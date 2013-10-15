@@ -1,0 +1,61 @@
+/*This file provides short description of keys for data stored in shared memory*/
+
+
+**************************************************************************************************
+captured frames and frame's length
+**************************************************************************************************
+
+key				value
+frame1			int val (pointer in heap)
+frame2			int val (pointer in heap)
+frame3			int val (pointer in heap)
+...
+
+framelen1		int val
+framelen2		int val
+framelen3		int val
+...
+
+frameorientation1 boolean (true - landscape, false - portrait)
+frameorientation2 boolean
+frameorientation3 boolean
+...
+
+**************************************************************************************************
+amount of images captured
+**************************************************************************************************
+
+amountofcapturedframes		int val
+
+**************************************************************************************************
+amount of images processed
+**************************************************************************************************
+
+amountofresultframes		int val
+
+**************************************************************************************************
+processed frames nd frame's length
+**************************************************************************************************
+
+resultframe1	int val (pointer in heap)
+resultframe2	int val (pointer in heap)
+resultframe3	int val (pointer in heap)
+...
+
+resultframelen1 int val
+resultframelen2 int val
+resultframelen3 int val
+...
+
+resultframeorientation1 boolean (true - landscape, false - portrait)
+resultframeorientation2 boolean
+resultframeorientation3 boolean
+...
+
+resultframeformat string - specifies format of result frame (jpeg, nv21)
+
+IsSlowMode      boolean   - indicates capture mode
+
+resultfromshared boolean  - indicates if result stored in shared memory or in heap 
+							(if in shared, then we support only one res file, 
+							but it can be fast expanded)

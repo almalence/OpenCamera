@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Sequence_Capture_Category_Title">Sequence capture</string>
+    <string name="Pref_Sequence_Capture_Preference_Title">Sequence mode</string>
+    <string name="Pref_Sequence_Capture_Preference_Summary">Set number of images in capture</string>
+
+    <string name="Pref_Sequence_Capture_ImagesAmount_Title">Number of images</string>
+    
+    <string name="Pref_Sequence_Capture_PauseBetweenShots_Title"> Pause between shots</string>
+    <string name="Res_Sequence_Capture_5">5 images</string>
+    <string name="Res_Sequence_Capture_6">6 images</string>
+    <string name="Res_Sequence_Capture_7">7 images</string>
+    <string name="Res_Sequence_Capture_8">8 images</string>
+    
+    <string name="Res_Sequence_Fast_Text">as fast as possible</string>
+</resources>

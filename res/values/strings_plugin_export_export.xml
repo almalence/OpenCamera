@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Export_Preference_Title">Export settings</string>
+	<string name="Pref_Export_Preference_Summary">Export name</string>
+	
+	<string name="Pref_Export_ExportName_Title">Photo name pattern</string>
+	
+	<string name="Pref_Export_ExportFormat_Title">Export name format</string>
+	
+	<string name="Res_Export_SaveJPEG_Text">Save format JPEG</string>
+	<string name="Res_Export_SavePNG_Text">Save format PNG</string>
+	
+	<string name="Res_Export_SaveAs_Text">Save as</string>
+	
+	<string name="Pref_Export_SaveTo_Title">Select location to store images</string>
+	
+	<string name="Pref_Export_UseGeoTagging_Title">Geo tagging</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">Add location tags. Turn on "GPS location" system setting to get precise geo-tagging</string>
+
+</resources>

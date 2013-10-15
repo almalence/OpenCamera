@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+ xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/Pref_Inactive_Preference_Title" 
+        				android:summary="@string/Pref_Inactive_Preference_Summary">
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_Shooting_Inactive_Title"
+			 android:summary="@string/Pref_Shooting_Inactive_Summary">
+			 <extra android:name="type" android:value="shooting_inactive_settings"/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="single_mode_name">Single shot</string>
+    <string name="single_mode_howto"></string>
+    
+    <string name="selftimer_mode_name">Self-Timer</string>
+    <string name="selftimer_mode_howto"></string>
+    
+    <string name="burst_mode_name">Burst</string>
+    <string name="burst_mode_howto"></string>
+    
+    <string name="expobracketing_mode_name">Expo-bracketing</string>
+    <string name="expobracketing_mode_howto"></string>
+    
+    <string name="hdr_mode_name">HDR</string>
+    <string name="hdr_mode_howto"></string>
+    
+    <string name="night_mode_name">Night</string>
+    <string name="night_mode_howto"></string>
+    
+    <string name="video_mode_name">Video</string>
+    <string name="video_mode_howto"></string>
+    
+    <string name="preshot_mode_name">Preshot</string>
+    <string name="preshot_mode_howto">Tap shutter to start/stop capture</string>
+    
+    <string name="objectremoval_mode_name">Object removal</string>
+    <string name="objectremoval_mode_howto"></string>
+    
+    <string name="groupshot_mode_name">Group shot</string>
+    <string name="groupshot_mode_howto"></string>
+    
+    <string name="sequence_mode_name">Sequence photo</string>
+    <string name="sequence_mode_howto"></string>
+    
+    <string name="panorama_mode_name">Panorama</string>
+    <string name="panorama_mode_howto"></string>
+    
+	<string name="hiresportrait_mode_name">Hires portrait</string>
+	<string name="hiresportrait_mode_howto"></string>
+    
+</resources>

@@ -1,0 +1,240 @@
+/*
+The contents of this file are subject to the Mozilla Public License
+Version 1.1 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+The Original Code is collection of files collectively known as Open Camera.
+
+The Initial Developer of the Original Code is Almalence Inc.
+Portions created by Initial Developer are Copyright (C) 2013 
+by Almalence Inc. All Rights Reserved.
+*/
+
+package com.almalence.plugins.capture.groupshot;
+
+import android.content.SharedPreferences;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.os.CountDownTimer;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.almalence.SwapHeap;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginCapture;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.R;
+
+/***
+Implements group shot capture plugin - captures predefined number of images
+***/
+
+public class GroupShotCapturePlugin extends PluginCapture
+{
+	private boolean takingAlready=false;
+		
+    //defaul val. value should come from config
+	private int imageAmount = 5;
+    private int pauseBetweenShots = 0;
+    
+    private int imagesTaken=0;
+    private boolean inCapture;
+	
+	public GroupShotCapturePlugin()
+	{
+		super("com.almalence.plugins.groupshotcapture",
+			  R.xml.preferences_capture_groupshot,
+			  0,
+			  MainScreen.thiz.getResources().getString(R.string.Pref_GroupShot_Capture_Preference_Title),
+			  MainScreen.thiz.getResources().getString(R.string.Pref_GroupShot_Capture_Preference_Summary),
+			  0,
+			  null);
+
+		refreshPreferences();
+	}
+	
+	@Override
+	public void onResume()
+	{
+		takingAlready = false;
+		imagesTaken=0;
+		inCapture = false;
+		refreshPreferences();
+	}
+	
+	private void refreshPreferences()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		imageAmount = Integer.parseInt(prefs.getString("groupShotImagesAmount", "7"));
+		pauseBetweenShots = Integer.parseInt(prefs.getString("groupShotPauseBetweenShots", "750"));
+	}
+	
+
+	@Override
+	public void OnShutterClick()
+	{
+		if (inCapture == false)
+        {
+			if (PluginManager.getInstance().getProcessingCounter()!=0)
+			{
+				Toast.makeText(MainScreen.thiz, "Processing in progress. Please wait.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			MainScreen.thiz.MuteShutter(true);
+			
+			String fm = MainScreen.thiz.getFocusMode();
+			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
+					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+					&& fm != null
+					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
+	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
+	        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
+	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)))
+				takingAlready = true;			
+			else if(takingAlready == false)
+				takePicture();
+        }
+	}
+	
+	public void takePicture()
+	{
+		refreshPreferences();
+		inCapture = true;
+		takingAlready = true;
+		Camera camera = MainScreen.thiz.getCamera();
+    	if (null==camera)
+    	{
+    		takingAlready = false;
+    		Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+			
+			MainScreen.guiManager.lockControls = false;
+			inCapture = false;
+    		return;
+    	}
+		if (imagesTaken==0 || pauseBetweenShots==0)
+		{
+			if (camera != null)
+	 		{
+				// play tick sound
+				MainScreen.guiManager.showCaptureIndication();
+        		MainScreen.thiz.PlayShutter();
+        		
+	 	    	camera.takePicture(null, null, null, MainScreen.thiz);
+	 		}			
+		}
+		else
+		{
+			new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
+			     public void onTick(long millisUntilFinished) {}
+			     public void onFinish() 
+			     {
+			    	Camera camera = MainScreen.thiz.getCamera();
+					if (camera != null)
+					{
+						// play tick sound
+						MainScreen.guiManager.showCaptureIndication();
+		        		MainScreen.thiz.PlayShutter();
+		     	    	camera.takePicture(null, null, null, MainScreen.thiz);
+					}
+					else
+					{
+						inCapture = false;
+						takingAlready = false;
+						Message msg = new Message();
+	        			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+	        			msg.what = PluginManager.MSG_BROADCAST;
+	        			MainScreen.H.sendMessage(msg);
+	        			
+	        			MainScreen.guiManager.lockControls = false;
+					}
+			     }
+			  }.start();
+		}
+	}
+
+	@Override
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	{
+		imagesTaken++;
+		int frame_len = paramArrayOfByte.length;
+		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+    	
+    	if (frame == 0)
+    	{
+    		Log.i("Group Shot", "Load to heap failed");
+    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+    	}
+    	String frameName = "frame" + imagesTaken;
+    	String frameLengthName = "framelen" + imagesTaken;
+    	
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
+		
+		try
+		{
+			paramCamera.startPreview();
+		}
+		catch (RuntimeException e)
+		{
+			Log.i("Group Shot", "StartPreview fail");
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+		}
+		if (imagesTaken < imageAmount)
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		else
+		{
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imagesTaken));
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			imagesTaken=0;
+			
+			//call timer to reset inCapture 
+			new CountDownTimer(5000, 5000) {
+			     public void onTick(long millisUntilFinished) {}
+			     public void onFinish() 
+			     {
+			    	 inCapture = false;
+			     }
+			  }.start();
+		}
+		takingAlready = false;
+	}
+	
+	@Override
+	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	{
+		if(takingAlready == true)
+			takePicture();
+		
+//		if(takingAlready == true && paramBoolean == true)
+//			takePicture();
+//		else if(takingAlready == true)
+//		{
+//			takingAlready = false;
+//			MainScreen.guiManager.lockControls = false;
+//		}
+	}
+
+	@Override
+	public void onPreviewFrame(byte[] data, Camera paramCamera){}	
+}

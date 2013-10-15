@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    
+    <!-- 
+    Mode should be configured in the following way:
+    
+    <mode id="test" name="Test" savename="save file name">
+	    <vf 		id="com.companyname.testvf1"/>
+	    <vf 		id="com.companyname.testvf2"/>
+	    <vf 		id="com.companyname.testvf3"/>    
+	    <capture 	id="com.companyname.testcapture" />    
+	    <processing	id="com.companyname.testprocessing"/>  
+		<filter		id="com.companyname.testfilter"/>  
+	    <export		id="com.companyname.export"/>
+	</mode> 
+    
+    <mode id="test" name="Test"> - mode id - for internal use (Should be unique). name - visible name to show in GUI
+    
+    plugin id - real unique plugin id which is set in plugin ctor
+     -->
+
+	<!--  Default plugin for initial start -->     
+    <defaultmode id="single"/>
+     
+	<mode id="single" name="single_mode_name" savename="">
+		<icon		id="gui_almalence_mode_single"/>
+
+	    <vf 		id="com.almalence.plugins.histogramvf"/>   
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.capture" />    
+	
+	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+	
+		<sku/>
+		
+		<howtotext  id=""/>
+		
+	</mode>
+	
+	<mode id="selftimer" name="selftimer_mode_name"  savename="">
+	
+	    <icon		id="gui_almalence_mode_selftimer"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>      
+	
+	    <capture 	id="com.almalence.plugins.selftimercapture" />    
+	
+	    <processing	id="com.almalence.plugins.simpleprocessing"/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku/>
+		
+		<howtotext  id=""/>
+		
+	</mode> 
+	
+	<mode id="burstmode" name="burst_mode_name"  savename="">
+	    
+	    <icon		id="gui_almalence_mode_burst"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+		<vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>   
+	
+	    <capture 	id="com.almalence.plugins.burstcapture" />    
+	
+	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+	
+		<sku		id="plugin_almalence_moving_burst"/>
+		
+		<howtotext  id=""/>
+		
+	</mode>
+	
+	<mode id="expobracketing" name="expobracketing_mode_name"  savename="BKT">
+	
+	    <icon		id="gui_almalence_mode_expobracketing"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
+	
+	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+		
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+	
+		<sku		id="plugin_almalence_moving_burst"/>
+		
+		<howtotext  id=""/>
+	
+	</mode>
+	
+	<mode id="hdrmode" name="hdr_mode_name"  savename="HDR">
+	
+	    <icon		id="gui_almalence_mode_hdr"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
+	
+	    <processing	id="com.almalence.plugins.hdrprocessing" />    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+	
+		<sku 		id="plugin_almalence_hdr"/>
+		
+		<howtotext  id=""/>
+	
+	</mode>
+	
+	<mode id="nightmode" name="night_mode_name"  savename="NIGHT">
+	
+	    <icon		id="gui_almalence_mode_night"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+		<vf 		id="com.almalence.plugins.zoomvf"/>
+		<vf 		id="com.almalence.plugins.focusvf"/>
+		<vf 		id="com.almalence.plugins.infosetvf"/>
+		
+	    <capture 	id="com.almalence.plugins.nightcapture" />    
+	
+	    <processing	id="com.almalence.plugins.nightprocessing" />    
+	
+	    <filter/>    
+	
+		<export 	id="com.almalence.plugins.export"/>
+		
+		<howtotext  id=""/>
+
+		<sku/>		
+	</mode>
+	
+	<mode id="video" name="video_mode_name"  savename="">
+	
+	    <icon		id="gui_almalence_mode_video"/>
+	    
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	
+	    <capture 	id="com.almalence.plugins.videocapture" />    
+	
+	    <processing/>    
+	
+	    <filter/>    
+	
+	    <export/>
+
+		<sku/>
+		
+		<howtotext  id=""/>
+			
+	</mode>
+	 
+	<mode id="pixfix" name="preshot_mode_name"  savename="PRESHOT">
+	
+	    <icon		id="gui_almalence_mode_backintime"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.preshotcapture" />    
+	
+	    <processing id="com.almalence.plugins.preshotprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export     id="com.almalence.plugins.export"/>
+
+		<sku/>
+		
+		<howtotext  id="preshot_mode_howto"/>
+			
+	</mode>
+	
+	<mode id="movingobjects" name="objectremoval_mode_name"  savename="OR">
+	
+	    <icon		id="gui_almalence_mode_moving"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.objectremovalcapture" />    
+	
+	    <processing id="com.almalence.plugins.objectremovalprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id="plugin_almalence_moving_burst"/>
+		
+		<howtotext  id=""/>
+			
+	</mode>
+	
+	<mode id="groupshot" name="groupshot_mode_name"  savename="GS">
+	
+	    <icon		id="gui_almalence_mode_groupshot"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.groupshotcapture" />
+	
+	    <processing id="com.almalence.plugins.groupshotprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id="plugin_almalence_groupshot"/>
+		
+		<howtotext  id=""/>
+			
+	</mode>
+	
+	<mode id="sequence" name="sequence_mode_name"  savename="SEQ">
+	
+	    <icon		id="gui_almalence_mode_sequence"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.sequencecapture" />
+	
+	    <processing id="com.almalence.plugins.sequenceprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id="plugin_almalence_moving_burst"/>
+		
+		<howtotext  id=""/>
+			
+	</mode>
+	
+	<mode id="panorama_augmented" name="panorama_mode_name"  savename="PANO">
+	
+	    <icon		id="gui_almalence_mode_panorama"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.panoramacapture_augmented" />
+	
+	    <processing id="com.almalence.plugins.panoramaprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id="plugin_almalence_panorama_augmented"/>
+		
+		<howtotext  id=""/>
+	</mode>
+
+</config>	

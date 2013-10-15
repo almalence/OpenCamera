@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Sequence_Preference_Title">Обработка фотопоследовательности</string>
+	<string name="Pref_Sequence_Preference_Summary">""</string>	
+	
+	<string name="Pref_Sequence_Save">Сохранить оригиналы</string>
+	
+</resources>

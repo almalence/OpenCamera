@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/Pref_NightCapture_Preference_Title">   
+        <ListPreference
+						android:title="@string/Pref_NightCapture_ImageSize_Title"
+						android:key="imageSizePrefNight"
+						android:defaultValue="0"
+						android:entries="@array/dimsArrayNight"
+						android:entryValues="@array/dimsValuesNight" />
+        <CheckBoxPreference
+						android:title="@string/Pref_NightCapture_NightVision_Title"
+						android:defaultValue="true"
+						android:summary="@string/Pref_NightCapture_NightVision_Summary"
+						android:key="openglPref" />
+		<ListPreference
+                        android:title="@string/Pref_NightCapture_FocusMode_Title"
+                        android:defaultValue="0"
+                        android:summary="@string/Pref_NightCapture_FocusMode_Summary"
+                        android:key="focusPref"
+                        android:entries="@array/focusArray"
+                        android:entryValues="@array/focusValues" />
+	</PreferenceCategory>
+</PreferenceScreen>

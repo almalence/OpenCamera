@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_ObjectRemoval_Preference_Title">Обработка удаления объектов</string>
+	<string name="Pref_ObjectRemoval_Preference_Summary">Обработать движущиеся объекты</string>	
+	
+	<string name="Pref_ObjectRemoval_Save">Сохранить оригиналы</string>
+	
+</resources>

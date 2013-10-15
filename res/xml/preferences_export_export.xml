@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--     <PreferenceCategory android:title="@string/Pref_Export_Preference_Title" 
+        				android:summary="@string/Pref_Export_Preference_Summary">
+        				 -->
+    	<ListPreference android:key="exportName" 
+    	    			android:title="@string/Pref_Export_ExportName_Title" 
+    	    			android:entries="@array/exportNameArray" 
+    	    			android:defaultValue="2" 
+    	    			android:entryValues="@array/exportNameValues" />
+<!--     	<ListPreference android:key="exportFormat" 
+    	    			android:title="@string/Pref_Export_ExportFormat_Title" 
+    	    			android:entries="@array/exportFormatArray" 
+    	    			android:defaultValue="1" 
+    	    			android:entryValues="@array/exportFormatValues" />
+    	    			 -->
+    	<CheckBoxPreference
+                        android:title="@string/Pref_Export_UseGeoTagging_Title"
+                        android:defaultValue="false"
+                        android:summary="@string/Pref_Export_UseGeoTagging_Summary"
+                        android:key="useGeoTaggingPrefExport" />
+
+<!--     	<ListPreference
+                        android:title="Save to..."
+                        android:summary="@string/Pref_Export_SaveTo_Title"
+                        android:key="saveToPrefExport"
+                        android:defaultValue="0"
+                        android:entries="@array/saveToArray"
+                        android:entryValues="@array/saveToValues" /> -->
+<!--	</PreferenceCategory> -->
+</PreferenceScreen>

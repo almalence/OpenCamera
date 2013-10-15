@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">A Better Camera - Una fotocamera migliore</string>
+    <string name="Pref_Billing_Left1">modalità: solo</string>
+    <string name="Pref_Billing_Left2">scatti gratuiti restanti.</string>
+    <string name="cannot_create_jpeg">Errore: impossibile salvare l\'immagine!</string>
+    <string name="choose_folder_pick">Usa questa cartella</string>
+    <string name="choose_folder_newfolder">Nuova cartella</string>
+    <string name="choose_folder_alert_0">Ops</string>
+    <string name="choose_folder_alert_1">Spiacenti, qui non possiamo salvare le tue foto :(</string>
+    <string name="choose_folder_alert_2">OK</string>
+    <string name="choose_folder_alert_0_2">Nome nuova cartella</string>
+    <string name="choose_folder_alert_1_2">Spiacenti, qui non possiamo creare cartelle :(</string>
+    <string name="choose_folder_alert_2_1">Crea</string>
+    <string name="choose_folder_alert_2_2">Annulla</string>
+    <string name="pref_advanced_saving_saveToPref_title">Salva in...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">Seleziona il percorso per salvare le immagini</string>
+    <string name="choose_folder">Seleziona cartella</string>
+    
+    <string name="save_to_phone">Telefono</string>
+    <string name="save_to_memorycard">Scheda di memoria</string>
+    <string name="save_to_custom">Cartella personalizzata</string>
+    
+    <string name="dimensions_none">Nessuna</string>
+    
+    <string name="already_unlocked">Elemento già sbloccato</string>
+    
+</resources>

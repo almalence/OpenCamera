@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Billing_Left"> осталось бесплатных снимков:</string>
+    <string name="cannot_create_jpeg">Ошибка: Невозможно сохранить снимок!</string>
+    <string name="choose_folder_pick">Использовать эту папку</string>
+    <string name="choose_folder_newfolder">Нова папка</string>
+    <string name="choose_folder_alert_0">Oops</string>
+    <string name="choose_folder_alert_1">Извините, невозможно сохранять снимки в этом месте :(</string>
+    <string name="choose_folder_alert_2">OK</string>
+    <string name="choose_folder_alert_0_2">Имя новой папки</string>
+    <string name="choose_folder_alert_1_2">Извините, невозможно создать папку здесь :(</string>
+    <string name="choose_folder_alert_2_1">Создать</string>
+    <string name="choose_folder_alert_2_2">Отменить</string>
+    <string name="pref_advanced_saving_saveToPref_title">Сохранить как...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">Выбрать место для сохранения снимков</string>
+    <string name="choose_folder">Выбрать папку</string>
+    
+    <string name="save_to_phone">Телефон</string>
+    <string name="save_to_memorycard">Карта памяти</string>
+    <string name="save_to_custom">Выбрать папку</string>
+    
+    <string name="dimensions_none">None</string>
+    
+    <string name="already_unlocked">Уже активировано</string>
+    
+</resources>

@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/Pref_ExpoBracketing_Category_Title">   
+    	<ListPreference
+			android:title="@string/Pref_ExpoBracketing_EvRange_Title"
+			android:summary=""
+			android:key="evPrefExpoBracketing" 
+			android:defaultValue="0"
+			android:entries="@array/evArrayExpoBracketing"
+			android:entryValues="@array/evValuesExpoBracketing" />		
+		<CheckBoxPreference
+			android:title="@string/Pref_ExpoBracketing_Luma_Title"
+			android:defaultValue="false"
+			android:summary="@string/Pref_ExpoBracketing_Luma_Summary"
+			android:key="lumaPrefExpoBracketing" />    		
+		<CheckBoxPreference
+			android:title="@string/Pref_ExpoBracketing_Refocus_Title"
+			android:defaultValue="false"
+			android:summary="@string/Pref_ExpoBracketing_Refocus_Summary"
+			android:key="refocusPrefExpoBracketing" />	
+	</PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_GroupShot_Capture_Category_Title">Съемка группового портрета</string>
+    <string name="Pref_GroupShot_Capture_Preference_Title">Режим группового портрета</string>
+    <string name="Pref_GroupShot_Capture_Preference_Summary">Выберите количество кадров</string>
+
+    <string name="Pref_GroupShot_Capture_ImagesAmount_Title">Количество снимков</string>
+    
+    <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title"> Пауза между снимками</string>
+    
+    <string name="Res_GroupShot_Capture_5">5 снимков</string>
+    <string name="Res_GroupShot_Capture_6">6 снимков</string>
+    <string name="Res_GroupShot_Capture_7">7 снимков</string>
+    <string name="Res_GroupShot_Capture_8">8 снимков</string>
+    
+</resources>

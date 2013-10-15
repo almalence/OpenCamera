@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">일반 설정</string>
+    <string name="Pref_Common_Header_Summary">카메라 등</string>
+    <string name="Pref_Common_Preference_Title">카메라 설정</string>
+    <string name="Pref_Common_Preference_Summary">카메라 등</string>
+    <string name="Pref_Common_UseFrontCamera_Title">전면 카메라</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">전면 카메라 사용</string>
+    <string name="Pref_Common_ImageSize_Title">이미지 크기</string>
+    <string name="Pref_Common_ImageSize_Summary">\n주의: 일부 모드의 경우 이미지 크기에 개별 설정이 있습니다</string>
+    <string name="Pref_Common_Shutter_Title">무음 동작</string>
+    <string name="Pref_Common_Shutter_Summary">일부 모델에서는 작동하지 않을 수 있음</string>
+    <string name="Pref_Common_MediaRescan_Title">종료 시 미디어 재검색</string>
+    <string name="Pref_Common_MediaRescan_Summary">이미지가 갤러리에 표시되지 않을 경우 사용하세요.</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">기다려주세요. 처리 중...</string>
+    
+    <!-- <string name="sceneAuto">자동</string>
+    <string name="sceneAction">작업</string>
+    <string name="scenePortrait">인물</string>
+    <string name="sceneLandscape">풍경</string>
+    <string name="sceneNight">야간</string>
+    <string name="sceneNightPortrait">야간-인물</string>
+    <string name="sceneTheatre">극장</string>
+    <string name="sceneBeach">해변</string>
+    <string name="sceneSnow">눈</string>
+    <string name="sceneSunset">일몰</string>
+    <string name="sceneSteadyPhoto">steadyphoto</string>
+    <string name="sceneFireworks">불꽃놀이</string>
+    <string name="sceneSports">스포츠</string>
+    <string name="sceneParty">파티</string>
+    <string name="sceneCandlelight">촛불</string>
+    <string name="sceneBarcode">바코드</string>
+    <string name="sceneHDR">hdr</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">자동</string>
+    <string name="wbIncandescent">백열</string>
+    <string name="wbFluorescent">형광</string>
+    <string name="wbWarmFluorescent">따뜻한-형광</string>
+    <string name="wbDaylight">일광</string>
+    <string name="wbCloudyDaylight">흐린-일광</string>
+    <string name="wbTwilight">미광</string>
+    <string name="wbShade">음영</string>
+    
+    <string name="focusAuto">자동</string>
+    <string name="focusInfinity">무한</string>
+    <string name="focusNormal">일반</string>
+    <string name="focusMacro">매크로</string>
+    <string name="focusFixed">고정</string>
+    <string name="focusEdof">edof</string>
+    <string name="focusContinuousVideo">연속-비디오</string>
+    <string name="focusContinuousPicture">연속-사진</string>
+    
+    <string name="flashAuto">자동</string>
+    <string name="flashOn">켬</string>
+    <string name="flashOff">끔</string>
+    <string name="flashRedEye">적목</string>
+    <string name="flashTorch">토치</string>
+    
+    <string name="isoAuto">자동</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">ISO800</string>
+    <string name="iso1600">ISO1600</string> -->
+    
+    <string name="settings_mode_scene">장면 모드</string>
+    <string name="settings_mode_wb">화이트밸런스</string>
+    <string name="settings_mode_focus">초점 모드</string>
+    <string name="settings_mode_flash">플래시 모드</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">후면 카메라</string>
+    <string name="settings_mode_front">전면 카메라</string>
+    <string name="settings_mode_exposure">노출</string>
+    <string name="settings_mode_moresettings">기타 설정</string>
+    
+    <string name="settings_not_available">현재 모드에서 이용 불가</string>
+    <string name="processing_not_finished">처리가 완료되지 않았습니다. 기다려주세요.</string>
+        
+    <string name="Pref_General_Preference_Title">일반 설정</string>
+	<string name="Pref_General_Preference_Summary">카메라 및 촬영</string>
+	<string name="Pref_VF_Preference_Title">뷰파인더 설정</string>
+	<string name="Pref_VF_Preference_Summary">표시할 사항</string>
+	<string name="Pref_Modes_Preference_Title">촬영 모드 설정</string>
+	<string name="Pref_Saving_Preference_Title">저장 및 공유</string>
+	<string name="Pref_Saving_Preference_Summary">파일 이름, 포맷, 위치 태그, exif 및 기타 파라미터</string>
+	<string name="Pref_Advanced_Preference_Title">고급</string>
+	<string name="Pref_Advanced_Preference_Summary">전문 사용자를 위한 설정</string>
+	<string name="Pref_Unlock_Preference_Title">잠금해제</string>
+	<string name="Pref_Unlock_Preference_Summary">프리미엄 기능 잠금해제</string>
+	
+	<string name="layout_hint_bottom">카메라 모드 선택</string>
+	<string name="layout_hint_center">스와이핑</string>
+	<string name="layout_hint_top_left">길게 눌러서\n설정하세요</string>
+	<string name="layout_hint_top_center">당겨서 더 많은 옵션을 보세요</string>
+	
+</resources>

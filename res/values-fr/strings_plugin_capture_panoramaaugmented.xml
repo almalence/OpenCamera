@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_preference_title">Panorama augmenté</string>
+	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Prise de vue panoramique en HD</string>	
+	
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Hauteur du panorama</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Mode Mise au point</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Sélectionner le mode de mise au point adapté</string>
+      
+    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Mise au point à l\'infini</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">Mise au point automatique</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">Mise au point automatique + nouvelle mise au point à chaque photo</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Continue</string>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Utiliser le gyroscope de l\'appareil</string>
+    <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Gyroscope de l\'appareil nécessaire. S\'il n\'est pas activé ou existant, nous utiliserons le gyroscope de notre logiciel</string>
+	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">Pas de gyroscope</string>
+    <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">Désolé mais votre appareil n\'est pas doté d\'un gyroscope. Nous avons donc activé le gyroscope de notre logiciel pour optimiser votre expérience</string>
+    
+</resources>

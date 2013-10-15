@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+<PreferenceCategory android:title="@string/pref_plugin_capture_panoramaaugmented_preference_title">   
+    	<ListPreference
+			android:title="@string/pref_plugin_capture_panoramaaugmented_imageheight_title"
+			android:key="pref_plugin_capture_panoramaaugmented_imageheight"
+			android:defaultValue="2"
+			android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
+			android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"/>
+    	<CheckBoxPreference
+			android:title="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_title"
+			android:defaultValue="false"
+			android:summary="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary"
+			android:key="pref_plugin_capture_panoramaaugmented_usehardwaregyro"/>
+		<ListPreference
+			android:title="@string/pref_plugin_capture_panoramaaugmented_focusmode_title"
+			android:summary="@string/pref_plugin_capture_panoramaaugmented_focusmode_summary"
+			android:defaultValue="0"
+			android:key="pref_plugin_capture_panoramaaugmented_focus"
+			android:entries="@array/plugin_capture_panoramaaugmented_focusArray"
+			android:entryValues="@array/plugin_capture_panoramaaugmented_focusValues"/>   
+</PreferenceCategory>
+
+</PreferenceScreen>

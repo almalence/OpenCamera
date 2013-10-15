@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">كاميرا أفضل</string>
+    <string name="Pref_Billing_Left1">الوضع: فقط</string>
+    <string name="Pref_Billing_Left2">لقطات مجانية متبقية.</string>
+    <string name="cannot_create_jpeg">خطأ: لا يمكن حفظ الصورة!</string>
+    <string name="choose_folder_pick">استخدم هذا المجلد</string>
+    <string name="choose_folder_newfolder">مجلد جديد</string>
+    <string name="choose_folder_alert_0">عذرًا</string>
+    <string name="choose_folder_alert_1">عذرًا، فنحن لا نستطيع وضع صورك هنا :(</string>
+    <string name="choose_folder_alert_2">موافق</string>
+    <string name="choose_folder_alert_0_2">اسم المجلد الجديد</string>
+    <string name="choose_folder_alert_1_2">عذرًا، فنحن لا نستطيع إنشاء مجلد هنا :(</string>
+    <string name="choose_folder_alert_2_1">إنشاء</string>
+    <string name="choose_folder_alert_2_2">إلغاء</string>
+    <string name="pref_advanced_saving_saveToPref_title">حفظ في...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">تحديد موقع لتخزين الصور</string>
+    <string name="choose_folder">اختيار المجلد</string>
+    
+    <string name="save_to_phone">الهاتف</string>
+    <string name="save_to_memorycard">بطاقة الذاكرة</string>
+    <string name="save_to_custom">مجلد مخصص</string>
+    
+    <string name="dimensions_none">لا شيء</string>
+    
+    <string name="already_unlocked">مفتوح بالفعل</string>
+    
+</resources>

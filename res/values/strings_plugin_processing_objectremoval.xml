@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_ObjectRemoval_Preference_Title">Object removal processing</string>
+	<string name="Pref_ObjectRemoval_Preference_Summary">Process moving objects</string>	
+	
+	<string name="Pref_ObjectRemoval_Save">Save original frames</string>
+	
+</resources>

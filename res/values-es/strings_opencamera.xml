@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">A Better Camera - (Una cámara fabulosa)</string>
+    <string name="Pref_Billing_Left1">modo HDR: solo</string>
+    <string name="Pref_Billing_Left2">Disparos restantes:</string>
+    <string name="cannot_create_jpeg">Error: No se puede guardar la imagen.</string>
+    <string name="choose_folder_pick">Utilizar esta carpeta</string>
+    <string name="choose_folder_newfolder">Nueva carpeta</string>
+    <string name="choose_folder_alert_0">¡Uy!</string>
+    <string name="choose_folder_alert_1">Disculpa, no podemos poner tus fotos aquí :(</string>
+    <string name="choose_folder_alert_2">OK</string>
+    <string name="choose_folder_alert_0_2">Nombre de nueva carpeta</string>
+    <string name="choose_folder_alert_1_2">Disculpa, no podemos crear una nueva carpeta aquí :(</string>
+    <string name="choose_folder_alert_2_1">Crear</string>
+    <string name="choose_folder_alert_2_2">Cancelar</string>
+    <string name="pref_advanced_saving_saveToPref_title">Guardar en...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">Seleccionar ubicación para guardar imágenes</string>
+    <string name="choose_folder">Elegir carpeta</string>
+    
+    <string name="save_to_phone">Teléfono</string>
+    <string name="save_to_memorycard">Tarjeta de memoria</string>
+    <string name="save_to_custom">Personalizar carpeta</string>
+    
+    <string name="dimensions_none">Ninguna</string>
+    
+    <string name="already_unlocked">Ya está desbloqueado</string>
+    
+</resources>

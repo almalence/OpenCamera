@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+   <dimen name="gridImageSize">70dp</dimen>
+   <dimen name="gridTextLayoutSize">70dp</dimen>
+   <dimen name="gridTextSize">14sp</dimen>
+   <dimen name="gridModeTextLayoutSize">70dp</dimen>
+   <dimen name="gridModeTextSize">14sp</dimen>
+   <dimen name="gridModeImageSize">70dp</dimen>
+   <dimen name="gridModeVerticalSpacing">5dp</dimen>
+   
+   <dimen name="mainButtonHeight">48dp</dimen>
+   <dimen name="mainButtonHeightSelect">55dp</dimen>
+   <dimen name="shutterHeight">90dp</dimen>
+   <dimen name="scanerWidth">6dp</dimen>
+   
+   <dimen name="infoLayoutWidth">47dp</dimen>
+   <dimen name="viewfinderViewsMarginTop">13dp</dimen>
+   
+   <dimen name="paramsLayoutHeight">60dp</dimen>
+   
+   <dimen name="buttonsLayoutMarginTop">25dp</dimen>   
+   
+   <dimen name="exposureButtonSize">30dp</dimen>
+   <dimen name="exposureSeekBarWidth">210dp</dimen>
+   <dimen name="exposureTitleWidth">70dp</dimen>
+   <dimen name="exposureCenterTitleWidth">70dp</dimen>
+   <dimen name="exposureTitleSize">16sp</dimen>
+   
+   <dimen name="blockingTitleSize">24sp</dimen>
+   
+   <dimen name="hintUpArrowTop">40sp</dimen>
+   <dimen name="hintUpArrowText">10sp</dimen>
+   
+   <dimen name="hintDownArrowBottom">60sp</dimen>
+   <dimen name="hintDownArrowText">50sp</dimen>  
+   
+</resources>

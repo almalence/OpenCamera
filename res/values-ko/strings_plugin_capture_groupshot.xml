@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_GroupShot_Capture_Category_Title">단체 사진 촬영</string>
+    <string name="Pref_GroupShot_Capture_Preference_Title">단체 사진 모드</string>
+    <string name="Pref_GroupShot_Capture_Preference_Summary">촬영 시 이미지 개수 설정</string>
+
+    <string name="Pref_GroupShot_Capture_ImagesAmount_Title">이미지 개수</string>
+    
+    <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title">촬영 간 일시정지</string>
+    
+    <string name="Res_GroupShot_Capture_5">5개의 이미지</string>
+    <string name="Res_GroupShot_Capture_6">6개의 이미지</string>
+    <string name="Res_GroupShot_Capture_7">7개의 이미지</string>
+    <string name="Res_GroupShot_Capture_8">8개의 이미지</string>
+    
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Burst_Category_Title">Burst съемка</string>
+    <string name="Pref_Burst_Preference_Title">Режим burst</string>
+    <string name="Pref_Burst_Preference_Summary">Выбор количества снимков</string>
+
+    <string name="Pref_Burst_ImagesAmount_Title">Количество снимков</string>
+    
+    <string name="Res_Burst_Images_Text"> снимков</string>
+    <string name="Pref_Burst_PauseBetweenShots_Title"> Пауза между снимками</string>
+    <string name="Res_Burst_Fast_Text">как можно быстрее</string>
+    
+    <string name="Res_Burst_3">3 снимка</string>
+    <string name="Res_Burst_5">5 снимков</string>
+    <string name="Res_Burst_10">10 снимков</string>
+    
+</resources>

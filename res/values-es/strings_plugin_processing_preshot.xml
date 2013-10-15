@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+	
+	<string name="Pref_PreShotProcessing_Preference_Title">Procesamiento de disparo previo</string>
+	<string name="Pref_PreShotProcessing_Preference_Summary">Tiempo atrás</string>
+	
+</resources>

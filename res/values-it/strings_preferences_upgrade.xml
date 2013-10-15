@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">Sblocca tutto per sempre: $9,95</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">Attiva tutte le funzioni e le modalità, nonché quelle delle future versioni</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">Sblocca la modalità HDR: $0,99</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Scatta immagini ad ampia gamma dinamica di straordinaria bellezza</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Foto panoramiche ad alta risoluzione: $2,99</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">Scatta straordinarie foto panoramiche con l\'ausilio della realtà aumentata</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">Rimozione di oggetti/Foto sequenziali: $2,99</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Rimuovi oggetti indesiderati o combina oggetti in movimento in un\'unica foto</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Sblocca Foto di gruppo: $2,99</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Seleziona sulla foto i volti migliori</string>
+	
+</resources>

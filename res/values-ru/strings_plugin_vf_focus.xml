@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Focus_Preference_Title">Фокус</string>
+	<string name="Pref_Focus_Preference_Summary">Фокус</string>
+	
+</resources>

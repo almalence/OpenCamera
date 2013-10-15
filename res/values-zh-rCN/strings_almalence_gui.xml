@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">常用设置</string>
+    <string name="Pref_Common_Header_Summary">相机和其它</string>
+    <string name="Pref_Common_Preference_Title">相机设置</string>
+    <string name="Pref_Common_Preference_Summary">相机和其它</string>
+    <string name="Pref_Common_UseFrontCamera_Title">前置摄像头</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">使用前置摄像头</string>
+    <string name="Pref_Common_ImageSize_Title">图像大小</string>
+    <string name="Pref_Common_ImageSize_Summary">\n请注意: 一些模式有单个的图像尺寸设置</string>
+    <string name="Pref_Common_Shutter_Title">静音操作</string>
+    <string name="Pref_Common_Shutter_Summary">不保证在所有模型上都可使用</string>
+    <string name="Pref_Common_MediaRescan_Title">注销时媒体重新扫描</string>
+    <string name="Pref_Common_MediaRescan_Summary">图像未出现在库中时帮助。</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">请等待，处理中...</string>
+    
+    <string name="sceneAuto">自动</string>
+    <string name="sceneAction">动作</string>
+    <string name="scenePortrait">纵向</string>
+    <string name="sceneLandscape">横向</string>
+    <string name="sceneNight">夜晚</string>
+    <string name="sceneNightPortrait">夜晚-纵向</string>
+    <string name="sceneTheatre">剧院</string>
+    <string name="sceneBeach">海滩</string>
+    <string name="sceneSnow">白雪</string>
+    <string name="sceneSunset">日落</string>
+    <string name="sceneSteadyPhoto">稳定照片</string>
+    <string name="sceneFireworks">烟花</string>
+    <string name="sceneSports">运动</string>
+    <string name="sceneParty">聚会</string>
+    <string name="sceneCandlelight">烛光</string>
+    <string name="sceneBarcode">条形码</string>
+    <string name="sceneHDR">hdr</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">自动</string>
+    <string name="wbIncandescent">白炽</string>
+    <string name="wbFluorescent">荧光</string>
+    <string name="wbWarmFluorescent">温暖的荧光</string>
+    <string name="wbDaylight">日光</string>
+    <string name="wbCloudyDaylight">多云的日光</string>
+    <string name="wbTwilight">曙暮光</string>
+    <string name="wbShade">阴影</string>
+    
+    <string name="focusAuto">自动</string>
+    <string name="focusInfinity">无限远</string>
+    <string name="focusNormal">正常</string>
+    <string name="focusMacro">微距</string>
+    <string name="focusFixed">固定</string>
+    <string name="focusEdof">全幅聚焦</string>
+    <string name="focusContinuousVideo">连续视频</string>
+    <string name="focusContinuousPicture">连续画面</string>
+    
+    <string name="flashAuto">自动</string>
+    <string name="flashOn">开</string>
+    <string name="flashOff">关</string>
+    <string name="flashRedEye">红眼</string>
+    <string name="flashTorch">手电筒</string>
+    
+    <string name="isoAuto">自动</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">&quot;ISO800&quot;</string>
+    <string name="iso1600">ISO1600</string>
+    
+    <string name="settings_mode_scene">场景模式</string>
+    <string name="settings_mode_wb">白平衡</string>
+    <string name="settings_mode_focus">对焦模式</string>
+    <string name="settings_mode_flash">闪光模式</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">后置摄像头</string>
+    <string name="settings_mode_front">前置摄像头</string>
+    <string name="settings_mode_exposure">曝光</string>
+    <string name="settings_mode_moresettings">更多设置</string>
+    
+    <string name="settings_not_available">在当前模式中不可用</string>
+    <string name="processing_not_finished">处理尚未完成。请等待。</string>
+        
+    <string name="Pref_General_Preference_Title">通用设置</string>
+	<string name="Pref_General_Preference_Summary">相机和拍摄</string>
+	<string name="Pref_VF_Preference_Title">取景器设置</string>
+	<string name="Pref_VF_Preference_Summary">显示内容</string>
+	<string name="Pref_Modes_Preference_Title">拍摄模式设置</string>
+	<string name="Pref_Saving_Preference_Title">保存和分享</string>
+	<string name="Pref_Saving_Preference_Summary">文件名、格式、地理标记，exif及其他参数</string>
+	<string name="Pref_Advanced_Preference_Title">高级</string>
+	<string name="Pref_Advanced_Preference_Summary">专业用户设置</string>
+	<string name="Pref_Unlock_Preference_Title">解锁</string>
+	<string name="Pref_Unlock_Preference_Summary">解锁高级功能</string>
+	
+	<string name="layout_hint_bottom">选择相机模式</string>
+	<string name="layout_hint_center">划动</string>
+	<string name="layout_hint_top_left">长按\n以配置</string>
+	<string name="layout_hint_top_center">拉动获取更多选项</string>
+	
+</resources>

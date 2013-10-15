@@ -1,0 +1,49 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/Pref_HDR_Category_Title">   
+   <ListPreference
+			android:title="@string/Pref_HDR_ColorViv_Title"
+			android:summary=""
+			android:key="colorPrefHDR"
+			android:defaultValue="2"
+			android:entries="@array/colorArrayHDR"
+			android:entryValues="@array/colorValuesHDR" />
+		<ListPreference
+			android:title="@string/Pref_HDR_LocalContrast_Title"
+			android:summary="@string/Pref_HDR_LocalContrast_Summary"
+			android:key="contrastPrefHDR"
+			android:defaultValue="1"
+			android:entries="@array/contrastArrayHDR"
+			android:entryValues="@array/contrastValuesHDR" />
+		<ListPreference
+			android:title="@string/Pref_HDR_Microcontrast_Title"
+			android:summary="@string/Pref_HDR_Microcontrast_Summary"
+			android:key="mcontrastPrefHDR"
+			android:defaultValue="1"
+			android:entries="@array/mcontrastArrayHDR"
+			android:entryValues="@array/mcontrastValuesHDR" />
+		<ListPreference
+			android:title="@string/Pref_HDR_Exposure_Title"
+			android:summary=""
+			android:key="expoPrefHDR"
+			android:defaultValue="1"
+			android:entries="@array/expoArrayHDR"
+			android:entryValues="@array/expoValuesHDR" />
+		<ListPreference
+			android:title="@string/Pref_HDR_NoiseReduction_Title"
+			android:summary=""
+			android:key="noisePrefHDR"
+			android:defaultValue="1"
+			android:entries="@array/noiseArrayHDR"
+			android:entryValues="@array/noiseValuesHDR" />
+		<CheckBoxPreference
+			android:title="@string/Pref_HDR_SaveInputPref_Title"
+			android:defaultValue="false"
+			android:summary="@string/Pref_HDR_SaveInputPref_Summary"
+			android:key="saveInputPrefHDR" />
+ 		<CheckBoxPreference
+			android:title="@string/Pref_HDR_AutoAdjustPref_Title"
+			android:defaultValue="false"
+			android:summary="@string/Pref_HDR_AutoAdjustPref_Summary"
+			android:key="autoadjustPrefHDR"/>
+	</PreferenceCategory>
+</PreferenceScreen>

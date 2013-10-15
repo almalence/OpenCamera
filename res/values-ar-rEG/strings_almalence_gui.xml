@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">إعدادات عامة</string>
+    <string name="Pref_Common_Header_Summary">الكاميرا وأشياء أخرى</string>
+    <string name="Pref_Common_Preference_Title">إعدادات الكاميرا</string>
+    <string name="Pref_Common_Preference_Summary">الكاميرا وأشياء أخرى</string>
+    <string name="Pref_Common_UseFrontCamera_Title">الكاميرا الأمامية</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">استخدام الكاميرا الأمامية</string>
+    <string name="Pref_Common_ImageSize_Title">حجم الصورة</string>
+    <string name="Pref_Common_ImageSize_Summary">\nملاحظة: تحتوي بعض الأوضاع على إعداد واحد لحجم الصورة</string>
+    <string name="Pref_Common_Shutter_Title">تشغيل صامت</string>
+    <string name="Pref_Common_Shutter_Summary">ليس مضمونًا أن يعمل على كل الطرز</string>
+    <string name="Pref_Common_MediaRescan_Title">إعادة مسح الوسائط عند الخروج</string>
+    <string name="Pref_Common_MediaRescan_Summary">يساعد إذا كانت الصور لا تظهر في المعرض.</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">يرجى الانتظار، تتم المعالجة...</string>
+    
+    <!-- ceneNight">ليلي</string>
+    <string name="sceneNightPortrait">عمودي-ليلي</string>
+    <string name="sceneTheatre">مسرح</string>
+    <string name="sceneBeach">شاطئ</string>
+    <string name="sceneSnow">جليد</string>
+    <string name="sceneSunset">غروب الشمس</string>
+    <string name="sceneSteadyPhoto">صورة ثابتة</string>
+    <string name="sceneFireworks">ألعاب نارية</string>
+    <string name="sceneSports">رياضات</string>
+    <string name="sceneParty">حفلة</string>
+    <string name="sceneCandlelight">ضوء الشموع</string>
+    <string name="sceneBarcode">رمز شريطي</string>
+    <string name="sceneHDR">المدى الديناميكي العالي</string>
+    <string name="sceneAR">عربي</string>
+    
+    <string name="wbAuto">تلقائي</string>
+    <string name="wbIncandescent">متوهج</string>
+    <string name="wbFluorescent">فلورسنت</string>
+    <string name="wbWarmFluorescent">فلورسنت دافئ</string>
+    <string name="wbDaylight">ضوء النهار</string>
+    <string name="wbCloudyDaylight">نهاري غائم</string>
+    <string name="wbTwilight">ضوء القمر</string>
+    <string name="wbShade">ظل</string>
+    
+    <string name="focusAuto">تلقائية</string>
+    <string name="focusInfinity">لانهائية</string>
+    <string name="focusNormal">عادية</string>
+    <string name="focusMacro">موسعة</string>
+    <string name="focusFixed">ثابتة</string>
+    <string name="focusEdof">edof</string>
+    <string name="focusContinuousVideo">فيديو متصل</string>
+    <string name="focusContinuousPicture">صورة متصلة</string>
+    
+    <string name="flashAuto">تلقائي</string>
+    <string name="flashOn">تشغيل</string>
+    <string name="flashOff">إيقاف</string>
+    <string name="flashRedEye">العين الحمراء</string>
+    <string name="flashTorch">شعلة</string>
+    
+    <string name="isoAuto">تلقائي</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">ISO800</string>
+    <string name="iso1600">ISO1600</string> -->
+    
+    <string name="settings_mode_scene">وضع المشهد</string>
+    <string name="settings_mode_wb">توازن اللون الأبيض</string>
+    <string name="settings_mode_focus">وضع البؤرة</string>
+    <string name="settings_mode_flash">وضع الفلاش</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">الكاميرا الخلفية</string>
+    <string name="settings_mode_front">الكاميرا الأمامية</string>
+    <string name="settings_mode_exposure">التعريض</string>
+    <string name="settings_mode_moresettings">المزيد من الإعدادات</string>
+    
+    <string name="settings_not_available">غير متاح في الوضع الحالي</string>
+    <string name="processing_not_finished">المعالجة لم تكتمل بعد. يرجى الانتظار.</string>
+        
+    <string name="Pref_General_Preference_Title">إعدادات عامة</string>
+	<string name="Pref_General_Preference_Summary">الكاميرا والتقاط الصور</string>
+	<string name="Pref_VF_Preference_Title">إعدادات باحث العرض</string>
+	<string name="Pref_VF_Preference_Summary">ما يتم عرضه</string>
+	<string name="Pref_Modes_Preference_Title">إعدادات أوضاع التصوير</string>
+	<string name="Pref_Saving_Preference_Title">الحفظ والمشاركة</string>
+	<string name="Pref_Saving_Preference_Summary">أسماء الملفات والتنسيقات ووضع العلامات الجغرافية وتنسيق ملفات الصور القابلة للتبادل ومعلمات أخرى</string>
+	<string name="Pref_Advanced_Preference_Title">متقدم</string>
+	<string name="Pref_Advanced_Preference_Summary">إعدادات خبراء المستخدمين</string>
+	<string name="Pref_Unlock_Preference_Title">فتح</string>
+	<string name="Pref_Unlock_Preference_Summary">فتح الميزات المتميزة</string>
+	
+	<string name="layout_hint_bottom">تحديد وضع الكاميرا</string>
+	<string name="layout_hint_center">مسح</string>
+	<string name="layout_hint_top_left">ضغطة طويلة\nللتكوين</string>
+	<string name="layout_hint_top_center">سحب للمزيد من الخيارات</string>
+	
+</resources>

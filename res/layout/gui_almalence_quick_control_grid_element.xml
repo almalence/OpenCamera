@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    android:id="@+id/quickLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"    
+    android:padding="5dp"
+    android:background="@drawable/almalence_gui_grid_elem_background">
+     
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_height="@dimen/gridImageSize"
+        android:layout_width="wrap_content"
+        android:src="@drawable/icon"        
+        android:padding="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+    </ImageView>
+     
+        <TextView
+        android:id="@+id/textView"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/imageView"
+		android:layout_centerHorizontal="true"
+        android:textSize="@dimen/gridTextSize">            
+        </TextView>
+
+     
+</RelativeLayout>

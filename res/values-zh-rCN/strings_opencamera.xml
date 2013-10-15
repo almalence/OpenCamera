@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">超群相机</string>
+    <string name="Pref_Billing_Left1">模式: 仅剩</string>
+    <string name="Pref_Billing_Left2">次免费拍摄。</string>
+    <string name="cannot_create_jpeg">出错: 无法保存图像!</string>
+    <string name="choose_folder_pick">使用此文件夹</string>
+    <string name="choose_folder_newfolder">新文件夹</string>
+    <string name="choose_folder_alert_0">糟糕</string>
+    <string name="choose_folder_alert_1">抱歉，不能将你的照片存放在此处:(</string>
+    <string name="choose_folder_alert_2">好</string>
+    <string name="choose_folder_alert_0_2">新文件夹名称</string>
+    <string name="choose_folder_alert_1_2">抱歉，不能在此处创建文件夹:(</string>
+    <string name="choose_folder_alert_2_1">创建</string>
+    <string name="choose_folder_alert_2_2">取消</string>
+    <string name="pref_advanced_saving_saveToPref_title">保存到…</string>
+    <string name="pref_advanced_saving_saveToPref_summary">选择位置以保存图像</string>
+    <string name="choose_folder">选择文件夹</string>
+    
+    <string name="save_to_phone">电话</string>
+    <string name="save_to_memorycard">记忆卡</string>
+    <string name="save_to_custom">自定义文件夹</string>
+    
+    <string name="dimensions_none">无</string>
+    
+    <string name="already_unlocked">已解锁</string>
+    
+</resources>

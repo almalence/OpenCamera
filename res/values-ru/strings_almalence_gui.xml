@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Common_Header_Title">Общие настройки</string>
+    <string name="Pref_Common_Header_Summary">Камера и др.</string>
+    <string name="Pref_Common_Preference_Title">Настройки камеры</string>
+    <string name="Pref_Common_Preference_Summary">Камера и др.</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Фронтальная камера</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Использовать фронтальную камеру</string>
+    <string name="Pref_Common_ImageSize_Title">Размер снимка</string>
+    <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
+    <string name="Pref_Common_Shutter_Title">Отключить звуки</string>
+    <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
+    <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
+    <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
+    <string name="blockingText">Пожалуйста подождите, обработка...</string>
+    
+    <!-- <string name="sceneAuto">Авто</string>
+    <string name="sceneAction">Движение</string>
+    <string name="scenePortrait">Портрет</string>
+    <string name="sceneLandscape">Ландшафт</string>
+    <string name="sceneNight">Ночь</string>
+    <string name="sceneNightPortrait">Ночной портрет</string>
+    <string name="sceneTheatre">Театр</string>
+    <string name="sceneBeach">Пляж</string>
+    <string name="sceneSnow">Снег</string>
+    <string name="sceneSunset">Закат</string>
+    <string name="sceneSteadyPhoto">Steadyphoto</string>
+    <string name="sceneFireworks">Фейерверк</string>
+    <string name="sceneSports">Спорт</string>
+    <string name="sceneParty">Вечеринка</string>
+    <string name="sceneCandlelight">Свеча</string>
+    <string name="sceneBarcode">Штрихкод</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">Авто</string>
+    <string name="wbIncandescent">Накаливания</string>
+    <string name="wbFluorescent">Флюоресцентная</string>
+    <string name="wbWarmFluorescent">Теплая флюоресцентная</string>
+    <string name="wbDaylight">Дневной свет</string>
+    <string name="wbCloudyDaylight">Облачно</string>
+    <string name="wbTwilight">Сумерки</string>
+    <string name="wbShade">Тень</string>
+
+    <string name="focusAuto">Авто</string>
+    <string name="focusInfinity">Бесконечность</string>
+    <string name="focusNormal">Нормальная</string>
+    <string name="focusMacro">Макро</string>
+    <string name="focusFixed">Фиксированый</string>
+    <string name="focusEdof">Edof</string>
+    <string name="focusContinuousVideo">Сontinuous video</string>
+    <string name="focusContinuousPicture">Continuous picture</string>
+    
+    <string name="flashAuto">авто</string>
+    <string name="flashOn">вкл</string>
+    <string name="flashOff">выкл</string>
+    <string name="flashRedEye">red-eye</string>
+    <string name="flashTorch">фонарик</string>
+    
+    <string name="isoAuto">авто</string> -->
+    
+    <string name="settings_mode_scene">Сцена</string>
+    <string name="settings_mode_wb">Баланс белого</string>
+    <string name="settings_mode_focus">Фокусировка</string>
+    <string name="settings_mode_flash">Вспышка</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">Основная</string>
+    <string name="settings_mode_front">Фронтальная</string>
+    <string name="settings_mode_exposure">Выдержка</string>
+    <string name="settings_mode_moresettings">Настройки</string>
+    
+    <string name="settings_not_available">Недоступно в выбранном режиме</string>
+    <string name="processing_not_finished">Обработка еще не завершена. Пожалуйста подождите.</string>
+        
+    <string name="Pref_General_Preference_Title">Общие настройки</string>
+	<string name="Pref_General_Preference_Summary">Камера и съемка</string>
+	<string name="Pref_VF_Preference_Title">Настройки экрана</string>
+	<string name="Pref_VF_Preference_Summary">Что показывать</string>
+	<string name="Pref_Modes_Preference_Title">Настроки режимов съемки</string>
+	<string name="Pref_Saving_Preference_Title">Сохранение и sharing</string>
+	<string name="Pref_Saving_Preference_Summary">Форматы, именование, геотэги, exif и др. параметры</string>
+	<string name="Pref_Advanced_Preference_Title">Расширенные настройки</string>
+	<string name="Pref_Advanced_Preference_Summary">Настройки для продвинутых пользователей</string>
+	<string name="Pref_Unlock_Preference_Title">Разблокировка</string>
+	<string name="Pref_Unlock_Preference_Summary">Разблокировать премиальные функции</string>
+	
+	<string name="layout_hint_bottom">Выбрать режим камеры</string>
+	<string name="layout_hint_center">Свайп</string>
+	<string name="layout_hint_top_left">Длинное нажатие\nчтобы выбрать</string>
+	<string name="layout_hint_top_center">Выдвинуть доп. опции</string>
+	
+</resources>

@@ -1,0 +1,47 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">        
+        
+    <PreferenceCategory android:title="@string/Pref_PreShot_Preference_Title">   
+        <ListPreference 
+            android:entries="@array/modeArrayPreShot" 
+            android:entryValues="@array/modeValuesPreShot" 
+            android:key="modePrefPreShot" 
+            android:summary="@string/Pref_PreShot_Mode_Summary" 
+            android:title="@string/Pref_PreShot_Mode_Title" 
+            android:defaultValue="0" />
+        
+		<ListPreference 
+		    android:key="PreShotPrefPreShot" 
+		    android:title="@string/Pref_PreShot_preshot_Title" 
+		    android:summary="@string/Pref_PreShot_preshot_Summary" 
+		    android:entries="@array/backArrayPreShot" 
+		    android:entryValues="@array/backValuesPreShot" 
+		    android:defaultValue="5" />
+		
+		<ListPreference 
+		    android:entryValues="@array/fpsValuesPreShot" 
+		    android:entries="@array/fpsArrayPreShot" 
+		    android:key="fpsPrefPreShot" 
+		    android:title="@string/Pref_PreShot_fps_Title" 
+		    android:summary="@string/Pref_PreShot_fps_Summary" 
+		    android:defaultValue="4" />
+		
+		<ListPreference
+		    android:key="pauseBetweenShotsPrefPreShot" 
+		    android:title="@string/Pref_PreShot_pauseBetweenShots_Title" 
+		    android:summary="@string/Pref_PreShot_pauseBetweenShots_Summary" 
+		    android:entries="@array/pauseArrayPreShot" 
+		    android:entryValues="@array/pauseValuesPreShot" 
+		    android:defaultValue="500"/>
+		<CheckBoxPreference
+            android:title="@string/Pref_PreShot_RefocusOnEachShot_Title"
+            android:defaultValue="false"
+            android:summary="@string/Pref_PreShot_RefocusOnEachShot_Summary"
+            android:key="refocusPrefPreShot" />
+		<CheckBoxPreference
+            android:title="@string/Pref_PreShot_Autostart_Title"
+            android:defaultValue="false"
+            android:summary="@string/Pref_PreShot_Autostart_Summary"
+            android:key="autostartPrefPreShot" />
+		
+	</PreferenceCategory>   
+</PreferenceScreen>

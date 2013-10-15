@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">Paramètres habituels</string>
+    <string name="Pref_Common_Header_Summary">Appareil photo et autres</string>
+    <string name="Pref_Common_Preference_Title">Paramètres de l\'appareil photo</string>
+    <string name="Pref_Common_Preference_Summary">Appareil photo et autres</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Appareil photo frontal</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Utiliser l\'appareil photo frontal</string>
+    <string name="Pref_Common_ImageSize_Title">Taille de l\'image</string>
+    <string name="Pref_Common_ImageSize_Summary">\nRemarque : certains modes comportent un paramètre spécial de configuration de la taille de l\'image</string>
+    <string name="Pref_Common_Shutter_Title">Fonctionnement silencieux</string>
+    <string name="Pref_Common_Shutter_Summary">Nous ne garantissons toutefois pas le fonctionnement sur tous les modèles</string>
+    <string name="Pref_Common_MediaRescan_Title">Relance de l\'analyse des fichiers média en quittant</string>
+    <string name="Pref_Common_MediaRescan_Summary">Aide si les images n\'apparaissent pas dans la galerie.</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Veuillez patienter, traitement en cours</string>
+    
+    <!-- <string name="sceneAuto">auto</string>
+    <string name="sceneAction">action</string>
+    <string name="scenePortrait">portrait</string>
+    <string name="sceneLandscape">paysage</string>
+    <string name="sceneNight">nuit</string>
+    <string name="sceneNightPortrait">portrait-nuit</string>
+    <string name="sceneTheatre">théâtre</string>
+    <string name="sceneBeach">plage</string>
+    <string name="sceneSnow">neige</string>
+    <string name="sceneSunset">coucher de soleil</string>
+    <string name="sceneSteadyPhoto">stabilisateur</string>
+    <string name="sceneFireworks">feu d\'artifice</string>
+    <string name="sceneSports">sport</string>
+    <string name="sceneParty">fête</string>
+    <string name="sceneCandlelight">bougie</string>
+    <string name="sceneBarcode">code-barres</string>
+    <string name="sceneHDR">plage dynamique étendue</string>
+    <string name="sceneAR">rapport de cadre</string>
+    
+    <string name="wbAuto">auto</string>
+    <string name="wbIncandescent">incandescent</string>
+    <string name="wbFluorescent">fluorescent</string>
+    <string name="wbWarmFluorescent">fluorescent chaud</string>
+    <string name="wbDaylight">lumière du jour</string>
+    <string name="wbCloudyDaylight">lumière du jour-nuageux</string>
+    <string name="wbTwilight">crépuscule</string>
+    <string name="wbShade">ombre</string>
+    
+    <string name="focusAuto">auto</string>
+    <string name="focusInfinity">infinie</string>
+    <string name="focusNormal">normale</string>
+    <string name="focusMacro">macro</string>
+    <string name="focusFixed">fixe</string>
+    <string name="focusEdof">objectif à focale fixe</string>
+    <string name="focusContinuousVideo">vidéo en continu</string>
+    <string name="focusContinuousPicture">photo en continu</string>
+    
+    <string name="flashAuto">auto</string>
+    <string name="flashOn">activé</string>
+    <string name="flashOff">désactivé</string>
+    <string name="flashRedEye">yeux rouges</string>
+    <string name="flashTorch">lampe torche</string>
+    
+    <string name="isoAuto">auto</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">ISO800</string>
+    <string name="iso1600">ISO1600</string> -->
+    
+    <string name="settings_mode_scene">Mode Scène</string>
+    <string name="settings_mode_wb">Balance des blancs</string>
+    <string name="settings_mode_focus">Mode Mise au point</string>
+    <string name="settings_mode_flash">Mode Flash</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">Appareil photo arrière</string>
+    <string name="settings_mode_front">Appareil photo frontal</string>
+    <string name="settings_mode_exposure">Exposition</string>
+    <string name="settings_mode_moresettings">Plus de paramètres</string>
+    
+    <string name="settings_not_available">Aucune disponibilité dans le mode actuel</string>
+    <string name="processing_not_finished">Traitement non terminé. Veuillez patienter.</string>
+        
+    <string name="Pref_General_Preference_Title">Paramètres généraux</string>
+	<string name="Pref_General_Preference_Summary">Appareil photo et prise de vue</string>
+	<string name="Pref_VF_Preference_Title">Paramètres du viseur</string>
+	<string name="Pref_VF_Preference_Summary">À afficher</string>
+	<string name="Pref_Modes_Preference_Title">Paramètres des modes de prise de vue</string>
+	<string name="Pref_Saving_Preference_Title">Enregistrer et partager</string>
+	<string name="Pref_Saving_Preference_Summary">Noms des fichiers, formats, géotags, données exif et autres paramètres</string>
+	<string name="Pref_Advanced_Preference_Title">Avancé</string>
+	<string name="Pref_Advanced_Preference_Summary">Paramètres pour utilisateurs expérimentés</string>
+	<string name="Pref_Unlock_Preference_Title">Déverrouiller</string>
+	<string name="Pref_Unlock_Preference_Summary">Déverrouiller les fonctionnalités haut de gamme</string>
+	
+	<string name="layout_hint_bottom">Choisir le mode de l\'appareil photo</string>
+	<string name="layout_hint_center">Balayer</string>
+	<string name="layout_hint_top_left">Presser longuement\npour configurer</string>
+	<string name="layout_hint_top_center">Faire descendre pour plus d\'options</string>
+	
+</resources>

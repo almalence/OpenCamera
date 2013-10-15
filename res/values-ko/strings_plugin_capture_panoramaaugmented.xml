@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_preference_title">증강현실 파노라마</string>
+	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">HD 파노라마 촬영</string>	
+	
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">파노라마 높이</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">초점 모드</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">적당한 초점 모드를 선택하세요</string>
+      
+    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">초점 무한대</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">자동 초점</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">자동 초점 + 매번 초점 다시 맞추기</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">연속</string>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">장치 자이로스코프 이용</string>
+    <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">하드웨어 자이로스코프 필요. 체크하지 않으면 소프트웨어 자이로스코프를 사용합니다.</string>
+	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">자이로스코프 없음</string>
+    <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">죄송합니다. 장치에 자이로스코프가 없습니다. 대신 소프트웨어 자이로스코프를 사용합니다.</string>
+    
+</resources>

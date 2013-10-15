@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Common_Header_Title">Common settings</string>
+    <string name="Pref_Common_Header_Summary">Camera and others</string>
+    <string name="Pref_Common_Preference_Title">Camera settings</string>
+    <string name="Pref_Common_Preference_Summary">Camera and others</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Front camera</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Use front camera</string>
+    <string name="Pref_Common_ImageSize_Title">Image size</string>
+    <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
+    <string name="Pref_Common_Shutter_Title">Silent operation</string>
+    <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
+    <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
+    <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Please wait, processing...</string>
+    <string name="almalence_gui_selected">selected</string>
+    
+    <string name="sceneAuto">Auto</string>
+    <string name="sceneAction">Action</string>
+    <string name="scenePortrait">Portrait</string>
+    <string name="sceneLandscape">Landscape</string>
+    <string name="sceneNight">Night</string>
+    <string name="sceneNightPortrait">Night portrait</string>
+    <string name="sceneTheatre">Theatre</string>
+    <string name="sceneBeach">Beach</string>
+    <string name="sceneSnow">Snow</string>
+    <string name="sceneSunset">Sunset</string>
+    <string name="sceneSteadyPhoto">Steadyphoto</string>
+    <string name="sceneFireworks">Fireworks</string>
+    <string name="sceneSports">Sports</string>
+    <string name="sceneParty">Party</string>
+    <string name="sceneCandlelight">Candlelight</string>
+    <string name="sceneBarcode">Barcode</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">Auto</string>
+    <string name="wbIncandescent">Incandescent</string>
+    <string name="wbFluorescent">Fluorescent</string>
+    <string name="wbWarmFluorescent">Warm fluorescent</string>
+    <string name="wbDaylight">Daylight</string>
+    <string name="wbCloudyDaylight">Cloudy daylight</string>
+    <string name="wbTwilight">Twilight</string>
+    <string name="wbShade">Shade</string>
+    
+    <string name="focusAuto">Auto</string>
+    <string name="focusInfinity">Infinity</string>
+    <string name="focusNormal">Normal</string>
+    <string name="focusMacro">Macro</string>
+    <string name="focusFixed">Fixed</string>
+    <string name="focusEdof">Edof</string>
+    <string name="focusContinuousVideo">Continuous video</string>
+    <string name="focusContinuousPicture">Continuous picture</string>
+    
+    <string name="flashAuto">Auto</string>
+    <string name="flashOn">On</string>
+    <string name="flashOff">Off</string>
+    <string name="flashRedEye">Red eye</string>
+    <string name="flashTorch">Torch</string>
+    
+    <string name="isoAuto">Auto</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">"ISO800"</string>
+    <string name="iso1600">ISO1600</string>
+    
+    <string name="sceneAutoSystem">auto</string>
+    <string name="sceneActionSystem">action</string>
+    <string name="scenePortraitSystem">portrait</string>
+    <string name="sceneLandscapeSystem">landscape</string>
+    <string name="sceneNightSystem">night</string>
+    <string name="sceneNightPortraitSystem">night-portrait</string>
+    <string name="sceneTheatreSystem">theatre</string>
+    <string name="sceneBeachSystem">beach</string>
+    <string name="sceneSnowSystem">snow</string>
+    <string name="sceneSunsetSystem">sunset</string>
+    <string name="sceneSteadyPhotoSystem">steadyphoto</string>
+    <string name="sceneFireworksSystem">fireworks</string>
+    <string name="sceneSportsSystem">sports</string>
+    <string name="scenePartySystem">party</string>
+    <string name="sceneCandlelightSystem">candlelight</string>
+    <string name="sceneBarcodeSystem">barcode</string>
+    <string name="sceneHDRSystem">hdr</string>
+    <string name="sceneARSystem">AR</string>
+    
+    <string name="wbAutoSystem">auto</string>
+    <string name="wbIncandescentSystem">incandescent</string>
+    <string name="wbFluorescentSystem">fluorescent</string>
+    <string name="wbWarmFluorescentSystem">warm-fluorescent</string>
+    <string name="wbDaylightSystem">daylight</string>
+    <string name="wbCloudyDaylightSystem">cloudy-daylight</string>
+    <string name="wbTwilightSystem">twilight</string>
+    <string name="wbShadeSystem">shade</string>
+    
+    <string name="focusAutoSystem">auto</string>
+    <string name="focusInfinitySystem">infinity</string>
+    <string name="focusNormalSystem">normal</string>
+    <string name="focusMacroSystem">macro</string>
+    <string name="focusFixedSystem">fixed</string>
+    <string name="focusEdofSystem">edof</string>
+    <string name="focusContinuousVideoSystem">continuous-video</string>
+    <string name="focusContinuousPictureSystem">continuous-picture</string>
+    
+    <string name="flashAutoSystem">auto</string>
+    <string name="flashOnSystem">on</string>
+    <string name="flashOffSystem">off</string>
+    <string name="flashRedEyeSystem">red-eye</string>
+    <string name="flashTorchSystem">torch</string>
+    
+    <string name="isoAutoSystem">auto</string>
+    <string name="iso100System">ISO100</string>
+    <string name="iso200System">ISO200</string>
+    <string name="iso400System">ISO400</string>
+    <string name="iso800System">"ISO800"</string>
+    <string name="iso1600System">ISO1600</string>
+    
+    <string name="settings_mode_scene">Scene mode</string>
+    <string name="settings_mode_wb">White balance</string>
+    <string name="settings_mode_focus">Focus mode</string>
+    <string name="settings_mode_flash">Flash mode</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">Rear camera</string>
+    <string name="settings_mode_front">Front camera</string>
+    <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_moresettings">More settings</string>
+    
+    <string name="settings_not_available">Not available in current mode</string>
+    <string name="processing_not_finished">Processing is not finished yet. Please wait.</string>
+        
+    <string name="Pref_General_Preference_Title">General Settings</string>
+	<string name="Pref_General_Preference_Summary">Camera and shooting</string>
+	<string name="Pref_VF_Preference_Title">Viewfinder settings</string>
+	<string name="Pref_VF_Preference_Summary">What to display</string>
+	<string name="Pref_Modes_Preference_Title">Shooting modes settings</string>
+	<string name="Pref_Saving_Preference_Title">Saving and sharing</string>
+	<string name="Pref_Saving_Preference_Summary">Filenames, formats, geotagging, exif and other parameters</string>
+	<string name="Pref_Advanced_Preference_Title">Advanced</string>
+	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
+	<string name="Pref_Unlock_Preference_Title">Unlock</string>
+	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
+	
+	<string name="layout_hint_bottom">Select camera mode</string>
+	<string name="layout_hint_center">Swipe</string>
+	<string name="layout_hint_top_left">Long-press\nto configure</string>
+	<string name="layout_hint_top_center">Pull for more options</string>
+	
+</resources>

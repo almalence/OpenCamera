@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">$5.95で全てを永遠にアンロック</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">今後発売されるバージョンも含め、全ての機能、モードをアクティベート</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">$0.99でHDRモードをアンロック</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">すばらしいダイナミックレンジの画像を撮影</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">$2.99で高解像度パノラマ</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">素晴らしいパノラマ撮影</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">$2.99でオブジェクト削除／シークエンス写真</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">いらない部分の削除や動きをひとつの写真に合成</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">$2.99でグループショットをアンロック</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">あなたの写真からベストな顔を選択</string>
+	
+</resources>

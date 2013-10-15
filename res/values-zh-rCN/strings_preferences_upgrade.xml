@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">只需$5.95永久解锁所有功能</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">激活所有功能和模式，包括未来版本新增功能</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">$0.99解锁HDR模式</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">拍摄漂亮的高动态范围图像</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">$2.99解锁高分辨率全景拍摄</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">拍摄大全景，可采用扫描模式或使用扩增实境帮助</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">$2.99解锁对象移除/连拍</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">移除不想要的对象或将运动合并到一张照片上</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">$2.99解锁群摄</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">选择照片上拍得最好的脸</string>
+	
+</resources>

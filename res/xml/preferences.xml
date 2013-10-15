@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_Shutter_Title"
+			android:summary="@string/Pref_Common_Shutter_Summary"
+			android:defaultValue="false" 
+			android:key="shutterPrefCommon" />	
+	<ListPreference
+		android:title="@string/Pref_Common_ImageSize_Title"
+		android:summary="@string/Pref_Common_ImageSize_Summary"
+		android:key="imageSizePrefCommon"
+		android:defaultValue="0"
+		android:entries="@array/dimsArrayCommon"
+		android:entryValues="@array/dimsValuesCommon" />
+	
+	<ListPreference
+		android:title="@string/Pref_Common_VolumeButton_Title"
+		android:key="volumeButtonPrefCommon"
+		android:defaultValue="0"
+		android:entries="@array/volumeButtonArrayCommon"
+		android:entryValues="@array/volumeButtonValuesCommon" />
+	
+<!-- 	<CheckBoxPreference
+			android:title="@string/Pref_Common_MediaRescan_Title"
+			android:defaultValue="true"
+			android:summary="@string/Pref_Common_MediaRescan_Title"
+			android:key="mediaPref" /> -->           
+    <Preference android:key="about" 
+        	android:title="@string/Pref_About_Title" 
+        	android:summary="@string/Pref_About_Summary"
+        	/>
+</PreferenceScreen>

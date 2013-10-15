@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">Активировать все $5.95</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">Активировать все режимы и возможности навсегда, даже добавляемые в будущем</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">Режим HDR $0.99</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Снимайте отличные кадры с широким динамическим диапазоном</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">HD Панорама $2.99</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">Снимайте великолепные панорамы (высотой более 1000pix), в режиме проводки или с помощью дополненной реальности</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">Движущиеся объекты $2.99</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Удаляйте ненужные объекты или совмещайте движения в едином кадре</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Групповой снимок $2.99</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Выбирайте лучшие выражения лиц на вашем фото</string>
+	
+</resources>

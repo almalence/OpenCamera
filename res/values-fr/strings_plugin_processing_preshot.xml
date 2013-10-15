@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+	
+	<string name="Pref_PreShotProcessing_Preference_Title">Traitement d\'avant photo</string>
+	<string name="Pref_PreShotProcessing_Preference_Summary">D\'époque</string>
+	
+</resources>

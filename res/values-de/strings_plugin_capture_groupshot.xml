@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_GroupShot_Capture_Category_Title">Gruppenaufnahme</string>
+    <string name="Pref_GroupShot_Capture_Preference_Title">Gruppenaufnahmemodus</string>
+    <string name="Pref_GroupShot_Capture_Preference_Summary">Legen Sie die Anzahl der Bilder in einer Aufnahme fest</string>
+
+    <string name="Pref_GroupShot_Capture_ImagesAmount_Title">Anzahl der Bilder</string>
+    
+    <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title">Pause zwischen den Aufnahmen</string>
+    
+    <string name="Res_GroupShot_Capture_5">5 Bilder</string>
+    <string name="Res_GroupShot_Capture_6">6 Bilder</string>
+    <string name="Res_GroupShot_Capture_7">7 Bilder</string>
+    <string name="Res_GroupShot_Capture_8">8 Bilder</string>
+    
+</resources>

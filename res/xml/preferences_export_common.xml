@@ -1,0 +1,9 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+       <ListPreference
+			android:title="@string/pref_advanced_saving_saveToPref_title"
+			android:summary="@string/pref_advanced_saving_saveToPref_summary"
+			android:key="saveToPref"
+			android:defaultValue="0"
+			android:entries="@array/saveArray"
+			android:entryValues="@array/saveValues" /> 
+</PreferenceScreen>

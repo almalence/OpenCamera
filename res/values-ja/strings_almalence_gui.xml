@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">共通設定</string>
+    <string name="Pref_Common_Header_Summary">カメラとその他</string>
+    <string name="Pref_Common_Preference_Title">カメラ設定</string>
+    <string name="Pref_Common_Preference_Summary">カメラとその他</string>
+    <string name="Pref_Common_UseFrontCamera_Title">前面カメラ</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">前面カメラを使用</string>
+    <string name="Pref_Common_ImageSize_Title">画像サイズ</string>
+    <string name="Pref_Common_ImageSize_Summary">\n注意：個々に画像サイズの設定があるモードもあります</string>
+    <string name="Pref_Common_Shutter_Title">消音</string>
+    <string name="Pref_Common_Shutter_Summary">全てのモデルで作動する保証はありません</string>
+    <string name="Pref_Common_MediaRescan_Title">終了時にメディアを再スキャン</string>
+    <string name="Pref_Common_MediaRescan_Summary">ギャラリーに画像が表示されない場合に役立ちます。</string>
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">お待ちください、処理中です...</string>
+    
+    <!-- <string name="sceneAuto">自動</string>
+    <string name="sceneAction">アクション</string>
+    <string name="scenePortrait">縦</string>
+    <string name="sceneLandscape">横</string>
+    <string name="sceneNight">夜</string>
+    <string name="sceneNightPortrait">夜-縦</string>
+    <string name="sceneTheatre">劇場</string>
+    <string name="sceneBeach">海岸</string>
+    <string name="sceneSnow">雪</string>
+    <string name="sceneSunset">夕日</string>
+    <string name="sceneSteadyPhoto">固定写真</string>
+    <string name="sceneFireworks">花火</string>
+    <string name="sceneSports">スポーツ</string>
+    <string name="sceneParty">パーティー</string>
+    <string name="sceneCandlelight">ロウソクの灯り</string>
+    <string name="sceneBarcode">バーコード</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">自動</string>
+    <string name="wbIncandescent">白熱灯</string>
+    <string name="wbFluorescent">蛍光灯</string>
+    <string name="wbWarmFluorescent">暖色蛍光灯</string>
+    <string name="wbDaylight">太陽光</string>
+    <string name="wbCloudyDaylight">曇り-太陽光</string>
+    <string name="wbTwilight">黄昏</string>
+    <string name="wbShade">日陰</string>
+    
+    <string name="focusAuto">自動</string>
+    <string name="focusInfinity">無限</string>
+    <string name="focusNormal">普通</string>
+    <string name="focusMacro">マクロ</string>
+    <string name="focusFixed">固定</string>
+    <string name="focusEdof">拡張焦点深度</string>
+    <string name="focusContinuousVideo">連続-動画</string>
+    <string name="focusContinuousPicture">連続-写真</string>
+    
+    <string name="flashAuto">自動</string>
+    <string name="flashOn">オン</string>
+    <string name="flashOff">オフ</string>
+    <string name="flashRedEye">赤目</string>
+    <string name="flashTorch">トーチ</string>
+    
+    <string name="isoAuto">自動</string>
+    <string name="iso100">ISO100</string>
+    <string name="iso200">ISO200</string>
+    <string name="iso400">ISO400</string>
+    <string name="iso800">ISO800</string>
+    <string name="iso1600">ISO1600</string> -->
+    
+    <string name="settings_mode_scene">シーンモード</string>
+    <string name="settings_mode_wb">ホワイトバランス</string>
+    <string name="settings_mode_focus">フォーカスモード</string>
+    <string name="settings_mode_flash">フラッシュモード</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">背面カメラ</string>
+    <string name="settings_mode_front">前面カメラ</string>
+    <string name="settings_mode_exposure">露出</string>
+    <string name="settings_mode_moresettings">詳細設定</string>
+    
+    <string name="settings_not_available">現在のモードでは利用できません</string>
+    <string name="processing_not_finished">処理が完了していません。お待ちください。</string>
+        
+    <string name="Pref_General_Preference_Title">一般設定</string>
+	<string name="Pref_General_Preference_Summary">カメラと撮影</string>
+	<string name="Pref_VF_Preference_Title">ビューファインダー設定</string>
+	<string name="Pref_VF_Preference_Summary">表示項目</string>
+	<string name="Pref_Modes_Preference_Title">撮影モードの設定</string>
+	<string name="Pref_Saving_Preference_Title">保存と共有</string>
+	<string name="Pref_Saving_Preference_Summary">ファイル名、フォーマット、ジオタグ、エグジブ、その他のパラメーター</string>
+	<string name="Pref_Advanced_Preference_Title">上級</string>
+	<string name="Pref_Advanced_Preference_Summary">エキスパートユーザー向けの設定</string>
+	<string name="Pref_Unlock_Preference_Title">アンロック</string>
+	<string name="Pref_Unlock_Preference_Summary">プレミアム機能をアンロック</string>
+	
+	<string name="layout_hint_bottom">カメラモードを選択</string>
+	<string name="layout_hint_center">スワイプ</string>
+	<string name="layout_hint_top_left">長押しで\n設定</string>
+	<string name="layout_hint_top_center">プルでさらにオプション表示</string>
+	
+</resources>

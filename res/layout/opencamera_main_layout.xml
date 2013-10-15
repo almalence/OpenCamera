@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLayout1"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000">    
+    <!-- Surface for camera preview -->
+    <RelativeLayout android:id="@+id/mainLayout2"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"        			
+        			android:layout_alignParentTop="true"
+        			android:visibility="invisible">
+	<SurfaceView android:id="@+id/SurfaceView01"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center">
+	</SurfaceView>
+	</RelativeLayout>	
+	
+</RelativeLayout>
+ 

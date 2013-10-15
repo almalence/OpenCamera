@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string-array name="typeArrayGrid">
+   <item>@string/Pref_Grid_Golden</item>
+   <item>@string/Pref_Grid_Thirds</item>
+   <item>@string/Pref_Grid_Bisection</item>
+   <item>@string/Pref_Grid_None</item>
+</string-array>
+ 
+<string-array name="typeValuesGrid">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+   <item>3</item>
+</string-array>
+
+</resources>

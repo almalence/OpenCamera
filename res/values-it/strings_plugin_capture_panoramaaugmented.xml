@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_preference_title">Foto panoramiche realtà aumentata</string>
+	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Acquisizione foto panoramiche in HD</string>	
+	
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Altezza foto panoramiche</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Modalità di messa a fuoco</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Seleziona la modalità di messa a fuoco adatta</string>
+      
+    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Messa a fuoco infinita</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">Messa a fuoco automatica</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">Messa a fuoco automatica + rimessa a fuoco a ogni scatto</string>
+    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Continua</string>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Usa giroscopio del dispositivo</string>
+    <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">È richiesto l\'hardware giroscopio. Se quest\'ultimo non è stato selezionato, useremo in alternativa il nostro software giroscopio</string>
+	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">Nessun giroscopio</string>
+    <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">Il tuo dispositivo è sprovvisto di giroscopio. Per ottimizzare la tua esperienza d\'uso dell\'app, attiveremo in alternativa il nostro software giroscopio</string>
+    
+</resources>

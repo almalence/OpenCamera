@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/Pref_Night_Category_Title">   
+		<ListPreference
+                        android:title="@string/Pref_Night_NoiseReduction_Title"
+                        android:summary=""
+                        android:key="noisePrefNight"
+                        android:defaultValue="1"
+                        android:entries="@array/noiseArrayNight"
+                        android:entryValues="@array/noiseValuesNight" />
+        <ListPreference
+                        android:title="@string/Pref_Night_DeGhosting_Title"
+                        android:summary=""
+                        android:key="ghostPrefNight"
+                        android:defaultValue="1"
+                        android:entries="@array/ghostArrayNight"
+                        android:entryValues="@array/ghostValuesNight" />
+        <CheckBoxPreference
+                        android:title="@string/Pref_Night_ColorsSaturated_Title"
+                        android:defaultValue="true"
+                        android:summary="@string/Pref_Night_ColorsSaturated_Summary"
+                        android:key="keepcolorsPref" />
+   	</PreferenceCategory>
+</PreferenceScreen>

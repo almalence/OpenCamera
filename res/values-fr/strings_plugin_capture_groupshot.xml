@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_GroupShot_Capture_Category_Title">Prise de vue de groupe</string>
+    <string name="Pref_GroupShot_Capture_Preference_Title">Mode Prise de vue de groupe</string>
+    <string name="Pref_GroupShot_Capture_Preference_Summary">Définir le nombre de photos lors de la prise de vue</string>
+
+    <string name="Pref_GroupShot_Capture_ImagesAmount_Title">Nombre de photos</string>
+    
+    <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title">Pause entre les prises de vue</string>
+    
+    <string name="Res_GroupShot_Capture_5">5 photos</string>
+    <string name="Res_GroupShot_Capture_6">6 photos</string>
+    <string name="Res_GroupShot_Capture_7">7 photos</string>
+    <string name="Res_GroupShot_Capture_8">8 photos</string>
+    
+</resources>
