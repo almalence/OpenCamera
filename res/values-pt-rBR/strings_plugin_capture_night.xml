@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="textOn">LIG</string>
+	<string name="textOff">DESL</string>
+	
+	<string name="hold_still">Não se mexa!</string>
+	<string name="capturing">Capturando</string>
+	
+	<string name="Pref_NightCapture_Preference_Title">Captura noturna</string>
+	<string name="Pref_NightCapture_Preference_Summary">Captura com pouca luz</string>	
+	
+	<string name="Pref_NightCapture_ImageSize_Title">Tamanho da imagem (modo alta velocidade)</string>
+	
+	<string name="Pref_NightCapture_FocusMode_Title">Modo de foco</string>
+    <string name="Pref_NightCapture_FocusMode_Summary">Selecione um modo de foco adequado</string>
+	
+	<string name="Pref_NightCapture_FocusModeAlert_Title">Modo \'AutoFoco\' forçado</string>
+    <string name="Pref_NightCapture_FocusModeAlert_Msg">A câmera do dispositivo não suporta o modo \'Hiperfoco Fixo\', será usado o modo \'AutoFoco\'</string>
+    
+    <string name="Pref_NightCapture_NightVision_Title">Visão noturna</string>
+    <string name="Pref_NightCapture_NightVision_Summary">Desmarque para o visor voltar ao modo normal.</string>	
+    
+    <string name="Pref_NightCapture_None">Nenhum</string>
+    <string name="Pref_NightCapture_Fixed">Hiperfoco fixo</string>
+    <string name="Pref_NightCapture_Auto">AutoFoco</string>
+    <string name="Pref_NightCapture_Refocus">Re-focar a cada disparo</string>
+	
+</resources>

@@ -20,7 +20,7 @@ package com.almalence.opencam.util;
 
 public class ImageConversion 
 {
-    public static native int JpegConvert(byte[] in, int sx, int sy, boolean rotate, boolean mirrored);
+    public static native int JpegConvert(byte[] in, int sx, int sy, boolean rotate, boolean mirrored, int rotationDegree);
     public static native void sumByteArraysNV21(byte[] data1, byte[] data2, byte[] out, int width, int height);
     public static native void TransformNV21(byte[] InPic, byte[] OutPic, int sx, int sy, int flipLR, int flipUD, int rotate90);
     public static native void TransformNV21N(int InPic, int OutPic, int sx, int sy, int flipLR, int flipUD, int rotate90);

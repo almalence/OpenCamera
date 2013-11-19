@@ -42,6 +42,7 @@ import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -54,11 +55,13 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.util.Util;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
@@ -86,6 +89,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	private boolean prefRefocus;
 	private boolean prefHardwareGyroscope;
 	
+	private String preferenceFocusMode;
+	
 	private float viewAngleX = 54.8f;
 	private float viewAngleY = 42.5f;
 
@@ -105,6 +110,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	private int pictureHeight;
 	private int previewWidth;
 	private int previewHeight;
+	
+	private static boolean isFirstFrame = true;
+	
+	private boolean previewRestartFlag;
 	
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -184,65 +193,77 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
 		
-		if (ResolutionsPictureIdxesList.size() > 0)
-		{	
-			boolean found = false;
-			int idx = 0;
-			
-			// first - try to select resolution <= 5mpix and with at least 5 frames available 
-			for (int i = 0; i < ResolutionsPictureSizesList.size(); i++)
-			{
-				final Point point = ResolutionsPictureSizesList.get(i);
-				final int frames_fit_count = 
-						(int)(getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(point.x, point.y));
+		if (!prefs.contains(PREFERENCES_KEY_RESOLUTION))
+		{
+			if (ResolutionsPictureIdxesList.size() > 0)
+			{	
+				boolean found = false;
+				int idx = 0;
 				
-				if ((frames_fit_count >= 5) && (point.x*point.y < 5200000))
-				{
-					idx = i;
-		    		found = true;
-		    		break;
-				}
-			}
-			
-			if (!found)
-			{
-				int best_fit_count = 1;
-				
-				// try to select resolution with highest number of frames available (the lowest resolution really)
+				// first - try to select resolution <= 5mpix and with at least 5 frames available 
 				for (int i = 0; i < ResolutionsPictureSizesList.size(); i++)
 				{
 					final Point point = ResolutionsPictureSizesList.get(i);
 					final int frames_fit_count = 
 							(int)(getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(point.x, point.y));
 					
-					if (frames_fit_count > best_fit_count)
+					if ((frames_fit_count >= 5) && (point.x*point.y < 5200000))
 					{
-						best_fit_count = frames_fit_count; 
 						idx = i;
 			    		found = true;
+			    		break;
 					}
 				}
+				
+				if (!found)
+				{
+					int best_fit_count = 1;
+					
+					// try to select resolution with highest number of frames available (the lowest resolution really)
+					for (int i = 0; i < ResolutionsPictureSizesList.size(); i++)
+					{
+						final Point point = ResolutionsPictureSizesList.get(i);
+						final int frames_fit_count = 
+								(int)(getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(point.x, point.y));
+						
+						if (frames_fit_count > best_fit_count)
+						{
+							best_fit_count = frames_fit_count; 
+							idx = i;
+				    		found = true;
+						}
+					}
+				}
+				
+	    		prefs.edit().putString(
+	    						PREFERENCES_KEY_RESOLUTION, 
+	    						ResolutionsPictureIdxesList.get(idx)).commit();
 			}
-			
-    		prefs.edit().putString(
-    						PREFERENCES_KEY_RESOLUTION, 
-    						ResolutionsPictureIdxesList.get(idx)).commit();
+		}
+		
+		if (!prefs.contains(PREFERENCES_KEY_USE_DEVICE_GYRO))
+		{
+			prefs.edit().putBoolean(
+							PREFERENCES_KEY_USE_DEVICE_GYRO,
+							this.sensorGyroscope != null).commit();
 		}
 
-		prefs.edit().putBoolean(
-						PREFERENCES_KEY_USE_DEVICE_GYRO,
-						this.sensorGyroscope != null).commit();
-
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		// set default focus mode to continuous if available (works faster for augmented mode)
-    	final Camera.Parameters cp = camera.getParameters();
-		List<String> supportedFocusModes = cp.getSupportedFocusModes();
-		if ((supportedFocusModes.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) >= 0) &&
-			(supportedFocusModes.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) >= 0))
+		if (!prefs.contains(PREFERENCES_KEY_FOCUS))
 		{
-    		prefs.edit().putString(PREFERENCES_KEY_FOCUS, "3").commit();
+			Camera camera = MainScreen.thiz.getCamera();
+	    	if (null==camera)
+	    		return;
+			// set default focus mode to continuous if available (works faster for augmented mode)
+	    	final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+			List<String> supportedFocusModes = cp.getSupportedFocusModes();
+			if (supportedFocusModes!=null)
+			{
+				if ((supportedFocusModes.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) >= 0) &&
+					(supportedFocusModes.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) >= 0))
+				{
+		    		prefs.edit().putString(PREFERENCES_KEY_FOCUS, "3").commit();
+				}
+			}
 		}
 	}
 	
@@ -254,12 +275,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	
 	@Override
 	public void onResume()
-	{
+	{		
 		MainScreen.thiz.MuteShutter(false);
 		
         final Message msg = new Message();
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
 		MainScreen.H.sendMessage(msg);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
+				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
 	}
 	
 	@Override
@@ -275,13 +300,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				this.stopCapture();
 			}
 		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
+        prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
 	}
 	
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true);
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true);
+		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
+		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
 		
 		this.clearViews();
 	}
@@ -296,7 +324,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     	if (null==camera)
     		return;
 		
-		final Parameters params = camera.getParameters();
+		final Parameters params = MainScreen.thiz.getCameraParameters();
 		final List<Camera.Size> cs = params.getSupportedPictureSizes();
 
     
@@ -318,13 +346,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     }
 	
 	@Override
-	public void SetCameraPreviewSize()
+	public void SetCameraPreviewSize(Camera.Parameters params)
 	{
 		final Camera camera = MainScreen.thiz.getCamera();
     	if (camera == null)
     		return;
 		
-		final Parameters params = camera.getParameters();
 		
 		final Size previewSize = this.getOptimalPreviewSize(
 				params.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
@@ -333,7 +360,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		this.previewHeight = previewSize.height;
 		
 		params.setPreviewSize(previewSize.width, previewSize.height);
-		camera.setParameters(params);
+		//camera.setParameters(params);
 	}
 	
 	@Override
@@ -342,7 +369,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-    	final Camera.Parameters cp = camera.getParameters();
+    	final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
     	final List<Size> picture_sizes = cp.getSupportedPictureSizes();
     	
 		this.pictureWidth = picture_sizes.get(this.prefResolution).width;
@@ -351,21 +378,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
 		cp.setJpegQuality(100);
     	
+		String sUserFocusMode;
     	if (this.prefFocusContinuous
     			&& MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-		{
-    		cp.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		}
+    		sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
     	else if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_INFINITY))
-    	{
-    		cp.setFocusMode(Parameters.FOCUS_MODE_INFINITY);
-    	}
+    		sUserFocusMode = Parameters.FOCUS_MODE_INFINITY;
     	else
-    	{
-    		cp.setFocusMode(MainScreen.supportedFocusModes.get(0));
-    	}
+    		sUserFocusMode = MainScreen.supportedFocusModes.get(0);
 		
-		camera.setParameters(cp);
+    	cp.setFocusMode(sUserFocusMode);
+		//camera.setParameters(cp);
+		
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, sUserFocusMode).commit();
 		
 		try
 		{
@@ -435,6 +460,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			}
 			else
 			{
+				isFirstFrame = true;
 				this.capturing = true;
 				this.takingAlready.set(true);
 				this.startCapture();
@@ -451,9 +477,58 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	    	if (camera == null)
 	    		return false;
 	    	
+	    	this.previewRestartFlag = true;
     		camera.startPreview();
     		
+    		new CountDownTimer(500, 4000)
+    		{
+				public void onTick(final long millisUntilFinished)
+				{
+					if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
+					{
+						camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
+						camera.addCallbackBuffer(MainScreen.thiz.pviewBuffer);
+					}
+					else
+					{
+						this.cancel();
+					}
+				}
+
+				public void onFinish()
+				{
+					
+				}
+			}.start();
+    		
     		return true;
+		}
+		else if (command == PluginManager.MSG_TAKE_PICTURE)
+		{
+			Camera cam = MainScreen.thiz.getCamera();
+	    	if (null==cam)
+	    		return true;
+			cam.takePicture(
+					PanoramaAugmentedCapturePlugin.this,
+					null,
+					null,
+					PanoramaAugmentedCapturePlugin.this);
+			return true;
+		}
+		else if (command == PluginManager.MSG_BAD_FRAME)
+		{
+			Toast.makeText(
+					MainScreen.thiz,
+					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_badframe),
+					Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		{
+			this.capturing = false;
+			this.stopCapture();
+			
+			return true;
 		}
 
 		return false;
@@ -527,23 +602,24 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				if (idx < ResolutionsPictureIdxesList.size())
 				{
 					lp.setValueIndex(idx);
+//				}
+//				else 
+//				{
+//					idx=0;
+//					lp.setValueIndex(idx);
+//				}
+					lp.setSummary(entries[idx]);
+			        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			        {
+						//@Override
+						public boolean onPreferenceChange(Preference preference, Object newValue)
+						{
+							int value = Integer.parseInt(newValue.toString());
+							PanoramaAugmentedCapturePlugin.this.prefResolution = value;
+			                return true;
+						}
+			        });
 				}
-				else 
-				{
-					idx=0;
-					lp.setValueIndex(idx);
-				}
-				lp.setSummary(entries[idx]);
-		        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-		        {
-					//@Override
-					public boolean onPreferenceChange(Preference preference, Object newValue)
-					{
-						int value = Integer.parseInt(newValue.toString());
-						PanoramaAugmentedCapturePlugin.this.prefResolution = value;
-		                return true;
-					}
-		        });
 	        }
         }
 		
@@ -600,66 +676,69 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		final Parameters cp = camera.getParameters();
+		final Parameters cp = MainScreen.thiz.getCameraParameters();
 		final List<Camera.Size> cs = cp.getSupportedPictureSizes();   
         
         int maxIndex = 0;
 
-    	for (int ii=0; ii<cs.size(); ++ii)
-    	{
-            final Size s = cs.get(ii); 
-
-            if (s.width > cs.get(maxIndex).width)
-            {
-            	maxIndex = ii;
-            }
-
-            if ((long)s.width >= MIN_HEIGHT_SUPPORTED)
-            {
-            	// find good location in a list
-            	int loc;
-            	boolean shouldInsert = true;
-            	for (loc = 0; loc < ResolutionsPictureSizesList.size(); ++loc)
-            	{
-            		final Point psize = ResolutionsPictureSizesList.get(loc);
-            		if (psize.x == s.width)
-            		{
-            			if (s.height > psize.y)
-            			{
-    		            	ResolutionsPictureNamesList.remove(loc);
-    		            	ResolutionsPictureIdxesList.remove(loc);
-    		            	ResolutionsPictureSizesList.remove(loc);
+        if (cs!=null)
+        {
+	    	for (int ii=0; ii<cs.size(); ++ii)
+	    	{
+	            final Size s = cs.get(ii); 
+	
+	            if (s.width > cs.get(maxIndex).width)
+	            {
+	            	maxIndex = ii;
+	            }
+	
+	            if ((long)s.width >= MIN_HEIGHT_SUPPORTED)
+	            {
+	            	// find good location in a list
+	            	int loc;
+	            	boolean shouldInsert = true;
+	            	for (loc = 0; loc < ResolutionsPictureSizesList.size(); ++loc)
+	            	{
+	            		final Point psize = ResolutionsPictureSizesList.get(loc);
+	            		if (psize.x == s.width)
+	            		{
+	            			if (s.height > psize.y)
+	            			{
+	    		            	ResolutionsPictureNamesList.remove(loc);
+	    		            	ResolutionsPictureIdxesList.remove(loc);
+	    		            	ResolutionsPictureSizesList.remove(loc);
+		            			break;
+	            			}
+	            			else
+	            			{
+		            			shouldInsert = false;
+		            			break;
+	            			}
+	            		}
+	            		else if (psize.x < s.width)
+	            		{
 	            			break;
-            			}
-            			else
-            			{
-	            			shouldInsert = false;
-	            			break;
-            			}
-            		}
-            		else if (psize.x < s.width)
-            		{
-            			break;
-            		}
-            	}
-            	
-            	if (shouldInsert)
-            	{
-	            	ResolutionsPictureNamesList.add(loc, String.format("%dpx", s.width));
-	            	ResolutionsPictureIdxesList.add(loc, String.format("%d", ii));
-	            	ResolutionsPictureSizesList.add(loc, new Point(s.width, s.height));
-            	}
-            }
+	            		}
+	            	}
+	            	
+	            	if (shouldInsert)
+	            	{
+		            	ResolutionsPictureNamesList.add(loc, String.format("%dpx", s.width));
+		            	ResolutionsPictureIdxesList.add(loc, String.format("%d", ii));
+		            	ResolutionsPictureSizesList.add(loc, new Point(s.width, s.height));
+	            	}
+	            }
+	        }
+	    	
+	    	if (ResolutionsPictureIdxesList.size() == 0)
+	    	{
+	            final Size s = cs.get(maxIndex); 
+	    		
+	            ResolutionsPictureNamesList.add(String.format("%dpx", s.width));
+	            ResolutionsPictureIdxesList.add(String.format("%d", maxIndex));
+	            ResolutionsPictureSizesList.add(new Point(s.width, s.height));
+	    	}
         }
-    	
-    	if (ResolutionsPictureIdxesList.size() == 0)
-    	{
-            final Size s = cs.get(maxIndex); 
-    		
-            ResolutionsPictureNamesList.add(String.format("%dpx", s.width));
-            ResolutionsPictureIdxesList.add(String.format("%d", maxIndex));
-            ResolutionsPictureSizesList.add(new Point(s.width, s.height));
-    	}
 	}
 	
 	private static long getAmountOfMemoryToFitFrames()
@@ -713,12 +792,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	@Override
 	public void onPreviewFrame(final byte[] data, final Camera paramCamera)
 	{
+		this.previewRestartFlag = false;
+		
 		if (!this.prefHardwareGyroscope)
 		{
 			this.sensorSoftGyroscope.NewData(data);
 		}
 		
-		if (this.engine.getPictureTakingState(this.prefRefocus) == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
+		if (this.engine.getPictureTakingState(
+				this.prefRefocus) == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
 				&& this.takingAlready.compareAndSet(false, true))
 		{
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
@@ -730,14 +812,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		@Override
 		public void onAutoFocus(final boolean success, final Camera camera)
 		{
-			Camera cam = MainScreen.thiz.getCamera();
-	    	if (null==camera)
-	    		return;
-			cam.takePicture(
-					PanoramaAugmentedCapturePlugin.this,
-					null,
-					null,
-					PanoramaAugmentedCapturePlugin.this);
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.thiz.handleMessage(msg);
 		}
 	};
 	
@@ -764,7 +842,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	
 	@Override
 	public void takePicture()
-	{
+	{		
 		if (this.prefAutofocus)
 		{
 			this.tryAutoFocus();
@@ -786,14 +864,38 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	
 	@Override
 	public void onPictureTaken(final byte[] paramArrayOfByte, final Camera paramCamera)
-	{
-		this.engine.onPictureTaken(paramArrayOfByte);
+	{		
+		final boolean goodPlace = this.engine.onPictureTaken(paramArrayOfByte);
 		this.takingAlready.set(false);
+		
+		if(isFirstFrame)
+		{
+			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+			isFirstFrame = false;
+		}
 
-		final Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.thiz.handleMessage(msg);
+		{
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.thiz.handleMessage(msg);
+		}
+		
+		if (!goodPlace)
+		{
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_BAD_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.thiz.handleMessage(msg);
+		}
+		
+		if (this.engine.isCurcular())
+		{
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.thiz.handleMessage(msg);
+		}
 	}
 	
 	@SuppressLint("FloatMath")

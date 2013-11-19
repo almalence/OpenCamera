@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">A Better Camera</string>
+    <string name="Pref_Billing_Left">fotos grátis restantes:</string>
+    <string name="cannot_create_jpeg">Erro: Impossível salvar imagem!</string>
+    <string name="choose_folder_pick">Usar esta pasta</string>
+    <string name="choose_folder_newfolder">Nova pasta</string>
+    <string name="choose_folder_alert_0">Opa</string>
+    <string name="choose_folder_alert_1">Desculpe, não podemos colocar suas fotos aqui :(</string>
+    <string name="choose_folder_alert_2">OK</string>
+    <string name="choose_folder_alert_0_2">Nome da nova pasta</string>
+    <string name="choose_folder_alert_1_2">Desculpe, não podemos criar uma pasta aqui :(</string>
+    <string name="choose_folder_alert_2_1">Criar</string>
+    <string name="choose_folder_alert_2_2">Cancelar</string>
+    <string name="pref_advanced_saving_saveToPref_title">Salvar para...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">Selecione o local para armazenar as imagens</string>
+    <string name="choose_folder">Escolher pasta</string>
+    
+    <string name="save_to_phone">Telefone</string>
+    <string name="save_to_memorycard">Cartão de memória</string>
+    <string name="save_to_custom">Pasta personalizada</string>
+    
+    <string name="dimensions_none">Vazio</string>
+    
+    <string name="already_unlocked">Já desbloqueado</string>
+
+    <string name="Pref_Common_VolumeButton_Title">Botão de volume</string>
+
+</resources>

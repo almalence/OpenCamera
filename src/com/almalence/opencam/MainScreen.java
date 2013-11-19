@@ -32,6 +32,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -48,7 +49,6 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -113,6 +113,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static File ForceFilename = null;
 
 	private static Camera camera = null;
+	private static Camera.Parameters cameraParameters = null;
 
 	public static GUI guiManager = null;
 
@@ -137,7 +138,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private static int imageWidth, imageHeight;
 	public static int previewWidth, previewHeight;
 	private static int saveImageWidth, saveImageHeight;
-	public static PowerManager pm = null;
+//	public static PowerManager pm = null;
 
 	private CountDownTimer ScreenTimer = null;
 	private boolean isScreenTimerRunning = false;
@@ -171,6 +172,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// public static boolean FullMediaRescan;
 	public static final String SavePathPref = "savePathPref";
 
+	private boolean keepScreenOn = false;
+	
 	public static String SaveToPath;
 	public static boolean SaveInputPreference;
 	public static String SaveToPreference;
@@ -203,6 +206,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	private static int mFocusState = FOCUS_STATE_IDLE;
 	private static int mCaptureState = CAPTURE_STATE_IDLE;
+	
+	private static boolean mAFLocked = false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -240,6 +245,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		setContentView(R.layout.opencamera_main_layout);
 
 		/**** Billing *****/
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		if (true == prefs.contains("unlock_all_forever")) {
+			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
+		}
+		if (true == prefs.contains("plugin_almalence_hdr")) {
+			hdrPurchased = prefs.getBoolean("plugin_almalence_hdr", false);
+		}
+		if (true == prefs.contains("plugin_almalence_panorama")) {
+			panoramaPurchased = prefs.getBoolean("plugin_almalence_panorama", false);
+		}
+		if (true == prefs.contains("plugin_almalence_moving_burst")) {
+			objectRemovalBurstPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
+		}
+		if (true == prefs.contains("plugin_almalence_groupshot")) {
+			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
+		}
+		
 		createBillingHandler();
 		/**** Billing *****/
 		
@@ -303,25 +325,29 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				if(orientationMain != orientationMainPrevious)
 				{
 					orientationMainPrevious = orientationMain;
-					PluginManager.getInstance().onOrientationChanged(orientationMain);
+					//PluginManager.getInstance().onOrientationChanged(orientationMain);
 				}
 			}
 		};
 
-		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		//pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
+		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
-		ScreenTimer = new CountDownTimer(180000, 180000) {
-			public void onTick(long millisUntilFinished) {
-			}
-
-			public void onFinish() {
-				preview.setKeepScreenOn(false);
-				isScreenTimerRunning = false;
-			}
-		};
-		ScreenTimer.start();
-		isScreenTimerRunning = true;
+		if (!keepScreenOn)
+		{
+			ScreenTimer = new CountDownTimer(180000, 180000) {
+				public void onTick(long millisUntilFinished) {
+				}
+	
+				public void onFinish() {
+					preview.setKeepScreenOn(false);
+					isScreenTimerRunning = false;
+				}
+			};
+			ScreenTimer.start();
+			isScreenTimerRunning = true;
+		}
 
 		// Description
 		// init gui manager
@@ -371,10 +397,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			entryValues = ResolutionsIdxesList
 					.toArray(new CharSequence[ResolutionsIdxesList.size()]);
 
+			
 			ListPreference lp = (ListPreference) prefActivity
-					.findPreference("imageSizePrefCommon");
-			lp.setEntries(entries);
-			lp.setEntryValues(entryValues);
+					.findPreference("imageSizePrefCommonBack");
+			ListPreference lp2 = (ListPreference) prefActivity
+					.findPreference("imageSizePrefCommonFront");
+			
+			if(CameraIndex == 0 && lp2 != null && lp != null)
+			{
+				prefActivity.getPreferenceScreen().removePreference(lp2);
+				lp.setEntries(entries);
+				lp.setEntryValues(entryValues);
+			}
+			else if(lp2 != null && lp != null)
+			{
+				prefActivity.getPreferenceScreen().removePreference(lp);
+				lp2.setEntries(entries);
+				lp2.setEntryValues(entryValues);
+			}
+			else
+				return;
 
 			// set currently selected image size
 			int idx;
@@ -384,8 +426,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				}
 			}
 			if (idx < ResolutionsIdxesList.size()) {
-				lp.setValueIndex(idx);
+				if(CameraIndex == 0)
+					lp.setValueIndex(idx);
+				else
+					lp2.setValueIndex(idx);
 			}
+			if(CameraIndex == 0)
 			lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 				// @Override
 				public boolean onPreferenceChange(Preference preference,
@@ -395,6 +441,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					return true;
 				}
 			});
+			else
+				lp2.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+					// @Override
+					public boolean onPreferenceChange(Preference preference,
+							Object newValue) {
+						int value = Integer.parseInt(newValue.toString());
+						CapIdx = value;
+						return true;
+					}
+				});
+				
 		}
 	}
 
@@ -417,6 +474,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	protected void onStop() {
 		super.onStop();
 		mApplicationStarted = false;
+		orientationMain = 0;
+		orientationMainPrevious = 0;
 		MainScreen.guiManager.onStop();
 		PluginManager.getInstance().onStop();
 	}
@@ -450,8 +509,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							: 1;
 					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 							false);
-					ImageSizeIdxPreference = prefs.getString(
-							"imageSizePrefCommon", "-1");
+					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
+							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 					SaveToPath = prefs.getString(SavePathPref, Environment
 							.getExternalStorageDirectory().getAbsolutePath());
@@ -484,8 +544,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
 				ScreenTimer.cancel();
-			ScreenTimer.start();
-			isScreenTimerRunning = true;
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+			if (!keepScreenOn)
+			{
+				ScreenTimer.start();
+				isScreenTimerRunning = true;
+			}
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
@@ -534,6 +599,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			camera.stopPreview();
 			camera.release();
 			camera = null;
+			cameraParameters = null;
 		}
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
@@ -577,8 +643,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							: 1;
 					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 							false);
-					ImageSizeIdxPreference = prefs.getString(
-							"imageSizePrefCommon", "-1");
+					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
+							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
@@ -599,7 +665,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
 					: 1;
 			ShutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-			ImageSizeIdxPreference = prefs.getString("imageSizePrefCommon",
+			ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
+					"imageSizePrefCommonBack" : "imageSizePrefCommonFront",
 					"-1");
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
@@ -610,14 +677,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public void delayedSetup() {
-		isCreating = false;
-		MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(
-				View.VISIBLE);
-		setupCamera(surfaceHolder);
-		PluginManager.getInstance().onGUICreate();
-		MainScreen.guiManager.onGUICreate();
-	}
 
 	@TargetApi(9)
 	protected void openCameraFrontOrRear() {
@@ -647,10 +706,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 
 			if (camera == null) {
-				// H.sendEmptyMessage(MSG_NO_CAMERA);
+				Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
 				return;
 			}
 		}
+		
+		cameraParameters = camera.getParameters(); //Initialize of camera parameters variable
 
 		PluginManager.getInstance().SelectDefaults();
 
@@ -667,7 +728,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			e.printStackTrace();
 		}
 
-		PopulateCameraDimensions();
+		if (MainScreen.camera == null)
+			return;
+		//Camera.Parameters cp = MainScreen.cameraParameters;
+		
+		PopulateCameraDimensions(cameraParameters);
 		ResolutionsMPixListIC = ResolutionsMPixList;
 		ResolutionsIdxesListIC = ResolutionsIdxesList;
 		ResolutionsNamesListIC = ResolutionsNamesList;
@@ -677,12 +742,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		// ----- Select preview dimensions with ratio correspondent to full-size
 		// image
-		PluginManager.getInstance().SetCameraPreviewSize();
+		PluginManager.getInstance().SetCameraPreviewSize(cameraParameters);
 
-		guiManager.setupViewfinderPreviewSize();
+		guiManager.setupViewfinderPreviewSize(cameraParameters);
 
-		Camera.Parameters cp = camera.getParameters();
-		Size previewSize = cp.getPreviewSize();
+		Size previewSize = cameraParameters.getPreviewSize();
 
 		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
 			if (glView == null) {
@@ -712,7 +776,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		pviewBuffer = new byte[previewSize.width
 				* previewSize.height
-				* ImageFormat.getBitsPerPixel(camera.getParameters()
+				* ImageFormat.getBitsPerPixel(cameraParameters
 						.getPreviewFormat()) / 8];
 
 		camera.setErrorCallback(MainScreen.thiz);
@@ -725,17 +789,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		PluginManager.getInstance().SetCameraPictureSize();
 		PluginManager.getInstance().SetupCameraParameters();
-		cp = camera.getParameters();
+		//cp = cameraParameters;
 
 		try {
-			camera.setParameters(cp);
+			setCameraParameters(cameraParameters);
 		} catch (RuntimeException e) {
 			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
 					+ e.getMessage());
 		}
 
-		previewWidth = camera.getParameters().getPreviewSize().width;
-		previewHeight = camera.getParameters().getPreviewSize().height;
+//		previewWidth = cameraParameters.getPreviewSize().width;
+//		previewHeight = cameraParameters.getPreviewSize().height;
+		previewWidth = cameraParameters.getPreviewSize().width;
+		previewHeight = cameraParameters.getPreviewSize().height;
 
 		Util.initialize(mainContext);
 
@@ -753,7 +819,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				{
 					camera.startPreview();
 				} catch (RuntimeException e) {
-					// MainScreen.H.sendEmptyMessage(MainScreen.MSG_NO_CAMERA);
+					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -771,15 +837,34 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}.start();
 	}
 
-	public static void PopulateCameraDimensions() {
+	public static void PopulateCameraDimensions(Camera.Parameters cp) {
 		ResolutionsMPixList = new ArrayList<Long>();
 		ResolutionsIdxesList = new ArrayList<String>();
 		ResolutionsNamesList = new ArrayList<String>();
 
-		if (MainScreen.camera == null)
-			return;
-		Camera.Parameters cp = MainScreen.camera.getParameters();
-
+		////For debug file
+//		File saveDir = PluginManager.getInstance().GetSaveDir();
+//		File file = new File(
+//        		saveDir, 
+//        		"!!!ABC_DEBUG_COMMON.txt");
+//		if (file.exists())
+//		    file.delete();
+//		try {
+//			String data = "";
+//			data = cp.flatten();
+//			FileOutputStream out;
+//			out = new FileOutputStream(file);
+//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+//			outputStreamWriter.write(data);
+//			outputStreamWriter.write(data);
+//			outputStreamWriter.flush();
+//			outputStreamWriter.close();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
 		List<Camera.Size> cs;
 		int MinMPIX = MIN_MPIX_SUPPORTED;
 		cs = cp.getSupportedPictureSizes();
@@ -789,6 +874,31 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		int iHighestIndex = 0;
 		Size sHighest = cs.get(iHighestIndex);
 
+//		/////////////////////////		
+//		try {
+//			File saveDir2 = PluginManager.getInstance().GetSaveDir();
+//			File file2 = new File(
+//	        		saveDir2, 
+//	        		"!!!ABC_DEBUG.txt");
+//			if (file2.exists())
+//			    file2.delete();
+//			FileOutputStream out2;
+//			out2 = new FileOutputStream(file2);
+//			OutputStreamWriter outputStreamWriter2 = new OutputStreamWriter(out2);
+//
+//			for (int ii = 0; ii < cs.size(); ++ii) {
+//				Size s = cs.get(ii);
+//					String data = "cs.size() = "+cs.size()+ " " +"size "+ ii + " = " + s.width + "x" +s.height;
+//					outputStreamWriter2.write(data);
+//					outputStreamWriter2.flush();
+//			}
+//			outputStreamWriter2.close();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		/////////////////////////
+		
 		for (int ii = 0; ii < cs.size(); ++ii) {
 			Size s = cs.get(ii);
 
@@ -939,21 +1049,46 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public Camera.Parameters getCameraParameters() {
-		if (camera != null)
-			return camera.getParameters();
+		if (camera != null && cameraParameters != null)
+			return cameraParameters;
 
 		return null;
 	}
 
 	public void setCameraParameters(Camera.Parameters params) {
 		if (params != null && camera != null)
+		{
 			camera.setParameters(params);
+//			cameraParameters = params;
+			cameraParameters = camera.getParameters();
+		}
+		
+	}
+	
+	public boolean isExposureLockSupported() {
+		if (camera != null && cameraParameters != null) {
+			if (cameraParameters.isAutoExposureLockSupported())
+				return true;
+			else
+				return false;
+		} else
+			return false;
+	}
+	
+	public boolean isWhiteBalanceLockSupported() {
+		if (camera != null && cameraParameters != null) {
+			if (cameraParameters.isAutoWhiteBalanceLockSupported())
+				return true;
+			else
+				return false;
+		} else
+			return false;
 	}
 
 	public boolean isExposureCompensationSupported() {
-		if (camera != null) {
-			if (camera.getParameters().getMinExposureCompensation() == 0
-					&& camera.getParameters().getMaxExposureCompensation() == 0)
+		if (camera != null && cameraParameters != null) {
+			if (cameraParameters.getMinExposureCompensation() == 0
+					&& cameraParameters.getMaxExposureCompensation() == 0)
 				return false;
 			else
 				return true;
@@ -962,30 +1097,30 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public int getMinExposureCompensation() {
-		if (camera != null)
-			return camera.getParameters().getMinExposureCompensation();
+		if (camera != null && cameraParameters != null)
+			return cameraParameters.getMinExposureCompensation();
 		else
 			return 0;
 	}
 
 	public int getMaxExposureCompensation() {
-		if (camera != null)
-			return camera.getParameters().getMaxExposureCompensation();
+		if (camera != null && cameraParameters != null)
+			return cameraParameters.getMaxExposureCompensation();
 		else
 			return 0;
 	}
 
 	public float getExposureCompensationStep() {
-		if (camera != null)
-			return camera.getParameters().getExposureCompensationStep();
+		if (camera != null && cameraParameters != null)
+			return cameraParameters.getExposureCompensationStep();
 		else
 			return 0;
 	}
 
 	public float getExposureCompensation() {
-		if (camera != null)
-			return camera.getParameters().getExposureCompensation()
-					* camera.getParameters().getExposureCompensationStep();
+		if (camera != null && cameraParameters != null)
+			return cameraParameters.getExposureCompensation()
+					* cameraParameters.getExposureCompensationStep();
 		else
 			return 0;
 	}
@@ -994,9 +1129,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (camera != null) {
 			if (!isExposureCompensationSupported())
 				return;
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			params.setExposureCompensation(0);
-			camera.setParameters(params);
+			setCameraParameters(params);
 		}
 	}
 
@@ -1010,7 +1145,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public List<String> getSupportedSceneModes() {
 		if (camera != null)
-			return camera.getParameters().getSupportedSceneModes();
+			return cameraParameters.getSupportedSceneModes();
 
 		return null;
 	}
@@ -1025,7 +1160,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public List<String> getSupportedWhiteBalance() {
 		if (camera != null)
-			return camera.getParameters().getSupportedWhiteBalance();
+			return cameraParameters.getSupportedWhiteBalance();
 
 		return null;
 	}
@@ -1040,7 +1175,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public List<String> getSupportedFocusModes() {
 		if (camera != null)
-			return camera.getParameters().getSupportedFocusModes();
+			return cameraParameters.getSupportedFocusModes();
 
 		return null;
 	}
@@ -1053,9 +1188,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			return false;
 	}
 
-	public List<String> getSupportedFlashModes() {
+	public List<String> getSupportedFlashModes() {		
 		if (camera != null)
-			return camera.getParameters().getSupportedFlashModes();
+			return cameraParameters.getSupportedFlashModes();
 
 		return null;
 	}
@@ -1070,8 +1205,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public List<String> getSupportedISO() {
 		if (camera != null) {
-			Camera.Parameters camParams = MainScreen.camera.getParameters();
+			Camera.Parameters camParams = MainScreen.cameraParameters;
 			String supportedIsoValues = camParams.get("iso-values");
+			//String iso = camParams.get("iso");
 			if (supportedIsoValues != "" && supportedIsoValues != null) {
 				List<String> isoList = new ArrayList<String>();
 				String delims = "[,]+";
@@ -1081,6 +1217,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 				return isoList;
 			}
+//			else if(iso != null && iso != "")
+//			{
+//				List<String> isoList = new ArrayList<String>();
+//				String delims = "[,]+";
+//				String[] ISOs = iso.split(delims);
+//				for (int i = 0; i < ISOs.length; i++)
+//					isoList.add(ISOs[i]);
+//
+//				return isoList;
+//			}
 		}
 
 		return null;
@@ -1088,7 +1234,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public String getSceneMode() {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null)
 				return params.getSceneMode();
 		}
@@ -1098,7 +1244,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public String getWBMode() {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null)
 				return params.getWhiteBalance();
 		}
@@ -1110,7 +1256,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		try {
 			if (camera != null) {
-				Camera.Parameters params = camera.getParameters();
+				Camera.Parameters params = cameraParameters;
 				if (params != null)
 					return params.getFocusMode();
 			}
@@ -1125,7 +1271,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public String getFlashMode() {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null)
 				return params.getFlashMode();
 		}
@@ -1135,7 +1281,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public String getISOMode() {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null)
 				return params.get("iso");
 		}
@@ -1145,60 +1291,61 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public void setCameraSceneMode(String mode) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null) {
 				params.setSceneMode(mode);
-				camera.setParameters(params);
+				setCameraParameters(params);
 			}
 		}
 	}
 
 	public void setCameraWhiteBalance(String mode) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null) {
 				params.setWhiteBalance(mode);
-				camera.setParameters(params);
+				setCameraParameters(params);
 			}
 		}
 	}
 
 	public void setCameraFocusMode(String mode) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null) {
 				params.setFocusMode(mode);
-				camera.setParameters(params);
+				setCameraParameters(params);
+				mAFLocked = false;
 			}
 		}
 	}
 
 	public void setCameraFlashMode(String mode) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
-			if (params != null) {
+			Camera.Parameters params = cameraParameters;
+			if (params != null && mode != "") {
 				params.setFlashMode(mode);
-				camera.setParameters(params);
+				setCameraParameters(params);
 			}
 		}
 	}
 
 	public void setCameraISO(String mode) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null) {
 				params.set("iso", mode);
-				camera.setParameters(params);
+				setCameraParameters(params);
 			}
 		}
 	}
 
 	public void setCameraExposureCompensation(int iEV) {
 		if (camera != null) {
-			Camera.Parameters params = camera.getParameters();
+			Camera.Parameters params = cameraParameters;
 			if (params != null) {
 				params.setExposureCompensation(iEV);
-				camera.setParameters(params);
+				setCameraParameters(params);
 			}
 		}
 	}
@@ -1240,10 +1387,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void setCameraFocusAreas(List<Area> focusAreas) {
 		if (camera != null) {
 			try {
-				Camera.Parameters params = camera.getParameters();
+				Camera.Parameters params = cameraParameters;
 				if (params != null) {
 					params.setFocusAreas(focusAreas);
-					camera.setParameters(params);
+					setCameraParameters(params);
 				}
 			} catch (RuntimeException e) {
 				Log.e("SetFocusArea", e.getMessage());
@@ -1254,10 +1401,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void setCameraMeteringAreas(List<Area> meteringAreas) {
 		if (camera != null) {
 			try {
-				Camera.Parameters params = camera.getParameters();
+				Camera.Parameters params = cameraParameters;
 				if (params != null) {
 					params.setMeteringAreas(meteringAreas);
-					camera.setParameters(params);
+					setCameraParameters(params);
 				}
 			} catch (RuntimeException e) {
 				Log.e("SetMeteringArea", e.getMessage());
@@ -1326,8 +1473,25 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static void cancelAutoFocus() {
 		if (camera != null) {
 			setFocusState(MainScreen.FOCUS_STATE_IDLE);
-			camera.cancelAutoFocus();
+			try
+			{
+				camera.cancelAutoFocus();
+			}
+			catch(RuntimeException exp)
+			{
+				Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
+			}
 		}
+	}
+	
+	public static void setAutoFocusLock(boolean locked)
+	{
+		mAFLocked = locked;
+	}
+	
+	public static boolean getAutoFocusLock()
+	{
+		return mAFLocked;
 	}
 
 	@Override
@@ -1452,8 +1616,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void disableCameraParameter(GUI.CameraParameter iParam,
-			boolean bDisable) {
-		guiManager.disableCameraParameter(iParam, bDisable);
+			boolean bDisable, boolean bInitMenu) {
+		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
 	}
 
 	public void showOpenGLLayer() {
@@ -1572,14 +1736,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private boolean groupShotPurchased = false;
 
 	private void createBillingHandler() {
-		if (isInstalled("com.almalence.hdr_plus"))
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+		{
 			hdrPurchased = true;
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_hdr", true);
+			prefsEditor.commit();
+		}
 		if (isInstalled("com.almalence.panorama.smoothpanorama"))
+		{
 			panoramaPurchased = true;
-		if (isInstalled("com.almalence.pixfix"))
-			hdrPurchased = true;
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_panorama", true);
+			prefsEditor.commit();
+		}
 
-		String base64EncodedPublicKey = "market key here";
+		String base64EncodedPublicKey = "";
 		// Create the helper, passing it our context and the public key to
 		// verify signatures with
 		Log.v("Main billing", "Creating IAB helper.");
@@ -1628,22 +1801,43 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		public void onQueryInventoryFinished(IabResult result,
 				Inventory inventory) {
 			if (inventory == null)
+			{
+				Log.e("Main billing", "mGotInventoryListener inventory null ");
 				return;
+			}
 
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			
 			if (inventory.hasPurchase("plugin_almalence_hdr")) {
 				hdrPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
 			}
 			if (inventory.hasPurchase("plugin_almalence_panorama")) {
 				panoramaPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
 			}
 			if (inventory.hasPurchase("unlock_all_forever")) {
 				unlockAllPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
 			}
 			if (inventory.hasPurchase("plugin_almalence_moving_burst")) {
 				objectRemovalBurstPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
 			}
 			if (inventory.hasPurchase("plugin_almalence_groupshot")) {
 				groupShotPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
 			}
 		}
 	};
@@ -1832,6 +2026,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				return;
 			}
 
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			
 			Log.v("Main billing", "Purchase successful.");
 
 			if (purchase.getSku().equals("plugin_almalence_hdr")) {
@@ -1840,6 +2037,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				hdrPurchased = true;
 				hdrPref.setEnabled(false);
 				hdrPref.setSummary(R.string.already_unlocked);
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_panorama")) {
 				Log.v("Main billing", "Purchase Panorama.");
@@ -1847,6 +2048,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				panoramaPurchased = true;
 				panoramaPref.setEnabled(false);
 				panoramaPref.setSummary(R.string.already_unlocked);
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("unlock_all_forever")) {
 				Log.v("Main billing", "Purchase all.");
@@ -1866,6 +2071,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 				hdrPref.setEnabled(false);
 				hdrPref.setSummary(R.string.already_unlocked);
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_moving_burst")) {
 				Log.v("Main billing", "Purchase object removal.");
@@ -1873,6 +2082,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				objectRemovalBurstPurchased = true;
 				objectremovalPref.setEnabled(false);
 				objectremovalPref.setSummary(R.string.already_unlocked);
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_groupshot")) {
 				Log.v("Main billing", "Purchase groupshot.");
@@ -1880,6 +2093,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				groupShotPurchased = true;
 				groupshotPref.setEnabled(false);
 				groupshotPref.setSummary(R.string.already_unlocked);
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
 			}
 		}
 	};
@@ -1908,25 +2125,47 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 			Log.v("Main billing", "Purchase successful.");
 
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			
 			if (purchase.getSku().equals("plugin_almalence_hdr")) {
 				Log.v("Main billing", "Purchase HDR.");
 				hdrPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_panorama")) {
 				Log.v("Main billing", "Purchase Panorama.");
 				panoramaPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("unlock_all_forever")) {
 				Log.v("Main billing", "Purchase unlock_all_forever.");
 				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_moving_burst")) {
 				Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
 				objectRemovalBurstPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals("plugin_almalence_groupshot")) {
 				Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
 				groupShotPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
 			}
 
 			showUnlock = true;

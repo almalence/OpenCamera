@@ -152,7 +152,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     	{
     		AlmaShotNight.SuperZoomPreview(compressed_frame, NightProcessingPlugin.HI_SPEED_FRAMES, mImageWidth, mImageHeight, 
     				mImageWidth*2, mImageHeight*2,
-    				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference), SaturatedColors? 18 : 8,
+    				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference), SaturatedColors? 1 : 0,
     				1);
     	}
     	else
@@ -173,7 +173,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     		
     		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight,
     			Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
-    			2, SaturatedColors? 18 : 8,
+    			8, SaturatedColors? 8 : 0,
     			imagesAmount);
     	}
     	System.gc();

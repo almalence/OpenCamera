@@ -144,7 +144,7 @@ public class GLCameraPreview {
 	    Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters params = camera.getParameters();
+		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		if(params == null)
 		{
 			return;

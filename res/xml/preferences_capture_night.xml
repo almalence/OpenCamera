@@ -1,9 +1,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/Pref_NightCapture_Preference_Title">   
+    <PreferenceCategory android:title="@string/Pref_NightCapture_Preference_Title"
+        				android:key="Pref_NightCapture_Category">   
         <ListPreference
 						android:title="@string/Pref_NightCapture_ImageSize_Title"
-						android:key="imageSizePrefNight"
+						android:key="imageSizePrefNightBack"
+						android:defaultValue="0"
+						android:entries="@array/dimsArrayNight"
+						android:entryValues="@array/dimsValuesNight" />
+        <ListPreference
+						android:title="@string/Pref_NightCapture_ImageSize_Title"
+						android:key="imageSizePrefNightFront"
 						android:defaultValue="0"
 						android:entries="@array/dimsArrayNight"
 						android:entryValues="@array/dimsValuesNight" />

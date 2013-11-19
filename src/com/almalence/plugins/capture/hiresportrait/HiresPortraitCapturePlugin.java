@@ -187,7 +187,8 @@ public class HiresPortraitCapturePlugin extends PluginCapture
 				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
 				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
 				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)))			
+				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+				&& !MainScreen.getAutoFocusLock())			
 				aboutToTakePicture = true;			
 		else if(takingAlready == false)
 			takePicture();
@@ -235,7 +236,7 @@ public class HiresPortraitCapturePlugin extends PluginCapture
 	{
 		if (captureFront)
 		{//save frame from front camera
-			Camera.Parameters cp = camera.getParameters();
+			Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 			int fov = (int)cp.getHorizontalViewAngle();
 			// some devices report incorrect FOV values, use typical view angles then
 			if (fov >= 150)
@@ -298,7 +299,7 @@ public class HiresPortraitCapturePlugin extends PluginCapture
 			else
 				frmcnt=0;
 			
-			Camera.Parameters cp = camera.getParameters();
+			Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 	        
 			int fov = (int)cp.getHorizontalViewAngle();
 			// some devices report incorrect FOV values, use typical view angles then
@@ -377,6 +378,10 @@ public class HiresPortraitCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framelen"/*+String.valueOf(PluginManager.getInstance().getSessionID())*/, String.valueOf(frame_len));
     	PluginManager.getInstance().addToSharedMem("frameorientation"/*+String.valueOf(PluginManager.getInstance().getSessionID())*/, String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" /*+String.valueOf(PluginManager.getInstance().getSessionID())*/, String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	if(captureFront)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    	
 		secondCaptured=true;
 		changeCamera();
 		

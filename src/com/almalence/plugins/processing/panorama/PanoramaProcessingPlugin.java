@@ -47,11 +47,12 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	
 	private boolean prefSaveInput;
 	private boolean prefLandscape;
+	private int mOrientation;
 	private int out_ptr = 0;
 	
 	public PanoramaProcessingPlugin()
 	{
-		super("com.almalence.plugins.panoramaprocessing", 
+		super("com.almalence.plugins.panoramaprocessing",
 				R.xml.preferences_processing_panorama, 
 				0, 
 				MainScreen.thiz.getResources().getString(R.string.pref_plugin_processing_panorama_preference_title), 
@@ -64,12 +65,16 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@Override
 	public void onStartProcessing(final long sessionID)
     {
-		Log.wtf(TAG, "onStartProcessing");
+		Log.e(TAG, "onStartProcessing");
 		
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(
 				MainScreen.thiz).getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 		
-		this.prefLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));
+		//this.prefLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));
+		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));		
+		this.prefLandscape = orient == 0 || orient == 180? true : false;
+		mOrientation = this.prefLandscape? (orient == 180? 90 : 270) : (orient == 270? 180 : 0);
+		//mOrientation = 0;
 		
 		try
 		{
@@ -130,7 +135,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 				this.freeFrames(frames_ptrs, 0, frames_ptrs.length);
 			}
 			
-
+			
 			MainScreen.setSaveImageWidth(output_width);
 			MainScreen.setSaveImageHeight(output_height);
 			if (this.prefLandscape)
@@ -144,9 +149,9 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(output_height));
 			}
 			PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
-			PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), this.prefLandscape ? "true" : "false");
-	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), Boolean.toString(!this.prefLandscape));
-	    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), Boolean.toString(this.prefLandscape));
+			//PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), this.prefLandscape ? "true" : "false");
+	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mOrientation));			
+	    	//PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), Boolean.toString(this.prefLandscape));
 			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
 	    	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(this.out_ptr));
 	    	PluginManager.getInstance().addToSharedMem("resultcrop0"+Long.toString(sessionID), String.valueOf(crop_x));
@@ -158,7 +163,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		}
 		catch (final NumberFormatException e)
 		{
-			Log.wtf(TAG, "Could not parse shared memory data.");
+			Log.e(TAG, "Could not parse shared memory data.");
 			throw e;
 		}
     }
@@ -203,8 +208,8 @@ public class PanoramaProcessingPlugin extends PluginProcessing
         for (int i = 0; i < count; ++i)
         {			
         	final int optr = images[offset + i];
-	    	fileFormat += String.format("_%d.jpg", i);
-            final File file = new File(saveDir, fileFormat);
+        	String index = String.format("_%02d", i);
+            final File file = new File(saveDir, fileFormat+index+".jpg");
             
             FileOutputStream os = null;
             try

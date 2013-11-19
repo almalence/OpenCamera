@@ -34,7 +34,8 @@ int JPEG2NV21(
 	int sx,
 	int sy,
 	bool needRotation,
-	bool cameraMirrored
+	bool cameraMirrored,
+	int rotationDegree
 );
 
 int JPEG2RGBA
@@ -53,7 +54,8 @@ int DecodeAndRotateMultipleJpegs
 	int sy,
 	int nFrames,
 	int needRotation,
-	int cameraMirrored
+	int cameraMirrored,
+	int rotationDegree
 );
 
 void TransformPlane32bit

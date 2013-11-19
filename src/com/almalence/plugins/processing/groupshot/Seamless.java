@@ -80,13 +80,14 @@ public class Seamless
     	  }
     }
     
-	public void addInputFrames(List<byte[]> inputFrame, Size size, Size fd_size, boolean needRotation, boolean cameraMirrored)  throws Exception {
+	public void addInputFrames(List<byte[]> inputFrame, Size size, Size fd_size, boolean needRotation, boolean cameraMirrored, int rotationDegree)  throws Exception {
 		mNumOfFrame = inputFrame.size();
-		if(needRotation)
+		if(rotationDegree != 0 && rotationDegree != 180)
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
         else
         	mInputFrameSize = size;
 		//mInputFrameSize = size;
+		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 		
 		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
 			throw new Exception("Number of input frame is wrong");
@@ -107,7 +108,7 @@ public class Seamless
 		}
 		
 		long start = System.currentTimeMillis();
-	    int error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored);
+	    int error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
 	    Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
 	    if (error < 0) {
 	    	Log.d(TAG, "Out Of Memory");

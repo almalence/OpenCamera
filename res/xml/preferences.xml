@@ -8,7 +8,14 @@
 	<ListPreference
 		android:title="@string/Pref_Common_ImageSize_Title"
 		android:summary="@string/Pref_Common_ImageSize_Summary"
-		android:key="imageSizePrefCommon"
+		android:key="imageSizePrefCommonFront"
+		android:defaultValue="0"
+		android:entries="@array/dimsArrayCommon"
+		android:entryValues="@array/dimsValuesCommon" />
+	<ListPreference
+		android:title="@string/Pref_Common_ImageSize_Title"
+		android:summary="@string/Pref_Common_ImageSize_Summary"
+		android:key="imageSizePrefCommonBack"
 		android:defaultValue="0"
 		android:entries="@array/dimsArrayCommon"
 		android:entryValues="@array/dimsValuesCommon" />

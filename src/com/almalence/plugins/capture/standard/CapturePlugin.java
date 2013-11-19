@@ -18,6 +18,9 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Message;
@@ -27,6 +30,14 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegMetadataReader;
+import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegProcessingException;
+import com.almalence.opencam.util.exifreader.lang.Rational;
+import com.almalence.opencam.util.exifreader.metadata.Directory;
+import com.almalence.opencam.util.exifreader.metadata.Metadata;
+import com.almalence.opencam.util.exifreader.metadata.exif.ExifIFD0Directory;
+import com.almalence.opencam.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+
 
 /***
 Implements standard capture plugin - capture single image and save it in shared memory
@@ -56,7 +67,8 @@ public class CapturePlugin extends PluginCapture
 				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
 				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
 				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)))			
+				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+				&& !MainScreen.getAutoFocusLock())			
 				aboutToTakePicture = true;			
 		else if(takingAlready == false)
 			takePicture();
@@ -120,6 +132,7 @@ public class CapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
 		
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), "1");
+    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
     	
 		try
 		{

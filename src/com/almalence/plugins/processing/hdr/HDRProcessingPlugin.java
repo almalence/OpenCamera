@@ -77,7 +77,6 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.exiv2.Exiv2;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
@@ -85,6 +84,7 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.util.ImageConversion;
 import com.almalence.opencam.util.MLocation;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 
 /***
 Implements HDR processing plugin.
@@ -156,7 +156,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			MainScreen.guiManager.lockControls = true;
 		}
 		
-		Log.wtf("HDR", "start processing");
+		Log.e("HDR", "start processing");
 		sessionID=SessionID;
 		
 		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
@@ -170,18 +170,18 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageHeight = MainScreen.getImageHeight();
 		
 		AlmaShotHDR.Initialize();
-		Log.wtf("HDR", "almashot lib initialize success");
+		Log.e("HDR", "almashot lib initialize success");
 
 		//hdr processing
 		HDRPreview();
-		Log.wtf("HDR", "HDRPreview success");
+		Log.e("HDR", "HDRPreview success");
 		
 		if(!AutoAdjustments)
 		{
 			HDRProcessing();
-			Log.wtf("HDR", "HDRProcessing success");
+			Log.e("HDR", "HDRProcessing success");
 			
-			if(mDisplayOrientationCurrent == 180 || mDisplayOrientationCurrent == 270)
+			if(mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 			{
 				byte[] dataRotated = new byte[yuv.length];
 				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
@@ -336,15 +336,22 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			            
 			            if (l != null)
 			            {	     
-			            	Exiv2.writeGeoDataIntoImage(
-			            		file.getAbsolutePath(), 
-			            		true,
-			            		l.getLatitude(), 
-			            		l.getLongitude(), 
-			            		dateString, 
-			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
+//			            	Exiv2.writeGeoDataIntoImage(
+//			            		file.getAbsolutePath(), 
+//			            		true,
+//			            		l.getLatitude(), 
+//			            		l.getLongitude(), 
+//			            		dateString, 
+//			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
+//			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
 			            		
+			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+			            	ei.saveAttributes();
 			            	
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
@@ -1471,7 +1478,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 //			this.saving = true;
 //			this.mAsyncTaskManager.setupTask(new AdjustmentsSavingTask(MainScreen.thiz.getResources()));
 			HDRProcessing();
-			Log.wtf("HDR", "HDRProcessing success");
+			Log.e("HDR", "HDRProcessing success");
 			
 			if(mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 			{

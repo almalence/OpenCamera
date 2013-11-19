@@ -83,13 +83,15 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(true);
 			
 			String fm = MainScreen.thiz.getFocusMode();
-			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
+	
+			if(fm != null && takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
 					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
 					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
 	        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
 	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)))
+	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+	        				&& !MainScreen.getAutoFocusLock())
 				takingAlready = true;			
 			else if(takingAlready == false)
 				takePicture();
@@ -131,25 +133,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			     public void onTick(long millisUntilFinished) {}
 			     public void onFinish() 
 			     {
-			    	Camera camera = MainScreen.thiz.getCamera();
-					if (camera != null)
-					{
-						// play tick sound
-						MainScreen.guiManager.showCaptureIndication();
-		        		MainScreen.thiz.PlayShutter();
-		     	    	camera.takePicture(null, null, null, MainScreen.thiz);
-					}
-					else
-					{
-						inCapture = false;
-						takingAlready = false;
-						Message msg = new Message();
-	        			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-	        			msg.what = PluginManager.MSG_BROADCAST;
-	        			MainScreen.H.sendMessage(msg);
-	        			
-	        			MainScreen.guiManager.lockControls = false;
-					}
+			    	Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);
 			     }
 			  }.start();
 		}
@@ -179,6 +166,9 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
     	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	if(imagesTaken == 1)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
 		
 		try
 		{
@@ -216,16 +206,37 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		if(takingAlready == true)
 			takePicture();
-		
-//		if(takingAlready == true && paramBoolean == true)
-//			takePicture();
-//		else if(takingAlready == true)
-//		{
-//			takingAlready = false;
-//			MainScreen.guiManager.lockControls = false;
-//		}
 	}
 
+	@Override
+	public boolean onBroadcast(int arg1, int arg2)
+	{
+		if (arg1 == PluginManager.MSG_NEXT_FRAME)
+		{
+			Camera camera = MainScreen.thiz.getCamera();
+			if (camera != null)
+			{
+				// play tick sound
+				MainScreen.guiManager.showCaptureIndication();
+        		MainScreen.thiz.PlayShutter();
+     	    	camera.takePicture(null, null, null, MainScreen.thiz);
+			}
+			else
+			{
+				inCapture = false;
+				takingAlready = false;
+				Message msg = new Message();
+    			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+    			msg.what = PluginManager.MSG_BROADCAST;
+    			MainScreen.H.sendMessage(msg);
+    			
+    			MainScreen.guiManager.lockControls = false;
+			}						
+    		return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}	
 }

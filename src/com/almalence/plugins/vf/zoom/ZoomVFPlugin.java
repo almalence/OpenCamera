@@ -92,8 +92,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.zoomvf",
 			  R.xml.preferences_vf_zoom,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Summary),
+			  "Zoom",//MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Title),
+			  null,//MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Summary),
 			  0,
 			  null);
 		
@@ -285,7 +285,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
         if (cp.isZoomSupported())
         {
         	zoomBar.setMax(cp.getMaxZoom());
@@ -301,7 +301,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		if (cp==null)
+			return;
 		
 		if (cp.isZoomSupported())
 		{		
@@ -320,7 +322,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					
 				cp.setZoom(zoomCurrent);
 					
-				camera.setParameters(cp);
+				MainScreen.thiz.setCameraParameters(cp);
 				
 				zoomBar.setProgressAndThumb(zoomCurrent);
 			}
@@ -373,6 +375,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)zoomPanel.getLayoutParams();
+				if (params==null)
+					return;
 				params.setMargins(-zoomPanelWidth/2, 0, 0, 0);
 				zoomPanel.setLayoutParams(params);				
 				zoomPanel.clearAnimation();
@@ -438,7 +442,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 		if (arg1 == PluginManager.MSG_CONTROL_LOCKED) 
 			mZoomDisabled = true;
 		else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED) 
-			mZoomDisabled = false;			
+			mZoomDisabled = false;
 		return false;
 	}
 }

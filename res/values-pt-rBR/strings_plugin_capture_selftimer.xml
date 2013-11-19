@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="Pref_SelfTimer_Category_Title">Captura programada</string>
+	<string name="Pref_SelfTimer_Preference_Title">Captura</string>
+	<string name="Pref_SelfTimer_Preference_Summary">Temporizador</string>
+	
+	<string name="Pref_SelfTimer_DelayInterval_Title">Valor do temporizador</string>
+	
+	<string name="Pref_SelfTimer_ImagesAmount_Title">Número de disparos</string>
+	
+	<string name="Pref_SelfTimerCapture_Blinking_Title">Piscar na contagem</string>
+	<string name="Pref_SelfTimerCapture_Blinking_Summary">O flash pisca a cada segundo da contagem regressiva</string>
+	
+	<string name="Pref_SelfTimerCapture_Sound_Title">Contagem com som</string>
+	<string name="Pref_SelfTimerCapture_Sound_Summary">Emitir um bip a cada segundo da contagem regressiva</string>
+	
+	<string name="Res_SelfTimerCapture_Capture_1">1 imagem</string>
+    <string name="Res_SelfTimerCapture_Capture_2">2 imagens</string>
+    <string name="Res_SelfTimerCapture_Capture_3">3 imagens</string>
+</resources>

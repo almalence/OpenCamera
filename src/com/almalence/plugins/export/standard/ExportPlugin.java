@@ -39,7 +39,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.almalence.SwapHeap;
-import com.almalence.exiv2.Exiv2;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginExport;
 import com.almalence.opencam.PluginManager;
@@ -158,7 +157,7 @@ public class ExportPlugin extends PluginExport
     {
 		if (useGeoTaggingPrefExport)
         {
-			MLocation.unsubcribe();
+			MLocation.unsubscribe();
         }
     }
 	
@@ -241,6 +240,8 @@ public class ExportPlugin extends PluginExport
 	
 	            FileOutputStream os = new FileOutputStream(file);
 	            
+	            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+	            
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
 	            if(imagesAmount == 1 && imageIndex != 0)
@@ -279,32 +280,30 @@ public class ExportPlugin extends PluginExport
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
 	            		os.write(frame);
-			            os.close();
+//			            os.close();
 			            
-			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());			            
-
-			            if(writeOrientationTag)			            	
-			            {
-			            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-			            	switch(orientation)
-			            	{
-			            	default:
-			            	case 0:
-			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-			            		break;
-			            	case 90:
-			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-			            		break;
-			            	case 180:
-			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-			            		break;
-			            	case 270:
-			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-			            		break;
-			            	}
-			            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-			            	ei.saveAttributes();
-			            }
+//			            if(writeOrientationTag)			            	
+//			            {
+//			            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+//			            	switch(orientation)
+//			            	{
+//			            	default:
+//			            	case 0:
+//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+//			            		break;
+//			            	case 90:
+//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+//			            		break;
+//			            	case 180:
+//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+//			            		break;
+//			            	case 270:
+//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+//			            		break;
+//			            	}
+//			            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+//			            	ei.saveAttributes();
+//			            }
 		            }
 	            }
 	            else
@@ -313,20 +312,12 @@ public class ExportPlugin extends PluginExport
 			            String res = PluginManager.getInstance().getFromSharedMem("resultfromshared"+Long.toString(sessionID));
 			            if ((null == res) || "".equals(res) || "true".equals(res))
 			            {
-			            	/*
-				            byte[] data = SwapHeap.CopyFromHeap(
-				            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
-				            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
-		
-				            //0x00000011 - NV21
-				            YuvImage image = new YuvImage(data, 0x00000011, x, y, null);
-					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 95, os);
-					    	//*/
-			            	
 			            	// Why not just compress directly from native?
 			            	final int ptr = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID)));
 			            	com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
-					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, os);
+			            	//to avoid problems with SKIA
+			            	int cropHeight = image.getHeight()-image.getHeight()%16;
+					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
 			            }
 			            else
 			            {
@@ -345,7 +336,30 @@ public class ExportPlugin extends PluginExport
 					    		int crop3 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
 					    		Rect r = new Rect(crop0, crop1, crop0+crop2, crop1+crop3);
 					    		out.compressToJpeg(r, 95, os);
-		    	    		}    	    		
+		    	    		} 	    	
+
+//				            if(writeOrientationTag)			            	
+//				            {
+//				            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+//				            	switch(orientation)
+//				            	{
+//				            	default:
+//				            	case 0:
+//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+//				            		break;
+//				            	case 90:
+//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+//				            		break;
+//				            	case 180:
+//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+//				            		break;
+//				            	case 270:
+//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+//				            		break;
+//				            	}
+//				            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+//				            	ei.saveAttributes();
+//				            }
 			            }
 		            }
 	            }
@@ -369,7 +383,6 @@ public class ExportPlugin extends PluginExport
             	}
 	            
 	            
-	            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
 	            values = new ContentValues(9);
                 values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
                 values.put(ImageColumns.DISPLAY_NAME, file.getName());
@@ -386,24 +399,13 @@ public class ExportPlugin extends PluginExport
 	            	Location l = MLocation.getLocation(MainScreen.mainContext);
 		            
 		            if (l != null)
-		            {	     
-		            	Exiv2.writeGeoDataIntoImage(
-		            		file.getAbsolutePath(), 
-		            		true,
-		            		l.getLatitude(), 
-		            		l.getLongitude(), 
-		            		dateString, 
-		            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-		            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-		            		
-		            	
-			            values.put(ImageColumns.LATITUDE, l.getLatitude());
-			            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-			            
-//			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-//		            	ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, ""+l.getLatitude());
-//		            	ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, ""+l.getLongitude());
-//		            	ei.saveAttributes();
+		            {
+			            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+			            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+		            	ei.saveAttributes();
 	            	}
 	            	else
 	            	{
@@ -411,8 +413,86 @@ public class ExportPlugin extends PluginExport
 	            		
 	            	}
 	            }
-		    	os.close();
+    	    	
+    	    	String tag_exposure_time = PluginManager.getInstance().getFromSharedMem("exiftag_exposure_time"+Long.toString(sessionID));
+	            String tag_aperture = PluginManager.getInstance().getFromSharedMem("exiftag_aperture"+Long.toString(sessionID));
+	            String tag_flash = PluginManager.getInstance().getFromSharedMem("exiftag_flash"+Long.toString(sessionID));
+	            String tag_focal_length = PluginManager.getInstance().getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
+	            String tag_iso = PluginManager.getInstance().getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
+	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
+	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
+	            String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+	            String tag_spectral_ensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_ensitivity"+Long.toString(sessionID));
+	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
+	            	            
+	            if(tag_exposure_time != null)
+	            	ei.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, tag_exposure_time);
+	            if(tag_aperture != null)
+	            	ei.setAttribute(ExifInterface.TAG_APERTURE, tag_aperture);
+	            if(tag_flash != null)
+	            	ei.setAttribute(ExifInterface.TAG_FLASH, tag_flash);
+	            if(tag_focal_length != null)
+	            	ei.setAttribute(ExifInterface.TAG_FOCAL_LENGTH, tag_focal_length);
+	            if(tag_iso != null)
+	            {
+	            	ei.setAttribute(ExifInterface.TAG_ISO, tag_iso);
+	            	ei.setAttribute("ISOSpeedRatings", tag_iso);
+	            }
+	            if(tag_white_balance != null)
+	            	ei.setAttribute(ExifInterface.TAG_WHITE_BALANCE, tag_white_balance);
+	            if(tag_make != null)
+	            	ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
+	            if(tag_model != null)
+	            	ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+	            if(tag_spectral_ensitivity != null)
+	            	ei.setAttribute("SpectralSensitivity", tag_spectral_ensitivity);
+	            
+	            ei.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(x));
+	            ei.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(y));	            
+	            
+	            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
+	            ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
+	            ei.setAttribute("DateTimeOriginal", dateString);
+	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name));
+	            ei.setAttribute("ExifVersion", tag_version);
+	            
+	            if(writeOrientationTag)			            	
+	            {
+	            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+	            	switch(orientation)
+	            	{
+	            	default:
+	            	case 0:
+	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+	            		break;
+	            	case 90:
+	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+	            		break;
+	            	case 180:
+	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+	            		break;
+	            	case 270:
+	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+	            		break;
+	            	}
+	            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));	            
+	            }
+	            else
+	            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
+	            
+	            ei.saveAttributes();
+		    	
 		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+		    	
+		    	try
+		    	{
+		    		os.close();
+				}
+		    	catch (Exception e)
+		        {
+		        	e.printStackTrace();
+		        	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+		        }
 			}
 			//MainScreen.FramesShot = true;
             //MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);

@@ -36,7 +36,7 @@ public class HiresPortraitProcessingPlugin extends PluginProcessing
 		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame1));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(len1));
-    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" +String.valueOf(sessionID), String.valueOf(wantLandscape1));
+    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" +String.valueOf(sessionID), String.valueOf(wantLandscape1? 0 : 90));
     	PluginManager.getInstance().addToSharedMem("resultframemirrored1" +String.valueOf(sessionID), String.valueOf(cameraMirrored1));
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
 		

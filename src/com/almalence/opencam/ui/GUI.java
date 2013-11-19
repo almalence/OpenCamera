@@ -54,6 +54,18 @@ public abstract class GUI
 
 	public final static String isoParam = "iso";
 	
+	// Flags to know which camera feature supported at current device
+	public boolean mEVSupported = false;	
+	public boolean mSceneModeSupported = false;
+	public boolean mWBSupported = false;
+	public boolean mFocusModeSupported = false;
+	public boolean mFlashModeSupported = false;
+	public boolean mISOSupported = false;
+	public boolean mCameraChangeSupported = false;
+	
+	public boolean mEVLockSupported = false;
+	public boolean mWBLockSupported = false;
+	
 	//Lists of added plugin's controls
 	List<View> VFViews;
 	List<View> FullScreenVFViews;
@@ -114,6 +126,8 @@ public abstract class GUI
 	//onGUICreate called when main layout is rendered and size's variables is available
 	abstract public void onGUICreate();
 	
+	abstract public void onCaptureFinished();
+	
 	//called to set any indication when export plugin work finished.
 	abstract public void onPostProcessingStarted();
 
@@ -129,7 +143,7 @@ public abstract class GUI
 	
 	abstract public void onCameraSetup();
 	
-	abstract public void setupViewfinderPreviewSize();
+	abstract public void setupViewfinderPreviewSize(Camera.Parameters cp);
 
 	abstract public void menuButtonPressed();
 	
@@ -220,7 +234,7 @@ public abstract class GUI
 
 	abstract public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event);
 	
-	abstract public void disableCameraParameter(CameraParameter iParam, boolean bDisable);
+	abstract public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu);
 	
 	abstract public void startProcessingAnimation();
 	
@@ -237,4 +251,10 @@ public abstract class GUI
 	
 	public int getDisplayOrientation(){return (mDeviceOrientation + 90)%360;} // used to operate with image's data
 	public int getLayoutOrientation(){return (mDeviceOrientation)%360;} //used to operate with ui controls
+	public int getDisplayRotation()
+	{
+		int orientation = getLayoutOrientation();
+		int displayRotationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
+		return displayRotationCurrent;
+	} //used to operate with plugin's views
 }

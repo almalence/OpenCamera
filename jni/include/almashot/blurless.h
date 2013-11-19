@@ -67,7 +67,7 @@ extern "C"
 // preFilter - apply pre-filtering (useful for sensors with high noise)
 // postFilter - apply luma and chroma post-filtering (soft-threshold median, sensor-gain and lens-shading dependent)
 // zeroBlackLevel - do not subtract black level from the input frames
-// enhanceLuma/enhanceChroma - amount of luma/chroma enhancement to apply (only in Mode 2), recommended value: 19
+// enhanceLuma/enhanceChroma - amount of luma/chroma enhancement to apply (only in Mode 2), recommended value: 9
 // 0 - no enhancement
 // 1..10 - enhance (the higher the number the brighter or more colorful image output will be)
 //

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+   <dimen name="gridElementSize">150dp</dimen>
    <dimen name="gridImageSize">70dp</dimen>
-   <dimen name="gridTextLayoutSize">70dp</dimen>
+   <dimen name="gridTextLayoutHeight">70dp</dimen>
+   <dimen name="gridTextLayoutWidth">140dp</dimen>
    <dimen name="gridTextSize">18sp</dimen>
+   <dimen name="gridModeElementSize">90dp</dimen>
    <dimen name="gridModeTextLayoutSize">70dp</dimen>
    <dimen name="gridModeTextSize">18sp</dimen>
    <dimen name="gridModeImageSize">70dp</dimen>
@@ -12,6 +15,8 @@
    <dimen name="mainButtonHeightSelect">65dp</dimen>
    <dimen name="shutterHeight">115dp</dimen>
    <dimen name="scanerWidth">3dp</dimen>
+   <dimen name="scanerHeight">60dp</dimen>
+   
    
    <dimen name="infoLayoutWidth">50dp</dimen>
    <dimen name="viewfinderViewsMarginTop">17dp</dimen>

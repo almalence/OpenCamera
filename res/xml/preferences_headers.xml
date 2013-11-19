@@ -14,7 +14,8 @@
     </header>
     <header 
         android:fragment="com.almalence.opencam.Fragment"
-        android:title="@string/Pref_Modes_Preference_Title">
+        android:title="@string/Pref_Modes_Preference_Title"
+        android:summary="@string/Pref_Modes_Preference_Summary">
         <extra android:name="type" android:value="shooting_settings" />
     </header>
     <header 

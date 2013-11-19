@@ -77,7 +77,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.histogramvf",
 			  R.xml.preferences_vf_histogram,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_HistogramVF_Preference_Title),
+			  "Histogram",//MainScreen.thiz.getResources().getString(R.string.Pref_HistogramVF_Preference_Title),
 			  null,
 			  R.drawable.gui_almalence_histogram_rgb,
 			  "Histogram");
@@ -361,7 +361,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		Camera.Parameters params = paramCamera.getParameters();
+		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		if (params == null)
 			return;
 

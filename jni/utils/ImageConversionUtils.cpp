@@ -88,7 +88,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool needRotation, bool cameraMirrored)
+int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool needRotation, bool cameraMirrored, int rotationDegree)
 {
 	int i, y;
 	int inlen;
@@ -103,6 +103,7 @@ int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool nee
 	Uint8* dst;
 
 	if (needRotation || cameraMirrored)
+	//if(rotationDegree != 0 || cameraMirrored)
 		dst = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
 	else
 		dst = yuv;
@@ -142,8 +143,8 @@ int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool nee
 		{
 			for (int i = 0; i < cinfo.output_width; i+=2)
 			{
-				cbcr_buffer[i] = wline[(i*3) + 2];
-				cbcr_buffer[i + 1] = wline[(i*3) + 1];
+				cbcr_buffer[i] = wline[(i*3) + 2];		// V
+				cbcr_buffer[i + 1] = wline[(i*3) + 1];	// U
 			}
 			cbcr_buffer += cinfo.output_width;
 		}
@@ -155,8 +156,18 @@ int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool nee
 
 	if (needRotation || cameraMirrored)
 	{
+		int nRotate = 0;
+		int flipUD = 0;
+		if(rotationDegree == 180 || rotationDegree == 270)
+		{
+			cameraMirrored = !cameraMirrored; //used to support 4-side rotation
+			flipUD = 1; //used to support 4-side rotation
+		}
+		if(rotationDegree == 90 || rotationDegree == 270)
+			nRotate = 1; //used to support 4-side rotation
+
 		// ToDo: not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
-		TransformNV21(dst, yuv, sx, sy, NULL, cameraMirrored, 0, needRotation);
+		TransformNV21(dst, yuv, sx, sy, NULL, cameraMirrored, flipUD, nRotate);
 		free(dst);
 	}
 
@@ -234,7 +245,8 @@ int DecodeAndRotateMultipleJpegs
 	int sy,
 	int nFrames,
 	int needRotation,
-	int cameraMirrored
+	int cameraMirrored,
+	int rotationDegree
 )
 {
 	int i;
@@ -265,7 +277,7 @@ int DecodeAndRotateMultipleJpegs
 	for (i=0; i<nFrames; ++i)
 	{
 		// decode from jpeg
-		if(JPEG2NV21(yuvFrame[i], jpeg[i], jpeg_length[i], sx, sy, needRotation, cameraMirrored) == 0)
+		if(JPEG2NV21(yuvFrame[i], jpeg[i], jpeg_length[i], sx, sy, needRotation, cameraMirrored, rotationDegree) == 0)
 		{
 			isFoundinInput = i;
 			LOGE("Error Found in %d - jpeg frame\n", (int)i);
@@ -300,7 +312,7 @@ void TransformPlane8bit
 	if ((!flipLeftRight) && (!flipUpDown) && (!rotate90))
 	{
 		if (In!=Out)
-			memcpy (Out, In, sx*sy*sizeof(unsigned short));
+			memcpy (Out, In, sx*sy*sizeof(unsigned char));
 		return;
 	}
 
@@ -621,11 +633,11 @@ void NV21_to_RGB_scaled_rotated
 	int nY, nU, nV;
 	unsigned char *out = buffer;
 	int offset;
-	int bgr = 0;
+	int bgr = 1;
 
-	if (stride >= 5)
+	if (stride >= 5)	// a special case for GL - RGBA
 	{
-		bgr = 1;
+		bgr = 0;
 		stride -= 2;
 	}
 
@@ -649,17 +661,17 @@ void NV21_to_RGB_scaled_rotated
 			nV = *(pUV + (is / 2) * width + 2 * (js / 2));
 			nU = *(pUV + (is / 2) * width + 2 * (js / 2) + 1);
 
-			if (bgr)	// a special case for GL - BGR
+			if (bgr)	// usual bitmap has BGRA format
 			{
-				out[offset++] = CSC_B(nY, nV);
+				out[offset++] = CSC_B(nY, nU);
 				out[offset++] = CSC_G(nY, nU, nV);
-				out[offset++] = CSC_R(nY, nU);
+				out[offset++] = CSC_R(nY, nV);
 			}
-			else
+			else		// a special case for GL - RGBA
 			{
-				out[offset++] = CSC_R(nY, nU);
+				out[offset++] = CSC_R(nY, nV);
 				out[offset++] = CSC_G(nY, nU, nV);
-				out[offset++] = CSC_B(nY, nV);
+				out[offset++] = CSC_B(nY, nU);
 			}
 			if (stride == 4) out[offset++] = 255;
 
@@ -708,12 +720,12 @@ void NV21_to_RGB_scaled
             js = j * wCrop / outWidth;
 
             Y = *(pY + is * width + js);
-            U = *(pUV + (is / 2) * width + 2*(js / 2));
-            V = *(pUV + (is / 2) * width + 2*(js / 2) + 1);
+            V = *(pUV + (is / 2) * width + 2*(js / 2));
+            U = *(pUV + (is / 2) * width + 2*(js / 2) + 1);
 
-			out[offset++] = CSC_R(Y,V);
-			out[offset++] = CSC_G(Y, U, V);
 			out[offset++] = CSC_B(Y,U);
+			out[offset++] = CSC_G(Y, U, V);
+			out[offset++] = CSC_R(Y,V);
 			if (stride == 4) out[offset++] = 255;
         }
     }

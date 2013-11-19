@@ -95,7 +95,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0);
+	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0);
 
 	env->ReleaseIntArrayElements(in, (jint*)jpeg, JNI_ABORT);
 	env->ReleaseIntArrayElements(in_len, (jint*)jpeg_length, JNI_ABORT);
@@ -113,23 +113,23 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	jint sy,
 	jint sensorGainPref,
 	jint DeGhostPref,
-	jint mode,
-	jint saturated,
+	jint lumaEnh,
+	jint chromaEnh,
 	jint nImages
 )
 {
 	int i;
 	Uint8 *pview_yuv;
 	Uint32 *pview;
-	int nTable[3] = {1,3,7};	// sqrt of this value is used for thresholding at <=3, <=6 and >6
+	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
-		256*3,
+		0, // 256*3,
 		deghTable[DeGhostPref],
-		mode==2 ? 2:0, mode==2 ? nImages:0, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, saturated, saturated);
+		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
 
@@ -195,7 +195,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	void * *frames;
 	Uint8 *pview_yuv;
 	Uint32 *pview;
-	int nTable[3] = {1,3,7};	// sqrt of this value is used for thresholding at <=3, <=6 and >6
+	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
 	frames = (void**)env->GetIntArrayElements(in, NULL);
@@ -209,9 +209,11 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "b: %d (%d %d %d %d)  %d   %dx%d", (int)yuv, (int)yuv[0], (int)yuv[1], (int)yuv[2], (int)yuv[3], sensorGainPref, sx, sy);
 	//SuperZoom_Preview(&instance, yuv, pview_yuv, sx, sy, sxo, syo, -1, -1, nFrames,
 	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
-		256*nTable[sensorGainPref],
+		0, // 256*nTable[sensorGainPref],
 		deghTable[DeGhostPref],
-		-1, saturated, 1, 1, 0, 2, 1, NULL, 0, 0);	// hack to get brightening (pass enh. level in kelvin2 parameter)
+		-1, 8+saturated*8*16+1, 1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);	// hack to get brightening (pass enh. level in kelvin2 parameter)
+
+	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Preview completed");
 
 	env->ReleaseIntArrayElements(in, (jint*)frames, JNI_ABORT);
 

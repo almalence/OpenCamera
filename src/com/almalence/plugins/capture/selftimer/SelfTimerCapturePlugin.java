@@ -75,6 +75,8 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 
     private CountDownTimer timer=null;
     
+    public String flashModeBackUp = "";
+    
 	public SelfTimerCapturePlugin()
 	{
 		super("com.almalence.plugins.selftimercapture",
@@ -236,6 +238,17 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 	@Override
 	public void OnShutterClick()
 	{
+		flashModeBackUp = "";
+//		Camera cam = MainScreen.thiz.getCamera();
+//		if (cam != null)
+//		{
+//			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//			if (params != null)
+//				flashModeBackUp = params.getFlashMode();
+//		}
+		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		if (params != null)
+			flashModeBackUp = params.getFlashMode();
 		if (takingAlready == false)
 			takePicture();
 	}
@@ -259,7 +272,6 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 		
 		timer = new CountDownTimer(imagesTaken!=0 ? 1000 : delayInterval, imagesTaken!=0 ? 100: 1000) 
 		{			 
-			 final String flashModeBackUp = MainScreen.thiz.getCamera().getParameters().getFlashMode();
 			 boolean isFirstTick = true;
 		     public void onTick(long millisUntilFinished) {
 		    	 if(!(imagesTaken != 0 && !isFirstTick))
@@ -283,9 +295,9 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 			         {
 			        	try 
 			        	{
-			        		 Camera.Parameters p = camera.getParameters();
+			        		 Camera.Parameters p = MainScreen.thiz.getCameraParameters();
 				        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-				        	 camera.setParameters(p);
+				        	 MainScreen.thiz.setCameraParameters(p);
 						} catch (Exception e) {
 							e.printStackTrace();
 							Log.e("Self-timer", "Torch exception: " + e.getMessage());
@@ -375,9 +387,9 @@ public class SelfTimerCapturePlugin extends PluginCapture {
         	Camera camera = MainScreen.thiz.getCamera();
         	if (null==camera)
         		return;
-        	Camera.Parameters p = camera.getParameters();
+        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
        	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-       	 	camera.setParameters(p); 
+       	 	MainScreen.thiz.setCameraParameters(p); 
         }
     };
     
@@ -389,7 +401,7 @@ public class SelfTimerCapturePlugin extends PluginCapture {
         		return;
         	
         	try {
-	        	Camera.Parameters p = camera.getParameters();
+	        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
 	        	if(isFlashON)
 	        	{
 	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -400,7 +412,7 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 	       	 		isFlashON = true;
 	        	}
-	        	camera.setParameters(p);
+	        	MainScreen.thiz.setCameraParameters(p);
         	} catch (Exception e) {
 				e.printStackTrace();
 				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());
@@ -427,6 +439,9 @@ public class SelfTimerCapturePlugin extends PluginCapture {
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
     	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	if(imagesTaken == 1)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
     	
 		try
 		{

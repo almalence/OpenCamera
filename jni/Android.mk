@@ -20,10 +20,10 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include/libjpeg
 include $(PREBUILT_STATIC_LIBRARY)
 
 # Exiv2 library
-include $(CLEAR_VARS)
-LOCAL_MODULE    := exiv2
-LOCAL_SRC_FILES :=  prebuilt/$(TARGET_ARCH_ABI)/libexiv2.so
-include $(PREBUILT_SHARED_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE    := exiv2
+#LOCAL_SRC_FILES :=  prebuilt/$(TARGET_ARCH_ABI)/libexiv2.so
+#include $(PREBUILT_SHARED_LIBRARY)
 
 # Open CV libraries
 include $(CLEAR_VARS)

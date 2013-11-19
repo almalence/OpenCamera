@@ -30,6 +30,7 @@
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.capture" />    
 	
@@ -53,7 +54,8 @@
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>      
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>      
 	
 	    <capture 	id="com.almalence.plugins.selftimercapture" />    
 	
@@ -75,7 +77,8 @@
 		<vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>   
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
 	
 	    <capture 	id="com.almalence.plugins.burstcapture" />    
 	
@@ -99,6 +102,7 @@
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
 	
@@ -122,6 +126,7 @@
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
 	
@@ -145,6 +150,7 @@
 		<vf 		id="com.almalence.plugins.zoomvf"/>
 		<vf 		id="com.almalence.plugins.focusvf"/>
 		<vf 		id="com.almalence.plugins.infosetvf"/>
+		<vf 		id="com.almalence.plugins.aeawlockvf"/>
 		
 	    <capture 	id="com.almalence.plugins.nightcapture" />    
 	
@@ -167,14 +173,15 @@
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.videocapture" />    
 	
-	    <processing/>    
+	    <processing	id="com.almalence.plugins.simpleprocessing" />    
 	
 	    <filter/>    
 	
-	    <export/>
+	    <export 	id="com.almalence.plugins.export"/>
 
 		<sku/>
 		
@@ -191,6 +198,7 @@
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.preshotcapture" />    
 	
@@ -215,6 +223,7 @@
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.objectremovalcapture" />    
 	
@@ -239,6 +248,7 @@
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.groupshotcapture" />
 	
@@ -263,6 +273,7 @@
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.sequencecapture" />
 	
@@ -286,6 +297,7 @@
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
 	
 	    <capture 	id="com.almalence.plugins.panoramacapture_augmented" />
 	
@@ -300,4 +312,27 @@
 		<howtotext  id=""/>
 	</mode>
 
+<!-- 
+	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">
+	
+	    <icon		id="gui_almalence_mode_hiresportrait"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	
+	    <capture 	id="com.almalence.plugins.hiresportraitcapture" />
+	
+	    <processing id="com.almalence.plugins.hiresportraitprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id=""/>
+		
+		<howtotext  id=""/>
+	</mode>
+	-->
 </config>	

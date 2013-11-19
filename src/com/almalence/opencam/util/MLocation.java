@@ -65,7 +65,7 @@ public class MLocation
         }
 	}
 
-	public static void unsubcribe()
+	public static void unsubscribe()
 	{
 		if (lm != null)
 		{
@@ -78,17 +78,17 @@ public class MLocation
 	{
 		if (lastGpsLocation != null)
 		{
-			unsubcribe();
+			unsubscribe();
 			return lastGpsLocation;
 		}
 		else if (lastNetworkLocation != null)
 		{
-			unsubcribe();
+			unsubscribe();
 			return lastNetworkLocation;
 		}
 		else
 		{
-			unsubcribe();
+			unsubscribe();
 			return getLastChanceLocation(context);
 		}
 	}

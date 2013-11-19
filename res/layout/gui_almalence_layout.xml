@@ -73,7 +73,7 @@
 	    android:gravity="bottom"	    
 	    android:layout_alignParentBottom="true">
 
-    
+    <!-- android:src="@drawable/gui_almalence_gallery" -->
           	<RelativeLayout android:id="@+id/gallery_control"
             android:layout_weight="1"
 			android:layout_width="match_parent"
@@ -84,9 +84,9 @@
 		 	 	    android:orientation="vertical"
 		 	 	    android:gravity="center">
 	            <com.almalence.opencam.ui.RotateImageView
-					android:id="@+id/buttonGallery"
-					android:src="@drawable/gui_almalence_gallery"
-					android:layout_gravity="center_horizontal"				
+					android:id="@+id/buttonGallery"								
+					android:layout_gravity="center_horizontal"
+					android:src="@drawable/gui_almalence_gallery"									
 					android:background="@android:color/transparent"				
 					android:layout_height="@dimen/paramsLayoutHeight"
 					android:layout_width="@dimen/paramsLayoutHeight"	
@@ -97,7 +97,6 @@
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
-		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
 				<com.almalence.opencam.ui.RotateImageView
 					android:id="@+id/buttonGallery2"
@@ -105,7 +104,7 @@
 					android:layout_gravity="center_horizontal"
 					android:scaleType="center"
 					android:background="@android:color/transparent"
-					android:layout_height="@dimen/mainButtonHeight"
+					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
 			   		android:onClick="onButtonClick"
 			   		android:visibility="gone">
@@ -118,6 +117,7 @@
 	 	 	    android:orientation="vertical"
 	 	 	    android:gravity="bottom"	    			 	 	    
 				android:layout_weight="1">
+				
 	 	 	<com.almalence.opencam.ui.RotateImageView
 				android:id="@+id/buttonShutter"
 				android:src="@drawable/button_shutter"				
@@ -197,7 +197,17 @@
        android:orientation="vertical"
        android:background="@android:color/transparent"   
        android:visibility="visible" >
-	</RelativeLayout>	
+	</RelativeLayout>
+	
+	<RelativeLayout
+       android:id="@+id/specialPluginsLayout2"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:layout_above="@+id/mainButtons"
+       android:orientation="vertical"
+       android:background="@android:color/transparent"   
+       android:visibility="visible" >
+	</RelativeLayout>
 	
 	
 	<!-- Top menu for main camera parameters: Scene mode, WB, Flash mode, Focus mode and Preferences button   -->
@@ -257,7 +267,7 @@
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
-			   		android:onClick="onButtonClick"/>						
+			   		android:onClick="onButtonClick"/>									
 	</LinearLayout>
 	
 	<RelativeLayout android:id="@+id/qcLayout"
@@ -276,11 +286,9 @@
 					    android:verticalSpacing="10dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
-					    android:gravity="top"					    
+					    android:gravity="center"					    
 					    android:visibility="gone"
-					    android:paddingLeft="2dp"
-					    android:paddingRight="2dp"
-					    android:paddingBottom="2dp"
+					    
 					/>					
 	</RelativeLayout>
 

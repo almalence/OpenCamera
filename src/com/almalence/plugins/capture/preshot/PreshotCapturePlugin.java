@@ -196,14 +196,14 @@ public class PreshotCapturePlugin extends PluginCapture
 			Camera camera = MainScreen.thiz.getCamera();
 	    	if (null==camera)
 	    		return;
-	    	Camera.Parameters cp = camera.getParameters();
+	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 	
 	    	cp.setJpegQuality(90);
 	
 			// change fps
 			cp.setPreviewFrameRate(30);
 			
-			camera.setParameters(cp);
+			MainScreen.thiz.setCameraParameters(cp);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -225,7 +225,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 		if (isSlowMode==false)//fast mode
 		{
 			try 
@@ -233,7 +233,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				if(MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
 				{
 					cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);			
-					camera.setParameters(cp);
+					MainScreen.thiz.setCameraParameters(cp);
 					
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).commit();
 				}				
@@ -250,7 +250,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				if(MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
 				{
 					cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-					camera.setParameters(cp);
+					MainScreen.thiz.setCameraParameters(cp);
 					
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE).commit();
 				}				
@@ -266,7 +266,8 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onExportFinished()
 	{
-		modeSwitcher.setEnabled(true);
+		if (modeSwitcher!=null)
+			modeSwitcher.setEnabled(true);
 		if(AutostartPreference)
 		{
 			Camera camera = MainScreen.thiz.getCamera();
@@ -326,11 +327,11 @@ public class PreshotCapturePlugin extends PluginCapture
 	    	if (null==camera)
 	    		return;
 			MainScreen.guiManager.startContinuousCaptureIndication();
-			preview_fps = camera.getParameters().getPreviewFrameRate();
+			preview_fps = MainScreen.thiz.getCameraParameters().getPreviewFrameRate();
 			
-			imW = camera.getParameters().getPreviewSize().width;
-			imH = camera.getParameters().getPreviewSize().height;
-			format = camera.getParameters().getPreviewFormat();
+			imW = MainScreen.thiz.getCameraParameters().getPreviewSize().width;
+			imH = MainScreen.thiz.getCameraParameters().getPreviewSize().height;
+			format = MainScreen.thiz.getCameraParameters().getPreviewFormat();
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
@@ -403,7 +404,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 //			if(MainScreen.getCameraMirrored())
 //			{
-//				Camera.Parameters params = _camera.getParameters();			
+//				Camera.Parameters params = _MainScreen.thiz.getCameraParameters();			
 //				int imageWidth = params.getPreviewSize().width;
 //				int imageHeight = params.getPreviewSize().height;
 //				
@@ -463,7 +464,8 @@ public class PreshotCapturePlugin extends PluginCapture
         			 fm.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0 ||
 					 fm.compareTo(Camera.Parameters.FOCUS_MODE_INFINITY) == 0 ||
 					 fm.compareTo(Camera.Parameters.FOCUS_MODE_FIXED) == 0 ||
-					 fm.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0))
+					 fm.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0)
+					 && !MainScreen.getAutoFocusLock())
             	{
         			if(!MainScreen.autoFocus())
         			{
@@ -497,6 +499,10 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
     	inCapture = false;
+    	
+    	if (0 == PreShot.GetImageCount())
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+			
     	//PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getWantLandscapePhoto()?0:1);
     	PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.guiManager.getDisplayOrientation());
     	
@@ -552,7 +558,8 @@ public class PreshotCapturePlugin extends PluginCapture
 				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0 ||
 				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_INFINITY) == 0) ||
 				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_FIXED) == 0 ||
-				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0)
+				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0
+				  && !MainScreen.getAutoFocusLock())
 			{
 				Log.v("", "1");
 				counter=0;

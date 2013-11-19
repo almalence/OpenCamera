@@ -19,8 +19,10 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.expobracketing;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -65,7 +67,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     // preferences
 	public static boolean RefocusPreference;
 	public static boolean UseLumaAdaptation;
-	
+
+	//set exposure based on onpreviewframe
+	public boolean previewMode = true;
+	public boolean previewWorking=false;
+	public CountDownTimer cdt = null;
 	public ExpoBracketingCapturePlugin()
 	{
 		super("com.almalence.plugins.expobracketingcapture",
@@ -100,6 +106,16 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         preferenceEVCompensationValue = prefs.getInt("EvCompensationValue", 0);
+        
+        if (true == prefs.contains("expo_previewMode")) 
+        {
+        	previewMode = prefs.getBoolean("expo_previewMode", true);
+        }
+        else
+        	previewMode = true;
+        
+        previewWorking=false;
+        cdt = null;
 	}
 	
 	@Override
@@ -112,8 +128,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true);
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true);		
+		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false);
+		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);		
 	}
 	
 	@Override
@@ -122,7 +138,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters prm = camera.getParameters();
+		Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
 		if(prm != null)
 		{
 			prm.setExposureCompensation(0);
@@ -133,7 +149,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void OnShutterClick()
 	{
 		if (takingAlready == false)
+		{
+			previewWorking=false;
+			cdt = null;
 			startCaptureSequence();
+		}
 	}
 
 	private void startCaptureSequence()
@@ -157,14 +177,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-   	    			|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)))
+   	    			|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+   	    			&& !MainScreen.getAutoFocusLock())
     			aboutToTakePicture = true;
-    		else if(takingAlready == false && fm != null
+    		else if(takingAlready == false || (fm != null
     									   && (fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) ||
     										   fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ||
     										   fm.equals(Parameters.FOCUS_MODE_INFINITY) ||
     										   fm.equals(Parameters.FOCUS_MODE_FIXED) ||
-    										   fm.equals(Parameters.FOCUS_MODE_EDOF)))
+    										   fm.equals(Parameters.FOCUS_MODE_EDOF))))
     		{
     			Camera camera = MainScreen.thiz.getCamera();
     	    	if (null==camera)
@@ -201,22 +222,40 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		{
     		if (camera != null)		// paranoia
     		{
-	        	Camera.Parameters prm = camera.getParameters();
+	        	Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
 	            if (UseLumaAdaptation && LumaAdaptationAvailable)
 	            	prm.set("luma-adaptation", evRequested);
 	            else
 	            	prm.setExposureCompensation(evRequested);
 		    	try
 		    	{
-		    		camera.setParameters(prm);
+		    		MainScreen.thiz.setCameraParameters(prm);
 		    	}
 		    	catch (RuntimeException e)
 		    	{
 		    		Log.i("ExpoBracketing", "setExpo fail in MSG_SET_EXPOSURE");
 		    	}
 
-		    	// message to capture image will be emitted 2 or 3 frames after setExposure
-				evLatency = 10;		// the minimum value at which Galaxy Nexus is changing exposure in a stable way
+		    	if (previewMode)
+		    	{
+			    	// message to capture image will be emitted 2 or 3 frames after setExposure
+					evLatency = 10;		// the minimum value at which Galaxy Nexus is changing exposure in a stable way
+					
+		    	}
+		    	else
+		    	{
+			    	new CountDownTimer(500, 500) {
+						public void onTick(long millisUntilFinished) {
+						}
+	
+						public void onFinish() {
+							Message msg = new Message();
+							msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
+							msg.what = PluginManager.MSG_BROADCAST;
+							MainScreen.H.sendMessage(msg);
+						}
+					}.start();
+		    	}
     		}
     		return true;
 		}    	    
@@ -257,6 +296,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	            {
 	            	takingAlready = false;
 	            	inCapture = false;
+	            	previewWorking = true;
+	            	if (cdt!=null)
+	            	{
+	            		cdt.cancel();
+	            		cdt = null;
+	            	}
 	            	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
 	            	MainScreen.thiz.resetExposureCompensation();
 	            }
@@ -274,13 +319,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	        	// let's try to set the exposure two times, catching possible throws on differing models
 		    	try
 		    	{
-		        	Camera.Parameters prm = camera.getParameters();
+		        	Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
 
 		            if (UseLumaAdaptation && LumaAdaptationAvailable)
 		            	prm.set("luma-adaptation", evRequested);
 		            else
 		            	prm.setExposureCompensation(evRequested);
-		            camera.setParameters(prm);
+		            MainScreen.thiz.setCameraParameters(prm);
 		    	}
 		    	catch (RuntimeException e)
 		    	{
@@ -316,6 +361,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(n+1));
     	
+    	if(n == 0)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    	
     	if (compressed_frame[n] == 0)
     	{
     		NotEnoughMemory();
@@ -325,6 +373,35 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 		msg.what = PluginManager.MSG_BROADCAST;
 		MainScreen.H.sendMessage(msg);
+		
+		//if preview not working
+		if (previewMode==false)
+			return;
+		previewWorking = false;
+		//start timer to check if onpreviewframe working
+		cdt = new CountDownTimer(5000, 5000) {
+			public void onTick(long millisUntilFinished) {
+			}
+
+			public void onFinish() {
+				if (previewWorking == false)
+				{
+					Log.e("ExpoBracketing", "previewMode DISABLED!");
+					previewMode=false;
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean("expo_previewMode", false);
+					prefsEditor.commit();
+					evLatency=0;
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);
+				}
+			}
+		};
+		cdt.start();
+		
 	}
 	
 	private void getPrefs()
@@ -351,7 +428,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-        Camera.Parameters cp = camera.getParameters();
+        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
         
         String luma = cp.get("luma-adaptation");
         if (luma == null)
@@ -574,8 +651,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		if (evLatency>0)
 		{
+			previewWorking=true;
 			if (--evLatency == 0)
 			{
+				if (cdt!=null)
+            	{
+            		cdt.cancel();
+            		cdt = null;
+            	}
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
 				msg.what = PluginManager.MSG_BROADCAST;

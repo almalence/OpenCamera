@@ -273,7 +273,7 @@ public class Thumbnail {
     {
     	final int side = Math.min(bitmap.getWidth(), bitmap.getHeight());
 
-    	System.gc();
+    	//System.gc();
     	final Bitmap bitmapCropped = Bitmap.createBitmap(    				
     		bitmap,
     		(bitmap.getWidth() - side) / 2,
@@ -281,7 +281,7 @@ public class Thumbnail {
     		side, 
     		side);
     	
-    	System.gc();
+    	//System.gc();
     	final Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         
         Canvas canvas = new Canvas(output);

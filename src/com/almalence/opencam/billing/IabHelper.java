@@ -15,11 +15,6 @@
 
 package com.almalence.opencam.billing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -35,6 +30,11 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.vending.billing.IInAppBillingService;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -263,6 +263,7 @@ public class IabHelper {
         };
 
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.android.vending");
         if (!mContext.getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
             // service available to handle that Intent
             mContext.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_ExpoBracketing_Category_Title">Captura com bracketing de exposição</string>
+    <string name="Pref_ExpoBracketing_Preference_Title">Capturar</string>
+    <string name="Pref_ExpoBracketing_Preference_Summary">Bracketing de exposição</string>
+    
+    <string name="Pref_ExpoBracketing_ImageSize_Title">Tamanho da imagem</string>
+    <string name="Pref_ExpoBracketing_EvRange_Title">Escala Ev</string>
+    <string name="Pref_ExpoBracketing_Capture_Title">Modo de mudança de exposição</string>
+    <string name="Pref_ExpoBracketing_Capture_Summary">Altere se você deseja as fotos com o mesmo valor de exposição</string>
+    <string name="Pref_ExpoBracketing_Luma_Title">Controle de exposição alternativo</string>
+    <string name="Pref_ExpoBracketing_Luma_Summary">Tente isso se a exposição não mudar</string>
+    <string name="Pref_ExpoBracketing_Refocus_Title">Re-focar a cada disparo</string>
+    <string name="Pref_ExpoBracketing_Refocus_Summary">Alguns aparelhos resetam o foco após um disparo. Marque se suas fotos ficarem fora de foco</string>
+    
+    <string name="Pref_ExpoBracketing_Expo">Máximo possível</string>
+    <string name="Pref_ExpoBracketing_None">Nenhum</string>
+</resources>

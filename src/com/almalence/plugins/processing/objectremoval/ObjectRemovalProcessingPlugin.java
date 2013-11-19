@@ -60,13 +60,13 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.exiv2.Exiv2;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.util.MLocation;
 import com.almalence.opencam.util.Size;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
@@ -86,12 +86,16 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 
     public static boolean SaveInputPreference;
     
+    public boolean released=false;
     private AlmaCLRShot mAlmaCLRShot;
 
     static public int imgWidthOR;
 	static public int imgHeightOR;
 	private int mDisplayOrientation;
 	private boolean mCameraMirrored;
+	
+	//indicates that no more user interaction needed
+	private boolean finishing = false;
 	
 	public ObjectRemovalProcessingPlugin()
 	{
@@ -113,6 +117,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	@Override
 	public void onStartProcessing(long SessionID) 
 	{
+		finishing = false;
+		released=false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.H.sendMessage(msg);	
@@ -257,15 +263,22 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     			            
     			            if (l != null)
     			            {	     
-    			            	Exiv2.writeGeoDataIntoImage(
-    			            		file.getAbsolutePath(), 
-    			            		true,
-    			            		l.getLatitude(), 
-    			            		l.getLongitude(), 
-    			            		dateString, 
-    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
+//    			            	Exiv2.writeGeoDataIntoImage(
+//    			            		file.getAbsolutePath(), 
+//    			            		true,
+//    			            		l.getLatitude(), 
+//    			            		l.getLongitude(), 
+//    			            		dateString, 
+//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
+//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
     			            		
+    			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+    			            	ei.saveAttributes();
     			            	
     				            values.put(ImageColumns.LATITUDE, l.getLatitude());
     				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
@@ -342,11 +355,13 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	private ImageView mImgView;
 	private Button mSaveButton;
 	
+	private int mLayoutOrientationCurrent;
 	private int mDisplayOrientationCurrent;
 	
 	private static final int MSG_REDRAW = 1;
 	private static final int MSG_LEAVING = 3;
 	private static final int MSG_END_OF_LOADING = 4;
+	private static final int MSG_SAVE = 5;
 	private final Handler mHandler = new Handler(this);
 	private boolean[] mObjStatus;
 	private Bitmap PreviewBmp = null;
@@ -360,6 +375,10 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	@Override
 	public void onStartPostProcessing()
 	{	
+		mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
+		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
+    	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
+		
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_objectremoval_postprocessing, null, false);
 		
@@ -423,6 +442,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN)
 				{
+					if (finishing == true)
+						return true;
 			        float x = event.getY();
 					float y = mDisplayHeight-1-event.getX();
 					int objIndex = 0;
@@ -458,16 +479,17 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.objectremovalLayout)).addView(mSaveButton, saveLayoutParams);
-		mSaveButton.setRotation(mDisplayOrientationCurrent);
+		mSaveButton.setRotation(mLayoutOrientationCurrent);
     }
     
     public void onOrientationChanged(int orientation)
     {	    	
     	if(orientation != mDisplayOrientationCurrent)
     	{
+    		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
     		mDisplayOrientationCurrent = orientation;
     		if(postProcessingRun)
-    			mSaveButton.setRotation(mDisplayOrientationCurrent);
+    			mSaveButton.setRotation(mLayoutOrientationCurrent);
     	}
     }
     
@@ -476,14 +498,10 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	{
     	if (v == mSaveButton)
     	{
-    		try {
-				mAlmaCLRShot.setObjectList(mObjStatus);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-    		savePicture(MainScreen.mainContext);
-    		
-    		mHandler.sendEmptyMessage(MSG_LEAVING);
+    		if (finishing == true)
+				return;
+    		finishing = true;
+    		mHandler.sendEmptyMessage(MSG_SAVE);
     	}
 	}
     
@@ -506,7 +524,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 		
-		mAlmaCLRShot.release();
 //		try
 //        {	
 //			String[] filesSavedNames = new String[1];
@@ -579,7 +596,18 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 			setupSaveButton();
 			postProcessingRun = true;
     		break;
+    	case MSG_SAVE:
+    		try {
+				mAlmaCLRShot.setObjectList(mObjStatus);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    		savePicture(MainScreen.mainContext);
+    		mHandler.sendEmptyMessage(MSG_LEAVING);
+    		break;
     	case MSG_LEAVING:
+    		if (released==true)
+    			return false;
     		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
     		mJpegBufferList.clear();
     		
@@ -591,11 +619,16 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		MainScreen.guiManager.lockControls = false;   		
 
     		postProcessingRun = false;
-        	return false;
+    		
+    		mAlmaCLRShot.release();
+    		released=true;
+        	break;
         	
     	case MSG_REDRAW:
             if (PreviewBmp != null)
             	PreviewBmp.recycle();
+            if (finishing == true)
+				return true;
     		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
     		drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
             if (PreviewBmp != null) 
@@ -618,6 +651,9 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
+			if (finishing == true)
+				return true;
+			finishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);
 			return true;
 		}

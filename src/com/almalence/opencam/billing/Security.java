@@ -15,6 +15,13 @@
 
 package com.almalence.opencam.billing;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -23,9 +30,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-
-import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * Security-related methods. For a secure implementation, all of this code
@@ -52,21 +56,14 @@ public class Security {
      * @param signature the signature for the data, signed with the private key
      */
     public static boolean verifyPurchase(String base64PublicKey, String signedData, String signature) {
-        if (signedData == null) {
-            Log.e(TAG, "data is null");
+        if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey) ||
+                TextUtils.isEmpty(signature)) {
+            Log.e(TAG, "Purchase verification failed: missing data.");
             return false;
         }
 
-        boolean verified = false;
-        if (!TextUtils.isEmpty(signature)) {
-            PublicKey key = Security.generatePublicKey(base64PublicKey);
-            verified = Security.verify(key, signedData, signature);
-            if (!verified) {
-                Log.w(TAG, "signature does not match data.");
-                return false;
-            }
-        }
-        return true;
+        PublicKey key = Security.generatePublicKey(base64PublicKey);
+        return Security.verify(key, signedData, signature);
     }
 
     /**

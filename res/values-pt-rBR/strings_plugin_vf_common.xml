@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">Confirações comuns de visor</string>
+	
+	<string name="Pref_KeepScreenOn">Manter tela ligada</string>
+	<string name="Pref_KeepScreenOn_Summary">Evitar desligamento da tela ao usar a câmera</string>
+	
+</resources>

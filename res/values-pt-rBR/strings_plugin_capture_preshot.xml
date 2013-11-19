@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_PreShot_Preference_Title">Foto com pré-disparo</string>
+	
+	<string name="Pref_PreShot_ImageSize_Title">Tamanho da imagem</string>
+	
+	<string name="Pref_PreShot_RefocusOnEachShot_Title">Re-focar a cada disparo</string>
+	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Alguns dispositivos resetam o foco após um disparo. Marque se suas fotos estão ficando fora de foco.</string>
+	
+	<string name="Pref_PreShot_Mode_Title">Modo</string>
+	<string name="Pref_PreShot_Mode_Summary">Modo de captura de imagem</string>
+	
+	<string name="Pref_PreShot_preshot_Title">Segundos antes da captura...</string>
+	<string name="Pref_PreShot_preshot_Summary">Armazenar quadros num determinado intervalo, antes da conclusão da captura.</string>
+	
+	<string name="Pref_PreShot_fps_Title">Disparos por segundo (alta velocidade)</string>
+	<string name="Pref_PreShot_fps_Summary">Quantidade de imagens para capturar por segundo</string>
+	
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pausa entre as capturas (alta resolução)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pausar após uma captura - para fins de refoco.</string>
+	
+	<string name="Pref_PreShot_Low">Baixa resolução (mais rápido)</string>
+	<string name="Pref_PreShot_High">Alta resolução (mais lento)</string>
+	
+	<string name="Pref_PreShot_None">Nenhum</string>
+	
+	<string name="Pref_PreShot_1shot">1 disparo por segundo</string>
+	<string name="Pref_PreShot_2shot">2 disparos por segundo</string>
+	<string name="Pref_PreShot_3shot">3 disparos por segundo</string>
+	<string name="Pref_PreShot_4shot">4 disparos por segundo</string>
+	<string name="Pref_PreShot_5shot">5 disparos por segundo</string>
+	<string name="Pref_PreShot_10shot">10 disparos por segundo</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">Iniciar automaticamente</string>
+	<string name="Pref_PreShot_Autostart_Summary">Começar a captura ao abrir a câmera</string>
+</resources>

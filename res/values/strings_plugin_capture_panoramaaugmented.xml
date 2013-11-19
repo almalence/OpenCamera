@@ -19,4 +19,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">No gyroscope</string>
     <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">There is no gyroscope on your device, sorry. We instead enable our software gyroscope to enhance your experience</string>
     
+    <string name="plugin_capture_panoramaaugmented_badframe">Please hold still when taking picture</string>
+    
 </resources>

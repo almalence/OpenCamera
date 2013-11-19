@@ -209,13 +209,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		    	{
 		    		return null;
 		    	}
-		    	
-//		    	Camera.Parameters params = MainScreen.camera.getParameters();
-//		    	int imageWidth = params.getPreviewSize().width;
-//				int imageHeight = params.getPreviewSize().height;
-//		    	byte[] dataRotated = new byte[data.length];
-//				ImageConversion.TransformNV21(data, dataRotated, imageWidth, imageHeight, 0, 1, 0);
-//				data = dataRotated;			
 				
 		    	int frame = SwapHeap.SwapToHeap(data);
 		    	
@@ -545,7 +538,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	Bitmap photo = mini_frames[idx];//getMultishotBitmap(idx);
     	//Log.e("MultishotExportPlugin", "Show getMultishotBitmap success");
     	if(photo != null)
-    	{
+    	{    		
     		if(initial)
     		{
 	    		if(mDisplayOrientationCurrent == 0 || mDisplayOrientationCurrent == 180) //Device in landscape
@@ -760,7 +753,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	if(isFlipping)
     		return true;
     	
-    	boolean isGuffyOrientation = (mDisplayOrientationCurrent == 180 || mDisplayOrientationCurrent == 270); 
+    	boolean isGuffyOrientation = (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270); 
     	
     	Bitmap photo = null;
     	
@@ -968,9 +961,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			    	if(photo != null)
 			    	{
 			    		Matrix matrix = new Matrix();
-			    		
+			    		matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
 						//matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent)%360 : mLayoutOrientationCurrent);
-			    		matrix.postRotate(mLayoutOrientationCurrent);
+			    		//matrix.postRotate(mLayoutOrientationCurrent);
 						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			    		((ImageView)postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
 			    	}
@@ -983,8 +976,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			    	{
 			    		Matrix matrix = new Matrix();
 			    		
+			    		matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
 						//matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent)%360 : mLayoutOrientationCurrent);
-						matrix.postRotate(mLayoutOrientationCurrent);
+						//matrix.postRotate(mLayoutOrientationCurrent);
 						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			    		((ImageView)postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
 			    	}

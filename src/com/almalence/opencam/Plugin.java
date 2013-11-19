@@ -65,7 +65,7 @@ public abstract class Plugin
 	//preference header name - to show on main preference screen
 	//TODO make private
 	public String title = "Default title";
-	public String summary = "Default summary";
+	//public String summary = "Default summary";
 	
 	//ID of icon and title for creating quick control button
 	//Each plugin may have only one quick control button
@@ -133,7 +133,7 @@ public abstract class Plugin
 		setAdvancedPreferenceName(advancedPreferenceID);
 		//for dynamic preference generation. Header text and preferences xml
 		title = preferenceTitle;
-		summary = preferenceSummary;
+		//summary = preferenceSummary;
 		
 		quickControlIconID = quickControlID;
 		quickControlTitle = quickControlInitTitle;
@@ -230,7 +230,7 @@ public abstract class Plugin
     	Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 		List<Camera.Size> cs = cp.getSupportedPictureSizes();
 		int Capture5mIdx = -1;
 		long Capture5mMpix = 0;
@@ -301,11 +301,10 @@ public abstract class Plugin
     	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(CaptureHeight));
 	}
 	
-	public void SetCameraPreviewSize() {
+	public void SetCameraPreviewSize(Camera.Parameters cp) {
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
 		List<Camera.Size> cs = cp.getSupportedPreviewSizes();
 
 		Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
@@ -313,7 +312,7 @@ public abstract class Plugin
 		cp.setPreviewSize(os.width, os.height);
 		try
         {
-			camera.setParameters(cp);
+			MainScreen.thiz.setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {
@@ -325,12 +324,12 @@ public abstract class Plugin
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = camera.getParameters();
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setJpegQuality(95);
 		try
         {
-			camera.setParameters(cp);
+			MainScreen.thiz.setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {
@@ -385,6 +384,8 @@ public abstract class Plugin
 	
 	// Called for each plugin on first camera startup. Camera setup is guaranteed when it's called.
 	public void onDefaultsSelect() { }
+	
+	public void onCaptureFinished() { }
 	
 	
 /******************************************************************************************************

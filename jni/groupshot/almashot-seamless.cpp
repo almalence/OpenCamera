@@ -137,7 +137,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	jint fd_sx,
 	jint fd_sy,
 	jboolean needRotation,
-	jboolean cameraMirrored
+	jboolean cameraMirrored,
+	jint rotationDegree
 )
 {
 	int i;
@@ -152,7 +153,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, needRotation, cameraMirrored);
+	isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, needRotation, cameraMirrored, rotationDegree);
 
 	// prepare down-scaled gray frames for face detection analisys and detect faces
 	#pragma omp parallel for
@@ -165,7 +166,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 		{
 			void *inst;
 
-			if(!needRotation)
+			if(rotationDegree == 0 || rotationDegree == 180)
 				NV21_to_Gray_scaled(inputFrame[i], sx, sy, 0, 0, sx, sy, fd_sx, fd_sy, grayFrame);
 			else
 				NV21_to_Gray_scaled(inputFrame[i], sy, sx, 0, 0, sy, sx, fd_sx, fd_sy, grayFrame);

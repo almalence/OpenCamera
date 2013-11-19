@@ -152,7 +152,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_opencam_util_ImageConversio
 	jint sx,
 	jint sy,
 	jboolean jrot,
-	jboolean mirror
+	jboolean mirror,
+	jint rotationDegree
 )
 {
 	int data_length;
@@ -165,7 +166,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_opencam_util_ImageConversio
 
 	if (out != NULL)
 	{
-		if (JPEG2NV21(out, data, data_length, sx, sy, jrot, mirror) == 0)
+		if (JPEG2NV21(out, data, data_length, sx, sy, jrot, mirror, rotationDegree) == 0)
 		{
 			free(out);
 			out = NULL;
@@ -209,6 +210,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 	unsigned int* data_rgba = (unsigned int*)malloc(inHeight*inWidth*sizeof(unsigned int));
 	if (data_rgba == NULL)
 	{
+		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "nativeresizeJpeg2RGBA(): malloc() returned NULL");
 		return;
 	}
 

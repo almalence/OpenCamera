@@ -55,7 +55,8 @@ public final class AlmaShotSeamless
     	int fd_sx,
     	int fd_sy,
     	boolean needRotation,
-    	boolean cameraMirrored
+    	boolean cameraMirrored,
+    	int rotationDegree
     );
     
     public static synchronized native int GetFaces(int index, Face[] faces);

@@ -55,13 +55,13 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.exiv2.Exiv2;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.util.MLocation;
 import com.almalence.opencam.util.Size;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
@@ -90,7 +90,10 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	
 	private OrderControl sequenceView;
 	public static ArrayList<Bitmap> thumbnails = new ArrayList<Bitmap>();
-	
+
+	//indicates that no more user interaction needed
+	private boolean finishing = false;
+		
 	public SequenceProcessingPlugin()
 	{
 		super("com.almalence.plugins.sequenceprocessing",
@@ -111,6 +114,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	@Override
 	public void onStartProcessing(long SessionID) 
 	{
+		finishing = false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.H.sendMessage(msg);	
@@ -125,6 +129,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		sessionID=SessionID;
 
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
+		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
+    	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
         
         if(mDisplayOrientation == 0 || mDisplayOrientation == 180)
         {
@@ -261,15 +267,22 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			            
     			            if (l != null)
     			            {	     
-    			            	Exiv2.writeGeoDataIntoImage(
-    			            		file.getAbsolutePath(), 
-    			            		true,
-    			            		l.getLatitude(), 
-    			            		l.getLongitude(), 
-    			            		dateString, 
-    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-    			            		
+//    			            	Exiv2.writeGeoDataIntoImage(
+//    			            		file.getAbsolutePath(), 
+//    			            		true,
+//    			            		l.getLatitude(), 
+//    			            		l.getLongitude(), 
+//    			            		dateString, 
+//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
+//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
+
+    			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+    			            	ei.saveAttributes();
     			            	
     				            values.put(ImageColumns.LATITUDE, l.getLatitude());
     				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
@@ -351,6 +364,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private static final int MSG_END_OF_LOADING = 4;
 	private final Handler mHandler = new Handler(this);
 	private boolean[] mObjStatus;
+	private int mLayoutOrientationCurrent;
 	private int mDisplayOrientationCurrent;
 	private Bitmap PreviewBmp = null;
 	public static int mDisplayWidth;
@@ -481,7 +495,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
-		mSaveButton.setRotation(mDisplayOrientationCurrent);
+		mSaveButton.setRotation(mLayoutOrientationCurrent);
     }
     
     public void onOrientationChanged(int orientation)
@@ -489,6 +503,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	if(orientation != mDisplayOrientationCurrent)
     	{
     		mDisplayOrientationCurrent = orientation;
+    		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
 //
 //	    	if (PreviewBmp != null)
 //	        	PreviewBmp.recycle();
@@ -503,7 +518,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 //	    	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
 //
     		if(postProcessingRun)
-    			mSaveButton.setRotation(mDisplayOrientationCurrent);
+    			mSaveButton.setRotation(mLayoutOrientationCurrent);
     	}
     }
     
@@ -512,6 +527,9 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	{
     	if (v == mSaveButton)
     	{
+    		if (finishing == true)
+				return;
+    		finishing = true;
 //    		try {
 //				mAlmaCLRShot.setObjectList(mObjStatus);
 //			} catch (Exception e) {
@@ -572,6 +590,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	case MSG_REDRAW:
             if (PreviewBmp != null)
             	PreviewBmp.recycle();
+            if (finishing == true)
+				return true;
     		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
 //    		drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
             if (PreviewBmp != null) 
@@ -596,7 +616,11 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
+			if (finishing == true)
+				return true;
+			finishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);
+			mAlmaCLRShot.release();
 			return true;
 		}
 		

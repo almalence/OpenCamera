@@ -52,6 +52,7 @@
     <string name="focusEdof">Edof</string>
     <string name="focusContinuousVideo">Continuous video</string>
     <string name="focusContinuousPicture">Continuous picture</string>
+    <string name="focusAFLock">AF lock</string>
     
     <string name="flashAuto">Auto</string>
     <string name="flashOn">On</string>
@@ -60,11 +61,13 @@
     <string name="flashTorch">Torch</string>
     
     <string name="isoAuto">Auto</string>
+    <string name="iso50">ISO50</string>
     <string name="iso100">ISO100</string>
     <string name="iso200">ISO200</string>
     <string name="iso400">ISO400</string>
     <string name="iso800">"ISO800"</string>
     <string name="iso1600">ISO1600</string>
+    <string name="iso3200">ISO3200</string>
     
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">action</string>
@@ -102,6 +105,7 @@
     <string name="focusEdofSystem">edof</string>
     <string name="focusContinuousVideoSystem">continuous-video</string>
     <string name="focusContinuousPictureSystem">continuous-picture</string>
+    <string name="focusAfLockSystem">af-lock</string>
     
     <string name="flashAutoSystem">auto</string>
     <string name="flashOnSystem">on</string>
@@ -110,11 +114,13 @@
     <string name="flashTorchSystem">torch</string>
     
     <string name="isoAutoSystem">auto</string>
+    <string name="iso50System">ISO50</string>
     <string name="iso100System">ISO100</string>
     <string name="iso200System">ISO200</string>
     <string name="iso400System">ISO400</string>
     <string name="iso800System">"ISO800"</string>
     <string name="iso1600System">ISO1600</string>
+    <string name="iso3200System">ISO3200</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>
@@ -125,6 +131,8 @@
     <string name="settings_mode_front">Front camera</string>
     <string name="settings_mode_exposure">Exposure</string>
     <string name="settings_mode_moresettings">More settings</string>
+    <string name="settings_mode_aeaflock">AE\\AF Locked</string>
+    <string name="settings_mode_aeafunlock">AE\\AF UnLocked</string>
     
     <string name="settings_not_available">Not available in current mode</string>
     <string name="processing_not_finished">Processing is not finished yet. Please wait.</string>
@@ -134,6 +142,7 @@
 	<string name="Pref_VF_Preference_Title">Viewfinder settings</string>
 	<string name="Pref_VF_Preference_Summary">What to display</string>
 	<string name="Pref_Modes_Preference_Title">Shooting modes settings</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Night, Panorama ...</string>
 	<string name="Pref_Saving_Preference_Title">Saving and sharing</string>
 	<string name="Pref_Saving_Preference_Summary">Filenames, formats, geotagging, exif and other parameters</string>
 	<string name="Pref_Advanced_Preference_Title">Advanced</string>

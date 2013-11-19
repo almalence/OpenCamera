@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Focus_Preference_Title">Foco</string>
+	<string name="Pref_Focus_Preference_Summary">Foco</string>
+	
+</resources>

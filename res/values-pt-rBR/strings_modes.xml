@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="single_mode_name">Disparo único</string>
+    <string name="single_mode_howto"></string>
+    
+    <string name="selftimer_mode_name">Temporizador</string>
+    <string name="selftimer_mode_howto"></string>
+    
+    <string name="burst_mode_name">Múltiplos</string>
+    <string name="burst_mode_howto"></string>
+    
+    <string name="expobracketing_mode_name">Bracketing de exp.</string>
+    <string name="expobracketing_mode_howto"></string>
+    
+    <string name="hdr_mode_name">HDR</string>
+    <string name="hdr_mode_howto"></string>
+    
+    <string name="night_mode_name">Noturno</string>
+    <string name="night_mode_howto"></string>
+    
+    <string name="video_mode_name">Vídeo</string>
+    <string name="video_mode_howto"></string>
+    
+    <string name="preshot_mode_name">Pré-disparo</string>
+    <string name="preshot_mode_howto">Toque o obturador para iniciar/parar a captura</string>
+    
+    <string name="objectremoval_mode_name">Remoção de objetos</string>
+    <string name="objectremoval_mode_howto"></string>
+    
+    <string name="groupshot_mode_name">Foto de grupo</string>
+    <string name="groupshot_mode_howto"></string>
+    
+    <string name="sequence_mode_name">Sequência de fotos</string>
+    <string name="sequence_mode_howto"></string>
+    
+    <string name="panorama_mode_name">Panorama</string>
+    <string name="panorama_mode_howto"></string>
+    
+   
+</resources>

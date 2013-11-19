@@ -48,12 +48,10 @@ public class GridVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.gridvf",
 			  R.xml.preferences_vf_grid,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Grid_Preference_Title),
+			  "Grid",//MainScreen.thiz.getResources().getString(R.string.Pref_Grid_Preference_Title),
 			  "",
 			  R.drawable.plugin_vf_grid_none,
 			  "Grid type");		
-
-		refreshPreferences();
 	}
 	
 	@Override
@@ -156,7 +154,7 @@ public class GridVFPlugin extends PluginViewfinder
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-		Size previewSize = camera.getParameters().getPreviewSize();
+		Size previewSize = MainScreen.thiz.getCameraParameters().getPreviewSize();
 		
 		float ratio = (float)previewSize.width/previewSize.height;
 

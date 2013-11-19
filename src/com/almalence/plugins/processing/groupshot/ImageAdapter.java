@@ -141,27 +141,34 @@ public class ImageAdapter extends BaseAdapter {
 		options.inJustDecodeBounds = false;
 		if (mList == null) {
 			Bitmap bm = BitmapFactory.decodeFile(imagePath[position], options);
-			if(!mDisplayLandscape)
-    		{
-	    		Matrix matrix = new Matrix();
-	    		matrix.postRotate(mCameraMirrored? -90 : 90);
-	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-    		}
+//			if(!mDisplayLandscape)
+//    		{
+//	    		Matrix matrix = new Matrix();
+//	    		matrix.postRotate(mCameraMirrored? -90 : 90);
+//	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+//    		}
+			Matrix matrix = new Matrix();
+    		matrix.postRotate(mCameraMirrored? -90 : 90);
+    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);			
 			i.setImageBitmap(bm);
 		} else {
 			Bitmap bm = BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
-			if(!mDisplayLandscape)
-    		{
-	    		Matrix matrix = new Matrix();
-	    		matrix.postRotate(mCameraMirrored? -90 : 90);
-	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-    		}
+//			if(!mDisplayLandscape)
+//    		{
+//	    		Matrix matrix = new Matrix();
+//	    		matrix.postRotate(mCameraMirrored? -90 : 90);
+//	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+//    		}
+			Matrix matrix = new Matrix();
+    		matrix.postRotate(mCameraMirrored? -90 : 90);
+    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
 			i.setImageBitmap(bm);
 		}
-		if(mDisplayLandscape)
-			i.setLayoutParams(new Gallery.LayoutParams(250, 200));
-		else
-			i.setLayoutParams(new Gallery.LayoutParams(200, 250));
+		i.setLayoutParams(new Gallery.LayoutParams(200, 250));
+//		if(mDisplayLandscape)
+//			i.setLayoutParams(new Gallery.LayoutParams(250, 200));
+//		else
+//			i.setLayoutParams(new Gallery.LayoutParams(200, 250));
 		i.setScaleType(ImageView.ScaleType.FIT_XY);
 		i.setBackgroundResource(mGalleryItemBackground);
 		return i;

@@ -116,9 +116,11 @@ public class FocusVFPlugin extends PluginViewfinder
                 case RESET_TOUCH_FOCUS:
                     cancelAutoFocus();
                     Camera camera = MainScreen.thiz.getCamera();
+                    String fm = MainScreen.thiz.getFocusMode();
                     if(camera != null &&
                 		  	   (preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
                 		  	    preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0) &&
+                		  	    fm != null &&
                 		  	    preferenceFocusMode.compareTo(MainScreen.thiz.getFocusMode()) != 0)
                       	{
                           	MainScreen.thiz.setCameraFocusMode(preferenceFocusMode);
@@ -141,8 +143,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.focusvf",
 				0,
 				0,
-				MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Title),
-				MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Summary),
+				"",//MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Title),
+				null,//MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Summary),
 				0,
 				null);
 
@@ -307,7 +309,7 @@ public class FocusVFPlugin extends PluginViewfinder
         
         Matrix matrix = new Matrix();
         Util.prepareMatrix(matrix, mirror, displayOrientation,
-        		MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight());
+        		mPreviewWidth, mPreviewHeight);
         // In face detection, the matrix converts the driver coordinates to UI
         // coordinates. In tap focus, the inverted matrix converts the UI
         // coordinates to driver coordinates.
@@ -340,11 +342,12 @@ public class FocusVFPlugin extends PluginViewfinder
     	Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-        if (needAutoFocusCall())
+        if (needAutoFocusCall() && !focusOnShutterDisabled())
         { 
             if (mState == STATE_IDLE &&
             		!(preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
-            		preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)== 0))
+            		preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)== 0)
+            		&& !MainScreen.getAutoFocusLock())
             {
             	if(preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
             	           preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0)
@@ -357,7 +360,7 @@ public class FocusVFPlugin extends PluginViewfinder
             else if((mState == STATE_SUCCESS || mState == STATE_FAIL) &&
             		(preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
             		preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)== 0) &&
-            		preferenceFocusMode.compareTo(camera.getParameters().getFocusMode()) != 0)
+            		preferenceFocusMode.compareTo(MainScreen.thiz.getCameraParameters().getFocusMode()) != 0)
             {
             	// allow driver to choose whatever it wants for focusing / metering
                 // without these two lines Continuous focus is not re-enabled on HTC One
@@ -372,12 +375,12 @@ public class FocusVFPlugin extends PluginViewfinder
             		MainScreen.thiz.setCameraMeteringAreas(null);
             	}
                 
-            	Camera.Parameters params = camera.getParameters();
+            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
         		if(params != null)
         		{
         			camera.cancelAutoFocus();
         			params.setFocusMode(preferenceFocusMode);
-        			camera.setParameters(params);
+        			MainScreen.thiz.setCameraParameters(params);
         		}
             }
             else if(mState == STATE_FAIL)
@@ -488,9 +491,11 @@ public class FocusVFPlugin extends PluginViewfinder
         	focusCanceled = true;
         	cancelAutoFocus();
         	Camera camera = MainScreen.thiz.getCamera();
+        	String fm = MainScreen.thiz.getFocusMode();
         	if(camera != null &&
         		  	   (preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
         		  	    preferenceFocusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0) &&
+        		  	    fm!=null&&
         		  	    preferenceFocusMode.compareTo(MainScreen.thiz.getFocusMode()) != 0)
               	{
                   	MainScreen.thiz.setCameraFocusMode(preferenceFocusMode);
@@ -878,13 +883,16 @@ public class FocusVFPlugin extends PluginViewfinder
     {
         String focusMode = getFocusMode();
         boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("UseFocus", true);
-        boolean continuousCapturing = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("ContinuousCapturing", false);
         return !(focusMode.equals(Parameters.FOCUS_MODE_INFINITY)
                 || focusMode.equals(Parameters.FOCUS_MODE_FIXED)
                 || focusMode.equals(Parameters.FOCUS_MODE_EDOF)		// FixMe: EDOF likely needs auto-focus call 
                 || !useFocus
-                || mFocusDisabled
-                || continuousCapturing);
+                || mFocusDisabled);
+    }
+    
+    private boolean focusOnShutterDisabled()
+    {
+    	return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("ContinuousCapturing", false);
     }
     
     public boolean onBroadcast(int arg1, int arg2)
@@ -910,7 +918,12 @@ public class FocusVFPlugin extends PluginViewfinder
 		else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
 			String fm = MainScreen.thiz.getFocusMode();
-			preferenceFocusMode = MainScreen.thiz.getFocusMode();
+			if (fm != null)
+				preferenceFocusMode = fm;
+		}
+		else if (arg1 == PluginManager.MSG_PREVIEW_CHANGED)
+		{
+			initialize(MainScreen.getCameraMirrored(), 90);
 		}
 		
 		return false;

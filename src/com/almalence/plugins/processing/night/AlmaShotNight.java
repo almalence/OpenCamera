@@ -25,7 +25,7 @@ public final class AlmaShotNight
     
     public static synchronized native String ConvertFromJpeg(int frame[], int frame_len[], int nFrames, int sx, int sy);    
 
-    public static synchronized native String BlurLessPreview(int sx, int sy, int sensorGainPref, int DeGhostPref, int mode, int saturated, int nImages);
+    public static synchronized native String BlurLessPreview(int sx, int sy, int sensorGainPref, int DeGhostPref, int lumaEnh, int chromaEnh, int nImages);
     public static synchronized native int BlurLessProcess(int sx, int sy, int[] crop, boolean rotate, boolean mirror);
 
     public static synchronized native String SuperZoomPreview(int frame[], int nFrames, int sx, int sy, int sxo, int syo, int sensorGainPref, int DeGhostPref, int saturated, int noSres);

@@ -28,7 +28,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 
-
+ 
 /***
 New interface for preferences. Loads sections for Common preferences.
 ***/

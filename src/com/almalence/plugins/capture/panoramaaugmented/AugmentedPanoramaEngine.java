@@ -36,6 +36,7 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
+import android.util.Log;
 
 
 public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationReceiver
@@ -46,7 +47,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private static final int TIP_FRAMES_COUNT = 2;
 	
-	public static final float FRAME_INTERSECTION_PART = 0.37f; // 0.35f;
+	public static final float FRAME_INTERSECTION_PART = 0.30f; // 0.37f;
 
 	public static final long FRAME_WHITE_FADE_IN = 500;
 	public static final long FRAME_WHITE_FADE_OUT = 400;
@@ -208,6 +209,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private float radius, radiusEdge;
 	
 	private float angleShift = 0.0f;	
+	private volatile float angleTotal;
 	
 	private final AugmentedFrameTarget[] targetFrames = new AugmentedFrameTarget[TIP_FRAMES_COUNT];
 	
@@ -246,7 +248,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		// so use the adjusted value somewhere in-between
 		this.radiusEdge = (this.radiusEdge + this.radius)/2;
 
-		this.angleShift = (float)(2.0f * Math.atan2((0.5f - FRAME_INTERSECTION_PART / 2) * this.width, this.radius));
+		final double tShift = 2.0d * Math.atan2((0.5d - FRAME_INTERSECTION_PART / 2) * this.width, this.radius);
+		final int circle_frames = (int)Math.ceil(2.0d * Math.PI / tShift);
+		this.angleShift = (float)(2.0d * Math.PI / circle_frames);
+		
+		this.angleTotal = 0.0f;
 		
 		final float[] vertices = 
 		{
@@ -392,6 +398,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public int getPictureTakingState(final boolean autoFocus)
 	{
+		if (this.isCurcular())
+		{
+			return STATE_STANDBY;
+		}
+		
 		synchronized (this.stateSynch)
 		{
 			// a 200ms delay in switching from STATE_CLOSEENOUGH to STATE_TAKINGPICTURE
@@ -428,6 +439,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				return this.state;
 			}
 		}
+	}
+	
+	public boolean isCurcular()
+	{
+		return (this.angleTotal >= 2.0d * Math.PI);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -508,6 +524,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				Thread.currentThread().interrupt();
 			}
 		}
+		
+		this.angleTotal = 0.0f;
 	
 		return frames;
 	}
@@ -617,9 +635,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.addToBeginning = false;
 			}
 			else
-			{
-				this.targetFrames[this.currentlyTargetedTarget].move();
-				
+			{				
 				this.addToBeginning = (this.currentlyTargetedTarget == 0);
 			}
 				
@@ -645,25 +661,39 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		
 		synchronized (this.stateSynch)
 		{
-			goodPlace = (this.state == STATE_TAKINGPICTURE) || (framesCount == 0);
+			goodPlace = (framesCount == 0)
+					|| (this.state == STATE_TAKINGPICTURE
+						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.25f);
 		}
 
-		final Vector3d position = new Vector3d(this.last_position);
-		final Vector3d topVec = new Vector3d(this.last_topVec);
-		final float[] transform = new float[16];
-		System.arraycopy(this.last_transform, 0, transform, 0, 16);
-
-		final AugmentedFrameTaken frame = new AugmentedFrameTaken(position, topVec, transform, jpeg);
-	
-		synchronized (AugmentedPanoramaEngine.this.frames)
+		if (goodPlace)
 		{
-			if (AugmentedPanoramaEngine.this.addToBeginning)
+			this.angleTotal += this.angleShift;
+			
+			if (framesCount > 0)
 			{
-				AugmentedPanoramaEngine.this.frames.addFirst(frame);
+				this.targetFrames[this.currentlyTargetedTarget].move();
 			}
-			else
+			
+			final Vector3d position = new Vector3d(this.last_position);
+			final Vector3d topVec = new Vector3d(this.last_topVec);
+			final float[] transform = new float[16];
+			System.arraycopy(this.last_transform, 0, transform, 0, 16);
+	
+			final byte[] jpeg_copy = new byte[jpeg.length];
+			System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
+			final AugmentedFrameTaken frame = new AugmentedFrameTaken(position, topVec, transform, jpeg_copy);
+		
+			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
-				AugmentedPanoramaEngine.this.frames.addLast(frame);
+				if (AugmentedPanoramaEngine.this.addToBeginning)
+				{
+					AugmentedPanoramaEngine.this.frames.addFirst(frame);
+				}
+				else
+				{
+					AugmentedPanoramaEngine.this.frames.addLast(frame);
+				}
 			}
 		}
 			
@@ -759,7 +789,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				}
 			}
 			
-			if (this.capturing.get())
+			if (this.capturing.get() && !this.isCurcular())
 			{
 				for (final AugmentedFrameTarget frame : this.targetFrames)
 				{
@@ -1198,7 +1228,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		    						jpeg,
 		    						AugmentedPanoramaEngine.this.height,
 		    						AugmentedPanoramaEngine.this.width,
-		    						true, MainScreen.getCameraMirrored());
+		    						true, MainScreen.getCameraMirrored(),
+		    						90);
 						}
 		            }
 				}).start();
@@ -1287,11 +1318,13 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					{
 						GLES10.glDeleteTextures(2, this.texture, 0);
 						
+						Log.e("Almalence", "Error creating texture");
 						this.textureAllocated = false;
 					}
 				}
 				else
 				{
+					Log.e("Almalence", "Error generating texture");
 					this.textureAllocated = false;
 				}
     		}
