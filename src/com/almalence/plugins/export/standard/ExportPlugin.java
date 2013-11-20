@@ -454,7 +454,7 @@ public class ExportPlugin extends PluginExport
 	            ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
 	            ei.setAttribute("DateTimeOriginal", dateString);
 	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name));
-	            ei.setAttribute("ExifVersion", tag_version);
+	            ei.setAttribute("ExifVersion", tag_version==null?"":tag_version);
 	            
 	            if(writeOrientationTag)			            	
 	            {

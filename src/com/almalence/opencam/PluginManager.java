@@ -705,7 +705,8 @@ public class PluginManager {
 
 		loadStandardSettingsBefore(pf, settings);
 		if ("general_settings".equals(settings)) {
-		} else if ("vf_settings".equals(settings)) {
+		} 
+		else if ("vf_settings".equals(settings)) {
 			for (int i = 0; i < listVF.size(); i++) {
 				Plugin pg = listVF.get(i);
 				if (activeVF.contains(pg.getID()))
@@ -720,13 +721,18 @@ public class PluginManager {
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
 			
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
-		} else if ("vf_inactive_settings".equals(settings)) {
+		} 
+		else if ("vf_inactive_settings".equals(settings)) {
 			for (int i = 0; i < listVF.size(); i++) {
 				Plugin pg = listVF.get(i);
 				if (!activeVF.contains(pg.getID()))
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, false);
+		}
+		else if ("save_configuration".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
 		}
 		else if ("shooting_settings".equals(settings)) 
 		{

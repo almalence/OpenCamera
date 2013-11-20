@@ -243,6 +243,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
+		
+		//reset or save settings
+		ResetOrSaveSettings();
 
 		/**** Billing *****/
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -2348,5 +2351,68 @@ public class MainScreen extends Activity implements View.OnClickListener,
     		return;
     	}
     }
-	
+
+	private void ResetOrSaveSettings()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		Editor prefsEditor = prefs.edit();
+		boolean isSaving = prefs.getBoolean("SaveConfiguration_Mode", true);
+		if (false == isSaving)
+		{
+			prefsEditor.putString("defaultModeName", "single");
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_ImageSize", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString("imageSizePrefCommonBack", "-1");
+			prefsEditor.putString("imageSizePrefCommonFront", "-1");
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString(GUI.sSceneModePref, GUI.sDefaultValue);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_FocusMode", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString("sRearFocusModePref", GUI.sDefaultFocusValue);
+			prefsEditor.putString(GUI.sFrontFocusModePref, GUI.sDefaultFocusValue);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString(GUI.sWBModePref, GUI.sDefaultValue);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString(GUI.sISOPref, GUI.sDefaultValue);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_FlashMode", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putString(GUI.sFlashModePref, GUI.sDefaultValue);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_FrontRearCamera", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putBoolean("useFrontCamera", false);
+			prefsEditor.commit();
+		}
+		
+	}
 }

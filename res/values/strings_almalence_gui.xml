@@ -12,6 +12,18 @@
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
+    <string name="Pref_Common_VolumeButton_Title">Volume button</string>
+    <string name="Pref_SaveConfiguration_Title">Save configuration</string>
+    <string name="Pref_SaveConfiguration_Summary">Select which settings to save between launches</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Shooting mode</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Image size</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Scene mode</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Focus mode</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">White balance mode</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO mode</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
+    
     <string name="ev_zero">0</string>    
     <string name="blockingText">Please wait, processing...</string>
     <string name="almalence_gui_selected">selected</string>
