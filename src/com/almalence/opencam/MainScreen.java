@@ -222,10 +222,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static boolean isCreating = false;
 	public static boolean mApplicationStarted = false;
 	public static long startTime = 0;
+	
+	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent intent = this.getIntent();
+		String mode = intent.getStringExtra(EXTRA_ITEM);
 
 		startTime = System.currentTimeMillis();
 		msavedInstanceState = savedInstanceState;
@@ -246,9 +251,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		//reset or save settings
 		ResetOrSaveSettings();
-
-		/**** Billing *****/
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		
+		if(null != mode)
+			prefs.edit().putString("defaultModeName", mode).commit();
+		
+		/**** Billing *****/
 		if (true == prefs.contains("unlock_all_forever")) {
 			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
 		}
@@ -352,6 +361,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			isScreenTimerRunning = true;
 		}
 
+		PluginManager.getInstance().setupDefaultMode();
 		// Description
 		// init gui manager
 		guiManager = new AlmalenceGUI();

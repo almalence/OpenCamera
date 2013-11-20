@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    android:id="@+id/modeSelectLayout"
+    android:layout_width="@dimen/widgetElementSize"
+    android:layout_height="@dimen/widgetElementSize"
+    xmlns:android="http://schemas.android.com/apk/res/android"    
+    android:layout_gravity="center_horizontal"
+    android:padding="3dp"
+    android:background="@android:color/transparent">
+    
+    <ImageView
+        android:id="@+id/modeImage"
+        android:layout_height="@dimen/widgetImageSize"
+        android:layout_width="@dimen/widgetImageSize"        
+        android:layout_centerInParent="true"
+        android:padding="7dp"                
+        android:background="@drawable/thumbnail_background_inner">
+    </ImageView>
+   
+</RelativeLayout>

@@ -58,6 +58,19 @@
 		<activity android:name=".FolderPicker"
 		        android:label="@string/choose_folder"/>
 		
+		<receiver android:name=".OpenCameraWidgetProvider" >
+    		<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+    		</intent-filter>
+    	<meta-data android:name="android.appwidget.provider"
+               android:resource="@xml/opencamera_appwidget_info" />
+		</receiver>
+		
+		<!-- StackWidget Service -->
+    	<service android:name=".OpenCameraWidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS"
+        android:exported="false" />		
+		
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
  	<uses-feature android:name="android.hardware.camera" android:required="false" />

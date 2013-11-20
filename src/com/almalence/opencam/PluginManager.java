@@ -356,7 +356,11 @@ public class PluginManager {
 
 		// parsing configuration file to setup modes
 		ParseConfig();
+	}
 
+
+	public void setupDefaultMode()
+	{
 		// select default mode - selection from preferences if exists. or from
 		// config if first start
 		Mode mode = null;
@@ -379,14 +383,17 @@ public class PluginManager {
 		}
 
 		// set active plugins for default mode
+		activeVF.clear();
 		for (int i = 0; i < mode.VF.size(); i++)
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
 		for (int i = 0; i < mode.Filter.size(); i++)
 			activeFilter.add(mode.Filter.get(i));
+		activeFilter.clear();
 		activeExport = mode.Export;
 	}
+
 
 	public String getActiveModeID() {
 		return getActiveMode().modeID;

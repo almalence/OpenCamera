@@ -21,7 +21,6 @@ package com.almalence.plugins.vf.focus;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Matrix;
@@ -293,7 +292,6 @@ public class FocusVFPlugin extends PluginViewfinder
 	 * 
 	 */
 	// This has to be initialized before initialize().
-    @TargetApi(14)
     public void initializeParameters(Parameters parameters)
     {
         mParameters = parameters;
@@ -321,7 +319,6 @@ public class FocusVFPlugin extends PluginViewfinder
             Log.e(TAG, "mParameters is not initialized.");
     }
     
-    @TargetApi(14)
 	private void initializeCapabilities()
     {
         mInitialParams = MainScreen.thiz.getCameraParameters();
@@ -394,7 +391,6 @@ public class FocusVFPlugin extends PluginViewfinder
     	OnShutterClick();
     }
     
-    @TargetApi(14)	
     public void setFocusParameters()
 	{        
         if (mFocusAreaSupported)
@@ -543,7 +539,6 @@ public class FocusVFPlugin extends PluginViewfinder
         return true;
     }
     
-    @TargetApi(14)
     public void onTouchAreas(MotionEvent e)
     {
     	// Initialize variables.
