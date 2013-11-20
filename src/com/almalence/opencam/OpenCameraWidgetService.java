@@ -80,7 +80,6 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         for (int i = 0; i < mCount; i++) {
         	OpenCameraWidgetItem mode = new OpenCameraWidgetItem(modeNames.get(i), modeIcons.get(i));
             mWidgetItems.add(mode);
-            
         }
 
         // We sleep for 3 seconds here to show how the empty view appears in the interim.
