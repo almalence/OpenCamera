@@ -964,6 +964,7 @@ public class AlmalenceGUI extends GUI implements
 		paramMap.clear();
 		Set<String> keys = icons_map.keySet();
 		Iterator<String> it = keys.iterator();
+		int mode_number = 0;
 		while (it.hasNext()) {
 			final String system_name = it.next();
 			final String value_name = names_map.get(system_name);
@@ -977,11 +978,12 @@ public class AlmalenceGUI extends GUI implements
 			((TextView) paramMode.findViewById(R.id.textView))
 					.setText(value_name);
 			
+			final boolean isFirstMode = mode_number == 0? true : false;
 			paramMode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					if(event.getAction() == MotionEvent.ACTION_CANCEL)
+					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
 					{
 						switch (mode) {
 						case MODE_SCENE:
@@ -1035,6 +1037,7 @@ public class AlmalenceGUI extends GUI implements
 			});
 
 			paramMap.put(system_name, paramMode);
+			mode_number++;
 		}
 
 		return paramMap;
@@ -2001,51 +2004,14 @@ public class AlmalenceGUI extends GUI implements
 				qc4, quickControl4) : getFreeQuickControlButton(qc1, qc2, qc3,
 				qc4, quickControl4);
 
-				
-//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-//				.addView(quickControl1);
-//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-//				.addView(quickControl2);
-//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-//				.addView(quickControl3);
-//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-//				.addView(quickControl4);
-				
-		try
-		{
-			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl1);
-		}catch(RuntimeException e)
-		{
-			e.printStackTrace();
-			Log.e("addView(quickControl1) failed", "addView(quickControl1): " + e.getMessage());
-		}
-
-		try
-		{
-			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl2);
-		}catch(RuntimeException e)
-		{
-			e.printStackTrace();
-			Log.e("addView(quickControl2) failed", "addView(quickControl1): " + e.getMessage());
-		}
-		
-		try
-		{
-			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl3);
-		}catch(RuntimeException e)
-		{
-			e.printStackTrace();
-			Log.e("addView(quickControl3) failed", "addView(quickControl1): " + e.getMessage());
-		}
-		
-		try
-		{
-			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl4);
-		}catch(RuntimeException e)
-		{
-			e.printStackTrace();
-			Log.e("addView(quickControl4) failed", "addView(quickControl1): " + e.getMessage());
-		}
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.addView(quickControl1);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.addView(quickControl2);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.addView(quickControl3);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.addView(quickControl4);
 
 		if (mEVSupported) {
 			Message msg = new Message();
@@ -4949,6 +4915,7 @@ public class AlmalenceGUI extends GUI implements
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
+		int mode_number = 0;
 		while (it.hasNext()) {
 			Mode tmp = it.next();
 
@@ -4966,13 +4933,14 @@ public class AlmalenceGUI extends GUI implements
 					"string", MainScreen.thiz.getPackageName());
 			String modename = MainScreen.thiz.getResources().getString(id);
 
+			final boolean isFirstMode = mode_number == 0? true : false;
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			mode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
-					if(event.getAction() == MotionEvent.ACTION_CANCEL)
+					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
 					{
 						hideModeList();
 
@@ -5143,6 +5111,8 @@ public class AlmalenceGUI extends GUI implements
 				mode.findViewById(R.id.modeImage).setBackgroundResource(
 						R.drawable.thumbnail_background_selected_inner);
 			}
+			
+			mode_number++;
 		}
 
 		modeAdapter.Elements = modeViews;
