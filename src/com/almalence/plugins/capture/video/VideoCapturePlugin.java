@@ -656,7 +656,14 @@ public class VideoCapturePlugin extends PluginCapture
 		if (isRecording) 
 		{
             // stop recording and release camera
-            mMediaRecorder.stop();  // stop the recording
+			try
+			{
+				mMediaRecorder.stop();  // stop the recording
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
+			}
             releaseMediaRecorder(); // release the MediaRecorder object
             camera.lock();         // take camera access back from MediaRecorder
 
