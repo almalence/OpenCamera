@@ -31,5 +31,9 @@
                        android:title="@string/Pref_SaveConfiguration_FrontRear_Title"
                        android:defaultValue="true"
                        android:key="SaveConfiguration_FrontRearCamera"/>
+	<CheckBoxPreference
+                       android:title="@string/Pref_SaveConfiguration_DelayedCapture_Title"
+                       android:defaultValue="true"
+                       android:key="SaveConfiguration_DelayedCapture"/>
 	
 </PreferenceScreen>

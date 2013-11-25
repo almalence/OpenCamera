@@ -2436,5 +2436,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
+		isSaving = prefs.getBoolean("SaveConfiguration_DelayedCapture", true);
+		if (false == isSaving)
+		{		
+			prefsEditor.putString("delayedCapturePrefCommon", "0");
+			//prefsEditor.putBoolean("delayedCapturePrefCommon", "0");
+			prefsEditor.commit();
+		}
+		
 	}
 }
