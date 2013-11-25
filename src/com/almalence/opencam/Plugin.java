@@ -386,7 +386,9 @@ public abstract class Plugin
 	public void onDefaultsSelect() { }
 	
 	public void onCaptureFinished() { }
-	
+
+	//return true in implementation of plugin if plugin can call OnShutterClick with delay, specified in general settings.
+	public boolean delayedCaptureSupported(){return false;}
 	
 /******************************************************************************************************
 	Processing Interfaces

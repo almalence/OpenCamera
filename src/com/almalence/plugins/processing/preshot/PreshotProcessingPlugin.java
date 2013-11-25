@@ -532,7 +532,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     		idx = 0;
     	else if (idx >= imgCnt)
     		idx = imgCnt - 1;
-    	if (imgCnt==1)
+    	if (imgCnt==1 || mini_frames.length==1)
     		idx = 0;
     	
     	Bitmap photo = mini_frames[idx];//getMultishotBitmap(idx);

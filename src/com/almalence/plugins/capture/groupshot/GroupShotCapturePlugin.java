@@ -77,6 +77,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 		pauseBetweenShots = Integer.parseInt(prefs.getString("groupShotPauseBetweenShots", "750"));
 	}
 	
+	public boolean delayedCaptureSupported(){return true;}
 
 	@Override
 	public void OnShutterClick()

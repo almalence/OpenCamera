@@ -75,6 +75,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		pauseBetweenShots = Integer.parseInt(prefs.getString("objectRemovalPauseBetweenShots", "750"));
 	}
 	
+	public boolean delayedCaptureSupported(){return true;}
+	
 	@Override
 	public void OnShutterClick()
 	{
@@ -219,7 +221,20 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				// play tick sound
 				MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-     	    	camera.takePicture(null, null, null, MainScreen.thiz);
+        		
+        		try {
+        			camera.takePicture(null, null, null, MainScreen.thiz);
+				}catch (Exception e) {
+					e.printStackTrace();
+					Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+					inCapture = false;
+					takingAlready = false;
+					Message msg = new Message();
+	    			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+	    			msg.what = PluginManager.MSG_BROADCAST;
+	    			MainScreen.H.sendMessage(msg);	    			
+	    			MainScreen.guiManager.lockControls = false;
+				}
 			}
 			else
 			{

@@ -457,7 +457,6 @@ public class SelfTimerCapturePlugin extends PluginCapture {
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imagesTaken));
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imagesTaken));
 			imagesTaken=0;
 		}
 		takingAlready = false;
@@ -483,7 +482,19 @@ public class SelfTimerCapturePlugin extends PluginCapture {
     		{
 	    		MainScreen.guiManager.showCaptureIndication();
 	    		MainScreen.thiz.PlayShutter();
-				camera.takePicture(null, null, null, MainScreen.thiz);
+	    		try {
+        			camera.takePicture(null, null, null, MainScreen.thiz);
+				}catch (Exception e) {
+					e.printStackTrace();
+					Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+					takingAlready = false;
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);
+					
+					MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+				}
     		}
     		return true;
     	}

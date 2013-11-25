@@ -23,6 +23,9 @@
     <string name="Pref_SaveConfiguration_ISOMode_Title">ISO mode</string>
     <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
+    <string name="Pref_Common_DelayedCapture_Title">Delayed capture</string>
+    <string name="Pref_Common_DelayedCaptureFlash_Title">Delayed capture indication</string>
+    <string name="Pref_Common_DelayedCaptureFlash_Summary">Flash and sound every second on delayed capture</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">Please wait, processing...</string>

@@ -949,6 +949,8 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 	
+	public boolean delayedCaptureSupported(){return true;}
+	
 	@Override
 	public void OnShutterClick()
 	{

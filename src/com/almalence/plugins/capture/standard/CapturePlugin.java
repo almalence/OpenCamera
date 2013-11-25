@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Message;
@@ -30,13 +27,6 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegMetadataReader;
-import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegProcessingException;
-import com.almalence.opencam.util.exifreader.lang.Rational;
-import com.almalence.opencam.util.exifreader.metadata.Directory;
-import com.almalence.opencam.util.exifreader.metadata.Metadata;
-import com.almalence.opencam.util.exifreader.metadata.exif.ExifIFD0Directory;
-import com.almalence.opencam.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 
 /***
@@ -74,7 +64,6 @@ public class CapturePlugin extends PluginCapture
 			takePicture();
 	}
 	
-		
 	public void takePicture()
 	{
 		if(takingAlready)
@@ -89,8 +78,8 @@ public class CapturePlugin extends PluginCapture
 		if (camera != null)		// paranoia
 		{
 			MainScreen.guiManager.showCaptureIndication();
-			MainScreen.thiz.PlayShutter();
 			
+			MainScreen.thiz.PlayShutter();
 	    	try {
 	    		camera.takePicture(null, null, null, MainScreen.thiz);
 			} catch (Exception e) {

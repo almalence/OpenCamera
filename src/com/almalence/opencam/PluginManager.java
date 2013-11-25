@@ -40,11 +40,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -54,7 +57,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.almalence.asynctaskmanager.Task;
 import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegMetadataReader;
@@ -157,7 +162,7 @@ public class PluginManager {
 	public static final int MSG_EXPORT_FINISHED = 8;
 	public static final int MSG_START_FX = 9;
 	public static final int MSG_FX_FINISHED = 10;
-	
+	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
 
 	public static final int MSG_SET_EXPOSURE = 22;
@@ -572,6 +577,7 @@ public class PluginManager {
 
 	// base onResume stage
 	public void onResume() {
+		shutterRelease = true;
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
@@ -589,6 +595,21 @@ public class PluginManager {
 
 	// base onPause stage
 	public void onPause(boolean isFromMain) {
+		
+		//stops delayed interval timer if it's working
+		if (delayedCaptureFlashPrefCommon)
+		{
+			releaseSoundPlayers();
+	        countdownHandler.removeCallbacks(FlashOff);
+		    finalcountdownHandler.removeCallbacks(FlashBlink);
+			//stops timer befor exit to be sure it canceled
+			if (timer!=null)
+			{
+				timer.cancel();
+				timer=null;
+			}
+		}
+		
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onPause();
 		if (null != pluginList.get(activeCapture))
@@ -644,11 +665,25 @@ public class PluginManager {
 			MainScreen.guiManager.lockControls = false;
 			return;
 		}
+		
+		if (shutterRelease == false)
+			return;
 
-		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).OnShutterClick();
-		if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
-			pluginList.get(activeCapture).OnShutterClick();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		delayedCaptureFlashPrefCommon = prefs.getBoolean("delayedCaptureFlashPrefCommon", false);
+		int delayInterval = Integer.parseInt(prefs.getString("delayedCapturePrefCommon", "0"));
+		if (delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
+		{	
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).OnShutterClick();
+			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+				pluginList.get(activeCapture).OnShutterClick();
+		}
+		else
+		{
+			shutterRelease = false;
+			delayedCapture(delayInterval);	
+		}
 	}
 	
 	public void OnFocusButtonClick() {
@@ -1327,6 +1362,8 @@ public class PluginManager {
 			break;
 
 		case MSG_CAPTURE_FINISHED:
+			shutterRelease = true;
+			
 			MainScreen.guiManager.lockControls = false;
 			Message message = new Message();
 			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
@@ -1424,6 +1461,13 @@ public class PluginManager {
 	        }
 			break;
 
+		case MSG_DELAYED_CAPTURE: 
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).OnShutterClick();
+			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+				pluginList.get(activeCapture).OnShutterClick();
+			break;
+			
 		case MSG_RETURN_CAPTURED:
 			MainScreen.thiz.setResult(Activity.RESULT_OK);
 			MainScreen.thiz.finish();
@@ -1754,4 +1798,161 @@ public class PluginManager {
         }
         return saveDir;
     }
+	
+	//delayed capture feature
+	
+	private SoundPlayer countdownPlayer = null;
+    private SoundPlayer finalcountdownPlayer = null;
+
+    private CountDownTimer timer=null;
+    
+    public String flashModeBackUp = "";
+	
+	final Handler countdownHandler = new Handler();
+	final Handler finalcountdownHandler = new Handler();
+	
+	private boolean delayedCaptureFlashPrefCommon = false; 
+			
+	private boolean shutterRelease = true;
+	private void delayedCapture(int delayInterval)
+	{
+		initializeSoundPlayers(MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
+		MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
+		countdownHandler.removeCallbacks(FlashOff);	 
+		finalcountdownHandler.removeCallbacks(FlashBlink);		
+		
+		timer = new CountDownTimer(delayInterval, 1000) 
+		{			 
+			 boolean isFirstTick = true;
+		     public void onTick(long millisUntilFinished) 
+		     {		    	 
+		    	 if (!delayedCaptureFlashPrefCommon)
+		    		 return;
+		    	 
+	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
+		         
+		         Camera camera = MainScreen.thiz.getCamera();
+		     	 if (null==camera)
+		     		return;
+		         
+		         if(true)//isBlinkEnable)
+		         {
+			         if(millisUntilFinished > 500)// || (imagesTaken != 0 && isFirstTick))
+			         {
+			        	try 
+			        	{
+			        		 Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+				        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+				        	 MainScreen.thiz.setCameraParameters(p);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Log.e("Self-timer", "Torch exception: " + e.getMessage());
+						}
+			        	countdownHandler.postDelayed(FlashOff, 50);
+			         }
+//			         else if(!(0 != 0 && !isFirstTick))
+//			         {
+//			        	finalcountdownHandler.postDelayed(FlashBlink, 100);
+//			         }
+		         }
+		         
+		         isFirstTick = false;
+		     }
+
+		     public void onFinish() 
+		     {
+		    	 countdownHandler.removeCallbacks(FlashOff);	 
+		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
+		         
+		 	    Camera camera = MainScreen.thiz.getCamera();
+		    	if (camera != null)		// paranoia
+				{
+					if(MainScreen.thiz.getSupportedFlashModes() != null)
+		    			MainScreen.thiz.setCameraFlashMode(flashModeBackUp);
+					
+					Message msg = new Message();
+					msg.what = PluginManager.MSG_DELAYED_CAPTURE;
+					MainScreen.H.sendMessage(msg);
+				}
+		    	timer=null;
+		     }
+		  };
+		  timer.start();
+	}
+	
+	public void TickEverySecond(boolean isLastSecond)
+	{
+		if (MainScreen.ShutterPreference)
+			return;
+		if (true)//isSoundEnable)
+		{
+			if(isLastSecond)
+			{
+				if (finalcountdownPlayer != null)
+					finalcountdownPlayer.play();
+			}
+			else
+			{
+				if (countdownPlayer!=null)
+					countdownPlayer.play();
+			}
+		}
+ 	}
+	
+	public void initializeSoundPlayers(AssetFileDescriptor fd_countdown, AssetFileDescriptor fd_finalcountdown) {
+		countdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_countdown);
+		finalcountdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_finalcountdown);
+    }
+
+    public void releaseSoundPlayers() {
+        if (countdownPlayer != null) {
+        	countdownPlayer.release();
+        	countdownPlayer = null;
+        }
+        
+        if (finalcountdownPlayer != null) {
+        	finalcountdownPlayer.release();
+        	finalcountdownPlayer = null;
+        }
+    }
+    
+    private Runnable FlashOff = new Runnable() {
+        public void run() {
+        	Camera camera = MainScreen.thiz.getCamera();
+        	if (null==camera)
+        		return;
+        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+       	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+       	 	MainScreen.thiz.setCameraParameters(p); 
+        }
+    };
+    
+    private Runnable FlashBlink = new Runnable() {
+    	boolean isFlashON = false;
+        public void run() {
+        	Camera camera = MainScreen.thiz.getCamera();
+        	if (null==camera)
+        		return;
+        	
+        	try {
+	        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+	        	if(isFlashON)
+	        	{
+	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+	       	 		isFlashON = false;
+	        	}
+	        	else
+	        	{
+	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+	       	 		isFlashON = true;
+	        	}
+	        	MainScreen.thiz.setCameraParameters(p);
+        	} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());
+			}
+        	finalcountdownHandler.postDelayed(this, 50);
+        }
+    };
+	
 }

@@ -146,6 +146,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 
+	public boolean delayedCaptureSupported(){return true;}
+	
 	public void OnShutterClick()
 	{
 		if (takingAlready == false)
@@ -263,7 +265,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		{
     		if (camera != null)		// paranoia
     		{
-    			camera.startPreview();
 	            if (++frame_num < total_frames)
 	            {
 	            	// re-open preview (closed once frame is captured)
@@ -335,7 +336,22 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		    	MainScreen.guiManager.showCaptureIndication();
 		    	MainScreen.thiz.PlayShutter();
 		    	
-		    	camera.takePicture(null, null, null, MainScreen.thiz);
+		    	try {
+        			camera.takePicture(null, null, null, MainScreen.thiz);
+				}catch (Exception e) {
+					e.printStackTrace();
+					Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+					takingAlready = false;
+	            	inCapture = false;
+	            	previewWorking = true;
+	            	if (cdt!=null)
+	            	{
+	            		cdt.cancel();
+	            		cdt = null;
+	            	}
+	            	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+	            	MainScreen.thiz.resetExposureCompensation();
+				}
     		}
     		return true;
     	}
@@ -368,6 +384,25 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	{
     		NotEnoughMemory();
     	}
+
+    	try
+		{
+			paramCamera.startPreview();
+		}
+		catch (RuntimeException e)
+		{
+			takingAlready = false;
+        	inCapture = false;
+        	previewWorking = true;
+        	if (cdt!=null)
+        	{
+        		cdt.cancel();
+        		cdt = null;
+        	}
+        	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+        	MainScreen.thiz.resetExposureCompensation();
+			return;
+		}
     	
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;

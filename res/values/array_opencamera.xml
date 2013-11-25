@@ -31,4 +31,18 @@
    <item>1</item>
 </string-array>
 
+<string-array name="delayedCaptureArrayCommon">
+   <item>No delay</item>
+   <item>3 seconds</item>
+   <item>5 seconds</item>
+   <item>10 seconds</item>
+</string-array>
+ 
+<string-array name="delayedCaptureValuesCommon">
+   <item>0</item>
+   <item>3000</item>
+   <item>5000</item>
+   <item>10000</item>
+</string-array>
+
 </resources>

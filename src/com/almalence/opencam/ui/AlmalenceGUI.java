@@ -2001,14 +2001,51 @@ public class AlmalenceGUI extends GUI implements
 				qc4, quickControl4) : getFreeQuickControlButton(qc1, qc2, qc3,
 				qc4, quickControl4);
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl1);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl2);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl3);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl4);
+				
+//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+//				.addView(quickControl1);
+//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+//				.addView(quickControl2);
+//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+//				.addView(quickControl3);
+//		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+//				.addView(quickControl4);
+				
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl1);
+		}catch(RuntimeException e)
+		{
+			e.printStackTrace();
+			Log.e("addView(quickControl1) failed", "addView(quickControl1): " + e.getMessage());
+		}
+
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl2);
+		}catch(RuntimeException e)
+		{
+			e.printStackTrace();
+			Log.e("addView(quickControl2) failed", "addView(quickControl1): " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl3);
+		}catch(RuntimeException e)
+		{
+			e.printStackTrace();
+			Log.e("addView(quickControl3) failed", "addView(quickControl1): " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl4);
+		}catch(RuntimeException e)
+		{
+			e.printStackTrace();
+			Log.e("addView(quickControl4) failed", "addView(quickControl1): " + e.getMessage());
+		}
 
 		if (mEVSupported) {
 			Message msg = new Message();

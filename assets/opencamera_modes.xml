@@ -88,7 +88,7 @@
 	
 	    <export 	id="com.almalence.plugins.export"/>
 	
-		<sku		id="plugin_almalence_moving_burst"/>
+		<sku/>
 		
 		<howtotext  id=""/>
 		
@@ -112,7 +112,7 @@
 	
 	    <export 	id="com.almalence.plugins.export"/>
 	
-		<sku		id="plugin_almalence_moving_burst"/>
+		<sku/>
 		
 		<howtotext  id=""/>
 	

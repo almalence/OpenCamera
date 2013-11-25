@@ -1456,11 +1456,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			if (camera != null) {
 				if (mCaptureState != CAPTURE_STATE_CAPTURING) {
 					setFocusState(MainScreen.FOCUS_STATE_FOCUSING);
-					camera.autoFocus(listener);
+					try {
+						camera.autoFocus(listener);
+					}catch (Exception e) {
+						e.printStackTrace();
+						Log.e("MainScreen autoFocus(listener) failed", "autoFocus: " + e.getMessage());
+						return false;
+					}
 					return true;
 				}
 			}
-
 			return false;
 		}
 	}
@@ -1472,13 +1477,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					String fm = thiz.getFocusMode();
 					// Log.e("", "mCaptureState = " + mCaptureState);
 					setFocusState(MainScreen.FOCUS_STATE_FOCUSING);
-					camera.autoFocus(MainScreen.thiz);
+					try {
+						camera.autoFocus(MainScreen.thiz);
+					}catch (Exception e) {
+						e.printStackTrace();
+						Log.e("MainScreen autoFocus() failed", "autoFocus: " + e.getMessage());
+						return false;
+					}					
 					return true;
 				}
 			}
-
-			// Log.e("", "autoFocus(). FocusState = CAPTURE_STATE_CAPTURING");
-
 			return false;
 		}
 	}
@@ -2376,8 +2384,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		isSaving = prefs.getBoolean("SaveConfiguration_ImageSize", true);
 		if (false == isSaving)
 		{			
+			//general settings - image size
 			prefsEditor.putString("imageSizePrefCommonBack", "-1");
 			prefsEditor.putString("imageSizePrefCommonFront", "-1");
+			//night hi sped image size
+			prefsEditor.putString("imageSizePrefNightBack", "-1");
+			prefsEditor.putString("pref_plugin_capture_panoramaaugmented_imageheight", "0");
 			prefsEditor.commit();
 		}
 		
