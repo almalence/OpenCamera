@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-   <dimen name="widgetElementSize">70dp</dimen>
+   <dimen name="widgetElementWidth">70dp</dimen>
+   <dimen name="widgetElementHeight">100dp</dimen>
    <dimen name="widgetImageSize">65dp</dimen>   
    <dimen name="widgetTextSize">18sp</dimen>
+   
+   <dimen name="widgetListElementWidth">100dp</dimen>
+   <dimen name="widgetListElementHeight">70dp</dimen>
+   <dimen name="widgetListImageHeight">65dp</dimen>
+   <dimen name="widgetListImageWidth">65dp</dimen>   
+   <dimen name="widgetListTextWidth">120dp</dimen>
    
    <dimen name="widgetMinWidth">286dp</dimen>
    <dimen name="widgetMinHeight">146dp</dimen>

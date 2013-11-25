@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout 
     android:id="@+id/modeSelectLayout"
-    android:layout_width="@dimen/widgetElementSize"
-    android:layout_height="@dimen/widgetElementSize"
+    android:layout_width="@dimen/widgetElementWidth"
+    android:layout_height="@dimen/widgetElementHeight"
     xmlns:android="http://schemas.android.com/apk/res/android"    
     android:layout_gravity="center_horizontal"
     android:padding="3dp"

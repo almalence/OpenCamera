@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@+id/modeListElementLayout"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"        
+    android:layout_gravity="center"
+    android:padding="0dp"    
+    android:background="#555555">
+    
+    <RelativeLayout android:id="@+id/imageLayout"
+        			android:layout_height="@dimen/widgetListImageHeight"
+        			android:layout_width="@dimen/widgetListImageWidth"
+        			android:layout_gravity="center">  
+    <ImageView
+        android:id="@+id/modeImage"
+        android:layout_width="@dimen/widgetListImageWidth"
+        android:layout_height="@dimen/widgetListImageHeight"
+        android:layout_centerInParent="true"        
+        android:padding="5dp"                
+        android:background="#3B5555">
+    </ImageView>
+    </RelativeLayout>
+    
+    <RelativeLayout android:id="@+id/textLayout"
+        			android:layout_height="@dimen/widgetListElementHeight"
+        			android:layout_width="@dimen/widgetListTextWidth"
+        			android:background="#F0F0F0">        			
+    <TextView
+        android:id="@+id/modeText"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"        
+        android:textSize="@dimen/gridTextSize">
+    </TextView>
+    
+    </RelativeLayout>
+   
+</LinearLayout>
+

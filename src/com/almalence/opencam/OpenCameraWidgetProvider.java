@@ -60,4 +60,28 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider {
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
+    
+    public static RemoteViews buildRemoteViews(Context context, int appWidgetId)
+    {            
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
+
+        /// set intent for widget service that will create the views
+        Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
+        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))); // embed extras so they don't get ignored
+        remoteViews.setRemoteAdapter(appWidgetId, R.id.widgetGrid, serviceIntent);
+        remoteViews.setEmptyView(R.id.widgetGrid, R.id.widgetEmptyView);
+        
+        // set intent for item click (opens main activity)
+        Intent viewIntent = new Intent(context, MainScreen.class);
+        viewIntent.setAction(Intent.ACTION_MAIN);
+        //viewIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        //viewIntent.setData(Uri.parse(viewIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        
+        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
+        remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
+        //remoteViews.setOnClickPendingIntent(R.id.widgetGrid, viewPendingIntent);
+        
+        return remoteViews;   
+    }
 }

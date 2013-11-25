@@ -69,7 +69,13 @@
 		<!-- StackWidget Service -->
     	<service android:name=".OpenCameraWidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS"
-        android:exported="false" />		
+        android:exported="false" />
+    	
+    	<activity android:name="com.almalence.opencam.OpenCameraWidgetConfigureActivity">
+    		<intent-filter>
+        		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+    		</intent-filter>
+		</activity>		
 		
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
