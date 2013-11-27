@@ -64,7 +64,7 @@
     		</intent-filter>
     	<meta-data android:name="android.appwidget.provider"
                android:resource="@xml/opencamera_appwidget_info" />
-		</receiver>		
+		</receiver>
 		
     	<service android:name=".OpenCameraWidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS"
