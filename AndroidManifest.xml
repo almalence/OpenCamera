@@ -66,6 +66,13 @@
                android:resource="@xml/opencamera_appwidget_info" />
 		</receiver>
 		
+		<receiver android:name=".HWButtonStart" >
+		    <intent-filter android:priority="10000">         
+		        <action android:name="android.intent.action.CAMERA_BUTTON" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		    </intent-filter>            
+		</receiver>
+		
 		<!-- StackWidget Service -->
     	<service android:name=".OpenCameraWidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS"

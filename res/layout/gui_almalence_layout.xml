@@ -291,19 +291,19 @@
 					    
 					/>					
 	</RelativeLayout>
-	<!-- 
+	 
 	<com.almalence.opencam.ui.RotateImageView 
 	    android:id="@+id/Unlock"
 		android:background="@drawable/transparent_background"
 		android:src="@drawable/unlock"					
-		android:layout_height="30dip"
-		android:layout_width="30dip"
+		android:layout_height="40dip"
+		android:layout_width="40dip"
 		
 		android:layout_marginTop="100dip"
 		android:layout_weight="1"
    		android:layout_gravity="top|left"
-   		android:onClick="onButtonClick"/>	
--->
+   		android:visibility="gone"/>	
+
 	 
 	<RelativeLayout
 		android:id="@+id/buttonsLayout"

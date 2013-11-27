@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">فتح الكل للأبد 5.95 دولار</string>
+	<string name="Pref_Upgrde_All_Preference_Title">فتح الكل للأبد</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">تنشيط كل الميزات والأوضاع، حتى الإضافات للإصدارات المستقبلية</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">فتح وضع المدى الديناميكي العالي 0.99 دولار</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">فتح وضع المدى الديناميكي العالي</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">التقاط صور رائعة المظهر بالمدى الديناميكي العالي</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">بانوراما بدقة وضوح عالية 2.99 دولار</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">بانوراما بدقة وضوح عالية</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">تصوير مناظر بانوراما رائعة ، سواء في وضع الكنس أو بمساعدة تقنية الواقع المعزز</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">إزالة الكائن/الصورة التسلسلية 2.99 دولار</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">إزالة الكائن/الصورة التسلسلية</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">إزالة الكائنات غير المرغوب فيها أو جمع الحركة في صورة واحدة</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">فتح اللقطة المجمعة 2.99 دولار</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">فتح اللقطة المجمعة</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">تحديد أفضل الوجوه في صورتك</string>
 	
 </resources>

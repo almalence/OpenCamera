@@ -759,6 +759,9 @@ public class AlmalenceGUI extends GUI implements
 
 				((TextView) guiView.findViewById(R.id.blockingText))
 						.setRotation(-AlmalenceGUI.mDeviceOrientation);
+				
+				((RotateImageView) guiView.findViewById(R.id.Unlock))
+				.setOrientation(AlmalenceGUI.mDeviceOrientation);
 
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 				
@@ -790,6 +793,16 @@ public class AlmalenceGUI extends GUI implements
 						.getDimension(R.dimen.paramsLayoutHeight)), false);
 		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
 				.setImageBitmap(bm);
+		
+		
+		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
+		unlock.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				MainScreen.thiz.showUnlock = true;
+				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
+				MainScreen.thiz.startActivity(intent);
+			}
+		});
 	}
 
 	@Override
@@ -810,6 +823,42 @@ public class AlmalenceGUI extends GUI implements
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,true);
 	}
 
+	
+	
+	public void ShowUnlockControl()
+	{
+		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
+		unlock.setImageResource(R.drawable.unlock);
+		unlock.setAlpha(1.0f);
+		unlock.setVisibility(View.VISIBLE);
+		
+		Animation invisible_alpha = new AlphaAnimation(1, 0.4f);
+		invisible_alpha.setDuration(7000);
+		invisible_alpha.setRepeatCount(0);
+
+		invisible_alpha.setAnimationListener(new AnimationListener() 
+		{
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				unlock.clearAnimation();
+				unlock.setImageResource(R.drawable.unlock_gray);
+				unlock.setAlpha(0.4f);
+			}
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+			@Override
+			public void onAnimationStart(Animation animation) {}
+		});
+
+		unlock.startAnimation(invisible_alpha);
+	}
+	
+	public void HideUnlockControl()
+	{
+		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));		
+		unlock.setVisibility(View.GONE);
+	}
+	
 	@Override
 	public void onResume() {
 		this.updateThumbnailButton();
@@ -844,8 +893,56 @@ public class AlmalenceGUI extends GUI implements
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.GONE);
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
+		
+		
+		//manage unlock control
+		if (true == prefs.getBoolean("unlock_all_forever", false))
+			HideUnlockControl();
+		else 
+		{
+			String modeID = PluginManager.getInstance().getActiveMode().modeID;
+			
+			if ("hdrmode".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("movingobjects".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("sequence".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("groupshot".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("panorama_augmented".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else
+				ShowUnlockControl();
+		}
 	}
-
+	
+	
 	@Override
 	public void onDestroy() {
 
