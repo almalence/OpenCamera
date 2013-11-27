@@ -291,6 +291,18 @@
 					    
 					/>					
 	</RelativeLayout>
+	 
+	<com.almalence.opencam.ui.RotateImageView 
+	    android:id="@+id/Unlock"
+		android:background="@drawable/transparent_background"
+		android:src="@drawable/unlock"					
+		android:layout_height="40dip"
+		android:layout_width="40dip"
+		
+		android:layout_marginTop="100dip"
+		android:layout_weight="1"
+   		android:layout_gravity="top|left"
+   		android:visibility="gone"/>	
 
 	 
 	<RelativeLayout
@@ -508,7 +520,8 @@
 					    android:visibility="gone"
 					/>
 	</RelativeLayout>
-		<com.almalence.opencam.ui.Panel
+	
+	<com.almalence.opencam.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"

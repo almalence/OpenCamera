@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">Desbloquear tudo, para sempre $5.95</string>
+	<string name="Pref_Upgrde_All_Preference_Title">Desbloquear tudo, para sempre</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Ativar todas as funções e modos, e também adições futuras</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">Desbloquear o modo HDR $0.99</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">Desbloquear o modo HDR</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Tire incríveis fotos com alto alcance dinâmico</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorama em alta resolução $2.99</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorama em alta resolução</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Fotografe belos panoramas com a ajuda da realidade aumentada</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Mover objetos $2.99</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Mover objetos</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Remova objetos indesejados ou combine movimento numa única foto</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Destravar foto de grupos $2.99</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Destravar foto de grupos</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Selecione os melhores rostos na sua foto</string>
 	
 </resources>

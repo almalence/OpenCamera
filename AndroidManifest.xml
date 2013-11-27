@@ -65,8 +65,8 @@
     	<meta-data android:name="android.appwidget.provider"
                android:resource="@xml/opencamera_appwidget_info" />
 		</receiver>
-		
-    	<service android:name=".OpenCameraWidgetService"
+				
+		<service android:name=".OpenCameraWidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS"
         android:exported="false" />
     	
@@ -75,6 +75,13 @@
         		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
     		</intent-filter>
 		</activity> -->		
+		
+		<receiver android:name=".HWButtonStart" >
+		    <intent-filter android:priority="10000">         
+		        <action android:name="android.intent.action.CAMERA_BUTTON" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		    </intent-filter>            
+		</receiver>
 		
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />

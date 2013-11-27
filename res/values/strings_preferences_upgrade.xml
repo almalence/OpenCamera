@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">Unlock all forever $5.95</string>
+	<string name="Pref_Upgrde_All_Preference_Title">Unlock all forever</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Activate all features and modes, even future version additions</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">Unlock HDR mode $0.99</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">Unlock HDR mode</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Shoot great-looking high-dynamic range images</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">High-resolution panorama $2.99</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">High-resolution panorama</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Shoot great panoramas with help of augmented-reality</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Moving objects $2.99</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Moving objects</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Remove unwanted objects or combine movement into single photo</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Unlock Group Shot $2.99</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Unlock Group Shot</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Select best faces on your photo</string>
 	
 </resources>

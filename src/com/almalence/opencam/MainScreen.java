@@ -1071,9 +1071,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void setCameraParameters(Camera.Parameters params) {
 		if (params != null && camera != null)
 		{
-			camera.setParameters(params);
-//			cameraParameters = params;
-			cameraParameters = camera.getParameters();
+			try
+			{
+				camera.setParameters(params);
+	//			cameraParameters = params;
+				cameraParameters = camera.getParameters();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				Log.e("MainScreen", "setCameraParameters exception: " + e.getMessage());
+			}
 		}
 		
 	}
@@ -1819,6 +1826,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
+	public String titleUnlockAll;
+	public String titleUnlockHDR;
+	public String titleUnlockPano;
+	public String titleUnlockMoving;
+	public String titleUnlockGroup;
+	
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		public void onQueryInventoryFinished(IabResult result,
 				Inventory inventory) {
@@ -1861,6 +1874,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
 				prefsEditor.commit();
 			}
+			
+			titleUnlockAll = inventory.getSkuDetails("unlock_all_forever").getPrice();
+			titleUnlockHDR = inventory.getSkuDetails("plugin_almalence_hdr").getPrice();
+			titleUnlockPano = inventory.getSkuDetails("plugin_almalence_panorama").getPrice();
+			titleUnlockMoving = inventory.getSkuDetails("plugin_almalence_moving_burst").getPrice();
+			titleUnlockGroup = inventory.getSkuDetails("plugin_almalence_groupshot").getPrice();
 		}
 	};
 
@@ -1874,6 +1893,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public void onBillingPreferenceCreate(final PreferenceFragment prefActivity) {
 		allPref = prefActivity.findPreference("purchaseAll");
+		
+		if (titleUnlockAll!=null && titleUnlockAll != "")
+		{
+			String title = getResources().getString(R.string.Pref_Upgrde_All_Preference_Title) + ": " + titleUnlockAll;
+			allPref.setTitle(title);
+		}
+		
 		allPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				// generate payload to identify user....????
@@ -1906,6 +1932,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		hdrPref = prefActivity.findPreference("hdrPurchase");
+		
+		if (titleUnlockHDR!=null && titleUnlockHDR != "")
+		{
+			String title = getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title) + ": " + titleUnlockHDR;
+			hdrPref.setTitle(title);
+		}
+		
 		hdrPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				// generate payload to identify user....????
@@ -1934,6 +1967,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		panoramaPref = prefActivity.findPreference("panoramaPurchase");
+		
+		if (titleUnlockPano!=null && titleUnlockPano != "")
+		{
+			String title = getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title) + ": " + titleUnlockPano;
+			panoramaPref.setTitle(title);
+		}
+		
 		panoramaPref
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
@@ -1965,6 +2005,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		objectremovalPref = prefActivity.findPreference("movingPurchase");
+		
+		if (titleUnlockMoving!=null && titleUnlockMoving != "")
+		{
+			String title = getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title) + ": " + titleUnlockMoving;
+			objectremovalPref.setTitle(title);
+		}
+		
 		objectremovalPref
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
@@ -1996,6 +2043,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		groupshotPref = prefActivity.findPreference("groupPurchase");
+		
+		if (titleUnlockGroup!=null && titleUnlockGroup != "")
+		{
+			String title = getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title) + ": " + titleUnlockGroup;
+			groupshotPref.setTitle(title);
+		}
+		
 		groupshotPref
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
