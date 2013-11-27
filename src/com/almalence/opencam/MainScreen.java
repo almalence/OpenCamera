@@ -1209,7 +1209,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public boolean isISOSupported() {
-		List<String> supported_iso = getSupportedISO();
+		List<String> supported_iso = getSupportedISO();   
 		String isoSystem = MainScreen.thiz.getCameraParameters().get("iso");
 		if ((supported_iso != null && supported_iso.size() > 0) || isoSystem != null)
 			return true;
