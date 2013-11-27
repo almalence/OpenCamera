@@ -103,6 +103,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static MainScreen thiz;
 	public static Context mainContext;
 	public static Handler H;
+	
 
 	private Object syncObject = new Object();
 
