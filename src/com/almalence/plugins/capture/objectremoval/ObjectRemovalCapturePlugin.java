@@ -68,6 +68,13 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		refreshPreferences();
 	}
 	
+	@Override
+	public void onGUICreate()
+	{
+		String text = "1. Hold device still and don't move\n2. Press shutter to start\n3. Tab detected moving objects to delete";
+		MainScreen.guiManager.showHelp("Object removal help", text, R.drawable.plugin_help_panorama, "objectRemovalShowHelp");
+	}
+	
 	private void refreshPreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);

@@ -91,7 +91,7 @@ import com.almalence.opencam.util.Util;
 public class MainScreen extends Activity implements View.OnClickListener,
 		View.OnTouchListener, SurfaceHolder.Callback, Camera.PictureCallback,
 		Camera.AutoFocusCallback, Handler.Callback, Camera.ErrorCallback,
-		Camera.PreviewCallback {
+		Camera.PreviewCallback, Camera.ShutterCallback {
 	// >>Description
 	// section with different global parameters available for everyone
 	//
@@ -1216,7 +1216,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public boolean isISOSupported() {
-		List<String> supported_iso = getSupportedISO();   
+		List<String> supported_iso = getSupportedISO();
 		String isoSystem = MainScreen.thiz.getCameraParameters().get("iso");
 		if ((supported_iso != null && supported_iso.size() > 0) || isoSystem != null)
 			return true;
@@ -1594,6 +1594,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public void onButtonClick(View v) {
 		MainScreen.guiManager.onButtonClick(v);
+	}
+	
+	@Override
+	public void onShutter()
+	{
+		PluginManager.getInstance().onShutter();
 	}
 
 	@Override

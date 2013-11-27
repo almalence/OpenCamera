@@ -80,6 +80,8 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1294,16 +1296,8 @@ public class AlmalenceGUI extends GUI implements
 		postProcessingLayout.bringToFront();
 		hintLayout.bringToFront();
 
-		// boolean useGeoTaggingPrefExport =
-		// prefs.getBoolean("useGeoTaggingPrefExport", false);
-		// if (useGeoTaggingPrefExport)
-		// {
-		// Location l = MLocation.getLocation(MainScreen.mainContext);
-		// if (l==null)
-		// Toast.makeText(MainScreen.mainContext,
-		// "Can't get location. Turn on \"use GPS satellites\" setting",
-		// Toast.LENGTH_LONG).show();
-		// }
+		View help = guiView.findViewById(R.id.mode_help);
+		help.bringToFront();
 	}
 
 	@Override
@@ -4104,6 +4098,9 @@ public class AlmalenceGUI extends GUI implements
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
 
+		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
+			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
+		
 		int id = button.getId();
 		if (lockControls && ((R.id.buttonShutter != id)))
 			return;
@@ -6266,6 +6263,9 @@ public class AlmalenceGUI extends GUI implements
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
+		
+		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
+			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
 
 		int res = 0;
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -6659,5 +6659,50 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	@TargetApi(14)
 	public void setFocusParameters() {
+	}
+	
+	
+	//mode help procedure
+	@Override
+	public void showHelp(String modeName, String text, int imageID, String Prefs)
+	{
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		boolean needToShow = prefs.getBoolean(Prefs, true);
+		if (false == needToShow)
+			return;
+		
+		final String preference = Prefs;
+		
+		final View help = guiView.findViewById(R.id.mode_help);
+		ImageView helpImage = (ImageView)guiView.findViewById(R.id.helpImage);
+		helpImage.setImageResource(imageID);
+		TextView helpText = (TextView)guiView.findViewById(R.id.helpText);
+		helpText.setText(text);
+		
+		final CheckBox ck = (CheckBox)guiView.findViewById(R.id.helpCheckBox);
+		ck.setChecked(false);
+		
+		TextView helpTextModeName = (TextView)guiView.findViewById(R.id.helpTextModeName);
+		helpTextModeName.setText(modeName);
+		
+		Button button = (Button)guiView.findViewById(R.id.buttonOk);
+		button.setOnClickListener(new OnClickListener() 
+		{
+			public void onClick(View v) 
+			{
+				help.setVisibility(View.GONE);
+				
+				if (ck.isChecked())
+				{
+					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean(preference, false);
+					prefsEditor.commit();
+				}				
+			}
+		});
+		
+		help.setVisibility(View.VISIBLE);
+		help.bringToFront();
 	}
 }

@@ -1208,6 +1208,11 @@ public class PluginManager {
 			pluginList.get(activeCapture).takePicture();
 	}
 
+	void onShutter() {
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onShutter();
+	}
+
 	void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte,

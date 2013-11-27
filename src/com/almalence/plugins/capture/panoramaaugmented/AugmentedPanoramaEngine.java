@@ -221,8 +221,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private boolean bViewportCreated = false;
 	private boolean bCreateViewportNow = false;
 	private GL10 gl10 = null;
+	private volatile int framesMax;
 	
-	public void reset(int width, int height, float verticalViewAngleR)
+	public void reset(final int width, final int height, float verticalViewAngleR)
 	{
 		this.width = width;
 		this.height = height;
@@ -273,6 +274,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		this.optimizeTextureDimensions();
 		
 		this.activated.set(true);
+	}
+	
+	public void setMaxFrames(final int count)
+	{
+		this.framesMax = count;
+		Log.e("Almalence", "Maximum frames count: " + count);
 	}
 	
 	public float getRadiusToEdge()
@@ -398,7 +405,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public int getPictureTakingState(final boolean autoFocus)
 	{
-		if (this.isCurcular())
+		if (this.isCircular())
 		{
 			return STATE_STANDBY;
 		}
@@ -441,9 +448,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 	}
 	
-	public boolean isCurcular()
+	public boolean isCircular()
 	{
-		return (this.angleTotal >= 2.0d * Math.PI);
+		synchronized (this.frames)
+		{
+			return (this.angleTotal >= 2.0d * Math.PI || this.frames.size() >= this.framesMax);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -663,7 +673,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			goodPlace = (framesCount == 0)
 					|| (this.state == STATE_TAKINGPICTURE
-						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.25f);
+						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.35f);
 		}
 
 		if (goodPlace)
@@ -789,7 +799,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				}
 			}
 			
-			if (this.capturing.get() && !this.isCurcular())
+			if (this.capturing.get() && !this.isCircular())
 			{
 				for (final AugmentedFrameTarget frame : this.targetFrames)
 				{
@@ -1354,8 +1364,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			//float scale = Math.max(0.2f, 1.0f - Math.max(0.1f, this.distance-0.1f));
 			float scale = Math.max(0.20f, 1.0f - this.distance);
-			gl.glScalef(scale, scale, scale);
-			
+			gl.glScalef(scale, scale, scale);	
 			
 			
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.this.vertexBuffer);

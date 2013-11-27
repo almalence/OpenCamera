@@ -39,4 +39,6 @@
    <dimen name="hintDownArrowBottom">60sp</dimen>
    <dimen name="hintDownArrowText">50sp</dimen>  
    
+   <dimen name="helpImage">150dp</dimen>
+   
 </resources>

@@ -68,6 +68,13 @@ public class SequenceCapturePlugin extends PluginCapture
 		refreshPreferences();
 	}
 	
+	@Override
+	public void onGUICreate()
+	{
+		String text = "1. Hold device still and don't move\n2. Press shutter to start\n3. Select which photos to use in result";
+		MainScreen.guiManager.showHelp("Sequence help", text, R.drawable.plugin_help_sequence, "sequenceRemovalShowHelp");
+	}
+	
 	private void refreshPreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);

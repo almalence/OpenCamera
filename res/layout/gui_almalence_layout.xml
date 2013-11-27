@@ -697,4 +697,85 @@
 			
 	</LinearLayout>
 		
+	<RelativeLayout android:id="@+id/mode_help"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_margin="20dip"
+			android:background="#FAFAFA"
+			android:visibility="gone"
+			>
+            
+	    	<TextView
+				android:id="@+id/helpTextModeName"
+				android:textSize="18sp"
+				android:textColor="#5A5E5E"
+				android:background="@android:color/transparent"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_alignParentTop="true"
+				android:layout_centerHorizontal="true"
+				android:layout_margin="5dip"
+				>
+			</TextView>
+			
+		    <LinearLayout
+			android:id="@+id/helpImageLayout"
+			android:layout_width="fill_parent"
+			android:layout_height="@dimen/helpImage"
+			android:layout_margin="10dip"
+			android:orientation="vertical"       
+			android:layout_below="@+id/helpTextModeName"
+			>
+	            <ImageView
+					android:id="@+id/helpImage"
+					android:layout_height="fill_parent"
+					android:layout_width="fill_parent"
+					android:layout_centerInParent="true"
+					
+					>
+				</ImageView>
+			</LinearLayout>
+			
+            <TextView
+				android:id="@+id/helpText"
+				android:textSize="18sp"
+				android:textColor="#5A5E5E"
+				android:background="@android:color/transparent"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_margin="10dip"
+				android:layout_below="@+id/helpImageLayout"
+				>
+			</TextView>
+			
+            <CheckBox
+				android:id="@+id/helpCheckBox"
+				android:textSize="18sp"
+				android:textColor="#5A5E5E"
+				android:text="Don't show this again"
+				android:background="@android:color/transparent"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_margin="10dip"
+				android:layout_below="@+id/helpText"
+				>
+			</CheckBox>
+			
+            <Button 
+                android:id="@+id/buttonOk"
+                android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dip"
+                android:text="OK"
+                android:textColor="#5A5E5E"
+                android:textSize="22sp"
+                android:background="@android:color/transparent">
+            </Button>
+			
+	</RelativeLayout>
+	
 </RelativeLayout>

@@ -184,6 +184,8 @@ public abstract class Plugin
 	
 	public void takePicture(){}
 	
+	public void onShutter(){};
+	
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera){}
 
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
