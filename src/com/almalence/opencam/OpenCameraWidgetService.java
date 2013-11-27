@@ -2,8 +2,10 @@ package com.almalence.opencam;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -23,7 +25,7 @@ public class OpenCameraWidgetService extends RemoteViewsService {
 }
 
 class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    private static final int mCount = 12;
+    private static int mCount = 13;
     private List<OpenCameraWidgetItem> mWidgetItems = new ArrayList<OpenCameraWidgetItem>();
     private Context mContext;
     private int mAppWidgetId;
@@ -77,10 +79,21 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
-        for (int i = 0; i < mCount; i++) {
-        	OpenCameraWidgetItem mode = new OpenCameraWidgetItem(modeNames.get(i), modeIcons.get(i));
-            mWidgetItems.add(mode);
-        }
+    	if(OpenCameraWidgetConfigureActivity.modeGridAssoc != null)
+    	{
+    		Set<Integer> keys = OpenCameraWidgetConfigureActivity.modeGridAssoc.keySet();
+    		mCount = keys.size()+1;
+    		Iterator<Integer> it = keys.iterator();
+    		while(it.hasNext())
+    		{
+    			int gridIndex = it.next();
+    			Mode mode = OpenCameraWidgetConfigureActivity.modeGridAssoc.get(gridIndex); 
+    			OpenCameraWidgetItem modeInfo = new OpenCameraWidgetItem(mode.modeID, MainScreen.thiz.getResources().getIdentifier(
+																					  mode.icon, "drawable",
+																					  MainScreen.thiz.getPackageName()));
+    			mWidgetItems.add(modeInfo);
+    		}
+    	}
 
         // We sleep for 3 seconds here to show how the empty view appears in the interim.
         // The empty view is set in the StackWidgetProvider and should be a sibling of the
@@ -102,23 +115,39 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         return mCount;
     }
 
-    public RemoteViews getViewAt(int position) {
+    public RemoteViews getViewAt(int position)
+    {
         // position will always range from 0 to getCount() - 1.
-
-    	OpenCameraWidgetItem item = mWidgetItems.get(position);
-        // We construct a remote views item based on our widget item xml file, and set the
-        // text based on the position.
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
-        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
-        rv.setImageViewResource(R.id.modeImage, item.modeIconID);
-
-        // Next, we set a fill-intent which will be used to fill-in the pending intent template
-        // which is set on the collection view in StackWidgetProvider.
-        Bundle extras = new Bundle();
-        extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
-        Intent fillInIntent = new Intent(mContext, MainScreen.class);
-        fillInIntent.putExtras(extras);
-        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+    	RemoteViews rv = null;
+    	if(position == mCount-1)
+    	{    		
+    		rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
+	        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
+	        rv.setImageViewResource(R.id.modeImage, R.drawable.opencamera_widget_settings);
+	
+	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+	        // which is set on the collection view in StackWidgetProvider.
+	        
+	        Intent fillInIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);	        
+	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+    	}
+    	else
+    	{
+	    	OpenCameraWidgetItem item = mWidgetItems.get(position);
+	        // We construct a remote views item based on our widget item xml file, and set the
+	        // text based on the position.
+	        rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
+	        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
+	        rv.setImageViewResource(R.id.modeImage, item.modeIconID);
+	
+	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+	        // which is set on the collection view in StackWidgetProvider.
+	        Bundle extras = new Bundle();
+	        extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
+	        Intent fillInIntent = new Intent(mContext, MainScreen.class);
+	        fillInIntent.putExtras(extras);
+	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+    	}
         
      // set intent for item click (opens main activity)
 //        Intent viewIntent = new Intent(mContext, MainScreen.class);

@@ -104,6 +104,26 @@
     <string name="sceneHDRSystem">hdr</string>
     <string name="sceneARSystem">AR</string>
     
+    <string name="sceneAutoKey">00_auto</string>
+    <string name="sceneActionKey">01_action</string>
+    <string name="sceneARKey">02_AR</string>
+    <string name="sceneBarcodeKey">03_barcode</string>
+    <string name="sceneBeachKey">04_beach</string>
+    <string name="sceneCandlelightKey">05_candlelight</string>
+    <string name="sceneFireworksKey">06_fireworks</string>
+    <string name="sceneHDRKey">07_hdr</string>
+    <string name="sceneLandscapeKey">08_landscape</string>
+    <string name="sceneNightKey">09_night</string>
+    <string name="sceneNightPortraitKey">10_night-portrait</string>
+    <string name="scenePartyKey">11_party</string>
+    <string name="scenePortraitKey">12_portrait</string>
+    <string name="sceneSnowKey">13_snow</string>
+    <string name="sceneSportsKey">14_sports</string>
+    <string name="sceneSteadyPhotoKey">15_steadyphoto</string>
+    <string name="sceneSunsetKey">16_sunset</string>     
+    <string name="sceneTheatreKey">17_theatre</string>
+    
+    
     <string name="wbAutoSystem">auto</string>
     <string name="wbIncandescentSystem">incandescent</string>
     <string name="wbFluorescentSystem">fluorescent</string>
@@ -113,6 +133,16 @@
     <string name="wbTwilightSystem">twilight</string>
     <string name="wbShadeSystem">shade</string>
     
+    <string name="wbAutoKey">00_auto</string>
+    <string name="wbCloudyDaylightKey">01_cloudy-daylight</string>
+    <string name="wbDaylightKey">02_daylight</string>
+    <string name="wbFluorescentKey">03_fluorescent</string>
+    <string name="wbIncandescentKey">04_incandescent</string>
+    <string name="wbShadeKey">05_shade</string>
+    <string name="wbTwilightKey">06_twilight</string>
+    <string name="wbWarmFluorescentKey">07_warm-fluorescent</string>    
+
+
     <string name="focusAutoSystem">auto</string>
     <string name="focusInfinitySystem">infinity</string>
     <string name="focusNormalSystem">normal</string>
@@ -123,11 +153,27 @@
     <string name="focusContinuousPictureSystem">continuous-picture</string>
     <string name="focusAfLockSystem">af-lock</string>
     
+    <string name="focusAutoKey">00_auto</string>
+    <string name="focusContinuousVideoKey">01_continuous-video</string>
+    <string name="focusContinuousPictureKey">02_continuous-picture</string>
+    <string name="focusNormalKey">03_normal</string>
+    <string name="focusMacroKey">04_macro</string>
+    <string name="focusFixedKey">05_fixed</string>
+    <string name="focusInfinityKey">06_infinity</string>    
+    <string name="focusEdofKey">07_edof</string>    
+    <string name="focusAfLockKey">08_af-lock</string>
+    
     <string name="flashAutoSystem">auto</string>
     <string name="flashOnSystem">on</string>
     <string name="flashOffSystem">off</string>
     <string name="flashRedEyeSystem">red-eye</string>
     <string name="flashTorchSystem">torch</string>
+    
+    <string name="flashAutoKey">00_auto</string>
+    <string name="flashOnKey">01_on</string>
+    <string name="flashOffKey">02_off</string>
+    <string name="flashRedEyeKey">03_red-eye</string>
+    <string name="flashTorchKey">04_torch</string>
     
     <string name="isoAutoSystem">auto</string>
     <string name="iso50System">ISO50</string>
@@ -137,6 +183,22 @@
     <string name="iso800System">"ISO800"</string>
     <string name="iso1600System">ISO1600</string>
     <string name="iso3200System">ISO3200</string>
+    
+    <string name="isoAutoKey">0_auto</string>
+    <string name="iso50Key">1_ISO50</string>
+    <string name="iso100Key">2_ISO100</string>
+    <string name="iso200Key">3_ISO200</string>
+    <string name="iso400Key">4_ISO400</string>
+    <string name="iso800Key">"5_ISO800"</string>
+    <string name="iso1600Key">6_ISO1600</string>
+    <string name="iso3200Key">7_ISO3200</string>
+    
+    <string name="isoAutoDefaultSystem">auto</string>    
+    <string name="iso100DefaultSystem">100</string>
+    <string name="iso200DefaultSystem">200</string>
+    <string name="iso400DefaultSystem">400</string>
+    <string name="iso800DefaultSystem">"800"</string>
+    <string name="iso1600DefaultSystem">1600</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>

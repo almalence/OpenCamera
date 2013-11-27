@@ -106,6 +106,7 @@ public class GridVFPlugin extends PluginViewfinder
 		}
 	}
 	
+	static boolean is100 = false;
 	@Override
 	public void onQuickControlClick()
 	{        

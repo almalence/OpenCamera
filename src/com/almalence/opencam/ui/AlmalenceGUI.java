@@ -342,16 +342,16 @@ public class AlmalenceGUI extends GUI implements
 		{
 			put(isoAuto, R.drawable.gui_almalence_settings_iso_auto);
 			put(iso50, R.drawable.gui_almalence_settings_iso_50);
-			put(iso100, R.drawable.gui_almalence_settings_iso_100);
+			put(iso100, R.drawable.gui_almalence_settings_iso_100);				
 			put(iso200, R.drawable.gui_almalence_settings_iso_200);
 			put(iso400, R.drawable.gui_almalence_settings_iso_400);
 			put(iso800, R.drawable.gui_almalence_settings_iso_800);
 			put(iso1600, R.drawable.gui_almalence_settings_iso_1600);
-			put(iso3200, R.drawable.gui_almalence_settings_iso_3200);
+			put(iso3200, R.drawable.gui_almalence_settings_iso_3200);			
 		}
 	};
 
-	// List of localized names for camera parameters values
+	// List of localized names for camera parameters values	
 	private final static Map<String, String> names_scene = new Hashtable<String, String>() {
 		{
 			put(sceneAuto,
@@ -436,6 +436,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
+
 	private final static Map<String, String> names_focus = new Hashtable<String, String>() {
 		{
 			put(focusAuto,
@@ -500,6 +501,109 @@ public class AlmalenceGUI extends GUI implements
 					MainScreen.thiz.getResources().getString(R.string.iso1600));
 			put(iso3200,
 					MainScreen.thiz.getResources().getString(R.string.iso3200));
+		}
+	};
+	
+	private final static Map<String, String> scene_keys = new Hashtable<String, String>()
+	{
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.sceneAutoKey), sceneAuto);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneActionKey), sceneAction);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneARKey), sceneAR);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneBarcodeKey), sceneBarcode);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneBeachKey), sceneBeach);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneCandlelightKey), sceneCandlelight);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneFireworksKey), sceneFireworks);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneHDRKey), sceneHDR);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneLandscapeKey), sceneLandscape);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneNightKey), sceneNight);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneNightPortraitKey), sceneNightPortrait);
+			put(MainScreen.thiz.getResources().getString(R.string.scenePartyKey), sceneParty);
+			put(MainScreen.thiz.getResources().getString(R.string.scenePortraitKey), scenePortrait);		
+			put(MainScreen.thiz.getResources().getString(R.string.sceneSnowKey), sceneSnow);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneSportsKey), sceneSports);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhotoKey), sceneSteadyPhoto);
+			put(MainScreen.thiz.getResources().getString(R.string.sceneSunsetKey), sceneSunset);			
+			put(MainScreen.thiz.getResources().getString(R.string.sceneTheatreKey), sceneTheatre);			
+		}
+	};
+	
+	private final static Map<String, String> wb_keys = new Hashtable<String, String>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.wbAutoKey), wbAuto);
+			put(MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylightKey), wbCloudyDaylight);
+			put(MainScreen.thiz.getResources().getString(R.string.wbDaylightKey), wbDaylight);
+			put(MainScreen.thiz.getResources().getString(R.string.wbFluorescentKey), wbFluorescent);
+			put(MainScreen.thiz.getResources().getString(R.string.wbIncandescentKey), wbIncandescent);
+			put(MainScreen.thiz.getResources().getString(R.string.wbShadeKey), wbShade);
+			put(MainScreen.thiz.getResources().getString(R.string.wbTwilightKey), wbTwilight);
+			put(MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescentKey), wbWarmFluorescent);
+		}
+	};
+	
+	private final static Map<String, String> focus_keys = new Hashtable<String, String>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.focusAutoKey), focusAuto);
+			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousVideoKey), focusContinuousVideo);
+			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureKey), focusContinuousPicture);
+			put(MainScreen.thiz.getResources().getString(R.string.focusNormalKey), focusNormal);
+			put(MainScreen.thiz.getResources().getString(R.string.focusMacroKey), focusMacro);
+			put(MainScreen.thiz.getResources().getString(R.string.focusFixedKey), focusFixed);
+			put(MainScreen.thiz.getResources().getString(R.string.focusInfinityKey), focusInfinity);
+			put(MainScreen.thiz.getResources().getString(R.string.focusEdofKey), focusEdof);
+		}
+	};
+	
+	
+	private final static Map<String, String> flash_keys = new Hashtable<String, String>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.flashAutoKey), flashAuto);
+			put(MainScreen.thiz.getResources().getString(R.string.flashOnKey), flashOn);
+			put(MainScreen.thiz.getResources().getString(R.string.flashOffKey), flashOff);
+			put(MainScreen.thiz.getResources().getString(R.string.flashRedEyeKey), flashRedEye);
+			put(MainScreen.thiz.getResources().getString(R.string.flashTorchKey), flashTorch);
+		}
+	};
+
+	
+	private final static Map<String, String> iso_keys = new Hashtable<String, String>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), isoAuto);
+			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), iso50);
+			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), iso100);
+			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), iso200);
+			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), iso400);
+			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), iso800);
+			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), iso1600);
+			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), iso3200);
+		}
+	};
+	
+	private final static List<String> iso_default = new ArrayList<String>() {
+		{			
+			add(isoAuto);			
+			add(iso100);
+			add(iso200);
+			add(iso400);
+			add(iso800);
+			add(iso1600);			
+		}
+	};
+	
+	private final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
+	{			
+			put(isoAuto,
+					MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
+			put(iso100,
+					MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
+			put(iso200,
+					MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
+			put(iso400,
+					MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
+			put(iso800,
+					MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
+			put(iso1600,
+					MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
 		}
 	};
 
@@ -962,7 +1066,7 @@ public class AlmalenceGUI extends GUI implements
 			Map<String, Integer> icons_map, Map<String, String> names_map,
 			Map<String, View> paramMap, final int mode) {
 		paramMap.clear();
-		Set<String> keys = icons_map.keySet();
+		Set<String> keys = icons_map.keySet();		
 		Iterator<String> it = keys.iterator();
 		int mode_number = 0;
 		while (it.hasNext()) {
@@ -1528,10 +1632,14 @@ public class AlmalenceGUI extends GUI implements
 		List<String> supported_scene = MainScreen.thiz.getSupportedSceneModes();
 		if (supported_scene != null && supported_scene.size() > 0 && activeScene != null) {
 
-			Set<String> keys = SceneModeButtons.keySet();
+//			Set<String> keys = SceneModeButtons.keySet();
+//			Iterator<String> it = keys.iterator();
+			Collection<String> unsorted_keys = scene_keys.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
-				String scene_name = it.next();
+				String scene_key = it.next();
+				String scene_name = scene_keys.get(scene_key);
 				if (supported_scene.contains(scene_name)
 						&& scene_name != sceneHDR && scene_name != sceneNight) {
 					activeScene.add(SceneModeButtons.get(scene_name));
@@ -1597,10 +1705,13 @@ public class AlmalenceGUI extends GUI implements
 		if (supported_wb != null && supported_wb.size() > 0 && activeWB != null) {
 			//mWBSupported = true;
 
-			Set<String> keys = WBModeButtons.keySet();
+			//Set<String> keys = WBModeButtons.keySet();
+			Collection<String> unsorted_keys = wb_keys.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
-				String wb_name = it.next();
+				String wb_key = it.next();
+				String wb_name = wb_keys.get(wb_key);
 				if (supported_wb.contains(wb_name)) {
 					activeWB.add(WBModeButtons.get(wb_name));
 					activeWBNames.add(wb_name);
@@ -1663,10 +1774,13 @@ public class AlmalenceGUI extends GUI implements
 		final List<String> supported_focus = MainScreen.thiz.getSupportedFocusModes();
 		if (supported_focus != null && supported_focus.size() > 0 && activeFocus != null) {
 
-			Set<String> keys = FocusModeButtons.keySet();
+			//Set<String> keys = FocusModeButtons.keySet();
+			Collection<String> unsorted_keys = focus_keys.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
-				String focus_name = it.next();
+				String focus_key = it.next();
+				String focus_name = focus_keys.get(focus_key);
 				if (supported_focus.contains(focus_name)) {
 					activeFocus.add(FocusModeButtons.get(focus_name));
 					activeFocusNames.add(focus_name);
@@ -1833,10 +1947,13 @@ public class AlmalenceGUI extends GUI implements
 		List<String> supported_flash = MainScreen.thiz.getSupportedFlashModes();
 		if (supported_flash != null && supported_flash.size() > 0 && activeFlash != null) {			
 
-			Set<String> keys = FlashModeButtons.keySet();
+			//Set<String> keys = FlashModeButtons.keySet();
+			Collection<String> unsorted_keys = flash_keys.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
-				String flash_name = it.next();
+				String flash_key = it.next();
+				String flash_name = flash_keys.get(flash_key);
 				if (supported_flash.contains(flash_name)) {
 					activeFlash.add(FlashModeButtons.get(flash_name));
 					activeFlashNames.add(flash_name);
@@ -1900,13 +2017,24 @@ public class AlmalenceGUI extends GUI implements
 
 		// Create ISO button and adding supported ISOs
 		List<String> supported_iso = MainScreen.thiz.getSupportedISO();
-		if (supported_iso != null && supported_iso.size() > 0 && activeISO != null) {
+		if ((supported_iso != null && supported_iso.size() > 0 && activeISO != null) ||
+				MainScreen.thiz.isISOSupported())
+		{
 
-			Set<String> keys = ISOButtons.keySet();
+			//Collection<String> unsorted_keys = ISOButtons.keySet();
+			//List<String> keys = Util.asSortedList(unsorted_keys);
+			Collection<String> unsorted_keys = iso_keys.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
-				String iso_name = it.next();
-				if (supported_iso.contains(iso_name)) {
+				String iso_key = it.next();
+				String iso_name = iso_keys.get(iso_key);
+				if (supported_iso != null && supported_iso.size() > 0 && supported_iso.contains(iso_name)) {
+					activeISO.add(ISOButtons.get(iso_name));
+					activeISONames.add(iso_name);
+				}
+				else if(iso_default.contains(iso_name))
+				{
 					activeISO.add(ISOButtons.get(iso_name));
 					activeISONames.add(iso_name);
 				}
@@ -1959,7 +2087,9 @@ public class AlmalenceGUI extends GUI implements
 				mISOSupported = false;
 				mISO = null;	
 			}
-		} else {
+		}		
+		else
+		{
 			mISOSupported = false;
 			mISO = null;
 		}
@@ -3203,11 +3333,15 @@ public class AlmalenceGUI extends GUI implements
 					return;
 				}
 				List<String> supported_iso = MainScreen.thiz.getSupportedISO();
-				if (supported_iso.size() > 0) {
+				if ((supported_iso != null && supported_iso.size() > 0) ||
+				    MainScreen.thiz.isISOSupported())
+				{					
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
 					showParams(MODE_ISO);
-				} else {
+				}
+				else
+				{
 					String newISO;
 					ListIterator<String> it = supported_iso
 							.listIterator(supported_iso.indexOf(mISO));
@@ -4508,7 +4642,7 @@ public class AlmalenceGUI extends GUI implements
 		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		if (newMode != null && params != null)
 		{
-			if ((mSceneMode != sceneAuto || mISO != newMode)
+			if (mSceneMode != null && (mSceneMode.compareTo(sceneAuto) != 0 && mISO.compareTo(newMode) != 0)
 					&& MainScreen.thiz.mSceneModeSupported)
 			{
 				setSceneMode(sceneAuto);
@@ -4516,7 +4650,14 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			params.set(isoParam, newMode);
-			MainScreen.thiz.setCameraParameters(params);
+			try
+			{
+				MainScreen.thiz.setCameraParameters(params);
+			}
+			catch(RuntimeException exp)
+			{
+				params.set(isoParam, iso_default_values.get(newMode));
+			}
 			mISO = newMode;
 			setButtonSelected(ISOButtons, mISO);
 
