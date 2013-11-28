@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.PointF;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -271,13 +273,21 @@ public class ZoomVFPlugin extends PluginViewfinder
 		}
 		else {
 			zoomPanel.setVisibility(View.VISIBLE);
-		}
+		}		
+		
+		String modeName = prefs.getString("defaultModeName", null);
+		if(modeName != null && modeName.compareTo("video") == 0
+		   && Build.MODEL.compareTo(MainScreen.thiz.getResources().getString(R.string.device_name_ss3)) == 0)
+			zoomPanel.setVisibility(View.GONE);
 	}	
 
 	@Override
 	public void onCameraParametersSetup()
 	{
-		if (!isEnabled)
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		String modeName = prefs.getString("defaultModeName", null);
+		if (!isEnabled || (modeName != null && modeName.compareTo("video") == 0
+				   && Build.MODEL.compareTo(MainScreen.thiz.getResources().getString(R.string.device_name_ss3)) == 0))
 			return;
 		
 		zoomCurrent = 0;				

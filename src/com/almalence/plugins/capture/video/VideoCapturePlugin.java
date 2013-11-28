@@ -34,6 +34,7 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.os.SystemClock;
@@ -105,7 +106,9 @@ public class VideoCapturePlugin extends PluginCapture
 
     public boolean showRecording = false;
     
-    private View buttonsLayout; 
+    private View buttonsLayout;
+    
+    private final String deviceSS3 = MainScreen.thiz.getResources().getString(R.string.device_name_ss3);
     
 //    private int mLayoutOrientationCurrent;
 //	private int mDisplayOrientationCurrent;
@@ -146,15 +149,17 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		
 		//change shutter icon
 		isRecording = false;
+		prefs.edit().putBoolean("videorecording", false);
 		
 		MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
 		
 		onPreferenceCreate((PreferenceFragment)null);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
 	    int quality = 0;
 	    switch (ImageSizeIdxPreference)
 	    {
@@ -308,6 +313,10 @@ public class VideoCapturePlugin extends PluginCapture
 		takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		takePictureButton.invalidate();
 		takePictureButton.requestLayout();
+		
+		
+		if(Build.MODEL.compareTo(deviceSS3) == 0)
+			takePictureButton.setVisibility(View.INVISIBLE);		
 	}
 	
 	@Override
@@ -490,9 +499,16 @@ public class VideoCapturePlugin extends PluginCapture
             camera.lock();         // take camera access back from MediaRecorder
 
             MainScreen.guiManager.lockControls = false;
+            
+            Message msg = new Message();
+	  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+	  		msg.what = PluginManager.MSG_BROADCAST;
+	  		MainScreen.H.sendMessage(msg);
+		  		
             // inform the user that recording has stopped
             isRecording = false;
             showRecordingUI(isRecording);
+            prefs.edit().putBoolean("videorecording", false);
             
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
@@ -679,7 +695,8 @@ public class VideoCapturePlugin extends PluginCapture
             MainScreen.guiManager.lockControls = false;
             // inform the user that recording has stopped
             isRecording = false;
-            showRecordingUI(isRecording);         
+            showRecordingUI(isRecording);
+            PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("videorecording", false);
             
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
@@ -714,9 +731,29 @@ public class VideoCapturePlugin extends PluginCapture
 //            Message msg = new Message();
 //			msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;				
 //			MainScreen.H.sendMessage(msg);
+   		  	
+   		  	if(Build.MODEL.compareTo(deviceSS3) == 0)
+   		  	{
+   		  		MainScreen.guiManager.lockControls = false;
+   		  		
+   		  		Message msg = new Message();
+   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+   		  		msg.what = PluginManager.MSG_BROADCAST;
+   		  		MainScreen.H.sendMessage(msg);
+   		  	}
 			
         } else 
         {
+        	if(Build.MODEL.compareTo(deviceSS3) == 0)
+   		  	{
+   		  		MainScreen.guiManager.lockControls = true;
+   		  		
+   		  		Message msg = new Message();
+   		  		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
+   		  		msg.what = PluginManager.MSG_BROADCAST;
+   		  		MainScreen.H.sendMessage(msg);
+   		  	}
+        	
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
         	
@@ -904,6 +941,7 @@ public class VideoCapturePlugin extends PluginCapture
             // inform the user that recording has started
             isRecording = true;
             showRecordingUI(isRecording);
+            prefs.edit().putBoolean("videorecording", true);
             
             //PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", true).commit();
             
@@ -911,8 +949,9 @@ public class VideoCapturePlugin extends PluginCapture
    		     	public void onTick(long millisUntilFinished) {}
 
 	   		     public void onFinish() {
-	   		    	 shutterOff=false;
-	   		    	 MainScreen.guiManager.lockControls = false;
+	   		    	 shutterOff=false;	   		    	
+	   		    	 if(Build.MODEL.compareTo(deviceSS3) != 0)
+	   		    		 MainScreen.guiManager.lockControls = false;
 	   		     }
    		  	}.start();
         }

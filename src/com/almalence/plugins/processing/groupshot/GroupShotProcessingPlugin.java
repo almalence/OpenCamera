@@ -155,6 +155,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 
     //indicates that no more user interaction needed
   	private boolean finishing = false;
+  	private boolean changingFace = false;
   	
 	public GroupShotProcessingPlugin()
 	{
@@ -171,6 +172,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	public void onStartProcessing(long SessionID) 
 	{
 		finishing = false;
+		changingFace = false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.H.sendMessage(msg);	
@@ -827,8 +829,10 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 					while(!checkFaceIsSuitable(newFrameIndex, i, radius, ratiox, ratioy, newRect))
 						newFrameIndex++;
 
+					changingFace = true;
 					mChosenFace[mBaseFrame][i] = newFrameIndex;
 					mSeamless.changeFace(i, mChosenFace[mBaseFrame][i] % nFrames);
+					changingFace = false;
 					return true;
 				}
 				i++;
@@ -1036,7 +1040,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 			{
-				if (finishing == true)
+				if (finishing == true || changingFace == true)
 					return true;
 				finishing = true;
 				mHandler.sendEmptyMessage(MSG_LEAVING);
@@ -1052,7 +1056,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 	    	if (v == mSaveButton)
 	    	{
-	    		if (finishing == true)
+	    		if (finishing == true || changingFace == true)
 					return;
 	    		finishing = true;
 	    		savePicture(MainScreen.mainContext);

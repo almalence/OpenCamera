@@ -29,6 +29,7 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -112,8 +113,8 @@ public class FocusVFPlugin extends PluginViewfinder
         {
             switch (msg.what)
             {
-                case RESET_TOUCH_FOCUS:
-                    cancelAutoFocus();
+                case RESET_TOUCH_FOCUS:                	
+        			cancelAutoFocus();
                     Camera camera = MainScreen.thiz.getCamera();
                     String fm = MainScreen.thiz.getFocusMode();
                     if(camera != null &&
@@ -654,7 +655,13 @@ public class FocusVFPlugin extends PluginViewfinder
         	(//fm.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
         	//fm.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0 ||
         	fm.compareTo(Camera.Parameters.FOCUS_MODE_INFINITY) == 0))
+        	{
+        		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("defaultModeName", null);
+        		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+    			if(!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording
+    			   && Build.MODEL.compareTo(MainScreen.thiz.getResources().getString(R.string.device_name_ss3)) == 0))
         		MainScreen.cancelAutoFocus();
+        	}
         }
         
         // Reset the tap area before calling mListener.cancelAutofocus.
@@ -795,8 +802,14 @@ public class FocusVFPlugin extends PluginViewfinder
 		   focusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0) &&
 		   mFocusAreaSupported)
     	{
-    		MainScreen.thiz.setCameraFocusAreas(null);
-    		MainScreen.thiz.setCameraMeteringAreas(null);
+    		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("defaultModeName", null);
+    		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+			if(!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording
+			   && Build.MODEL.compareTo(MainScreen.thiz.getResources().getString(R.string.device_name_ss3)) == 0))
+			{
+				MainScreen.thiz.setCameraFocusAreas(null);
+    			MainScreen.thiz.setCameraMeteringAreas(null);
+			}
     	}
         
 //        if(MainScreen.camera != null &&
@@ -895,20 +908,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (arg1 == PluginManager.MSG_CONTROL_LOCKED) 
 		{
 			mFocusDisabled = true;
-			cancelAutoFocus();
-			return false;
+			cancelAutoFocus();			
 		}
 		else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED) 
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();
-			return false;
+			cancelAutoFocus();			
 		}
 		else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED) 
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();
-			return false;
+			cancelAutoFocus();			
 		}
 		else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{

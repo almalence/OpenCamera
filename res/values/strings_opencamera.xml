@@ -24,5 +24,7 @@
     <string name="dimensions_none">None</string>
     
     <string name="already_unlocked">Already unlocked</string>
+    
+    <string name="device_name_ss3">GT-I9300</string>
 
 </resources>
