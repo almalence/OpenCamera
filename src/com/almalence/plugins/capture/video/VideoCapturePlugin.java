@@ -1216,6 +1216,7 @@ public class VideoCapturePlugin extends PluginCapture
         np.setValue(interval);
         np.setDisplayedValues(stringInterval);
         np.setWrapSelectorWheel(false);
+        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         
         final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
         np2.setMaxValue(2);
@@ -1223,6 +1224,7 @@ public class VideoCapturePlugin extends PluginCapture
         np2.setValue(measurementVal);
         np2.setWrapSelectorWheel(false);
         np2.setDisplayedValues(stringMeasurement);
+        np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         
         final Switch sw = (Switch) d.findViewById(R.id.timelapse_switcher);
         

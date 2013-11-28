@@ -6905,6 +6905,7 @@ public class AlmalenceGUI extends GUI implements
         d.setContentView(R.layout.selftimer_dialog);
         final Button bSet = (Button) d.findViewById(R.id.button1);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np.setMaxValue(2);
         np.setMinValue(0);
         np.setValue(interval);

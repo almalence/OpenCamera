@@ -1967,7 +1967,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		if (summaryUnlockHDR!=null && summaryUnlockHDR != "")
 		{
-			String summary = summaryUnlockHDR + getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Summary);
+			String summary = summaryUnlockHDR + " " + getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Summary);
 			hdrPref.setSummary(summary);
 		}
 		
@@ -2007,7 +2007,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		if (summaryUnlockPano!=null && summaryUnlockPano != "")
 		{
-			String summary = summaryUnlockPano + getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Summary) ;
+			String summary = summaryUnlockPano + " " + getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Summary) ;
 			panoramaPref.setSummary(summary);
 		}
 		
@@ -2050,7 +2050,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		if (summaryUnlockMoving!=null && summaryUnlockMoving != "")
 		{
-			String summary = summaryUnlockMoving + getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Summary);
+			String summary = summaryUnlockMoving + " " + getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Summary);
 			objectremovalPref.setSummary(summary);
 		}
 		
@@ -2093,7 +2093,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		if (summaryUnlockGroup!=null && summaryUnlockGroup != "")
 		{
-			String summary = summaryUnlockGroup + getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Summary);
+			String summary = summaryUnlockGroup + " " + getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Summary);
 			groupshotPref.setSummary(summary);
 		}
 		
