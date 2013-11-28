@@ -726,12 +726,9 @@ public class VideoCapturePlugin extends PluginCapture
 	   		    	shutterOff = false;
 	   				showRecording=false;
 	   		     }
-   		  	}.start();
-   		  	
-//            Message msg = new Message();
-//			msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;				
-//			MainScreen.H.sendMessage(msg);
-   		  	
+   		  	}.start();  		  	
+
+
    		  	if(Build.MODEL.compareTo(deviceSS3) == 0)
    		  	{
    		  		MainScreen.guiManager.lockControls = false;
