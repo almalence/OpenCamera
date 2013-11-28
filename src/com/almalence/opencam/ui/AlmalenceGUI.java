@@ -906,6 +906,11 @@ public class AlmalenceGUI extends GUI implements
 		unlock.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				MainScreen.thiz.showUnlock = true;
+				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
+				{
+					Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+					return;
+				}
 				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
 				MainScreen.thiz.startActivity(intent);
 			}
@@ -6733,7 +6738,10 @@ public class AlmalenceGUI extends GUI implements
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		boolean needToShow = prefs.getBoolean(Prefs, true);
-		if (false == needToShow)
+		
+		//check show help settings
+		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", false);
+		if (false == needToShow && MainScreen.showHelp == false)
 			return;
 		
 		final String preference = Prefs;
@@ -6760,6 +6768,16 @@ public class AlmalenceGUI extends GUI implements
 				if (ck.isChecked())
 				{
 					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean("showHelpPrefCommon", false);
+					//reset all show help settings
+					if (MainScreen.showHelp)
+					{
+						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+						prefsEditor.putBoolean("panoramaShowHelp", true);
+						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+						prefsEditor.putBoolean("objectRemovalShowHelp", true);
+					}
+					
 					prefsEditor.putBoolean(preference, false);
 					prefsEditor.commit();
 				}				

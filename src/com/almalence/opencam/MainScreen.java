@@ -170,6 +170,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// Common preferences
 	public static String ImageSizeIdxPreference;
 	public static boolean ShutterPreference = true;
+	
+	public static boolean showHelp = false;
 	// public static boolean FullMediaRescan;
 	public static final String SavePathPref = "savePathPref";
 
@@ -568,6 +570,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		
 	}
 
 	@Override
@@ -1833,11 +1836,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public String titleUnlockAll;
-	public String titleUnlockHDR;
-	public String titleUnlockPano;
-	public String titleUnlockMoving;
-	public String titleUnlockGroup;
+	public String titleUnlockAll = "check for sale";
+	public String titleUnlockHDR = "check for sale";
+	public String titleUnlockPano = "check for sale";
+	public String titleUnlockMoving = "check for sale";
+	public String titleUnlockGroup = "check for sale";
 	
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		public void onQueryInventoryFinished(IabResult result,

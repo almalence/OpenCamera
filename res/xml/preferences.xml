@@ -47,6 +47,12 @@
 			android:defaultValue="false" 
 			android:key="delayedCaptureFlashPrefCommon" />	
 	
+	<CheckBoxPreference
+			android:title="@string/Pref_ShowHelp_Title"
+			android:summary="@string/Pref_WhowHelp_Summary"
+			android:defaultValue="false" 
+			android:key="showHelpPrefCommon" />
+	
     <Preference android:key="about" 
         	android:title="@string/Pref_About_Title" 
         	android:summary="@string/Pref_About_Summary"
