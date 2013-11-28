@@ -873,6 +873,7 @@ public class AlmalenceGUI extends GUI implements
 				
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 			}
+			
 		};
 
 		// create merged image for select mode button
@@ -909,6 +910,7 @@ public class AlmalenceGUI extends GUI implements
 				MainScreen.thiz.startActivity(intent);
 			}
 		});
+		
 	}
 
 	@Override
@@ -959,10 +961,21 @@ public class AlmalenceGUI extends GUI implements
 		unlock.startAnimation(invisible_alpha);
 	}
 	
+	public void ShowGrayUnlockControl()
+	{
+		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
+		if (unlock.getVisibility() == View.VISIBLE)
+			return;
+		unlock.setImageResource(R.drawable.unlock_gray);
+		unlock.setAlpha(0.4f);
+		unlock.setVisibility(View.VISIBLE);
+	}
+	
 	public void HideUnlockControl()
 	{
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));		
 		unlock.setVisibility(View.GONE);
+		
 	}
 	
 	@Override
@@ -1013,38 +1026,38 @@ public class AlmalenceGUI extends GUI implements
 				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
 					HideUnlockControl();
 				else
-					ShowUnlockControl();
+					ShowGrayUnlockControl();
 			}
 			else if ("movingobjects".equals(modeID))
 			{
 				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
 					HideUnlockControl();
 				else
-					ShowUnlockControl();
+					ShowGrayUnlockControl();
 			}
 			else if ("sequence".equals(modeID))
 			{
 				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
 					HideUnlockControl();
 				else
-					ShowUnlockControl();
+					ShowGrayUnlockControl();
 			}
 			else if ("groupshot".equals(modeID))
 			{
 				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
 					HideUnlockControl();
 				else
-					ShowUnlockControl();
+					ShowGrayUnlockControl();
 			}
 			else if ("panorama_augmented".equals(modeID))
 			{
 				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
 					HideUnlockControl();
 				else
-					ShowUnlockControl();
+					ShowGrayUnlockControl();
 			}
 			else
-				ShowUnlockControl();
+				ShowGrayUnlockControl();
 		}
 	}
 	
@@ -1155,6 +1168,54 @@ public class AlmalenceGUI extends GUI implements
 		
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
+		
+		//manage unlock control
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		if (true == prefs.getBoolean("unlock_all_forever", false))
+			HideUnlockControl();
+		else 
+		{
+			String modeID = PluginManager.getInstance().getActiveMode().modeID;
+			
+			if ("hdrmode".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("movingobjects".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("sequence".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("groupshot".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else if ("panorama_augmented".equals(modeID))
+			{
+				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
+					HideUnlockControl();
+				else
+					ShowUnlockControl();
+			}
+			else
+				ShowUnlockControl();
+		}
 	}
 
 	private Map<String, View> initCameraParameterModeButtons(
@@ -6265,7 +6326,10 @@ public class AlmalenceGUI extends GUI implements
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
 		
 		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
+		{
 			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
+			return true;
+		}
 
 		int res = 0;
 		if (keyCode == KeyEvent.KEYCODE_BACK) {

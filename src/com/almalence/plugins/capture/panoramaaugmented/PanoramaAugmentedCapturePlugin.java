@@ -314,7 +314,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		this.clearViews();
 		
-		String text = "1. Hold device still horizontally\n2. Press shutter to start panorama capture\n3. Move device to red guides and stop when green.\n4. Move camera to next guide\n5. To finish panorama - press shutter";
+		String text = "Important: Don't move your hand, rotate device only!\n\n1. Hold device still horizontally\n2. Press shutter to start panorama capture\n3. Rotate device to red guides and stop when green.\n4. Move camera to next guide\n5. To finish panorama - press shutter";
 		MainScreen.guiManager.showHelp("Panorama help", text, R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
 	

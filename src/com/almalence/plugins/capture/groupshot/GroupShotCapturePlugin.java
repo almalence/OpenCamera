@@ -73,7 +73,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		String text = "1. Hold device still and don't move\n2. Press shutter to start groupshot\n3. Select base image in thumbnails (touch image anywhere to see all thumbnails)\n3. Select best faces";
+		String text = "1. Hold device still and don't move\n2. Press shutter to start groupshot\n3. Wait until series of images taken and processed\n4. Select base image in thumbnails (touch image anywhere to see all thumbnails)\n5. Select best faces";
 		MainScreen.guiManager.showHelp("Groupshot help", text, R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
 	}
 	

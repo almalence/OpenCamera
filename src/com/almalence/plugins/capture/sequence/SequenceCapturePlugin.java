@@ -71,7 +71,7 @@ public class SequenceCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		String text = "1. Hold device still and don't move\n2. Press shutter to start\n3. Select which photos to use in result";
+		String text = "1. Hold device still and don't move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n4. Select which photos to use in result";
 		MainScreen.guiManager.showHelp("Sequence help", text, R.drawable.plugin_help_sequence, "sequenceRemovalShowHelp");
 	}
 	
