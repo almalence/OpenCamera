@@ -30,6 +30,7 @@ import java.util.Set;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -82,11 +83,14 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1316,6 +1320,12 @@ public class AlmalenceGUI extends GUI implements
 		// Recreate plugin views
 		removePluginViews();
 		createPluginViews();
+		
+		//add self-timer control
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		boolean showDelayedCapturePrefCommon = prefs.getBoolean("showDelayedCapturePrefCommon", false);
+		AddSelfTimerControl(showDelayedCapturePrefCommon);
 
 		LinearLayout infoLayout = (LinearLayout) guiView
 				.findViewById(R.id.infoLayout);
@@ -1330,9 +1340,7 @@ public class AlmalenceGUI extends GUI implements
 			infoLayout.setLayoutParams(infoParams);
 			infoLayout.requestLayout();
 		}
-
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+		
 		infoSet = prefs.getInt("defaultInfoSet", 2);
 		if (infoSet == 2 && !isAnyViewOnViewfinder()) {
 			infoSet = 0;
@@ -1364,6 +1372,102 @@ public class AlmalenceGUI extends GUI implements
 
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
+	}
+	
+	private void AddSelfTimerControl(boolean needToShow)
+	{
+		// Calculate right sizes for plugin's controls
+		DisplayMetrics metrics = new DisplayMetrics();
+		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+				.getMetrics(metrics);
+		float fScreenDensity = metrics.density;
+    			
+    	int iIndicatorSize = (int) (MainScreen.mainContext.getResources()
+				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
+    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
+		int topMargin = MainScreen.thiz.findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.thiz.getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+		params.setMargins((int)(2*MainScreen.guiManager.getScreenDensity()), topMargin, 0, 0);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();		
+		
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		View buttonsLayout = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
+		buttonsLayout.setVisibility(View.VISIBLE);
+		
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int layout_id = buttonsLayout.getId();
+			if(view_id == layout_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				
+				specialLayout.removeView(view);
+			}
+		}
+		
+		if (needToShow == false || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
+		{
+			return; 
+		}
+		
+		RotateImageView timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonSelftimer);
+		
+		timeLapseButton.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {			
+				SelfTimerDialog();
+			}
+			
+		});
+		
+		List<View> specialView2 = new ArrayList<View>();
+		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
+		for(int i = 0; i < specialLayout2.getChildCount(); i++)
+			specialView2.add(specialLayout2.getChildAt(i));
+
+		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.videobuttons_size);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(buttonsLayout, params);
+		
+		buttonsLayout.setLayoutParams(params);
+		buttonsLayout.requestLayout();
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
+        switch (delayInterval)
+        {
+        case 0:
+       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
+       	 break;
+        case 3:
+       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
+       	 break;
+        case 5:
+       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
+       	 break;
+        case 10:
+       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
+       	 break;
+        }
 	}
 
 	@Override
@@ -6786,5 +6890,143 @@ public class AlmalenceGUI extends GUI implements
 		
 		help.setVisibility(View.VISIBLE);
 		help.bringToFront();
+	}
+	
+	boolean swChecked = false;
+	String[] stringInterval = {"3", "5", "10"};
+	public void SelfTimerDialog()
+	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		int interval = prefs.getInt("delayedIndexCapturePrefCommon", 0);
+		swChecked = prefs.getBoolean("swChecked", false);		
+		
+		final Dialog d = new Dialog(MainScreen.thiz);
+        d.setTitle("Self timer settings");
+        d.setContentView(R.layout.selftimer_dialog);
+        final Button bSet = (Button) d.findViewById(R.id.button1);
+        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+        np.setMaxValue(2);
+        np.setMinValue(0);
+        np.setValue(interval);
+        np.setDisplayedValues(stringInterval);
+        np.setWrapSelectorWheel(false);
+        
+        final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
+        boolean flash = prefs.getBoolean("delayedCaptureFlashPrefCommon", false);
+        flashCheckbox.setChecked(flash);
+        
+        final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
+        boolean sound = prefs.getBoolean("delayedCaptureSoundPrefCommon", false);
+        soundCheckbox.setChecked(sound);
+        
+//        final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
+//        np2.setMaxValue(2);
+//        np2.setMinValue(0);
+//        np2.setValue(measurementVal);
+//        np2.setWrapSelectorWheel(false);
+//        np2.setDisplayedValues(stringMeasurement);
+        
+        final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
+        
+        //disable/enable controls in dialog
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+			{
+				if (false == sw.isChecked())
+		        {
+//		        	np2.setEnabled(false);
+		        	np.setEnabled(false);
+		        	flashCheckbox.setEnabled(false);
+		        	soundCheckbox.setEnabled(false);
+		        	swChecked = false;
+//		        	bSet.setEnabled(false);
+		        }
+				else
+				{
+//					np2.setEnabled(true);
+		        	np.setEnabled(true);
+		        	flashCheckbox.setEnabled(true);
+		        	soundCheckbox.setEnabled(true);
+		        	swChecked = true;
+		        	bSet.setEnabled(true);
+				}
+			}
+		});
+        
+        //disable control in dialog by default
+        if (false == swChecked)
+        {
+        	sw.setChecked(false);
+        	flashCheckbox.setEnabled(false);
+        	soundCheckbox.setEnabled(false);
+//        	np2.setEnabled(false);
+        	np.setEnabled(false);
+        	bSet.setEnabled(false);
+        }
+        else
+        {
+//        	np2.setEnabled(true);
+        	np.setEnabled(true);
+        	flashCheckbox.setEnabled(true);
+        	soundCheckbox.setEnabled(true);
+        	bSet.setEnabled(true);
+        	sw.setChecked(true);
+        }
+        
+        //set button in dialog pressed
+        bSet.setOnClickListener(new OnClickListener()
+        {
+         @Override
+         public void onClick(View v) {
+             d.dismiss();
+             int interval = 0;
+             Editor prefsEditor = prefs.edit();
+ 			
+             if (swChecked == true)
+             {
+//            	 measurementVal = np2.getValue();
+            	 interval  = np.getValue();
+//            	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
+             }
+             else
+             {
+            	 interval = 0;
+//            	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
+             }
+             int real_int = Integer.parseInt(stringInterval[np.getValue()]);
+             prefsEditor.putBoolean("swChecked", swChecked);
+             if (swChecked)
+            	 prefsEditor.putInt("delayedCapturePrefCommon", real_int);
+             else
+             {
+            	 prefsEditor.putInt("delayedCapturePrefCommon", 0);
+            	 real_int = 0;
+             }
+             prefsEditor.putBoolean("delayedCaptureFlashPrefCommon", flashCheckbox.isChecked());
+             prefsEditor.putBoolean("delayedCaptureSoundPrefCommon", soundCheckbox.isChecked());
+             prefsEditor.putInt("delayedIndexCapturePrefCommon", interval);
+             prefsEditor.commit();
+
+             RotateImageView timeLapseButton = (RotateImageView)guiView.findViewById(R.id.buttonSelftimer);
+             switch (real_int)
+             {
+             case 0:
+            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
+            	 break;
+             case 3:
+            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
+            	 break;
+             case 5:
+            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
+            	 break;
+             case 10:
+            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
+            	 break;
+             }
+             
+          }    
+         });
+      d.show();
 	}
 }

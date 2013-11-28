@@ -154,4 +154,6 @@ public class CapturePlugin extends PluginCapture
 	
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
+	
+	public boolean delayedCaptureSupported(){return true;}
 }

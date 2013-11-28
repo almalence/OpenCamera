@@ -1836,11 +1836,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public String titleUnlockAll = "check for sale";
-	public String titleUnlockHDR = "check for sale";
-	public String titleUnlockPano = "check for sale";
-	public String titleUnlockMoving = "check for sale";
-	public String titleUnlockGroup = "check for sale";
+	public String titleUnlockAll = "$5.95";
+	public String titleUnlockHDR = "$0.99";
+	public String titleUnlockPano = "$2.99";
+	public String titleUnlockMoving = "$2.99";
+	public String titleUnlockGroup = "$2.99";
+	
+	public String summaryUnlockAll = "";
+	public String summaryUnlockHDR = "";
+	public String summaryUnlockPano = "";
+	public String summaryUnlockMoving = "";
+	public String summaryUnlockGroup = "";
 	
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		public void onQueryInventoryFinished(IabResult result,
@@ -1890,6 +1896,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			titleUnlockPano = inventory.getSkuDetails("plugin_almalence_panorama").getPrice();
 			titleUnlockMoving = inventory.getSkuDetails("plugin_almalence_moving_burst").getPrice();
 			titleUnlockGroup = inventory.getSkuDetails("plugin_almalence_groupshot").getPrice();
+			
+			summaryUnlockAll = inventory.getSkuDetails("unlock_all_forever").getDescription();
+			summaryUnlockHDR = inventory.getSkuDetails("plugin_almalence_hdr").getDescription();
+			summaryUnlockPano = inventory.getSkuDetails("plugin_almalence_panorama").getDescription();
+			summaryUnlockMoving = inventory.getSkuDetails("plugin_almalence_moving_burst").getDescription();
+			summaryUnlockGroup = inventory.getSkuDetails("plugin_almalence_groupshot").getDescription();
 		}
 	};
 
@@ -1908,6 +1920,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			String title = getResources().getString(R.string.Pref_Upgrde_All_Preference_Title) + ": " + titleUnlockAll;
 			allPref.setTitle(title);
+		}
+		if (summaryUnlockAll!=null && summaryUnlockAll != "")
+		{
+			String summary = summaryUnlockAll + " " + getResources().getString(R.string.Pref_Upgrde_All_Preference_Summary);
+			allPref.setSummary(summary);
 		}
 		
 		allPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -1948,6 +1965,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			String title = getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title) + ": " + titleUnlockHDR;
 			hdrPref.setTitle(title);
 		}
+		if (summaryUnlockHDR!=null && summaryUnlockHDR != "")
+		{
+			String summary = summaryUnlockHDR + getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Summary);
+			hdrPref.setSummary(summary);
+		}
 		
 		hdrPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
@@ -1982,6 +2004,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			String title = getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title) + ": " + titleUnlockPano;
 			panoramaPref.setTitle(title);
+		}
+		if (summaryUnlockPano!=null && summaryUnlockPano != "")
+		{
+			String summary = summaryUnlockPano + getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Summary) ;
+			panoramaPref.setSummary(summary);
 		}
 		
 		panoramaPref
@@ -2021,6 +2048,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			String title = getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title) + ": " + titleUnlockMoving;
 			objectremovalPref.setTitle(title);
 		}
+		if (summaryUnlockMoving!=null && summaryUnlockMoving != "")
+		{
+			String summary = summaryUnlockMoving + getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Summary);
+			objectremovalPref.setSummary(summary);
+		}
 		
 		objectremovalPref
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -2058,6 +2090,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			String title = getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title) + ": " + titleUnlockGroup;
 			groupshotPref.setTitle(title);
+		}
+		if (summaryUnlockGroup!=null && summaryUnlockGroup != "")
+		{
+			String summary = summaryUnlockGroup + getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Summary);
+			groupshotPref.setSummary(summary);
 		}
 		
 		groupshotPref
@@ -2501,13 +2538,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_DelayedCapture", true);
-		if (false == isSaving)
-		{		
-			prefsEditor.putString("delayedCapturePrefCommon", "0");
-			//prefsEditor.putBoolean("delayedCapturePrefCommon", "0");
-			prefsEditor.commit();
-		}
+//		isSaving = prefs.getBoolean("SaveConfiguration_DelayedCapture", true);
+//		if (false == isSaving)
+//		{		
+//			prefsEditor.putString("delayedCapturePrefCommon", "0");
+//			//prefsEditor.putBoolean("delayedCapturePrefCommon", "0");
+//			prefsEditor.commit();
+//		}
 		
 	}
 	

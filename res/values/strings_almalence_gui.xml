@@ -24,9 +24,8 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Delayed capture</string>
-    <string name="Pref_Common_DelayedCapture_Title">Delayed capture</string>
-    <string name="Pref_Common_DelayedCaptureFlash_Title">Delayed capture indication</string>
-    <string name="Pref_Common_DelayedCaptureFlash_Summary">Flash and sound every second on delayed capture</string>
+    <string name="Pref_Common_DelayedCapture_Title">Self-timer capture</string>
+    <string name="Pref_Common_DelayedCapture_Summary">show settings control</string>
     <string name="Pref_ShowHelp_Title">Show help</string>
     <string name="Pref_WhowHelp_Summary">Show help when mode started (Panorama, Object removal, Sequence, Groupshot)</string>
     

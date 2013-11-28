@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/selftimerButtons"
+	    android:layout_width="fill_parent"
+	    android:layout_height="@dimen/videobuttons_size"			       
+	    android:orientation="horizontal"	        
+	    android:background="@android:color/transparent"
+	    android:gravity="center"   
+	    android:visibility="gone">
+	    	<LinearLayout
+		    android:id="@+id/selftimerButtons1"
+		    android:layout_width="wrap_content"
+		    android:layout_height="fill_parent"			       
+		    android:background="@android:color/transparent"
+		    android:gravity="right"
+		    android:layout_weight="1">
+					<com.almalence.opencam.ui.RotateImageView
+					android:id="@+id/buttonSelftimer"
+					android:src="@drawable/gui_almalence_mode_selftimer"
+					android:background="@android:color/transparent"			
+					android:layout_height="@dimen/videobuttons_size"
+					android:layout_width="@dimen/videobuttons_size"								
+					android:scaleType="fitCenter"
+					android:paddingLeft="0dp"
+					android:paddingRight="0dp"
+					android:paddingBottom="0dp"
+					android:paddingTop="0dp"
+					android:layout_marginRight="10dp"				
+			   		android:layout_gravity="right"		   		
+			   		>
+			 	</com.almalence.opencam.ui.RotateImageView>
+		 	</LinearLayout>
+</LinearLayout>

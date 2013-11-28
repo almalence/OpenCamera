@@ -34,18 +34,11 @@
 		 <extra android:name="type" android:value="save_configuration"/>
 	</PreferenceScreen>
 
-	<ListPreference
-		android:title="@string/Pref_Common_DelayedCapture_Title"
-		android:key="delayedCapturePrefCommon"
-		android:defaultValue="0"
-		android:entries="@array/delayedCaptureArrayCommon"
-		android:entryValues="@array/delayedCaptureValuesCommon" />
-	
 	<CheckBoxPreference
-			android:title="@string/Pref_Common_DelayedCaptureFlash_Title"
-			android:summary="@string/Pref_Common_DelayedCaptureFlash_Summary"
-			android:defaultValue="false" 
-			android:key="delayedCaptureFlashPrefCommon" />	
+		android:title="@string/Pref_Common_DelayedCapture_Title"
+		android:summary="@string/Pref_Common_DelayedCapture_Summary"
+		android:defaultValue="false" 
+		android:key="showDelayedCapturePrefCommon" />	
 	
 	<CheckBoxPreference
 			android:title="@string/Pref_ShowHelp_Title"

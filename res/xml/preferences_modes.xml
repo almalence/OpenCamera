@@ -7,12 +7,13 @@
 			 <extra android:name="type" android:value="single"/>
 		</PreferenceScreen>
 		-->
+		<!-- 
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_SelfTimer_Title">
 			 <extra android:name="type" android:value="selftimer"/>
 		</PreferenceScreen>
-		
+		 -->
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_Burst_Title">

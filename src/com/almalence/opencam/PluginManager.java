@@ -55,9 +55,13 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -443,6 +447,13 @@ public class PluginManager {
 			pluginList.get(i).onCreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
+		
+		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.thiz, R.anim.plugin_capture_selftimer_countdown);
+		countdownAnimation.setFillAfter(true);
+		
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		countdownLayout = (RelativeLayout)inflator.inflate(R.layout.plugin_capture_selftimer_layout, null, false);
+		countdownView = (TextView)countdownLayout.findViewById(R.id.countdown_text);
 	}
 
 	private void restartMainScreen() {
@@ -457,6 +468,9 @@ public class PluginManager {
 		onStart();
 		MainScreen.thiz.ResumeMain();
 
+		countdownView.clearAnimation();
+        countdownLayout.setVisibility(View.GONE);
+        
 		// onGUICreate();
 		// MainScreen.guiManager.onGUICreate();
 	}
@@ -597,7 +611,7 @@ public class PluginManager {
 	public void onPause(boolean isFromMain) {
 		
 		//stops delayed interval timer if it's working
-		if (delayedCaptureFlashPrefCommon)
+		if (delayedCaptureFlashPrefCommon || delayedCaptureSoundPrefCommon)
 		{
 			releaseSoundPlayers();
 	        countdownHandler.removeCallbacks(FlashOff);
@@ -656,6 +670,35 @@ public class PluginManager {
 			pluginList.get(activeExport).onGUICreate();
 
 		isRestarting = true;
+		
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int layout_id = this.countdownLayout.getId();
+			if(view_id == layout_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				
+				specialLayout.removeView(view);
+			}
+		}
+		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);		
+		
+		params.addRule(RelativeLayout.CENTER_IN_PARENT);		
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.countdownLayout, params);
+		
+		this.countdownLayout.setLayoutParams(params);
+		this.countdownLayout.requestLayout();
+		this.countdownLayout.setVisibility(View.INVISIBLE);
 	}
 
 	public void OnShutterClick() {
@@ -671,8 +714,10 @@ public class PluginManager {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		delayedCaptureFlashPrefCommon = prefs.getBoolean("delayedCaptureFlashPrefCommon", false);
-		int delayInterval = Integer.parseInt(prefs.getString("delayedCapturePrefCommon", "0"));
-		if (delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
+		delayedCaptureSoundPrefCommon = prefs.getBoolean("delayedCaptureSoundPrefCommon", false);
+		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
+		boolean showDelayedCapturePrefCommon = prefs.getBoolean("showDelayedCapturePrefCommon", false);
+		if (showDelayedCapturePrefCommon == false ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
 		{	
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).OnShutterClick();
@@ -1816,7 +1861,13 @@ public class PluginManager {
 	final Handler countdownHandler = new Handler();
 	final Handler finalcountdownHandler = new Handler();
 	
+	private RelativeLayout countdownLayout = null;
+    private TextView countdownView = null;
+    
+    private Animation countdownAnimation = null;
+    
 	private boolean delayedCaptureFlashPrefCommon = false; 
+	private boolean delayedCaptureSoundPrefCommon = false;
 			
 	private boolean shutterRelease = true;
 	private void delayedCapture(int delayInterval)
@@ -1826,23 +1877,28 @@ public class PluginManager {
 		countdownHandler.removeCallbacks(FlashOff);	 
 		finalcountdownHandler.removeCallbacks(FlashBlink);		
 		
-		timer = new CountDownTimer(delayInterval, 1000) 
+		timer = new CountDownTimer(delayInterval*1000+500, 1000) 
 		{			 
-			 boolean isFirstTick = true;
-		     public void onTick(long millisUntilFinished) 
+			 public void onTick(long millisUntilFinished) 
 		     {		    	 
-		    	 if (!delayedCaptureFlashPrefCommon)
+		    	 if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
 		    		 return;
 		    	 
 	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
 		         
+	        	 countdownView.setRotation(90 - MainScreen.orientationMain);
+		         countdownView.setText(String.valueOf(millisUntilFinished/1000));
+		         countdownView.clearAnimation();
+		         countdownLayout.setVisibility(View.VISIBLE);
+		         countdownView.startAnimation(countdownAnimation);
+	    		 
 		         Camera camera = MainScreen.thiz.getCamera();
 		     	 if (null==camera)
 		     		return;
 		         
-		         if(true)//isBlinkEnable)
+		         if(delayedCaptureFlashPrefCommon)
 		         {
-			         if(millisUntilFinished > 500)// || (imagesTaken != 0 && isFirstTick))
+			         if(millisUntilFinished > 1000)// || (imagesTaken != 0 && isFirstTick))
 			         {
 			        	try 
 			        	{
@@ -1855,17 +1911,14 @@ public class PluginManager {
 						}
 			        	countdownHandler.postDelayed(FlashOff, 50);
 			         }
-//			         else if(!(0 != 0 && !isFirstTick))
-//			         {
-//			        	finalcountdownHandler.postDelayed(FlashBlink, 100);
-//			         }
 		         }
-		         
-		         isFirstTick = false;
 		     }
 
 		     public void onFinish() 
 		     {
+		    	 countdownView.clearAnimation();
+		         countdownLayout.setVisibility(View.GONE);
+		         
 		    	 countdownHandler.removeCallbacks(FlashOff);	 
 		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
 		         
@@ -1889,7 +1942,7 @@ public class PluginManager {
 	{
 		if (MainScreen.ShutterPreference)
 			return;
-		if (true)//isSoundEnable)
+		if (delayedCaptureSoundPrefCommon)
 		{
 			if(isLastSecond)
 			{
