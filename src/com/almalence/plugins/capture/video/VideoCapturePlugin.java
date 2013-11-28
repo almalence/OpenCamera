@@ -713,10 +713,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        filesSavedNames[0] = fileSaved.toString();
 	           
 			MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-//			MainScreen.FramesShot = true;
 	        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-            //PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", false).commit();
-            
             
             new CountDownTimer(500, 500) {			 
    		     	public void onTick(long millisUntilFinished) {}
