@@ -908,17 +908,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (arg1 == PluginManager.MSG_CONTROL_LOCKED) 
 		{
 			mFocusDisabled = true;
-			cancelAutoFocus();			
+			cancelAutoFocus();
 		}
 		else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED) 
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();			
+			cancelAutoFocus();
 		}
 		else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED) 
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();			
+			cancelAutoFocus();
 		}
 		else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
