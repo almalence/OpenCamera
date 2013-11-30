@@ -37,8 +37,6 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -46,10 +44,10 @@ import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
@@ -314,8 +312,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		this.clearViews();
 		
-		String text = "Important: Don't move your hand, rotate device only!\n\n1. Hold device still horizontally\n2. Press shutter to start panorama capture\n3. Rotate device to red guides and stop when green.\n4. Move camera to next guide\n5. To finish panorama - press shutter";
-		MainScreen.guiManager.showHelp("Panorama help", text, R.drawable.plugin_help_panorama, "panoramaShowHelp");
+		MainScreen.guiManager.showHelp("Panorama help", MainScreen.thiz.getResources().getString(R.string.Panorama_Help), R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
 	
 

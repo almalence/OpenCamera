@@ -390,6 +390,18 @@ public class PluginManager {
 			prefsEditor.putString("defaultModeName", mode.modeID);
 			prefsEditor.commit();
 		}
+		
+		//when old mode removed for example
+		if (mode == null)
+		{
+			// set default mode - get this val from mode.xml and later control
+			// in preerences
+			mode = ConfigParser.getInstance().getDefaultMode();
+
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putString("defaultModeName", mode.modeID);
+			prefsEditor.commit();
+		}
 
 		// set active plugins for default mode
 		activeVF.clear();
@@ -1881,16 +1893,16 @@ public class PluginManager {
 		{			 
 			 public void onTick(long millisUntilFinished) 
 		     {		    	 
-		    	 if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
-		    		 return;
-		    	 
-	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
-		         
-	        	 countdownView.setRotation(90 - MainScreen.orientationMain);
+		    	 countdownView.setRotation(90 - MainScreen.orientationMain);
 		         countdownView.setText(String.valueOf(millisUntilFinished/1000));
 		         countdownView.clearAnimation();
 		         countdownLayout.setVisibility(View.VISIBLE);
 		         countdownView.startAnimation(countdownAnimation);
+	    		 
+		         if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
+		    		 return;
+		    	 
+	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
 	    		 
 		         Camera camera = MainScreen.thiz.getCamera();
 		     	 if (null==camera)

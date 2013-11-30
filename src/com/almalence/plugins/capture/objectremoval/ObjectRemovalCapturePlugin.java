@@ -71,8 +71,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		String text = "1. Hold device still and don't move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n4. Tap detected moving objects to delete";
-		MainScreen.guiManager.showHelp("Object removal help", text, R.drawable.plugin_help_object, "objectRemovalShowHelp");
+		MainScreen.guiManager.showHelp("Object removal help", MainScreen.thiz.getResources().getString(R.string.ObjectRemoval_Help), R.drawable.plugin_help_object, "objectRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()
