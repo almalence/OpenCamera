@@ -15,7 +15,7 @@
     <string name="ev_zero">0</string>    
     <string name="blockingText">Aguarde, processando...</string>
     <string name="almalence_gui_selected">selecionada</string>
-    
+    <!-- 
     <string name="sceneAuto">Auto</string>
     <string name="sceneAction">Ação</string>
     <string name="scenePortrait">Retrato</string>
@@ -68,7 +68,7 @@
     <string name="iso800">"ISO800"</string>
     <string name="iso1600">ISO1600</string>
     <string name="iso3200">ISO3200</string>
-    
+     -->
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">ação</string>
     <string name="scenePortraitSystem">retrato</string>
