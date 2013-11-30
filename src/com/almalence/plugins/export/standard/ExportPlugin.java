@@ -276,34 +276,12 @@ public class ExportPlugin extends PluginExport
 
 		            if (os != null)
 		            {
-		            	byte[] frame = SwapHeap.CopyFromHeap(
+		            	byte[] frame = SwapHeap.SwapFromHeap(
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
 	            		os.write(frame);
 //			            os.close();
 			            
-//			            if(writeOrientationTag)			            	
-//			            {
-//			            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-//			            	switch(orientation)
-//			            	{
-//			            	default:
-//			            	case 0:
-//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-//			            		break;
-//			            	case 90:
-//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-//			            		break;
-//			            	case 180:
-//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-//			            		break;
-//			            	case 270:
-//			            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-//			            		break;
-//			            	}
-//			            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-//			            	ei.saveAttributes();
-//			            }
 		            }
 	            }
 	            else
@@ -338,28 +316,6 @@ public class ExportPlugin extends PluginExport
 					    		out.compressToJpeg(r, 95, os);
 		    	    		} 	    	
 
-//				            if(writeOrientationTag)			            	
-//				            {
-//				            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-//				            	switch(orientation)
-//				            	{
-//				            	default:
-//				            	case 0:
-//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-//				            		break;
-//				            	case 90:
-//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-//				            		break;
-//				            	case 180:
-//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-//				            		break;
-//				            	case 270:
-//				            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-//				            		break;
-//				            	}
-//				            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-//				            	ei.saveAttributes();
-//				            }
 			            }
 		            }
 	            }

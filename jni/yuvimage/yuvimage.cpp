@@ -64,5 +64,7 @@ JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
 	env->ReleaseIntArrayElements(offsets, imgOffsets, 0);
 	env->ReleaseIntArrayElements(strides, imgStrides, 0);
 
+	free(OutPic);
+
 	return result;
 }
