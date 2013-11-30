@@ -68,7 +68,7 @@
     <string name="iso800">"ISO800"</string>
     <string name="iso1600">ISO1600</string>
     <string name="iso3200">ISO3200</string>
-     -->
+     
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">ação</string>
     <string name="scenePortraitSystem">retrato</string>
@@ -122,6 +122,7 @@
     <string name="iso1600System">ISO1600</string>
     <string name="iso3200System">ISO3200</string>
     
+    -->
     <string name="settings_mode_scene">Modo de cena</string>
     <string name="settings_mode_wb">Balanço de branco</string>
     <string name="settings_mode_focus">Modo de foco</string>
