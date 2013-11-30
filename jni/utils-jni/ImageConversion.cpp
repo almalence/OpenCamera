@@ -269,7 +269,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 		yoffset -= 4;
 	}
 
-
+	free (data_rgba);
 
 	// make nice corners and edges,
 	// apply softbox-like effect

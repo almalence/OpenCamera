@@ -164,6 +164,9 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 
 	env->ReleaseIntArrayElements(jframes, nframes, JNI_ABORT);
 
+	//for (int i=0; i<nframesCount; ++i)
+	//	free(framesRelevant[i]);
+
 	Pano_Preview(&instance, framesRelevant, NULL, NULL, NULL, 5 * 256, 0, 0, fx0, fy0, fsx, fsy,
 			out_width, out_height, nFramesSelected, 0);
 
@@ -180,6 +183,13 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 
 	jintArray jresult = env->NewIntArray(1 + 2 + 4 + 1 + nFramesSelected);
 	jint* nresult = env->GetIntArrayElements(jresult, 0);
+
+	/*
+	out = (Uint8*) malloc(16*16*3/2);
+	crop[2] = out_width = 16;
+	crop[3] = out_height = 16;
+	crop[0] = crop[1] = 0;
+	//*/
 
 	int result_cursor = 0;
 	nresult[result_cursor++] = (int)out;
