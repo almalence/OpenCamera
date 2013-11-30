@@ -765,12 +765,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		// for intermediate pre-rendered frames: just a bit more than nFrames*bytesPerFrame (20% is possible)
 		// also, there is a possibility of memory fragmentation
 		
-		return (long) ((mi[1] - 10.f) * 1000000.f * 0.3f);	// ensure at least 10Mb left free
+		return (long) ((mi[1] - 10.f) * 1000000.f * 0.8f);	// use up to 80% and ensure at least 64Mb left free
 	}
 	
 	public static int getFrameSizeInBytes(int width, int height)
 	{
-		return (4 * width * height + width + 256);
+		return (5 * width * height + width + 256);
 	}
 	
 	private void checkCoordinatesRemapRequired()
