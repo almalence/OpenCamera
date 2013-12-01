@@ -50,6 +50,27 @@ public class Vector3d
 		this.z = vector.z;
 	}
 	
+	public void multiply(final float multi)
+	{
+		this.x *= multi;
+		this.y *= multi;
+		this.z *= multi;
+	}
+	
+	public void normalize()
+	{
+		final float length = this.length();
+		
+		if (length == 0.0f)
+		{
+			throw new ArithmeticException("Can't normalize a zero-length vector");
+		}
+
+		this.x /= length;
+		this.y /= length;
+		this.z /= length;
+	}
+	
 	public float length()
 	{
 		return (float)Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);

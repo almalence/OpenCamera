@@ -348,6 +348,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.topVector.x = this.transform[1];
 				this.topVector.y = this.transform[5];
 				this.topVector.z = this.transform[9];
+				this.topVector.normalize();
 			}
 			
 			synchronized (this.sideVector)
@@ -355,13 +356,16 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.sideVector.x = this.transform[0];
 				this.sideVector.y = this.transform[4];
 				this.sideVector.z = this.transform[8];
+				this.sideVector.normalize();
 			}
 			
 			synchronized (this.currentVector)
 			{				
-				this.currentVector.x = -this.radius * this.transform[2];
-				this.currentVector.y = -this.radius * this.transform[6];
-				this.currentVector.z = -this.radius * this.transform[10];
+				this.currentVector.x = -this.transform[2];
+				this.currentVector.y = -this.transform[6];
+				this.currentVector.z = -this.transform[10];
+				this.currentVector.normalize();
+				this.currentVector.multiply(this.radius);
 				
 				int target = -1;
 				
@@ -383,17 +387,17 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				
 				synchronized (this.stateSynch)
 				{
-					if (target != -1)
+					if (this.state != STATE_TAKINGPICTURE)
 					{
-						if (this.state == STATE_STANDBY)
+						if (target == -1)
+						{
+							this.state = STATE_STANDBY;
+						}
+						else
 						{
 							this.state = STATE_CLOSEENOUGH;
 							this.currentlyTargetedTarget = target;
 						}
-					}
-					else
-					{
-						this.state = STATE_STANDBY;
 					}
 				}
 			}
@@ -673,7 +677,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			goodPlace = (framesCount == 0)
 					|| (this.state == STATE_TAKINGPICTURE
-						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.35f);
+						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.2f);
 		}
 
 		if (goodPlace)
@@ -1111,7 +1115,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						+ Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.z - AugmentedPanoramaEngine.this.topVector.z));
 			}
 
-			this.distance = dpos / AugmentedPanoramaEngine.this.width + drot;
+			final float sizeDim = (float)Math.sqrt(AugmentedPanoramaEngine.this.width * AugmentedPanoramaEngine.this.height);
+			
+			this.distance = dpos / sizeDim + drot;
 
 			float distanceScaled = Math.max(Math.min(3.0f * this.distance, 1.0f), 0.0f);
 			
@@ -1410,7 +1416,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						+ Util.mathSquare(this.position.z - AugmentedPanoramaEngine.this.currentVector.z));
 			}
 			
-			this.distance = 1.5f * dpos / AugmentedPanoramaEngine.this.width;
+			final float sizeDim = (float)Math.sqrt(AugmentedPanoramaEngine.this.width * AugmentedPanoramaEngine.this.height);
+			
+			this.distance = 1.5f * dpos / sizeDim;
 		}
 
 		public void destroy()

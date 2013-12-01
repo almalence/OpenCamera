@@ -3,7 +3,7 @@
 <PreferenceCategory android:title="@string/pref_plugin_capture_panoramaaugmented_preference_title">   
     	<ListPreference
 			android:title="@string/pref_plugin_capture_panoramaaugmented_imageheight_title"
-			android:key="pref_plugin_capture_panoramaaugmented_imageheight"
+			android:key="pref_plugin_capture_panoramaaugmented_imageheight2_"
 			android:defaultValue="2"
 			android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
 			android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"/>
