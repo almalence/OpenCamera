@@ -1612,6 +1612,8 @@ public class PluginManager {
 	
 	public boolean addToSharedMem_ExifTagsFromCamera() {		
 		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		if (params==null)
+			return false;
 		
 		String s1 = null;
 		if(params.getSupportedWhiteBalance().size() > 0)

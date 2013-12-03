@@ -908,7 +908,11 @@ public class AlmalenceGUI extends GUI implements
 		
 		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		unlock.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
+				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+					return;
+				
 				MainScreen.thiz.showUnlock = true;
 				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 				{
@@ -2391,14 +2395,45 @@ public class AlmalenceGUI extends GUI implements
 				qc4, quickControl4) : getFreeQuickControlButton(qc1, qc2, qc3,
 				qc4, quickControl4);
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl1);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl2);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl3);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl4);
+		try
+		{				
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl1);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl2);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl3);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl4);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
 
 		if (mEVSupported) {
 			Message msg = new Message();
@@ -6846,6 +6881,9 @@ public class AlmalenceGUI extends GUI implements
 		//check show help settings
 		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", false);
 		if (false == needToShow && MainScreen.showHelp == false)
+			return;
+		
+		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 			return;
 		
 		final String preference = Prefs;
