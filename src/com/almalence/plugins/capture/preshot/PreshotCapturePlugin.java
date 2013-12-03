@@ -200,8 +200,8 @@ public class PreshotCapturePlugin extends PluginCapture
 	
 	    	cp.setJpegQuality(90);
 	
-			// change fps
-			cp.setPreviewFrameRate(30);
+	    	// Should already been set in sceleton
+			//cp.setPreviewFrameRate(30);
 			
 			MainScreen.thiz.setCameraParameters(cp);
 		}
