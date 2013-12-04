@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Tomando foto panorámica HD</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Altura de la foto panorámica</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Modo de foco</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Selecciona el modo de foco adecuado</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Foco en infinito</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">Foco automático</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">Foco automático + reenfoque en cada toma</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Continuo</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Utilizar giroscopio del dispositivo</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Se necesita giroscopio de hardware. Si no está disponible, utilizaremos nuestro giroscopio de software.</string>

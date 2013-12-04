@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -51,6 +50,7 @@ import android.preference.PreferenceManager;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -70,7 +70,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	
 	private static final String PREFERENCES_KEY_RESOLUTION = "pref_plugin_capture_panoramaaugmented_imageheight2_";
 	private static final String PREFERENCES_KEY_USE_DEVICE_GYRO = "pref_plugin_capture_panoramaaugmented_usehardwaregyro";
-	private static final String PREFERENCES_KEY_FOCUS = "pref_plugin_capture_panoramaaugmented_focus";
 	
 	
 	private AugmentedPanoramaEngine engine;
@@ -82,9 +81,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	public final List<String> ResolutionsPictureNamesList = new ArrayList<String>();
 	
 	private int prefResolution;
-	private boolean prefFocusContinuous;
-	private boolean prefAutofocus;
-	private boolean prefRefocus;
 	private boolean prefHardwareGyroscope;
 	
 	private String preferenceFocusMode;
@@ -96,11 +92,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	private Sensor sensorAccelerometer;
 	private Sensor sensorMagnetometer;
 	private Sensor sensorGyroscope;
-	private VfGyroSensor sensorSoftGyroscope;
+	private VfGyroSensor sensorSoftGyroscope = null;
 	private boolean remapOrientation;
 
 	private volatile boolean capturing;
-	private final AtomicBoolean takingAlready = new AtomicBoolean();
+	private boolean takingAlready = false;
 	
 	private AugmentedRotationListener rotationListener;
 	
@@ -125,13 +121,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				null);
 		
 		this.capturing = false;
-		this.takingAlready.set(false);
 		
 		this.sensorManager = (SensorManager)MainScreen.mainContext.getSystemService(Context.SENSOR_SERVICE);
 		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		this.sensorMagnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		this.sensorSoftGyroscope = new VfGyroSensor(null);
 	}
 	
 	private void init()
@@ -153,6 +147,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		}
 		else
 		{
+			if (this.sensorSoftGyroscope == null)
+			{
+				this.sensorSoftGyroscope = new VfGyroSensor(null);
+			}
 			this.sensorSoftGyroscope.open();
 			this.sensorSoftGyroscope.SetListener(this.rotationListener);
 		}
@@ -201,14 +199,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				boolean found = false;
 				int idx = 0;
 				
-				// first - try to select resolution <= 5mpix and with at least 5 frames available 
+				// first - try to select resolution <= 5mpix and with at least 10 frames available 
 				for (int i = 0; i < ResolutionsPictureSizesList.size(); i++)
 				{
 					final Point point = ResolutionsPictureSizesList.get(i);
 					final int frames_fit_count = 
 							(int)(getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(point.x, point.y));
 					
-					if ((frames_fit_count >= 5) && (point.x*point.y < 5200000))
+					if ((frames_fit_count >= 10) && (point.x*point.y < 5200000))
 					{
 						idx = i;
 			    		found = true;
@@ -247,31 +245,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 							PREFERENCES_KEY_USE_DEVICE_GYRO,
 							this.sensorGyroscope != null).commit();
 		}
-
-		if (!prefs.contains(PREFERENCES_KEY_FOCUS))
-		{
-			Camera camera = MainScreen.thiz.getCamera();
-	    	if (null==camera)
-	    		return;
-			// set default focus mode to continuous if available (works faster for augmented mode)
-	    	final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-			List<String> supportedFocusModes = cp.getSupportedFocusModes();
-			if (supportedFocusModes != null)
-			{
-				if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-				{
-		    		prefs.edit().putString(PREFERENCES_KEY_FOCUS, "3").commit();
-				}
-				else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO))
-				{
-		    		prefs.edit().putString(PREFERENCES_KEY_FOCUS, "0").commit();
-				}
-				else
-				{
-		    		prefs.edit().putString(PREFERENCES_KEY_FOCUS, "1").commit();
-				}
-			}
-		}
 	}
 	
 	@Override
@@ -299,12 +272,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	{
 		this.deinit();
 		
-		if (this.capturing)
+		synchronized (this.engine)
 		{
-			if (!this.takingAlready.get())
+			if (this.capturing)
 			{
-				this.capturing = false;
-				this.stopCapture();
+				if (!this.takingAlready)
+				{
+					this.stopCapture();
+				}
 			}
 		}
 		
@@ -313,14 +288,42 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	}
 	
 	@Override
+	public boolean onKeyDown(final int keyCode, final KeyEvent event)
+	{
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			if (this.capturing && !this.takingAlready)
+			{
+				if (this.engine != null)
+				{		
+					synchronized (this.engine)
+					{
+						final int result = engine.cancelFrame();
+						
+						if (result <= 0)
+						{
+							this.stopCapture();
+						}
+						
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public void onGUICreate()
 	{
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
 		
 		this.clearViews();
 		
-		MainScreen.guiManager.showHelp("Panorama help", MainScreen.thiz.getResources().getString(R.string.Panorama_Help), R.drawable.plugin_help_panorama, "panoramaShowHelp");
+		MainScreen.guiManager.showHelp("Panorama help",
+				MainScreen.thiz.getResources().getString(R.string.Panorama_Help),
+				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
 	
 
@@ -370,6 +373,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	public void SetCameraPictureSize()
 	{
 		final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		if (cp == null)
+		{
+			return;
+		}
     	final List<Size> picture_sizes = cp.getSupportedPictureSizes();
     	
 		this.pictureWidth = picture_sizes.get(this.prefResolution).width;
@@ -378,39 +385,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
 		cp.setJpegQuality(100);
     	
+
 		String sUserFocusMode = null;
 		
 		if (MainScreen.supportedFocusModes != null)
 		{
-			if (this.prefFocusContinuous)
+			if (MainScreen.supportedFocusModes.contains(
+					Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
 			{
-				if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-					sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-				else if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_INFINITY))
-				{
-					sUserFocusMode = Parameters.FOCUS_MODE_INFINITY;
-					this.prefFocusContinuous = false;
-				}
-				else
-					sUserFocusMode = MainScreen.supportedFocusModes.get(0);
-			}
-			else if (this.prefAutofocus)
-			{
-				if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_AUTO))
-				{
-					sUserFocusMode = Parameters.FOCUS_MODE_AUTO;
-				}
-				else
-				{
-					this.prefAutofocus = false;
-				}
-			}
-			else
-			{
-				if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_INFINITY))
-				{
-					sUserFocusMode = Parameters.FOCUS_MODE_INFINITY;
-				}
+				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
 			}
 		}
     	
@@ -450,7 +433,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     	
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 		
-		this.sensorSoftGyroscope.SetFrameParameters(this.previewWidth, this.previewHeight, this.viewAngleX, this.viewAngleY);
+		if (!this.prefHardwareGyroscope)
+		{
+			this.sensorSoftGyroscope.SetFrameParameters(this.previewWidth,
+					this.previewHeight, this.viewAngleX, this.viewAngleY);
+		}
 	}
 	
 	@Override
@@ -486,22 +473,25 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	@Override
 	public void OnShutterClick()
 	{
-		if (!this.takingAlready.get())
+		synchronized (this.engine)
 		{
-			if (this.capturing)
+			if (!this.takingAlready)
 			{
-				this.capturing = false;
-				this.stopCapture();
-			}
-			else
-			{
-				this.isFirstFrame = true;
-				this.capturing = true;
-				this.takingAlready.set(true);
-				this.startCapture();
+				if (this.capturing)
+				{
+					this.stopCapture();
+				}
+				else
+				{
+					this.isFirstFrame = true;
+					this.capturing = true;
+					this.takingAlready = true;
+					this.startCapture();
+				}
 			}
 		}
 	}
+	
 	
 	@Override
 	public boolean onBroadcast(final int command, final int arg)
@@ -558,9 +548,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 					Toast.LENGTH_SHORT).show();
 			return true;
 		}
+		else if (command == PluginManager.MSG_OUT_OF_MEMORY)
+		{
+			Toast.makeText(
+					MainScreen.thiz,
+					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_outofmemory),
+					Toast.LENGTH_LONG).show();
+			return true;
+		}
 		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
 		{
-			this.capturing = false;
 			this.stopCapture();
 			
 			return true;
@@ -583,31 +580,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			e.printStackTrace();
 			Log.e("Panorama", "getPrefs exception: " + e.getMessage());
 			this.prefResolution = 0;
-		}
-        final int focusPref = Integer.parseInt(prefs.getString(PREFERENCES_KEY_FOCUS, "0"));
-        if (focusPref == 0)
-		{
-			this.prefFocusContinuous = false;
-			this.prefAutofocus = true;
-			this.prefRefocus = true;
-		}
-		else if (focusPref == 1)
-		{
-			this.prefFocusContinuous = false;
-			this.prefAutofocus = true;
-			this.prefRefocus = false;
-		}
-		else if (focusPref == 2)
-		{
-			this.prefFocusContinuous = false;
-			this.prefAutofocus = false;
-			this.prefRefocus = false;
-		}
-		else if (focusPref == 3)
-		{
-			this.prefFocusContinuous = true;
-			this.prefAutofocus = false;
-			this.prefRefocus = false;
 		}
         this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
     }
@@ -657,6 +629,30 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 							int value = Integer.parseInt(newValue.toString());
 							PanoramaAugmentedCapturePlugin.this.prefResolution = value;
 				    		
+							for (int i = 0; i < ResolutionsPictureIdxesList.size(); i++)
+							{
+								if (ResolutionsPictureIdxesList.get(i).equals(newValue))
+								{
+									final int idx = i;
+									final Point point = ResolutionsPictureSizesList.get(idx);
+									
+									// frames_fit_count may decrease when returning to main view due to slightly
+									// more memory used, so in text messages we report both exact and decreased count to the user 
+									final int frames_fit_count = 
+											(int)(getAmountOfMemoryToFitFrames()
+													/ getFrameSizeInBytes(point.x, point.y));
+									
+									{
+										Toast.makeText(	MainScreen.thiz, String.format(
+												MainScreen.thiz.getString(
+														R.string.pref_plugin_capture_panoramaaugmented_imageheight_warning),
+														frames_fit_count), Toast.LENGTH_SHORT).show();
+										
+										return true;
+									}
+								}
+							}
+							
 			                return true;
 						}
 			        });
@@ -848,17 +844,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			this.sensorSoftGyroscope.NewData(data);
 		}
 		
-		if (this.takingAlready.get())
+		synchronized (this.engine)
 		{
-			return;
-		}
-		
-		final int state = this.engine.getPictureTakingState(this.prefRefocus);
-		
-		if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
-				&& this.takingAlready.compareAndSet(false, true))
-		{
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			if (!this.takingAlready)
+			{
+				final int state = this.engine.getPictureTakingState(
+						MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO));
+				
+				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
+				{
+					this.takingAlready = true;
+					MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+				}
+			}
 		}
 	}
 	
@@ -899,9 +897,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	@Override
 	public void takePicture()
 	{		
+		synchronized (this.engine)
+		{
+			if (!this.capturing)
+			{
+				this.takingAlready = false;
+				return;
+			}
+		}
+		
 		try
 		{
-			if (this.prefRefocus || (this.prefAutofocus && this.isFirstFrame))
+			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
 			{
 				this.tryAutoFocus();
 			}
@@ -921,7 +928,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		Camera camera = MainScreen.thiz.getCamera();
     	if (camera == null)
     	{
-    		this.takingAlready.set(false);
+    		synchronized (this.engine)
+    		{
+    			this.takingAlready = false;
+    		}
     		Log.e("Almalence", "takePicture(): camera is null");
     		return;
     	}
@@ -941,21 +951,37 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	@Override
 	public void onPictureTaken(final byte[] paramArrayOfByte, final Camera paramCamera)
 	{		
-		if (!this.coordsRecorded)
-		{
-			this.engine.recordCoordinates();
-		}
+		final boolean goodPlace;
 		
-		final boolean goodPlace = this.engine.onPictureTaken(paramArrayOfByte);
-		this.takingAlready.set(false);
-		
-		if (this.isFirstFrame)
+		synchronized (this.engine)
 		{
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
-			this.isFirstFrame = false;
+			this.takingAlready = false;
+			this.engine.notifyAll();
+			
+			if (!this.coordsRecorded)
+			{
+				this.engine.recordCoordinates();
+			}
+			
+			goodPlace = this.engine.onPictureTaken(paramArrayOfByte);
+			
+			if (this.isFirstFrame)
+			{
+				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+				this.isFirstFrame = false;
+			}
 		}
 		
 		final boolean done = this.engine.isCircular();
+		final boolean oom = this.engine.isMax();
+		
+		if (oom && !done)
+		{
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
 
 		{
 			final Message msg = new Message();
@@ -972,7 +998,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			MainScreen.H.sendMessage(msg);
 		}
 		
-		if (done)
+		if (done || oom)
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
@@ -984,6 +1010,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	@SuppressLint("FloatMath")
 	private void stopCapture()
 	{		
+		this.capturing = false;
+		
 		final LinkedList<AugmentedFrameTaken> frames = this.engine.retrieveFrames();
 		
 		if (frames.size() > 0)

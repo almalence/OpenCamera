@@ -173,6 +173,7 @@ public class PluginManager {
 	public static final int MSG_NEXT_FRAME = 23;
 	
 	public static final int MSG_BAD_FRAME = 24;
+	public static final int MSG_OUT_OF_MEMORY = 25;
 
 	public static final int MSG_FOCUS_STATE_CHANGED = 28;
 

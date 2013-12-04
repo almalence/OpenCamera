@@ -5,21 +5,16 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">HD Panorama capturing</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Panorama height</string>
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_warning">You can take %d frames with this resolution</string>
 	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Focus mode</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Select suitable focus mode</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Focus to infinity</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">Autofocus</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">Autofocus + refocus on each shot</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Continuous</string>
-    
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Use device gyroscope</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Hardware gyroscope required. If not checked we instead will use our software gyroscope</string>
 	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">No gyroscope</string>
     <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">There is no gyroscope on your device, sorry. We instead enable our software gyroscope to enhance your experience</string>
     
     <string name="plugin_capture_panoramaaugmented_badframe">Please hold still when taking picture</string>
+    
+    <string name="plugin_capture_panoramaaugmented_outofmemory">Sorry, this is maximum frames we can fit in your memory.</string>
     
     <string name="Panorama_Help">Important: Do not move your hand, rotate device only!\n\n1. Hold device still horizontally\n2. Press shutter to start panorama capture\n3. Rotate device to red guides and stop when green.\n4. Move camera to next guide\n5. To finish panorama - press shutter</string>
     
