@@ -75,9 +75,10 @@ Uint32 *Dro_GetHistogramNV21(Uint8 *in, Uint32 *hist, int sx, int sy);
 //         min_limit - Minimum limit on contrast reduction. Range: [0..0.9]. Default: 0.5
 //         max_limit - Maximum limit on contrast enhancement. Range: [1..10]. Default:
 //                     4 - for hdr-like effects, 3 for more balanced results
+//         global_limit - Maximum limit on total brightness amplification. Recommended: 4
 // Return:
 //         pointer to lookup_table.
-Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float gamma, float max_limit, float min_limit);
+Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float gamma, float max_limit, float min_limit, float global_limit);
 
 
 // ApplyToneTableNV21 - apply lookup_table[256] to YUV.
@@ -92,6 +93,28 @@ Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float ga
 //         0 = all Ok
 //         1 = Not enough memory
 int Dro_ApplyToneTableNV21(Uint8 *in, Uint8 *out, Int32 *lookup_table, int sx, int sy);
+
+// ApplyToneTableFilteredNV21 - same as ApplyToneTableNV21 but with noise reduction
+//
+int Dro_ApplyToneTableFilteredNV21(Uint8 *in, Uint8 *out, Int32 *lookup_table, int sx, int sy);
+
+// Description:
+//    Detects if a new histogram is sufficiently different from the base one.
+//    If so - new histogram is copied into base.
+//    It is further detected if scene is changed.
+//
+// Return:
+//
+// 0 = no tone table update is needed
+//     hist_base remain untouched
+//
+// 1 = tone update is needed, but no scene change (slowly advance to the new table)
+//     hist_base updated with the new hist
+//
+// 2 = tone update is needed, scene change (switch to the new table immediately)
+//     hist_base updated with the new hist
+//
+int Dro_CheckToneUpdateNeeded(Uint32 *hist, Uint32 *hist_base);
 
 
 //

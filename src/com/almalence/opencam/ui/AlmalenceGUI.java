@@ -908,7 +908,11 @@ public class AlmalenceGUI extends GUI implements
 		
 		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		unlock.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
+				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+					return;
+				
 				MainScreen.thiz.showUnlock = true;
 				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 				{
@@ -1455,19 +1459,31 @@ public class AlmalenceGUI extends GUI implements
 		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
         switch (delayInterval)
         {
-        case 0:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
-       	 break;
-        case 3:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
-       	 break;
-        case 5:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
-       	 break;
-        case 10:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
-       	 break;
-        }
+         case 0:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+        	 break;
+         case 3:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
+        	 break;
+         case 5:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
+        	 break;
+         case 10:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
+        	 break;
+         }
 	}
 
 	@Override
@@ -2391,14 +2407,45 @@ public class AlmalenceGUI extends GUI implements
 				qc4, quickControl4) : getFreeQuickControlButton(qc1, qc2, qc3,
 				qc4, quickControl4);
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl1);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl2);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl3);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl4);
+		try
+		{				
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl1);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl2);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl3);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
+		
+		try
+		{
+			((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+					.addView(quickControl4);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("AlmalenceGUI", "addView exception: " + e.getMessage());
+		}
 
 		if (mEVSupported) {
 			Message msg = new Message();
@@ -6848,6 +6895,9 @@ public class AlmalenceGUI extends GUI implements
 		if (false == needToShow && MainScreen.showHelp == false)
 			return;
 		
+		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+			return;
+		
 		final String preference = Prefs;
 		
 		final View help = guiView.findViewById(R.id.mode_help);
@@ -7013,19 +7063,30 @@ public class AlmalenceGUI extends GUI implements
              switch (real_int)
              {
              case 0:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
             	 break;
              case 3:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
             	 break;
              case 5:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
             	 break;
              case 10:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
             	 break;
              }
-             
           }    
          });
       d.show();

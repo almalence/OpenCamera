@@ -809,6 +809,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		//cp = cameraParameters;
 
 		try {
+			//List<int[]> range = cameraParameters.getSupportedPreviewFpsRange();
+			//Log.i("CameraTest", "fps ranges" + range.get(0)[0] + " " + range.get(0)[1] + " " + range.get(1)[0] + " " + range.get(1)[1] + " " + range.get(2)[0] + " " + range.get(2)[1] + " " + range.get(3)[0] + " " + range.get(3)[1]);
+			//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+			//cameraParameters.setPreviewFpsRange(7000, 30000);
+			// an obsolete but much more reliable way of setting preview to a reasonable fps range
+			// Nexus 5 is giving preview which is too dark without this
+			cameraParameters.setPreviewFrameRate(30);
+		
 			setCameraParameters(cameraParameters);
 		} catch (RuntimeException e) {
 			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
@@ -1791,7 +1799,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 
-		String base64EncodedPublicKey = "";
+		String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
 		// Create the helper, passing it our context and the public key to
 		// verify signatures with
 		Log.v("Main billing", "Creating IAB helper.");

@@ -85,6 +85,83 @@ void Filters_FindNoiseLevel
 );
 
 
+// Filters_FilterFrame
+// calls Filters_PostFilterQuick and Filters_PostFilterUV with right parameters
+// to filter Y and UV planes of YUV frame
+void Filters_FilterFrame
+(
+	void *instance,
+	Uint8 *in,
+	Uint8 *inUV,
+	Uint8 *out,
+	Uint8 *outUV,
+	int sx,
+	int sy,
+	int Filter,
+	int HighQuality,
+	int Sharpen
+);
+
+
+// Limitations:
+// x0, y0, w, h should be even
+void Filters_ScaleFrame
+(
+	void *instance,
+	Uint8 *in,
+	Uint8 *inUV,
+	Uint8 *out,
+	Uint8 *outUV,
+	int x0,
+	int y0,
+	int w,
+	int h,
+	int sxi,
+	int syi,
+	int sxo,
+	int syo
+);
+
+
+// Filters_EnhanceEdges - edge-enhancer, an alternative to sharpening
+//
+// Input:
+// Y - image plane to be filtered/sharpened
+// x_st, y_st, x_en, y_en - coordinates of crop area where to apply edge enhancer
+// sx, sy - image dimensions
+// mode - amount of edge enhancing: =0 - less, =1 - more
+// stride - distance (in bytes) between pixel values, set to
+//          1 - for Y channel in NV21
+//          2 - for U/V channels in NV21
+//          2 - for Y channel in YUYV
+//          4 - for U/V channels in YUYV
+//          3 - for interleaved RGB
+//          4 - for RGBA
+//
+// Output:
+// Y - image plane with enhanced edges
+//
+void Filters_EnhanceEdges
+(
+	void *instance,
+	Uint8 *Y,
+	int x_st,
+	int x_en,
+	int y_st,
+	int y_en,
+	int sx,
+    int sy,
+	int mode,
+    int stride
+);
+
+
+// ----------------------------------------------------------------------
+// Note: Unstable API below
+
+#define QUARTER_PADDED(x)  ((x)/4+4+(((x)/4)&1))
+
+
 // Filters_PostFilter - Noise filter and Sharpen
 //
 // Input:
@@ -140,26 +217,33 @@ void Filters_PostFilterUV
 	int sy
 );
 
-// Filters_FilterFrame
-// calls Filters_PostFilterQuick and Filters_PostFilterUV with right parameters
-// to filter Y and UV planes of YUV frame
-void Filters_FilterFrame
+
+// Filter lower spatial components of the frame
+// (useful for small-pixel sensors)
+int Filters_GetFilteredLowSpatial
 (
 	void *instance,
 	Uint8 *in,
 	Uint8 *inUV,
-	Uint8 *out,
-	Uint8 *outUV,
 	int sx,
 	int sy,
 	int Filter,
-	int HighQuality,
-	int Sharpen
+	Uint8 **quarterIn,
+	Uint8 **quarterOut
 );
 
+void Filters_ResidualQuarterCompute
+(
+	Uint8 *in,
+	Uint8 *quarterIn,
+	Uint8 *quarterOut,
+	int sx,
+	int sy,
+	int sxs,
+	int sys,
+	int s
+);
 
-// Filter lower spatial components of the frame
-// (useful for small-pixel sensors)
 void Filters_FilterLowSpatial
 (
 	void *instance,
@@ -170,57 +254,13 @@ void Filters_FilterLowSpatial
 	int Filter
 );
 
-
-// Limitations:
-// x0, y0, w, h should be even
-void Filters_ScaleFrame
+void Filters_FilterLowSpatialUV
 (
 	void *instance,
-	Uint8 *in,
 	Uint8 *inUV,
-	Uint8 *out,
-	Uint8 *outUV,
-	int x0,
-	int y0,
-	int w,
-	int h,
-	int sxi,
-	int syi,
-	int sxo,
-	int syo
-);
-
-
-// Filters_EnhanceEdges - edge-enhancer, an alternative to sharpening
-//
-// Input:
-// Y - image plane to be filtered/sharpened
-// x_st, y_st, x_en, y_en - coordinates of crop area where to apply edge enhancer
-// sx, sy - image dimensions
-// mode - amount of edge enhancing: =0 - less, =1 - more
-// stride - distance (in bytes) between pixel values, set to
-//          1 - for Y channel in NV21
-//          2 - for U/V channels in NV21
-//          2 - for Y channel in YUYV
-//          4 - for U/V channels in YUYV
-//          3 - for interleaved RGB
-//          4 - for RGBA
-//
-// Output:
-// Y - image plane with enhanced edges
-//
-void Filters_EnhanceEdges
-(
-	void *instance,
-	Uint8 *Y,
-	int x_st,
-	int x_en,
-	int y_st,
-	int y_en,
 	int sx,
-    int sy,
-	int mode,
-    int stride
+	int sy,
+	int Filter
 );
 
 

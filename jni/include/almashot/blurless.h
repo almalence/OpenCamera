@@ -89,7 +89,8 @@ int BlurLess_Preview
 	int   postSharpen,
 	int   zeroBlackLevel,
 	int   enhanceLuma,
-	int   enhanceChroma
+	int   enhanceChroma,
+	int   externalBuffers
 );
 
 // BlurLess_Process - call to construct full-size image (should be called after BlurLess_Preview)

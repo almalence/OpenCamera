@@ -244,6 +244,10 @@ public class PluginManager {
 		 */
 
 		// VF
+		AeAwLockVFPlugin aeawlockVFPlugin = new AeAwLockVFPlugin();
+		pluginList.put(aeawlockVFPlugin.getID(), aeawlockVFPlugin);
+		listVF.add(aeawlockVFPlugin);
+		
 		HistogramVFPlugin histgramVFPlugin = new HistogramVFPlugin();
 		pluginList.put(histgramVFPlugin.getID(), histgramVFPlugin);
 		listVF.add(histgramVFPlugin);
@@ -256,17 +260,13 @@ public class PluginManager {
 		pluginList.put(gridVFPlugin.getID(), gridVFPlugin);
 		listVF.add(gridVFPlugin);
 
-		InfosetVFPlugin infosetVFPlugin = new InfosetVFPlugin();
-		pluginList.put(infosetVFPlugin.getID(), infosetVFPlugin);
-		listVF.add(infosetVFPlugin);
-
 		FocusVFPlugin focusVFPlugin = new FocusVFPlugin();
 		pluginList.put(focusVFPlugin.getID(), focusVFPlugin);
 		listVF.add(focusVFPlugin);
 		
-		AeAwLockVFPlugin aeawlockVFPlugin = new AeAwLockVFPlugin();
-		pluginList.put(aeawlockVFPlugin.getID(), aeawlockVFPlugin);
-		listVF.add(aeawlockVFPlugin);
+		InfosetVFPlugin infosetVFPlugin = new InfosetVFPlugin();
+		pluginList.put(infosetVFPlugin.getID(), infosetVFPlugin);
+		listVF.add(infosetVFPlugin);
 
 		// Capture
 		CapturePlugin testCapturePlugin = new CapturePlugin();
@@ -804,10 +804,15 @@ public class PluginManager {
 		boolean hasInactive = false;
 
 		loadStandardSettingsBefore(pf, settings);
-		if ("general_settings".equals(settings)) {
+		if ("general_settings".equals(settings)) 
+		{
 		} 
-		else if ("vf_settings".equals(settings)) {
-			for (int i = 0; i < listVF.size(); i++) {
+		else if ("vf_settings".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
+			
+			for (int i = 0; i < listVF.size(); i++) 
+			{				
 				Plugin pg = listVF.get(i);
 				if (activeVF.contains(pg.getID()))
 					activePlugins.add(pg);
@@ -819,8 +824,6 @@ public class PluginManager {
 			if (activePlugins.size() != listVF.size()
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
-			
-			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
 		} 
 		else if ("vf_inactive_settings".equals(settings)) {
 			for (int i = 0; i < listVF.size(); i++) {
@@ -1613,6 +1616,8 @@ public class PluginManager {
 	
 	public boolean addToSharedMem_ExifTagsFromCamera() {		
 		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		if (params==null)
+			return false;
 		
 		String s1 = null;
 		if(params.getSupportedWhiteBalance().size() > 0)
