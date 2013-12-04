@@ -62,9 +62,6 @@ extern "C"
 // -------------------------------------------------------------------
 // Still image superzoom functions
 
-// instance - an address of a pointer to hold instance-related data, to be later passed to SuperZoom_Process
-// in - captured frames in YUV format. in's should be allocated with malloc, these are free'd inside Hdr_Process
-// SensorGain is the sensor gain during capture, in u8.8 fixed-point format
 int SuperZoom_Preview
 (
 	void  ** instance,
@@ -149,16 +146,6 @@ int SuperZoom_ResolveFrame
 	int		 nImages,
 	int      nRefImage,
 	int		 enh_edges
-);
-
-
-void SuperZoom_FilterFrame
-(
-	Uint8 *frame,
-	int sx,
-	int sy,
-	int Filter,
-	int Sharpen
 );
 
 

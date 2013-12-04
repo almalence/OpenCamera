@@ -129,7 +129,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
 		deghTable[DeGhostPref],
-		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh);
+		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
 
