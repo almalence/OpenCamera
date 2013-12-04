@@ -3,7 +3,11 @@ LOCAL_PATH := $(call my-dir)
 # Almalence AlmaShot library
 include $(CLEAR_VARS)
 LOCAL_MODULE := almalib-static
+ifeq ($(wildcard $(TARGET_ARCH_ABI)/libalmalib.a),) 
+LOCAL_SRC_FILES := $(TARGET_ARCH_ABI)/libalmalib_eval.a
+else 
 LOCAL_SRC_FILES := $(TARGET_ARCH_ABI)/libalmalib.a
+endif
 LOCAL_EXPORT_C_INCLUDES := $(MY_CORE_PATH)/include/almashot
 include $(PREBUILT_STATIC_LIBRARY)
 
