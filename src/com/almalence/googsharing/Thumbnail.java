@@ -244,12 +244,20 @@ public class Thumbnail {
         }
         
         // Ensure database and storage are in sync.
-        if (Util.isUriValid(lastMedia.uri, resolver))
+//        if (Util.isUriValid(lastMedia.uri, resolver))
+//        {
+        try
         {
             return createThumbnail(lastMedia.uri, bitmap, null, lastMedia.orientation);
+        } 
+        catch (Exception ex) 
+        {
+        	Log.e("getLastThumbnail", "createThumbnail exception " + ex.getMessage());
+            return null;
         }
+//        }
         
-        return null;
+//        return null;
     }
 
 

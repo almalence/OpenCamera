@@ -87,7 +87,7 @@ public class AppRater
 		return false;
 	}
 
-	public static void showRateDialog(final Activity mContext, final SharedPreferences prefs)
+	private static void showRateDialog(final Activity mContext, final SharedPreferences prefs)
 	{
 		final String APP_TITLE = mContext.getResources().getString(R.string.app_name);
 		

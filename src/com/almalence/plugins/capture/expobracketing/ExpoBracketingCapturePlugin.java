@@ -18,6 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.expobracketing;
 
+import java.util.Date;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
@@ -152,6 +154,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		if (takingAlready == false)
 		{
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+			
 			previewWorking=false;
 			cdt = null;
 			startCaptureSequence();
@@ -303,7 +308,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	            		cdt.cancel();
 	            		cdt = null;
 	            	}
-	            	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+	            	
+	            	Message message = new Message();
+	            	message.obj = String.valueOf(SessionID);
+	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+	    			MainScreen.H.sendMessage(message);
+	    			
 	            	MainScreen.thiz.resetExposureCompensation();
 	            }
     		}
@@ -349,7 +359,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	            		cdt.cancel();
 	            		cdt = null;
 	            	}
-	            	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+	            	
+	            	Message message = new Message();
+	            	message.obj = String.valueOf(SessionID);
+	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+	    			MainScreen.H.sendMessage(message);
+	    			
 	            	MainScreen.thiz.resetExposureCompensation();
 				}
     		}
@@ -370,15 +385,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
     	compressed_frame[n] = SwapHeap.SwapToHeap(paramArrayOfByte);
     	compressed_frame_len[n] = paramArrayOfByte.length;
-    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame[n]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame_len[n]));
+    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[n]));
     	
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(n+1));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
     	if(n == 0)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
     	
     	if (compressed_frame[n] == 0)
     	{
@@ -399,7 +414,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         		cdt.cancel();
         		cdt = null;
         	}
-        	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+        	
+        	Message message = new Message();
+        	message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
         	MainScreen.thiz.resetExposureCompensation();
 			return;
 		}

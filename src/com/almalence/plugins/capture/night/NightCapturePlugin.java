@@ -20,6 +20,7 @@ package com.almalence.plugins.capture.night;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -206,7 +207,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onExportFinished()
 	{
-		if(modeSwitcher != null)
+		if(modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && inCapture == false)
 			modeSwitcher.setEnabled(true);
 	}
 	
@@ -247,7 +248,8 @@ public class NightCapturePlugin extends PluginCapture
 				LayoutParams.WRAP_CONTENT);
 		
 		modeSwitcher.setLayoutParams(lp);
-		modeSwitcher.setEnabled(true);
+		if(PluginManager.getInstance().getProcessingCounter() == 0)
+			modeSwitcher.setEnabled(true);
 		
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
@@ -481,15 +483,11 @@ public class NightCapturePlugin extends PluginCapture
 	    		CapIdx = captureIndex;
 	    		MainScreen.setSaveImageWidth(imgCaptureWidth*2);
 	        	MainScreen.setSaveImageHeight(imgCaptureHeight*2);
-	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imgCaptureWidth*2));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imgCaptureHeight*2));
 	    	}
 	    	else
 	    	{
 	    	  	MainScreen.setSaveImageWidth(imgCaptureWidth);
 	        	MainScreen.setSaveImageHeight(imgCaptureHeight);
-	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imgCaptureWidth));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imgCaptureHeight));
 	    	}
 	    	
 	    	MainScreen.setImageWidth(imgCaptureWidth);
@@ -970,6 +968,22 @@ public class NightCapturePlugin extends PluginCapture
 		
 		if (inCapture == false)
         {
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+			
+			int mode = Integer.parseInt(ModePreference);
+			if(mode == 1)
+	    	{
+	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth*2));
+	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight*2));
+	    	}
+	    	else
+	    	{
+	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth));
+	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight));
+	    	}
+
+			
     		inCapture = true;
     		takingAlready = false;
     		this.modeSwitcher.setEnabled(false);
@@ -984,7 +998,8 @@ public class NightCapturePlugin extends PluginCapture
             frame_num = 0;
     		total_frames = HI_RES_FRAMES;
     		
-            PluginManager.getInstance().addToSharedMem("nightmode"+String.valueOf(PluginManager.getInstance().getSessionID()), ModePreference);
+    		//Log.e("NIGHT CAMERA DEBUG", "startCaptureSequence session = " + PluginManager.getInstance().getSessionID());
+            PluginManager.getInstance().addToSharedMem("nightmode"+String.valueOf(SessionID), ModePreference);
 
             Camera camera = MainScreen.thiz.getCamera();
         	if (null==camera)
@@ -1037,15 +1052,15 @@ public class NightCapturePlugin extends PluginCapture
     	compressed_frame[frame_num] = SwapHeap.SwapToHeap(paramArrayOfByte);
     	compressed_frame_len[frame_num] = paramArrayOfByte.length;
     	
-    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame[frame_num]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame_len[frame_num]));
+    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
     	
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frame_num+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_num+1));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
     	
     	if(frame_num == 0)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
     	
     	String message = MainScreen.thiz.getResources().getString(R.string.capturing);
 		message += " ";
@@ -1148,14 +1163,14 @@ public class NightCapturePlugin extends PluginCapture
 		    	compressed_frame[HI_SPEED_FRAMES-nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
 		    	compressed_frame_len[HI_SPEED_FRAMES-nVFframesToBuffer] = data.length;
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame[frame_num]));
-		    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(compressed_frame_len[frame_num]));
+		    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
+		    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_num+1));
+		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
 				
 		    	if(frame_num == 0)
-		    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera();
+		    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
 		    	
 		    	++frame_num;
 				--nVFframesToBuffer;
@@ -1165,10 +1180,16 @@ public class NightCapturePlugin extends PluginCapture
 				{
 					// play tick sound
 	        		MainScreen.thiz.PlayShutter();
+										
+	        		Message message = new Message();
+	        		message.obj = String.valueOf(SessionID);
+	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+	    			MainScreen.H.sendMessage(message);
+	    			
+					MainScreen.guiManager.stopCaptureIndication();
+					
 					takingAlready = false;
 					inCapture = false;
-					MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
-					MainScreen.guiManager.stopCaptureIndication();
 					//modeSwitcher.setEnabled(true);
 				}
 			}
@@ -1324,9 +1345,14 @@ public class NightCapturePlugin extends PluginCapture
 	            else
 	            {
 	            	//modeSwitcher.setEnabled(true);
+	            		            	
+	            	Message message = new Message();
+	            	message.obj = String.valueOf(SessionID);
+	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+	    			MainScreen.H.sendMessage(message);
+	            	
 	            	takingAlready = false;
 	            	inCapture = false;
-	            	MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
 	            }
     		}
     		return true;

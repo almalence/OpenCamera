@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Dialog;
@@ -106,10 +107,7 @@ public class VideoCapturePlugin extends PluginCapture
     public boolean showRecording = false;
     
     private View buttonsLayout;    
-    
-//    private int mLayoutOrientationCurrent;
-//	private int mDisplayOrientationCurrent;
-    
+
 	public VideoCapturePlugin()
 	{
 		super("com.almalence.plugins.videocapture",
@@ -759,6 +757,9 @@ public class VideoCapturePlugin extends PluginCapture
    		  		msg.what = PluginManager.MSG_BROADCAST;
    		  		MainScreen.H.sendMessage(msg);
    		  	}
+        
+        	Date curDate = new Date();
+        	SessionID = curDate.getTime();
         	
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
@@ -1315,13 +1316,13 @@ public class VideoCapturePlugin extends PluginCapture
     	{
     		//NotEnoughMemory();
     	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), "1");
-    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
     	
 		try
 		{
@@ -1331,7 +1332,11 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			Log.i("View capture still image", "StartPreview fail");
 		}
-		MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+		
+		Message message = new Message();
+		message.obj = String.valueOf(SessionID);
+		message.what = PluginManager.MSG_CAPTURE_FINISHED;
+		MainScreen.H.sendMessage(message);
 
 		takingAlready = false;
 	}

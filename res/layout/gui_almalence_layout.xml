@@ -707,7 +707,7 @@
             
 	    	<TextView
 				android:id="@+id/helpTextModeName"
-				android:textSize="18sp"
+				android:textSize="17sp"
 				android:textColor="#5A5E5E"
 				android:background="@android:color/transparent"
 				android:layout_height="wrap_content"
@@ -722,7 +722,7 @@
 			android:id="@+id/helpImageLayout"
 			android:layout_width="fill_parent"
 			android:layout_height="@dimen/helpImage"
-			android:layout_margin="10dip"
+			android:layout_margin="5dip"
 			android:orientation="vertical"       
 			android:layout_below="@+id/helpTextModeName"
 			>
@@ -738,27 +738,27 @@
 			
             <TextView
 				android:id="@+id/helpText"
-				android:textSize="18sp"
+				android:textSize="17sp"
 				android:textColor="#5A5E5E"
 				android:background="@android:color/transparent"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:layout_alignParentLeft="true"
-				android:layout_margin="10dip"
+				android:layout_margin="5dip"
 				android:layout_below="@+id/helpImageLayout"
 				>
 			</TextView>
 			
             <CheckBox
 				android:id="@+id/helpCheckBox"
-				android:textSize="18sp"
+				android:textSize="17sp"
 				android:textColor="#5A5E5E"
 				android:text="Don't show this again"
 				android:background="@android:color/transparent"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:layout_alignParentLeft="true"
-				android:layout_margin="10dip"
+				android:layout_margin="5dip"
 				android:layout_below="@+id/helpText"
 				>
 			</CheckBox>
@@ -772,7 +772,7 @@
                 android:layout_margin="10dip"
                 android:text="OK"
                 android:textColor="#5A5E5E"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:background="@android:color/transparent">
             </Button>
 			

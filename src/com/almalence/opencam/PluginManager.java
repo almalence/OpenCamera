@@ -79,7 +79,6 @@ import com.almalence.plugins.capture.night.NightCapturePlugin;
 import com.almalence.plugins.capture.objectremoval.ObjectRemovalCapturePlugin;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.preshot.PreshotCapturePlugin;
-import com.almalence.plugins.capture.selftimer.SelfTimerCapturePlugin;
 import com.almalence.plugins.capture.sequence.SequenceCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
@@ -144,7 +143,7 @@ public class PluginManager {
 	// session ID used to identify capture session. Created on start and
 	// updated each time when capture finished and processing/filter/export
 	// sequence started
-	private long SessionID = 0;
+	//private long SessionID = 0;
 
 	// table for sharing plugin's data
 	// hashtable for storing shared data - assoc massive for string key and
@@ -282,9 +281,9 @@ public class PluginManager {
 		pluginList.put(nightCapturePlugin.getID(), nightCapturePlugin);
 		listCapture.add(nightCapturePlugin);
 
-		SelfTimerCapturePlugin testTimerCapturePlugin = new SelfTimerCapturePlugin();
-		pluginList.put(testTimerCapturePlugin.getID(), testTimerCapturePlugin);
-		listCapture.add(testTimerCapturePlugin);
+//		SelfTimerCapturePlugin testTimerCapturePlugin = new SelfTimerCapturePlugin();
+//		pluginList.put(testTimerCapturePlugin.getID(), testTimerCapturePlugin);
+//		listCapture.add(testTimerCapturePlugin);
 
 		BurstCapturePlugin burstCapturePlugin = new BurstCapturePlugin();
 		pluginList.put(burstCapturePlugin.getID(), burstCapturePlugin);
@@ -605,8 +604,8 @@ public class PluginManager {
 	// base onResume stage
 	public void onResume() {
 		shutterRelease = true;
-		Date curDate = new Date();
-		SessionID = curDate.getTime();
+		//Date curDate = new Date();
+		//SessionID = curDate.getTime();
 
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onResume();
@@ -629,12 +628,12 @@ public class PluginManager {
 			releaseSoundPlayers();
 	        countdownHandler.removeCallbacks(FlashOff);
 		    finalcountdownHandler.removeCallbacks(FlashBlink);
-			//stops timer befor exit to be sure it canceled
-			if (timer!=null)
-			{
-				timer.cancel();
-				timer=null;
-			}
+		}
+		//stops timer before exit to be sure it's canceled
+		if (timer!=null)
+		{
+			timer.cancel();
+			timer=null;
 		}
 		
 		for (int i = 0; i < activeVF.size(); i++)
@@ -841,10 +840,10 @@ public class PluginManager {
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
 		}
-		else if ("selftimer".equals(settings))
-		{
-			AddModeSettings("selftimer", pf);
-		}
+//		else if ("selftimer".equals(settings))
+//		{
+//			AddModeSettings("selftimer", pf);
+//		}
 		else if ("burst".equals(settings))
 		{
 			AddModeSettings("burstmode", pf);
@@ -1430,12 +1429,6 @@ public class PluginManager {
 		case MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
 			
-			MainScreen.guiManager.lockControls = false;
-			Message message = new Message();
-			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			message.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(message);
-			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -1445,12 +1438,15 @@ public class PluginManager {
 			// start async task for further processing
 			cntProcessing++;
 			ProcessingTask task = new ProcessingTask(MainScreen.thiz);
-			task.SessionID = SessionID;
+			task.SessionID = Long.valueOf((String)msg.obj);
+//			Log.e("NIGHT CAMERA DEBUG", "MSG_CAPTURE_FINISHED session = " + SessionID);
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
+			
+//			Date curDate = new Date();
+//			SessionID = curDate.getTime();
+//			Log.e("NIGHT CAMERA DEBUG", "New created session = " + SessionID);
 
 			MainScreen.thiz.MuteShutter(false);
 			
@@ -1459,6 +1455,12 @@ public class PluginManager {
 	    	if (mode.SKU != null)
 	    		if (!mode.SKU.isEmpty())
 	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
+	    	
+	    	MainScreen.guiManager.lockControls = false;
+			Message message = new Message();
+			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			message.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(message);
 			break;
 			
 		case MSG_START_POSTPROCESSING:
@@ -1576,7 +1578,7 @@ public class PluginManager {
 		return true;
 	}
 	
-	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte) {		
+	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID) {		
 		try
     	{
     		InputStream is = new ByteArrayInputStream(paramArrayOfByte);
@@ -1595,16 +1597,16 @@ public class PluginManager {
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
 			
-			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(PluginManager.getInstance().getSessionID()), s1);
-			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(PluginManager.getInstance().getSessionID()), s2);
-			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(PluginManager.getInstance().getSessionID()), s3);
-			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(PluginManager.getInstance().getSessionID()), s4);
-			if(s5 != null) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(PluginManager.getInstance().getSessionID()), s5);
-			if(s6 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(PluginManager.getInstance().getSessionID()), s6);
-			if(s7 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(PluginManager.getInstance().getSessionID()), s7);
-			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(PluginManager.getInstance().getSessionID()), s8);
-			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_ensitivity"+String.valueOf(PluginManager.getInstance().getSessionID()), s9);
-			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(PluginManager.getInstance().getSessionID()), s10);
+			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);
+			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+			if(s5 != null) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+			if(s6 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+			if(s7 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_ensitivity"+String.valueOf(SessionID), s9);
+			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
 			
 		} catch (JpegProcessingException e1)
 		{
@@ -1614,7 +1616,7 @@ public class PluginManager {
 		return true;
 	}
 	
-	public boolean addToSharedMem_ExifTagsFromCamera() {		
+	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID) {		
 		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		if (params==null)
 			return false;
@@ -1629,10 +1631,10 @@ public class PluginManager {
 		if(MainScreen.guiManager.mISOSupported)
 			s4 = MainScreen.thiz.getISOMode();
 		
-		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(PluginManager.getInstance().getSessionID()), s1);
-		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(PluginManager.getInstance().getSessionID()), s2);
-		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(PluginManager.getInstance().getSessionID()), s3);
-		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(PluginManager.getInstance().getSessionID()), s4);
+		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
 		return true;
 	}
 
@@ -1762,9 +1764,9 @@ public class PluginManager {
 	}
 
 	//return current session id!!!
-	public long getSessionID() {
-		return SessionID;
-	}
+//	public long getSessionID() {
+//		return SessionID;
+//	}
 	
 	//get file saving directory
 	public File GetSaveDir()
@@ -2030,5 +2032,5 @@ public class PluginManager {
         	finalcountdownHandler.postDelayed(this, 50);
         }
     };
-	
+
 }

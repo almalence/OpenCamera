@@ -73,6 +73,8 @@ public abstract class Plugin
 	public String quickControlTitle = "";	 
 	
 	protected static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
+
+	protected long SessionID=0;
 	
 	public enum ViewfinderZone {
 		
@@ -299,8 +301,8 @@ public abstract class Plugin
 		
 		MainScreen.setSaveImageWidth(CaptureWidth);
 		MainScreen.setSaveImageHeight(CaptureHeight);
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(CaptureWidth));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(CaptureHeight));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(CaptureWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(CaptureHeight));
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {

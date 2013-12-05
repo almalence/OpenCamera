@@ -18,6 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
+import java.util.Date;
+
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Message;
@@ -61,7 +63,11 @@ public class CapturePlugin extends PluginCapture
 				&& !MainScreen.getAutoFocusLock())			
 				aboutToTakePicture = true;			
 		else if(takingAlready == false)
+		{
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
 			takePicture();
+		}
 	}
 	
 	public void takePicture()
@@ -115,13 +121,13 @@ public class CapturePlugin extends PluginCapture
     	{
     		//NotEnoughMemory();
     	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), "1");
-    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
     	
 		try
 		{
@@ -131,7 +137,11 @@ public class CapturePlugin extends PluginCapture
 		{
 			Log.i("Capture", "StartPreview fail");
 		}
-		MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+		
+		Message message = new Message();
+		message.obj = String.valueOf(SessionID);
+		message.what = PluginManager.MSG_CAPTURE_FINISHED;
+		MainScreen.H.sendMessage(message);
 
 		takingAlready = false;
 		aboutToTakePicture = false;

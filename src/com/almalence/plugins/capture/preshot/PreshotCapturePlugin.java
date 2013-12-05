@@ -18,6 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.preshot;
 
+import java.util.Date;
+
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.CountDownTimer;
@@ -294,7 +296,11 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 			captureStarted=false;
 			StopBuffering();
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
 		}
 		else
 		{
@@ -318,6 +324,9 @@ public class PreshotCapturePlugin extends PluginCapture
 	// starts buffering to native buffer
 	void StartBuffering() {
 		
+		Date curDate = new Date();
+		SessionID = curDate.getTime();
+
 		MainScreen.thiz.MuteShutter(true);
 		
 		isBuffering = true;
@@ -335,8 +344,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imW));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imH));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
+        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 	
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 			
@@ -345,7 +354,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture", "StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
-			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(PluginManager.getInstance().getSessionID()), "false");
+			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(SessionID), "false");
 		}
 		else
 		{
@@ -356,8 +365,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imW));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imH));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
+        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 			
 			//Log.i("StartBuffering", "SX "+ SX +" SY "+ SY);
 			int secondsAllocated = PreShot.AllocateBuffer(imW, imH, Integer.parseInt(FPS), Integer.parseInt(PreShotInterval), 1);
@@ -365,7 +374,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture","StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
-			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(PluginManager.getInstance().getSessionID()), "true");
+			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(SessionID), "true");
 			
 			StartCaptureSequence();
 		}
@@ -387,7 +396,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		counter = 0;
 		
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(PreShot.GetImageCount()));
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(PreShot.GetImageCount()));
 		
 		if (isSlowMode==false)
 		{
@@ -501,7 +510,7 @@ public class PreshotCapturePlugin extends PluginCapture
     	inCapture = false;
     	
     	if (0 == PreShot.GetImageCount())
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
 			
     	//PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getWantLandscapePhoto()?0:1);
     	PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.guiManager.getDisplayOrientation());

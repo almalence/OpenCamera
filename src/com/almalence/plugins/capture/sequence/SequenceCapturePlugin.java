@@ -18,6 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.sequence;
 
+import java.util.Date;
+
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -102,7 +104,12 @@ public class SequenceCapturePlugin extends PluginCapture
 	        				&& !MainScreen.getAutoFocusLock())
 				takingAlready = true;			
 			else if(takingAlready == false)
+			{
+				Date curDate = new Date();
+				SessionID = curDate.getTime();
+
 				takePicture();
+			}
         }
 	}
 	
@@ -150,7 +157,12 @@ public class SequenceCapturePlugin extends PluginCapture
     	if (frame == 0)
     	{
     		Log.i("Sequence", "Load to heap failed");
-    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+    		
+    		Message message = new Message();
+    		message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
 			imagesTaken=0;
 			MainScreen.thiz.MuteShutter(false);
 			inCapture = false;
@@ -160,13 +172,13 @@ public class SequenceCapturePlugin extends PluginCapture
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
     	
-    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
     	
     	if(imagesTaken == 1)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
 		
 		try
 		{
@@ -175,7 +187,12 @@ public class SequenceCapturePlugin extends PluginCapture
 		catch (RuntimeException e)
 		{
 			Log.i("Sequence", "StartPreview fail");
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
 			imagesTaken=0;
 			MainScreen.thiz.MuteShutter(false);
 			inCapture = false;
@@ -185,8 +202,13 @@ public class SequenceCapturePlugin extends PluginCapture
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		else
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(PluginManager.getInstance().getSessionID()), String.valueOf(imagesTaken));
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAPTURE_FINISHED);
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
 			imagesTaken=0;
 			
 			//call timer to reset inCapture 

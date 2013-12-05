@@ -146,7 +146,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
 		
-    	int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+Long.toString(sessionID)));
+		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+Long.toString(sessionID)));
     	
     	if(mode == 1)
     	{
