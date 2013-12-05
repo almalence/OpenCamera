@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Captura de Panorama em HD</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Largura do panorama</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Modo de foco</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Selecione o modo de foco adequado</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Foco infinito</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">AutoFoco</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">AutoFoco + refoco a cada disparo</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Contínuo</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Usar giroscópio do dispositivo</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Exige o hardware giroscópio. Senão usaremos nosso software de giroscópio</string>

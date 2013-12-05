@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">高清全景拍摄</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">全景高度</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">对焦模式</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">选择合适的对焦模式</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">对焦到无限远</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">自动对焦</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">每次拍摄自动对焦+重新对焦</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">连续</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">使用设备陀螺仪</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">需要硬件陀螺仪。若未检测到，将使用我们的软件陀螺仪</string>

@@ -52,8 +52,6 @@ extern "C"
 #define restrict
 #endif
 
-#define MAX_FRAMES	50	// at most 50 frames are accepted where applicable
-
 typedef int Int32;
 typedef short Int16;
 typedef unsigned int Uint32;
@@ -61,10 +59,34 @@ typedef unsigned short Uint16;
 typedef unsigned char Uint8;
 typedef signed char Int8;
 
+
+// ---------------------------------------------------------------------------
+// Defines
+// ---------------------------------------------------------------------------
+
+#define MAX_FRAMES	50	// at most 50 frames are accepted where applicable
+
+// Error codes
+#define ALMA_ALL_OK					0
+#define ALMA_NOT_ENOUGH_MEMORY		1
+#define ALMA_INVALID_INSTANCE		2
+#define ALMA_FRAMES_TOO_LARGE		3
+#define ALMA_INVALID_NUM_FRAMES		4
+#define ALMA_INVALID_BUFFERS		5
+#define ALMA_GL_CONTEXT_ERROR		6
+#define ALMA_GL_SURFACE_ERROR		7
+
+
+// ---------------------------------------------------------------------------
+// Function prototypes
+// ---------------------------------------------------------------------------
+
 int AlmaShot_Initialize(int initGlFramework);
 int AlmaShot_Release(void);
 int AlmaShot_ReAcquireOpenGL(void);
 int AlmaShot_ReleaseOpenGL(void);
+
+char * AlmaShot_GetVersionString(void);
 
 void AlmaShot_SubsampleForPreview
 (
@@ -194,6 +216,29 @@ void AlmaShot_Preview2BGRAi
 	int   pitch
 );
 
+void AlmaShot_SwapUV
+(
+	Uint8 *restrict in,
+	int    sx,
+	int    sy
+);
+
+void AlmaShot_ConvertNV12toNV16
+(
+	Uint8 *restrict in,
+	Uint8 *restrict out,
+	int    sx,
+	int    sy
+);
+
+void AlmaShot_ConvertNV21toNV16
+(
+	Uint8 *restrict in,
+	Uint8 *restrict out,
+	int    sx,
+	int    sy
+);
+
 void AlmaShot_PauseProcessing(void);
 void AlmaShot_ResumeProcessing(void);
 
@@ -201,6 +246,8 @@ void AlmaShot_ResumeProcessing(void);
 int AlmaShot_MeasureProcessingTimeSuperZoom(int sx, int sy);
 int AlmaShot_MeasureProcessingTimeHdr(int sx, int sy);
 int AlmaShot_MeasureProcessingTimeBlurLess(int sx, int sy);
+
+
 
 
 #if defined __cplusplus

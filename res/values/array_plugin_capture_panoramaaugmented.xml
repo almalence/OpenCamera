@@ -9,18 +9,4 @@
    <item>0</item>
 </string-array>
 
-<string-array name="plugin_capture_panoramaaugmented_focusArray">
-   <item>@string/pref_plugin_capture_panoramaaugmented_focus_refocus</item>
-   <item>@string/pref_plugin_capture_panoramaaugmented_focus_auto</item>
-   <item>@string/pref_plugin_capture_panoramaaugmented_focus_infinity</item>
-   <item>@string/pref_plugin_capture_panoramaaugmented_focus_continuous</item>
-</string-array>
-
-<string-array name="plugin_capture_panoramaaugmented_focusValues">
-   <item>0</item>
-   <item>1</item>
-   <item>2</item>
-   <item>3</item>
-</string-array>
-
 </resources>

@@ -1459,19 +1459,31 @@ public class AlmalenceGUI extends GUI implements
 		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
         switch (delayInterval)
         {
-        case 0:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
-       	 break;
-        case 3:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
-       	 break;
-        case 5:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
-       	 break;
-        case 10:
-       	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
-       	 break;
-        }
+         case 0:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+        	 break;
+         case 3:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
+        	 break;
+         case 5:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
+        	 break;
+         case 10:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
+        	 break;
+         }
 	}
 
 	@Override
@@ -7053,19 +7065,30 @@ public class AlmalenceGUI extends GUI implements
              switch (real_int)
              {
              case 0:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
             	 break;
              case 3:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
             	 break;
              case 5:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
             	 break;
              case 10:
-            	 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10);
+            	 if (swChecked)
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+            	 else
+            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
             	 break;
              }
-             
           }    
          });
       d.show();

@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">تصوير بانوراما عالي الوضوح</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">ارتفاع البانوراما</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">وضع البؤرة</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">تحديد وضع البؤرة المناسب</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">البؤرة على لانهائية</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">بؤرة تلقائية</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">بؤرة تلقائية + إعادة ضبط البؤرة في كل لقطة</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">متواصل</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">استخدام أداة تحديد الاتجاه في الجهاز</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">مطلوب جهاز تحديد اتجاه. إذا لم يكن موجودًا، فسوف نستخدم أداة تحديد الاتجاه البرمجية الخاصة بنا</string>

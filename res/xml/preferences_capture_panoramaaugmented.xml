@@ -12,13 +12,6 @@
 			android:defaultValue="false"
 			android:summary="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary"
 			android:key="pref_plugin_capture_panoramaaugmented_usehardwaregyro"/>
-		<ListPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_focusmode_title"
-			android:summary="@string/pref_plugin_capture_panoramaaugmented_focusmode_summary"
-			android:defaultValue="0"
-			android:key="pref_plugin_capture_panoramaaugmented_focus"
-			android:entries="@array/plugin_capture_panoramaaugmented_focusArray"
-			android:entryValues="@array/plugin_capture_panoramaaugmented_focusValues"/>   
 </PreferenceCategory>
 
 </PreferenceScreen>

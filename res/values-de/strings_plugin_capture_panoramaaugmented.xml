@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Aufnahme von HD-Panoramabildern</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Panoramahöhe</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">Fokusmodus</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">Wählen Sie einen geeigneten Fokusmodus</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">Unendlichkeitsfokus</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">Autofokus</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">Autofokus + Bei jedem Foto neu fokussieren</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">Fortlaufend</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Gyroskop des Geräts verwenden</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Hardware-Gyroskop erforderlich. Falls nicht vorhanden, verwenden wir unser Software-Gyroskop.</string>

@@ -21,6 +21,8 @@ package com.almalence.plugins.capture.panoramaaugmented;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.almalence.SwapHeap;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.util.ImageConversion;
 import com.almalence.opencam.util.Util;
@@ -454,9 +457,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public boolean isCircular()
 	{
+		return (this.angleTotal >= 2.0d * Math.PI);
+	}
+	
+	public boolean isMax()
+	{
 		synchronized (this.frames)
 		{
-			return (this.angleTotal >= 2.0d * Math.PI || this.frames.size() >= this.framesMax);
+			return (this.frames.size() >= this.framesMax);
 		}
 	}
 	
@@ -527,6 +535,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				}
 			});
 			
+			Collections.sort(frames, new Comparator<AugmentedFrameTaken>()
+			{
+				@Override
+			    public int compare(final AugmentedFrameTaken frame1, final AugmentedFrameTaken frame2)
+				{
+			        return (int)frame1.angleShift - (int)frame2.angleShift;
+			    }
+			});
+			
 			try
 			{
 				syncObject.wait();
@@ -542,6 +559,52 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		this.angleTotal = 0.0f;
 	
 		return frames;
+	}
+	
+	public int cancelFrame()
+	{
+		final AugmentedFrameTaken frame;
+		
+		final int frames_count;
+		
+		synchronized (this.frames)
+		{
+			frames_count = this.frames.size();
+			
+			if (frames_count > 0)
+			{
+				frame = this.frames.removeLast();
+			}
+			else
+			{
+				frame = null;
+			}
+		}
+		
+		if (frame != null)
+		{
+			this.targetFrames[frame.angleShift < 0 ? 0 : 1].moveBack();
+			
+			new Thread()
+			{
+				@Override
+				public void run()
+				{
+					MainScreen.thiz.queueGLEvent(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							frame.destroy();
+						}
+					});
+					
+					SwapHeap.FreeFromHeap(frame.getNV21address());
+				}
+			}.start();
+		}
+		
+		return (frames_count - 1);
 	}
 	
 	public float getHorizonErrorAngle()
@@ -626,7 +689,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private final Vector3d last_position = new Vector3d();
 	private final Vector3d last_topVec = new Vector3d();
 	private final float[] last_transform = new float[16];
-	private boolean addToBeginning;
+	private volatile boolean addToBeginning;
 
 	public void recordCoordinates()
 	{
@@ -673,11 +736,13 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			framesCount = this.frames.size();
 		}
 		
+		final AugmentedFrameTarget targetFrame = this.targetFrames[this.addToBeginning ? 0 : 1];
+		
 		synchronized (this.stateSynch)
 		{
 			goodPlace = (framesCount == 0)
 					|| (this.state == STATE_TAKINGPICTURE
-						&& this.targetFrames[this.addToBeginning ? 0 : 1].distance() < 0.2f);
+						&& targetFrame.distance() < 0.2f);
 		}
 
 		if (goodPlace)
@@ -696,18 +761,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 			final byte[] jpeg_copy = new byte[jpeg.length];
 			System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
-			final AugmentedFrameTaken frame = new AugmentedFrameTaken(position, topVec, transform, jpeg_copy);
+			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, jpeg_copy);
 		
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
-				if (AugmentedPanoramaEngine.this.addToBeginning)
-				{
-					AugmentedPanoramaEngine.this.frames.addFirst(frame);
-				}
-				else
-				{
-					AugmentedPanoramaEngine.this.frames.addLast(frame);
-				}
+				AugmentedPanoramaEngine.this.frames.add(frame);
 			}
 		}
 			
@@ -1158,6 +1216,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			this.move((int)Math.signum(this.angle));
 		}
 
+		public void moveBack()
+		{
+			this.move(-(int)Math.signum(this.angle));
+		}
+		
 		// Not used as target frame is kept as long as GL context remains
 		/*
 		public void destroy()
@@ -1181,6 +1244,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		private final Vector3d position;
 		private final Vector3d vTop;
 		
+		private final float angleShift;
+		
 		private int nv21address;
 		private final Object nv21addressSync = new Object();
 		
@@ -1196,8 +1261,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 		}
 		
-		public AugmentedFrameTaken(final Vector3d position, final Vector3d topVec, float[] rotation, final byte[] jpeg)
+		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
+				final Vector3d topVec, final float[] rotation, final byte[] jpeg)
 		{	
+			this.angleShift = angleShift;
+			
 			final Object syncObject = new Object();
 			synchronized (syncObject)
 			{

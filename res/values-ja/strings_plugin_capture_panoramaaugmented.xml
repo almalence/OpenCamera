@@ -5,14 +5,6 @@
 	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">HDパノラマ撮影</string>	
 	
 	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">パノラマ縦</string>
-	
-	<string name="pref_plugin_capture_panoramaaugmented_focusmode_title">フォーカスモード</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focusmode_summary">最適なフォーカスモードを選択</string>
-      
-    <string name="pref_plugin_capture_panoramaaugmented_focus_infinity">無限フォーカス</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_auto">自動フォーカス</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_refocus">撮影毎に自動＋再フォーカス</string>
-    <string name="pref_plugin_capture_panoramaaugmented_focus_continuous">連続</string>
     
 	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">デバイスのジャイロスコープを使用</string>
     <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">ハードウェアのジャイロスコープが必要です。もしチェックしていない場合は、ソフトウェアのジャイロスコープを使用します。</string>
