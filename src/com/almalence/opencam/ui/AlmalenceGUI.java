@@ -1902,8 +1902,10 @@ public class AlmalenceGUI extends GUI implements
 				String scene_key = it.next();
 				String scene_name = scene_keys.get(scene_key);
 				if (supported_scene.contains(scene_name)
-						&& scene_name != sceneHDR && scene_name != sceneNight) {
-					activeScene.add(SceneModeButtons.get(scene_name));
+						&& scene_name != sceneHDR/* && scene_name != sceneNight*/)
+				{
+					if(scene_name.compareTo(sceneNight) != 0)
+						activeScene.add(SceneModeButtons.get(scene_name));
 					activeSceneNames.add(scene_name);
 				}
 			}

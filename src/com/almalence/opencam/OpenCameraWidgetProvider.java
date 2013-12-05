@@ -6,9 +6,13 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 
-public class OpenCameraWidgetProvider extends AppWidgetProvider {	
+public class OpenCameraWidgetProvider extends AppWidgetProvider
+{
+	public static String SETTING_BUTTON = "com.almalence.opencam.SETTING_BUTTON";
+	
 	@Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
@@ -25,7 +29,12 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent)
+    {
+    	if (SETTING_BUTTON.equals(intent.getAction()))
+    	{
+    		Log.e("OpenCameraWidgetProvider", "SETTING CLICK!");
+    	}
         super.onReceive(context, intent);
     }
 
@@ -46,14 +55,18 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider {
             remoteViews.setEmptyView(R.id.widgetGrid, R.id.widgetEmptyView);
             
             // set intent for item click (opens main activity)
-            Intent viewIntent = new Intent(context, MainScreen.class);
-            viewIntent.setAction(Intent.ACTION_MAIN);
-            //viewIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            //viewIntent.setData(Uri.parse(viewIntent.toUri(Intent.URI_INTENT_SCHEME)));
-            
-            PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
-            remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
+//            Intent viewIntent = new Intent(context, MainScreen.class);
+//            viewIntent.setAction(Intent.ACTION_MAIN);
+//            //viewIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+//            //viewIntent.setData(Uri.parse(viewIntent.toUri(Intent.URI_INTENT_SCHEME)));
+//            
+//            PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
+//            remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
             //remoteViews.setOnClickPendingIntent(R.id.widgetGrid, viewPendingIntent);
+            
+            Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
+	        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+	        remoteViews.setOnClickPendingIntent(R.id.widgetGrid, pendingIntent );
             
             // update widget
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

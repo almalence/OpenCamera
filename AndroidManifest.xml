@@ -61,6 +61,7 @@
 		<!-- <receiver android:name=".OpenCameraWidgetProvider" >
     		<intent-filter>
         		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        		<action android:name="com.almalence.opencam.SETTING_BUTTON" />
     		</intent-filter>
     	<meta-data android:name="android.appwidget.provider"
                android:resource="@xml/opencamera_appwidget_info" />
@@ -74,7 +75,7 @@
     		<intent-filter>
         		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
     		</intent-filter>
-		</activity> -->		
+		</activity> -->	
 		
 		<receiver android:name=".HWButtonStart" >
 		    <intent-filter android:priority="10000">         

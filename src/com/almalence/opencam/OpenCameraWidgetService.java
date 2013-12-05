@@ -130,8 +130,12 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        
 	        Intent fillInIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);	        
 	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+	        
+//	        Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
+//	        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//	        rv.setOnClickPendingIntent(R.id.modeSelectLayout, pendingIntent );
     	}
-    	else
+    	else if(mWidgetItems != null && mWidgetItems.size() > position)
     	{
 	    	OpenCameraWidgetItem item = mWidgetItems.get(position);
 	        // We construct a remote views item based on our widget item xml file, and set the

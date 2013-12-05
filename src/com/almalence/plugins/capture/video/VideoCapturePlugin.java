@@ -79,7 +79,6 @@ public class VideoCapturePlugin extends PluginCapture
 	
     private boolean isRecording;
     
-    public static int CapIdx;
     
     public static int CameraIDPreference;
 
@@ -106,9 +105,7 @@ public class VideoCapturePlugin extends PluginCapture
 
     public boolean showRecording = false;
     
-    private View buttonsLayout;
-    
-    private final String deviceSS3 = MainScreen.thiz.getResources().getString(R.string.device_name_ss3);
+    private View buttonsLayout;    
     
 //    private int mLayoutOrientationCurrent;
 //	private int mDisplayOrientationCurrent;
@@ -315,7 +312,12 @@ public class VideoCapturePlugin extends PluginCapture
 		takePictureButton.requestLayout();
 		
 		
-		if(Build.MODEL.compareTo(deviceSS3) == 0)
+		if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
 			takePictureButton.setVisibility(View.INVISIBLE);		
 	}
 	
@@ -726,7 +728,12 @@ public class VideoCapturePlugin extends PluginCapture
    		  	}.start();  		  	
 
 
-   		  	if(Build.MODEL.compareTo(deviceSS3) == 0)
+   		 if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+ 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+ 				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+ 				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+ 				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+ 				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
    		  	{
    		  		MainScreen.guiManager.lockControls = false;
    		  		
@@ -738,7 +745,12 @@ public class VideoCapturePlugin extends PluginCapture
 			
         } else 
         {
-        	if(Build.MODEL.compareTo(deviceSS3) == 0)
+        	if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+    				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+    				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+    				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+    				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
    		  	{
    		  		MainScreen.guiManager.lockControls = true;
    		  		
@@ -944,7 +956,12 @@ public class VideoCapturePlugin extends PluginCapture
 
 	   		     public void onFinish() {
 	   		    	 shutterOff=false;	   		    	
-	   		    	 if(Build.MODEL.compareTo(deviceSS3) != 0)
+	   		    	if(!(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+	   						Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+	   						Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+	   						Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+	   						Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+	   						Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13)))
 	   		    		 MainScreen.guiManager.lockControls = false;
 	   		     }
    		  	}.start();

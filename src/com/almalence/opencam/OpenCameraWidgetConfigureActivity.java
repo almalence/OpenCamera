@@ -37,6 +37,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	private ElementAdapter modeGridAdapter;
 	private List<View> modeGridViews;
 	
+	private Map<String, View> allModeViews;
+	
 	public static Map<Integer, Mode> modeGridAssoc;
 	
 	private int currentModeIndex;
@@ -53,6 +55,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		modeGridViews = new ArrayList<View>();
 		
 		modeGridAssoc = new Hashtable<Integer, Mode>();
+		
+		allModeViews = new Hashtable<String, View>();
 		
         setResult(RESULT_CANCELED);
         setContentView(R.layout.widget_opencamera_configure);
@@ -72,8 +76,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         if(null != buttonDone)
         	buttonDone.setOnClickListener(this);
         
-        initModeList();
         initModeGrid();
+        initModeList();        
     }
 	
 	@Override
@@ -130,7 +134,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 
 			int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
 					"string", MainScreen.thiz.getPackageName());
-			String modename = MainScreen.thiz.getResources().getString(id);
+			final String modename = MainScreen.thiz.getResources().getString(id);
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
@@ -138,9 +142,19 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 				@Override
 				public void onClick(View v)
 				{
+					View newMode = allModeViews.get(modename);
+					
 					modeGridAssoc.put(currentModeIndex, tmp);
 					if(modeList.getVisibility() == View.VISIBLE)
 						modeList.setVisibility(View.GONE);
+					
+					modeGridViews.remove(currentModeIndex);
+					modeGridViews.add(currentModeIndex, newMode);
+					modeGridAdapter.Elements = modeGridViews;
+					//modeGrid.setAdapter(modeGridAdapter);
+					modeGridAdapter.notifyDataSetChanged();
+					//modeGrid.invalidate();
+					//modeGrid.requestLayout();
 				}
 			});
 			
@@ -156,6 +170,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	{
 		modeGrid = (GridView)this.findViewById(R.id.widgetConfGrid);
 		modeGridViews.clear();
+		allModeViews.clear();
 		if (modeGridAdapter.Elements != null) {
 			modeGridAdapter.Elements.clear();
 			modeGridAdapter.notifyDataSetChanged();
@@ -196,6 +211,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			
 			modeGridViews.add(mode);
 			modeGridAssoc.put(i++, tmp);
+			
+			allModeViews.put(modename, mode);
 		}
 		
 		modeGridAdapter.Elements = modeGridViews;

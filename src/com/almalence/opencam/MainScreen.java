@@ -227,10 +227,38 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static long startTime = 0;
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
+	
+	public static String deviceSS3_01;
+	public static String deviceSS3_02;
+	public static String deviceSS3_03;
+	public static String deviceSS3_04;
+	public static String deviceSS3_05;
+	public static String deviceSS3_06;
+	public static String deviceSS3_07;
+	public static String deviceSS3_08;
+	public static String deviceSS3_09;
+	public static String deviceSS3_10;
+	public static String deviceSS3_11;
+	public static String deviceSS3_12;
+	public static String deviceSS3_13;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		deviceSS3_01 = getResources().getString(R.string.device_name_ss3_01);
+		deviceSS3_02 = getResources().getString(R.string.device_name_ss3_02);
+		deviceSS3_03 = getResources().getString(R.string.device_name_ss3_03);
+		deviceSS3_04 = getResources().getString(R.string.device_name_ss3_04);
+		deviceSS3_05 = getResources().getString(R.string.device_name_ss3_05);
+		deviceSS3_06 = getResources().getString(R.string.device_name_ss3_06);
+		deviceSS3_07 = getResources().getString(R.string.device_name_ss3_07);
+		deviceSS3_08 = getResources().getString(R.string.device_name_ss3_08);
+		deviceSS3_09 = getResources().getString(R.string.device_name_ss3_09);
+		deviceSS3_10 = getResources().getString(R.string.device_name_ss3_10);
+		deviceSS3_11 = getResources().getString(R.string.device_name_ss3_11);
+		deviceSS3_12 = getResources().getString(R.string.device_name_ss3_12);
+		deviceSS3_13 = getResources().getString(R.string.device_name_ss3_13);
 		
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);

@@ -572,6 +572,12 @@ public class NightCapturePlugin extends PluginCapture
 		
 		cp = MainScreen.thiz.getCameraParameters();
 		cp.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+		MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	SharedPreferences.Editor editor = prefs.edit();        	
+    	editor.putString("SceneModeValue", Camera.Parameters.SCENE_MODE_NIGHT);
+    	editor.commit();
         
         try
         {        	
