@@ -569,13 +569,16 @@ public class NightCapturePlugin extends PluginCapture
 	    }
 		
 		cp = MainScreen.thiz.getCameraParameters();
-		cp.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
-		MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	SharedPreferences.Editor editor = prefs.edit();        	
-    	editor.putString("SceneModeValue", Camera.Parameters.SCENE_MODE_NIGHT);
-    	editor.commit();
+		if(cp.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_NIGHT))
+		{
+			cp.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+			MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+			
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+	    	SharedPreferences.Editor editor = prefs.edit();        	
+	    	editor.putString("SceneModeValue", Camera.Parameters.SCENE_MODE_NIGHT);
+	    	editor.commit();
+		}
         
         try
         {        	
@@ -583,10 +586,10 @@ public class NightCapturePlugin extends PluginCapture
 	        {
 	        	if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_FIXED))
 	        		cp.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);	// should set to hyperfocal distance as per android doc
-		        else
+		        else if(cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_AUTO))
 		        	cp.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 	        }
-	        else
+	        else if(cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_AUTO))
 	        	cp.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 	        
 	        String sUserFocusMode = cp.getFocusMode();
@@ -598,7 +601,8 @@ public class NightCapturePlugin extends PluginCapture
 			if(sUserFocusMode.compareTo(sSystemFocusMode) != 0)
 			{
 		    	Log.i("NightCapturePlugin", "setFocusMode didn't worked in Night Scene, reverting to Auto Scene");
-				MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+		    	if(cp.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_AUTO))
+		    		MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
 				MainScreen.thiz.setCameraFocusMode(sUserFocusMode);
 			}
 			
