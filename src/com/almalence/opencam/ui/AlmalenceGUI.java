@@ -6894,7 +6894,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		//check show help settings
 		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", false);
-		if (false == needToShow && MainScreen.showHelp == false)
+		if (false == needToShow || MainScreen.showHelp == false)
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)

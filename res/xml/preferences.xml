@@ -37,7 +37,7 @@
 	<CheckBoxPreference
 		android:title="@string/Pref_ShowHelp_Title"
 		android:summary="@string/Pref_WhowHelp_Summary"
-		android:defaultValue="false" 
+		android:defaultValue="true" 
 		android:key="showHelpPrefCommon" />
 	
     <Preference android:key="about" 
