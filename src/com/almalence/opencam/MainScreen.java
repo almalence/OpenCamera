@@ -1108,9 +1108,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return null;
 	}
 
-	public void setCameraParameters(Camera.Parameters params) {
+	public boolean setCameraParameters(Camera.Parameters params) {
 		if (params != null && camera != null)
-		{
+		{			
 			try
 			{
 				camera.setParameters(params);
@@ -1120,9 +1120,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			catch (Exception e) {
 				e.printStackTrace();
 				Log.e("MainScreen", "setCameraParameters exception: " + e.getMessage());
+				return false;
 			}
+			
+			return true;
 		}
 		
+		return false;		
 	}
 	
 	public boolean isExposureLockSupported() {

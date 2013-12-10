@@ -128,8 +128,11 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
 	        // which is set on the collection view in StackWidgetProvider.
 	        
-	        Intent fillInIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);	        
-	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+	        Intent fillInIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);
+	        fillInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, fillInIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+	        //rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+	        rv.setOnClickPendingIntent(R.id.modeSelectLayout, pendingIntent);
 	        
 //	        Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
 //	        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);

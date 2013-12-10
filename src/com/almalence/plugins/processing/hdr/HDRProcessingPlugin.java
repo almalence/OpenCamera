@@ -169,6 +169,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageWidth = MainScreen.getImageWidth();
 		mImageHeight = MainScreen.getImageHeight();
 		
+		int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
 		AlmaShotHDR.Initialize();
 		Log.e("HDR", "almashot lib initialize success");
 
@@ -200,8 +203,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
 			PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
 			
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
     	
     	
     		AlmaShotHDR.HDRFreeInstance();

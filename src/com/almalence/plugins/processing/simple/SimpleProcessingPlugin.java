@@ -41,6 +41,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	{
 		sessionID=SessionID;
 		
+		int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
 		
 		if (imagesAmount==0)
@@ -62,8 +65,8 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
 		
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	}
 
 	@Override

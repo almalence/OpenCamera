@@ -134,6 +134,9 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
     	mCameraMirrored = MainScreen.getCameraMirrored();
+    	
+    	int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
         
         if(mDisplayOrientation == 0 || mDisplayOrientation == 180)
         {
@@ -297,8 +300,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		
     		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
     		
-    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
      		
      		//frames!!! should be taken from heap
      		mAlmaCLRShot.addInputFrame(compressed_frame, input);

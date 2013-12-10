@@ -91,6 +91,9 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		mImageWidth = MainScreen.getImageWidth();
 		mImageHeight = MainScreen.getImageHeight();
 		
+		int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
 		AlmaShotNight.Initialize();
 
 		//start night processing
@@ -128,8 +131,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
     	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(yuv));
     	
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	}
 			
 	

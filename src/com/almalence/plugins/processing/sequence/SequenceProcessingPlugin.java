@@ -142,6 +142,9 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	imgWidthOR = MainScreen.getImageWidth();
         	imgHeightOR = MainScreen.getImageHeight();
         }
+        
+        int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 		
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 		
@@ -301,8 +304,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		
     		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
     		
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
      		
     		this.indexes = new int[imagesAmount];
             for (int i = 0; i < imagesAmount; i++)

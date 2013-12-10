@@ -189,6 +189,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("IsSlowMode"+Long.toString(sessionID)));
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
 		
+		int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
 		if (imagesAmount==0)
 			imagesAmount=1;
 		
@@ -241,13 +244,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((0)));
 	    	if(iOrientation == 90 || iOrientation == 270)
 	    	{
-		    	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
-		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
+		    	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
 	    	}
 	    	else
 	    	{
-	    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+	    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	    	}
 
 			PluginManager.getInstance().addToSharedMem("resultframemirrored" + (i+1) + String.valueOf(sessionID), String.valueOf(mCameraMirrored));

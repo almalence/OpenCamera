@@ -344,8 +344,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
+//			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
+//        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 	
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 			
@@ -365,8 +365,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
+//			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
+//        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 			
 			//Log.i("StartBuffering", "SX "+ SX +" SY "+ SY);
 			int secondsAllocated = PreShot.AllocateBuffer(imW, imH, Integer.parseInt(FPS), Integer.parseInt(PreShotInterval), 1);

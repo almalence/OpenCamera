@@ -198,6 +198,9 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     	Log.e("GroupShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
     	mCameraMirrored = MainScreen.getCameraMirrored();
+    	
+    	int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
         
         if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
         {
@@ -303,8 +306,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
      	PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
 		
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	}    	
 	
 	private void getPrefs()

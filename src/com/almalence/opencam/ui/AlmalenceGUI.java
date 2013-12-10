@@ -4959,13 +4959,10 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			params.set(isoParam, newMode);
-			try
-			{
-				MainScreen.thiz.setCameraParameters(params);
-			}
-			catch(RuntimeException exp)
+			if(false == MainScreen.thiz.setCameraParameters(params))
 			{
 				params.set(isoParam, iso_default_values.get(newMode));
+				MainScreen.thiz.setCameraParameters(params);	
 			}
 			mISO = newMode;
 			setButtonSelected(ISOButtons, mISO);
@@ -6632,8 +6629,9 @@ public class AlmalenceGUI extends GUI implements
 		updateThumbnailButton();
 		thumbnailView.invalidate();
 
+		Log.e("AlmalenceGUI", "processing conter = " + PluginManager.getInstance().getProcessingCounter());
 		if (0 != PluginManager.getInstance().getProcessingCounter()) {
-			new CountDownTimer(500, 500) {
+			new CountDownTimer(10, 10) {
 				public void onTick(long millisUntilFinished) {
 				}
 
@@ -6735,6 +6733,9 @@ public class AlmalenceGUI extends GUI implements
 	private RotateImageView processingAnim;
 
 	public void startProcessingAnimation() {
+		if(processingAnim != null && processingAnim.getVisibility() == View.VISIBLE)
+			return;
+
 		processingAnim = ((RotateImageView) guiView
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
@@ -6765,6 +6766,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onAnimationEnd(Animation animation) {
 				processingAnim.clearAnimation();
 				processingAnim.setVisibility(View.GONE);
+				Log.e("AlmalenceGUI", "processing animation ended");
 			}
 
 			@Override
@@ -6776,6 +6778,7 @@ public class AlmalenceGUI extends GUI implements
 			}
 		});
 
+		Log.e("AlmalenceGUI", "processing animation started");
 		processingAnim.startAnimation(lrinvisible);
 	}
 

@@ -27,6 +27,9 @@ public class HiresPortraitProcessingPlugin extends PluginProcessing
 		boolean wantLandscape1 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation"/*+Long.toString(sessionID)*/));
 		boolean cameraMirrored1 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("framemirrored"/*+Long.toString(sessionID)*/));
 		
+		int iSaveImageWidth = MainScreen.getSaveImageWidth();
+		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
 //		int frame2 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame2"/*+Long.toString(sessionID)*/));
 //		int len2 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen2"/*+Long.toString(sessionID)*/));
 //		boolean wantLandscape2 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation2"/*+Long.toString(sessionID)*/));
@@ -40,8 +43,8 @@ public class HiresPortraitProcessingPlugin extends PluginProcessing
     	PluginManager.getInstance().addToSharedMem("resultframemirrored1" +String.valueOf(sessionID), String.valueOf(cameraMirrored1));
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
 		
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	}
 
 //	public void FreeMemory()

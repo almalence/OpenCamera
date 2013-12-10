@@ -64,9 +64,9 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
 //            remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
             //remoteViews.setOnClickPendingIntent(R.id.widgetGrid, viewPendingIntent);
             
-            Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
-	        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-	        remoteViews.setOnClickPendingIntent(R.id.widgetGrid, pendingIntent );
+//            Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
+//	        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//	        remoteViews.setOnClickPendingIntent(R.id.widgetGrid, pendingIntent );
             
             // update widget
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

@@ -978,13 +978,17 @@ public class NightCapturePlugin extends PluginCapture
 			int mode = Integer.parseInt(ModePreference);
 			if(mode == 1)
 	    	{
-	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth*2));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight*2));
+				MainScreen.setSaveImageWidth(imgCaptureWidth*2);
+				MainScreen.setSaveImageHeight(imgCaptureHeight*2);
+//	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth*2));
+//	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight*2));
 	    	}
 	    	else
 	    	{
-	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight));
+	    		MainScreen.setSaveImageWidth(imgCaptureWidth);
+				MainScreen.setSaveImageHeight(imgCaptureHeight);
+//	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth));
+//	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight));
 	    	}
 
 			

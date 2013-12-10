@@ -301,8 +301,8 @@ public abstract class Plugin
 		
 		MainScreen.setSaveImageWidth(CaptureWidth);
 		MainScreen.setSaveImageHeight(CaptureHeight);
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(CaptureWidth));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(CaptureHeight));
+//		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(CaptureWidth));
+//    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(CaptureHeight));
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {
