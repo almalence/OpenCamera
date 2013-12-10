@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.PointF;
 import android.hardware.Camera;
 import android.os.Build;
