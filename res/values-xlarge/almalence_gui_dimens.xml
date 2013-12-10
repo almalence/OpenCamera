@@ -17,7 +17,7 @@
    <dimen name="scanerWidth">6dp</dimen>
    <dimen name="scanerHeight">65dp</dimen>
    
-   <dimen name="infoLayoutWidth">60dp</dimen>
+   <dimen name="infoLayoutWidth">50dp</dimen>
    <dimen name="viewfinderViewsMarginTop">17dp</dimen>
    
    <dimen name="paramsLayoutHeight">87dp</dimen>

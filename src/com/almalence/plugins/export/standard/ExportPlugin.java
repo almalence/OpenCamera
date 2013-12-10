@@ -129,6 +129,12 @@ public class ExportPlugin extends PluginExport
         	    }    
 			});
 		}
+		else
+		{
+			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_export_gps, null);
+			gpsInfoImage = (ImageView)v.findViewById(R.id.gpsInfoImage);
+			gpsInfoImage.setVisibility(View.INVISIBLE);
+		}
 	}
 	
 	public void ShowGPSStatus(int event)
@@ -138,10 +144,10 @@ public class ExportPlugin extends PluginExport
 	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_search));
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	        break;
-	    case GpsStatus.GPS_EVENT_STOPPED:
-	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
-	    	gpsInfoImage.setVisibility(View.INVISIBLE);
-	        break;
+//	    case GpsStatus.GPS_EVENT_STOPPED:
+//	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
+//	    	gpsInfoImage.setVisibility(View.INVISIBLE);
+//	        break;
 	    case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 	    	if (!isFirstGpsFix)
 	    		return;
