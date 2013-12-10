@@ -175,7 +175,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_seque
 	if (almashot_inited == 0)
 	{
 		err = AlmaShot_Initialize(0);
-		if (err == 0)
+		if (err == ALMA_ALL_OK)
 			almashot_inited = 1;
 	}
 

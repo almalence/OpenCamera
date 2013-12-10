@@ -260,6 +260,8 @@ public class AlmaCLRShot
     
     static
     {
+        System.loadLibrary("utils-image");
+    	System.loadLibrary("almalib");
         System.loadLibrary("almashot-sequence");
     }
 }

@@ -79,7 +79,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_group
 	{
 		err = AlmaShot_Initialize(0);
 
-		if (err == 0)
+		if (err == ALMA_ALL_OK)
 			almashot_inited = 1;
 	}
 
@@ -401,7 +401,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 			0,							// base frame (from which to take background)
 			// Set it to non-zero to get very quick stitched result
 			0,					// full processing, not a quick method
-			&crop[0], &crop[1], &crop[2], &crop[3]) == 1)
+			&crop[0], &crop[1], &crop[2], &crop[3]) == ALMA_ALL_OK)
 	{
 		LOGD("RealView - ok");
 	}

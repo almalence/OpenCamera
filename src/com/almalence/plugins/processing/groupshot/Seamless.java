@@ -137,7 +137,7 @@ public class Seamless
 		int layoutLength = mLayoutSize.getWidth()*mLayoutSize.getHeight();
 		mLayout = new byte[layoutLength];
 		
-	    if (AlmaShotSeamless.Align(mInputFrameSize.getWidth(), mInputFrameSize.getHeight(), mBasebaseFrameIndex, mNumOfFrame) == 0) {
+	    if (AlmaShotSeamless.Align(mInputFrameSize.getWidth(), mInputFrameSize.getHeight(), mBasebaseFrameIndex, mNumOfFrame) != 0) {
 	    	throw new Exception("Align : error");
 	    }
 		
