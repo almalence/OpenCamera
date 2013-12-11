@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">Häufige Sucher-Einstellungen</string>
+	
+	<string name="Pref_KeepScreenOn">Bildschirm eingeschaltet lassen</string>
+	<string name="Pref_KeepScreenOn_Summary">Ruhemodus vermeiden, wenn Kamera aktiv ist</string>
+	
+</resources>

@@ -6,6 +6,8 @@
 
     <string name="Pref_ObjectRemoval_Capture_ImagesAmount_Title">图像数量</string>
     
+    <string name="ObjectRemoval_Help">1. 稳持设备不动\n2. 按快门开始群摄\n3. 等待系列图像拍摄和处理完\n4. 点按检测到的移动对象以删除</string>
+    
     <string name="Pref_ObjectRemoval_Capture_PauseBetweenShots_Title">拍摄之间停顿</string>
     <string name="Res_ObjectRemoval_Capture_5">5张图像</string>
     <string name="Res_ObjectRemoval_Capture_6">6张图像</string>

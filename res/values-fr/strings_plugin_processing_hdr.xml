@@ -36,4 +36,22 @@
 	<string name="Pref_HDR_Pure">Pure</string>
 	<string name="Pref_HDR_Standard">Standard</string>
 	<string name="Pref_HDR_Saturated">Saturée</string>
+	
+	<string name="adjustments_trashDialog_title">Supprimer cette photo ?</string>
+    <string name="adjustments_trashDialog_content">Cette photo sera perdue</string>
+    <string name="adjustments_trashDialog_positive">Oui</string>
+    <string name="adjustments_trashDialog_negative">Non</string>
+    <string name="adjustments_presets_prompt">Choisir un réglage prédéfini</string>
+    <string name="adjustments_preset_natural">Naturel</string>
+    <string name="adjustments_preset_candy">Détails</string>
+    <string name="adjustments_preset_artistic">Artistique</string>
+    <string name="adjustments_preset_bnw">Noir et blanc</string>
+    <string name="adjustments_preset_vanilla">Vanille</string>
+    <string name="adjustments_preset_xerox">Xerox</string>
+    <string name="adjustments_preset_neon">Néon</string>
+    <string name="adjustments_preset_custom">Personnalisé</string>
+    <string name="adjustments_exposure">Exposition</string>
+    <string name="adjustments_contrast">Contraste</string>
+    <string name="adjustments_microcontrast">Micro-contraste</string>
+    <string name="adjustments_vividness">Éclat des couleurs</string>
 </resources>

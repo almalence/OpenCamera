@@ -36,4 +36,22 @@
 	<string name="Pref_HDR_Pure">純潔</string>
 	<string name="Pref_HDR_Standard">標準</string>
 	<string name="Pref_HDR_Saturated">飽和</string>
+	
+	<string name="adjustments_trashDialog_title">刪除此照片?</string>
+    <string name="adjustments_trashDialog_content">此圖像將丟失</string>
+    <string name="adjustments_trashDialog_positive">是</string>
+    <string name="adjustments_trashDialog_negative">否</string>
+    <string name="adjustments_presets_prompt">選擇一個調整預設</string>
+    <string name="adjustments_preset_natural">自然</string>
+    <string name="adjustments_preset_candy">詳情</string>
+    <string name="adjustments_preset_artistic">藝術</string>
+    <string name="adjustments_preset_bnw">黑白</string>
+    <string name="adjustments_preset_vanilla">香草</string>
+    <string name="adjustments_preset_xerox">施樂</string>
+    <string name="adjustments_preset_neon">霓虹</string>
+    <string name="adjustments_preset_custom">自訂</string>
+    <string name="adjustments_exposure">曝光</string>
+    <string name="adjustments_contrast">反差</string>
+    <string name="adjustments_microcontrast">微反差</string>
+    <string name="adjustments_vividness">色彩生動</string>
 </resources>

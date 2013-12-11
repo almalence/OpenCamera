@@ -6,6 +6,8 @@
 
     <string name="Pref_ObjectRemoval_Capture_ImagesAmount_Title">Número de imágenes</string>
     
+    <string name="ObjectRemoval_Help">1. Mantener el dispositivo fijo y sin mover\n2. Pulsar el disparador para iniciar\n3. Esperar hasta que las series de imágenes se hayan tomado y procesado\n4. Tocar los objetos en movimiento detectados y eliminarlos.</string>
+    
     <string name="Pref_ObjectRemoval_Capture_PauseBetweenShots_Title">Pausa entre disparos</string>
     <string name="Res_ObjectRemoval_Capture_5">5 imágenes</string>
     <string name="Res_ObjectRemoval_Capture_6">6 imágenes</string>

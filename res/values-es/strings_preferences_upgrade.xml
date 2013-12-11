@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">Desbloquea para siempre todas las funciones por</string>
+	<string name="Pref_Upgrde_All_Preference_Title">Desbloquea todo para siempre</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Activa todas las funciones y modos, aún las incorporaciones de próximas versiones.</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">Desbloquear el modo HDR por</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">Desbloquea el modo HDR</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Toma fabulosas imágenes de alto rango dinámico</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorama de alta resolución por</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorámica de alta resolución</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Toma fabulosas fotos panorámicas con la ayuda de realidad aumentada.</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Eliminación de objetos / Foto en secuencias por</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Objetos en movimiento</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Elimina objetos no deseados o combina movimientos en una sola foto</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Desbloquear disparos múltiples por</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Desbloquear disparos múltiples</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Selecciona los mejores rostros en tu foto</string>
 	
 </resources>

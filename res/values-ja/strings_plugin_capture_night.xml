@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">夜の撮影</string>
 	<string name="Pref_NightCapture_Preference_Summary">暗所撮影</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">画像撮影 （高速モードのみ）</string>
+	<string name="Pref_NightCapture_ImageSize_Title">画像サイズ（高速モード）</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">フォーカスモード</string>
     <string name="Pref_NightCapture_FocusMode_Summary">最適なフォーカスモードを選択</string>

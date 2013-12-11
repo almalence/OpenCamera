@@ -6,10 +6,10 @@
 	<string name="Pref_Upgrde_HDR_Preference_Title">解鎖HDR模式</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">拍攝漂亮的高動態範圍圖像</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">解鎖高解析度全景拍攝</string>
-	<string name="Pref_Upgrde_Panorama_Preference_Summary">拍攝大全景，可採用掃描模式或使用擴增實境幫助</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">高解析度全景</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">在擴增實境幫助下拍攝大全景</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">解鎖對象移除/連續相片</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">移動對象</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">移除不想要的對象或將運動合併到一張照片上</string>
 	
 	<string name="Pref_Upgrde_Groupshot_Preference_Title">解鎖群攝</string>

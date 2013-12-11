@@ -12,58 +12,26 @@
     <string name="Pref_Common_Shutter_Summary">Funktioniert nicht bei allen Geräten</string>
     <string name="Pref_Common_MediaRescan_Title">Medien beim Schließen erneut scannen</string>
     <string name="Pref_Common_MediaRescan_Summary">Nützlich, wenn Bilder nicht in der Galerie erscheinen.</string>
+    <string name="Pref_Common_VolumeButton_Title">Lautstärke-Button</string>
+    <string name="Pref_SaveConfiguration_Title">Konfiguration speichern</string>
+    <string name="Pref_SaveConfiguration_Summary">Wählen Sie, welche Einstellungen Sie zwischen den App-Aufrufen speichern möchten</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Aufnahmemodus</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Bildgröße</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Szenemodus</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Fokusmodus</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Weißabgleichmodus</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO-Modus</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Blitzmodus</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Ausgewählte Kamera</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Selbstauslöser</string>
+    <string name="Pref_Common_DelayedCapture_Title">Selbstauslöseraufnahme</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Selbstauslösersteuerung anzeigen</string>
+    <string name="Pref_ShowHelp_Title">Hilfe anzeigen</string>
+    <string name="Pref_WhowHelp_Summary">Zeigt Hilfe an, kurz nachdem der Modus aktiviert wurde (Panoramas, Objektentfernung, Sequenz, Gruppenaufnahme)</string>
+    
     <string name="ev_zero">0</string>    
     <string name="blockingText">Bitte warten. Verarbeitung läuft...</string>
-    
-    <!-- <string name="sceneAuto">Autom</string>
-    <string name="sceneAction">Aktion</string>
-    <string name="scenePortrait">Portrait</string>
-    <string name="sceneLandscape">Landschaft</string>
-    <string name="sceneNight">Nacht</string>
-    <string name="sceneNightPortrait">Nachtportrait</string>
-    <string name="sceneTheatre">Theater</string>
-    <string name="sceneBeach">Strand</string>
-    <string name="sceneSnow">Schnee</string>
-    <string name="sceneSunset">Sonnenuntergang</string>
-    <string name="sceneSteadyPhoto">Verwackelungssperre</string>
-    <string name="sceneFireworks">Feuerwerk</string>
-    <string name="sceneSports">Sport</string>
-    <string name="sceneParty">Party</string>
-    <string name="sceneCandlelight">Kerzenlicht</string>
-    <string name="sceneBarcode">Barcode</string>
-    <string name="sceneHDR">HDR</string>
-    <string name="sceneAR">AR</string>
-    
-    <string name="wbAuto">Autom</string>
-    <string name="wbIncandescent">Glühend</string>
-    <string name="wbFluorescent">Leuchtend</string>
-    <string name="wbWarmFluorescent">Warmleuchtend</string>
-    <string name="wbDaylight">Tageslicht</string>
-    <string name="wbCloudyDaylight">Tageslicht bewölkt</string>
-    <string name="wbTwilight">Dämmerung</string>
-    <string name="wbShade">Schatten</string>
-    
-    <string name="focusAuto">Autom</string>
-    <string name="focusInfinity">Unendlich</string>
-    <string name="focusNormal">Normal</string>
-    <string name="focusMacro">Makro</string>
-    <string name="focusFixed">Fixfokus</string>
-    <string name="focusEdof">Erweiterter Fixfokus</string>
-    <string name="focusContinuousVideo">Fortlaufendes Video</string>
-    <string name="focusContinuousPicture">Fortlaufendes Bild</string>
-    
-    <string name="flashAuto">Autom</string>
-    <string name="flashOn">Ein</string>
-    <string name="flashOff">Aus</string>
-    <string name="flashRedEye">Rote Augen</string>
-    <string name="flashTorch">Taschenlampe</string>
-    
-    <string name="isoAuto">Autom</string>
-    <string name="iso100">ISO100</string>
-    <string name="iso200">ISO200</string>
-    <string name="iso400">ISO400</string>
-    <string name="iso800">ISO800</string>
-    <string name="iso1600">ISO1600</string> -->
+    <string name="almalence_gui_selected">ausgewählt</string>
     
     <string name="settings_mode_scene">Szenenmodus</string>
     <string name="settings_mode_wb">Weißabgleich</string>
@@ -74,6 +42,8 @@
     <string name="settings_mode_front">Frontkamera</string>
     <string name="settings_mode_exposure">Belichtung</string>
     <string name="settings_mode_moresettings">Weitere Einstellungen</string>
+    <string name="settings_mode_aeaflock">AB\AF gesperrt</string>
+    <string name="settings_mode_aeafunlock">AB\AF freigeschaltet</string>
     
     <string name="settings_not_available">Im aktuellen Modus nicht verfügbar</string>
     <string name="processing_not_finished">Die Verarbeitung ist noch nicht abgeschlossen. Bitte warten.</string>
@@ -83,6 +53,7 @@
 	<string name="Pref_VF_Preference_Title">Sucher-Einstellungen</string>
 	<string name="Pref_VF_Preference_Summary">Was soll angezeigt werden</string>
 	<string name="Pref_Modes_Preference_Title">Aufnahmemodus-Einstellungen</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Nacht, Panoramas...</string>
 	<string name="Pref_Saving_Preference_Title">Speichern und Teilen</string>
 	<string name="Pref_Saving_Preference_Summary">Dateinamen, Formate, Geotagging, Exif und andere Parameter</string>
 	<string name="Pref_Advanced_Preference_Title">Erweitert</string>

@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">夜間拍攝</string>
 	<string name="Pref_NightCapture_Preference_Summary">低光拍攝</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">圖像尺寸(僅針對高速模式)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">圖像尺寸(高速模式)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">對焦模式</string>
     <string name="Pref_NightCapture_FocusMode_Summary">選擇合適的對焦模式</string>

@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="single_mode_name">单张</string>
+    <string name="single_mode_howto"/>
+    
+    <string name="burst_mode_name">连拍</string>
+    <string name="burst_mode_howto"/>
+    
+    <string name="expobracketing_mode_name">包围曝光</string>
+    <string name="expobracketing_mode_howto"/>
+    
+    <string name="hdr_mode_name">HDR</string>
+    <string name="hdr_mode_howto"/>
+    
+    <string name="night_mode_name">夜间</string>
+    <string name="night_mode_howto"/>
+    
+    <string name="video_mode_name">视频</string>
+    <string name="video_mode_howto"/>
+    
+    <string name="preshot_mode_name">预拍</string>
+    <string name="preshot_mode_howto">点按快门开始/停止拍摄</string>
+    
+    <string name="objectremoval_mode_name">对象移除</string>
+    <string name="objectremoval_mode_howto"/>
+    
+    <string name="groupshot_mode_name">群摄</string>
+    <string name="groupshot_mode_howto"/>
+    
+    <string name="sequence_mode_name">顺序照片</string>
+    <string name="sequence_mode_howto"/>
+    
+    <string name="panorama_mode_name">全景</string>
+    <string name="panorama_mode_howto"/>
+    
+</resources>

@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_Billing_Left1">모드:</string>
-    <string name="Pref_Billing_Left2">회의 무료 촬영횟수 남음.</string>
+    <string name="Pref_Billing_Left">%1$s 모드의 무료 잔여 촬영횟수: %2$d</string>
     <string name="cannot_create_jpeg">오류: 이미지 저장 불가!</string>
     <string name="choose_folder_pick">이 폴더 사용</string>
     <string name="choose_folder_newfolder">새 폴더</string>

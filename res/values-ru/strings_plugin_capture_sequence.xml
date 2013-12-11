@@ -13,4 +13,7 @@
     <string name="Res_Sequence_Capture_8">8 снимков</string>
     
     <string name="Res_Sequence_Fast_Text">как можно быстрее</string>
+    
+    <string name="Sequence_Help">1. Держите телефон ровно, не сдвигайте\n2. Нажмите кнопку спуска для начала съемки\n3. Дождитесь конца съемки серии снимков и завершения обработки\n4. Выберете кадры, для включения в итоговое изображение</string>
+    
 </resources>

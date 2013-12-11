@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Prise de vue de nuit</string>
 	<string name="Pref_NightCapture_Preference_Summary">Prise de vue en faible luminosité</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Taille de l\'image (uniquement pour le mode Vitesse rapide)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Taille de l\'image (mode Vitesse rapide)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Mode Mise au point</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Sélectionnez le mode de mise au point approprié</string>

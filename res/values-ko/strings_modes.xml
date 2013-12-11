@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="single_mode_name">1회 촬영</string>
+    <string name="single_mode_howto"/>
+    
+    <string name="burst_mode_name">연속촬영</string>
+    <string name="burst_mode_howto"/>
+    
+    <string name="expobracketing_mode_name">노출 브라케팅</string>
+    <string name="expobracketing_mode_howto"/>
+    
+    <string name="hdr_mode_name">HDR</string>
+    <string name="hdr_mode_howto"/>
+    
+    <string name="night_mode_name">야간</string>
+    <string name="night_mode_howto"/>
+    
+    <string name="video_mode_name">비디오</string>
+    <string name="video_mode_howto"/>
+    
+    <string name="preshot_mode_name">프리샷</string>
+    <string name="preshot_mode_howto">셔터를 탭하여 촬영 시작/중지</string>
+    
+    <string name="objectremoval_mode_name">객체 제거</string>
+    <string name="objectremoval_mode_howto"/>
+    
+    <string name="groupshot_mode_name">단체사진</string>
+    <string name="groupshot_mode_howto"/>
+    
+    <string name="sequence_mode_name">시퀀스 사진</string>
+    <string name="sequence_mode_howto"/>
+    
+    <string name="panorama_mode_name">파노라마</string>
+    <string name="panorama_mode_howto"/>
+    
+</resources>

@@ -12,7 +12,25 @@
     <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
-    <string name="blockingText">Пожалуйста подождите, обработка...</string>
+    <string name="blockingText">Подождите, идет обработка...</string>
+
+    <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
+    <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Режимы съемки</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Размер</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Сцену</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Фокус</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Баланс белого</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Вспышка</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Передняя/задняя камера</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Таймер съемки</string>
+    <string name="Pref_Common_DelayedCapture_Title">Съемка по таймеру</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру на главном экране</string>
+    <string name="Pref_ShowHelp_Title">Показывать помощь</string>
+    <string name="Pref_WhowHelp_Summary">Показывать помощь при запуске режима (режимы панорамы, удаление движущихся объектов, групповой снимок)</string>
+    
+    <string name="almalence_gui_selected">выбран</string>
     
     <!-- <string name="sceneAuto">Авто</string>
     <string name="sceneAction">Движение</string>

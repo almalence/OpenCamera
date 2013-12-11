@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">Alle für immer freischalten für</string>
+	<string name="Pref_Upgrde_All_Preference_Title">Alle für immer freischalten</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Nutzen Sie alle Funktionen und Modi, einschließlich aller Erweiterungen in Updates</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">HDR-Modus freischalten für</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR-Modus freischalten</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Knipsen Sie großartige Fotos mit hohem Dynamikbereich</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">Hochauflösende Panoramabilder für</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Hochauflösende Panoramabilder</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Knipsen Sie großartige Panoramabilder mit AR (Augmented Reality)</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Objektentfernung/Sequenzaufnahmen für</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Objektentfernung</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Entfernen Sie unerwünschte Objekte oder zeigen Sie eine Bewegung in einem Einzelbild</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Gruppenaufnahme freischalten für</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Gruppenaufnahme freischalten</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Wählen Sie die besten Gesichter auf Ihrem Foto</string>
 	
 </resources>

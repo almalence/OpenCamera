@@ -2,7 +2,6 @@
 <resources>
 	
 	<string name="Pref_PreShot_Preference_Title">촬영 전 사진</string>
-	<string name="Pref_PreShot_Preference_Summary">과거</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">이미지 크기</string>
 	
@@ -15,10 +14,10 @@
 	<string name="Pref_PreShot_preshot_Title">촬영 종료 전 사진 기록 시간...</string>
 	<string name="Pref_PreShot_preshot_Summary">촬영 종료 전 지정된 시간 동안 프레임을 촬영합니다.</string>
 	
-	<string name="Pref_PreShot_fps_Title">초당 촬영횟수(hi-sped 모드만)</string>
+	<string name="Pref_PreShot_fps_Title">초당 촬영횟수(hi-speed 모드)</string>
 	<string name="Pref_PreShot_fps_Summary">초당 촬영되는 이미지 개수</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">촬영 간 일시정지(고해상도 모드만)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">촬영 간 일시정지(고해상도 모드)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">초점을 다시 맞추기 위해 촬영 후 일시정지합니다.</string>
 	
 	<string name="Pref_PreShot_Low">저해상도(빠름)</string>
@@ -32,4 +31,7 @@
 	<string name="Pref_PreShot_4shot">초당 4장</string>
 	<string name="Pref_PreShot_5shot">초당 5장</string>
 	<string name="Pref_PreShot_10shot">초당 10장</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">자동 시작</string>
+	<string name="Pref_PreShot_Autostart_Summary">카메라 실행 시 촬영을 시작합니다</string>
 </resources>

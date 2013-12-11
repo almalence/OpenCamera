@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Captura nocturna</string>
 	<string name="Pref_NightCapture_Preference_Summary">Captura con luz baja</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Tamaño de la imagen (solo para modo alta velocidad)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Tamaño de la imagen (modo alta velocidad)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Modo de foco</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Seleccionar el modo de foco adecuado</string>

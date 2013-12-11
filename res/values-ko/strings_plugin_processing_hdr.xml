@@ -36,4 +36,22 @@
 	<string name="Pref_HDR_Pure">순수</string>
 	<string name="Pref_HDR_Standard">일반</string>
 	<string name="Pref_HDR_Saturated">포화</string>
+	
+	<string name="adjustments_trashDialog_title">이 사진을 삭제할까요?</string>
+    <string name="adjustments_trashDialog_content">이 이미지가 사라집니다</string>
+    <string name="adjustments_trashDialog_positive">예</string>
+    <string name="adjustments_trashDialog_negative">아니요</string>
+    <string name="adjustments_presets_prompt">조정 프리셋을 선택하세요</string>
+    <string name="adjustments_preset_natural">자연</string>
+    <string name="adjustments_preset_candy">세부묘사</string>
+    <string name="adjustments_preset_artistic">예술적</string>
+    <string name="adjustments_preset_bnw">흑백</string>
+    <string name="adjustments_preset_vanilla">바닐라</string>
+    <string name="adjustments_preset_xerox">Xerox</string>
+    <string name="adjustments_preset_neon">네온</string>
+    <string name="adjustments_preset_custom">사용자 정의</string>
+    <string name="adjustments_exposure">노출</string>
+    <string name="adjustments_contrast">대비</string>
+    <string name="adjustments_microcontrast">미세 대비</string>
+    <string name="adjustments_vividness">색상 선명도</string>
 </resources>

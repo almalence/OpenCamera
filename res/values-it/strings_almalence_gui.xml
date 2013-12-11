@@ -12,58 +12,26 @@
     <string name="Pref_Common_Shutter_Summary">Il funzionamento non è garantito su tutti i modelli</string>
     <string name="Pref_Common_MediaRescan_Title">Ripetizione scansione dei file multimediali all\'uscita</string>
     <string name="Pref_Common_MediaRescan_Summary">È utile quando le immagini non compaiono in galleria.</string>
+    <string name="Pref_Common_VolumeButton_Title">Pulsante Volume</string>
+    <string name="Pref_SaveConfiguration_Title">Salva configurazione</string>
+    <string name="Pref_SaveConfiguration_Summary">Seleziona quali impostazioni salvare tra gli avvii</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Modalità Scatto</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Dimensioni immagine</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Modalità Scena</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Modalità di messa a fuoco</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Modalità Bilanciamento del bianco</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">Modalità ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Modalità Flash</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Fotocamera selezionata</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Autoscatto</string>
+    <string name="Pref_Common_DelayedCapture_Title">Acquisizione con autoscatto</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Mostra comando Autoscatto</string>
+    <string name="Pref_ShowHelp_Title">Mostra la guida</string>
+    <string name="Pref_WhowHelp_Summary">Mostra la guida all\'avvio della modalità (Foto panoramiche, Rimozione di oggetti, Sequenza, Foto di gruppo)</string>
+    
     <string name="ev_zero">0</string>    
     <string name="blockingText">Elaborazione in corso...</string>
-    
-    <!-- <string name="sceneAuto">auto</string>
-    <string name="sceneAction">azione</string>
-    <string name="scenePortrait">primo piano</string>
-    <string name="sceneLandscape">paesaggio</string>
-    <string name="sceneNight">notte</string>
-    <string name="sceneNightPortrait">primo piano notte</string>
-    <string name="sceneTheatre">teatro</string>
-    <string name="sceneBeach">spiaggia</string>
-    <string name="sceneSnow">neve</string>
-    <string name="sceneSunset">tramonto</string>
-    <string name="sceneSteadyPhoto">stabilizzatore di immagine</string>
-    <string name="sceneFireworks">fuochi d\'artificio</string>
-    <string name="sceneSports">sport</string>
-    <string name="sceneParty">festa</string>
-    <string name="sceneCandlelight">lume di candela</string>
-    <string name="sceneBarcode">codice a barre</string>
-    <string name="sceneHDR">hdr</string>
-    <string name="sceneAR">AR</string>
-    
-    <string name="wbAuto">auto</string>
-    <string name="wbIncandescent">luce a incandescenza</string>
-    <string name="wbFluorescent">luce fluorescente</string>
-    <string name="wbWarmFluorescent">luce fluorescente calda</string>
-    <string name="wbDaylight">luce diurna</string>
-    <string name="wbCloudyDaylight">nuvoloso</string>
-    <string name="wbTwilight">crepuscolo</string>
-    <string name="wbShade">ombra</string>
-    
-    <string name="focusAuto">auto</string>
-    <string name="focusInfinity">infinita</string>
-    <string name="focusNormal">normale</string>
-    <string name="focusMacro">macro</string>
-    <string name="focusFixed">fissa</string>
-    <string name="focusEdof">edof</string>
-    <string name="focusContinuousVideo">video continuo</string>
-    <string name="focusContinuousPicture">immagine continua</string>
-    
-    <string name="flashAuto">auto</string>
-    <string name="flashOn">sì</string>
-    <string name="flashOff">no</string>
-    <string name="flashRedEye">occhi rossi</string>
-    <string name="flashTorch">torcia</string>
-    
-    <string name="isoAuto">auto</string>
-    <string name="iso100">ISO100</string>
-    <string name="iso200">ISO200</string>
-    <string name="iso400">ISO400</string>
-    <string name="iso800">ISO800</string>
-    <string name="iso1600">ISO1600</string> -->
+    <string name="almalence_gui_selected">selezionata</string>
     
     <string name="settings_mode_scene">Modalità Scena</string>
     <string name="settings_mode_wb">Bilanciamento del bianco</string>
@@ -74,6 +42,8 @@
     <string name="settings_mode_front">Fotocamera anteriore</string>
     <string name="settings_mode_exposure">Esposizione</string>
     <string name="settings_mode_moresettings">Altre impostazioni</string>
+    <string name="settings_mode_aeaflock">AE\\AF bloccata</string>
+    <string name="settings_mode_aeafunlock">AE\\AF sbloccata</string>
     
     <string name="settings_not_available">Non disponibile nella modalità attuale</string>
     <string name="processing_not_finished">L\'elaborazione è ancora in corso. Attendere.</string>
@@ -83,6 +53,7 @@
 	<string name="Pref_VF_Preference_Title">Impostazioni mirino</string>
 	<string name="Pref_VF_Preference_Summary">Cosa mostrare</string>
 	<string name="Pref_Modes_Preference_Title">Impostazioni modalità Scatto</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Notte, Foto panoramiche...</string>
 	<string name="Pref_Saving_Preference_Title">Salvataggio e condivisione</string>
 	<string name="Pref_Saving_Preference_Summary">nomi dei file, formati, geo-etichettatura, exif e altri parametri</string>
 	<string name="Pref_Advanced_Preference_Title">Avanzate</string>

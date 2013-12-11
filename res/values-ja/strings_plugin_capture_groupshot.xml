@@ -8,6 +8,8 @@
     
     <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title">撮影間で休止</string>
     
+    <string name="GroupShot_Help">1. デバイスをもって動かさないでください\n2. シャッターを押してグループショット開始\n3. 一連の撮影がされ、処理が終わるをお待ちください\n4. サムネイルの基本画像を選択してください（画像をどこでもいいのでタッチすると全サムネイルが表示されます）\n5. ベストショットを選んでください</string>
+    
     <string name="Res_GroupShot_Capture_5">5</string>
     <string name="Res_GroupShot_Capture_6">6</string>
     <string name="Res_GroupShot_Capture_7">7</string>

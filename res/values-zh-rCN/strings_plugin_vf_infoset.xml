@@ -16,7 +16,7 @@
 	<string name="Pref_Infoset_UseEVMonitor_Title">曝光补偿指示</string>
 	<string name="Pref_Infoset_UseEVMonitor_Summary">显示当前相机的曝光补偿</string>
 	
-	<string name="Pref_Infoset_UseSceneMonitor_Title">场景模式指示</string>
+	<string name="Pref_Infoset_UseSceneMonitor_Title">场景模式</string>
 	<string name="Pref_Infoset_UseSceneMonitor_Summary">显示当前相机的场景模式</string>
 	
 	<string name="Pref_Infoset_UseWBMonitor_Title">白平衡指示</string>

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">Ajustes VF comunes</string>
+	
+	<string name="Pref_KeepScreenOn">Mantener pantalla encendida</string>
+	<string name="Pref_KeepScreenOn_Summary">Evitar modo reposo con la cámara activa</string>
+	
+</resources>

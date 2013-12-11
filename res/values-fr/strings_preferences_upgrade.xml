@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>	
-	<string name="Pref_Upgrde_All_Preference_Title">Tout déverrouiller à vie pour</string>
+	<string name="Pref_Upgrde_All_Preference_Title">Tout déverrouiller à vie</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Activez toutes les fonctionnalités et tous les modes, y compris les ajouts des versions futures</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">Déverrouiller le mode Plage dynamique étendue pour</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">Déverrouiller le mode Plage dynamique étendue</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Prenez de superbes photos grâce à la plage dynamique étendue</string>
 	
-	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorama en haute résolution pour</string>
-	<string name="Pref_Upgrde_Panorama_Preference_Summary">Prenez de larges panoramas grâce à la fonctionnalité de réalité augmentée</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Panorama en haute résolution</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">Prendre de larges panoramas grâce à la fonctionnalité de réalité augmentée</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Suppression d\'objet ou photo séquence pour</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Objets en mouvement</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Supprimez les objets non désirés ou combinez les mouvements dans une même photo</string>
 	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Déverrouiller les prises de vue de groupe pour</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Déverrouiller les prises de vue de groupe</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Sélectionnez les meilleurs visages sur votre photo</string>
 	
 </resources>
