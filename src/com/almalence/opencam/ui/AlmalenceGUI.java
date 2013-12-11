@@ -948,8 +948,10 @@ public class AlmalenceGUI extends GUI implements
 	
 	public void ShowUnlockControl()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setImageResource(MainScreen.thiz.bOnSale?R.drawable.unlock_sale:R.drawable.unlock);
+		unlock.setImageResource(bOnSale?R.drawable.unlock_sale:R.drawable.unlock);
 		unlock.setAlpha(1.0f);
 		unlock.setVisibility(View.VISIBLE);
 		

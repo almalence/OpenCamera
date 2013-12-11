@@ -1808,7 +1808,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	IabHelper mHelper;
 	
-	public boolean bOnSale = false;
+	private boolean bOnSale = false;
 
 	private boolean unlockAllPurchased = false;
 	private boolean hdrPurchased = false;
@@ -1937,13 +1937,29 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.commit();
 			}
 			
-			if (inventory.hasPurchase("abc_sale_controller1") && inventory.hasPurchase("abc_sale_controller2")) {
-				int price1 = Integer.getInteger(inventory.getSkuDetails("abc_sale_controller1").getPrice());
-				int price2 = Integer.getInteger(inventory.getSkuDetails("abc_sale_controller2").getPrice());
-				if(price2>price1)
+			try{
+			//if (inventory.hasPurchase("abc_sale_controller1") && inventory.hasPurchase("abc_sale_controller2")) {
+				
+				String[] separated = inventory.getSkuDetails("abc_sale_controller1").getPrice().split(",");
+				int price1 = Integer.valueOf(separated[0]);
+				String[] separated2 = inventory.getSkuDetails("abc_sale_controller2").getPrice().split(",");
+				int price2 = Integer.valueOf(separated2[0]);
+				
+				if(price1<price2)
 					bOnSale = true;
 				else
 					bOnSale = false;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("bOnSale", bOnSale);
+				prefsEditor.commit();
+				
+				Log.e("Main billing SALE", "Sale status is " + bOnSale);
+			}
+			catch(Exception e)
+			{
+				Log.e("Main billing SALE", "No sale data available");
+				bOnSale = false;
 			}
 			
 			titleUnlockAll = inventory.getSkuDetails("unlock_all_forever").getPrice();
