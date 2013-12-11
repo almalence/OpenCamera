@@ -976,7 +976,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	public void ShowGrayUnlockControl()
 	{
-		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(MainScreen.thiz.bOnSale?R.drawable.unlock_sale:R.drawable.unlock));
+		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		if (unlock.getVisibility() == View.VISIBLE)
 			return;
 		unlock.setImageResource(R.drawable.unlock_gray);
