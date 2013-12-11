@@ -19,7 +19,7 @@
 	<string name="Pref_Infoset_UseSceneMonitor_Title">Режим сцены</string>
 	<string name="Pref_Infoset_UseSceneMonitor_Summary">Показывать сцену</string>
 	
-	<string name="Pref_Infoset_UseWBMonitor_Title">Баланс белого</string>
+	<string name="Pref_Infoset_UseWBMonitor_Title">Режим баланса белого</string>
 	<string name="Pref_Infoset_UseWBMonitor_Summary">Показывать баланс белого</string>
 	
 	<string name="Pref_Infoset_UseFocusMonitor_Title">Режим фокусировки</string>
