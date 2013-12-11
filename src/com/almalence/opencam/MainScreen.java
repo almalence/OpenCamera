@@ -1807,6 +1807,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	/************************ Billing ************************/
 
 	IabHelper mHelper;
+	
+	public boolean bOnSale = false;
 
 	private boolean unlockAllPurchased = false;
 	private boolean hdrPurchased = false;
@@ -1856,6 +1858,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				additionalSkuList.add("unlock_all_forever");
 				additionalSkuList.add("plugin_almalence_moving_burst");
 				additionalSkuList.add("plugin_almalence_groupshot");
+				
+				//for sale
+				additionalSkuList.add("abc_sale_controller1");
+				additionalSkuList.add("abc_sale_controller2");
 
 				Log.v("Main billing", "Setup successful. Querying inventory.");
 				mHelper.queryInventoryAsync(true, additionalSkuList,
@@ -1876,8 +1882,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public String titleUnlockAll = "$5.95";
-	public String titleUnlockHDR = "$0.99";
+	public String titleUnlockAll = "$6.95";
+	public String titleUnlockHDR = "$2.99";
 	public String titleUnlockPano = "$2.99";
 	public String titleUnlockMoving = "$2.99";
 	public String titleUnlockGroup = "$2.99";
@@ -1929,6 +1935,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
 				prefsEditor.commit();
+			}
+			
+			if (inventory.hasPurchase("abc_sale_controller1") && inventory.hasPurchase("abc_sale_controller2")) {
+				int price1 = Integer.getInteger(inventory.getSkuDetails("abc_sale_controller1").getPrice());
+				int price2 = Integer.getInteger(inventory.getSkuDetails("abc_sale_controller2").getPrice());
+				if(price2>price1)
+					bOnSale = true;
+				else
+					bOnSale = false;
 			}
 			
 			titleUnlockAll = inventory.getSkuDetails("unlock_all_forever").getPrice();
