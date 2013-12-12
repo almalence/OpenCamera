@@ -25,7 +25,7 @@ public class OpenCameraWidgetService extends RemoteViewsService {
 }
 
 class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    private static int mCount = 13;
+    private static int mCount = 14;
     private List<OpenCameraWidgetItem> mWidgetItems = new ArrayList<OpenCameraWidgetItem>();
     private Context mContext;
     private int mAppWidgetId;
@@ -82,17 +82,21 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     	if(OpenCameraWidgetConfigureActivity.modeGridAssoc != null)
     	{
     		Set<Integer> keys = OpenCameraWidgetConfigureActivity.modeGridAssoc.keySet();
-    		mCount = keys.size()+1;
+//    		mCount = keys.size()+1;
     		Iterator<Integer> it = keys.iterator();
     		while(it.hasNext())
     		{
     			int gridIndex = it.next();
-    			Mode mode = OpenCameraWidgetConfigureActivity.modeGridAssoc.get(gridIndex); 
-    			OpenCameraWidgetItem modeInfo = new OpenCameraWidgetItem(mode.modeID, MainScreen.thiz.getResources().getIdentifier(
-																					  mode.icon, "drawable",
-																					  MainScreen.thiz.getPackageName()));
-    			mWidgetItems.add(modeInfo);
+//    			Mode mode = OpenCameraWidgetConfigureActivity.modeGridAssoc.get(gridIndex); 
+//    			OpenCameraWidgetItem modeInfo = new OpenCameraWidgetItem(mode.modeID, MainScreen.thiz.getResources().getIdentifier(
+//																					  mode.icon, "drawable",
+//																					  MainScreen.thiz.getPackageName()));
+    			OpenCameraWidgetItem modeInfo = OpenCameraWidgetConfigureActivity.modeGridAssoc.get(gridIndex);
+    			if(!modeInfo.modeName.contains("hide"))
+    				mWidgetItems.add(modeInfo);
     		}
+    		
+    		mCount = mWidgetItems.size() + 1;
     	}
 
         // We sleep for 3 seconds here to show how the empty view appears in the interim.
@@ -138,9 +142,24 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 //	        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 //	        rv.setOnClickPendingIntent(R.id.modeSelectLayout, pendingIntent );
     	}
+//    	else if(position == mCount-2)
+//    	{    		
+//    		rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
+//	        rv.setImageViewResource(R.id.modeImage, R.drawable.gui_almalence_settings_flash_torch);
+//	        
+//	        Bundle extras = new Bundle();
+//	        extras.putString(MainScreen.EXTRA_ITEM, "single");
+//	        extras.putString(MainScreen.EXTRA_TORCH, "on");
+//	        Intent fillInIntent = new Intent(mContext, MainScreen.class);
+//	        fillInIntent.putExtras(extras);
+//	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+//    	}
     	else if(mWidgetItems != null && mWidgetItems.size() > position)
     	{
 	    	OpenCameraWidgetItem item = mWidgetItems.get(position);
+	    	
+	    	if(item.modeName.contains("hide"))
+	    		return null;
 	        // We construct a remote views item based on our widget item xml file, and set the
 	        // text based on the position.
 	        rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
@@ -151,6 +170,8 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        // which is set on the collection view in StackWidgetProvider.
 	        Bundle extras = new Bundle();
 	        extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
+	        if(item.isTorchOn)
+	        	extras.putString(MainScreen.EXTRA_TORCH, "on");	
 	        Intent fillInIntent = new Intent(mContext, MainScreen.class);
 	        fillInIntent.putExtras(extras);
 	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);

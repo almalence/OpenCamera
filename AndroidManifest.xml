@@ -75,7 +75,7 @@
     		<intent-filter>
         		<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
     		</intent-filter>
-		</activity>	 -->
+		</activity> -->
 		
 		<receiver android:name=".HWButtonStart" >
 		    <intent-filter android:priority="10000">         
