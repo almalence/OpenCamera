@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_Billing_Left1">モード：残り</string>
-    <string name="Pref_Billing_Left2">回の無料撮影</string>
+    <string name="Pref_Billing_Left">%1$s モードでの残りの無料撮影数：%2$d</string>
     <string name="cannot_create_jpeg">エラー：画像が保存できません！</string>
     <string name="choose_folder_pick">このフォルダーを使用</string>
     <string name="choose_folder_newfolder">新規フォルダ</string>

@@ -366,6 +366,7 @@ public class ExportPlugin extends PluginExport
 			            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
 			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
 			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+			            ei.setAttribute("GPSVersionID", "2.2.0.0");
 
 		            	ei.saveAttributes();
 	            	}

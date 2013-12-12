@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">Общие настройки экрана</string>
+	
+	<string name="Pref_KeepScreenOn">Всегда активный экран</string>
+	<string name="Pref_KeepScreenOn_Summary">Всегда оставаться в активном режиме во время работы камеры. Отлкючение режима сна по таймеру. (Может привести к быстрому расходу батареи)</string>
+	
+</resources>

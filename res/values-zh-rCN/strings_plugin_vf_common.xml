@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">常用VF设置</string>
+	
+	<string name="Pref_KeepScreenOn">保持屏幕打开</string>
+	<string name="Pref_KeepScreenOn_Summary">相机在使用时阻止睡眠模式</string>
+	
+</resources>

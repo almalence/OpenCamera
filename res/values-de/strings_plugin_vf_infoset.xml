@@ -10,25 +10,25 @@
 	<string name="Pref_Infoset_UseBatteryMonitor_Title">Akkustatus</string>
 	<string name="Pref_Infoset_UseBatteryMonitor_Summary">Zeigt den Akkustatus auf dem Bildschirm an</string>
 	
-	<string name="Pref_Infoset_AvailablePictureCount_Title">Verfügbare Bilderzahl</string>
+	<string name="Pref_Infoset_AvailablePictureCount_Title">Anzahl der Bilder</string>
 	<string name="Pref_Infoset_AvailablePictureCount_Summary">Zeigt die Anzahl der Bilder an, die mit der aktuellen Bildgrößeneinstellung aufgenommen werden können</string>
 	
-	<string name="Pref_Infoset_UseEVMonitor_Title">Anzeige der Belichtungskorrektur</string>
+	<string name="Pref_Infoset_UseEVMonitor_Title">Belichtungskorrektur</string>
 	<string name="Pref_Infoset_UseEVMonitor_Summary">Zeigt die aktuelle Kompensation der Kamerabelichtung an</string>
 	
-	<string name="Pref_Infoset_UseSceneMonitor_Title">Szenenmodusanzeige</string>
+	<string name="Pref_Infoset_UseSceneMonitor_Title">Szenenmodus</string>
 	<string name="Pref_Infoset_UseSceneMonitor_Summary">Zeigt den aktuellen Szenenmodus der Kamera an</string>
 	
-	<string name="Pref_Infoset_UseWBMonitor_Title">Weißabgleichanzeige</string>
-	<string name="Pref_Infoset_UseWBMonitor_Summary">Zeigt die aktuelle Weißabgleich-Einstellung an</string>
+	<string name="Pref_Infoset_UseWBMonitor_Title">Weißabgleich</string>
+	<string name="Pref_Infoset_UseWBMonitor_Summary">Zeigt den aktuellen Weißabgleich der Kamera an</string>
 	
-	<string name="Pref_Infoset_UseFocusMonitor_Title">Anzeige des Fokusmodus</string>
+	<string name="Pref_Infoset_UseFocusMonitor_Title">Fokusmodus</string>
 	<string name="Pref_Infoset_UseFocusMonitor_Summary">Zeigt den aktuellen Fokusmodus der Kamera an</string>
 	
-	<string name="Pref_Infoset_UseFlashMonitor_Title">Blitzanzeige</string>
+	<string name="Pref_Infoset_UseFlashMonitor_Title">Blitzmodus</string>
 	<string name="Pref_Infoset_UseFlashMonitor_Summary">Zeigt den aktuellen Blitzmodus der Kamera an</string>
 	
-	<string name="Pref_Infoset_UseISOMonitor_Title">ISO-Anzeige</string>
+	<string name="Pref_Infoset_UseISOMonitor_Title">ISO</string>
 	<string name="Pref_Infoset_UseISOMonitor_Summary">Zeigt den aktuellen ISO-Wert der Kamera an</string>	
 	
 </resources>

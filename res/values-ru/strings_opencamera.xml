@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="Pref_Billing_Left"> осталось бесплатных снимков:</string>
+    <string name="Pref_Billing_Left">%1$s осталось бесплатных снимков: %2$d</string>
     <string name="cannot_create_jpeg">Ошибка: Невозможно сохранить снимок!</string>
     <string name="choose_folder_pick">Использовать эту папку</string>
     <string name="choose_folder_newfolder">Нова папка</string>

@@ -31,4 +31,7 @@
 	<string name="Pref_PreShot_4shot">4 кадра в секунду</string>
 	<string name="Pref_PreShot_5shot">5 кадров в секунду</string>
 	<string name="Pref_PreShot_10shot">10 кадров в секунду</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">Автостарт</string>
+	<string name="Pref_PreShot_Autostart_Summary">Начинать съемку при запуске камеры</string>
 </resources>

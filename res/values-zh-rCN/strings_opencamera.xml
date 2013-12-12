@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="app_name">超群相机</string>
-    <string name="Pref_Billing_Left1">模式: 仅剩</string>
-    <string name="Pref_Billing_Left2">次免费拍摄。</string>
+    <string name="Pref_Billing_Left">%1$s 模式剩余拍摄次数: %2$d</string>
     <string name="cannot_create_jpeg">出错: 无法保存图像!</string>
     <string name="choose_folder_pick">使用此文件夹</string>
     <string name="choose_folder_newfolder">新文件夹</string>

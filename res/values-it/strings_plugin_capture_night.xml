@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
-	<string name="textOn">Sì</string>
+	<string name="textOn">SÌ</string>
 	<string name="textOff">NO</string>
 	
 	<string name="hold_still">Tienila ferma!</string>
@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Acquisizione notturna</string>
 	<string name="Pref_NightCapture_Preference_Summary">Acquisizione con poca luce</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Dimensioni immagine (solo per la modalità Alta velocità)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Dimensioni immagine (modalità Alta velocità)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Modalità di messa a fuoco</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Seleziona la modalità di messa a fuoco adatta</string>

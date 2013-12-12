@@ -2,7 +2,6 @@
 <resources>
 	
 	<string name="Pref_PreShot_Preference_Title">预拍摄</string>
-	<string name="Pref_PreShot_Preference_Summary">及时返回</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">图像尺寸</string>
 	
@@ -32,4 +31,7 @@
 	<string name="Pref_PreShot_4shot">每秒4次</string>
 	<string name="Pref_PreShot_5shot">每秒5次</string>
 	<string name="Pref_PreShot_10shot">每秒10次</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">自动启动</string>
+	<string name="Pref_PreShot_Autostart_Summary">相机启动时开始拍摄</string>
 </resources>

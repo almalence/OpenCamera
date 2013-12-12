@@ -2,7 +2,6 @@
 <resources>
 	
 	<string name="Pref_PreShot_Preference_Title">Disparo previo a la captura</string>
-	<string name="Pref_PreShot_Preference_Summary">Tiempo atrás</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">Tamaño de la imagen</string>
 	
@@ -15,10 +14,10 @@
 	<string name="Pref_PreShot_preshot_Title">Segundos antes de pulsar...</string>
 	<string name="Pref_PreShot_preshot_Summary">Mantiene las imágenes tomadas durante un período determinado antes de pulsar.</string>
 	
-	<string name="Pref_PreShot_fps_Title">Disparos por segundo (solo modo alta velocidad)</string>
+	<string name="Pref_PreShot_fps_Title">Disparos por segundo (alta velocidad)</string>
 	<string name="Pref_PreShot_fps_Summary">Número de imágenes a tomar por segundo</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">Pausa entre disparos (solo modo alta resolución)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pausa entre disparos (alta resolución)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pausa después de tomar la imagen, para reenfocar.</string>
 	
 	<string name="Pref_PreShot_Low">Baja resolución (más rápido)</string>
@@ -32,4 +31,7 @@
 	<string name="Pref_PreShot_4shot">4 disparos por segundo</string>
 	<string name="Pref_PreShot_5shot">5 disparos por segundo</string>
 	<string name="Pref_PreShot_10shot">10 disparos por segundo</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">Inicio automático</string>
+	<string name="Pref_PreShot_Autostart_Summary">Comenzar con las capturas al iniciar la cámara</string>
 </resources>

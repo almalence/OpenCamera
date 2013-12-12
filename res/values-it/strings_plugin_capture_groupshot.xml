@@ -8,6 +8,8 @@
     
     <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title">Pausa tra gli scatti</string>
     
+    <string name="GroupShot_Help">1. Tieni fermo il dispositivo e non muoverlo\n2. Premi l\'otturatore per scattare una foto di gruppo\n3. Attendi l\'acquisizione e l\'elaborazione di una serie di immagini\n4. Seleziona l\'immagine di base dalle miniature (tocca l\'immagine in un punto qualsiasi per visualizzare tutte le miniature)\n5. Seleziona i volti migliori</string>
+    
     <string name="Res_GroupShot_Capture_5">5 immagini</string>
     <string name="Res_GroupShot_Capture_6">6 immagini</string>
     <string name="Res_GroupShot_Capture_7">7 immagini</string>

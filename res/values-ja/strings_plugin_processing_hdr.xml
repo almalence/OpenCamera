@@ -36,4 +36,22 @@
 	<string name="Pref_HDR_Pure">純</string>
 	<string name="Pref_HDR_Standard">標準</string>
 	<string name="Pref_HDR_Saturated">濃い</string>
+	
+	<string name="adjustments_trashDialog_title">この写真を削除しますか？</string>
+    <string name="adjustments_trashDialog_content">この画像は失われます</string>
+    <string name="adjustments_trashDialog_positive">はい</string>
+    <string name="adjustments_trashDialog_negative">いいえ</string>
+    <string name="adjustments_presets_prompt">調整プリセットを選択</string>
+    <string name="adjustments_preset_natural">ナチュラル</string>
+    <string name="adjustments_preset_candy">詳細</string>
+    <string name="adjustments_preset_artistic">アート</string>
+    <string name="adjustments_preset_bnw">モノクロ</string>
+    <string name="adjustments_preset_vanilla">バニラ</string>
+    <string name="adjustments_preset_xerox">Xerox</string>
+    <string name="adjustments_preset_neon">ネオン</string>
+    <string name="adjustments_preset_custom">カスタム</string>
+    <string name="adjustments_exposure">露出</string>
+    <string name="adjustments_contrast">コントラスト</string>
+    <string name="adjustments_microcontrast">マイクロコントラスト</string>
+    <string name="adjustments_vividness">鮮やかなカラー</string>
 </resources>

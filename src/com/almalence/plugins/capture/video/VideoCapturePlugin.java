@@ -929,18 +929,18 @@ public class VideoCapturePlugin extends PluginCapture
     	    // Step 6: Prepare configured MediaRecorder
     	    try {
     	        mMediaRecorder.prepare();
-    	    } catch (IllegalStateException e) {
-    	        Log.d("Video", "IllegalStateException preparing MediaRecorder: " + e.getMessage());
+    	        
+                // Camera is available and unlocked, MediaRecorder is prepared,
+                // now you can start recording
+                mMediaRecorder.start();
+
+    	    } catch (Exception e) 
+    	    {
+    	        Log.d("Video", "Exception preparing MediaRecorder: " + e.getMessage());
     	        releaseMediaRecorder();
-    	        return;
-    	    } catch (IOException e) {
-    	        Log.d("Video", "IOException preparing MediaRecorder: " + e.getMessage());
-    	        releaseMediaRecorder();
+    	        Toast.makeText(MainScreen.thiz, "Failed to start video recording", Toast.LENGTH_LONG).show();
     	        return;
     	    }
-            // Camera is available and unlocked, MediaRecorder is prepared,
-            // now you can start recording
-            mMediaRecorder.start();
 
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_STOP);

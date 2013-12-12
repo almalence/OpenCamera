@@ -2,7 +2,6 @@
 <resources>
 	
 	<string name="Pref_PreShot_Preference_Title">Voraufnahme</string>
-	<string name="Pref_PreShot_Preference_Summary">Nehmen Sie ein Bild von einem Zeitpunkt vor der Betätigung des Auslösers auf.</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">Bildgröße</string>
 	
@@ -15,10 +14,10 @@
 	<string name="Pref_PreShot_preshot_Title">Sekunden vor dem Auslösen...</string>
 	<string name="Pref_PreShot_preshot_Summary">Fotos behalten, die in einer bestimmten Zeitspanne vor der Betätigung des Auslösers aufgenommen wurden.</string>
 	
-	<string name="Pref_PreShot_fps_Title">Aufnahmen pro Sekunde (nur im sehr schnellen Modus)</string>
+	<string name="Pref_PreShot_fps_Title">Aufnahmen pro Sekunde (im sehr schnellen Modus)</string>
 	<string name="Pref_PreShot_fps_Summary">Anzahl der Bilder pro Sekunde</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">Pause zwischen den Aufnahmen (nur im hochauflösenden Modus)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pause zwischen den Aufnahmen (im hochauflösenden Modus)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pause nach dem aufgenommenen Bild - zum Neufokussiern.</string>
 	
 	<string name="Pref_PreShot_Low">Niedrige Auflösung (schneller)</string>
@@ -32,4 +31,7 @@
 	<string name="Pref_PreShot_4shot">4 Aufnahmen pro Sekunde</string>
 	<string name="Pref_PreShot_5shot">5 Aufnahmen pro Sekunde</string>
 	<string name="Pref_PreShot_10shot">10 Aufnahmen pro Sekunde</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">Autostart</string>
+	<string name="Pref_PreShot_Autostart_Summary">Aufnahme beim Aufruf der Kamera beginnen</string>
 </resources>

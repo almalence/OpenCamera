@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
-	<string name="textOn">Ein</string>
+	<string name="textOn">EIN</string>
 	<string name="textOff">AUS</string>
 	
 	<string name="hold_still">Halten Sie still!</string>
@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Nachtaufnahme</string>
 	<string name="Pref_NightCapture_Preference_Summary">Fotografieren bei schwacher Beleuchtung</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Bildgröße (nur im sehr schnellen Modus)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Bildgröße (im sehr schnellen Modus)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Fokusmodus</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Wählen Sie einen geeigneten Fokusmodus</string>
