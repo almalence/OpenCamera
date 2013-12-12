@@ -5,8 +5,128 @@
        		android:orientation="vertical"
        		android:layout_width="wrap_content"
        		android:layout_height="wrap_content"
-       		android:background="#5A3B3131"       		
+       		android:background="@android:color/background_light"
   			>
+  			<LinearLayout
+				    android:id="@+id/bgColorTitleLayout"
+				    android:orientation="horizontal"
+				    android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetDoneButtonHeight"        
+				    android:layout_gravity="top"
+				    android:layout_centerHorizontal="true"
+				    android:layout_alignParentTop="true"
+				    android:padding="0dp"    
+				    android:background="@android:color/transparent">
+			    <TextView
+			        android:id="@+id/bgColorTitle"
+			        android:layout_height="match_parent"
+			        android:layout_width="match_parent"			        
+			        android:gravity="center"        
+			        android:textSize="@dimen/gridTextSize"
+			        android:text="@string/widgetBgColorTitle">
+			    </TextView>
+			</LinearLayout>
+			
+  			<LinearLayout
+				    android:id="@+id/bgColorLayout"
+				    android:orientation="horizontal"
+				    android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetBgColorLayoutHeight"        
+				    android:layout_below="@+id/bgColorTitleLayout"
+				    android:layout_centerHorizontal="true"
+				    android:padding="0dp"    
+				    android:background="@android:color/transparent">
+			    <RelativeLayout
+			        android:id="@+id/bgColorButtonFristLayout"
+			        android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetBgColorLayoutHeight"
+				    android:layout_weight="1">
+				    <ImageButton 
+				        android:id="@+id/bgColorButtonFirst"
+				        android:layout_height="@dimen/widgetBgButtonSize"				        
+				        android:layout_width="@dimen/widgetBgButtonSize"
+				        android:scaleType="fitCenter"
+				        android:layout_centerHorizontal="true"
+				        android:layout_alignParentTop="true"
+				        android:src="@drawable/widget_bg_button_first"				        
+				        android:background="@android:color/transparent"/>
+				    <TextView
+			        	android:id="@+id/bgColorTitleFrist"
+			        	android:layout_height="wrap_content"
+			        	android:layout_width="match_parent"			        
+			        	android:layout_below="@+id/bgColorButtonFirst"
+			        	android:gravity="center"        
+			        	android:textSize="@dimen/gridTextSize"
+			        	android:text="@string/widgetBgColorTitleFirst"/>
+			    </RelativeLayout>
+			    <RelativeLayout
+			        android:id="@+id/bgColorButtonSecondLayout"
+			        android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetBgColorLayoutHeight"
+				    android:layout_weight="1">
+				    <ImageButton 
+				        android:id="@+id/bgColorButtonSecond"
+				        android:layout_height="@dimen/widgetBgButtonSize"				        
+				        android:layout_width="@dimen/widgetBgButtonSize"
+				        android:scaleType="fitCenter"
+				        android:layout_centerHorizontal="true"
+				        android:layout_alignParentTop="true"
+				        android:src="@drawable/widget_bg_button_second"				        
+				        android:background="@android:color/transparent"/>
+				    <TextView
+			        	android:id="@+id/bgColorTitleSecond"
+			        	android:layout_height="wrap_content"
+			        	android:layout_width="match_parent"			        
+			        	android:layout_below="@+id/bgColorButtonSecond"
+			        	android:gravity="center"        
+			        	android:textSize="@dimen/gridTextSize"
+			        	android:text="@string/widgetBgColorTitleSecond"/>
+				    
+			    </RelativeLayout>
+			    <RelativeLayout
+			        android:id="@+id/bgColorButtonThirdLayout"
+			        android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetBgColorLayoutHeight"
+				    android:layout_weight="1">
+				    <ImageButton 
+				        android:id="@+id/bgColorButtonThird"
+				        android:layout_height="@dimen/widgetBgButtonSize"				        
+				        android:layout_width="@dimen/widgetBgButtonSize"
+				        android:scaleType="fitCenter"
+				        android:layout_centerHorizontal="true"
+				        android:layout_alignParentTop="true"			        
+				        android:src="@drawable/widget_bg_button_third"				        
+				        android:background="@android:color/transparent"/>
+				    <TextView
+			        	android:id="@+id/bgColorTitleThird"
+			        	android:layout_height="wrap_content"
+			        	android:layout_width="match_parent"			        
+			        	android:layout_below="@+id/bgColorButtonThird"
+			        	android:gravity="center"        
+			        	android:textSize="@dimen/gridTextSize"
+			        	android:text="@string/widgetBgColorTitleThird"/>
+			    </RelativeLayout>			    
+			</LinearLayout>
+			
+  			
+  			<LinearLayout
+				    android:id="@+id/widgetConfigTitleLayout"
+				    android:orientation="horizontal"
+				    android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetDoneButtonHeight"        
+				    android:layout_below="@+id/bgColorLayout"
+				    android:layout_centerHorizontal="true"
+				    android:paddingTop="10dp"   
+				    android:background="@android:color/transparent">
+			    <TextView
+			        android:id="@+id/widgetConfigTitle"
+			        android:layout_height="match_parent"
+			        android:layout_width="match_parent"			        
+			        android:gravity="center"        
+			        android:textSize="@dimen/gridTextSize"
+			        android:text="@string/widgetConfigTitle">
+			    </TextView>
+			</LinearLayout>
   			<GridView 
 				    android:id="@+id/widgetConfGrid"
 				    android:layout_width="match_parent" 
@@ -15,9 +135,8 @@
 				    android:numColumns="4"
 				    android:verticalSpacing="5dp"
 				    android:horizontalSpacing="10dp"
-				    android:stretchMode="columnWidth"
-				    android:layout_centerInParent="true"
-				    android:gravity="center"
+				    android:stretchMode="columnWidth"				    
+				    android:layout_below="@+id/widgetConfigTitleLayout"
 				    android:background="#5A3B3131"
 			/>
   			
@@ -25,13 +144,13 @@
 				<LinearLayout
 				    android:id="@+id/doneButtonLayout"
 				    android:orientation="horizontal"
-				    android:layout_width="@dimen/widgetElementWidth"
-				    android:layout_height="@dimen/widgetElementHeight"        
+				    android:layout_width="match_parent"
+				    android:layout_height="@dimen/widgetDoneButtonHeight"        
 				    android:layout_gravity="bottom"
 				    android:layout_centerHorizontal="true"
 				    android:layout_alignParentBottom="true"
 				    android:padding="0dp"    
-				    android:background="@drawable/thumbnail_background_inner">
+				    android:background="@drawable/widget_configuration_button_background">
     
 			    <TextView
 			        android:id="@+id/doneButtonText"

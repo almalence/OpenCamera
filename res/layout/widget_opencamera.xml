@@ -6,25 +6,26 @@
        		android:orientation="vertical"
        		android:layout_width="wrap_content"
        		android:layout_height="match_parent"
-       		android:background="#5A3B3131"
+       		android:background="@android:color/transparent"
   			>
 				<GridView 
 				    android:id="@+id/widgetGrid"
-				    android:layout_width="fill_parent" 
+				    android:layout_width="match_parent" 
 				    android:layout_height="wrap_content"
+				    android:columnWidth="@dimen/widgetElementWidth"
 				    android:numColumns="4"
-				    android:verticalSpacing="3dp"
-				    android:horizontalSpacing="3dp"
+				    android:verticalSpacing="5dp"
+				    android:horizontalSpacing="10dp"
 				    android:stretchMode="columnWidth"
-				    android:gravity="center"
 				    android:layout_centerInParent="true"
-				/>
+				    android:background="@android:color/transparent"
+			/>
    				<TextView
         			android:id="@+id/widgetEmptyView"
         			android:layout_width="match_parent"
         			android:layout_height="match_parent"
         			android:text="@string/widgetLoadingText"
-        			android:background="#3A3B3131"
+        			android:background="@android:color/transparent"
         			android:gravity="center"
         			android:textColor="#ffffff"
         			android:textStyle="bold"

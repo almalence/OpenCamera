@@ -569,7 +569,8 @@ public class NightCapturePlugin extends PluginCapture
 	    }
 		
 		cp = MainScreen.thiz.getCameraParameters();
-		if(cp.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_NIGHT))
+		List<String> sceneModes = cp.getSupportedSceneModes();
+		if(sceneModes != null && sceneModes.contains(Camera.Parameters.SCENE_MODE_NIGHT))
 		{
 			cp.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
 			MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);

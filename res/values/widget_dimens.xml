@@ -2,6 +2,9 @@
 <resources>
    <dimen name="widgetElementWidth">70dp</dimen>
    <dimen name="widgetElementHeight">100dp</dimen>
+   <dimen name="widgetDoneButtonHeight">60dp</dimen>
+   <dimen name="widgetBgColorLayoutHeight">100dp</dimen>
+   <dimen name="widgetBgButtonSize">60dp</dimen>
    <dimen name="widgetImageSize">65dp</dimen>   
    <dimen name="widgetTextSize">18sp</dimen>
    

@@ -2,4 +2,9 @@
 <resources>	
 	<string name="widgetLoadingText">Loading…</string>
 	<string name="widgetConfigureDoneText">Done</string>
+	<string name="widgetBgColorTitle">Widget background color</string>
+	<string name="widgetBgColorTitleFirst">Translucent</string>
+	<string name="widgetBgColorTitleSecond">Solid black</string>
+	<string name="widgetBgColorTitleThird">Transparent</string>
+	<string name="widgetConfigTitle">Widget structure</string>
 </resources>

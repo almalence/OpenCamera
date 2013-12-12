@@ -43,6 +43,13 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	public static Map<Integer, Mode> modeGridAssoc;
 	
 	private int currentModeIndex;
+	
+	View buttonBGFirst;
+	View buttonBGSecond;
+	View buttonBGThird;
+	
+	private static int colorIndex = 0;
+	public static int bgColor = 0x5A3B3131;
 
 	@Override
     protected void onCreate(final Bundle savedInstanceState)
@@ -77,8 +84,17 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         if(null != buttonDone)
         	buttonDone.setOnClickListener(this);
         
+        buttonBGFirst = this.findViewById(R.id.bgColorButtonFirst);
+        buttonBGSecond = this.findViewById(R.id.bgColorButtonSecond);
+        buttonBGThird = this.findViewById(R.id.bgColorButtonThird);
+        
+        buttonBGFirst.setOnClickListener(this);
+        buttonBGSecond.setOnClickListener(this);
+        buttonBGThird.setOnClickListener(this);
+        
         initModeGrid(true);
-        initModeList();        
+        initModeList();
+        initColorButtons();
     }
 	
 	@Override
@@ -105,8 +121,74 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			// Destroy activity
 			finish();
 		}
+		else if(v == buttonBGFirst)
+		{
+			buttonBGThird.setSelected(false);
+			buttonBGSecond.setSelected(false);
+			buttonBGFirst.setSelected(true);
+			
+			modeGrid.setBackgroundColor(0x5A3B3131);
+			bgColor = 0x5A3B3131;
+			colorIndex = 0;
+			
+		}
+		else if(v == buttonBGSecond)
+		{
+			buttonBGThird.setSelected(false);
+			buttonBGSecond.setSelected(true);
+			buttonBGFirst.setSelected(false);
+			
+			modeGrid.setBackgroundColor(0xFF000000);
+			bgColor = 0xFF000000;
+			colorIndex = 1;
+		}
+		else if(v == buttonBGThird)
+		{
+			buttonBGThird.setSelected(true);
+			buttonBGSecond.setSelected(false);
+			buttonBGFirst.setSelected(false);
+			
+			modeGrid.setBackgroundColor(0x00000000);
+			bgColor = 0x00000000;
+			colorIndex = 2;
+		}
 	}
 	
+	
+	private void initColorButtons()
+	{
+		switch(colorIndex)
+		{
+			case 0:
+			{
+				buttonBGThird.setSelected(false);
+				buttonBGSecond.setSelected(false);
+				buttonBGFirst.setSelected(true);
+				
+				modeGrid.setBackgroundColor(0x5A3B3131);
+				bgColor = 0x5A3B3131;				
+			} break;
+			case 1:
+			{
+				buttonBGThird.setSelected(false);
+				buttonBGSecond.setSelected(true);
+				buttonBGFirst.setSelected(false);
+				
+				modeGrid.setBackgroundColor(0xFF000000);
+				bgColor = 0xFF000000;	
+			} break;
+			case 2:
+			{
+				buttonBGThird.setSelected(true);
+				buttonBGSecond.setSelected(false);
+				buttonBGFirst.setSelected(false);
+				
+				modeGrid.setBackgroundColor(0x00000000);
+				bgColor = 0x00000000;	
+			} break;
+			default: break;
+		}
+	}
 	
 	private void initModeList()
 	{
