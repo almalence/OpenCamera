@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	
 	//private Map<String, View> allModeViews;
 	
-	public static Map<Integer, Mode> modeGridAssoc;
+	public static Map<Integer, OpenCameraWidgetItem> modeGridAssoc;
 	
 	private int currentModeIndex;
 	
@@ -62,7 +63,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		modeGridAdapter = new ElementAdapter();
 		modeGridViews = new ArrayList<View>();
 		
-		modeGridAssoc = new Hashtable<Integer, Mode>();
+		modeGridAssoc = new Hashtable<Integer, OpenCameraWidgetItem>();
 		
 		//allModeViews = new Hashtable<String, View>();
 		
@@ -199,6 +200,40 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			modeListAdapter.notifyDataSetChanged();
 		}
 		
+		try
+		{
+			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			View mode = inflator.inflate(
+					R.layout.widget_opencamera_mode_list_element, null,
+					false);
+			// set some mode icon
+			((ImageView) mode.findViewById(R.id.modeImage))
+					.setImageResource(MainScreen.thiz.getResources()
+							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
+									MainScreen.thiz.getPackageName()));
+	
+			((TextView) mode.findViewById(R.id.modeText)).setText("Hide item");
+			
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("hide", 0, false);
+			
+			mode.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+					modeGridAssoc.put(currentModeIndex, item);
+					initModeGrid(false);
+					if(modeList.getVisibility() == View.VISIBLE)
+						modeList.setVisibility(View.GONE);
+				}
+			});
+			
+			modeListViews.add(mode);
+		}
+		catch(RuntimeException exp)
+		{
+			
+		}
+		
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
@@ -221,27 +256,63 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem(tmp.modeID, MainScreen.thiz.getResources().getIdentifier(
+					  tmp.icon, "drawable",
+					  MainScreen.thiz.getPackageName()), false);
+			
 			mode.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v)
 				{
-					//View newMode = allModeViews.get(modename);
-					
-					modeGridAssoc.put(currentModeIndex, tmp);
+					modeGridAssoc.put(currentModeIndex, item);
 					initModeGrid(false);
 					if(modeList.getVisibility() == View.VISIBLE)
 						modeList.setVisibility(View.GONE);
-					
-//					modeGridViews.remove(currentModeIndex);
-//					modeGridViews.add(currentModeIndex, newMode);
-//					modeGridAdapter.Elements = modeGridViews;
-//					modeGridAdapter.notifyDataSetChanged();
-					//modeGrid.invalidate();
-					//modeGrid.requestLayout();
 				}
 			});
 			
 			modeListViews.add(mode);
+		}
+		
+		
+		try
+		{
+			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			View mode = inflator.inflate(
+					R.layout.widget_opencamera_mode_list_element, null,
+					false);
+			// set some mode icon
+			((ImageView) mode.findViewById(R.id.modeImage))
+					.setImageResource(MainScreen.thiz.getResources()
+							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
+									MainScreen.thiz.getPackageName()));
+	
+			int id = MainScreen.thiz.getResources().getIdentifier("single_mode_name",
+					"string", MainScreen.thiz.getPackageName());
+			final String modename = MainScreen.thiz.getResources().getString(id);
+	
+			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
+			
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("single", MainScreen.thiz.getResources().getIdentifier(
+					"gui_almalence_settings_flash_torch", "drawable",
+					  MainScreen.thiz.getPackageName()), true);
+			
+			mode.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v)
+				{
+					modeGridAssoc.put(currentModeIndex, item);
+					initModeGrid(false);
+					if(modeList.getVisibility() == View.VISIBLE)
+						modeList.setVisibility(View.GONE);
+				}
+			});
+			
+			modeListViews.add(mode);
+		}
+		catch(RuntimeException exp)
+		{
+			
 		}
 		
 		modeListAdapter.Elements = modeListViews;
@@ -259,40 +330,74 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			modeGridAdapter.notifyDataSetChanged();
 		}
 		
-		List<Mode> hash = null;
+		List<OpenCameraWidgetItem> hash = null;
 		if(bInitial)
-			hash = ConfigParser.getInstance().getList();
+		{
+			hash = new ArrayList<OpenCameraWidgetItem>();
+			List<Mode> modeList = ConfigParser.getInstance().getList();
+			Iterator<Mode> it = modeList.iterator();
+    		while(it.hasNext())
+    		{
+    			Mode tmp = it.next();
+    			if(tmp.modeName.contains("hdr") || tmp.modeName.contains("panorama"))
+    			{
+	    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, MainScreen.thiz.getResources().getIdentifier(
+	  					  tmp.icon, "drawable",
+	  					  MainScreen.thiz.getPackageName()), false);			
+	    			hash.add(mode);
+    			}
+//    			else
+//    			{
+//    				OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);			
+//  	    			hash.add(mode);
+//    			}
+    		}    		
+    		try
+    		{
+	    		int iconID = MainScreen.thiz.getResources().getIdentifier("gui_almalence_settings_flash_torch", "drawable", MainScreen.thiz.getPackageName());
+	    		OpenCameraWidgetItem mode = new OpenCameraWidgetItem("single", iconID, true);			
+	  			hash.add(mode);
+    		}
+    		catch(NullPointerException exp)
+    		{
+    			Log.e("Widget", "Can't create TORCH mode");
+    		}
+    		
+    		for(int i = 0; i < modeList.size() - 2; i++)
+    		{
+    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);			
+    			hash.add(mode);
+    		}
+		}
 		else
 		{
-			hash = new ArrayList<Mode>();
+			hash = new ArrayList<OpenCameraWidgetItem>();
 			Set<Integer> keys = modeGridAssoc.keySet();    		
     		Iterator<Integer> it = keys.iterator();
     		while(it.hasNext())
     		{
     			int gridIndex = it.next();
-    			Mode mode = modeGridAssoc.get(gridIndex);    			
+    			OpenCameraWidgetItem mode = modeGridAssoc.get(gridIndex);    			
     			hash.add(mode);
     		}
 		}
-		Iterator<Mode> it = hash.iterator();
+		Iterator<OpenCameraWidgetItem> it = hash.iterator();
 
 		int i = 0;
 		while (it.hasNext())
 		{
-			Mode tmp = it.next();
+			OpenCameraWidgetItem tmp = it.next();
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_grid_element, null,
 					false);
 			// set some mode icon
-			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(MainScreen.thiz.getResources()
-							.getIdentifier(tmp.icon, "drawable",
-									MainScreen.thiz.getPackageName()));
+			if(tmp.modeIconID != 0)
+				((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(tmp.modeIconID);
 
-			int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
-					"string", MainScreen.thiz.getPackageName());
-			String modename = MainScreen.thiz.getResources().getString(id);
+			//int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
+			//		"string", MainScreen.thiz.getPackageName());
+			//String modename = MainScreen.thiz.getResources().getString(id);
 
 			final int index = i;
 			//((TextView) mode.findViewById(R.id.modeText)).setText(modename);

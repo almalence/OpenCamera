@@ -23,6 +23,7 @@
 			        android:layout_width="match_parent"			        
 			        android:gravity="center"        
 			        android:textSize="@dimen/gridTextSize"
+			        android:textColor="@android:color/black"
 			        android:text="@string/widgetBgColorTitle">
 			    </TextView>
 			</LinearLayout>
@@ -57,6 +58,7 @@
 			        	android:layout_below="@+id/bgColorButtonFirst"
 			        	android:gravity="center"        
 			        	android:textSize="@dimen/gridTextSize"
+			        	android:textColor="@android:color/black"
 			        	android:text="@string/widgetBgColorTitleFirst"/>
 			    </RelativeLayout>
 			    <RelativeLayout
@@ -80,6 +82,7 @@
 			        	android:layout_below="@+id/bgColorButtonSecond"
 			        	android:gravity="center"        
 			        	android:textSize="@dimen/gridTextSize"
+			        	android:textColor="@android:color/black"
 			        	android:text="@string/widgetBgColorTitleSecond"/>
 				    
 			    </RelativeLayout>
@@ -104,6 +107,7 @@
 			        	android:layout_below="@+id/bgColorButtonThird"
 			        	android:gravity="center"        
 			        	android:textSize="@dimen/gridTextSize"
+			        	android:textColor="@android:color/black"
 			        	android:text="@string/widgetBgColorTitleThird"/>
 			    </RelativeLayout>			    
 			</LinearLayout>
@@ -124,6 +128,7 @@
 			        android:layout_width="match_parent"			        
 			        android:gravity="center"        
 			        android:textSize="@dimen/gridTextSize"
+			        android:textColor="@android:color/black"
 			        android:text="@string/widgetConfigTitle">
 			    </TextView>
 			</LinearLayout>
@@ -158,6 +163,7 @@
 			        android:layout_width="match_parent"			        
 			        android:gravity="center"        
 			        android:textSize="@dimen/gridTextSize"
+			        android:textColor="@android:color/black"
 			        android:text="@string/widgetConfigureDoneText">
 			    </TextView>
 				   

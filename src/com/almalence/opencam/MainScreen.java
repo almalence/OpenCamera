@@ -227,6 +227,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static long startTime = 0;
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
+	public static final String EXTRA_TORCH = "WidgetTorchMode";
 	
 	public static String deviceSS3_01;
 	public static String deviceSS3_02;
@@ -262,6 +263,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
+		String torch = intent.getStringExtra(EXTRA_TORCH);
 
 		startTime = System.currentTimeMillis();
 		msavedInstanceState = savedInstanceState;
@@ -287,6 +289,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		if(null != mode)
 			prefs.edit().putString("defaultModeName", mode).commit();
+		
+		if(null != torch)
+			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
 		
 		/**** Billing *****/
 		if (true == prefs.contains("unlock_all_forever")) {
