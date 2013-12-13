@@ -648,7 +648,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		try 
     	{
     		 Camera.Parameters p = getCameraParameters();
-        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         	 setCameraParameters(p);
 		} catch (Exception e) {
 			e.printStackTrace();
