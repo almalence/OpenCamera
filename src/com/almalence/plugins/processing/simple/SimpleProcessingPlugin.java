@@ -44,7 +44,10 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 		
-		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID));
+		if (num == null)
+			return;
+		int imagesAmount = Integer.parseInt(num);
 		
 		if (imagesAmount==0)
 			imagesAmount=1;

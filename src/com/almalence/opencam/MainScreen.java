@@ -837,13 +837,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		//cp = cameraParameters;
 
 		try {
-			//List<int[]> range = cameraParameters.getSupportedPreviewFpsRange();
-			//Log.i("CameraTest", "fps ranges" + range.get(0)[0] + " " + range.get(0)[1] + " " + range.get(1)[0] + " " + range.get(1)[1] + " " + range.get(2)[0] + " " + range.get(2)[1] + " " + range.get(3)[0] + " " + range.get(3)[1]);
-			//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-			//cameraParameters.setPreviewFpsRange(7000, 30000);
+			List<int[]> range = cameraParameters.getSupportedPreviewFpsRange();
+			Log.i("CameraTest", "fps ranges" + range.get(0)[0] + " " + range.get(0)[1] + " " + range.get(1)[0] + " " + range.get(1)[1] + " " + range.get(2)[0] + " " + range.get(2)[1] + " " + range.get(3)[0] + " " + range.get(3)[1]);
+			cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+			cameraParameters.setPreviewFpsRange(7000, 30000);
 			// an obsolete but much more reliable way of setting preview to a reasonable fps range
 			// Nexus 5 is giving preview which is too dark without this
-			cameraParameters.setPreviewFrameRate(30);
+			//cameraParameters.setPreviewFrameRate(30);
 		
 			setCameraParameters(cameraParameters);
 		} catch (RuntimeException e) {
