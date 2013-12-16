@@ -876,6 +876,13 @@ public class AlmalenceGUI extends GUI implements
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 				
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
+				
+				if (timeLapseButton!=null)
+				{
+					timeLapseButton.setOrientation(AlmalenceGUI.mDeviceOrientation);
+					timeLapseButton.invalidate();
+					timeLapseButton.requestLayout();
+				}
 			}
 			
 		};
@@ -1380,8 +1387,10 @@ public class AlmalenceGUI extends GUI implements
 		help.bringToFront();
 	}
 	
+	private RotateImageView timeLapseButton =null;
 	private void AddSelfTimerControl(boolean needToShow)
 	{
+		View selfTimerControl =null;
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
 		MainScreen.thiz.getWindowManager().getDefaultDisplay()
@@ -1401,8 +1410,8 @@ public class AlmalenceGUI extends GUI implements
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();		
 		
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
-		View buttonsLayout = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
-		buttonsLayout.setVisibility(View.VISIBLE);
+		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
+		selfTimerControl.setVisibility(View.VISIBLE);
 		
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
@@ -1413,7 +1422,7 @@ public class AlmalenceGUI extends GUI implements
 		{
 			View view = specialView.get(j);
 			int view_id = view.getId();
-			int layout_id = buttonsLayout.getId();
+			int layout_id = selfTimerControl.getId();
 			if(view_id == layout_id)
 			{
 				if(view.getParent() != null)
@@ -1428,7 +1437,7 @@ public class AlmalenceGUI extends GUI implements
 			return; 
 		}
 		
-		RotateImageView timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonSelftimer);
+		timeLapseButton = (RotateImageView)selfTimerControl.findViewById(R.id.buttonSelftimer);
 		
 		timeLapseButton.setOnClickListener(new OnClickListener(){
 
@@ -1449,10 +1458,10 @@ public class AlmalenceGUI extends GUI implements
 		
 		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(buttonsLayout, params);
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
 		
-		buttonsLayout.setLayoutParams(params);
-		buttonsLayout.requestLayout();
+		selfTimerControl.setLayoutParams(params);
+		selfTimerControl.requestLayout();
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 

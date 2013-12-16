@@ -644,6 +644,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			isScreenTimerRunning = false;
 		}
 
+		//reset tourch
+		try 
+    	{
+    		 Camera.Parameters p = getCameraParameters();
+        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        	 setCameraParameters(p);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main", "Torch exception: " + e.getMessage());
+		}
+		
 		if (camera != null) {
 			camera.setPreviewCallback(null);
 			camera.stopPreview();
