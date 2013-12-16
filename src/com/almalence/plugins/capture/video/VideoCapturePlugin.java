@@ -19,7 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.video;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -309,6 +308,10 @@ public class VideoCapturePlugin extends PluginCapture
 		takePictureButton.invalidate();
 		takePictureButton.requestLayout();
 		
+		timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+		timeLapseButton.invalidate();
+		timeLapseButton.requestLayout();
+		
 		
 		if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -404,6 +407,12 @@ public class VideoCapturePlugin extends PluginCapture
 			takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 			takePictureButton.invalidate();
 			takePictureButton.requestLayout();
+		}
+		if (timeLapseButton!=null)
+		{
+			timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+			timeLapseButton.invalidate();
+			timeLapseButton.requestLayout();
 		}
     }
 	
