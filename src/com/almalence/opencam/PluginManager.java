@@ -490,7 +490,7 @@ public class PluginManager {
 	// parse config to get camera and modes configurations
 	void ParseConfig() {
 		try {
-			ConfigParser.getInstance().parse();
+			ConfigParser.getInstance().parse(MainScreen.mainContext);
 		} catch (XmlPullParserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
