@@ -489,7 +489,7 @@ public class PluginManager {
 	// parse config to get camera and modes configurations
 	void ParseConfig() {
 		try {
-			ConfigParser.getInstance().parse();
+			ConfigParser.getInstance().parse(MainScreen.mainContext);
 		} catch (XmlPullParserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1621,7 +1621,7 @@ public class PluginManager {
 			return false;
 		
 		String s1 = null;
-		if(params.getSupportedWhiteBalance().size() > 0)
+		if(params.getSupportedWhiteBalance() != null)
 			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;

@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:id="@+id/modeListElementLayout"
     android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"        
+    android:layout_width="@dimen/widgetListElementWidth"
+    android:layout_height="@dimen/widgetListElementHeight"      
     android:layout_gravity="center"
-    android:padding="0dp"    
-    android:background="#555555">
+    android:padding="3dp"    
+    android:background="@android:color/black">
     
     <RelativeLayout android:id="@+id/imageLayout"
         			android:layout_height="@dimen/widgetListImageHeight"
         			android:layout_width="@dimen/widgetListImageWidth"
-        			android:layout_gravity="center">  
+        			android:layout_gravity="center"
+        			android:layout_alignParentLeft="true">  
     <ImageView
         android:id="@+id/modeImage"
         android:layout_width="@dimen/widgetListImageWidth"
         android:layout_height="@dimen/widgetListImageHeight"
         android:layout_centerInParent="true"        
         android:padding="5dp"                
-        android:background="#3B5555">
+        android:background="@android:color/transparent">
     </ImageView>
     </RelativeLayout>
     
     <RelativeLayout android:id="@+id/textLayout"
         			android:layout_height="@dimen/widgetListElementHeight"
-        			android:layout_width="@dimen/widgetListTextWidth"
-        			android:background="#F0F0F0">        			
+        			android:layout_width="match_parent"
+        			android:background="@android:color/transparent"
+        			android:layout_toRightOf="@+id/imageLayout">        			
     <TextView
         android:id="@+id/modeText"
         android:layout_height="wrap_content"
@@ -37,5 +39,5 @@
     
     </RelativeLayout>
    
-</LinearLayout>
+</RelativeLayout>
 

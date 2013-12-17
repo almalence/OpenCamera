@@ -667,12 +667,16 @@ public class FocusVFPlugin extends PluginViewfinder
     	    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))))
         		MainScreen.cancelAutoFocus();
         	}
+        	
+        	if(fm.compareTo(preferenceFocusMode) != 0)
+            	MainScreen.thiz.setCameraFocusMode(preferenceFocusMode);
         }
         
         // Reset the tap area before calling mListener.cancelAutofocus.
         // Otherwise, focus mode stays at auto and the tap area passed to the
         // driver is not reset.
-        resetTouchFocus();
+        resetTouchFocus();        
+        
         //MainScreen.guiManager.cancelAutoFocus();        
         mState = STATE_IDLE;
         MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);

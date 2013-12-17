@@ -6,12 +6,14 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 public class OpenCameraWidgetProvider extends AppWidgetProvider
-{
-	public static String SETTING_BUTTON = "com.almalence.opencam.SETTING_BUTTON";
+{	
+	public static final String ACTION_START_ACTIVITY = "startActivity";
+	public static final String BROADCAST_PARAM_IS_MODE = "itemType";
 	
 	@Override
     public void onDeleted(Context context, int[] appWidgetIds) {
@@ -31,10 +33,34 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
     @Override
     public void onReceive(Context context, Intent intent)
     {
-    	if (SETTING_BUTTON.equals(intent.getAction()))
+    	if(ACTION_START_ACTIVITY.equals(intent.getAction()))
     	{
-    		Log.e("OpenCameraWidgetProvider", "SETTING CLICK!");
-    	}
+            boolean isModeCall = intent.getBooleanExtra(BROADCAST_PARAM_IS_MODE, false);            
+            if(isModeCall)
+            {
+            	String modeName = intent.getStringExtra(MainScreen.EXTRA_ITEM);
+            	String torchValue = intent.getStringExtra(MainScreen.EXTRA_TORCH);
+            	
+            	
+            	Bundle extras = new Bundle();
+    	        extras.putString(MainScreen.EXTRA_ITEM, modeName);
+    	        if(torchValue != null && torchValue.contains("on"))
+    	        	extras.putString(MainScreen.EXTRA_TORCH, "on");	
+    	        Intent modeIntent = new Intent(context, MainScreen.class);    	        
+    	        modeIntent.putExtras(extras);
+    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	        context.startActivity(modeIntent);
+            }
+            else
+            {
+            	int widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+            	Intent configIntent = new Intent(context, OpenCameraWidgetConfigureActivity.class);    	        
+            	configIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+    	        configIntent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(widgetID)));
+    	        context.startActivity(configIntent);
+            }
+        }
         super.onReceive(context, intent);
     }
 
@@ -78,7 +104,7 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
     }
     
     public static RemoteViews buildRemoteViews(Context context, int appWidgetId)
-    {            
+    { 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
 
         /// set intent for widget service that will create the views
@@ -92,14 +118,20 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
                 OpenCameraWidgetConfigureActivity.bgColor);
         
         // set intent for item click (opens main activity)
-        Intent viewIntent = new Intent(context, MainScreen.class);
-        viewIntent.setAction(Intent.ACTION_MAIN);
-        //viewIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        //viewIntent.setData(Uri.parse(viewIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        //Intent viewIntent = new Intent(context, MainScreen.class);
+//        Intent viewIntent = new Intent(context, OpenCameraWidgetConfigureActivity.class);
+//        viewIntent.setAction(Intent.ACTION_MAIN);
+//        
+//        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
+//        remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
         
-        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
-        remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
-        //remoteViews.setOnClickPendingIntent(R.id.widgetGrid, viewPendingIntent);
+        
+        
+        Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
+        intent.setAction(ACTION_START_ACTIVITY);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
+        
         
         return remoteViews;   
     }

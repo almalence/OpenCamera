@@ -1,12 +1,15 @@
 package com.almalence.opencam;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import com.almalence.opencam.ui.ElementAdapter;
 import com.almalence.opencam.ui.Panel;
@@ -63,7 +66,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		modeGridAdapter = new ElementAdapter();
 		modeGridViews = new ArrayList<View>();
 		
-		modeGridAssoc = new Hashtable<Integer, OpenCameraWidgetItem>();
+		if(modeGridAssoc == null)
+			modeGridAssoc = new Hashtable<Integer, OpenCameraWidgetItem>();
 		
 		//allModeViews = new Hashtable<String, View>();
 		
@@ -93,11 +97,12 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         buttonBGSecond.setOnClickListener(this);
         buttonBGThird.setOnClickListener(this);
         
-        initModeGrid(true);
+        initModeGrid(modeGridAssoc.size() == 0);
         initModeList();
         initColorButtons();
     }
 	
+
 	@Override
 	public void onClick(View v)
 	{
@@ -117,7 +122,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			                                                                       mAppWidgetId));
 
 			// Updates the collection view, not necessary the first time
-			//appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.notes_list);
+			appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widgetGrid);
 
 			// Destroy activity
 			finish();
@@ -202,15 +207,15 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		
 		try
 		{
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = this.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_list_element, null,
 					false);
 			// set some mode icon
 			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(MainScreen.thiz.getResources()
+					.setImageResource(this.getResources()
 							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
-									MainScreen.thiz.getPackageName()));
+									this.getPackageName()));
 	
 			((TextView) mode.findViewById(R.id.modeText)).setText("Hide item");
 			
@@ -240,25 +245,25 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		while (it.hasNext())
 		{
 			final Mode tmp = it.next();
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = this.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_list_element, null,
 					false);
 			// set some mode icon
 			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(MainScreen.thiz.getResources()
+					.setImageResource(this.getResources()
 							.getIdentifier(tmp.icon, "drawable",
-									MainScreen.thiz.getPackageName()));
+									this.getPackageName()));
 
-			int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
-					"string", MainScreen.thiz.getPackageName());
-			final String modename = MainScreen.thiz.getResources().getString(id);
+			int id = this.getResources().getIdentifier(tmp.modeName,
+					"string", this.getPackageName());
+			final String modename = this.getResources().getString(id);
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
-			final OpenCameraWidgetItem item = new OpenCameraWidgetItem(tmp.modeID, MainScreen.thiz.getResources().getIdentifier(
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem(tmp.modeID, this.getResources().getIdentifier(
 					  tmp.icon, "drawable",
-					  MainScreen.thiz.getPackageName()), false);
+					  this.getPackageName()), false);
 			
 			mode.setOnClickListener(new OnClickListener(){
 				@Override
@@ -277,25 +282,25 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		
 		try
 		{
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = this.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_list_element, null,
 					false);
 			// set some mode icon
 			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(MainScreen.thiz.getResources()
+					.setImageResource(this.getResources()
 							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
-									MainScreen.thiz.getPackageName()));
+									this.getPackageName()));
 	
-			int id = MainScreen.thiz.getResources().getIdentifier("single_mode_name",
-					"string", MainScreen.thiz.getPackageName());
-			final String modename = MainScreen.thiz.getResources().getString(id);
+			int id = this.getResources().getIdentifier("single_mode_name",
+					"string", this.getPackageName());
+			final String modename = this.getResources().getString(id);
 	
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
-			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("single", MainScreen.thiz.getResources().getIdentifier(
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("single", this.getResources().getIdentifier(
 					"gui_almalence_settings_flash_torch", "drawable",
-					  MainScreen.thiz.getPackageName()), true);
+					  this.getPackageName()), true);
 			
 			mode.setOnClickListener(new OnClickListener(){
 				@Override
@@ -333,6 +338,15 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		List<OpenCameraWidgetItem> hash = null;
 		if(bInitial)
 		{
+			try {
+				ConfigParser.getInstance().parse(this.getBaseContext());
+			} catch (XmlPullParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			hash = new ArrayList<OpenCameraWidgetItem>();
 			List<Mode> modeList = ConfigParser.getInstance().getList();
 			Iterator<Mode> it = modeList.iterator();
@@ -341,9 +355,9 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
     			Mode tmp = it.next();
     			if(tmp.modeName.contains("hdr") || tmp.modeName.contains("panorama"))
     			{
-	    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, MainScreen.thiz.getResources().getIdentifier(
+	    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, this.getResources().getIdentifier(
 	  					  tmp.icon, "drawable",
-	  					  MainScreen.thiz.getPackageName()), false);			
+	  					  this.getPackageName()), false);			
 	    			hash.add(mode);
     			}
 //    			else
@@ -354,7 +368,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
     		}    		
     		try
     		{
-	    		int iconID = MainScreen.thiz.getResources().getIdentifier("gui_almalence_settings_flash_torch", "drawable", MainScreen.thiz.getPackageName());
+	    		int iconID = this.getResources().getIdentifier("gui_almalence_settings_flash_torch", "drawable", this.getPackageName());
 	    		OpenCameraWidgetItem mode = new OpenCameraWidgetItem("single", iconID, true);			
 	  			hash.add(mode);
     		}
@@ -387,7 +401,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		while (it.hasNext())
 		{
 			OpenCameraWidgetItem tmp = it.next();
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = this.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_grid_element, null,
 					false);
@@ -395,9 +409,9 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			if(tmp.modeIconID != 0)
 				((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(tmp.modeIconID);
 
-			//int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
-			//		"string", MainScreen.thiz.getPackageName());
-			//String modename = MainScreen.thiz.getResources().getString(id);
+			//int id = this.getResources().getIdentifier(tmp.modeName,
+			//		"string", this.getPackageName());
+			//String modename = this.getResources().getString(id);
 
 			final int index = i;
 			//((TextView) mode.findViewById(R.id.modeText)).setText(modename);

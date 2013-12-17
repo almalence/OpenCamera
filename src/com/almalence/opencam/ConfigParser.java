@@ -27,6 +27,7 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Xml;
 
@@ -104,9 +105,9 @@ public class ConfigParser {
 		return getMode(defaultModeID);
 	}
 	
-    public boolean parse() throws XmlPullParserException, IOException 
+    public boolean parse(Context context) throws XmlPullParserException, IOException 
     {
-    	AssetManager assetManager = MainScreen.mainContext.getAssets();
+    	AssetManager assetManager = context.getAssets();//MainScreen.mainContext.getAssets();
     	InputStream in = null;
     	try {
     	    in = assetManager.open("opencamera_modes.xml");
@@ -116,6 +117,8 @@ public class ConfigParser {
     	}
     	
         try {
+        	if(modes != null && modes.size() > 0)
+        		modes.clear();
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);

@@ -171,10 +171,11 @@
 				
 			<ListView 
 				    android:id="@+id/widgetConfList"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"				    				    
+				    android:layout_width="@dimen/widgetListWidth"
+				    android:layout_height="@dimen/widgetListHeight"				    				    
 				    android:layout_centerInParent="true"				    				    
 				    android:gravity="center"
 				    android:visibility="gone"
+				    android:padding="3dp"
 				    android:background="@drawable/opencamera_widget_modelist_background"/>				
 </RelativeLayout>
