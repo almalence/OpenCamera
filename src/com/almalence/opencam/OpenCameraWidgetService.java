@@ -86,7 +86,10 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        // which is set on the collection view in StackWidgetProvider.
 	        Bundle extras = new Bundle();
 	        extras.putBoolean(OpenCameraWidgetProvider.BROADCAST_PARAM_IS_MODE, true);
-	        extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
+	        if(item.modeName.contains("torch"))
+	        	extras.putString(MainScreen.EXTRA_ITEM, "single");
+	        else
+	        	extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
 	        if(item.isTorchOn)
 	        	extras.putString(MainScreen.EXTRA_TORCH, "on");	
 	        //Intent fillInIntent = new Intent(mContext, MainScreen.class);

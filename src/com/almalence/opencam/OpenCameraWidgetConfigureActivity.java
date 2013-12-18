@@ -13,6 +13,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import com.almalence.opencam.ui.ElementAdapter;
 import com.almalence.opencam.ui.Panel;
+import com.almalence.opencam.util.Util;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -23,6 +24,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -46,6 +49,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	
 	public static Map<Integer, OpenCameraWidgetItem> modeGridAssoc;
 	
+	public static Map<View, OpenCameraWidgetItem> listItems;
+	
 	private int currentModeIndex;
 	
 	View buttonBGFirst;
@@ -68,6 +73,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		
 		if(modeGridAssoc == null)
 			modeGridAssoc = new Hashtable<Integer, OpenCameraWidgetItem>();
+		
+		listItems = new Hashtable<View, OpenCameraWidgetItem>();
 		
 		//allModeViews = new Hashtable<String, View>();
 		
@@ -199,6 +206,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	private void initModeList()
 	{
 		modeList = (ListView)this.findViewById(R.id.widgetConfList);
+		listItems.clear();
 		modeListViews.clear();
 		if (modeListAdapter.Elements != null) {
 			modeListAdapter.Elements.clear();
@@ -212,26 +220,29 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 					R.layout.widget_opencamera_mode_list_element, null,
 					false);
 			// set some mode icon
-			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(this.getResources()
-							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
-									this.getPackageName()));
+//			((ImageView) mode.findViewById(R.id.modeImage))
+//					.setImageResource(this.getResources()
+//							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
+//									this.getPackageName()));
 	
-			((TextView) mode.findViewById(R.id.modeText)).setText("Hide item");
+			final String modename = this.getResources().getString(R.string.widgetHideItem);
+			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
 			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("hide", 0, false);
 			
-			mode.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v)
-				{
-					modeGridAssoc.put(currentModeIndex, item);
-					initModeGrid(false);
-					if(modeList.getVisibility() == View.VISIBLE)
-						modeList.setVisibility(View.GONE);
-				}
-			});
+//			mode.setOnClickListener(new OnClickListener(){
+//				@Override
+//				public void onClick(View v)
+//				{
+//					Log.e("Widget","List item onClick!");
+//					modeGridAssoc.put(currentModeIndex, item);
+//					initModeGrid(false);
+//					if(modeList.getVisibility() == View.VISIBLE)
+//						modeList.setVisibility(View.GONE);
+//				}
+//			});
 			
+			listItems.put(mode, item);
 			modeListViews.add(mode);
 		}
 		catch(RuntimeException exp)
@@ -265,17 +276,19 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 					  tmp.icon, "drawable",
 					  this.getPackageName()), false);
 			
-			mode.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v)
-				{
-					modeGridAssoc.put(currentModeIndex, item);
-					initModeGrid(false);
-					if(modeList.getVisibility() == View.VISIBLE)
-						modeList.setVisibility(View.GONE);
-				}
-			});
+//			mode.setOnClickListener(new OnClickListener(){
+//				@Override
+//				public void onClick(View v)
+//				{
+//					Log.e("Widget","List item onClick!");
+//					modeGridAssoc.put(currentModeIndex, item);
+//					initModeGrid(false);
+//					if(modeList.getVisibility() == View.VISIBLE)
+//						modeList.setVisibility(View.GONE);
+//				}
+//			});
 			
+			listItems.put(mode, item);
 			modeListViews.add(mode);
 		}
 		
@@ -292,27 +305,25 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 							.getIdentifier("gui_almalence_settings_flash_torch", "drawable",
 									this.getPackageName()));
 	
-			int id = this.getResources().getIdentifier("single_mode_name",
-					"string", this.getPackageName());
-			final String modename = this.getResources().getString(id);
-	
+			final String modename = this.getResources().getString(R.string.widgetTorchItem);
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
-			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("single", this.getResources().getIdentifier(
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("torch", this.getResources().getIdentifier(
 					"gui_almalence_settings_flash_torch", "drawable",
 					  this.getPackageName()), true);
 			
-			mode.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v)
-				{
-					modeGridAssoc.put(currentModeIndex, item);
-					initModeGrid(false);
-					if(modeList.getVisibility() == View.VISIBLE)
-						modeList.setVisibility(View.GONE);
-				}
-			});
+//			mode.setOnClickListener(new OnClickListener(){
+//				@Override
+//				public void onClick(View v)
+//				{
+//					modeGridAssoc.put(currentModeIndex, item);
+//					initModeGrid(false);
+//					if(modeList.getVisibility() == View.VISIBLE)
+//						modeList.setVisibility(View.GONE);
+//				}
+//			});
 			
+			listItems.put(mode, item);
 			modeListViews.add(mode);
 		}
 		catch(RuntimeException exp)
@@ -322,6 +333,23 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		
 		modeListAdapter.Elements = modeListViews;
 		modeList.setAdapter(modeListAdapter);
+		
+		modeList.setOnItemClickListener(new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+			{
+				Log.e("Widget", "onItemClick");
+				OpenCameraWidgetItem item = listItems.get(arg1);
+				if(item != null)
+				{
+					modeGridAssoc.put(currentModeIndex, item);
+					initModeGrid(false);
+				}
+				if(modeList.getVisibility() == View.VISIBLE)
+					modeList.setVisibility(View.GONE);
+			}			
+		});
 	}
 	
 	
@@ -379,14 +407,15 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
     		
     		for(int i = 0; i < modeList.size() - 2; i++)
     		{
-    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);			
+    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);
     			hash.add(mode);
     		}
 		}
 		else
 		{
 			hash = new ArrayList<OpenCameraWidgetItem>();
-			Set<Integer> keys = modeGridAssoc.keySet();    		
+			Set<Integer> unsorted_keys = modeGridAssoc.keySet();
+			List<Integer> keys = Util.asSortedList(unsorted_keys);
     		Iterator<Integer> it = keys.iterator();
     		while(it.hasNext())
     		{
@@ -450,7 +479,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		if (super.onKeyDown(keyCode, event))
 			return true;
 		return false;
-	}	
+	}
 }
 
 
