@@ -141,8 +141,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.infosetvf",
 			  R.xml.preferences_vf_infoset,
 			  0,
-			  "Info",//MainScreen.thiz.getResources().getString(R.string.Pref_Infoset_Preference_Title),
-			  null,//MainScreen.thiz.getResources().getString(R.string.Pref_Infoset_Preference_Summary),
 			  0,
 			  null);
 	}	

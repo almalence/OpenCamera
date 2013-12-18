@@ -93,8 +93,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.zoomvf",
 			  R.xml.preferences_vf_zoom,
 			  0,
-			  "Zoom",//MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Title),
-			  null,//MainScreen.thiz.getResources().getString(R.string.Pref_Zoom_Preference_Summary),
 			  0,
 			  null);
 		

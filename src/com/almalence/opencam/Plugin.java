@@ -62,11 +62,6 @@ public abstract class Plugin
 	// plugin should set this to true if want to show preferences
 	protected boolean isShowPreferences=false;
 	
-	//preference header name - to show on main preference screen
-	//TODO make private
-	public String title = "Default title";
-	//public String summary = "Default summary";
-	
 	//ID of icon and title for creating quick control button
 	//Each plugin may have only one quick control button
 	public int quickControlIconID = -1;
@@ -122,7 +117,7 @@ public abstract class Plugin
 	//Postprocessing view. Actually a layout
 	protected View postProcessingView = null;
 	
-	public Plugin(String sID, int preferenceID, int advancedPreferenceID, String preferenceTitle, String preferenceSummary, int quickControlID, String quickControlInitTitle)
+	public Plugin(String sID, int preferenceID, int advancedPreferenceID, int quickControlID, String quickControlInitTitle)
 	{
 		ID=sID;
 		
@@ -134,7 +129,7 @@ public abstract class Plugin
 		
 		setAdvancedPreferenceName(advancedPreferenceID);
 		//for dynamic preference generation. Header text and preferences xml
-		title = preferenceTitle;
+		//title = preferenceTitle;
 		//summary = preferenceSummary;
 		
 		quickControlIconID = quickControlID;
@@ -440,16 +435,6 @@ public abstract class Plugin
 	public int getAdvancedPreferenceName()
 	{
 		return advancedPrefName;
-	}
-	
-	public void setPrefHeaderName(String name)
-	{
-		title = name;
-	}
-	
-	public String getPrefHeaderName()
-	{
-		return title;
 	}
 	
 	//show preference's value in summary on start 

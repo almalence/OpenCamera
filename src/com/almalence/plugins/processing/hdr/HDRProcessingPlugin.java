@@ -133,8 +133,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		super("com.almalence.plugins.hdrprocessing",
 			  R.xml.preferences_processing_hdr,
 			  R.xml.preferences_processing_hdr,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_HDR_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_HDR_Preference_Summary),
 			  0,
 			  null);
 	}

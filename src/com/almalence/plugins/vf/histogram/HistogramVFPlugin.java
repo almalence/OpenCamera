@@ -77,8 +77,6 @@ public class HistogramVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.histogramvf",
 			  R.xml.preferences_vf_histogram,
 			  0,
-			  "Histogram",//MainScreen.thiz.getResources().getString(R.string.Pref_HistogramVF_Preference_Title),
-			  null,
 			  R.drawable.gui_almalence_histogram_rgb,
 			  "Histogram");
 	}

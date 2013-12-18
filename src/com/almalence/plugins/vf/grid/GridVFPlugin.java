@@ -48,8 +48,6 @@ public class GridVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.gridvf",
 			  R.xml.preferences_vf_grid,
 			  0,
-			  "Grid",//MainScreen.thiz.getResources().getString(R.string.Pref_Grid_Preference_Title),
-			  "",
 			  R.drawable.plugin_vf_grid_none,
 			  "Grid type");		
 	}

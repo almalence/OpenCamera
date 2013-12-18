@@ -116,8 +116,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		super("com.almalence.plugins.panoramacapture_augmented",
 				R.xml.preferences_capture_panoramaaugmented,
 				0,
-				MainScreen.thiz.getResources().getString(R.string.pref_plugin_capture_panoramaaugmented_preference_title),
-				MainScreen.thiz.getResources().getString(R.string.pref_plugin_capture_panoramaaugmented_preference_summary),
 				0,
 				null);
 		

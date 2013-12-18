@@ -152,8 +152,6 @@ public class NightCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.nightcapture",
 			  R.xml.preferences_capture_night,
 			  R.xml.preferences_capture_night,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_NightCapture_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_NightCapture_Preference_Summary),
 			  R.drawable.plugin_capture_night_nightvision_on,
 			  "Night vision ON");
 	}

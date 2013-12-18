@@ -112,8 +112,6 @@ public class VideoCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.videocapture",
 			  R.xml.preferences_capture_video,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Video_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Video_Preference_Summary),
 			  R.drawable.gui_almalence_video_1080,
 			  "Video quality");
 	}

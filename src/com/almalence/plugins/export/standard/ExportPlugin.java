@@ -77,8 +77,6 @@ public class ExportPlugin extends PluginExport
 		super("com.almalence.plugins.export",
 			  R.xml.preferences_export_export,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Export_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Export_Preference_Summary),
 			  0,
 			  null);
 	}

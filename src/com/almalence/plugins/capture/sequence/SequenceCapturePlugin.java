@@ -54,8 +54,6 @@ public class SequenceCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.sequencecapture",
 			  R.xml.preferences_capture_sequence,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Sequence_Capture_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Sequence_Capture_Preference_Summary),
 			  0,
 			  null);
 		refreshPreferences();

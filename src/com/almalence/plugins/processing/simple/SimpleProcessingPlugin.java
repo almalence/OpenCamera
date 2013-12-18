@@ -33,7 +33,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	
 	public SimpleProcessingPlugin()
 	{
-		super("com.almalence.plugins.simpleprocessing", 0, 0, null, null, 0, null);
+		super("com.almalence.plugins.simpleprocessing", 0, 0, 0, null);
 	}
 	
 	@Override

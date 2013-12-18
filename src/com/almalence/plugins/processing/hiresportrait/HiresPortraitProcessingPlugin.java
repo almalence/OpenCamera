@@ -14,7 +14,7 @@ public class HiresPortraitProcessingPlugin extends PluginProcessing
 	
 	public HiresPortraitProcessingPlugin()
 	{
-		super("com.almalence.plugins.hiresportraitprocessing", 0, 0, null, null, 0, null);
+		super("com.almalence.plugins.hiresportraitprocessing", 0, 0, 0, null);
 	}
 	
 	@Override

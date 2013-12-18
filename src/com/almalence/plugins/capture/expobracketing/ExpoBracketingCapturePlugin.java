@@ -79,8 +79,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.expobracketingcapture",
 			  R.xml.preferences_capture_expobracketing,
 			  R.xml.preferences_capture_expobracketing,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_ExpoBracketing_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_ExpoBracketing_Preference_Summary),
 			  0,
 			  null);
 	}

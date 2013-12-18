@@ -68,8 +68,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		super("com.almalence.plugins.nightprocessing",
 			  R.xml.preferences_processing_night,
 			  R.xml.preferences_processing_night,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Night_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Night_Preference_Summary),
 			  0,
 			  null);
 	}

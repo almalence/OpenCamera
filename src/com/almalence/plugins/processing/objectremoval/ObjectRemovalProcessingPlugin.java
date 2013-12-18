@@ -102,8 +102,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		super("com.almalence.plugins.objectremovalprocessing",
 			  R.xml.preferences_processing_objectremoval,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_ObjectRemoval_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_ObjectRemoval_Preference_Summary),
 			  0,
 			  null);
 	}
