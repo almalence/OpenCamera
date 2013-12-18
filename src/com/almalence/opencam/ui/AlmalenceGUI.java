@@ -884,7 +884,6 @@ public class AlmalenceGUI extends GUI implements
 					timeLapseButton.requestLayout();
 				}
 			}
-			
 		};
 
 		// create merged image for select mode button
