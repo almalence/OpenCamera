@@ -136,7 +136,14 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
         		
-	 	    	camera.takePicture(null, null, null, MainScreen.thiz);
+        		try
+    	    	{
+        			camera.takePicture(null, null, null, MainScreen.thiz);
+    	    	}
+        		catch (RuntimeException e)
+    	    	{
+    	    		Log.e("OR capture", "takePicture fail in takePicture in OR");
+    	    	}
 	 		}
 		}
 		else

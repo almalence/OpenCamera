@@ -273,20 +273,6 @@ public class VideoCapturePlugin extends PluginCapture
 		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
 		for(int i = 0; i < specialLayout2.getChildCount(); i++)
 			specialView2.add(specialLayout2.getChildAt(i));
-
-//		for(int j = 0; j < specialView2.size(); j++)
-//		{
-//			View view = specialView2.get(j);
-//			int view_id = view.getId();
-//			int layout_id = this.buttonsLayout.getId();
-//			if(view_id == layout_id)
-//			{
-//				if(view.getParent() != null)
-//					((ViewGroup)view.getParent()).removeView(view);
-//				
-//				specialLayout2.removeView(view);
-//			}
-//		}
 		
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.videobuttons_size);
@@ -300,8 +286,6 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 		
-//		pauseResumeButton.setRotation(mLayoutOrientationCurrent);
-//		pauseResumeButton.invalidate();
 		takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		takePictureButton.invalidate();
 		takePictureButton.requestLayout();
@@ -417,7 +401,6 @@ public class VideoCapturePlugin extends PluginCapture
 	private static File getOutputMediaFile(){
 		File saveDir = PluginManager.getInstance().GetSaveDir();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	Calendar d = Calendar.getInstance();
     	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
         		d.get(Calendar.YEAR),
@@ -601,7 +584,6 @@ public class VideoCapturePlugin extends PluginCapture
 	//Get optimal supported preview size with aspect ration 16:9 or 4:3
 	private Camera.Size getBestPreviewSize(boolean aspect169)
 	{
-		Camera camera = MainScreen.thiz.getCamera();
 		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
     	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
 
@@ -887,7 +869,6 @@ public class VideoCapturePlugin extends PluginCapture
     	    	if (swChecked)
     	    	{
     	    		double captureRate = 24;
-    	    		String str = stringInterval[interval];
     	    		double val1 = Double.valueOf(stringInterval[interval]);
     	    		int val2 = measurementVal;
     	    		switch (val2)
