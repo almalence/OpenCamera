@@ -63,15 +63,9 @@ import com.almalence.opencam.MainScreen;
 /**
  * Collection of utility functions used in this package.
  */
-public class Util {
+public final class Util {
 	
-	static
-	{
-		System.loadLibrary("utils-image");
-		System.loadLibrary("utils-jni");
-	}
-	
-    private static final String TAG = "Util";
+	private static final String TAG = "Util";
 
     // The brightness setting used when it is set to automatic in the system.
     // The reason why it is set to 0.7 is just because 1.0 is too bright.
@@ -699,4 +693,10 @@ public class Util {
       java.util.Collections.sort(list);
       return list;
     }
+    
+    static
+	{
+		System.loadLibrary("utils-image");
+		System.loadLibrary("utils-jni");
+	}
 }

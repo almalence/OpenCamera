@@ -1274,7 +1274,11 @@ public class NightCapturePlugin extends PluginCapture
 		if(OpenGLPreference && !inCapture)
 			synchronized(this)
 			{
-				cameraPreview.draw(gl, yuv_data, MainScreen.mainContext);		//Draw the square
+				try {
+					cameraPreview.draw(gl, yuv_data, MainScreen.mainContext);		//Draw the square
+				} catch (RuntimeException e) {
+					Log.e("onGLDrawFrame", "onGLDrawFrame in Night some exception" + e.getMessage());
+				}
 			}
 	}
 /******************************************************************************************************
