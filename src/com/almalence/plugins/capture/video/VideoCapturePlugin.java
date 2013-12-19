@@ -753,13 +753,6 @@ public class VideoCapturePlugin extends PluginCapture
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
         	
-//        	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-//	        if (cp!=null)
-//	        {
-//	        	Log.e("Video", "cp null");
-//	        }
-//	    	List<int[]> frame = cp.getSupportedPreviewFpsRange();
-	    	
         	mMediaRecorder = new MediaRecorder();
         	camera.stopPreview();
     		camera.unlock();
@@ -768,7 +761,7 @@ public class VideoCapturePlugin extends PluginCapture
     	    // Step 2: Set sources
     	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
     	    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-
+    	    
     	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
    	    	

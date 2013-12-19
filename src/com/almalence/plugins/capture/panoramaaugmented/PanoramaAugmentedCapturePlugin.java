@@ -558,6 +558,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		}
 		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
 		{
+			Toast.makeText(
+					MainScreen.thiz,
+					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_stopcapture),
+					Toast.LENGTH_LONG).show();
 			this.stopCapture();
 			
 			return true;

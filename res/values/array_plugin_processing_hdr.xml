@@ -61,4 +61,16 @@
    <item>3</item>
 </string-array>
 
+<string-array name="saveInputArrayHDR">
+   <item>@string/Pref_HDR_SaveInputPref_None</item>
+   <item>@string/Pref_HDR_SaveInputPref_Summary</item>
+   <item>@string/Pref_HDR_SaveInputPref_Normal</item>
+</string-array>
+ 
+<string-array name="saveInputValuesHDR">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+</string-array>
+
 </resources>

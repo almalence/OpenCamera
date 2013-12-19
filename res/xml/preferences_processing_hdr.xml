@@ -35,11 +35,12 @@
 			android:defaultValue="1"
 			android:entries="@array/noiseArrayHDR"
 			android:entryValues="@array/noiseValuesHDR" />
-		<CheckBoxPreference
+		<ListPreference
 			android:title="@string/Pref_HDR_SaveInputPref_Title"
-			android:defaultValue="false"
-			android:summary="@string/Pref_HDR_SaveInputPref_Summary"
-			android:key="saveInputPrefHDR" />
+			android:defaultValue="0"
+			android:entries="@array/saveInputArrayHDR"
+			android:entryValues="@array/saveInputValuesHDR"
+			android:key="saveInputPrefHDRNew" />
  		<CheckBoxPreference
 			android:title="@string/Pref_HDR_AutoAdjustPref_Title"
 			android:defaultValue="false"
