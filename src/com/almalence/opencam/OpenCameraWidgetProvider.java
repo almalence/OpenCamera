@@ -1,13 +1,17 @@
 package com.almalence.opencam;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 public class OpenCameraWidgetProvider extends AppWidgetProvider
@@ -68,10 +72,17 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
         final int N = appWidgetIds.length;
 
         // Perform this loop procedure for each App Widget that belongs to this provider
-        for (int i=0; i<N; i++) {
-            int appWidgetId = appWidgetIds[i];
-            
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
+        for (int i=0; i<N; i++)
+        {
+        	int appWidgetId = appWidgetIds[i];
+	            
+        	RemoteViews remoteViews = null;
+        	if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+        	{
+        		remoteViews = createRemoteViews(context, appWidgetId);
+        	}
+        	else
+        		remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_4);
             
             /// set intent for widget service that will create the views
             Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
@@ -82,20 +93,6 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
             
             remoteViews.setInt(R.id.widgetGrid, "setBackgroundColor", 
                     OpenCameraWidgetConfigureActivity.bgColor);
-            
-            // set intent for item click (opens main activity)
-//            Intent viewIntent = new Intent(context, MainScreen.class);
-//            viewIntent.setAction(Intent.ACTION_MAIN);
-//            //viewIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-//            //viewIntent.setData(Uri.parse(viewIntent.toUri(Intent.URI_INTENT_SCHEME)));
-//            
-//            PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
-//            remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
-            //remoteViews.setOnClickPendingIntent(R.id.widgetGrid, viewPendingIntent);
-            
-//            Intent intent = new Intent(OpenCameraWidgetProvider.SETTING_BUTTON);
-//	        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//	        remoteViews.setOnClickPendingIntent(R.id.widgetGrid, pendingIntent );
             
             Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
             intent.setAction(ACTION_START_ACTIVITY);
@@ -110,7 +107,14 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
     
     public static RemoteViews buildRemoteViews(Context context, int appWidgetId)
     { 
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
+        //RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_4);
+    	RemoteViews remoteViews = null;
+    	if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+    	{
+    		remoteViews = createRemoteViews(context, appWidgetId);
+    	}
+    	else
+    		remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_4);
 
         /// set intent for widget service that will create the views
         Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
@@ -122,64 +126,74 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
         remoteViews.setInt(R.id.widgetGrid, "setBackgroundColor", 
                 OpenCameraWidgetConfigureActivity.bgColor);
         
-        // set intent for item click (opens main activity)
-        //Intent viewIntent = new Intent(context, MainScreen.class);
-//        Intent viewIntent = new Intent(context, OpenCameraWidgetConfigureActivity.class);
-//        viewIntent.setAction(Intent.ACTION_MAIN);
-//        
-//        PendingIntent viewPendingIntent = PendingIntent.getActivity(context, 0, viewIntent, 0);
-//        remoteViews.setPendingIntentTemplate(R.id.widgetGrid, viewPendingIntent);
-        
-        
-        
         Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
         intent.setAction(ACTION_START_ACTIVITY);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
         
-        
         return remoteViews;   
     }
     
-    static int cc = 1;
+    @TargetApi(16)
     @Override
     public void onAppWidgetOptionsChanged(Context context,
                                           AppWidgetManager appWidgetManager,
                                           int appWidgetId,
-                                          Bundle newOptions) {
-      int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
-      int maxWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
-      int minHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
-      int maxHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+                                          Bundle newOptions)
+    {
       
-      Log.e("Widget", "minWidth = " + minWidth);
-      Log.e("Widget", "maxWidth = " + maxWidth);
-      Log.e("Widget", "minHeight = " + minHeight);
-      Log.e("Widget", "maxHeight = " + maxHeight);
-      
-      //TODO: get different widget_opencamera files for differnet grid's columns numbers!!!
-      RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
-      
-      /// set intent for widget service that will create the views
-      Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
-      serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-      serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))); // embed extras so they don't get ignored
-      remoteViews.setRemoteAdapter(appWidgetId, R.id.widgetGrid, serviceIntent);
-      
-      remoteViews.setEmptyView(R.id.widgetGrid, R.id.widgetEmptyView);
-      
-      remoteViews.setInt(R.id.widgetGrid, "setBackgroundColor", 
-              OpenCameraWidgetConfigureActivity.bgColor);      
+    	Log.e("Widget", "onAppWidgetOptionsChanged");
+    	RemoteViews remoteViews = createRemoteViews(context, appWidgetId);      
+  
+    	/// set intent for widget service that will create the views
+    	Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
+    	serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+    	serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))); // embed extras so they don't get ignored
+    	remoteViews.setRemoteAdapter(appWidgetId, R.id.widgetGrid, serviceIntent);
+  
+    	remoteViews.setEmptyView(R.id.widgetGrid, R.id.widgetEmptyView);
+  
+    	remoteViews.setInt(R.id.widgetGrid, "setBackgroundColor", 
+    			OpenCameraWidgetConfigureActivity.bgColor);      
 
-      
-      Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
-      intent.setAction(ACTION_START_ACTIVITY);
-      PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-      remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
-      
-      // update widget
-      appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-      
-      cc++;
+  
+    	Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
+    	intent.setAction(ACTION_START_ACTIVITY);
+    	PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+    	remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
+  
+    	// update widget
+    	appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+    }
+    
+    @TargetApi(16)
+    private static RemoteViews createRemoteViews(Context context, int appWidgetId)
+    {
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+		int minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+    
+		DisplayMetrics metrics = new DisplayMetrics();
+		WindowManager mng = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+		mng.getDefaultDisplay()
+			.getMetrics(metrics);
+		float ScreenDensity = metrics.density;
+		float columnWidth = context.getResources().getDimension(R.dimen.widgetImageSize);
+		
+		Log.e("Widget", "minWidth*ScreenDensity = " + minWidth*ScreenDensity);
+		Log.e("Widget", "columnWidth = " + columnWidth);
+		
+		//TODO: get different widget_opencamera files for differnet grid's columns numbers!!!
+		RemoteViews remoteViews = null;		
+		if(minWidth*ScreenDensity > columnWidth*4)
+			remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_4);
+		else if(minWidth*ScreenDensity > columnWidth*3)
+			remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_3);
+		else if(minWidth*ScreenDensity > columnWidth*2)
+			remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_2);
+		else
+			remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera_column_1);
+		  
+		return remoteViews;  
     }
 }

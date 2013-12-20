@@ -4,7 +4,7 @@
     android:updatePeriodMillis="1800000"
     android:configure="com.almalence.opencam.OpenCameraWidgetConfigureActivity"
     android:previewImage="@drawable/widget_preview"
-    android:initialLayout="@layout/widget_opencamera"     
+    android:initialLayout="@layout/widget_opencamera_column_4"     
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">   
 </appwidget-provider>
