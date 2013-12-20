@@ -16,6 +16,6 @@
    <dimen name="widgetListImageWidth">65dp</dimen>   
    <dimen name="widgetListTextWidth">120dp</dimen>
    
-   <dimen name="widgetMinWidth">250dp</dimen>
+   <dimen name="widgetMinWidth">40dp</dimen>
    <dimen name="widgetMinHeight">40dp</dimen>
 </resources>

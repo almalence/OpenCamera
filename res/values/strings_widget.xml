@@ -7,4 +7,6 @@
 	<string name="widgetBgColorTitleSecond">Solid black</string>
 	<string name="widgetBgColorTitleThird">Transparent</string>
 	<string name="widgetConfigTitle">Widget structure</string>
+	<string name="widgetHideItem">Hide</string>
+	<string name="widgetTorchItem">Torch</string>
 </resources>

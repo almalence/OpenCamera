@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:dither="true"> 
 			<corners android:radius="4dip"/> 
-			<solid android:color="@android:color/black"/>
-			<stroke android:width="2dp"
-      	    android:color="#A0202020" />
-</shape> 
+			<solid android:color="@android:color/transparent"/>
+			<stroke android:width="1dp"
+      	    android:color="#A0FFFFFF" />
+</shape>

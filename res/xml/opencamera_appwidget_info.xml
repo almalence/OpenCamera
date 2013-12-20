@@ -3,7 +3,7 @@
     android:minHeight="@dimen/widgetMinHeight"
     android:updatePeriodMillis="1800000"
     android:configure="com.almalence.opencam.OpenCameraWidgetConfigureActivity"
-    android:previewImage="@drawable/opencamera_widget_preview"
+    android:previewImage="@drawable/widget_preview"
     android:initialLayout="@layout/widget_opencamera"     
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">   

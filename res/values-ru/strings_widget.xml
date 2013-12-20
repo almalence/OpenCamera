@@ -2,4 +2,11 @@
 <resources>	
 	<string name="widgetLoadingText">Загружается…</string>
 	<string name="widgetConfigureDoneText">Ок</string>
+	<string name="widgetBgColorTitle">Фон виджета</string>
+	<string name="widgetBgColorTitleFirst">Полупрозрачный</string>
+	<string name="widgetBgColorTitleSecond">Черный</string>
+	<string name="widgetBgColorTitleThird">Прозрачный</string>
+	<string name="widgetConfigTitle">Структура виджета</string>
+	<string name="widgetHideItem">Убрать</string>
+	<string name="widgetTorchItem">Фонарик</string>
 </resources>

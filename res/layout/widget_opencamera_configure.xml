@@ -5,7 +5,7 @@
        		android:orientation="vertical"
        		android:layout_width="wrap_content"
        		android:layout_height="wrap_content"
-       		android:background="@android:color/background_light"
+       		android:background="#dfdfdf"
   			>
   			<LinearLayout
 				    android:id="@+id/bgColorTitleLayout"
@@ -138,6 +138,7 @@
 				    android:layout_height="wrap_content"
 				    android:columnWidth="@dimen/widgetElementWidth"
 				    android:numColumns="4"
+				    android:padding="10dp"
 				    android:verticalSpacing="5dp"
 				    android:horizontalSpacing="10dp"
 				    android:stretchMode="columnWidth"				    
@@ -154,18 +155,28 @@
 				    android:layout_gravity="bottom"
 				    android:layout_centerHorizontal="true"
 				    android:layout_alignParentBottom="true"
-				    android:padding="0dp"    
-				    android:background="@drawable/widget_configuration_button_background">
+				    android:padding="0dp">
+			    
+				    <Button 
+				        android:id="@+id/doneButton"
+				        android:layout_height="match_parent"				        
+				        android:layout_width="match_parent"
+				        android:scaleType="fitCenter"
+				        android:gravity="center"
+				        android:textSize="@dimen/widgetTextSize"
+			        	android:textColor="@android:color/black"
+			        	android:text="@string/widgetConfigureDoneText"
+				        android:background="@drawable/widget_configuration_button_background"/>
     
-			    <TextView
+			    <!-- <TextView
 			        android:id="@+id/doneButtonText"
 			        android:layout_height="match_parent"
 			        android:layout_width="match_parent"			        
 			        android:gravity="center"        
-			        android:textSize="@dimen/gridTextSize"
+			        android:textSize="@dimen/widgetTextSize"
 			        android:textColor="@android:color/black"
 			        android:text="@string/widgetConfigureDoneText">
-			    </TextView>
+			    </TextView> -->
 				   
 				</LinearLayout>
 				
@@ -176,6 +187,6 @@
 				    android:layout_centerInParent="true"				    				    
 				    android:gravity="center"
 				    android:visibility="gone"
-				    android:padding="3dp"
-				    android:background="@drawable/opencamera_widget_modelist_background"/>				
+				    android:padding="0dp"
+				    android:background="@drawable/widget_modelist_background"/>				
 </RelativeLayout>

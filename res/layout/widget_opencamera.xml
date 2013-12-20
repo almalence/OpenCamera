@@ -5,9 +5,7 @@
        		
        		android:orientation="vertical"
        		android:layout_width="wrap_content"
-       		android:layout_height="match_parent"
-       		android:background="@android:color/transparent"
-  			>
+       		android:layout_height="match_parent">
 				<GridView 
 				    android:id="@+id/widgetGrid"
 				    android:layout_width="match_parent" 
@@ -18,14 +16,14 @@
 				    android:horizontalSpacing="10dp"
 				    android:stretchMode="columnWidth"
 				    android:layout_centerInParent="true"
-				    android:background="@android:color/transparent"
+				    android:background="#5A3B3131"
 			/>
    				<TextView
         			android:id="@+id/widgetEmptyView"
         			android:layout_width="match_parent"
         			android:layout_height="match_parent"
         			android:text="@string/widgetLoadingText"
-        			android:background="@android:color/transparent"
+        			android:background="#5A3B3131"
         			android:gravity="center"
         			android:textColor="#ffffff"
         			android:textStyle="bold"

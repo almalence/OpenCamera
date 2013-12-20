@@ -3,8 +3,9 @@
     android:id="@+id/modeSelectLayout"
     android:layout_height="@dimen/widgetElementHeight"
     android:layout_width="match_parent"    
-    android:layout_gravity="center"        
-    android:background="@android:color/transparent">
+    android:layout_gravity="center"
+    android:clickable="false"
+    android:background="@drawable/widget_mode_grid_button_layout_background">
     
     <ImageView
         android:id="@+id/modeImage"
@@ -12,7 +13,7 @@
         android:layout_width="@dimen/widgetImageSize"
         android:layout_gravity="center"        
         android:padding="7dp"                
-        android:background="@drawable/thumbnail_background_inner">
+        android:background="@drawable/widget_mode_grid_button_background">
     </ImageView>
    
 </FrameLayout>

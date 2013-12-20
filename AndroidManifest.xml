@@ -60,8 +60,7 @@
 		
 		<receiver android:name=".OpenCameraWidgetProvider" >
     		<intent-filter>
-        		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-        		<action android:name="com.almalence.opencam.SETTING_BUTTON" />
+        		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />        		
     		</intent-filter>
     	<meta-data android:name="android.appwidget.provider"
                android:resource="@xml/opencamera_appwidget_info" />
