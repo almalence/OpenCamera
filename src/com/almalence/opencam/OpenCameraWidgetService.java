@@ -1,15 +1,21 @@
 package com.almalence.opencam;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.almalence.opencam.util.Util;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -25,6 +31,10 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     private List<OpenCameraWidgetItem> mWidgetItems = new ArrayList<OpenCameraWidgetItem>();
     private Context mContext;
     private int mAppWidgetId;
+    
+    SharedPreferences prefs;
+    
+	//public static Map<Integer, OpenCameraWidgetItem> modeGridAssoc;
 
     public OpenCameraRemoteViewsFactory(Context context, Intent intent)
     {
@@ -36,6 +46,9 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 
     public void onCreate()
     {
+    	prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+//    	if(modeGridAssoc == null)
+//			modeGridAssoc = new Hashtable<Integer, OpenCameraWidgetItem>();
     	fillWidgetItemList();
     }
 
@@ -59,7 +72,7 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     	{    		
     		rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
 	        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
-	        rv.setImageViewResource(R.id.modeImage, R.drawable.opencamera_widget_settings);
+	        rv.setImageViewResource(R.id.modeImage, R.drawable.widget_settings);	        
 	
 	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
 	        // which is set on the collection view in StackWidgetProvider.	        
@@ -69,7 +82,8 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        configIntent.putExtra(OpenCameraWidgetProvider.BROADCAST_PARAM_IS_MODE, false);
 	        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 	        configIntent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(mAppWidgetId)));
-	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, configIntent);
+	        //rv.setOnClickFillInIntent(R.id.modeSelectLayout, configIntent);
+	        rv.setOnClickFillInIntent(R.id.modeImage, configIntent);
     	}
     	else if(mWidgetItems != null && mWidgetItems.size() > position)
     	{
@@ -80,7 +94,7 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        // We construct a remote views item based on our widget item xml file, and set the
 	        // text based on the position.
 	        rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
-	        rv.setImageViewResource(R.id.modeImage, item.modeIconID);
+	        rv.setImageViewResource(R.id.modeImage, item.modeIconID);	        
 	
 	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
 	        // which is set on the collection view in StackWidgetProvider.
@@ -95,7 +109,8 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        //Intent fillInIntent = new Intent(mContext, MainScreen.class);
 	        Intent fillInIntent = new Intent();
 	        fillInIntent.putExtras(extras);
-	        rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+	        //rv.setOnClickFillInIntent(R.id.modeSelectLayout, fillInIntent);
+	        rv.setOnClickFillInIntent(R.id.modeImage, fillInIntent);
     	}
 
         // Return the remote views object.
@@ -140,7 +155,8 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     	if(OpenCameraWidgetConfigureActivity.modeGridAssoc != null)
     	{
     		mWidgetItems.clear();
-    		Set<Integer> keys = OpenCameraWidgetConfigureActivity.modeGridAssoc.keySet();
+    		Set<Integer> unsorted_keys = OpenCameraWidgetConfigureActivity.modeGridAssoc.keySet();
+    		List<Integer> keys = Util.asSortedList(unsorted_keys);
     		Iterator<Integer> it = keys.iterator();
     		while(it.hasNext())
     		{
@@ -151,6 +167,24 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     		}
     		
     		mCount = mWidgetItems.size() + 1;
-    	}	
+    	}
+    	else
+    	{
+    		mWidgetItems.clear();
+    		int modeCount = 12;
+    		for(int i = 0; i < modeCount; i++)
+    		{
+    			String modeID = prefs.getString("widgetAddedModeID" + String.valueOf(i), "hide");
+    			if(!modeID.contains("hide"))
+    			{
+    				int modeIcon = prefs.getInt("widgetAddedModeIcon" + String.valueOf(i), 0);
+    				OpenCameraWidgetItem modeInfo = new OpenCameraWidgetItem(modeID, modeIcon, modeID.contains("torch"));
+    				
+    				mWidgetItems.add(modeInfo);
+    			}
+    		}
+    		
+    		mCount = mWidgetItems.size() + 1;
+    	}
     }
 }

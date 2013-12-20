@@ -97,6 +97,11 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
 //	        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 //	        remoteViews.setOnClickPendingIntent(R.id.widgetGrid, pendingIntent );
             
+            Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
+            intent.setAction(ACTION_START_ACTIVITY);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+            remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
+            
             // update widget
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
@@ -134,5 +139,47 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
         
         
         return remoteViews;   
+    }
+    
+    static int cc = 1;
+    @Override
+    public void onAppWidgetOptionsChanged(Context context,
+                                          AppWidgetManager appWidgetManager,
+                                          int appWidgetId,
+                                          Bundle newOptions) {
+      int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+      int maxWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
+      int minHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+      int maxHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+      
+      Log.e("Widget", "minWidth = " + minWidth);
+      Log.e("Widget", "maxWidth = " + maxWidth);
+      Log.e("Widget", "minHeight = " + minHeight);
+      Log.e("Widget", "maxHeight = " + maxHeight);
+      
+      //TODO: get different widget_opencamera files for differnet grid's columns numbers!!!
+      RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_opencamera);
+      
+      /// set intent for widget service that will create the views
+      Intent serviceIntent = new Intent(context, OpenCameraWidgetService.class);
+      serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+      serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))); // embed extras so they don't get ignored
+      remoteViews.setRemoteAdapter(appWidgetId, R.id.widgetGrid, serviceIntent);
+      
+      remoteViews.setEmptyView(R.id.widgetGrid, R.id.widgetEmptyView);
+      
+      remoteViews.setInt(R.id.widgetGrid, "setBackgroundColor", 
+              OpenCameraWidgetConfigureActivity.bgColor);      
+
+      
+      Intent intent = new Intent(context, OpenCameraWidgetProvider.class);
+      intent.setAction(ACTION_START_ACTIVITY);
+      PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+      remoteViews.setPendingIntentTemplate(R.id.widgetGrid, pendingIntent);
+      
+      // update widget
+      appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+      
+      cc++;
     }
 }

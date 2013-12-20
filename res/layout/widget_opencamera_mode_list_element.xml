@@ -6,7 +6,7 @@
     android:layout_height="@dimen/widgetListElementHeight"      
     android:layout_gravity="center"
     android:padding="3dp"    
-    android:background="@android:color/black">
+    android:background="@drawable/widget_mode_list_button_background">
     
     <RelativeLayout android:id="@+id/imageLayout"
         			android:layout_height="@dimen/widgetListImageHeight"
