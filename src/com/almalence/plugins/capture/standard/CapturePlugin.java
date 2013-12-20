@@ -78,37 +78,55 @@ public class CapturePlugin extends PluginCapture
 			return;
 		}
 		
-		takingAlready = true;		
+		takingAlready = true;
 		
-		Camera camera = MainScreen.thiz.getCamera();
-		if (camera != null)		// paranoia
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
+
+	}
+	
+	@Override
+	public boolean onBroadcast(int arg1, int arg2)
+	{
+		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			MainScreen.guiManager.showCaptureIndication();
-			
-			MainScreen.thiz.PlayShutter();
-	    	try {
-	    		camera.takePicture(null, null, null, MainScreen.thiz);
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+			Camera camera = MainScreen.thiz.getCamera();
+			if (camera != null)
+			{
+				// play tick sound
+				MainScreen.guiManager.showCaptureIndication();
+        		MainScreen.thiz.PlayShutter();
+        		
+        		try {
+        			camera.takePicture(null, null, null, MainScreen.thiz);
+				}
+        		catch (Exception e) 
+				{
+        			e.printStackTrace();
+    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+    				takingAlready = false;
+    				Message msg = new Message();
+    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+    				msg.what = PluginManager.MSG_BROADCAST;
+    				MainScreen.H.sendMessage(msg);
+    				MainScreen.guiManager.lockControls = false;
+				}
+			}
+			else
+			{
 				takingAlready = false;
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 				msg.what = PluginManager.MSG_BROADCAST;
 				MainScreen.H.sendMessage(msg);
+				
 				MainScreen.guiManager.lockControls = false;
-			}
+			}						
+    		return true;
 		}
-		else
-		{
-			takingAlready = false;
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
-			
-			MainScreen.guiManager.lockControls = false;
-		}
+		return false;
 	}
 	
 	@Override
