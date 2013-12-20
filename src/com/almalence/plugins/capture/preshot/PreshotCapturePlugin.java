@@ -84,8 +84,6 @@ public class PreshotCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.preshotcapture",
 			  R.xml.preferences_capture_preshot,
 			  R.xml.preferences_capture_preshot,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_PreShot_Preference_Title),
-			  null,
 			  0,
 			  null);
 	}

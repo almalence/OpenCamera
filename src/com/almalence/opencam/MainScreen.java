@@ -853,7 +853,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		//cp = cameraParameters;
 
 		try {
-			Log.i("CameraTest", Build.MODEL);
+			//Log.i("CameraTest", Build.MODEL);
 			if (Build.MODEL.contains("Nexus 5"))
 			{
 				cameraParameters.setPreviewFpsRange(7000, 30000);

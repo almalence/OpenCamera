@@ -71,8 +71,6 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.aeawlockvf",
 			  R.xml.preferences_vf_aeawlock,
 			  0,
-			  "AE\\AW Lock",
-			  "",
 			  0,
 			  null);		
 	}

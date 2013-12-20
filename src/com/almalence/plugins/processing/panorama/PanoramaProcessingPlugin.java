@@ -55,8 +55,6 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		super("com.almalence.plugins.panoramaprocessing",
 				R.xml.preferences_processing_panorama, 
 				0, 
-				MainScreen.thiz.getResources().getString(R.string.pref_plugin_processing_panorama_preference_title), 
-				MainScreen.thiz.getResources().getString(R.string.pref_plugin_processing_panorama_preference_summary),
 				0,
 				null);
 	}

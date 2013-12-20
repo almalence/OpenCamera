@@ -55,8 +55,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.groupshotcapture",
 			  R.xml.preferences_capture_groupshot,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_GroupShot_Capture_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_GroupShot_Capture_Preference_Summary),
 			  0,
 			  null);
 

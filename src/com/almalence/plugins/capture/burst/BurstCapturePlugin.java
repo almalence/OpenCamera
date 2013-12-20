@@ -56,8 +56,6 @@ public class BurstCapturePlugin extends PluginCapture
 		super("com.almalence.plugins.burstcapture",
 			  R.xml.preferences_capture_burst,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Burst_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Burst_Preference_Summary),
 			  R.drawable.gui_almalence_mode_burst,
 			  "Burst images");
 

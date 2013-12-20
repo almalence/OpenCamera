@@ -23,12 +23,10 @@ public abstract class PluginProcessing extends Plugin
 	public PluginProcessing(String ID,
 							int preferenceID,
 							int advancedPreferenceID,
-							String preferenceTitle,
-							String preferenceSummary,
 							int quickControlID,
 							String quickControlInitTitle)
 	{
-		super(ID, preferenceID, advancedPreferenceID, preferenceTitle, preferenceSummary, quickControlID, quickControlInitTitle);		
+		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);		
 	}
 	
 	@Override

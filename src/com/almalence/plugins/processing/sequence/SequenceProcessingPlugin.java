@@ -99,8 +99,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		super("com.almalence.plugins.sequenceprocessing",
 			  R.xml.preferences_processing_sequence,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Sequence_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_Sequence_Preference_Summary),
 			  0,
 			  null);
 	}

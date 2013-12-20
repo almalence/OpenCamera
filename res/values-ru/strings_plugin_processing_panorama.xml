@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
+    <string name="pref_plugin_capture_panoramaaugmented_preference_title">Панорама</string>
+	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">HD Panorama capturing</string>	
+	
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Высота панорамы</string>
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_warning">Можно снять %d кадров в этом разрешении</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Использовать гироскоп устройства.</string>
+    <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Требуется наличие гироскопа. Если не выбрано - будет использован программный гироскоп.</string>
+	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">Гироскоп недоступен.</string>
+    <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">На вашем устройстве нет гироскопа. Будет использован программный гироскоп.</string>
+    
+    <string name="plugin_capture_panoramaaugmented_badframe">Держите ровно во время съемки</string>
+        
 	<string name="pref_plugin_processing_panorama_preference_title">Обработка панорамы</string>
 	<string name="pref_plugin_processing_panorama_preference_summary">Panorama wide images processing</string>	
+	<string name="plugin_capture_panoramaaugmented_stopcapture">Круговая панорама снята! Обработка...</string>
 	
 	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Сохранять исходные кадры</string>
 </resources>

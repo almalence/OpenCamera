@@ -143,8 +143,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		super("com.almalence.plugins.focusvf",
 				0,
 				0,
-				"",//MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Title),
-				null,//MainScreen.thiz.getResources().getString(R.string.Pref_Focus_Preference_Summary),
 				0,
 				null);
 

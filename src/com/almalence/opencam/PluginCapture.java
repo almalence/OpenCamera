@@ -25,12 +25,10 @@ public abstract class PluginCapture extends Plugin
 	public PluginCapture(String ID,
 						 int preferenceID,
 						 int advancedPreferenceID,
-						 String preferenceTitle,
-						 String preferenceSummary,
 						 int quickControlID,
 						 String quickControlInitTitle)
 	{
-		super(ID, preferenceID, advancedPreferenceID, preferenceTitle, preferenceSummary, quickControlID, quickControlInitTitle);		
+		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);		
 	}
 	
 	@Override

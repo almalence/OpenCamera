@@ -3491,6 +3491,8 @@ public class AlmalenceGUI extends GUI implements
 				}
 				List<String> supported_scene = MainScreen.thiz
 						.getSupportedSceneModes();
+				if (supported_scene == null)
+					return;
 				if (supported_scene.size() > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
@@ -3530,6 +3532,8 @@ public class AlmalenceGUI extends GUI implements
 				}
 				List<String> supported_wb = MainScreen.thiz
 						.getSupportedWhiteBalance();
+				if (supported_wb == null)
+					return;
 				if (supported_wb.size() > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
@@ -3567,6 +3571,8 @@ public class AlmalenceGUI extends GUI implements
 				}
 				List<String> supported_focus = MainScreen.thiz
 						.getSupportedFocusModes();
+				if (supported_focus == null)
+					return;
 				if (supported_focus.size() > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
@@ -3611,6 +3617,8 @@ public class AlmalenceGUI extends GUI implements
 				}
 				List<String> supported_flash = MainScreen.thiz
 						.getSupportedFlashModes();
+				if (supported_flash == null)
+					return;
 				if (supported_flash.size() > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);

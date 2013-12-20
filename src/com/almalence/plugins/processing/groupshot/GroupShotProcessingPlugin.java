@@ -159,7 +159,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
   	
 	public GroupShotProcessingPlugin()
 	{
-		super("com.almalence.plugins.groupshotprocessing", 0, 0, null, null, 0, null);
+		super("com.almalence.plugins.groupshotprocessing", 0, 0, 0, null);
 	}
 
 	@Override

@@ -69,8 +69,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		super("com.almalence.plugins.preshotprocessing",
 			  R.xml.preferences_processing_preshot,
 			  0,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_PreShotProcessing_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_PreShotProcessing_Preference_Summary),
 			  0,
 			  null);
 		

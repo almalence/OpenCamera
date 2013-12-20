@@ -114,7 +114,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	public static String ColorPreference;
 	public static String NoisePreference;
 	public static boolean AutoAdjustments = false;
-	public static boolean SaveInputPreference;
+	public static int SaveInputPreference;
 	
 	private int mLayoutOrientationCurrent = 0;
 	private int mDisplayOrientationOnStartProcessing = 0;
@@ -133,8 +133,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		super("com.almalence.plugins.hdrprocessing",
 			  R.xml.preferences_processing_hdr,
 			  R.xml.preferences_processing_hdr,
-			  MainScreen.thiz.getResources().getString(R.string.Pref_HDR_Preference_Title),
-			  MainScreen.thiz.getResources().getString(R.string.Pref_HDR_Preference_Summary),
 			  0,
 			  null);
 	}
@@ -233,7 +231,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
         
-		if (HDRProcessingPlugin.SaveInputPreference)
+		if (HDRProcessingPlugin.SaveInputPreference != 0)
 		{
 			try
 	        {
@@ -268,10 +266,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        	}
 	        	
 	        	ContentValues values=null;
-				String[] filesSavedNames = new String[imagesAmount];
-				int nFilesSaved = 0;
+//				String[] filesSavedNames = new String[imagesAmount];
+//				int nFilesSaved = 0;
 	        	
-	            for (int i = 0; i<imagesAmount; ++i)
+	        	int tmpImagesAmount = imagesAmount;
+	        	if (HDRProcessingPlugin.SaveInputPreference == 2)
+	        		tmpImagesAmount = 1;
+	            for (int i = 0; i<tmpImagesAmount; ++i)
 	            {
 			    	float ev_mark = ExpoBracketingCapturePlugin.evValues[i]*ExpoBracketingCapturePlugin.ev_step;
 			    	if (ExpoBracketingCapturePlugin.UseLumaAdaptation)
@@ -583,14 +584,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
         
         AutoAdjustments = prefs.getBoolean("autoadjustPrefHDR", false);
         
-        SaveInputPreference = prefs.getBoolean("saveInputPrefHDR", false);
-    }
-
-	
-	
-	
-	
-	
+        SaveInputPreference = Integer.parseInt(prefs.getString("saveInputPrefHDRNew", "0"));
+    }	
 	
 	
 	private static final int ADJUSTMENT_CODE_EXPOSURE = 0;
