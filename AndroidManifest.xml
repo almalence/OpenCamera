@@ -3,8 +3,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="49"
-      android:versionName="3.14">
+      android:versionCode="50"
+      android:versionName="3.15">
       
     <supports-screens       
                   android:smallScreens="true" 

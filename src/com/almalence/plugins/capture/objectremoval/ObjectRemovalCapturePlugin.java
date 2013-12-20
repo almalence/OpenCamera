@@ -130,21 +130,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		takingAlready = true;
 		if (imagesTaken==0 || pauseBetweenShots==0)
 		{
-			if (camera != null)
-	 		{
-				// play tick sound
-				MainScreen.guiManager.showCaptureIndication();
-        		MainScreen.thiz.PlayShutter();
-        		
-        		try
-    	    	{
-        			camera.takePicture(null, null, null, MainScreen.thiz);
-    	    	}
-        		catch (RuntimeException e)
-    	    	{
-    	    		Log.e("OR capture", "takePicture fail in takePicture in OR");
-    	    	}
-	 		}
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
 		}
 		else
 		{

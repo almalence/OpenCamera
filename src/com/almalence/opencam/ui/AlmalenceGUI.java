@@ -1001,7 +1001,12 @@ public class AlmalenceGUI extends GUI implements
 	
 	@Override
 	public void onResume() {
-		this.updateThumbnailButton();
+		MainScreen.thiz.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlmalenceGUI.this.updateThumbnailButton();
+			}
+		});
 		setShutterIcon(ShutterButton.DEFAULT);
 
 		lockControls = false;
@@ -3792,7 +3797,7 @@ public class AlmalenceGUI extends GUI implements
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				Log.e("AlmalenceGUI", "ModeGridView onTouch! Action " + event.getAction());
+				//Log.e("AlmalenceGUI", "ModeGridView onTouch! Action " + event.getAction());
 				return false;
 			}
 			
@@ -5404,7 +5409,7 @@ public class AlmalenceGUI extends GUI implements
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
+					//Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
 					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
 					{
 						hideModeList();
@@ -5491,7 +5496,7 @@ public class AlmalenceGUI extends GUI implements
 			});
 			mode.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					Log.e("AlmalenceGUI", "Mode onClick!");
+					//Log.e("AlmalenceGUI", "Mode onClick!");
 					hideModeList();
 
 					// get mode associated with pressed button
@@ -6283,11 +6288,11 @@ public class AlmalenceGUI extends GUI implements
 		case MotionEvent.ACTION_UP: {
 			float difX = event.getX();
 			if ((X > difX) && (X - difX > 100)) {
-				Log.i("AlamlenceGUI", "Move left");
+				//Log.i("AlamlenceGUI", "Move left");
 				sliderLeftEvent();
 				return true;
 			} else if (X < difX && (difX - X > 100)) {
-				Log.i("AlamlenceGUI", "Move right");
+				//Log.i("AlamlenceGUI", "Move right");
 				sliderRightEvent();
 				return true;
 			}
@@ -6588,7 +6593,7 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.H.sendMessage(message);
 
 		if (!isUriValid(uri, MainScreen.thiz.getContentResolver())) {
-			Log.e("AlmalenceGUI", "Uri invalid. uri=" + uri);
+			//Log.e("AlmalenceGUI", "Uri invalid. uri=" + uri);
 			return;
 		}
 
@@ -6647,7 +6652,7 @@ public class AlmalenceGUI extends GUI implements
 		updateThumbnailButton();
 		thumbnailView.invalidate();
 
-		Log.e("AlmalenceGUI", "processing conter = " + PluginManager.getInstance().getProcessingCounter());
+		//Log.e("AlmalenceGUI", "processing conter = " + PluginManager.getInstance().getProcessingCounter());
 		if (0 != PluginManager.getInstance().getProcessingCounter()) {
 			new CountDownTimer(10, 10) {
 				public void onTick(long millisUntilFinished) {
@@ -6784,7 +6789,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onAnimationEnd(Animation animation) {
 				processingAnim.clearAnimation();
 				processingAnim.setVisibility(View.GONE);
-				Log.e("AlmalenceGUI", "processing animation ended");
+				//Log.e("AlmalenceGUI", "processing animation ended");
 			}
 
 			@Override
@@ -6796,7 +6801,7 @@ public class AlmalenceGUI extends GUI implements
 			}
 		});
 
-		Log.e("AlmalenceGUI", "processing animation started");
+		//Log.e("AlmalenceGUI", "processing animation started");
 		processingAnim.startAnimation(lrinvisible);
 	}
 
