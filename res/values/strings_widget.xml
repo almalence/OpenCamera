@@ -9,4 +9,7 @@
 	<string name="widgetConfigTitle">Widget structure</string>
 	<string name="widgetHideItem">Hide</string>
 	<string name="widgetTorchItem">Torch</string>
+	<string name="widgetShopText">To activate widget please purchase any item in our inapp shop! It\'s very cheap!</string>
+	<string name="widgetCancelText">Cancel</string>
+	<string name="widgetGoShopText">Go to shop</string>
 </resources>

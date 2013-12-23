@@ -16,6 +16,7 @@ import com.almalence.opencam.ui.Panel;
 import com.almalence.opencam.util.Util;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -71,6 +73,49 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         super.onCreate(savedInstanceState);       
         
         prefs = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
+        
+        /**** Check Billing *****/
+		if (true == prefs.contains("unlock_all_forever") ||
+			true == prefs.contains("plugin_almalence_hdr") ||
+			true == prefs.contains("plugin_almalence_panorama") ||
+			true == prefs.contains("plugin_almalence_moving_burst") ||
+			true == prefs.contains("plugin_almalence_groupshot"))
+		{
+	        final Dialog d = new Dialog(this);
+	        d.setTitle("Activate widget");
+	        d.setContentView(R.layout.widget_opencamera_shop_dialog);
+	        Button cancelButton = (Button) d.findViewById(R.id.widgetButtonCancel);
+	        Button shopButton = (Button) d.findViewById(R.id.widgetButtonGoShop);
+	        
+	        cancelButton.setOnClickListener(new OnClickListener()
+	        {
+				@Override
+				public void onClick(View arg0)
+				{
+					finish();
+				}
+	        	
+	        });
+	        
+	        shopButton.setOnClickListener(new OnClickListener()
+	        {
+				@Override
+				public void onClick(View arg0)
+				{
+					Bundle extras = new Bundle();
+	    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
+	    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
+	    	        modeIntent.putExtras(extras);
+	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
+					
+	    	        finish();
+				}
+	        	
+	        });        
+	        d.show();
+		}
+        
         isFirstLaunch = prefs.getBoolean("widgetFirstLaunch", true);
         
         modeListAdapter = new ElementAdapter();
@@ -120,30 +165,36 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         prefs.edit().putBoolean("widgetFirstLaunch", isFirstLaunch).commit();
     }
 	
+	public void ConfigurationFinished()
+	{
+		ConfigurationFinished();
+		// First set result OK with appropriate widgetId
+		Intent resultValue = new Intent();
+		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+		setResult(RESULT_OK, resultValue);
+
+		// Build/Update widget
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+
+		// This is equivalent to your ChecksWidgetProvider.updateAppWidget()    
+		appWidgetManager.updateAppWidget(mAppWidgetId,
+		                                 OpenCameraWidgetProvider.buildRemoteViews(getApplicationContext(),
+		                                                                       mAppWidgetId));
+
+		// Updates the collection view, not necessary the first time
+		appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widgetGrid);
+
+		// Destroy activity
+		finish();
+	}
+	
 
 	@Override
 	public void onClick(View v)
 	{
 		if(v.getId() == R.id.doneButton)
 		{
-			// First set result OK with appropriate widgetId
-			Intent resultValue = new Intent();
-			resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-			setResult(RESULT_OK, resultValue);
-
-			// Build/Update widget
-			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-
-			// This is equivalent to your ChecksWidgetProvider.updateAppWidget()    
-			appWidgetManager.updateAppWidget(mAppWidgetId,
-			                                 OpenCameraWidgetProvider.buildRemoteViews(getApplicationContext(),
-			                                                                       mAppWidgetId));
-
-			// Updates the collection view, not necessary the first time
-			appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.widgetGrid);
-
-			// Destroy activity
-			finish();
+			ConfigurationFinished();			
 		}
 		else if(v == buttonBGFirst)
 		{

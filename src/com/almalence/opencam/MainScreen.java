@@ -229,6 +229,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 	public static final String EXTRA_TORCH = "WidgetTorchMode";
 	
+	public static final String EXTRA_SHOP = "WidgetGoShopping";
+	
+	public static boolean goShopping = false;
+	
 	public static String deviceSS3_01;
 	public static String deviceSS3_02;
 	public static String deviceSS3_03;
@@ -264,6 +268,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		String torch = intent.getStringExtra(EXTRA_TORCH);
+		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 
 		startTime = System.currentTimeMillis();
 		msavedInstanceState = savedInstanceState;
@@ -433,6 +438,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		} else {
 			MainScreen.ForceFilename = null;
+		}
+		
+		if(goShopping)
+		{
+			MainScreen.thiz.showUnlock = true;
+			if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
+			{
+				Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+				return;
+			}
+			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
+			MainScreen.thiz.startActivity(shopintent);
 		}
 	}
 
