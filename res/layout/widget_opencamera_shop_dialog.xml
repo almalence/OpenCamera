@@ -1,22 +1,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/widgetShopDialogHeight"
+    android:layout_gravity="center"
     >
         
     <LinearLayout
 	    android:id="@+id/shopTextLayout"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"			       
-	    android:orientation="horizontal"	        
+	    android:orientation="vertical"	        
 	    android:background="@android:color/transparent"
-	    android:layout_marginTop="3dp"	    
 	    android:gravity="center"
 	    android:layout_centerInParent="true">
 	    <TextView
 	        android:id="@+id/shopText"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"	        
 	        android:textSize="@dimen/widgetTextSize"
+	        android:layout_gravity="center"
 	        android:text="@string/widgetShopText"
 	         />	    
     </LinearLayout>
