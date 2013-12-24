@@ -9,4 +9,8 @@
 	<string name="widgetConfigTitle">Структура виджета</string>
 	<string name="widgetHideItem">Убрать</string>
 	<string name="widgetTorchItem">Фонарик</string>
+	<string name="widgetShopText">Для активации виджета приобретите любой премиум режим.</string>
+	<string name="widgetCancelText">Отмена</string>
+	<string name="widgetGoShopText">Магазин</string>
+	<string name="widgetActivation">Активация виджета</string>
 </resources>
