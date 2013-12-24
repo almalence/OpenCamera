@@ -6593,8 +6593,9 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.H.sendMessage(message);
 
 		if (!isUriValid(uri, MainScreen.thiz.getContentResolver())) {
+			//prevent problems when image saved to specified location - for some reasons it doesn't work
 			//Log.e("AlmalenceGUI", "Uri invalid. uri=" + uri);
-			return;
+//			return;
 		}
 
 		try {
