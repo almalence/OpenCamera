@@ -16,8 +16,11 @@ import com.almalence.opencam.ui.Panel;
 import com.almalence.opencam.util.Util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -74,45 +77,88 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         
         prefs = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         
+        Log.e("Widget", "Widget Configuration Activity onCreate");
         /**** Check Billing *****/
-		if (true == prefs.contains("unlock_all_forever") ||
-			true == prefs.contains("plugin_almalence_hdr") ||
-			true == prefs.contains("plugin_almalence_panorama") ||
-			true == prefs.contains("plugin_almalence_moving_burst") ||
-			true == prefs.contains("plugin_almalence_groupshot"))
+		if (false == prefs.contains("unlock_all_forever") &&
+			false == prefs.contains("plugin_almalence_hdr") &&
+			false == prefs.contains("plugin_almalence_panorama") &&
+			false == prefs.contains("plugin_almalence_moving_burst") &&
+			false == prefs.contains("plugin_almalence_groupshot"))
 		{
-	        final Dialog d = new Dialog(this);
-	        d.setTitle("Activate widget");
-	        d.setContentView(R.layout.widget_opencamera_shop_dialog);
-	        Button cancelButton = (Button) d.findViewById(R.id.widgetButtonCancel);
-	        Button shopButton = (Button) d.findViewById(R.id.widgetButtonGoShop);
+			Log.e("Widget", "Show shop dialog!");
+			// 1. Instantiate an AlertDialog.Builder with its constructor
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+			// 2. Chain together various setter methods to set the dialog characteristics
+			builder.setMessage(R.string.widgetShopText)
+			       .setTitle(R.string.widgetActivation);
+			
+			builder.setPositiveButton(R.string.widgetGoShopText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   Bundle extras = new Bundle();
+		    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
+		    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
+		    	        modeIntent.putExtras(extras);
+		    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
+						
+		    	        finish();
+		           }
+		       });
+			builder.setNegativeButton(R.string.widgetCancelText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   finish();
+		           }
+		       });
+
+			// 3. Get the AlertDialog from create()
+			AlertDialog d = builder.create();
+	        //d.setTitle("Activate widget");
+	        //d.setContentView(R.layout.widget_opencamera_shop_dialog);	        
+	        //Button cancelButton = (Button) d.findViewById(R.id.widgetButtonCancel);
+	        //Button shopButton = (Button) d.findViewById(R.id.widgetButtonGoShop);
 	        
-	        cancelButton.setOnClickListener(new OnClickListener()
+//	        cancelButton.setOnClickListener(new OnClickListener()
+//	        {
+//				@Override
+//				public void onClick(View arg0)
+//				{
+//					finish();
+//				}
+//	        	
+//	        });
+//	        
+//	        shopButton.setOnClickListener(new OnClickListener()
+//	        {
+//				@Override
+//				public void onClick(View arg0)
+//				{
+//					Bundle extras = new Bundle();
+//	    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
+//	    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
+//	    	        modeIntent.putExtras(extras);
+//	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//	    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
+//					
+//	    	        finish();
+//				}
+//	        	
+//	        });
+	        
+	        d.setOnKeyListener(new OnKeyListener()
 	        {
 				@Override
-				public void onClick(View arg0)
+				public boolean onKey(DialogInterface arg0, int keyCode,
+						KeyEvent keyEvent)
 				{
-					finish();
+					if(keyCode == KeyEvent.KEYCODE_BACK)
+					{
+						finish();
+					}
+					return true;
 				}
 	        	
 	        });
-	        
-	        shopButton.setOnClickListener(new OnClickListener()
-	        {
-				@Override
-				public void onClick(View arg0)
-				{
-					Bundle extras = new Bundle();
-	    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
-	    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
-	    	        modeIntent.putExtras(extras);
-	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
-					
-	    	        finish();
-				}
-	        	
-	        });        
 	        d.show();
 		}
         
@@ -167,7 +213,6 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	
 	public void ConfigurationFinished()
 	{
-		ConfigurationFinished();
 		// First set result OK with appropriate widgetId
 		Intent resultValue = new Intent();
 		resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
