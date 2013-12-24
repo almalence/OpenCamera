@@ -21,6 +21,8 @@ import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -67,6 +69,9 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	private static int colorIndex = 0;
 	public static int bgColor = 0x5A000000;
 	
+	private static boolean hdrPurchased = false;
+	private static boolean panoramaPurchased = false;
+	
 	private static boolean isFirstLaunch = true;
 	SharedPreferences prefs;
 
@@ -78,6 +83,22 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         prefs = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         
         Log.e("Widget", "Widget Configuration Activity onCreate");
+        
+        if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+		{
+			hdrPurchased = true;
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_hdr", true);
+			prefsEditor.commit();
+		}
+		if (isInstalled("com.almalence.panorama.smoothpanorama"))
+		{
+			panoramaPurchased = true;
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_panorama", true);
+			prefsEditor.commit();
+		}
+		
         /**** Check Billing *****/
 		if (false == prefs.contains("unlock_all_forever") &&
 			false == prefs.contains("plugin_almalence_hdr") &&
@@ -617,6 +638,19 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		if (super.onKeyDown(keyCode, event))
 			return true;
 		return false;
+	}
+	
+	
+	private boolean isInstalled(String packageName) {
+		PackageManager pm = getPackageManager();
+		boolean installed = false;
+		try {
+			pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+			installed = true;
+		} catch (PackageManager.NameNotFoundException e) {
+			installed = false;
+		}
+		return installed;
 	}
 }
 
