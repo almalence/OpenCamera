@@ -22,6 +22,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -78,7 +79,9 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	@Override
     protected void onCreate(final Bundle savedInstanceState)
 	{
-        super.onCreate(savedInstanceState);       
+        super.onCreate(savedInstanceState);
+        
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
         prefs = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         
