@@ -650,6 +650,9 @@ public class VideoCapturePlugin extends PluginCapture
         }
     }
 
+	//*captureRate/24 - to get correct recording time
+	double captureRate = 24;
+	
 	@Override
 	public void OnShutterClick()
 	{
@@ -861,7 +864,6 @@ public class VideoCapturePlugin extends PluginCapture
     	    	
     	    	if (swChecked)
     	    	{
-    	    		double captureRate = 24;
     	    		double val1 = Double.valueOf(stringInterval[interval]);
     	    		int val2 = measurementVal;
     	    		switch (val2)
@@ -1058,12 +1060,13 @@ public class VideoCapturePlugin extends PluginCapture
         // limit, we'll countdown the remaining time instead.
         boolean countdownRemainingTime = (mMaxVideoDurationInMs != 0 && delta >= mMaxVideoDurationInMs - 60000);
 
-        long deltaAdjusted = delta;
+        long deltaAdjusted = (long)(delta*captureRate/24);
+        //*captureRate/24 needed for time lapse
         if (countdownRemainingTime) {
             deltaAdjusted = Math.max(0, mMaxVideoDurationInMs - deltaAdjusted) + 999;
         }
         String text;
-
+        
         long targetNextUpdateDelay;
         text = millisecondToTimeString(deltaAdjusted, false);
         targetNextUpdateDelay = 1000;
@@ -1197,7 +1200,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public int measurementVal = 0;
 	public boolean swChecked = false;
 	
-	String[] stringInterval = { "0.5", "1", "1.5", "2", "2.5", "3", "4", "5", "6", "10", "12", "15", "24"};
+	String[] stringInterval = { "0.1", "0.2", "0.3", "0.4", "0.5", "1", "1.5", "2", "2.5", "3", "4", "5", "6", "10", "12", "15", "24"};
 	String[] stringMeasurement = { "seconds", "minutes", "hours"};
 	public void TimeLapseDialog()
 	{
@@ -1210,7 +1213,7 @@ public class VideoCapturePlugin extends PluginCapture
         d.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
         final Button bSet = (Button) d.findViewById(R.id.button1);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setMaxValue(12);
+        np.setMaxValue(16);
         np.setMinValue(0);
         np.setValue(interval);
         np.setDisplayedValues(stringInterval);
@@ -1290,6 +1293,8 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
+		if (paramArrayOfByte == null)
+			return;
 		int frame_len = paramArrayOfByte.length;
 		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
     	

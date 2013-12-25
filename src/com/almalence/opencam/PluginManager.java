@@ -1075,9 +1075,14 @@ public class PluginManager {
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, true);
-		} else if ("plugins_settings".equals(settings)) {
-			pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
-			MainScreen.thiz.onBillingPreferenceCreate(pf);
+		} else if ("plugins_settings".equals(settings)) 
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			if (false == prefs.getBoolean("unlock_all_forever", false))
+			{
+				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
+				MainScreen.thiz.onBillingPreferenceCreate(pf);
+			}
 		}
 
 		loadStandardSettingsAfter(pf, settings);
