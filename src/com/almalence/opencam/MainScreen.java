@@ -231,7 +231,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static final String EXTRA_SHOP = "WidgetGoShopping";
 	
+	public static boolean launchTorch = false;
 	public static boolean goShopping = false;
+	
 	
 	public static String deviceSS3_01;
 	public static String deviceSS3_02;
@@ -267,7 +269,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
-		String torch = intent.getStringExtra(EXTRA_TORCH);
+		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 
 		startTime = System.currentTimeMillis();
@@ -295,7 +297,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if(null != mode)
 			prefs.edit().putString("defaultModeName", mode).commit();
 		
-		if(null != torch)
+		if(launchTorch)
 			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
 		
 		/**** Billing *****/
@@ -453,7 +455,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public void onPreferenceCreate(PreferenceFragment prefActivity) {
+	public void onPreferenceCreate(PreferenceFragment prefActivity)
+	{
 		CharSequence[] entries;
 		CharSequence[] entryValues;
 
@@ -521,7 +524,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	public void queueGLEvent(final Runnable runnable) {
+	public void queueGLEvent(final Runnable runnable)
+	{
 		final GLSurfaceView surfaceView = glView;
 
 		if (surfaceView != null && runnable != null) {
@@ -530,14 +534,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	@Override
-	protected void onStart() {
+	protected void onStart()
+	{
 		super.onStart();
 		MainScreen.guiManager.onStart();
 		PluginManager.getInstance().onStart();
 	}
 
 	@Override
-	protected void onStop() {
+	protected void onStop()
+	{
 		super.onStop();
 		mApplicationStarted = false;
 		orientationMain = 0;
@@ -547,8 +553,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{	
 		super.onDestroy();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		if(launchTorch && prefs.getString(GUI.sFlashModePref, "").contains(getResources().getString(R.string.flashTorchSystem)))
+		{
+			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashAutoSystem)).commit();
+		}
 		MainScreen.guiManager.onDestroy();
 		PluginManager.getInstance().onDestroy();
 
@@ -560,7 +572,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume()
+	{
 		super.onResume();
 
 		if (!isCreating)

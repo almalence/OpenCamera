@@ -68,10 +68,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	View buttonBGThird;
 	
 	private static int colorIndex = 0;
-	public static int bgColor = 0x5A000000;
-	
-	private static boolean hdrPurchased = false;
-	private static boolean panoramaPurchased = false;
+	public static int bgColor = 0x5A000000;	
 	
 	private static boolean isFirstLaunch = true;
 	SharedPreferences prefs;
@@ -85,18 +82,16 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         
         prefs = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         
-        Log.e("Widget", "Widget Configuration Activity onCreate");
+//        Log.e("Widget", "Widget Configuration Activity onCreate");
         
         if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
 		{
-			hdrPurchased = true;
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_hdr", true);
 			prefsEditor.commit();
 		}
 		if (isInstalled("com.almalence.panorama.smoothpanorama"))
 		{
-			panoramaPurchased = true;
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_panorama", true);
 			prefsEditor.commit();
@@ -109,7 +104,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			false == prefs.contains("plugin_almalence_moving_burst") &&
 			false == prefs.contains("plugin_almalence_groupshot"))
 		{
-			Log.e("Widget", "Show shop dialog!");
+//			Log.e("Widget", "Show shop dialog!");
 			// 1. Instantiate an AlertDialog.Builder with its constructor
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -381,6 +376,17 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			
 		}
 		
+		try {
+			ConfigParser.getInstance().parse(this.getBaseContext());
+		} catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			finish();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			finish();
+		}
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
@@ -470,7 +476,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
 			{
-				Log.e("Widget", "onItemClick");
+//				Log.e("Widget", "onItemClick");
 				OpenCameraWidgetItem item = listItems.get(arg1);
 				if(item != null)
 				{

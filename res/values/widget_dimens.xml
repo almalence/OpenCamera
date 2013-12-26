@@ -19,5 +19,8 @@
    <dimen name="widgetMinWidth">40dp</dimen>
    <dimen name="widgetMinHeight">40dp</dimen>
    
+   <dimen name="widgetInitWidth">250dp</dimen>
+   <dimen name="widgetInitHeight">40dp</dimen>
+   
    <dimen name="widgetShopDialogHeight">200dp</dimen>
 </resources>
