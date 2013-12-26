@@ -105,7 +105,7 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        else
 	        	extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
 	        if(item.isTorchOn)
-	        	extras.putString(MainScreen.EXTRA_TORCH, "on");	
+	        	extras.putBoolean(MainScreen.EXTRA_TORCH, true);	
 	        //Intent fillInIntent = new Intent(mContext, MainScreen.class);
 	        Intent fillInIntent = new Intent();
 	        fillInIntent.putExtras(extras);

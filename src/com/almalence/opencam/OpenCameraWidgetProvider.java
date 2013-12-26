@@ -43,13 +43,11 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
             if(isModeCall)
             {
             	String modeName = intent.getStringExtra(MainScreen.EXTRA_ITEM);
-            	String torchValue = intent.getStringExtra(MainScreen.EXTRA_TORCH);
-            	
+            	boolean torchValue = intent.getBooleanExtra(MainScreen.EXTRA_TORCH, false);
             	
             	Bundle extras = new Bundle();
-    	        extras.putString(MainScreen.EXTRA_ITEM, modeName);
-    	        if(torchValue != null && torchValue.contains("on"))
-    	        	extras.putString(MainScreen.EXTRA_TORCH, "on");	
+    	        extras.putString(MainScreen.EXTRA_ITEM, modeName);    	        
+	        	extras.putBoolean(MainScreen.EXTRA_TORCH, torchValue);	
     	        Intent modeIntent = new Intent(context, MainScreen.class);    	        
     	        modeIntent.putExtras(extras);
     	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -65,12 +63,16 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
     	        context.startActivity(configIntent);
             }
         }
+    	else if(intent.getAction().contentEquals("com.sec.android.widgetapp.APPWIDGET_RESIZE")) {
+    		handleResizeSignal(context, intent);
+        }
         super.onReceive(context, intent);
     }
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         final int N = appWidgetIds.length;
 
+//        Log.e("Widget", "onUpdate");
         // Perform this loop procedure for each App Widget that belongs to this provider
         for (int i=0; i<N; i++)
         {
@@ -142,7 +144,7 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
                                           Bundle newOptions)
     {
       
-    	Log.e("Widget", "onAppWidgetOptionsChanged");
+//    	Log.e("Widget", "onAppWidgetOptionsChanged");
     	RemoteViews remoteViews = createRemoteViews(context, appWidgetId);      
   
     	/// set intent for widget service that will create the views
@@ -167,6 +169,27 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
     }
     
     @TargetApi(16)
+    private void handleResizeSignal(Context context, Intent intent)
+    {
+    	AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+
+        int appWidgetId = intent.getIntExtra("widgetId", 0);
+        int widgetSpanX = intent.getIntExtra("widgetspanx", 0);
+        int widgetSpanY = intent.getIntExtra("widgetspany", 0);        
+        
+        if(appWidgetId > 0 && widgetSpanX > 0 && widgetSpanY > 0) {
+            Bundle newOptions = new Bundle();
+            // We have to convert these numbers for future use
+            newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, widgetSpanY * 74);
+            newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widgetSpanX * 74);
+            
+            appWidgetManager.updateAppWidgetOptions(appWidgetId, newOptions);
+
+            onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        }
+    }
+    
+    @TargetApi(16)
     private static RemoteViews createRemoteViews(Context context, int appWidgetId)
     {
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -180,8 +203,8 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
 		float ScreenDensity = metrics.density;
 		float columnWidth = context.getResources().getDimension(R.dimen.widgetImageSize);
 		
-		Log.e("Widget", "minWidth*ScreenDensity = " + minWidth*ScreenDensity);
-		Log.e("Widget", "columnWidth = " + columnWidth);
+//		Log.e("Widget", "minWidth*ScreenDensity = " + minWidth*ScreenDensity);
+//		Log.e("Widget", "columnWidth = " + columnWidth);
 		
 		//TODO: get different widget_opencamera files for differnet grid's columns numbers!!!
 		RemoteViews remoteViews = null;		
