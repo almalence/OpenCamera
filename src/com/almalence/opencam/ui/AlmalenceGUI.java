@@ -50,6 +50,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -105,7 +106,6 @@ import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.Panel.OnPanelListener;
 import com.almalence.opencam.util.Util;
-
 /***
  * AlmalenceGUI is an instance of GUI class, implements current GUI
  ***/
@@ -690,6 +690,8 @@ public class AlmalenceGUI extends GUI implements
 	private boolean isFirstLaunch = true;
 
 	public AlmalenceGUI() {
+		
+		mThumbnail = null;
 		topMenuButtons = new Hashtable<Integer, View>();
 		topMenuPluginButtons = new Hashtable<String, View>();
 
@@ -6712,47 +6714,132 @@ public class AlmalenceGUI extends GUI implements
 		thumbnailView.invalidate();
 	}
 
+	private updateThumbnailButtonTask t = null;
 	public void updateThumbnailButton() {
-		this.mThumbnail = Thumbnail.getLastThumbnail(MainScreen.thiz
-				.getContentResolver());
+		
+		t = new updateThumbnailButtonTask(MainScreen.thiz);
+        t.execute();
+        
+        new CountDownTimer(3000, 3000) {
+			public void onTick(long millisUntilFinished) {}
 
-		if (this.mThumbnail != null) {
-			final Bitmap bitmap = this.mThumbnail.getBitmap();
-
-			if (bitmap != null) {
-				if (bitmap.getHeight() > 0 && bitmap.getWidth() > 0) {
-					System.gc();
-
-					try {
-						Bitmap bm = Thumbnail
-								.getRoundedCornerBitmap(
-										bitmap,
-										(int) (MainScreen.mainContext
-												.getResources()
-												.getDimension(R.dimen.mainButtonHeight)),
-										(int) ((15.0f)));
-
-						thumbnailView.setImageBitmap(bm);
-					} catch (Exception e) {
-						Log.v("AlmalenceGUI", "Can't set thumbnail");
+			public void onFinish() {
+				try{
+					if (t != null && t.getStatus() != AsyncTask.Status.FINISHED)
+					{
+//						Log.e("AlmalenceGUI", "Trying to stop thumbnail");
+						t.cancel(true);
 					}
+//					Log.e("AlmalenceGUI", "Thumbnail stopped");
+				}catch(Exception e)
+				{
+					Log.e("AlmalenceGUI", "Can't stop thumbnail processing");
 				}
 			}
-		} else {
-			try {
-				Bitmap bitmap = Bitmap.createBitmap(96, 96, Config.ARGB_8888);
-				Canvas canvas = new Canvas(bitmap);
-				canvas.drawColor(Color.BLACK);
-				Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
-						(int) (MainScreen.mainContext.getResources()
-								.getDimension(R.dimen.mainButtonHeight)),
-						(int) ((15.0f)));
-				thumbnailView.setImageBitmap(bm);
-			} catch (Exception e) {
-				Log.v("AlmalenceGUI", "Can't set thumbnail");
+		}.start();
+	}
+	
+	private class updateThumbnailButtonTask extends AsyncTask <Void, Void, Void>
+	{
+		public updateThumbnailButtonTask(Context context) 
+		{
+		}
+			
+		@Override
+		protected void onPreExecute() {
+		// do nothing.
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) 
+		{
+			mThumbnail = Thumbnail.getLastThumbnail(MainScreen.thiz.getContentResolver());
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void v) 
+		{
+			if (mThumbnail != null) {
+				final Bitmap bitmap = mThumbnail.getBitmap();
+
+				if (bitmap != null) {
+					if (bitmap.getHeight() > 0 && bitmap.getWidth() > 0) {
+						System.gc();
+
+						try {
+							Bitmap bm = Thumbnail
+									.getRoundedCornerBitmap(
+											bitmap,
+											(int) (MainScreen.mainContext
+													.getResources()
+													.getDimension(R.dimen.mainButtonHeight)),
+											(int) ((15.0f)));
+
+							thumbnailView.setImageBitmap(bm);
+						} catch (Exception e) {
+							Log.v("AlmalenceGUI", "Can't set thumbnail");
+						}
+					}
+				}
+			} else {
+				try {
+					Bitmap bitmap = Bitmap.createBitmap(96, 96, Config.ARGB_8888);
+					Canvas canvas = new Canvas(bitmap);
+					canvas.drawColor(Color.BLACK);
+					Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
+							(int) (MainScreen.mainContext.getResources()
+									.getDimension(R.dimen.mainButtonHeight)),
+							(int) ((15.0f)));
+					thumbnailView.setImageBitmap(bm);
+				} catch (Exception e) {
+					Log.v("AlmalenceGUI", "Can't set thumbnail");
+				}
 			}
 		}
 	}
+//	public void updateThumbnailButton() {
+//	{
+//		this.mThumbnail = Thumbnail.getLastThumbnail(MainScreen.thiz
+//				.getContentResolver());
+//
+//		if (this.mThumbnail != null) {
+//			final Bitmap bitmap = this.mThumbnail.getBitmap();
+//
+//			if (bitmap != null) {
+//				if (bitmap.getHeight() > 0 && bitmap.getWidth() > 0) {
+//					System.gc();
+//
+//					try {
+//						Bitmap bm = Thumbnail
+//								.getRoundedCornerBitmap(
+//										bitmap,
+//										(int) (MainScreen.mainContext
+//												.getResources()
+//												.getDimension(R.dimen.mainButtonHeight)),
+//										(int) ((15.0f)));
+//
+//						thumbnailView.setImageBitmap(bm);
+//					} catch (Exception e) {
+//						Log.v("AlmalenceGUI", "Can't set thumbnail");
+//					}
+//				}
+//			}
+//		} else {
+//			try {
+//				Bitmap bitmap = Bitmap.createBitmap(96, 96, Config.ARGB_8888);
+//				Canvas canvas = new Canvas(bitmap);
+//				canvas.drawColor(Color.BLACK);
+//				Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
+//						(int) (MainScreen.mainContext.getResources()
+//								.getDimension(R.dimen.mainButtonHeight)),
+//						(int) ((15.0f)));
+//				thumbnailView.setImageBitmap(bm);
+//			} catch (Exception e) {
+//				Log.v("AlmalenceGUI", "Can't set thumbnail");
+//			}
+//		}
+//	}
 
 	private RotateImageView processingAnim;
 
@@ -6920,8 +7007,8 @@ public class AlmalenceGUI extends GUI implements
 		boolean needToShow = prefs.getBoolean(Prefs, true);
 		
 		//check show help settings
-		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", false);
-		if (false == needToShow || MainScreen.showHelp == false)
+		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", true);
+		if (false == needToShow && MainScreen.showHelp != true)
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)

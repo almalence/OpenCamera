@@ -107,6 +107,8 @@ public class VideoCapturePlugin extends PluginCapture
     
     private View buttonsLayout;    
 
+    private boolean snapshotSupported = false;
+    
 	public VideoCapturePlugin()
 	{
 		super("com.almalence.plugins.videocapture",
@@ -249,8 +251,18 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
 		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
-		takePictureButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonCaptureImage);
-		
+		Camera camera = MainScreen.thiz.getCamera();
+	    if (camera != null)
+	    {
+	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+        	if (cp!=null)
+        	{
+        		if  (cp.isVideoSnapshotSupported())
+        			snapshotSupported = true;
+        	}
+	    }
+    	takePictureButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonCaptureImage);
+	    
 		timeLapseButton.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -260,14 +272,17 @@ public class VideoCapturePlugin extends PluginCapture
 			
 		});
 		
-		takePictureButton.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {				
-				takePicture();
-			}
-			
-		});
+		if (snapshotSupported)
+		{
+			takePictureButton.setOnClickListener(new OnClickListener(){
+	
+				@Override
+				public void onClick(View v) {				
+					takePicture();
+				}
+				
+			});
+		}
 		
 		List<View> specialView2 = new ArrayList<View>();
 		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
@@ -286,14 +301,19 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 		
-		takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
-		takePictureButton.invalidate();
-		takePictureButton.requestLayout();
+		if (snapshotSupported)
+		{
+			takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+			takePictureButton.invalidate();
+			takePictureButton.requestLayout();
+		}
+		else
+			takePictureButton.setVisibility(View.INVISIBLE);
+		
 		
 		timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		timeLapseButton.invalidate();
 		timeLapseButton.requestLayout();
-		
 		
 		if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -301,7 +321,7 @@ public class VideoCapturePlugin extends PluginCapture
 				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
-			takePictureButton.setVisibility(View.INVISIBLE);		
+			takePictureButton.setVisibility(View.INVISIBLE);
 	}
 	
 	@Override
@@ -384,11 +404,14 @@ public class VideoCapturePlugin extends PluginCapture
 			mRecordingTimeView.setRotation(MainScreen.guiManager.getDisplayRotation()); 
 			mRecordingTimeView.invalidate();
 		}
-		if (takePictureButton!=null)
+		if (snapshotSupported)
 		{
-			takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
-			takePictureButton.invalidate();
-			takePictureButton.requestLayout();
+			if (takePictureButton!=null)
+			{
+				takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+				takePictureButton.invalidate();
+				takePictureButton.requestLayout();
+			}
 		}
 		if (timeLapseButton!=null)
 		{
@@ -1309,14 +1332,17 @@ public class VideoCapturePlugin extends PluginCapture
 		
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
     	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-    	
-		try
-		{
-			paramCamera.startPreview();
-		}
-		catch (RuntimeException e)
-		{
-			Log.i("View capture still image", "StartPreview fail");
+
+//    	if (!isRecording)
+    	{
+			try
+			{
+				paramCamera.startPreview();
+			}
+			catch (RuntimeException e)
+			{
+				Log.i("View capture still image", "StartPreview fail");
+			}
 		}
 		
 		Message message = new Message();

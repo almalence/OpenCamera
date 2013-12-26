@@ -284,8 +284,14 @@ public class ExportPlugin extends PluginExport
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
 			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
 	            		os.write(frame);
-//			            os.close();
-			            
+	            		try
+	    		    	{
+	    		    		os.close();
+	    				}
+	    		    	catch (Exception e)
+	    		        {
+	    		        	e.printStackTrace();
+	    		        }
 		            }
 	            }
 	            else
@@ -444,16 +450,6 @@ public class ExportPlugin extends PluginExport
 	            ei.saveAttributes();
 		    	
 		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-		    	
-		    	try
-		    	{
-		    		os.close();
-				}
-		    	catch (Exception e)
-		        {
-		        	e.printStackTrace();
-		        	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-		        }
 			}
 			//MainScreen.FramesShot = true;
             //MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
