@@ -6798,8 +6798,8 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 	}
+	
 //	public void updateThumbnailButton() {
-//	{
 //		this.mThumbnail = Thumbnail.getLastThumbnail(MainScreen.thiz
 //				.getContentResolver());
 //

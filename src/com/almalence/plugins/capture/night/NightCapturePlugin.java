@@ -1100,7 +1100,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		
+        		paramCamera.setPreviewCallback(null);
 	    		paramCamera.takePicture(null, null, null, MainScreen.thiz);
 	    	}
 	    	catch (RuntimeException e)

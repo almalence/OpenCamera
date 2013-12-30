@@ -944,7 +944,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     	}
     	
     	this.coordsRecorded = false;
-    	
+    	camera.setPreviewCallback(null);
 		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
 	}
 

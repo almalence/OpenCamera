@@ -244,6 +244,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
         		MainScreen.thiz.PlayShutter();
         		
         		try {
+        			camera.setPreviewCallback(null);
         			camera.takePicture(null, null, null, MainScreen.thiz);
 				}catch (Exception e) {
 					e.printStackTrace();
