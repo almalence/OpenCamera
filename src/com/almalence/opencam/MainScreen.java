@@ -1546,10 +1546,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public static boolean takePicture() {
 		synchronized (MainScreen.thiz.syncObject) {
-			if (camera != null
-					&& getFocusState() != MainScreen.FOCUS_STATE_FOCUSING) {
+			if (camera != null && getFocusState() != MainScreen.FOCUS_STATE_FOCUSING) 
+			{
 				MainScreen.mCaptureState = MainScreen.CAPTURE_STATE_CAPTURING;
 				// Log.e("", "mFocusState = " + getFocusState());
+				camera.setPreviewCallback(null);
 				camera.takePicture(null, null, null, MainScreen.thiz);
 				return true;
 			}
@@ -1703,7 +1704,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) 
+	{
+		
+		camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
+		camera.addCallbackBuffer(pviewBuffer);
+		
 		PluginManager.getInstance().onPictureTaken(paramArrayOfByte,
 				paramCamera);
 		MainScreen.mCaptureState = MainScreen.CAPTURE_STATE_IDLE;

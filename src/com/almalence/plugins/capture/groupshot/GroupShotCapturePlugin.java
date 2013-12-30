@@ -259,6 +259,7 @@ public class GroupShotCapturePlugin extends PluginCapture
         		MainScreen.thiz.PlayShutter();
         		try
         		{
+        			camera.setPreviewCallback(null);
         			camera.takePicture(null, null, null, MainScreen.thiz);
         		}
         		catch(RuntimeException exp)
