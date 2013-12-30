@@ -179,14 +179,23 @@
 			    </TextView> -->
 				   
 				</LinearLayout>
-				
+			
+			<RelativeLayout
+			    android:id="@+id/widgetConfListLayout"
+			    android:layout_height="match_parent"
+		        android:layout_width="match_parent"			        
+		        android:gravity="center"
+		        android:background="#F1a3a5a7"
+		        android:visibility="gone"
+		        >		
 			<ListView 
 				    android:id="@+id/widgetConfList"
 				    android:layout_width="@dimen/widgetListWidth"
 				    android:layout_height="@dimen/widgetListHeight"				    				    
 				    android:layout_centerInParent="true"				    				    
 				    android:gravity="center"
-				    android:visibility="gone"
+				    android:visibility="visible"
 				    android:padding="0dp"
-				    android:background="@drawable/widget_modelist_background"/>				
+				    android:background="@drawable/widget_modelist_background"/>
+			</RelativeLayout>				
 </RelativeLayout>

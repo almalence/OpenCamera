@@ -39,6 +39,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -47,6 +48,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	boolean mWidgetConfigurationStarted = false;
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 	
+	private RelativeLayout modeListLayout;
 	private ListView       modeList;
 	private ElementAdapter modeListAdapter;
 	private List<View> modeListViews;
@@ -332,6 +334,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	
 	private void initModeList()
 	{
+		modeListLayout = (RelativeLayout)this.findViewById(R.id.widgetConfListLayout);
 		modeList = (ListView)this.findViewById(R.id.widgetConfList);
 		listItems.clear();
 		modeListViews.clear();
@@ -472,6 +475,14 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		modeListAdapter.Elements = modeListViews;
 		modeList.setAdapter(modeListAdapter);
 		
+		modeListLayout.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View arg0)
+			{				
+			}
+			
+		});
 		modeList.setOnItemClickListener(new OnItemClickListener()
 		{
 			@Override
@@ -495,8 +506,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 								prefs.edit().putString("widgetAddedModeID" + String.valueOf(currentModeIndex), item.modeName).commit();
 				    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(currentModeIndex), item.modeIconID).commit();
 				    			
-				    			if(modeList.getVisibility() == View.VISIBLE)
-									modeList.setVisibility(View.GONE);
+				    			if(modeListLayout.getVisibility() == View.VISIBLE)
+									modeListLayout.setVisibility(View.GONE);
 				           }
 				       });
 					builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -533,8 +544,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 					prefs.edit().putString("widgetAddedModeID" + String.valueOf(currentModeIndex), item.modeName).commit();
 	    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(currentModeIndex), item.modeIconID).commit();
 	    			
-	    			if(modeList.getVisibility() == View.VISIBLE)
-						modeList.setVisibility(View.GONE);
+	    			if(modeListLayout.getVisibility() == View.VISIBLE)
+						modeListLayout.setVisibility(View.GONE);
 				}				
 			}			
 		});
@@ -632,7 +643,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			}
 			else
 			{
-				for(int i = 0; i < 12; i++)
+				for(int i = 0; i < 13; i++)
 	    		{
 	    			String modeID = prefs.getString("widgetAddedModeID" + String.valueOf(i), "hide");
 	    			
@@ -683,8 +694,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 				{
 					currentModeItem = tmp;
 					currentModeIndex = index;
-					if(modeList.getVisibility() == View.GONE)
-						modeList.setVisibility(View.VISIBLE);
+					if(modeListLayout.getVisibility() == View.GONE)
+						modeListLayout.setVisibility(View.VISIBLE);
 				}
 			});
 			
@@ -703,9 +714,9 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	{		
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if(modeList.getVisibility() == View.VISIBLE)
+			if(modeListLayout.getVisibility() == View.VISIBLE)
 			{
-				modeList.setVisibility(View.GONE);
+				modeListLayout.setVisibility(View.GONE);
 				return true;
 			}
 		}
