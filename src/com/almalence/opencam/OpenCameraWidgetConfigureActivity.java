@@ -61,13 +61,14 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	
 	public static Map<View, OpenCameraWidgetItem> listItems;
 	
+	private OpenCameraWidgetItem currentModeItem;
 	private int currentModeIndex;
 	
 	View buttonBGFirst;
 	View buttonBGSecond;
 	View buttonBGThird;
 	
-	private static int colorIndex = 0;
+	private static int colorIndex = 2;
 	public static int bgColor = 0x5A000000;	
 	
 	private static boolean isFirstLaunch = true;
@@ -124,7 +125,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		    	        finish();
 		           }
 		       });
-			builder.setNegativeButton(R.string.widgetCancelText, new DialogInterface.OnClickListener() {
+			builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   finish();
 		           }
@@ -413,18 +414,6 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 					  tmp.icon, "drawable",
 					  this.getPackageName()), false);
 			
-//			mode.setOnClickListener(new OnClickListener(){
-//				@Override
-//				public void onClick(View v)
-//				{
-//					Log.e("Widget","List item onClick!");
-//					modeGridAssoc.put(currentModeIndex, item);
-//					initModeGrid(false);
-//					if(modeList.getVisibility() == View.VISIBLE)
-//						modeList.setVisibility(View.GONE);
-//				}
-//			});
-			
 			listItems.put(mode, item);
 			modeListViews.add(mode);
 		}
@@ -449,16 +438,28 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 					"gui_almalence_settings_flash_torch", "drawable",
 					  this.getPackageName()), true);
 			
-//			mode.setOnClickListener(new OnClickListener(){
-//				@Override
-//				public void onClick(View v)
-//				{
-//					modeGridAssoc.put(currentModeIndex, item);
-//					initModeGrid(false);
-//					if(modeList.getVisibility() == View.VISIBLE)
-//						modeList.setVisibility(View.GONE);
-//				}
-//			});
+			listItems.put(mode, item);
+			modeListViews.add(mode);
+		}
+		catch(RuntimeException exp)
+		{
+			
+		}
+		
+		try
+		{
+			LayoutInflater inflator = this.getLayoutInflater();
+			View mode = inflator.inflate(
+					R.layout.widget_opencamera_mode_list_element, null,
+					false);
+			// set some mode icon
+			((ImageView) mode.findViewById(R.id.modeImage))
+					.setImageResource(R.drawable.widget_settings);
+	
+			final String modename = this.getResources().getString(R.string.widgetSettingsItem);
+			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
+			
+			final OpenCameraWidgetItem item = new OpenCameraWidgetItem("settings", R.drawable.widget_settings, false);
 			
 			listItems.put(mode, item);
 			modeListViews.add(mode);
@@ -477,17 +478,64 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
 			{
 //				Log.e("Widget", "onItemClick");
-				OpenCameraWidgetItem item = listItems.get(arg1);
-				if(item != null)
+				final OpenCameraWidgetItem item = listItems.get(arg1);
+				if(item.modeName.contains("hide") && currentModeItem.modeName.contains("settings"))
+				{
+					AlertDialog.Builder builder = new AlertDialog.Builder(OpenCameraWidgetConfigureActivity.this);
+
+					// 2. Chain together various setter methods to set the dialog characteristics
+					builder.setMessage(R.string.widgetHideSettingsText)
+					       .setTitle(R.string.widgetAlert);
+					
+					builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				        	   modeGridAssoc.put(currentModeIndex, item);
+								initModeGrid(false);
+								
+								prefs.edit().putString("widgetAddedModeID" + String.valueOf(currentModeIndex), item.modeName).commit();
+				    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(currentModeIndex), item.modeIconID).commit();
+				    			
+				    			if(modeList.getVisibility() == View.VISIBLE)
+									modeList.setVisibility(View.GONE);
+				           }
+				       });
+					builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				        	   dialog.cancel();
+				           }
+				       });
+
+					// 3. Get the AlertDialog from create()
+					AlertDialog d = builder.create();			        
+			        
+			        d.setOnKeyListener(new OnKeyListener()
+			        {
+						@Override
+						public boolean onKey(DialogInterface dialog, int keyCode,
+								KeyEvent keyEvent)
+						{
+							if(keyCode == KeyEvent.KEYCODE_BACK)
+							{
+								dialog.cancel();
+							}
+							
+							return true;
+						}
+			        	
+			        });
+			        d.show();
+				}				
+				else if(item != null)
 				{
 					modeGridAssoc.put(currentModeIndex, item);
 					initModeGrid(false);
 					
 					prefs.edit().putString("widgetAddedModeID" + String.valueOf(currentModeIndex), item.modeName).commit();
 	    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(currentModeIndex), item.modeIconID).commit();
-				}
-				if(modeList.getVisibility() == View.VISIBLE)
-					modeList.setVisibility(View.GONE);
+	    			
+	    			if(modeList.getVisibility() == View.VISIBLE)
+						modeList.setVisibility(View.GONE);
+				}				
 			}			
 		});
 	}
@@ -543,7 +591,8 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	//    				OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);			
 	//  	    			hash.add(mode);
 	//    			}
-	    		}    		
+	    		}	    		
+	    		
 	    		try
 	    		{
 		    		int iconID = this.getResources().getIdentifier("gui_almalence_settings_flash_torch", "drawable", this.getPackageName());
@@ -552,14 +601,30 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		  			
 	    			prefs.edit().putString("widgetAddedModeID" + String.valueOf(modeCount), "torch").commit();
 	    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(modeCount), iconID).commit();
+	    			
+	    			modeCount++;
 	    		}
 	    		catch(NullPointerException exp)
 	    		{
 	    			Log.e("Widget", "Can't create TORCH mode");
+	    		}    		
+	    		
+	    		try
+	    		{
+		    		int iconID = R.drawable.widget_settings;
+		    		OpenCameraWidgetItem mode = new OpenCameraWidgetItem("settings", iconID, false);
+		  			hash.add(mode);
+		  			
+	    			prefs.edit().putString("widgetAddedModeID" + String.valueOf(modeCount), "settings").commit();
+	    			prefs.edit().putInt("widgetAddedModeIcon" + String.valueOf(modeCount), iconID).commit();
+	    		}
+	    		catch(NullPointerException exp)
+	    		{
+	    			Log.e("Widget", "Can't create SETTINGS button");
 	    		}
 			
     		
-	    		for(int i = 0; i < modeList.size() - 2; i++)
+	    		for(int i = 0; i < modeList.size() - 4; i++)
 	    		{
 	    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem("hide", 0, false);
 	    			hash.add(mode);
@@ -597,7 +662,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 		int i = 0;
 		while (it.hasNext())
 		{
-			OpenCameraWidgetItem tmp = it.next();
+			final OpenCameraWidgetItem tmp = it.next();
 			LayoutInflater inflator = this.getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.widget_opencamera_mode_grid_element, null,
@@ -616,6 +681,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 				@Override
 				public void onClick(View v)
 				{
+					currentModeItem = tmp;
 					currentModeIndex = index;
 					if(modeList.getVisibility() == View.GONE)
 						modeList.setVisibility(View.VISIBLE);

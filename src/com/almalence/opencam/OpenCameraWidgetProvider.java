@@ -45,13 +45,25 @@ public class OpenCameraWidgetProvider extends AppWidgetProvider
             	String modeName = intent.getStringExtra(MainScreen.EXTRA_ITEM);
             	boolean torchValue = intent.getBooleanExtra(MainScreen.EXTRA_TORCH, false);
             	
-            	Bundle extras = new Bundle();
-    	        extras.putString(MainScreen.EXTRA_ITEM, modeName);    	        
-	        	extras.putBoolean(MainScreen.EXTRA_TORCH, torchValue);	
-    	        Intent modeIntent = new Intent(context, MainScreen.class);    	        
-    	        modeIntent.putExtras(extras);
-    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    	        context.startActivity(modeIntent);
+            	if(modeName.contains("settings"))
+            	{
+            		int widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+                	Intent configIntent = new Intent(context, OpenCameraWidgetConfigureActivity.class);    	        
+                	configIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        	        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        	        configIntent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(widgetID)));
+        	        context.startActivity(configIntent);
+            	}
+            	else
+            	{
+	            	Bundle extras = new Bundle();
+	    	        extras.putString(MainScreen.EXTRA_ITEM, modeName);    	        
+		        	extras.putBoolean(MainScreen.EXTRA_TORCH, torchValue);	
+	    	        Intent modeIntent = new Intent(context, MainScreen.class);    	        
+	    	        modeIntent.putExtras(extras);
+	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	    	        context.startActivity(modeIntent);
+            	}
             }
             else
             {

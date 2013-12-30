@@ -68,24 +68,25 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     {
         // position will always range from 0 to getCount() - 1.
     	RemoteViews rv = null;
-    	if(position == mCount-1)
-    	{    		
-    		rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
-	        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
-	        rv.setImageViewResource(R.id.modeImage, R.drawable.widget_settings);	        
-	
-	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
-	        // which is set on the collection view in StackWidgetProvider.	        
-	        
-	        //Intent configIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);
-	        Intent configIntent = new Intent();
-	        configIntent.putExtra(OpenCameraWidgetProvider.BROADCAST_PARAM_IS_MODE, false);
-	        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-	        configIntent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(mAppWidgetId)));
-	        //rv.setOnClickFillInIntent(R.id.modeSelectLayout, configIntent);
-	        rv.setOnClickFillInIntent(R.id.modeImage, configIntent);
-    	}
-    	else if(mWidgetItems != null && mWidgetItems.size() > position)
+//    	if(position == mCount-1)
+//    	{    		
+//    		rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_opencamera_mode_grid_element);
+//	        //rv.setTextViewText(R.id.modeText, mWidgetItems.get(position).modeName);
+//	        rv.setImageViewResource(R.id.modeImage, R.drawable.widget_settings);	        
+//	
+//	        // Next, we set a fill-intent which will be used to fill-in the pending intent template
+//	        // which is set on the collection view in StackWidgetProvider.	        
+//	        
+//	        //Intent configIntent = new Intent(mContext, OpenCameraWidgetConfigureActivity.class);
+//	        Intent configIntent = new Intent();
+//	        configIntent.putExtra(OpenCameraWidgetProvider.BROADCAST_PARAM_IS_MODE, false);
+//	        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+//	        configIntent.setData(Uri.withAppendedPath(Uri.parse("abc" + "://widget/id/"), String.valueOf(mAppWidgetId)));
+//	        //rv.setOnClickFillInIntent(R.id.modeSelectLayout, configIntent);
+//	        rv.setOnClickFillInIntent(R.id.modeImage, configIntent);
+//    	}
+//    	else if(mWidgetItems != null && mWidgetItems.size() > position)
+    	if(mWidgetItems != null && mWidgetItems.size() > position)
     	{
 	    	OpenCameraWidgetItem item = mWidgetItems.get(position);
 	    	
@@ -105,7 +106,12 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
 	        else
 	        	extras.putString(MainScreen.EXTRA_ITEM, item.modeName);
 	        if(item.isTorchOn)
-	        	extras.putBoolean(MainScreen.EXTRA_TORCH, true);	
+	        	extras.putBoolean(MainScreen.EXTRA_TORCH, true);
+	        if(item.modeName.contains("settings"))
+	        {
+	        	extras.putBoolean(OpenCameraWidgetProvider.BROADCAST_PARAM_IS_MODE, false);
+	        	extras.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+	        }
 	        //Intent fillInIntent = new Intent(mContext, MainScreen.class);
 	        Intent fillInIntent = new Intent();
 	        fillInIntent.putExtras(extras);
@@ -166,7 +172,7 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     				mWidgetItems.add(modeInfo);
     		}
     		
-    		mCount = mWidgetItems.size() + 1;
+    		mCount = mWidgetItems.size();
     	}
     	else
     	{
@@ -184,7 +190,7 @@ class OpenCameraRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
     			}
     		}
     		
-    		mCount = mWidgetItems.size() + 1;
+    		mCount = mWidgetItems.size();
     	}
     }
 }

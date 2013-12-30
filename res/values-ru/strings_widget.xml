@@ -9,8 +9,10 @@
 	<string name="widgetConfigTitle">Структура виджета</string>
 	<string name="widgetHideItem">Убрать</string>
 	<string name="widgetTorchItem">Фонарик</string>
+	<string name="widgetSettingsItem">Настройки виджета</string>
+	<string name="widgetHideSettingsText">Если убрать все копки настройки виджета, Вы не сможете больше конфигурировать текущий виджет!</string>
+	<string name="widgetAlert">Внимание!</string>	
 	<string name="widgetShopText">Для активации виджета приобретите любой премиум режим.</string>
-	<string name="widgetCancelText">Отмена</string>
 	<string name="widgetGoShopText">Магазин</string>
 	<string name="widgetActivation">Активация виджета</string>
 </resources>
