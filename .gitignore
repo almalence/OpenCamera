@@ -3,3 +3,4 @@
 /gen
 /jni/almashot/armeabi-v7a/libalmalib.a
 /jni/almashot/x86/libalmalib.a
+/.settings
