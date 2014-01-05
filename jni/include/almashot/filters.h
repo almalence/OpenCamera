@@ -218,18 +218,25 @@ void Filters_PostFilterUV
 );
 
 
-// Filter lower spatial components of the frame
-// (useful for small-pixel sensors)
-int Filters_GetFilteredLowSpatial
+int Filters_DownscaleLowSpatial
 (
 	void *instance,
 	Uint8 *in,
 	Uint8 *inUV,
 	int sx,
 	int sy,
-	int Filter,
 	Uint8 **quarterIn,
 	Uint8 **quarterOut
+);
+
+int Filters_GetFilteredLowSpatial
+(
+	void *instance,
+	Uint8 *qIn,
+	Uint8 *qOut,
+	int sxs,
+	int sys,
+	int Filter
 );
 
 void Filters_ResidualQuarterCompute
@@ -240,10 +247,22 @@ void Filters_ResidualQuarterCompute
 	int sx,
 	int sy,
 	int sxs,
-	int sys,
-	int s
+	int sys
 );
 
+void Filters_ResidualQuarterComputeUV
+(
+	Uint8 *in,
+	Uint8 *quarterIn,
+	Uint8 *quarterOut,
+	int sx,
+	int sy,
+	int sxs,
+	int sys
+);
+
+// Filter lower spatial components of the frame
+// (useful for small-pixel sensors)
 void Filters_FilterLowSpatial
 (
 	void *instance,
