@@ -2165,6 +2165,8 @@ public class AlmalenceGUI extends GUI implements
 									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
 								}
 								
+								String focusMode = MainScreen.thiz.getFocusMode();
+								
 								preferences
 								.edit()
 								.putString(
@@ -2172,15 +2174,16 @@ public class AlmalenceGUI extends GUI implements
 												: sFrontFocusModePref, AFMode).commit();
 							}		
 							
-
-							initSettingsMenu();
-							hideSecondaryMenus();
-							unselectPrimaryTopMenuButtons(-1);
-							
 							Message msg = new Message();
 							msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 							msg.what = PluginManager.MSG_BROADCAST;
 							MainScreen.H.sendMessage(msg);
+							
+							initSettingsMenu();
+							hideSecondaryMenus();
+							unselectPrimaryTopMenuButtons(-1);
+							
+							String focusMode = MainScreen.thiz.getFocusMode();
 							
 							guiView.findViewById(R.id.topPanel).setVisibility(
 									View.VISIBLE);
@@ -4964,7 +4967,7 @@ public class AlmalenceGUI extends GUI implements
 		initSettingsMenu();
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
-
+		
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;

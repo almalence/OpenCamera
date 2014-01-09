@@ -75,6 +75,7 @@ typedef signed char Int8;
 #define ALMA_INVALID_BUFFERS		5
 #define ALMA_GL_CONTEXT_ERROR		6
 #define ALMA_GL_SURFACE_ERROR		7
+#define ALMA_INVALID_PARAMETER		8
 
 
 // ---------------------------------------------------------------------------

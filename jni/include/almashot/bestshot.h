@@ -62,7 +62,21 @@ int BestShot_Select
 	float *  FramesScores,
 	int      nFramesToSelect
 );
-
+    
+int BestShot_SelectfromTiles
+(
+    Uint8 ** in,
+    int     sx,
+    int		sy,
+    int     x_st,
+    int     y_st,
+    int     x_en,
+    int     y_en,
+    int		nImages,
+    int     * BestFrames,
+    float   * FramesScores,
+    int     nFramesToSelect
+);
 
 #if defined __cplusplus
 }
