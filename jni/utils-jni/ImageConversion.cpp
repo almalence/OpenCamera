@@ -50,7 +50,7 @@ jbyte NightGamma[511] =
 
 // summation with tone-curve applied after
 // used in night-mode viewfinder
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversion_sumByteArraysNV21
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_sumByteArraysNV21
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -100,7 +100,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversion_TransformNV21
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_TransformNV21
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -127,7 +127,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversion_TransformNV21N
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_TransformNV21N
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -144,7 +144,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_opencam_util_ImageConversion_JpegConvert
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_util_ImageConversion_JpegConvert
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -179,7 +179,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_opencam_util_ImageConversio
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversion_convertNV21toGL(
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_convertNV21toGL(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
 {
 	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);
@@ -199,7 +199,7 @@ inline int max(int a, int b)
 {
 	return (a > b ? a : b);
 }
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversion_nativeresizeJpeg2RGBA(
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_nativeresizeJpeg2RGBA(
 		JNIEnv *env, jclass clazz,
 		jbyteArray jpeg,
 		jbyteArray rgb_out,
@@ -378,7 +378,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_opencam_util_ImageConversio
 }
 
 
-extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_opencam_util_Util_getMemoryInfo(JNIEnv* env, jclass)
+extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_Util_getMemoryInfo(JNIEnv* env, jclass)
 {
 	FILE *f;
 	char dummy[1024];
