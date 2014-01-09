@@ -29,11 +29,20 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.almalence.SwapHeap;
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+//-+- -->
+
+import com.almalence.SwapHeap;
 
 /***
 Implements burst capture plugin - captures predefined number of images

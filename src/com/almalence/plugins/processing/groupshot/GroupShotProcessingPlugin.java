@@ -58,11 +58,22 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.opencam.util.Size;
+//-+- -->
+
+import com.almalence.util.Size;
+
 
 /***
 Implements group shot processing

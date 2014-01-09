@@ -33,11 +33,21 @@ import android.util.Log;
 
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.opencam.util.ImageConversion;
+//-+- -->
+
+import com.almalence.util.ImageConversion;
 
 public class PanoramaProcessingPlugin extends PluginProcessing
 {

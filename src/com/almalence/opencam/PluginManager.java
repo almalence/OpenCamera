@@ -16,7 +16,13 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
+
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -65,12 +71,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.almalence.asynctaskmanager.Task;
-import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegMetadataReader;
-import com.almalence.opencam.util.exifreader.imaging.jpeg.JpegProcessingException;
-import com.almalence.opencam.util.exifreader.metadata.Directory;
-import com.almalence.opencam.util.exifreader.metadata.Metadata;
-import com.almalence.opencam.util.exifreader.metadata.exif.ExifIFD0Directory;
-import com.almalence.opencam.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+
+import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
+import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
+import com.almalence.util.exifreader.metadata.Directory;
+import com.almalence.util.exifreader.metadata.Metadata;
+import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
+import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
@@ -712,14 +720,16 @@ public class PluginManager {
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 	}
 
-	public void OnShutterClick() {
+	public void OnShutterClick() 
+	{
+		//<!-- -+-
 		// check if plugin payed
 		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
 		{
 			MainScreen.guiManager.lockControls = false;
 			return;
 		}
-		
+		//-+- -->
 		if (shutterRelease == false)
 			return;
 
@@ -742,14 +752,16 @@ public class PluginManager {
 		}
 	}
 	
-	public void OnFocusButtonClick() {
+	public void OnFocusButtonClick() 
+	{
+		//<!-- -+-
 		// check if plugin payed
 		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
 		{
 			MainScreen.guiManager.lockControls = false;
 			return;
 		}
-
+		//-+- -->
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).OnFocusButtonClick();
 		if (null != pluginList.get(activeCapture))
@@ -1077,12 +1089,14 @@ public class PluginManager {
 			addHeadersContent(pf, inactivePlugins, true);
 		} else if ("plugins_settings".equals(settings)) 
 		{
+			//<!-- -+-
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 			if (false == prefs.getBoolean("unlock_all_forever", false))
 			{
 				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
 				MainScreen.thiz.onBillingPreferenceCreate(pf);
 			}
+			//-+- -->
 		}
 
 		loadStandardSettingsAfter(pf, settings);
@@ -1454,11 +1468,13 @@ public class PluginManager {
 
 			MainScreen.thiz.MuteShutter(false);
 			
+			// <!-- -+-
 			//if mode free
 			Mode mode = getActiveMode();
 	    	if (mode.SKU != null)
 	    		if (!mode.SKU.isEmpty())
 	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
+	    	//-+- -->
 	    	
 	    	MainScreen.guiManager.lockControls = false;
 			Message message = new Message();

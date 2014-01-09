@@ -41,13 +41,24 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.SoundPlayer;
+import com.almalence.opencam_plus.ui.GUI;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.util.Util;
+//-+- -->
+
+import com.almalence.util.Util;
 
 /***
 Implements touch to focus functionality

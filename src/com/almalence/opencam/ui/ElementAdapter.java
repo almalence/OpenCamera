@@ -16,16 +16,18 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
 
 import java.util.List;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 /***
 Adapter for grids elements

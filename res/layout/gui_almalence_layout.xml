@@ -14,7 +14,7 @@
 		android:orientation="vertical"		    
 		android:background="@android:color/transparent"	  	
 		android:visibility="gone">
-		<com.almalence.opencam.ui.RotateImageView
+		<com.almalence.ui.RotateImageView
 				android:id="@+id/selectModeIcon"
 				android:paddingTop="2dp"
    		    	android:paddingBottom="2dp"
@@ -24,7 +24,7 @@
 				android:layout_height="@dimen/mainButtonHeight"
 				android:layout_width="@dimen/mainButtonHeight"	
 				android:scaleType="fitXY">
-		</com.almalence.opencam.ui.RotateImageView>
+		</com.almalence.ui.RotateImageView>
 		<TextView android:id="@+id/selectModeText"
    		    	  android:layout_width="wrap_content"
    		    	  android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
 		 	 	    android:gravity="center">
-	            <com.almalence.opencam.ui.RotateImageView
+	            <com.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery"								
 					android:layout_gravity="center_horizontal"
 					android:src="@drawable/gui_almalence_gallery"									
@@ -92,13 +92,13 @@
 					android:layout_width="@dimen/paramsLayoutHeight"	
 					android:scaleType="fitCenter"
 			   		android:onClick="onButtonClick">
-				</com.almalence.opencam.ui.RotateImageView>
+				</com.almalence.ui.RotateImageView>
 				</LinearLayout>
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
 		 	 	    android:gravity="center">
-				<com.almalence.opencam.ui.RotateImageView
+				<com.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
@@ -108,7 +108,7 @@
 					android:layout_width="@dimen/scanerWidth"
 			   		android:onClick="onButtonClick"
 			   		android:visibility="gone">
-				</com.almalence.opencam.ui.RotateImageView>
+				</com.almalence.ui.RotateImageView>
 				</LinearLayout>
 			</RelativeLayout>
 		
@@ -118,7 +118,7 @@
 	 	 	    android:gravity="bottom"	    			 	 	    
 				android:layout_weight="1">
 				
-	 	 	<com.almalence.opencam.ui.RotateImageView
+	 	 	<com.almalence.ui.RotateImageView
 				android:id="@+id/buttonShutter"
 				android:src="@drawable/button_shutter"				
 				android:background="@android:color/transparent"			
@@ -131,7 +131,7 @@
 				android:paddingTop="0dp"
 		   		android:layout_gravity="center_horizontal"
 		   		android:onClick="onButtonClick">
-		 	</com.almalence.opencam.ui.RotateImageView>
+		 	</com.almalence.ui.RotateImageView>
 		 	</LinearLayout>	 	
 		 	
 	 	 	<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
@@ -139,7 +139,7 @@
 	 	 	    android:orientation="vertical"
 	 	 	    android:gravity="center"	    			 	 	    
 				android:layout_weight="1">
-	 	 	<com.almalence.opencam.ui.RotateImageView
+	 	 	<com.almalence.ui.RotateImageView
 				android:id="@+id/buttonSelectMode"
 				android:src="@drawable/button_selectmode"
 				android:layout_gravity="center_horizontal"
@@ -148,7 +148,7 @@
 				android:layout_width="@dimen/paramsLayoutHeight"	
 				android:scaleType="fitXY"							
 		   		android:onClick="onButtonClick">
-		 	</com.almalence.opencam.ui.RotateImageView>
+		 	</com.almalence.ui.RotateImageView>
 		 	</LinearLayout>
  	</LinearLayout>
 	 	      
@@ -219,49 +219,49 @@
 		android:background="@drawable/topmenu_background"	    
 		android:layout_gravity="top"		
 		android:layout_alignParentTop="true">
-		 	<com.almalence.opencam.ui.RotateImageView android:id="@+id/evButton"
+		 	<com.almalence.ui.RotateImageView android:id="@+id/evButton"
 					android:background="@drawable/transparent_background"
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>
-		 	<com.almalence.opencam.ui.RotateImageView android:id="@+id/sceneButton"
+		 	<com.almalence.ui.RotateImageView android:id="@+id/sceneButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>		 	
-			<com.almalence.opencam.ui.RotateImageView android:id="@+id/wbButton"
+			<com.almalence.ui.RotateImageView android:id="@+id/wbButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.opencam.ui.RotateImageView android:id="@+id/focusButton"
+			<com.almalence.ui.RotateImageView android:id="@+id/focusButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.opencam.ui.RotateImageView android:id="@+id/flashButton"
+			<com.almalence.ui.RotateImageView android:id="@+id/flashButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.opencam.ui.RotateImageView android:id="@+id/isoButton"
+			<com.almalence.ui.RotateImageView android:id="@+id/isoButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>			
-			<com.almalence.opencam.ui.RotateImageView android:id="@+id/camerachangeButton"
+			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@drawable/transparent_background"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -292,7 +292,7 @@
 					/>					
 	</RelativeLayout>
 	 
-	<com.almalence.opencam.ui.RotateImageView 
+	<com.almalence.ui.RotateImageView 
 	    android:id="@+id/Unlock"
 		android:background="@drawable/transparent_background"
 		android:src="@drawable/unlock"					
@@ -521,7 +521,8 @@
 					/>
 	</RelativeLayout>
 	
-	<com.almalence.opencam.ui.Panel
+<!-- -+-  -->
+	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -553,8 +554,45 @@
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
-	</com.almalence.opencam.ui.Panel>
-	
+	</com.almalence.ui.Panel>
+<!--  -+- -->	
+<!-- +++
+	<com.almalence.ui.Panel
+	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/topPanel"
+		android:gravity="top"
+		my:position="top"
+		my:animationDuration="30"
+		my:downSpace="@dimen/paramsLayoutHeight"
+		my:linearFlying="true"
+		my:openedHandle="@drawable/gui_almalence_handle_up"
+		my:closedHandle="@drawable/gui_almalence_handle_down"		
+		>
+		<ImageButton
+			android:id="@id/panelHandle"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="@android:color/transparent" 
+			android:layout_gravity="center"
+			android:layout_marginTop="@dimen/paramsLayoutHeight"
+			android:paddingBottom="5dip"
+			/>
+				
+		<LinearLayout
+			android:id="@id/panelContent"
+			android:orientation="vertical"
+			android:background="@drawable/layout_border"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<include
+			layout="@layout/gui_almalence_panel" />
+		</LinearLayout>
+	</com.almalence.ui.Panel>
++++ -->	
+
+
 	<LinearLayout
 		android:id="@+id/hintLayout"
 		android:layout_width="fill_parent"

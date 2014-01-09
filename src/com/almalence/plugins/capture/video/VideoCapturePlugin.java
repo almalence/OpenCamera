@@ -61,13 +61,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
+import com.almalence.opencam_plus.ui.GUI;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.RotateImageView;
+//-+- -->
+
+import com.almalence.ui.RotateImageView;
 
 /***
 Implements basic functionality of Video capture.

@@ -28,10 +28,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.Plugin;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
+//-+- -->
 
 /***
 Implements viewfinder plugin - adds different grids on VF

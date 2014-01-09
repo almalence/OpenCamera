@@ -16,12 +16,25 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
+
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+/* <!-- +++
+import com.almalence.opencam_plus.PluginManager;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.PluginManager;
+//-+- -->
+
 
 import android.content.Context;
 import android.graphics.PixelFormat;

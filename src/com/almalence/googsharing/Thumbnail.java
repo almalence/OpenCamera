@@ -49,7 +49,8 @@ import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 
-import com.almalence.opencam.util.Util;
+import com.almalence.util.Util;
+
 
 public class Thumbnail {
     private static final String TAG = "Thumbnail";

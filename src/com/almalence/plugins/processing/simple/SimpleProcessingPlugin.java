@@ -18,9 +18,16 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.simple;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
+//-+- -->
 
 /***
 Implements simple processing plugin - just translate shared memory values 

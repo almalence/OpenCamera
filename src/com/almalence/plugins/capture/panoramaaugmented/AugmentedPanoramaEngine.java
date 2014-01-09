@@ -31,9 +31,17 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.almalence.SwapHeap;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.util.ImageConversion;
-import com.almalence.opencam.util.Util;
+//-+- -->
+
+import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
+
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
 import android.opengl.GLES10;

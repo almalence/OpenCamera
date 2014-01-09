@@ -16,7 +16,14 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +35,19 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.Plugin;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+//-+- -->
+
 
 /***
 GUI implements basic functionality for GUI. 

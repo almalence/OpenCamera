@@ -16,7 +16,14 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,7 +102,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.ui.Panel;
+import com.almalence.ui.RotateImageView;
+import com.almalence.ui.Panel.OnPanelListener;
+
 import com.almalence.googsharing.Thumbnail;
+
+//<!-- -+-
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Mode;
@@ -104,8 +117,21 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
-import com.almalence.opencam.ui.Panel.OnPanelListener;
-import com.almalence.opencam.util.Util;
+
+//-+- -->
+/* <!-- +++
+import com.almalence.opencam_plus.ConfigParser;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.Mode;
+import com.almalence.opencam_plus.Plugin;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginType;
+import com.almalence.opencam_plus.Preferences;
+import com.almalence.opencam_plus.R;
++++ --> */
+
+import com.almalence.util.Util;
+
 /***
  * AlmalenceGUI is an instance of GUI class, implements current GUI
  ***/
@@ -872,9 +898,11 @@ public class AlmalenceGUI extends GUI implements
 				((TextView) guiView.findViewById(R.id.blockingText))
 						.setRotation(-AlmalenceGUI.mDeviceOrientation);
 				
+				// <!-- -+-
 				((RotateImageView) guiView.findViewById(R.id.Unlock))
 				.setOrientation(AlmalenceGUI.mDeviceOrientation);
-
+				//-+- -->
+				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 				
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
@@ -913,7 +941,7 @@ public class AlmalenceGUI extends GUI implements
 		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
 				.setImageBitmap(bm);
 		
-		
+		// <!-- -+-
 		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		unlock.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) 
@@ -931,7 +959,7 @@ public class AlmalenceGUI extends GUI implements
 				MainScreen.thiz.startActivity(intent);
 			}
 		});
-		
+		//-+- -->
 	}
 
 	@Override
@@ -953,7 +981,7 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	
-	
+	//<!-- -+-	
 	public void ShowUnlockControl()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -984,6 +1012,7 @@ public class AlmalenceGUI extends GUI implements
 		unlock.startAnimation(invisible_alpha);
 	}
 	
+	
 	public void ShowGrayUnlockControl()
 	{
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
@@ -998,8 +1027,8 @@ public class AlmalenceGUI extends GUI implements
 	{
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));		
 		unlock.setVisibility(View.GONE);
-		
 	}
+	//-+- -->
 	
 	@Override
 	public void onResume() {
@@ -1041,7 +1070,7 @@ public class AlmalenceGUI extends GUI implements
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 		
-		
+		// <!-- -+-
 		//manage unlock control
 		if (true == prefs.getBoolean("unlock_all_forever", false))
 			HideUnlockControl();
@@ -1087,6 +1116,7 @@ public class AlmalenceGUI extends GUI implements
 			else
 				ShowGrayUnlockControl();
 		}
+		//-+- -->
 	}
 	
 	
@@ -1197,6 +1227,7 @@ public class AlmalenceGUI extends GUI implements
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 		
+		// <!-- -+-
 		//manage unlock control
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -1244,6 +1275,7 @@ public class AlmalenceGUI extends GUI implements
 			else
 				ShowUnlockControl();
 		}
+		//-+- -->
 	}
 
 	private Map<String, View> initCameraParameterModeButtons(
@@ -2517,8 +2549,8 @@ public class AlmalenceGUI extends GUI implements
 	private boolean isCameraParameterSupported(String param) {
 		if (param != "" && topMenuPluginButtons.containsKey(param))
 			return true;
-		else if (param != ""
-				&& com.almalence.opencam.util.Util.isNumeric(param)) {
+		else if (param != "" && com.almalence.util.Util.isNumeric(param))
+		{
 			int cameraParameter = Integer.valueOf(param);
 			switch (cameraParameter) {
 			case MODE_EV:
@@ -3915,14 +3947,18 @@ public class AlmalenceGUI extends GUI implements
 		AnimationSet lrvisible = new AnimationSet(true);
 		lrvisible.setInterpolator(new DecelerateInterpolator());
 
-		int duration_invisible = isAnimate ? com.almalence.opencam.util.Util
+		int duration_invisible = 0;
+		duration_invisible = isAnimate ? com.almalence.util.Util
 				.clamp(Math.abs(Math.round(((toLeft ? XtoVisible
 						: (screenWidth - XtoVisible)) * 500) / screenWidth)),
 						10, 500) : 0;
-		int duration_visible = isAnimate ? com.almalence.opencam.util.Util
+		
+		int duration_visible = 0; 
+		duration_visible = isAnimate ? com.almalence.util.Util
 				.clamp(Math.abs(Math.round(((toLeft ? XtoInvisible
 						: (screenWidth - XtoInvisible)) * 500) / screenWidth)),
 						10, 500) : 0;
+		
 
 		Animation invisible_alpha = new AlphaAnimation(1, 0);
 		invisible_alpha.setDuration(duration_invisible);
@@ -5426,9 +5462,11 @@ public class AlmalenceGUI extends GUI implements
 
 						tmpActiveMode = mode;
 
+						// <!-- -+-
 						if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
 							return false;
-
+						//-+- -->
+						
 						new CountDownTimer(100, 100) {
 							public void onTick(long millisUntilFinished) {
 							}
@@ -5511,9 +5549,11 @@ public class AlmalenceGUI extends GUI implements
 
 					tmpActiveMode = mode;
 
+					// <!-- -+-
 					if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
 						return;
-
+					//-+- -->
+					
 					new CountDownTimer(100, 100) {
 						public void onTick(long millisUntilFinished) {
 						}

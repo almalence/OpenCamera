@@ -52,10 +52,20 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.almalence.SwapHeap;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+//-+- -->
+
 import com.almalence.plugins.capture.preshot.PreShot;
 
 /***
@@ -670,10 +680,11 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		lrvisible.setInterpolator(new DecelerateInterpolator());
 		
 		int duration_visible = 0;
+		
 		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			duration_visible = com.almalence.opencam.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actH)), 250, 500);
+			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actH)), 250, 500);
 		else
-			duration_visible = com.almalence.opencam.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actW)), 250, 500);
+			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actW)), 250, 500);
 		
 		Animation visible_alpha = new AlphaAnimation(0, 1);		
 		visible_alpha.setDuration(duration_visible);
@@ -879,8 +890,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 					float scale_from = Math.abs(Xprev - X)/-500 + 2;
 					float scale_to = Math.abs(difX - X)/-500 + 2;
 					
-					scale_from = com.almalence.opencam.util.Util.clamp(scale_from, 1, 2);
-					scale_to = com.almalence.opencam.util.Util.clamp(scale_to, 1, 2);
+					scale_from = com.almalence.util.Util.clamp(scale_from, 1, 2);
+					scale_to = com.almalence.util.Util.clamp(scale_to, 1, 2);
 					
 //					in_scale_animation = new ScaleAnimation(scale_from, scale_to, scale_from, scale_to, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
 //					in_scale_animation.setDuration(10);
@@ -931,8 +942,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 					float scale_from = Math.abs(X - Xprev)/-500 + 2;
 					float scale_to = Math.abs(X - difX)/-500 + 2;
 					
-					scale_from = com.almalence.opencam.util.Util.clamp(scale_from, 1, 2);
-					scale_to = com.almalence.opencam.util.Util.clamp(scale_to, 1, 2);
+					scale_from = com.almalence.util.Util.clamp(scale_from, 1, 2);
+					scale_to = com.almalence.util.Util.clamp(scale_to, 1, 2);
 					
 //					in_scale_animation = new ScaleAnimation(scale_from, scale_to, scale_from, scale_to, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
 //					in_scale_animation.setDuration(10);

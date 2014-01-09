@@ -16,7 +16,13 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
+
 
 /***
 Currently available plugin types

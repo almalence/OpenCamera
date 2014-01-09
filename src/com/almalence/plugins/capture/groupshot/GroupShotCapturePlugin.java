@@ -29,11 +29,19 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.almalence.SwapHeap;
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+//-+- -->
+import com.almalence.SwapHeap;
 
 /***
 Implements group shot capture plugin - captures predefined number of images
