@@ -104,6 +104,12 @@ public class BurstCapturePlugin extends PluginCapture
         case 10:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
         	break;
+        case 15:
+        	quickControlIconID = R.drawable.gui_almalence_mode_burst15;
+        	break;
+        case 20:
+        	quickControlIconID = R.drawable.gui_almalence_mode_burst20;
+        	break;
         }       
 	}
 	
@@ -124,8 +130,14 @@ public class BurstCapturePlugin extends PluginCapture
         case 10:
         	selected=2;
         	break;
+        case 15:
+        	selected=3;
+        	break;
+        case 20:
+        	selected=4;
+        	break;
         }
-        selected= (selected+1)%3;
+        selected= (selected+1)%5;
         
     	Editor editor = prefs.edit();
     	switch (selected)
@@ -142,6 +154,14 @@ public class BurstCapturePlugin extends PluginCapture
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
         	editor.putString("burstImagesAmount", "10");
         	break;
+        case 3:
+        	quickControlIconID = R.drawable.gui_almalence_mode_burst15;
+        	editor.putString("burstImagesAmount", "15");
+        	break;
+        case 4:
+        	quickControlIconID = R.drawable.gui_almalence_mode_burst20;
+        	editor.putString("burstImagesAmount", "20");
+        	break;
         }
     	editor.commit();
 	}
@@ -153,6 +173,9 @@ public class BurstCapturePlugin extends PluginCapture
 	{
 		if (inCapture == false)
         {
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+			
 			MainScreen.thiz.MuteShutter(true);
 			
 			String fm = MainScreen.thiz.getFocusMode();
@@ -168,8 +191,6 @@ public class BurstCapturePlugin extends PluginCapture
 				takingAlready = true;			
 			else if(takingAlready == false)
 			{
-				Date curDate = new Date();
-				SessionID = curDate.getTime();
 				takePicture();
 			}
         }

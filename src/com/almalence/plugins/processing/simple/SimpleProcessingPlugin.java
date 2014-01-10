@@ -24,6 +24,8 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 +++ --> */
 // <!-- -+-
+import android.util.Log;
+
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
@@ -51,6 +53,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 		
+//		Log.v("!!!!!!!!!!!!", "SessionID " + sessionID + " shared size " + PluginManager.getInstance().sizeOfSharedMemory());
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID));
 		if (num == null)
 			return;

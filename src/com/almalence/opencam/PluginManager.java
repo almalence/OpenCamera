@@ -1677,6 +1677,10 @@ public class PluginManager {
 				sharedMemory.remove(i);
 		}
 	}
+	
+	public int sizeOfSharedMemory() {
+		return sharedMemory.size();
+	}
 
 	public void removeFromSharedMemory(String key) {
 		Enumeration<String> e = sharedMemory.keys();

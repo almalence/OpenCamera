@@ -13,5 +13,7 @@
     <string name="Res_Burst_3">3張圖像</string>
     <string name="Res_Burst_5">5張圖像</string>
     <string name="Res_Burst_10">10張圖像</string>
+    <string name="Res_Burst_15">15張圖像</string>
+    <string name="Res_Burst_20">20張圖像</string>
     
 </resources>

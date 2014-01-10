@@ -103,6 +103,9 @@ public class GroupShotCapturePlugin extends PluginCapture
 				Toast.makeText(MainScreen.thiz, "Processing in progress. Please wait.", Toast.LENGTH_SHORT).show();
 				return;
 			}
+	
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
 			
 			MainScreen.thiz.MuteShutter(true);
 			
@@ -119,8 +122,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 				takingAlready = true;			
 			else if(takingAlready == false)
 			{
-				Date curDate = new Date();
-				SessionID = curDate.getTime();
 				takePicture();
 			}
         }

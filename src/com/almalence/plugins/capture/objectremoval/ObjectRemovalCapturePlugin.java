@@ -27,6 +27,7 @@ import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 
@@ -97,6 +98,15 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		if (inCapture == false)
         {
+			if (PluginManager.getInstance().getProcessingCounter()!=0)
+			{
+				Toast.makeText(MainScreen.thiz, "Processing in progress. Please wait.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+						
 			MainScreen.thiz.MuteShutter(true);
 			
 			String fm = MainScreen.thiz.getFocusMode();
@@ -112,8 +122,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				takingAlready = true;			
 			else if(takingAlready == false)
 			{
-				Date curDate = new Date();
-				SessionID = curDate.getTime();
 				takePicture();
 			}
         }
