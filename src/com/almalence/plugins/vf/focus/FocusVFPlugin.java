@@ -732,6 +732,7 @@ public class FocusVFPlugin extends PluginViewfinder
     public void setFocusMode(String focus_mode)
     {
     	mPreferences.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, focus_mode).commit();
+    	preferenceFocusMode = focus_mode;
     }
 
     public List<Area> getFocusAreas()

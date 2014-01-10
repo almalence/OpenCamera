@@ -4927,15 +4927,15 @@ public class AlmalenceGUI extends GUI implements
 			e.printStackTrace();
 			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
 		}
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
 		
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
 		MainScreen.H.sendMessage(msg);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
 		
 		MainScreen.setAutoFocusLock(false);
 	}

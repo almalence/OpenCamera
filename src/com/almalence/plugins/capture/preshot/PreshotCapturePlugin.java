@@ -261,6 +261,11 @@ public class PreshotCapturePlugin extends PluginCapture
 				
 			}
 		}
+		
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 
 	@Override
