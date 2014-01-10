@@ -424,14 +424,22 @@ public class ExportPlugin extends PluginExport
 	            if(tag_spectral_ensitivity != null)
 	            	ei.setAttribute("SpectralSensitivity", tag_spectral_ensitivity);
 	            
-	            ei.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(x));
-	            ei.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(y));	            
+	            String xStr = String.valueOf(x);
+	            if (xStr != null)
+	            	ei.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, xStr);
+	            String yStr = String.valueOf(y);
+	            if (yStr != null)
+	            	ei.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, yStr);	            
 	            
 	            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-	            ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
-	            ei.setAttribute("DateTimeOriginal", dateString);
+	            if (dateString != null)
+	            {
+	            	ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
+	            	ei.setAttribute("DateTimeOriginal", dateString);
+	            }
 	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name));
-	            ei.setAttribute("ExifVersion", tag_version==null?"":tag_version);
+	            if(tag_version != null)
+	            	ei.setAttribute("ExifVersion", tag_version);
 	            
 	            if(writeOrientationTag)			            	
 	            {

@@ -82,9 +82,16 @@ public class BurstCapturePlugin extends PluginCapture
 	
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		imageAmount = Integer.parseInt(prefs.getString("burstImagesAmount", "3"));
-		pauseBetweenShots = Integer.parseInt(prefs.getString("burstPauseBetweenShots", "0"));
+		try
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			imageAmount = Integer.parseInt(prefs.getString("burstImagesAmount", "3"));
+			pauseBetweenShots = Integer.parseInt(prefs.getString("burstPauseBetweenShots", "0"));
+		}
+		catch (Exception e)
+		{
+			Log.v("Burst capture", "Cought exception " + e.getMessage());
+		}
 		
         switch (imageAmount)
         {
