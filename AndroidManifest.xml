@@ -49,11 +49,19 @@
 		        		android:label="Processing"
         				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
+   		<!-- +++
+		<activity android:name="com.almalence.opencam_plus.Preferences"
+				        android:label="@string/app_name"
+				        android:icon="@drawable/gui_almalence_settings_more_settings"
+				        android:hardwareAccelerated="true"/>
+		+++ -->
+		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.Preferences"
-		        android:label="@string/app_name"
-		        android:icon="@drawable/gui_almalence_settings_more_settings"
-		        android:hardwareAccelerated="true"/>
-		
+				        android:label="@string/app_name"
+				        android:icon="@drawable/gui_almalence_settings_more_settings"
+				        android:hardwareAccelerated="true"/>
+		<!--  -+- -->
+				
 		<activity android:name="com.almalence.photoeditor.PhotoEditor"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -67,6 +75,7 @@
 		<activity android:name=".FolderPicker"
 		        android:label="@string/choose_folder"/>
 		
+		<!-- replace opencam to opencam_plus for paid version in widget!!! -->
 		<!-- <receiver android:name=".OpenCameraWidgetProvider" >
     		<intent-filter>
         		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />        		

@@ -1,19 +1,6 @@
+<!-- -+-  -->
 <PreferenceScreen
  xmlns:android="http://schemas.android.com/apk/res/android">
-        <!-- 
-		<PreferenceScreen
-			 android:fragment="com.almalence.opencam.Fragment"
-			 android:title="@string/Pref_Single_Title">
-			 <extra android:name="type" android:value="single"/>
-		</PreferenceScreen>
-		-->
-		<!-- 
-		<PreferenceScreen
-			 android:fragment="com.almalence.opencam.Fragment"
-			 android:title="@string/Pref_SelfTimer_Title">
-			 <extra android:name="type" android:value="selftimer"/>
-		</PreferenceScreen>
-		 -->
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_Burst_Title">
@@ -74,3 +61,68 @@
 			 <extra android:name="type" android:value="panorama_augmented"/>
 		</PreferenceScreen>
 </PreferenceScreen>
+<!--  -+- -->
+<!-- +++
+<PreferenceScreen
+ xmlns:android="http://schemas.android.com/apk/res/android">
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Burst_Title">
+			 <extra android:name="type" android:value="burst"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Expobracketing_Title">
+			 <extra android:name="type" android:value="expobracketing"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_HDR_Title">
+			 <extra android:name="type" android:value="hdr"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Night_Title">
+			 <extra android:name="type" android:value="night"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Video_Title">
+			 <extra android:name="type" android:value="video"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Preshot_Title">
+			 <extra android:name="type" android:value="preshot"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_ObjectRemoval_Title">
+			 <extra android:name="type" android:value="objectremoval"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Groupshot_Title">
+			 <extra android:name="type" android:value="groupshot"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Sequence_Title">
+			 <extra android:name="type" android:value="sequence"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_PanoramaAugmented_Title">
+			 <extra android:name="type" android:value="panorama_augmented"/>
+		</PreferenceScreen>
+</PreferenceScreen>
++++ -->
