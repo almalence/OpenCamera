@@ -87,102 +87,102 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
         
 //        Log.e("Widget", "Widget Configuration Activity onCreate");
         
-        if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
-		{
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_hdr", true);
-			prefsEditor.commit();
-		}
-		if (isInstalled("com.almalence.panorama.smoothpanorama"))
-		{
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_panorama", true);
-			prefsEditor.commit();
-		}
-		
-        /**** Check Billing *****/
-		if (false == prefs.contains("unlock_all_forever") &&
-			false == prefs.contains("plugin_almalence_hdr") &&
-			false == prefs.contains("plugin_almalence_panorama") &&
-			false == prefs.contains("plugin_almalence_moving_burst") &&
-			false == prefs.contains("plugin_almalence_groupshot"))
-		{
-//			Log.e("Widget", "Show shop dialog!");
-			// 1. Instantiate an AlertDialog.Builder with its constructor
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			// 2. Chain together various setter methods to set the dialog characteristics
-			builder.setMessage(R.string.widgetShopText)
-			       .setTitle(R.string.widgetActivation);
-			
-			builder.setPositiveButton(R.string.widgetGoShopText, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   Bundle extras = new Bundle();
-		    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
-		    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
-		    	        modeIntent.putExtras(extras);
-		    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
-						
-		    	        finish();
-		           }
-		       });
-			builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   finish();
-		           }
-		       });
-
-			// 3. Get the AlertDialog from create()
-			AlertDialog d = builder.create();
-	        //d.setTitle("Activate widget");
-	        //d.setContentView(R.layout.widget_opencamera_shop_dialog);	        
-	        //Button cancelButton = (Button) d.findViewById(R.id.widgetButtonCancel);
-	        //Button shopButton = (Button) d.findViewById(R.id.widgetButtonGoShop);
-	        
-//	        cancelButton.setOnClickListener(new OnClickListener()
-//	        {
-//				@Override
-//				public void onClick(View arg0)
-//				{
-//					finish();
-//				}
-//	        	
-//	        });
+//        if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+//		{
+//			Editor prefsEditor = prefs.edit();
+//			prefsEditor.putBoolean("plugin_almalence_hdr", true);
+//			prefsEditor.commit();
+//		}
+//		if (isInstalled("com.almalence.panorama.smoothpanorama"))
+//		{
+//			Editor prefsEditor = prefs.edit();
+//			prefsEditor.putBoolean("plugin_almalence_panorama", true);
+//			prefsEditor.commit();
+//		}
+//		
+//        /**** Check Billing *****/
+//		if (false == prefs.contains("unlock_all_forever") &&
+//			false == prefs.contains("plugin_almalence_hdr") &&
+//			false == prefs.contains("plugin_almalence_panorama") &&
+//			false == prefs.contains("plugin_almalence_moving_burst") &&
+//			false == prefs.contains("plugin_almalence_groupshot"))
+//		{
+////			Log.e("Widget", "Show shop dialog!");
+//			// 1. Instantiate an AlertDialog.Builder with its constructor
+//			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//			// 2. Chain together various setter methods to set the dialog characteristics
+//			builder.setMessage(R.string.widgetShopText)
+//			       .setTitle(R.string.widgetActivation);
+//			
+//			builder.setPositiveButton(R.string.widgetGoShopText, new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		        	   Bundle extras = new Bundle();
+//		    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
+//		    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
+//		    	        modeIntent.putExtras(extras);
+//		    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
+//						
+//		    	        finish();
+//		           }
+//		       });
+//			builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		        	   finish();
+//		           }
+//		       });
+//
+//			// 3. Get the AlertDialog from create()
+//			AlertDialog d = builder.create();
+//	        //d.setTitle("Activate widget");
+//	        //d.setContentView(R.layout.widget_opencamera_shop_dialog);	        
+//	        //Button cancelButton = (Button) d.findViewById(R.id.widgetButtonCancel);
+//	        //Button shopButton = (Button) d.findViewById(R.id.widgetButtonGoShop);
 //	        
-//	        shopButton.setOnClickListener(new OnClickListener()
+////	        cancelButton.setOnClickListener(new OnClickListener()
+////	        {
+////				@Override
+////				public void onClick(View arg0)
+////				{
+////					finish();
+////				}
+////	        	
+////	        });
+////	        
+////	        shopButton.setOnClickListener(new OnClickListener()
+////	        {
+////				@Override
+////				public void onClick(View arg0)
+////				{
+////					Bundle extras = new Bundle();
+////	    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
+////	    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
+////	    	        modeIntent.putExtras(extras);
+////	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////	    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
+////					
+////	    	        finish();
+////				}
+////	        	
+////	        });
+//	        
+//	        d.setOnKeyListener(new OnKeyListener()
 //	        {
 //				@Override
-//				public void onClick(View arg0)
+//				public boolean onKey(DialogInterface arg0, int keyCode,
+//						KeyEvent keyEvent)
 //				{
-//					Bundle extras = new Bundle();
-//	    	        extras.putBoolean(MainScreen.EXTRA_SHOP, true);
-//	    	        Intent modeIntent = new Intent(OpenCameraWidgetConfigureActivity.this, MainScreen.class);    	        
-//	    	        modeIntent.putExtras(extras);
-//	    	        modeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//	    	        OpenCameraWidgetConfigureActivity.this.startActivity(modeIntent);
-//					
-//	    	        finish();
+//					if(keyCode == KeyEvent.KEYCODE_BACK)
+//					{
+//						finish();
+//					}
+//					return true;
 //				}
 //	        	
 //	        });
-	        
-	        d.setOnKeyListener(new OnKeyListener()
-	        {
-				@Override
-				public boolean onKey(DialogInterface arg0, int keyCode,
-						KeyEvent keyEvent)
-				{
-					if(keyCode == KeyEvent.KEYCODE_BACK)
-					{
-						finish();
-					}
-					return true;
-				}
-	        	
-	        });
-	        d.show();
-		}
+//	        d.show();
+//		}
         
         isFirstLaunch = prefs.getBoolean("widgetFirstLaunch", true);
         
