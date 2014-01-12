@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- -+-  -->
     <header 
         android:fragment="com.almalence.opencam.Fragment"
         android:title="@string/Pref_General_Preference_Title"
@@ -24,17 +25,38 @@
         android:summary="@string/Pref_Saving_Preference_Summary">
         <extra android:name="type" android:value="saving_settings" />
     </header>
-<!--     <header 
-        android:fragment="com.almalence.opencam.Fragment"
-        android:title="@string/Pref_Advanced_Preference_Title"
-        android:summary="@string/Pref_Advanced_Preference_Summary">
-        <extra android:name="type" android:value="advanced" />
-    </header> -->
     <header 
         android:fragment="com.almalence.opencam.Fragment"
         android:title="@string/Pref_Unlock_Preference_Title"
         android:summary="@string/Pref_Unlock_Preference_Summary">
         <extra android:name="type" android:value="plugins_settings" />
     </header>
-     
+<!--  -+- -->
+<!-- +++
+    <header 
+        android:fragment="com.almalence.opencam_plus.Fragment"
+        android:title="@string/Pref_General_Preference_Title"
+        android:summary="@string/Pref_General_Preference_Summary">
+        <extra android:name="type" android:value="general_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.opencam_plus.Fragment"
+        android:title="@string/Pref_VF_Preference_Title"
+        android:summary="@string/Pref_VF_Preference_Summary">
+        <extra android:name="type" android:value="vf_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.opencam_plus.Fragment"
+        android:title="@string/Pref_Modes_Preference_Title"
+        android:summary="@string/Pref_Modes_Preference_Summary">
+        <extra android:name="type" android:value="shooting_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.opencam_plus.Fragment"
+        android:title="@string/Pref_Saving_Preference_Title"
+        android:summary="@string/Pref_Saving_Preference_Summary">
+        <extra android:name="type" android:value="saving_settings" />
+    </header>
++++ -->
+    
 </preference-headers>

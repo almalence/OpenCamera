@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- +++
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	  package="com.almalence.opencam_plus"
+      android:installLocation="auto"
+      android:versionCode="51"
+      android:versionName="3.15">
++++ -->
+<!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
       android:versionCode="51"
       android:versionName="3.15">
-      
+<!--  -+- -->
+
     <supports-screens       
                   android:smallScreens="true" 
                   android:normalScreens="true" 
@@ -40,11 +49,19 @@
 		        		android:label="Processing"
         				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
+   		<!-- +++
+		<activity android:name="com.almalence.opencam_plus.Preferences"
+				        android:label="@string/app_name"
+				        android:icon="@drawable/gui_almalence_settings_more_settings"
+				        android:hardwareAccelerated="true"/>
+		+++ -->
+		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.Preferences"
-		        android:label="@string/app_name"
-		        android:icon="@drawable/gui_almalence_settings_more_settings"
-		        android:hardwareAccelerated="true"/>
-		
+				        android:label="@string/app_name"
+				        android:icon="@drawable/gui_almalence_settings_more_settings"
+				        android:hardwareAccelerated="true"/>
+		<!--  -+- -->
+				
 		<activity android:name="com.almalence.photoeditor.PhotoEditor"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -58,6 +75,8 @@
 		<activity android:name=".FolderPicker"
 		        android:label="@string/choose_folder"/>
 		
+		<!-- replace opencam to opencam_plus for paid version in widget!!! -->
+		<!-- +++
 		<receiver android:name=".OpenCameraWidgetProvider" >
     		<intent-filter>
         		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />        		
@@ -82,6 +101,7 @@
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
+		+++ -->
 		
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
@@ -94,7 +114,9 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!-- -+-  -->
 	<uses-permission android:name="com.android.vending.BILLING"/>
+<!--  -+- -->
 
 	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="18"/>

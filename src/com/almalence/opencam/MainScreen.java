@@ -16,7 +16,13 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,7 +77,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
+//<!-- -+-
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
 import com.almalence.opencam.billing.Inventory;
@@ -79,8 +85,15 @@ import com.almalence.opencam.billing.Purchase;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.util.AppRater;
-import com.almalence.opencam.util.Util;
+import com.almalence.util.AppRater;
+//-+- -->
+/* <!-- +++
+import com.almalence.opencam_plus.ui.AlmalenceGUI;
+import com.almalence.opencam_plus.ui.GLLayer;
+import com.almalence.opencam_plus.ui.GUI;
++++ --> */
+
+import com.almalence.util.Util;
 
 /***
  * MainScreen - main activity screen with camera functionality
@@ -300,6 +313,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if(launchTorch)
 			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
 		
+		// <!-- -+-
+		
 		/**** Billing *****/
 		if (true == prefs.contains("unlock_all_forever")) {
 			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
@@ -322,7 +337,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		//application rating helper
 		AppRater.app_launched(this);
-
+		//-+- -->
+		
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
 		preview.setOnClickListener(this);
@@ -442,6 +458,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			MainScreen.ForceFilename = null;
 		}
 		
+		// <!-- -+-
 		if(goShopping)
 		{
 			MainScreen.thiz.showUnlock = true;
@@ -453,6 +470,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
 			MainScreen.thiz.startActivity(shopintent);
 		}
+		//-+- -->
 	}
 
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
@@ -564,10 +582,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		MainScreen.guiManager.onDestroy();
 		PluginManager.getInstance().onDestroy();
 
+		// <!-- -+-
 		/**** Billing *****/
 		destroyBillingHandler();
 		/**** Billing *****/
-
+		//-+- -->
+		
 		glView = null;
 	}
 
@@ -1663,6 +1683,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (guiManager.onKeyDown(true, keyCode, event))
 			return true;
 
+		// <!-- -+-
 		if (keyCode == KeyEvent.KEYCODE_BACK)
     	{
     		if (AppRater.showRateDialogIfNeeded(this))
@@ -1670,6 +1691,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
     			return true;
     		}
     	}
+		//-+- -->
 		
 		if (super.onKeyDown(keyCode, event))
 			return true;
@@ -1867,7 +1889,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	/*******************************************************/
 	/************************ Billing ************************/
-
+// <!-- -+-
 	IabHelper mHelper;
 	
 	private boolean bOnSale = false;
@@ -2574,9 +2596,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		return installed;
 	}
+	
+// -+- -->
+	
 	/************************ Billing ************************/
 	/*******************************************************/
 	
+// <!-- -+-
 	
 	//Application rater code
 	public static void CallStoreFree(Activity act)
@@ -2589,22 +2615,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
     	}
     	catch(ActivityNotFoundException e)
     	{
-//    		// instruct user how to download manually
-//    		AlertDialog ad = new AlertDialog.Builder(act)
-//    			.setTitle(R.string.no_market_title)
-//    			.setMessage(R.string.no_market_msg)
-//    			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-//    			{
-//    				public void onClick(DialogInterface dialog, int whichButton) {}
-//    			})
-//    			.create();
-//    		
-//    		ad.show();
-    		
     		return;
     	}
     }
-
+// -+- -->
+	
 	private void ResetOrSaveSettings()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -2670,16 +2685,5 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.putBoolean("useFrontCamera", false);
 			prefsEditor.commit();
 		}
-		
-//		isSaving = prefs.getBoolean("SaveConfiguration_DelayedCapture", true);
-//		if (false == isSaving)
-//		{		
-//			prefsEditor.putString("delayedCapturePrefCommon", "0");
-//			//prefsEditor.putBoolean("delayedCapturePrefCommon", "0");
-//			prefsEditor.commit();
-//		}
-		
 	}
-	
-	//test
 }

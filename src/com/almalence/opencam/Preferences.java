@@ -16,7 +16,13 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
+
 
 import java.util.List;
 
@@ -36,12 +42,14 @@ public class Preferences extends PreferenceActivity
 	{
 		thiz=this;
 		loadHeadersFromResource(R.xml.preferences_headers, target);
-		
+
+		// <!-- -+-
 		if (MainScreen.thiz.showUnlock)
 		{
 			MainScreen.thiz.showUnlock=false;
 			startWithFragment("com.almalence.opencam.FragmentUpgrade", null, null, 0);
 		}
+		//-+- -->
 	}
 	
 	static public void closePrefs()

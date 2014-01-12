@@ -14,7 +14,7 @@
 		    android:background="@android:color/transparent"
 		    android:gravity="right"
 		    android:layout_weight="1">
-					<com.almalence.opencam.ui.RotateImageView
+					<com.almalence.ui.RotateImageView
 					android:id="@+id/buttonSelftimer"
 					android:src="@drawable/gui_almalence_mode_selftimer"
 					android:background="@android:color/transparent"			
@@ -28,6 +28,6 @@
 					android:layout_marginRight="10dp"				
 			   		android:layout_gravity="right"		   		
 			   		>
-			 	</com.almalence.opencam.ui.RotateImageView>
+			 	</com.almalence.ui.RotateImageView>
 		 	</LinearLayout>
 </LinearLayout>

@@ -31,12 +31,22 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.ui.GUI;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.Switch.Switch;
+//-+- -->
+
+import com.almalence.ui.Switch.Switch;
 
 /***
 Implements back in time capture plugin

@@ -59,7 +59,7 @@
 	    	android:gravity="bottom"	    
 	    	android:layout_alignParentBottom="true">
 	 	
- 	 	<com.almalence.opencam.ui.RotateImageView
+ 	 	<com.almalence.ui.RotateImageView
 			android:id="@+id/backintimeprocessing_savethis_button"
 			android:src="@drawable/plugin_processing_preshot_savethis_background"
 			android:background="@android:color/transparent"
@@ -70,7 +70,7 @@
 			android:layout_marginRight="2dip"
 			android:layout_marginBottom="5dip"/>
 	 	
- 	 	<com.almalence.opencam.ui.RotateImageView
+ 	 	<com.almalence.ui.RotateImageView
 			android:id="@+id/backintimeprocessing_saveall_button"
 			android:src="@drawable/plugin_processing_preshot_saveall_background"
 			android:background="@android:color/transparent"

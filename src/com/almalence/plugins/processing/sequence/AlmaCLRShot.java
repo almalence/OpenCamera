@@ -29,7 +29,8 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.util.Size;
+
+import com.almalence.util.Size;
 
 public class AlmaCLRShot
 {

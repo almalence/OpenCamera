@@ -30,8 +30,14 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.util.ImageConversion;
+//-+- -->
+
+import com.almalence.util.ImageConversion;
 
 
 /**

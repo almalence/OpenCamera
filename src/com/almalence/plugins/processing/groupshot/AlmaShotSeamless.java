@@ -18,7 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.groupshot;
 
-import com.almalence.opencam.util.Size;
+import com.almalence.util.Size;
 
 import android.graphics.Rect;
 

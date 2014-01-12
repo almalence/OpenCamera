@@ -1,4 +1,28 @@
+/*
+The contents of this file are subject to the Mozilla Public License
+Version 1.1 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+The Original Code is collection of files collectively known as Open Camera.
+
+The Initial Developer of the Original Code is Almalence Inc.
+Portions created by Initial Developer are Copyright (C) 2013 
+by Almalence Inc. All Rights Reserved.
+*/
+
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
+
 
 
 import java.io.IOException;
@@ -11,21 +35,16 @@ import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.almalence.opencam.ui.ElementAdapter;
-import com.almalence.opencam.ui.Panel;
-import com.almalence.opencam.util.Util;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -35,12 +54,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+
+/* <!-- +++
+import com.almalence.opencam_plus.ui.ElementAdapter;
++++ --> */
+// <!-- -+-
+import com.almalence.opencam.ui.ElementAdapter;
+//-+- -->
+
+import com.almalence.util.Util;
 
 
 public class OpenCameraWidgetConfigureActivity extends Activity implements View.OnClickListener

@@ -13,5 +13,7 @@
     <string name="Res_Burst_3">3 imagens</string>
     <string name="Res_Burst_5">5 imagens</string>
     <string name="Res_Burst_10">10 imagens</string>
+    <string name="Res_Burst_15">15 imagens</string>
+    <string name="Res_Burst_20">20 imagens</string>
     
 </resources>

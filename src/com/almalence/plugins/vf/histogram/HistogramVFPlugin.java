@@ -34,11 +34,19 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
-import com.almalence.opencam.ui.RotateImageView;
-import com.almalence.opencam.util.Util;
+//-+- -->
+
+import com.almalence.util.Util;
+import com.almalence.ui.RotateImageView;
 
 /***
  * Implements histogram (RGB and Luminance) based on preview image data

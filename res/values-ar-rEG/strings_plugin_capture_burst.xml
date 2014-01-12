@@ -13,5 +13,7 @@
     <string name="Res_Burst_3">3 صور</string>
     <string name="Res_Burst_5">5 صور</string>
     <string name="Res_Burst_10">10 صور</string>
+    <string name="Res_Burst_15">15 صور</string>
+    <string name="Res_Burst_20">20 صور</string>
     
 </resources>

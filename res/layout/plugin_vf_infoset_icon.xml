@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.almalence.opencam.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.almalence.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
     	android:id="@+id/infoImage"    	
     	android:visibility="visible"
     	android:scaleType="fitCenter"

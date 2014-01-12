@@ -36,7 +36,12 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 
 public class ImageAdapter extends BaseAdapter {
 	int mGalleryItemBackground;

@@ -55,12 +55,23 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.opencam.util.MLocation;
-import com.almalence.opencam.util.Size;
+//-+- -->
+
+import com.almalence.util.MLocation;
+import com.almalence.util.Size;
+
 import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 

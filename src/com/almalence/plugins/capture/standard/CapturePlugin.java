@@ -26,9 +26,17 @@ import android.os.Message;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+//-+- -->
 
 
 /***
@@ -48,25 +56,29 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void OnShutterClick()
 	{
-		MainScreen.thiz.MuteShutter(false);
-		
-		String fm = MainScreen.thiz.getFocusMode();
-		int fs = MainScreen.getFocusState();
-		if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-				MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
-				&& fm != null
-				&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
-				&& !MainScreen.getAutoFocusLock())			
-				aboutToTakePicture = true;			
-		else if(takingAlready == false)
+		if(takingAlready == false)
 		{
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
-			takePicture();
+			
+			MainScreen.thiz.MuteShutter(false);
+			
+			String fm = MainScreen.thiz.getFocusMode();
+			int fs = MainScreen.getFocusState();
+			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
+					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+					&& fm != null
+					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
+					|| fm.equals(Parameters.FOCUS_MODE_FIXED)
+					|| fm.equals(Parameters.FOCUS_MODE_EDOF)
+					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+					&& !MainScreen.getAutoFocusLock())			
+					aboutToTakePicture = true;			
+			else if(takingAlready == false)
+			{
+				takePicture();
+			}
 		}
 	}
 	

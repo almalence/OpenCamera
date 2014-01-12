@@ -27,13 +27,22 @@
 		android:entries="@array/volumeButtonArrayCommon"
 		android:entryValues="@array/volumeButtonValuesCommon" />
 
+	<!-- -+-  -->
 	<PreferenceScreen
 		 android:fragment="com.almalence.opencam.Fragment"
 		 android:title="@string/Pref_SaveConfiguration_Title"
 		 android:summary="@string/Pref_SaveConfiguration_Summary">
 		 <extra android:name="type" android:value="save_configuration"/>
 	</PreferenceScreen>	
-	
+	<!--  -+- -->
+	<!-- +++
+	<PreferenceScreen
+		 android:fragment="com.almalence.opencam_plus.Fragment"
+		 android:title="@string/Pref_SaveConfiguration_Title"
+		 android:summary="@string/Pref_SaveConfiguration_Summary">
+		 <extra android:name="type" android:value="save_configuration"/>
+	</PreferenceScreen>
+	+++ -->
 	<CheckBoxPreference
 		android:title="@string/Pref_ShowHelp_Title"
 		android:summary="@string/Pref_WhowHelp_Summary"
