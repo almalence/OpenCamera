@@ -253,10 +253,24 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    			            if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
-    			            {
-    				            ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + (cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90));
-    			            }
+    			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+    		            	switch(mDisplayOrientation)
+    		            	{
+    		            	default:
+    		            	case 0:
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+    		            		break;
+    		            	case 90:
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+    		            		break;
+    		            	case 180:
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+    		            		break;
+    		            	case 270:
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+    		            		break;
+    		            	}
+    		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
     			            ei.saveAttributes();
     		            }
     		            
