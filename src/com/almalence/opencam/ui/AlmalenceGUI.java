@@ -2400,7 +2400,10 @@ public class AlmalenceGUI extends GUI implements
 				Camera camera = MainScreen.thiz.getCamera();
 				if (null != camera && params != null)
 				{
-					params.set(isoParam, mISO);
+					if(params.get(isoParam) != null)
+						params.set(isoParam, mISO);
+					else if(params.get(isoParam2) != null)
+						params.set(isoParam2, mISO);
 //					try {
 //						MainScreen.thiz.setCameraParameters(params);
 //					} catch (Exception e) {
@@ -4771,6 +4774,8 @@ public class AlmalenceGUI extends GUI implements
 			String flashNew = params.getFlashMode();
 			String focusNew = params.getFocusMode();
 			String isoNew = params.get(isoParam);
+			if(isoNew == null)
+				isoNew = params.get(isoParam2);
 
 			// Save new params value
 			if(wbNew != null && WBModeButtons.containsKey(wbNew))
@@ -5022,10 +5027,16 @@ public class AlmalenceGUI extends GUI implements
 				params = MainScreen.thiz.getCameraParameters();
 			}
 
-			params.set(isoParam, newMode);
+			if(params.get(isoParam) != null)
+				params.set(isoParam, newMode);
+			else if(params.get(isoParam2) != null)
+				params.set(isoParam2, newMode);
 			if(false == MainScreen.thiz.setCameraParameters(params))
 			{
-				params.set(isoParam, iso_default_values.get(newMode));
+				if(params.get(isoParam) != null)
+					params.set(isoParam, iso_default_values.get(newMode));
+				else if(params.get(isoParam2) != null)
+					params.set(isoParam2, iso_default_values.get(newMode));
 				MainScreen.thiz.setCameraParameters(params);	
 			}
 			mISO = newMode;
