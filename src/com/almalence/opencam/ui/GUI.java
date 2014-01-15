@@ -68,6 +68,7 @@ public abstract class GUI
 	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
 
 	public final static String isoParam = "iso";
+	public final static String isoParam2 = "iso-speed";
 	
 	// Flags to know which camera feature supported at current device
 	public boolean mEVSupported = false;	

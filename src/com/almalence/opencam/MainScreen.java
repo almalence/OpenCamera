@@ -1338,36 +1338,38 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public boolean isISOSupported() {
 		List<String> supported_iso = getSupportedISO();
 		String isoSystem = MainScreen.thiz.getCameraParameters().get("iso");
-		if ((supported_iso != null && supported_iso.size() > 0) || isoSystem != null)
+		String isoSystem2 = MainScreen.thiz.getCameraParameters().get("iso-speed");
+		if ((supported_iso != null && supported_iso.size() > 0) || isoSystem != null || isoSystem2 != null)
 			return true;
 		else
 			return false;
 	}
 
-	public List<String> getSupportedISO() {
-		if (camera != null) {
+	public List<String> getSupportedISO()
+	{
+		if (camera != null)
+		{
 			Camera.Parameters camParams = MainScreen.cameraParameters;
 			String supportedIsoValues = camParams.get("iso-values");
+			String supportedIsoValues2 = camParams.get("iso-speed-values");
 			//String iso = camParams.get("iso");
-			if (supportedIsoValues != "" && supportedIsoValues != null) {
-				List<String> isoList = new ArrayList<String>();
-				String delims = "[,]+";
-				String[] ISOs = supportedIsoValues.split(delims);
+			
+			String delims = "[,]+";
+			String[] ISOs = null;
+			
+			if (supportedIsoValues != "" && supportedIsoValues != null)
+				ISOs = supportedIsoValues.split(delims);
+			else if(supportedIsoValues2 != "" && supportedIsoValues2 != null)
+				ISOs = supportedIsoValues2.split(delims);
+			
+			if(ISOs != null)
+			{
+				List<String> isoList = new ArrayList<String>();				
 				for (int i = 0; i < ISOs.length; i++)
 					isoList.add(ISOs[i]);
 
 				return isoList;
 			}
-//			else if(iso != null && iso != "")
-//			{
-//				List<String> isoList = new ArrayList<String>();
-//				String delims = "[,]+";
-//				String[] ISOs = iso.split(delims);
-//				for (int i = 0; i < ISOs.length; i++)
-//					isoList.add(ISOs[i]);
-//
-//				return isoList;
-//			}
 		}
 
 		return null;
@@ -1475,7 +1477,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (camera != null) {
 			Camera.Parameters params = cameraParameters;
 			if (params != null) {
-				params.set("iso", mode);
+				if(params.get("iso") != null)
+					params.set("iso", mode);
+				else if(params.get("iso-speed") != null)
+					params.set("iso-speed", mode);
+				
 				setCameraParameters(params);
 			}
 		}
