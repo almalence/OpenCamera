@@ -674,6 +674,7 @@ public class VideoCapturePlugin extends PluginCapture
 	
 	private void releaseMediaRecorder()
 	{
+		captureRate = 24;
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;

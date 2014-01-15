@@ -912,8 +912,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				cameraParameters.setPreviewFpsRange(7000, 30000);
 				setCameraParameters(cameraParameters);
 			}
-			//List<int[]> range = cameraParameters.getSupportedPreviewFpsRange();
-			//Log.i("CameraTest", "fps ranges" + range.get(0)[0] + " " + range.get(0)[1] + " " + range.get(1)[0] + " " + range.get(1)[1] + " " + range.get(2)[0] + " " + range.get(2)[1] + " " + range.get(3)[0] + " " + range.get(3)[1]);
+			
 			//Log.i("CameraTest", "fps ranges "+range.size()+" " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] + " " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
 			//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
 			//cameraParameters.setPreviewFpsRange(7000, 30000);
@@ -1900,6 +1899,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private boolean objectRemovalBurstPurchased = false;
 	private boolean groupShotPurchased = false;
 
+	public boolean isUnlockedAll()
+	{
+		return unlockAllPurchased;
+	}
+	
 	private void createBillingHandler() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))

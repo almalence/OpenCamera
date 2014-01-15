@@ -69,6 +69,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.almalence.asynctaskmanager.Task;
 
@@ -1090,6 +1091,12 @@ public class PluginManager {
 		} else if ("plugins_settings".equals(settings)) 
 		{
 			//<!-- -+-
+			if (MainScreen.thiz.isUnlockedAll())
+			{
+				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 			if (false == prefs.getBoolean("unlock_all_forever", false))
 			{

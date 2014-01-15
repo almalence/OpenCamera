@@ -162,6 +162,7 @@ public class CapturePlugin extends PluginCapture
     	
 		try
 		{
+			paramCamera.stopPreview();
 			paramCamera.startPreview();
 		}
 		catch (RuntimeException e)

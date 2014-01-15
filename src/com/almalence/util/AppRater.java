@@ -35,7 +35,7 @@ import com.almalence.opencam.R;
 public class AppRater
 {
 	private final static int DAYS_UNTIL_PROMPT = 0;
-	private final static int LAUNCHES_UNTIL_PROMPT = 20;
+	private final static int LAUNCHES_UNTIL_PROMPT = 15;
 
 	public static void app_launched(Activity mContext)
 	{
