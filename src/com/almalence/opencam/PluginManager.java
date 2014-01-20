@@ -1094,7 +1094,7 @@ public class PluginManager {
 			if (MainScreen.thiz.isUnlockedAll())
 			{
 				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
-				return;
+//				return;
 			}
 			
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);

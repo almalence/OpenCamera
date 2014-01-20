@@ -326,6 +326,8 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		timeLapseButton.invalidate();
 		timeLapseButton.requestLayout();
+	
+		List<Camera.Size> mResolutions = MainScreen.thiz.getCameraParameters().getSupportedVideoSizes();
 		
 		if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -897,6 +899,10 @@ public class VideoCapturePlugin extends PluginCapture
     	    	
     	    	CamcorderProfile pr = CamcorderProfile.get(MainScreen.CameraIndex, quality);
     	    	mMediaRecorder.setProfile(pr);
+    	    	
+//    	    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//    	    	params.set("cam_mode",1);
+//    	    	MainScreen.thiz.setCameraParameters(params);
     	    	
     	    	if (swChecked)
     	    	{

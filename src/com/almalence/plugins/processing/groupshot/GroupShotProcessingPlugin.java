@@ -53,6 +53,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -311,6 +312,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
  		} 
      	catch (Exception e) 
  		{
+     		Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
  			e.printStackTrace();
  		}
 		

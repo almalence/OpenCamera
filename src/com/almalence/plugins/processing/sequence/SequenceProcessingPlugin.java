@@ -51,6 +51,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
@@ -320,6 +321,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	        }
     	        catch (Exception e)
     	        {
+    	        	Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}

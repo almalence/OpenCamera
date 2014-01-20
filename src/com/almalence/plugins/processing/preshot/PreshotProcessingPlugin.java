@@ -836,6 +836,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		        // Get the drawable (could also get the bitmap behind the drawable and getWidth/getHeight)
 		        final Drawable d = imgView.getDrawable();
+		        if (d == null)
+		        	break;
 		        final int origW = d.getIntrinsicWidth();
 		        final int origH = d.getIntrinsicHeight();
 
