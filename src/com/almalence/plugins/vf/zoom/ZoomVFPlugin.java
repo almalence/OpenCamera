@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
@@ -81,6 +83,8 @@ public class ZoomVFPlugin extends PluginViewfinder
     private boolean isEnabled =true;
     
     private Handler zoomHandler;
+    
+    private boolean zoomStopping = false;
     
     private static final int CLOSE_ZOOM_PANEL = 0;
     private static final int CLOSE_ZOOM_PANEL_DELAY = 1500;
@@ -198,11 +202,13 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+		zoomStopping = false;
 	}
 	
 	@Override
 	public void onStop()
 	{
+		zoomStopping = true;
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
 		for(int i = 0; i < specialLayout.getChildCount(); i++)
@@ -218,9 +224,10 @@ public class ZoomVFPlugin extends PluginViewfinder
 				if(view.getParent() != null)
 					((ViewGroup)view.getParent()).removeView(view);
 				
+				Log.e("ZoomPlugin", "removeView");
 				specialLayout.removeView(view);
 			}
-		}	
+		}
 	}
 	
 	@Override
@@ -384,11 +391,12 @@ public class ZoomVFPlugin extends PluginViewfinder
     
     public void closeZoomPanel()
     { 
+    	Log.e("ZoomPlugin", "closeZoomPanel");
     	panelClosing = true;
     	
     	this.zoomPanel.clearAnimation();    	
 		Animation animation = new TranslateAnimation(0, -zoomPanelWidth/2 , 0, 0);
-		animation.setDuration(500);
+		animation.setDuration(300);
 		animation.setRepeatCount(0);
 		animation.setInterpolator(new LinearInterpolator());
 		animation.setFillAfter(true);		
@@ -399,9 +407,48 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
+				Log.e("ZoomPlugin", "onAnimationEnd");
+				if(zoomStopping)
+				{
+					List<View> specialView = new ArrayList<View>();
+					RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
+					for(int i = 0; i < specialLayout.getChildCount(); i++)
+						specialView.add(specialLayout.getChildAt(i));
+	
+					for(int j = 0; j < specialView.size(); j++)
+					{
+						final View view = specialView.get(j);
+						int view_id = view.getId();
+						int zoom_id = zoomPanel.getId();
+						if(view_id == zoom_id)
+						{
+							final ViewGroup parentView = (ViewGroup)view.getParent();
+							if(parentView != null)
+							{
+								parentView.post(new Runnable() {
+						            public void run() {
+						                // it works without the runOnUiThread, but all UI updates must 
+						                // be done on the UI thread
+						                MainScreen.thiz.runOnUiThread(new Runnable() {
+						                    public void run() {
+						                        parentView.removeView(view);
+						                    }
+						                });
+						            }
+						        });
+							}
+						}					
+					}
+					return;
+				}
+				
+				
 				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)zoomPanel.getLayoutParams();
 				if (params==null)
+				{
+					zoomPanel.clearAnimation();
 					return;
+				}
 				params.setMargins(-zoomPanelWidth/2, 0, 0, 0);
 				zoomPanel.setLayoutParams(params);				
 				zoomPanel.clearAnimation();
