@@ -47,9 +47,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /* <!-- +++
@@ -172,6 +175,43 @@ public class NightCapturePlugin extends PluginCapture
 	public void onCreate()
 	{
 		cameraPreview = new GLCameraPreview(MainScreen.mainContext);
+		
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        ModePreference = prefs.getString("modePref", "1");
+        modeSwitcher.setTextOn("Hi-Res");
+        modeSwitcher.setTextOff("Hi-Speed");
+        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
+		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+				if (isChecked)				
+					ModePreference = "0";		        	
+				else			
+					ModePreference = "1";
+				
+				SharedPreferences.Editor editor = prefs.edit();		        	
+	        	editor.putString("modePref", ModePreference);
+	        	editor.commit();
+				
+				Message msg = new Message();
+				msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;				
+				MainScreen.H.sendMessage(msg);
+			}
+		});
+		
+//		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
+//				LayoutParams.WRAP_CONTENT,
+//				LayoutParams.WRAP_CONTENT);
+//		
+//		modeSwitcher.setLayoutParams(lp);
+		if(PluginManager.getInstance().getProcessingCounter() == 0)
+			modeSwitcher.setEnabled(true);
 	}
 	
 	@Override
@@ -213,6 +253,28 @@ public class NightCapturePlugin extends PluginCapture
         prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
         prefs.edit().putString("FlashModeValue", preferenceFlashMode).commit();
 	}
+	
+	@Override
+	public void onStop()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
 
 	@Override
 	public void onExportFinished()
@@ -224,49 +286,43 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
-		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        ModePreference = prefs.getString("modePref", "1");
-        modeSwitcher.setTextOn("Hi-Res");
-        modeSwitcher.setTextOff("Hi-Speed");
-        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
-		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
 		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-				if (isChecked)				
-					ModePreference = "0";		        	
-				else			
-					ModePreference = "1";
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
 				
-				SharedPreferences.Editor editor = prefs.edit();		        	
-	        	editor.putString("modePref", ModePreference);
-	        	editor.commit();
-				
-				Message msg = new Message();
-				msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;				
-				MainScreen.H.sendMessage(msg);
+				specialLayout.removeView(view);
 			}
-		});
-		
-		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		
-		modeSwitcher.setLayoutParams(lp);
-		if(PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
+		}		
 		
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
 		
-		clearViews();
-		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+		
+		this.modeSwitcher.setLayoutParams(params);
+		this.modeSwitcher.requestLayout();
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		
+//		clearViews();
+//		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
 	}
 	
 	@Override

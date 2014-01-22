@@ -223,8 +223,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 			{
 				if(view.getParent() != null)
 					((ViewGroup)view.getParent()).removeView(view);
-				
-				Log.e("ZoomPlugin", "removeView");
 				specialLayout.removeView(view);
 			}
 		}
