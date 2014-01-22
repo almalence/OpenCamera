@@ -231,17 +231,25 @@ public class Thumbnail {
         Bitmap bitmap = null;
         Media lastMedia=null;
 
-     // If there is only image or video, get its thumbnail. If both exist,
-        // get the thumbnail of the one that is newer.
-        if (image != null && (video == null || image.dateTaken >= video.dateTaken))
+        try
         {
-        	bitmap = Images.Thumbnails.getThumbnail(resolver, image.id, Images.Thumbnails.MINI_KIND, null);        	
-            lastMedia = image;
+	     // If there is only image or video, get its thumbnail. If both exist,
+	        // get the thumbnail of the one that is newer.
+	        if (image != null && (video == null || image.dateTaken >= video.dateTaken))
+	        {
+	        	bitmap = Images.Thumbnails.getThumbnail(resolver, image.id, Images.Thumbnails.MINI_KIND, null);        	
+	            lastMedia = image;
+	        } 
+	        else if (video != null)
+	        {
+	            bitmap = Video.Thumbnails.getThumbnail(resolver, video.id, Video.Thumbnails.MINI_KIND, null);
+	            lastMedia = video;
+	        }
         } 
-        else if (video != null)
+        catch (Exception ex) 
         {
-            bitmap = Video.Thumbnails.getThumbnail(resolver, video.id, Video.Thumbnails.MINI_KIND, null);
-            lastMedia = video;
+        	Log.e("getLastThumbnail", "createThumbnail exception " + ex.getMessage());
+            return null;
         }
         
         // Ensure database and storage are in sync.

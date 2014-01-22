@@ -24,11 +24,13 @@
 <string-array name="volumeButtonArrayCommon">
    <item>Take picture</item>
    <item>Zoom</item>
+   <item>None</item>
 </string-array>
  
 <string-array name="volumeButtonValuesCommon">
    <item>0</item>
    <item>1</item>
+   <item>2</item>
 </string-array>
 
 <string-array name="delayedCaptureArrayCommon">

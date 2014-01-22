@@ -1673,13 +1673,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
-			String defaultModeName = prefs.getString("volumeButtonPrefCommon", "0");
-			if (defaultModeName.equals("0"))
+			String buttonFunc = prefs.getString("volumeButtonPrefCommon", "0");
+			if (buttonFunc.equals("0"))
 			{
 				MainScreen.guiManager.onHardwareFocusButtonPressed();
 				MainScreen.guiManager.onHardwareShutterButtonPressed();
 				return true;
 			}
+			else if (buttonFunc.equals("2"))
+				return true;
 		}
 		
 		
