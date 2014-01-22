@@ -209,6 +209,19 @@
        android:visibility="visible" >
 	</RelativeLayout>
 	
+	<RelativeLayout
+	    android:id="@+id/specialPluginsLayout3"	    	    
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_above="@+id/mainButtons"
+	    android:layout_below="@+id/paramsLayout"	    
+	    android:layout_toLeftOf="@+id/infoLayout"
+	    android:layout_marginTop="@dimen/viewfinderViewsMarginTop"
+	    android:layout_marginLeft="2dip"
+		android:layout_marginRight="2dip"
+		android:visibility="visible">
+	</RelativeLayout>
+	
 	
 	<!-- Top menu for main camera parameters: Scene mode, WB, Flash mode, Focus mode and Preferences button   -->
 	<LinearLayout

@@ -461,6 +461,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			System.gc();
 		
 		
+			if(frmCnt == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
 			//PreShot.InsertToBuffer(_data, MainScreen.getWantLandscapePhoto()?0:1);
 
 			PreShot.InsertToBuffer(_data, MainScreen.guiManager.getDisplayOrientation());

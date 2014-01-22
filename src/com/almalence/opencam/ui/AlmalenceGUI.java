@@ -2272,8 +2272,9 @@ public class AlmalenceGUI extends GUI implements
 
 		// Create Flash mode button and adding supported flash modes
 		List<String> supported_flash = MainScreen.thiz.getSupportedFlashModes();
-		if (supported_flash != null && supported_flash.size() > 0 && activeFlash != null) {			
-
+		if (supported_flash != null && supported_flash.size() > 0 && activeFlash != null &&
+				!(supported_flash.size() == 1 && supported_flash.contains(flashOff)))
+		{			
 			//Set<String> keys = FlashModeButtons.keySet();
 			Collection<String> unsorted_keys = flash_keys.keySet();
 			List<String> keys = Util.asSortedList(unsorted_keys);
@@ -4773,9 +4774,26 @@ public class AlmalenceGUI extends GUI implements
 			String wbNew = params.getWhiteBalance();
 			String flashNew = params.getFlashMode();
 			String focusNew = params.getFocusMode();
-			String isoNew = params.get(isoParam);
+			String isoNew = params.get(isoParam);			
 			if(isoNew == null)
 				isoNew = params.get(isoParam2);
+			if(mSceneMode.compareTo(sceneAuto) != 0)
+			{
+				isoNew = isoAuto;
+				if(params.get(isoParam) != null)
+					params.set(isoParam, isoAuto);
+				else if(params.get(isoParam2) != null)
+					params.set(isoParam2, isoAuto);
+				if(false == MainScreen.thiz.setCameraParameters(params))
+				{					
+					if(params.get(isoParam) != null)
+						params.set(isoParam, iso_default_values.get(isoAuto));
+					else if(params.get(isoParam2) != null)
+						params.set(isoParam2, iso_default_values.get(isoAuto));
+					MainScreen.thiz.setCameraParameters(params);	
+				}				
+				
+			}
 
 			// Save new params value
 			if(wbNew != null && WBModeButtons.containsKey(wbNew))
