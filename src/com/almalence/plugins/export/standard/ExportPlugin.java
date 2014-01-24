@@ -28,6 +28,7 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
@@ -376,12 +377,39 @@ public class ExportPlugin extends PluginExport
 		            
 		            if (l != null)
 		            {
-			            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-			            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-			            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-			            //ei.setAttribute("GPSVersionID", "2.2.0.0");
+		                double lat = l.getLatitude();
+		                double lon = l.getLongitude();
+		                boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
 
+		                if (hasLatLon) {
+				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+				            
+				            //ei.setAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD, l.getProvider().toUpperCase());
+		                    if (l.hasAltitude()) {
+		                        l.getAltitude();
+		                        int alt = (int)l.getAltitude()*1000;
+		                        ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Integer.toString(alt) +"/1000");
+		                        ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
+		                    } else {
+		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Long.toString(0));
+		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
+		                    }
+		                    if (l.getTime() != 0) {
+			                    SimpleDateFormat formatterTime = new SimpleDateFormat("HH/1,mm/1,ss/1");
+			                    Date currentTime = new Date(l.getTime());
+			                    String asStringTime = formatterTime.format(currentTime);
+			                    ei.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, asStringTime);
+			                    
+			                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd");
+			                    Date currentDate = new Date(l.getTime());
+			                    String asString = formatter.format(currentDate);
+			                    ei.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, asString);
+			                }
+		                }
+			                
 		            	ei.saveAttributes();
 	            	}
 	            	else
@@ -399,7 +427,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
 	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
 	            String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
-	            String tag_spectral_ensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_ensitivity"+Long.toString(sessionID));
+	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            	            
 	            if(tag_exposure_time != null)
@@ -421,8 +449,8 @@ public class ExportPlugin extends PluginExport
 	            	ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
 	            if(tag_model != null)
 	            	ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-	            if(tag_spectral_ensitivity != null)
-	            	ei.setAttribute("SpectralSensitivity", tag_spectral_ensitivity);
+	            if(tag_spectral_sensitivity != null)
+	            	ei.setAttribute("SpectralSensitivity", tag_spectral_sensitivity);
 	            
 	            String xStr = String.valueOf(x);
 	            if (xStr != null)
