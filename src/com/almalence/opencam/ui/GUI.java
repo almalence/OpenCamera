@@ -64,6 +64,7 @@ public abstract class GUI
 	public final static String sRearFocusModePref = "RearFocusModeValue";
 	public final static String sFlashModePref = "FlashModeValue";
 	public final static String sISOPref = "ISOValue";
+	public final static String sMeteringModePref = "MeteringModeValue";
 	public final static String sDefaultValue = MainScreen.thiz.getResources().getString(R.string.sceneAutoSystem);
 	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
 
@@ -81,6 +82,8 @@ public abstract class GUI
 	
 	public boolean mEVLockSupported = false;
 	public boolean mWBLockSupported = false;
+	
+	public boolean mMeteringAreasSupported = false;
 	
 	//Lists of added plugin's controls
 	List<View> VFViews;
@@ -107,6 +110,7 @@ public abstract class GUI
 		CAMERA_PARAMETER_FOCUS,
 		CAMERA_PARAMETER_FLASH,
 		CAMERA_PARAMETER_ISO,
+		CAMERA_PARAMETER_METERING,
 		CAMERA_PARAMETER_CAMERACHANGE
 	}
 	

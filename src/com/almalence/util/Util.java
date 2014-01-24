@@ -91,6 +91,8 @@ public final class Util {
     // Workaround for QC cameras with broken face detection on front camera
     private static boolean sNoFaceDetectOnFrontCamera;
     private static boolean sNoFaceDetectOnRearCamera;
+    
+    private static Matrix mMeteringMatrix = new Matrix();
 
     private Util() {
     }
@@ -697,6 +699,52 @@ public final class Util {
       List<T> list = new ArrayList<T>(c);
       java.util.Collections.sort(list);
       return list;
+    }
+    
+    
+    public static void initializeMeteringMatrix()
+    {
+        Matrix matrix = new Matrix();
+        Util.prepareMatrix(matrix, MainScreen.getCameraMirrored(), 0,
+        		MainScreen.previewWidth, MainScreen.previewHeight);
+        matrix.invert(mMeteringMatrix);
+    }
+    public static Rect convertToDriverCoordinates(Rect rect)
+    {
+//        int areaWidth = (int)(focusWidth * areaMultiple);
+//        int areaHeight = (int)(focusHeight * areaMultiple);
+//        int left = Util.clamp(x - areaWidth / 2, 0, previewWidth - areaWidth);
+//        int top = Util.clamp(y - areaHeight / 2, 0, previewHeight - areaHeight);
+//        
+//        int right = Util.clamp(x + areaWidth / 2, areaWidth, previewWidth);
+//        int bottom = Util.clamp(y + areaHeight / 2, areaHeight, previewHeight);
+//        
+        RectF rectF = new RectF(rect.left, rect.top, rect.right, rect.bottom);
+        mMeteringMatrix.mapRect(rectF);
+        Util.rectFToRect(rectF, rect);
+        
+    	
+        if(rect.left < -1000)
+        	rect.left = -1000;
+        if(rect.left > 1000)
+        	rect.left = 1000;
+        
+        if(rect.right < -1000)
+        	rect.right = -1000;
+        if(rect.right > 1000)
+        	rect.right = 1000;
+        
+        if(rect.top < -1000)
+        	rect.top = -1000;
+        if(rect.top > 1000)
+        	rect.top = 1000;
+        
+        if(rect.bottom < -1000)
+        	rect.bottom = -1000;
+        if(rect.bottom > 1000)
+        	rect.bottom = 1000;
+        
+        return rect;
     }
     
     static

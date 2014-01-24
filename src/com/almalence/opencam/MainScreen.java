@@ -42,6 +42,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Size;
@@ -261,6 +262,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static String deviceSS3_11;
 	public static String deviceSS3_12;
 	public static String deviceSS3_13;
+	
+	public static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaMatrix1 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaCenter = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
+	
+	public static String meteringModeMatrix = "Matrix";
+	public static String meteringModeCenter = "Center-weighted";
+	public static String meteringModeSpot = "Spot";
+	public static String meteringModeAuto = "Auto";
+	
+	public static String currentMeteringMode = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -932,6 +946,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		previewHeight = cameraParameters.getPreviewSize().height;
 
 		Util.initialize(mainContext);
+		Util.initializeMeteringMatrix();
+		
+		prepareMeteringAreas();
 
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
@@ -963,6 +980,38 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			public void onTick(long millisUntilFinished) {
 			}
 		}.start();
+	}
+	
+	private void prepareMeteringAreas()
+	{
+		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth/4, previewHeight/4, previewWidth - previewWidth/4, previewHeight - previewHeight/4));
+		Rect topLeftRect = Util.convertToDriverCoordinates(new Rect(0, 0, previewWidth/2, previewHeight/2));
+		Rect topRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth/2, 0, previewWidth, previewHeight/2));
+		Rect bottomRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth/2, previewHeight/2, previewWidth, previewHeight));
+		Rect bottomLeftRect = Util.convertToDriverCoordinates(new Rect(0, previewHeight/2, previewWidth/2, previewHeight));
+		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth/2 - 10, previewHeight/2 - 10, previewWidth/2 + 10, previewHeight/2 + 10));
+		
+		mMeteringAreaMatrix5.clear();
+		mMeteringAreaMatrix5.add(new Area(centerRect, 600));
+		mMeteringAreaMatrix5.add(new Area(topLeftRect, 200));
+		mMeteringAreaMatrix5.add(new Area(topRightRect, 200));
+		mMeteringAreaMatrix5.add(new Area(bottomRightRect, 200));
+		mMeteringAreaMatrix5.add(new Area(bottomLeftRect, 200));
+		
+		mMeteringAreaMatrix4.clear();
+		mMeteringAreaMatrix4.add(new Area(topLeftRect, 250));
+		mMeteringAreaMatrix4.add(new Area(topRightRect, 250));
+		mMeteringAreaMatrix4.add(new Area(bottomRightRect, 250));
+		mMeteringAreaMatrix4.add(new Area(bottomLeftRect, 250));
+		
+		mMeteringAreaMatrix1.clear();
+		mMeteringAreaMatrix1.add(new Area(centerRect, 1000));
+		
+		mMeteringAreaCenter.clear();
+		mMeteringAreaCenter.add(new Area(centerRect, 1000));
+		
+		mMeteringAreaSpot.clear();
+		mMeteringAreaSpot.add(new Area(spotRect, 1000));
 	}
 
 	public static void PopulateCameraDimensions(Camera.Parameters cp) {
@@ -1373,6 +1422,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		return null;
 	}
+	
+	public int getMaxNumMeteringAreas()
+	{
+		if(camera != null)
+		{
+			Camera.Parameters camParams = MainScreen.cameraParameters;
+			return camParams.getMaxNumMeteringAreas();
+		}
+		
+		return 0;
+	}
 
 	public String getSceneMode() {
 		if (camera != null) {
@@ -1485,6 +1545,34 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}
 	}
+	
+	public void setCameraMeteringMode(String mode)
+	{
+		if (camera != null)
+		{
+			Camera.Parameters params = cameraParameters;
+			if(meteringModeAuto.contains(mode))
+				setCameraMeteringAreas(null);
+			else if(meteringModeMatrix.contains(mode))
+			{				
+				int maxAreasCount = params.getMaxNumMeteringAreas();
+				if(maxAreasCount > 4)
+					setCameraMeteringAreas(mMeteringAreaMatrix5);
+				else if(maxAreasCount > 3)
+					setCameraMeteringAreas(mMeteringAreaMatrix4);
+				else if(maxAreasCount > 0)
+					setCameraMeteringAreas(mMeteringAreaMatrix1);
+				else
+					setCameraMeteringAreas(null);					
+			}
+			else if(meteringModeCenter.contains(mode))
+				setCameraMeteringAreas(mMeteringAreaCenter);
+			else if(meteringModeSpot.contains(mode))
+				setCameraMeteringAreas(mMeteringAreaSpot);
+			
+			currentMeteringMode = mode;
+		}
+	}
 
 	public void setCameraExposureCompensation(int iEV) {
 		if (camera != null) {
@@ -1549,6 +1637,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			try {
 				Camera.Parameters params = cameraParameters;
 				if (params != null) {
+//					Rect rect = meteringAreas.get(0).rect;
+//					Log.e("MainScreen", "Metering area: " + rect.left + ", " + rect.top + " - " + rect.right + ", " + rect.bottom);
+					if(meteringAreas != null)
+					{
+						params.setMeteringAreas(null);
+						setCameraParameters(params);
+					}
 					params.setMeteringAreas(meteringAreas);
 					setCameraParameters(params);
 				}

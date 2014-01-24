@@ -316,7 +316,7 @@ public class FocusVFPlugin extends PluginViewfinder
         mPreviewHeight = MainScreen.thiz.getPreviewHeight();
         
         Matrix matrix = new Matrix();
-        Util.prepareMatrix(matrix, mirror, displayOrientation,
+        Util.prepareMatrix(matrix, mirror, 90,
         		mPreviewWidth, mPreviewHeight);
         // In face detection, the matrix converts the driver coordinates to UI
         // coordinates. In tap focus, the inverted matrix converts the UI
@@ -379,7 +379,7 @@ public class FocusVFPlugin extends PluginViewfinder
         		   mFocusAreaSupported)
             	{
             		MainScreen.thiz.setCameraFocusAreas(null);
-            		MainScreen.thiz.setCameraMeteringAreas(null);
+            		//MainScreen.thiz.setCameraMeteringAreas(null);
             	}
                 
             	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
@@ -409,7 +409,9 @@ public class FocusVFPlugin extends PluginViewfinder
         if (mMeteringAreaSupported)
         {
             // Use the same area for focus and metering.
-        	MainScreen.thiz.setCameraMeteringAreas(getMeteringAreas());
+        	List<Area> area = getMeteringAreas();
+        	if(area != null)
+        		MainScreen.thiz.setCameraMeteringAreas(area);
         }
     }
 
@@ -570,18 +572,25 @@ public class FocusVFPlugin extends PluginViewfinder
         
         if (mFocusArea == null) {
             mFocusArea = new ArrayList<Area>();
-            mFocusArea.add(new Area(new Rect(), 1));
+            mFocusArea.add(new Area(new Rect(), 1000));
             mMeteringArea = new ArrayList<Area>();
-            mMeteringArea.add(new Area(new Rect(), 1));
+            mMeteringArea.add(new Area(new Rect(), 1000));
         }
 
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
+        Log.e("FocusPlugin", "Click! x = " + x + " y = " + y);
         calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
                 mFocusArea.get(0).rect);
-        calculateTapArea(focusWidth, focusHeight, 1.5f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
-                mMeteringArea.get(0).rect);
+        if(MainScreen.currentMeteringMode.contains("Spot"))
+        	calculateTapArea(20, 20, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
+                    mMeteringArea.get(0).rect);
+        else
+        	mMeteringArea = null;
+        	
+//    	calculateTapArea(focusWidth, focusHeight, 1.5f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
+//    			mMeteringArea.get(0).rect);        	
 
         // Use margin to set the focus indicator to the touched area.
         RelativeLayout.LayoutParams p =
@@ -832,7 +841,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))))
 			{
 				MainScreen.thiz.setCameraFocusAreas(null);
-    			MainScreen.thiz.setCameraMeteringAreas(null);
+    			//MainScreen.thiz.setCameraMeteringAreas(null);
 			}
     	}
         

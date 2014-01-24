@@ -51,6 +51,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -151,7 +152,7 @@ public class AlmalenceGUI extends GUI implements
 	};
 
 	public enum SettingsType {
-		SCENE, WB, FOCUS, FLASH, ISO, CAMERA, EV, MORE
+		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, MORE
 	};
 
 	private OrientationEventListener orientListener;	
@@ -292,6 +293,15 @@ public class AlmalenceGUI extends GUI implements
 			.getString(R.string.iso1600System);
 	private final static String iso3200 = MainScreen.thiz.getResources()
 			.getString(R.string.iso3200System);
+	
+	private final static String meteringAuto = MainScreen.thiz.getResources()
+			.getString(R.string.meteringAutoSystem);
+	private final static String meteringMatrix = MainScreen.thiz.getResources()
+			.getString(R.string.meteringMatrixSystem);
+	private final static String meteringCenter = MainScreen.thiz.getResources()
+			.getString(R.string.meteringCenterSystem);
+	private final static String meteringSpot = MainScreen.thiz.getResources()
+			.getString(R.string.meteringSpotSystem);
 
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
@@ -376,6 +386,15 @@ public class AlmalenceGUI extends GUI implements
 			put(iso800, R.drawable.gui_almalence_settings_iso_800);
 			put(iso1600, R.drawable.gui_almalence_settings_iso_1600);
 			put(iso3200, R.drawable.gui_almalence_settings_iso_3200);			
+		}
+	};
+	
+	private final static Map<String, Integer> icons_metering = new Hashtable<String, Integer>() {
+		{
+			put(meteringAuto, R.drawable.gui_almalence_settings_metering_auto);
+			put(meteringMatrix, R.drawable.gui_almalence_settings_metering_matrix);
+			put(meteringCenter, R.drawable.gui_almalence_settings_metering_center);				
+			put(meteringSpot, R.drawable.gui_almalence_settings_metering_spot);
 		}
 	};
 
@@ -532,6 +551,15 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
+	private final static Map<String, String> names_metering = new Hashtable<String, String>() {
+		{
+			put(meteringAuto, meteringAuto);
+			put(meteringMatrix, meteringMatrix);
+			put(meteringCenter, meteringCenter);
+			put(meteringSpot, meteringSpot);
+		}
+	};
+	
 	private final static Map<String, String> scene_keys = new Hashtable<String, String>()
 	{
 		{
@@ -643,6 +671,7 @@ public class AlmalenceGUI extends GUI implements
 	private final int MODE_FLASH = R.id.flashButton;
 	private final int MODE_ISO = R.id.isoButton;
 	private final int MODE_CAM = R.id.camerachangeButton;
+	private final int MODE_MET = R.id.meteringButton;
 
 	private Map<Integer, View> topMenuButtons;
 	private Map<String, View> topMenuPluginButtons; // Each plugin may have one
@@ -660,12 +689,14 @@ public class AlmalenceGUI extends GUI implements
 	private ElementAdapter focusmodeAdapter;
 	private ElementAdapter flashmodeAdapter;
 	private ElementAdapter isoAdapter;
+	private ElementAdapter meteringmodeAdapter;
 
 	private Map<String, View> SceneModeButtons;
 	private Map<String, View> WBModeButtons;
 	private Map<String, View> FocusModeButtons;
 	private Map<String, View> FlashModeButtons;
 	private Map<String, View> ISOButtons;
+	private Map<String, View> MeteringModeButtons;
 
 	// Camera settings values which is exist at current device
 	private List<View> activeScene;
@@ -673,12 +704,14 @@ public class AlmalenceGUI extends GUI implements
 	private List<View> activeFocus;
 	private List<View> activeFlash;
 	private List<View> activeISO;
+	private List<View> activeMetering;
 
 	private List<String> activeSceneNames;
 	private List<String> activeWBNames;
 	private List<String> activeFocusNames;
 	private List<String> activeFlashNames;
 	private List<String> activeISONames;
+	private List<String> activeMeteringNames;
 
 	private boolean isEVEnabled = true;
 	private boolean isSceneEnabled = true;
@@ -687,6 +720,7 @@ public class AlmalenceGUI extends GUI implements
 	private boolean isFlashEnabled = true;
 	private boolean isIsoEnabled = true;
 	private boolean isCameraChangeEnabled = true;
+	private boolean isMeteringEnabled = true;
 
 	// GUI Layout
 	public View guiView;
@@ -698,8 +732,11 @@ public class AlmalenceGUI extends GUI implements
 	private String mFocusMode = null;
 	private String mWB = null;
 	private String mISO = null;
+	private String mMeteringMode = null;
 
 	public boolean showAEAWLock = false;
+	
+	private Matrix mMeteringMatrix;
 
 	// Prefer sizes for plugin's controls in pixels for screens with density =
 	// 1;
@@ -726,24 +763,28 @@ public class AlmalenceGUI extends GUI implements
 		focusmodeAdapter = new ElementAdapter();
 		flashmodeAdapter = new ElementAdapter();
 		isoAdapter = new ElementAdapter();
+		meteringmodeAdapter = new ElementAdapter();
 
 		SceneModeButtons = new Hashtable<String, View>();
 		WBModeButtons = new Hashtable<String, View>();
 		FocusModeButtons = new Hashtable<String, View>();
 		FlashModeButtons = new Hashtable<String, View>();
 		ISOButtons = new Hashtable<String, View>();
+		MeteringModeButtons = new Hashtable<String, View>();
 
 		activeScene = new ArrayList<View>();
 		activeWB = new ArrayList<View>();
 		activeFocus = new ArrayList<View>();
 		activeFlash = new ArrayList<View>();
 		activeISO = new ArrayList<View>();
+		activeMetering = new ArrayList<View>();
 
 		activeSceneNames = new ArrayList<String>();
 		activeWBNames = new ArrayList<String>();
 		activeFocusNames = new ArrayList<String>();
 		activeFlashNames = new ArrayList<String>();
 		activeISONames = new ArrayList<String>();
+		activeMeteringNames = new ArrayList<String>();
 
 		settingsAdapter = new ElementAdapter();
 		settingsViews = new ArrayList<View>();
@@ -754,6 +795,8 @@ public class AlmalenceGUI extends GUI implements
 		modeAdapter = new ElementAdapter();
 		modeViews = new ArrayList<View>();
 		buttonModeViewAssoc = new Hashtable<View, String>();
+		
+		mMeteringMatrix = new Matrix();
 	}
 
 	/*
@@ -805,6 +848,14 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if(icons_iso.containsKey(isoMode))
 			return icons_iso.get(isoMode);
+		else
+			return -1;
+	}
+	
+	public int getMeteringIcon(String meteringMode)
+	{
+		if(icons_metering.containsKey(meteringMode))
+			return icons_metering.get(meteringMode);
 		else
 			return -1;
 	}
@@ -873,6 +924,8 @@ public class AlmalenceGUI extends GUI implements
 				((RotateImageView) topMenuButtons.get(MODE_ISO))
 						.setOrientation(AlmalenceGUI.mDeviceOrientation);
 				((RotateImageView) topMenuButtons.get(MODE_CAM))
+						.setOrientation(AlmalenceGUI.mDeviceOrientation);
+				((RotateImageView) topMenuButtons.get(MODE_MET))
 						.setOrientation(AlmalenceGUI.mDeviceOrientation);
 
 				Set<String> keys = topMenuPluginButtons.keySet();
@@ -1050,6 +1103,7 @@ public class AlmalenceGUI extends GUI implements
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_METERING, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, true);
 
 		// if first launch - show layout with hints
@@ -1179,6 +1233,8 @@ public class AlmalenceGUI extends GUI implements
 				MainScreen.thiz);
 		guiView.findViewById(R.id.isoButton)
 				.setOnTouchListener(MainScreen.thiz);
+		guiView.findViewById(R.id.meteringButton)
+				.setOnTouchListener(MainScreen.thiz);
 		guiView.findViewById(R.id.camerachangeButton).setOnTouchListener(
 				MainScreen.thiz);
 
@@ -1189,6 +1245,7 @@ public class AlmalenceGUI extends GUI implements
 		guiView.findViewById(R.id.focusButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.flashButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.isoButton).setOnLongClickListener(this);
+		guiView.findViewById(R.id.meteringButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.camerachangeButton).setOnLongClickListener(
 				this);
 
@@ -1199,6 +1256,7 @@ public class AlmalenceGUI extends GUI implements
 		topMenuButtons.put(MODE_FOCUS, guiView.findViewById(R.id.focusButton));
 		topMenuButtons.put(MODE_FLASH, guiView.findViewById(R.id.flashButton));
 		topMenuButtons.put(MODE_ISO, guiView.findViewById(R.id.isoButton));
+		topMenuButtons.put(MODE_MET, guiView.findViewById(R.id.meteringButton));
 		topMenuButtons.put(MODE_CAM, guiView.findViewById(R.id.camerachangeButton));
 
 		SceneModeButtons = initCameraParameterModeButtons(icons_scene,
@@ -1211,6 +1269,8 @@ public class AlmalenceGUI extends GUI implements
 				names_flash, FlashModeButtons, MODE_FLASH);
 		ISOButtons = initCameraParameterModeButtons(icons_iso, names_iso,
 				ISOButtons, MODE_ISO);
+		MeteringModeButtons = initCameraParameterModeButtons(icons_metering, names_metering,
+				MeteringModeButtons, MODE_MET);
 
 		// Create top menu buttons for plugins (each plugin may have only one
 		// top menu button)
@@ -1321,6 +1381,9 @@ public class AlmalenceGUI extends GUI implements
 						case MODE_ISO:
 							setISO(system_name);
 							break;
+						case MODE_MET:
+							setMeteringMode(system_name);
+							break;
 						}
 						guiView.findViewById(R.id.topPanel).setVisibility(
 								View.VISIBLE);
@@ -1348,6 +1411,9 @@ public class AlmalenceGUI extends GUI implements
 						break;
 					case MODE_ISO:
 						setISO(system_name);
+						break;
+					case MODE_MET:
+						setMeteringMode(system_name);
 						break;
 					}
 					guiView.findViewById(R.id.topPanel).setVisibility(
@@ -1845,6 +1911,7 @@ public class AlmalenceGUI extends GUI implements
 		mFocusModeSupported = false;
 		mFlashModeSupported = false;
 		mISOSupported = false;
+		mMeteringAreasSupported = false;
 		mCameraChangeSupported = false;
 		
 		mEVLockSupported = false;
@@ -1855,12 +1922,14 @@ public class AlmalenceGUI extends GUI implements
 		activeFocus.clear();
 		activeFlash.clear();
 		activeISO.clear();
+		activeMetering.clear();
 
 		activeSceneNames.clear();
 		activeWBNames.clear();
 		activeFocusNames.clear();
 		activeFlashNames.clear();
 		activeISONames.clear();
+		activeMeteringNames.clear();
 
 		removeAllQuickViews();
 		initDefaultQuickControls();
@@ -2424,6 +2493,66 @@ public class AlmalenceGUI extends GUI implements
 			mISOSupported = false;
 			mISO = null;
 		}
+		
+		
+		int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
+		if(iMeteringAreasSupported > 0)
+		{
+			Collection<String> unsorted_keys = names_metering.keySet();
+			List<String> keys = Util.asSortedList(unsorted_keys);
+			Iterator<String> it = keys.iterator();
+			while (it.hasNext())
+			{
+				String metering_name = it.next();
+				activeMetering.add(MeteringModeButtons.get(metering_name));
+				activeMeteringNames.add(metering_name);
+			}
+			
+			if(activeMeteringNames.size() > 0)
+			{
+				this.mMeteringAreasSupported = true;
+
+				meteringmodeAdapter.Elements = activeMetering;
+				GridView gridview = (GridView) guiView
+						.findViewById(R.id.meteringmodeGrid);
+				gridview.setNumColumns(activeMetering.size() > 9 ? 4 : 3);
+				gridview.setAdapter(meteringmodeAdapter);
+	
+				String initValue = preferences.getString(sMeteringModePref,
+						sDefaultValue);
+				if (!activeMeteringNames.contains(initValue))
+						initValue = activeMeteringNames.get(0);
+				
+				setButtonSelected(MeteringModeButtons, initValue);
+				setCameraParameterValue(MODE_MET, initValue);
+	
+				if (icons_metering!=null && icons_metering.containsKey(initValue))
+				{
+					RotateImageView but = (RotateImageView) topMenuButtons
+							.get(MODE_MET);
+					int icon_id = icons_metering.get(initValue);
+					but.setImageResource(icon_id);
+				}
+				
+				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
+				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					params.setFlashMode(mFlashMode);
+//				}
+			}
+			else
+			{
+				mMeteringAreasSupported = false;
+				mMeteringMode = null;	
+			}
+		}
+		else
+		{
+			this.mMeteringAreasSupported = false;
+			this.mMeteringMode = null;
+		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			addCameraChangeButton();
@@ -2590,6 +2719,11 @@ public class AlmalenceGUI extends GUI implements
 					return true;
 				else
 					return false;
+			case MODE_MET:
+				if (mMeteringAreasSupported)
+					return true;
+				else
+					return false;
 			case MODE_CAM:
 				if (mCameraChangeSupported)
 					return true;
@@ -2628,6 +2762,10 @@ public class AlmalenceGUI extends GUI implements
 		case CAMERA_PARAMETER_ISO:
 			topMenuView = topMenuButtons.get(MODE_ISO);
 			isIsoEnabled = !bDisable;
+			break;
+		case CAMERA_PARAMETER_METERING:
+			topMenuView = topMenuButtons.get(MODE_MET);
+			isMeteringEnabled = !bDisable;
 			break;
 		case CAMERA_PARAMETER_CAMERACHANGE:
 			topMenuView = topMenuButtons.get(MODE_CAM);
@@ -2910,6 +3048,12 @@ public class AlmalenceGUI extends GUI implements
 					R.string.settings_mode_iso);
 			isEnabled = isIsoEnabled;
 			break;
+		case METERING:
+			icon_id = icons_metering.get(mMeteringMode);
+			icon_text = MainScreen.thiz.getResources().getString(
+					R.string.settings_mode_metering);
+			isEnabled = isMeteringEnabled;
+			break;			
 		case CAMERA: {
 			icon_id = icon_cam;
 			if (preferences.getBoolean("useFrontCamera", false) == false)
@@ -2984,6 +3128,12 @@ public class AlmalenceGUI extends GUI implements
 			else
 				createSettingIsoOnClick(settingView);
 			break;
+		case METERING:
+			if (isQuickControl)
+				createQuickControlMeteringOnClick(settingView);
+			else
+				createSettingMeteringOnClick(settingView);
+			break;			
 		case CAMERA:
 			if (isQuickControl)
 				createQuickControlCameraChangeOnClick(settingView);
@@ -3074,6 +3224,10 @@ public class AlmalenceGUI extends GUI implements
 				if (mISOSupported)
 					addQuickSetting(SettingsType.ISO, true);
 				break;
+			case R.id.meteringButton:
+				if (mMeteringAreasSupported)
+					addQuickSetting(SettingsType.METERING, true);
+				break;				
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, true);
@@ -3306,6 +3460,25 @@ public class AlmalenceGUI extends GUI implements
 
 		});
 	}
+	
+	private void createQuickControlMeteringOnClick(View metering) {
+		metering.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				RotateImageView metering = (RotateImageView) topMenuButtons
+						.get(MODE_MET);
+				Drawable icon = MainScreen.mainContext.getResources()
+						.getDrawable(icons_metering.get(mMeteringMode));
+				metering.setImageDrawable(icon);
+
+				switchViews(currentQuickView, metering, String.valueOf(MODE_MET));
+				recreateQuickControlsMenu();
+				changeCurrentQuickControl(metering);
+				initQuickControlsMenu(currentQuickView);
+				showQuickControlsSettings();
+			}
+
+		});
+	}
 
 	private void createQuickControlCameraChangeOnClick(View cameraChange) {
 		cameraChange.setOnClickListener(new OnClickListener() {
@@ -3399,20 +3572,22 @@ public class AlmalenceGUI extends GUI implements
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
 						.getDrawable(R.drawable.topmenu_background));
 
-		correctTopMenuButtonBackground(MainScreen.thiz.findViewById(MODE_EV),
-				isEVEnabled);
+		correctTopMenuButtonBackground(
+				MainScreen.thiz.findViewById(MODE_EV), isEVEnabled);
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_SCENE), isSceneEnabled);
-		correctTopMenuButtonBackground(MainScreen.thiz.findViewById(MODE_WB),
-				isWBEnabled);
+		correctTopMenuButtonBackground(
+				MainScreen.thiz.findViewById(MODE_WB), isWBEnabled);
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_FOCUS), isFocusEnabled);
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_FLASH), isFlashEnabled);
-		correctTopMenuButtonBackground(MainScreen.thiz.findViewById(MODE_ISO),
-				isIsoEnabled);
-		correctTopMenuButtonBackground(MainScreen.thiz.findViewById(MODE_CAM),
-				isCameraChangeEnabled);
+		correctTopMenuButtonBackground(
+				MainScreen.thiz.findViewById(MODE_ISO), isIsoEnabled);
+		correctTopMenuButtonBackground(
+				MainScreen.thiz.findViewById(MODE_MET), isMeteringEnabled);
+		correctTopMenuButtonBackground(
+				MainScreen.thiz.findViewById(MODE_CAM), isCameraChangeEnabled);
 
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
@@ -3475,6 +3650,10 @@ public class AlmalenceGUI extends GUI implements
 				if (mISOSupported)
 					addQuickSetting(SettingsType.ISO, false);
 				break;
+			case R.id.meteringButton:
+				if (mMeteringAreasSupported)
+					addQuickSetting(SettingsType.METERING, false);
+				break;				
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, false);
@@ -3726,6 +3905,30 @@ public class AlmalenceGUI extends GUI implements
 					((ImageView) v.findViewById(R.id.imageView))
 							.setImageDrawable(icon);
 					setISO(newISO);
+				}
+			}
+		});
+	}
+	
+	private void createSettingMeteringOnClick(View settingView) {
+		settingView.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (!isMeteringEnabled) {
+					showToast(
+							null,
+							Toast.LENGTH_SHORT,
+							Gravity.CENTER,
+							MainScreen.thiz.getResources().getString(
+									R.string.settings_not_available), true,
+							false);
+					return;
+				}
+				int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
+				if (iMeteringAreasSupported > 0)
+				{					
+					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
+							false, false);
+					showParams(MODE_MET);
 				}
 			}
 		});
@@ -4653,6 +4856,38 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 			break;
+		case R.id.meteringButton: {
+			if (quickControlsChangeVisible) {
+				changeCurrentQuickControl(button);
+				initQuickControlsMenu(button);
+				showQuickControlsSettings();
+				break;
+			}
+
+			if (!isMeteringEnabled) {
+				showToast(
+						null,
+						Toast.LENGTH_SHORT,
+						Gravity.CENTER,
+						MainScreen.thiz.getResources().getString(
+								R.string.settings_not_available), true, false);
+				break;
+			}
+
+			RelativeLayout Layout = (RelativeLayout) guiView
+					.findViewById(R.id.meteringLayout);
+			if (Layout.getVisibility() == View.GONE) {
+				quickControlsVisible = true;
+				unselectPrimaryTopMenuButtons(MODE_MET);
+				hideSecondaryMenus();
+				showParams(MODE_MET);
+			} else {
+				quickControlsVisible = false;
+				unselectPrimaryTopMenuButtons(-1);
+				hideSecondaryMenus();
+			}
+		}
+			break;			
 		case R.id.camerachangeButton: {
 			if (quickControlsChangeVisible) {
 				changeCurrentQuickControl(button);
@@ -5076,6 +5311,27 @@ public class AlmalenceGUI extends GUI implements
 		msg.what = PluginManager.MSG_BROADCAST;
 		MainScreen.H.sendMessage(msg);
 	}
+	
+	private void setMeteringMode(String newMode)
+	{
+		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		if (newMode != null && params != null && !mMeteringMode.contains(newMode))
+		{
+			mMeteringMode = newMode;
+			setButtonSelected(MeteringModeButtons, mMeteringMode);
+
+			preferences.edit().putString(sMeteringModePref, newMode).commit();
+			MainScreen.thiz.setCameraMeteringMode(newMode);
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
+		int icon_id = icons_metering.get(mMeteringMode);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+	}
 
 	// Hide all pop-up layouts
 	private void unselectPrimaryTopMenuButtons(int iTopMenuButtonSelected)
@@ -5151,6 +5407,10 @@ public class AlmalenceGUI extends GUI implements
 			if (isIsoEnabled)
 				isEnabled = true;
 			break;
+		case MODE_MET:
+			if (isMeteringEnabled)
+				isEnabled = true;
+			break;			
 		case MODE_CAM:
 			if (isCameraChangeEnabled)
 				isEnabled = true;
@@ -5172,6 +5432,7 @@ public class AlmalenceGUI extends GUI implements
 		guiView.findViewById(R.id.focusmodeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.flashmodeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.isoLayout).setVisibility(View.GONE);
+		guiView.findViewById(R.id.meteringLayout).setVisibility(View.GONE);
 
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
@@ -5188,7 +5449,8 @@ public class AlmalenceGUI extends GUI implements
 				|| guiView.findViewById(R.id.wbLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE
-				|| guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
+				|| guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE
+				|| guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
 			return true;
 		return false;
 	}
@@ -5232,6 +5494,9 @@ public class AlmalenceGUI extends GUI implements
 		case MODE_ISO:
 			views = activeISO;
 			break;
+		case MODE_MET:
+			views = activeMetering;
+			break;			
 		}
 
 		if (views != null) {
@@ -5263,6 +5528,9 @@ public class AlmalenceGUI extends GUI implements
 		case MODE_ISO:
 			guiView.findViewById(R.id.isoLayout).setVisibility(View.VISIBLE);
 			break;
+		case MODE_MET:
+			guiView.findViewById(R.id.meteringLayout).setVisibility(View.VISIBLE);
+			break;			
 		}
 
 		quickControlsVisible = true;
@@ -5306,6 +5574,9 @@ public class AlmalenceGUI extends GUI implements
 		case MODE_ISO:
 			mISO = sValue;
 			break;
+		case MODE_MET:
+			mMeteringMode = sValue;
+			break;			
 		}
 	}
 

@@ -273,6 +273,13 @@
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:onClick="onButtonClick"/>
+			<com.almalence.ui.RotateImageView android:id="@+id/meteringButton"
+					android:background="@drawable/transparent_background"					
+					android:layout_height="fill_parent"
+					android:layout_width="0dip"
+					android:layout_weight="1"
+			   		android:layout_gravity="center"
 			   		android:onClick="onButtonClick"/>			
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@drawable/transparent_background"					
@@ -498,7 +505,28 @@
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
-			</RelativeLayout>	
+			</RelativeLayout>
+			<RelativeLayout android:id="@+id/meteringLayout"
+        		android:background="@drawable/layout_border"
+        		android:orientation="vertical"
+        		android:layout_width="fill_parent"
+        		android:layout_height="wrap_content"        		
+        		android:layout_marginLeft="5dip"
+        		android:layout_marginRight="5dip"
+				android:layout_marginBottom="3dip"
+	    		android:layout_gravity="top"
+				android:visibility="gone">
+					<GridView  
+					    android:id="@+id/meteringmodeGrid"
+					    android:layout_width="fill_parent" 
+					    android:layout_height="wrap_content"
+					    android:numColumns="3"
+					    android:verticalSpacing="10dp"
+					    android:horizontalSpacing="10dp"
+					    android:stretchMode="columnWidth"
+					    android:gravity="center"					    
+					/>
+			</RelativeLayout>				
 	</RelativeLayout>	 	
 		
 	   <LinearLayout

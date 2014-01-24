@@ -259,6 +259,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		isFirstGpsFix=true;
 		
+		mDeviceOrientation = MainScreen.guiManager.getDisplayOrientation();
+		mDeviceOrientation = (mDeviceOrientation - 90 + 360) % 360;
+		
 		clearInfoViews();
 		
 		if(useBatteryMonitor)
@@ -266,6 +269,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			batteryInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			batteryInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.battery_empty));
+			batteryInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(batteryInfoImage);			
 		}
@@ -275,6 +279,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			sceneInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon("auto")));
+			sceneInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(sceneInfoImage);
 		}
@@ -284,6 +289,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			wbInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon("auto")));
+			wbInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(wbInfoImage);
 		}
@@ -293,6 +299,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			focusInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon("auto")));
+			focusInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(focusInfoImage);
 		}
@@ -302,6 +309,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			flashInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon("auto")));
+			flashInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(flashInfoImage);
 		}
@@ -311,6 +319,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			isoInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
 			isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon("auto")));
+			isoInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(isoInfoImage);
 		}
@@ -321,6 +330,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_text, null);
 			memoryInfoText = (TextView)v.findViewById(R.id.infoText);
 			memoryInfoText.setText(memoryString);
+			memoryInfoText.setRotation(-mDeviceOrientation);
 			
 			addInfoView(memoryInfoText);
 		}
@@ -332,6 +342,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_text, null);
 			evInfoText = (TextView)v.findViewById(R.id.infoText);
 			evInfoText.setText(evString);
+			evInfoText.setRotation(-mDeviceOrientation);
 			
 			addInfoView(evInfoText);
 		}

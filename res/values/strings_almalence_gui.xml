@@ -201,11 +201,17 @@
     <string name="iso800DefaultSystem">"800"</string>
     <string name="iso1600DefaultSystem">1600</string>
     
+    <string name="meteringAutoSystem">Auto</string>
+    <string name="meteringMatrixSystem">Matrix</string>
+    <string name="meteringCenterSystem">Center-weighted</string>
+    <string name="meteringSpotSystem">Spot</string>
+    
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>
     <string name="settings_mode_focus">Focus mode</string>
     <string name="settings_mode_flash">Flash mode</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Exposure metering mode</string>
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
     <string name="settings_mode_exposure">Exposure</string>
