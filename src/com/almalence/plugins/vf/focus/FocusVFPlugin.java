@@ -583,7 +583,7 @@ public class FocusVFPlugin extends PluginViewfinder
         Log.e("FocusPlugin", "Click! x = " + x + " y = " + y);
         calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
                 mFocusArea.get(0).rect);
-        if(MainScreen.currentMeteringMode.contains("Spot"))
+        if(MainScreen.currentMeteringMode != null && MainScreen.currentMeteringMode.contains("Spot"))
         	calculateTapArea(20, 20, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
                     mMeteringArea.get(0).rect);
         else
