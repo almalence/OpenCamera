@@ -194,6 +194,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static String SaveToPath;
 	public static boolean SaveInputPreference;
 	public static String SaveToPreference;
+	public static boolean SortByDataPreference;
 
 	// Camera resolution variables and lists
 	public static final int MIN_MPIX_SUPPORTED = 1280 * 960;
@@ -631,6 +632,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					SaveInputPreference = prefs.getBoolean("saveInputPref",
 							false);
 					SaveToPreference = prefs.getString("saveToPref", "0");
+					SortByDataPreference = prefs.getBoolean("sortByDataPref",
+							false);
 
 					MainScreen.guiManager.onResume();
 					PluginManager.getInstance().onResume();
