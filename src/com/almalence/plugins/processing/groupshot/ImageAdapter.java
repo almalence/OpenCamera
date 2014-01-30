@@ -36,20 +36,25 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
+
 /* <!-- +++
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.R;
+import com.almalence.util.MemoryImageCache;
 //-+- -->
 
 public class ImageAdapter extends BaseAdapter {
+	final static int THUMBNAIL_WIDTH = 200;
+	final static int THUMBNAIL_HEIGHT = 250;
 	int mGalleryItemBackground;
 	private Context mContext = null;
 	private String[] imagePath = null;
 	private List<byte[]> mList;
 	private boolean mDisplayLandscape;
 	private boolean mCameraMirrored;
+	private MemoryImageCache cache = null;
 
 	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored) {
 		mContext = context;
@@ -60,6 +65,19 @@ public class ImageAdapter extends BaseAdapter {
 		mGalleryItemBackground = a.getResourceId(
 				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
+		
+		cache = new MemoryImageCache(mList.size());
+		
+		for (int i = 0; i < mList.size(); i++) {
+	    	final int id = i;
+		    new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+		        	final String Key = String.valueOf(id);
+		        	cache.addBitmap(Key, decodeJPEGfromData(id));
+		        }
+		    }).start();
+		}
 	}
 	
 	public ImageAdapter(Context context, String path) {
@@ -69,6 +87,64 @@ public class ImageAdapter extends BaseAdapter {
 				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
 		setDirContainThumbnails(path);
+	}
+	
+	public void finalize() {
+		cache.clear();
+	}
+	
+	private Bitmap decodeJPEGfromData(int position) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Config.RGB_565;
+		options.inJustDecodeBounds = true;
+		
+		if (mList == null) {
+			BitmapFactory.decodeFile(imagePath[position], options);
+		} else {
+			BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
+		}
+
+		float widthScale = (float)options.outWidth / (float)THUMBNAIL_WIDTH;
+		float heightScale = (float)options.outHeight / (float)THUMBNAIL_HEIGHT;
+		float scale = widthScale > heightScale ? widthScale : heightScale;
+		float imageRatio = (float)options.outWidth / (float)options.outHeight;
+		float displayRatio = (float)THUMBNAIL_WIDTH / (float)THUMBNAIL_HEIGHT;
+
+		if (scale >= 8) {
+			options.inSampleSize = 8;
+		} else if (scale >= 6) {
+			options.inSampleSize = 6;
+		} else if (scale >= 4) {
+			options.inSampleSize = 4;
+		} else if (scale >= 2) {
+			options.inSampleSize = 2;
+		} else {
+			options.inSampleSize = 1;
+		}
+
+		options.inJustDecodeBounds = false;
+		
+		Bitmap bm = null;
+		Bitmap bitmap = null;
+		
+		if (mList == null) {
+			bm = BitmapFactory.decodeFile(imagePath[position], options);		
+		} else {
+			bm = BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
+		}
+		
+		if (imageRatio > displayRatio) {
+			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int)(THUMBNAIL_WIDTH / displayRatio), true);
+		} else {
+			bitmap = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+		}
+
+		if(bitmap != bm)
+			bm.recycle();
+		
+		Matrix matrix = new Matrix();
+		matrix.postRotate(mCameraMirrored? -90 : 90);
+		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
 	
 	private int setDirContainThumbnails(String path) {
@@ -88,7 +164,16 @@ public class ImageAdapter extends BaseAdapter {
         }
         imagePath = new String[list.length];
         for (File f : list) {
-        	imagePath[numOfFrame++] = f.getAbsolutePath();
+        	imagePath[numOfFrame] = f.getAbsolutePath();
+        	final int id = numOfFrame;
+		    new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+		        	final String Key = String.valueOf(id);
+		        	cache.addBitmap(Key, decodeJPEGfromData(id));
+		        }
+		    }).start();
+		    numOfFrame++;
         }
         
 		return numOfFrame;
@@ -112,70 +197,25 @@ public class ImageAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ImageView i = new ImageView(mContext);
-		Display display = ((WindowManager) mContext
-				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		int displayWidth = display.getWidth();
-		int displayHeight = display.getHeight();
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Config.RGB_565;
-		options.inJustDecodeBounds = true;
-		
-		if (mList == null) {
-			BitmapFactory.decodeFile(imagePath[position], options);
-		} else {
-			BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
-		}
+        if (convertView == null) {
+            convertView = (ImageView) new ImageView(mContext);
+        }
+    	final String Key = String.valueOf(position);
+    	Bitmap b = cache.getBitmap(Key);
+    	
+    	if (b != null) {
+    		((ImageView) convertView).setImageBitmap(b);
+    	} else {
+    		((ImageView) convertView).setImageBitmap(decodeJPEGfromData(position));
+    	}
 
-		float widthScale = options.outWidth / displayWidth;
-		float heightScale = options.outHeight / displayHeight;
-		float scale = widthScale > heightScale ? widthScale : heightScale;
-
-		if (scale >= 8) {
-			options.inSampleSize = 8;
-		} else if (scale >= 6) {
-			options.inSampleSize = 6;
-		} else if (scale >= 4) {
-			options.inSampleSize = 4;
-		} else if (scale >= 2) {
-			options.inSampleSize = 2;
-		} else {
-			options.inSampleSize = 1;
-		}
-
-		options.inJustDecodeBounds = false;
-		if (mList == null) {
-			Bitmap bm = BitmapFactory.decodeFile(imagePath[position], options);
-//			if(!mDisplayLandscape)
-//    		{
-//	    		Matrix matrix = new Matrix();
-//	    		matrix.postRotate(mCameraMirrored? -90 : 90);
-//	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-//    		}
-			Matrix matrix = new Matrix();
-    		matrix.postRotate(mCameraMirrored? -90 : 90);
-    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);			
-			i.setImageBitmap(bm);
-		} else {
-			Bitmap bm = BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
-//			if(!mDisplayLandscape)
-//    		{
-//	    		Matrix matrix = new Matrix();
-//	    		matrix.postRotate(mCameraMirrored? -90 : 90);
-//	    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-//    		}
-			Matrix matrix = new Matrix();
-    		matrix.postRotate(mCameraMirrored? -90 : 90);
-    		bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-			i.setImageBitmap(bm);
-		}
-		i.setLayoutParams(new Gallery.LayoutParams(200, 250));
+    	convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
 //		if(mDisplayLandscape)
-//			i.setLayoutParams(new Gallery.LayoutParams(250, 200));
+//			convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH));
 //		else
-//			i.setLayoutParams(new Gallery.LayoutParams(200, 250));
-		i.setScaleType(ImageView.ScaleType.FIT_XY);
-		i.setBackgroundResource(mGalleryItemBackground);
-		return i;
+//			convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
+    	((ImageView) convertView).setScaleType(ImageView.ScaleType.FIT_XY);
+    	convertView.setBackgroundResource(mGalleryItemBackground);
+		return convertView;
 	}
 }
