@@ -16,5 +16,8 @@
 	
 	<string name="Pref_Export_UseGeoTagging_Title">Геотэги</string>
 	<string name="Pref_Export_UseGeoTagging_Summary">Добавлять геотэги. Включите GPS на устройстве для получения более точных результатов</string>
+	
+	<string name="Pref_Export_SortByData_Title">Использовать датируемые папки</string>
+	<string name="Pref_Export_SortByData_Summary">Сохранять результирующие фото в папки текущей даты</string>
 
 </resources>

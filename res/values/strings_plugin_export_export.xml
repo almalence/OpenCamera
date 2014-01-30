@@ -17,5 +17,8 @@
 	
 	<string name="Pref_Export_UseGeoTagging_Title">Geo tagging</string>
 	<string name="Pref_Export_UseGeoTagging_Summary">Add location tags. Turn on "GPS location" system setting to get precise geo-tagging</string>
+	
+	<string name="Pref_Export_SortByData_Title">Use dated folders</string>
+	<string name="Pref_Export_SortByData_Summary">Save result images to folder of current date</string>
 
 </resources>

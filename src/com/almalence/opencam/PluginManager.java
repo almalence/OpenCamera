@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -1805,16 +1806,23 @@ public class PluginManager {
         File dcimDir, saveDir = null, memcardDir;
         boolean usePhoneMem = true;
         
+        String abcDir = "Camera";
+        if(MainScreen.SortByDataPreference)
+        {
+        	Calendar rightNow = Calendar.getInstance();
+        	abcDir = String.format("%tF", rightNow);
+        }
+        
         if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
         {
-			dcimDir = Environment.getExternalStorageDirectory();
+			dcimDir = Environment.getExternalStorageDirectory();			
 			
 			// there are variations in sd-card directory namings
 			
 			memcardDir = new File("/storage", "sdcard1");		// Jelly Bean fix
             if (memcardDir.exists())
             {
-	            saveDir = new File("/storage", "sdcard1/DCIM/Camera");
+	            saveDir = new File("/storage", "sdcard1/DCIM/" + abcDir);
             	usePhoneMem = false;
             }
             else
@@ -1822,7 +1830,7 @@ public class PluginManager {
             	memcardDir = new File("/mnt", "extSdCard");		// SGSIII
 	            if (memcardDir.exists())
 	            {
-		            saveDir = new File("/mnt", "extSdCard/DCIM/Camera");
+		            saveDir = new File("/mnt", "extSdCard/DCIM/" + abcDir);
 	            	usePhoneMem = false;
 	            }
 	            else
@@ -1830,7 +1838,7 @@ public class PluginManager {
 					memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
 		            if (memcardDir.exists())
 		            {
-			            saveDir = new File("/storage", "sdcard0/DCIM/Camera");
+			            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
 		            	usePhoneMem = false;
 		            }
 		            else
@@ -1838,7 +1846,7 @@ public class PluginManager {
 		    			memcardDir = new File(dcimDir, "external_sd");		// Samsung
 		                if (memcardDir.exists())
 		                {
-		    	            saveDir = new File(dcimDir, "external_sd/DCIM/Camera");
+		    	            saveDir = new File(dcimDir, "external_sd/DCIM/" + abcDir);
 		                	usePhoneMem = false;
 		                }
 		                else
@@ -1846,7 +1854,7 @@ public class PluginManager {
 							memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
 				            if (memcardDir.exists())
 				            {
-					            saveDir = new File(dcimDir, "sdcard-ext/DCIM/Camera"); 
+					            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
 				            	usePhoneMem = false;
 				            }
 				            else
@@ -1854,7 +1862,7 @@ public class PluginManager {
 								memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
 					            if (memcardDir.exists())
 					            {
-						            saveDir = new File("/mnt", "sdcard-ext/DCIM/Camera"); 
+						            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
 					            	usePhoneMem = false;
 					            }
 					            else
@@ -1862,7 +1870,7 @@ public class PluginManager {
 									memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
 						            if (memcardDir.exists())
 						            {
-							            saveDir = new File("/", "sdcard/DCIM/Camera");
+							            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
 						            	usePhoneMem = false;
 						            }
 					            }
@@ -1881,9 +1889,8 @@ public class PluginManager {
         
         if (usePhoneMem)		// phone memory (internal sd card)
 		{
-        	
         	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, "Camera"); // "HDR");
+            saveDir = new File(dcimDir, abcDir); // "HDR");
 		}
         if (!saveDir.exists())
             saveDir.mkdirs();
@@ -1892,7 +1899,7 @@ public class PluginManager {
         if (!saveDir.exists())
         {
         	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, "Camera"); // "HDR");
+            saveDir = new File(dcimDir, abcDir); // "HDR");
             
             if (!saveDir.exists())
                 saveDir.mkdirs();
