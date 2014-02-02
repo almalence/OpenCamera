@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-//<!-- -+-
+
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
 import com.almalence.opencam.billing.Inventory;
@@ -87,14 +88,14 @@ import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.util.AppRater;
+import com.almalence.util.Util;
+//<!-- -+-
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ui.AlmalenceGUI;
 import com.almalence.opencam_plus.ui.GLLayer;
 import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
-
-import com.almalence.util.Util;
 
 /***
  * MainScreen - main activity screen with camera functionality
@@ -1023,26 +1024,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		ResolutionsNamesList = new ArrayList<String>();
 
 		////For debug file
-//		File saveDir = PluginManager.getInstance().GetSaveDir();
-//		File file = new File(
-//        		saveDir, 
-//        		"!!!ABC_DEBUG_COMMON.txt");
-//		if (file.exists())
-//		    file.delete();
-//		try {
-//			String data = "";
-//			data = cp.flatten();
-//			FileOutputStream out;
-//			out = new FileOutputStream(file);
-//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.flush();
-//			outputStreamWriter.close();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		File saveDir = PluginManager.getInstance().GetSaveDir();
+		File file = new File(
+        		saveDir, 
+        		"!!!ABC_DEBUG_COMMON.txt");
+		if (file.exists())
+		    file.delete();
+		try {
+			String data = "";
+			data = cp.flatten();
+			FileOutputStream out;
+			out = new FileOutputStream(file);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+			outputStreamWriter.write(data);
+			outputStreamWriter.write(data);
+			outputStreamWriter.flush();
+			outputStreamWriter.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		List<Camera.Size> cs;

@@ -59,3 +59,7 @@ IsSlowMode      boolean   - indicates capture mode
 resultfromshared boolean  - indicates if result stored in shared memory or in heap 
 							(if in shared, then we support only one res file, 
 							but it can be fast expanded)
+							
+							
+							
+mode_name		string		- mode name, to add in exif data							

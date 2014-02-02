@@ -33,6 +33,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -42,6 +43,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -329,9 +331,13 @@ public abstract class Plugin
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
+    	
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+    	
 		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		cp.setJpegQuality(95);
+		cp.setJpegQuality(jpegQuality);
 		try
         {
 			MainScreen.thiz.setCameraParameters(cp);
