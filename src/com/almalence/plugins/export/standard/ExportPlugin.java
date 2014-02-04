@@ -23,12 +23,12 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.hardware.Camera;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
@@ -209,7 +209,7 @@ public class ExportPlugin extends PluginExport
 					idx+="_"+i;
 				
 		    	//define file name format. from settings!
-		    	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
+		    	String fileFormat = String.format(Locale.US, "%04d%02d%02d_%02d%02d%02d",
 	            		d.get(Calendar.YEAR),
 	            		d.get(Calendar.MONTH)+1,
 	            		d.get(Calendar.DAY_OF_MONTH),
@@ -317,6 +317,7 @@ public class ExportPlugin extends PluginExport
 			            	//to avoid problems with SKIA
 			            	int cropHeight = image.getHeight()-image.getHeight()%16;
 					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+					    	SwapHeap.FreeFromHeap(ptr);
 			            }
 			            else
 			            {
@@ -337,6 +338,7 @@ public class ExportPlugin extends PluginExport
 					    		out.compressToJpeg(r, 95, os);
 		    	    		} 	    	
 
+					    	SwapHeap.FreeFromHeap(yuv);
 			            }
 		            }
 	            }
