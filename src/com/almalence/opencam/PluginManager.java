@@ -1835,20 +1835,20 @@ public class PluginManager {
 	            }
 	            else
 	            {
-					memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
-		            if (memcardDir.exists())
-		            {
-			            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
-		            	usePhoneMem = false;
-		            }
+	            	memcardDir = new File(dcimDir, "external_sd");		// Samsung
+	                if (memcardDir.exists())
+	                {
+	    	            saveDir = new File(dcimDir, "external_sd/DCIM/" + abcDir);
+	                	usePhoneMem = false;
+	                }					
 		            else
 		            {
-		    			memcardDir = new File(dcimDir, "external_sd");		// Samsung
-		                if (memcardDir.exists())
-		                {
-		    	            saveDir = new File(dcimDir, "external_sd/DCIM/" + abcDir);
-		                	usePhoneMem = false;
-		                }
+		            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
+			            if (memcardDir.exists())
+			            {
+				            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
+			            	usePhoneMem = false;
+			            }
 		                else
 		                {
 							memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)

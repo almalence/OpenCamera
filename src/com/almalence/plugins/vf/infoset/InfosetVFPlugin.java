@@ -381,7 +381,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 	public void initInfoIndicators()
 	{
 		if(useBatteryMonitor)
-		{			
+		{	
+			if(isBatteryMonitorRegistered)
+				MainScreen.mainContext.unregisterReceiver(this.mBatInfoReceiver);
+			
 			MainScreen.mainContext.registerReceiver(this.mBatInfoReceiver, 
 	        	  new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 			
