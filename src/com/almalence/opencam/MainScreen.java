@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-//<!-- -+-
+
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
 import com.almalence.opencam.billing.Inventory;
@@ -87,14 +88,14 @@ import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.util.AppRater;
+import com.almalence.util.Util;
+//<!-- -+-
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ui.AlmalenceGUI;
 import com.almalence.opencam_plus.ui.GLLayer;
 import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
-
-import com.almalence.util.Util;
 
 /***
  * MainScreen - main activity screen with camera functionality
@@ -1023,26 +1024,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		ResolutionsNamesList = new ArrayList<String>();
 
 		////For debug file
-//		File saveDir = PluginManager.getInstance().GetSaveDir();
-//		File file = new File(
-//        		saveDir, 
-//        		"!!!ABC_DEBUG_COMMON.txt");
-//		if (file.exists())
-//		    file.delete();
-//		try {
-//			String data = "";
-//			data = cp.flatten();
-//			FileOutputStream out;
-//			out = new FileOutputStream(file);
-//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.flush();
-//			outputStreamWriter.close();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		File saveDir = PluginManager.getInstance().GetSaveDir();
+		File file = new File(
+        		saveDir, 
+        		"!!!ABC_DEBUG_COMMON.txt");
+		if (file.exists())
+		    file.delete();
+		try {
+			String data = "";
+			data = cp.flatten();
+			FileOutputStream out;
+			out = new FileOutputStream(file);
+			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+			outputStreamWriter.write(data);
+			outputStreamWriter.write(data);
+			outputStreamWriter.flush();
+			outputStreamWriter.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		List<Camera.Size> cs;
@@ -2010,58 +2011,72 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return unlockAllPurchased;
 	}
 	
-	private void createBillingHandler() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
-		{
-			hdrPurchased = true;
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_hdr", true);
-			prefsEditor.commit();
-		}
-		if (isInstalled("com.almalence.panorama.smoothpanorama"))
-		{
-			panoramaPurchased = true;
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_panorama", true);
-			prefsEditor.commit();
-		}
-
-		String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
-		// Create the helper, passing it our context and the public key to
-		// verify signatures with
-		Log.v("Main billing", "Creating IAB helper.");
-		mHelper = new IabHelper(this, base64EncodedPublicKey);
-
-		mHelper.enableDebugLogging(true);
-
-		Log.v("Main billing", "Starting setup.");
-		mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-			public void onIabSetupFinished(IabResult result) {
-				Log.v("Main billing", "Setup finished.");
-
-				if (!result.isSuccess()) {
-					Log.v("Main billing", "Problem setting up in-app billing: "
-							+ result);
-					return;
-				}
-
-				List<String> additionalSkuList = new ArrayList<String>();
-				additionalSkuList.add("plugin_almalence_hdr");
-				additionalSkuList.add("plugin_almalence_panorama");
-				additionalSkuList.add("unlock_all_forever");
-				additionalSkuList.add("plugin_almalence_moving_burst");
-				additionalSkuList.add("plugin_almalence_groupshot");
-				
-				//for sale
-				additionalSkuList.add("abc_sale_controller1");
-				additionalSkuList.add("abc_sale_controller2");
-
-				Log.v("Main billing", "Setup successful. Querying inventory.");
-				mHelper.queryInventoryAsync(true, additionalSkuList,
-						mGotInventoryListener);
+	private void createBillingHandler() 
+	{
+		try {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+			{
+				hdrPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
 			}
-		});
+			if (isInstalled("com.almalence.panorama.smoothpanorama"))
+			{
+				panoramaPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
+			}
+	
+			String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
+			// Create the helper, passing it our context and the public key to
+			// verify signatures with
+			Log.v("Main billing", "Creating IAB helper.");
+			mHelper = new IabHelper(this, base64EncodedPublicKey);
+	
+			mHelper.enableDebugLogging(true);
+	
+			Log.v("Main billing", "Starting setup.");
+			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+				public void onIabSetupFinished(IabResult result) 
+				{
+					try {
+						Log.v("Main billing", "Setup finished.");
+		
+						if (!result.isSuccess()) {
+							Log.v("Main billing", "Problem setting up in-app billing: "
+									+ result);
+							return;
+						}
+		
+						List<String> additionalSkuList = new ArrayList<String>();
+						additionalSkuList.add("plugin_almalence_hdr");
+						additionalSkuList.add("plugin_almalence_panorama");
+						additionalSkuList.add("unlock_all_forever");
+						additionalSkuList.add("plugin_almalence_moving_burst");
+						additionalSkuList.add("plugin_almalence_groupshot");
+						
+						//for sale
+						additionalSkuList.add("abc_sale_controller1");
+						additionalSkuList.add("abc_sale_controller2");
+		
+						Log.v("Main billing", "Setup successful. Querying inventory.");
+						mHelper.queryInventoryAsync(true, additionalSkuList,
+								mGotInventoryListener);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("Main billing",
+								"onIabSetupFinished exception: " + e.getMessage());
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing",
+					"createBillingHandler exception: " + e.getMessage());
+		}
 	}
 
 	private void destroyBillingHandler() {

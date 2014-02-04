@@ -198,28 +198,6 @@ public class PreshotCapturePlugin extends PluginCapture
 			isSlowMode = false;
 		}
     }
-	
-	@Override
-	public void onCameraParametersSetup()
-	{
-		try {
-			Camera camera = MainScreen.thiz.getCamera();
-	    	if (null==camera)
-	    		return;
-	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-	
-	    	cp.setJpegQuality(90);
-	
-	    	// Should already been set in sceleton
-			//cp.setPreviewFrameRate(30);
-			
-			MainScreen.thiz.setCameraParameters(cp);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			Log.e("Preshot", "onCameraParametersSetup " + e.getMessage());
-		}
-	}
 
 	@Override
 	public void onCameraSetup()

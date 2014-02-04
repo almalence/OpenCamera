@@ -21,6 +21,13 @@
 		android:entryValues="@array/dimsValuesCommon" />
 	
 	<ListPreference
+		android:title="@string/Pref_Common_JPEGQuality_Title"
+		android:key="commonJPEGQuality"
+		android:defaultValue="95"
+		android:entries="@array/JPEGQualityArrayCommon"
+		android:entryValues="@array/JPEGQualityValuesCommon" />
+	
+	<ListPreference
 		android:title="@string/Pref_Common_VolumeButton_Title"
 		android:key="volumeButtonPrefCommon"
 		android:defaultValue="0"

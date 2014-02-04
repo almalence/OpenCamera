@@ -12,6 +12,7 @@
     <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
+    <string name="Pref_Common_JPEGQuality_Title">Качество jpeg</string>
     <string name="blockingText">Подождите, идет обработка...</string>
 
     <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
@@ -103,7 +104,7 @@
 	<string name="Pref_Unlock_Preference_Summary">Разблокировать премиальные функции</string>
 	
 	<string name="layout_hint_bottom">Выбрать режим камеры</string>
-	<string name="layout_hint_center">Свайп</string>
+	<string name="layout_hint_center">Переключение экранов</string>
 	<string name="layout_hint_top_left">Длинное нажатие\nчтобы выбрать</string>
 	<string name="layout_hint_top_center">Выдвинуть доп. опции</string>
 	

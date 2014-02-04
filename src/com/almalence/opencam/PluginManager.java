@@ -1461,6 +1461,10 @@ public class PluginManager {
 			MainScreen.guiManager.onCaptureFinished();
 			MainScreen.guiManager.startProcessingAnimation();
 
+			int id = MainScreen.thiz.getResources().getIdentifier(getActiveMode().modeName,
+					"string", MainScreen.thiz.getPackageName());
+			String modeName = MainScreen.thiz.getResources().getString(id);
+			PluginManager.getInstance().addToSharedMem("mode_name"+(String)msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
 			ProcessingTask task = new ProcessingTask(MainScreen.thiz);

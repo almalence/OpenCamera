@@ -465,7 +465,12 @@ public class ExportPlugin extends PluginExport
 	            	ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
 	            	ei.setAttribute("DateTimeOriginal", dateString);
 	            }
-	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name));
+
+	            //extract mode name
+	            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
+	            if (tag_modename == null)
+	            	tag_modename = "";
+	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename);
 	            if(tag_version != null)
 	            	ei.setAttribute("ExifVersion", tag_version);
 	            

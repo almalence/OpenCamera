@@ -21,6 +21,20 @@
    <item>2</item>
 </string-array>
 
+<string-array name="JPEGQualityArrayCommon">
+   <item>100</item>
+   <item>95</item>
+   <item>90</item>
+   <item>80</item>
+</string-array>
+ 
+<string-array name="JPEGQualityValuesCommon">
+   <item>100</item>
+   <item>95</item>
+   <item>90</item>
+   <item>80</item>
+</string-array>
+
 <string-array name="volumeButtonArrayCommon">
    <item>Take picture</item>
    <item>Zoom</item>

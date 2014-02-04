@@ -12,6 +12,7 @@
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
+    <string name="Pref_Common_JPEGQuality_Title">Jpeg quality</string>
     <string name="Pref_Common_VolumeButton_Title">Volume button</string>
     <string name="Pref_SaveConfiguration_Title">Save configuration</string>
     <string name="Pref_SaveConfiguration_Summary">Select which settings to save between launches</string>
@@ -236,7 +237,7 @@
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
 	
 	<string name="layout_hint_bottom">Select camera mode</string>
-	<string name="layout_hint_center">Swipe</string>
+	<string name="layout_hint_center">Swipe for more/less info</string>
 	<string name="layout_hint_top_left">Long-press\nto configure</string>
 	<string name="layout_hint_top_center">Pull for more options</string>
 	
