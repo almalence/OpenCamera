@@ -225,7 +225,7 @@ public class Thumbnail {
     	mResolver = resolver;
         Media image = getLastImageThumbnail(resolver);
         Media video = getLastVideoThumbnail(resolver);
-
+        
         if (image == null && video == null) return null;
 
         Bitmap bitmap = null;
@@ -237,12 +237,12 @@ public class Thumbnail {
 	        // get the thumbnail of the one that is newer.
 	        if (image != null && (video == null || image.dateTaken >= video.dateTaken))
 	        {
-	        	bitmap = Images.Thumbnails.getThumbnail(resolver, image.id, Images.Thumbnails.MINI_KIND, null);        	
+	        	bitmap = Images.Thumbnails.getThumbnail(resolver, image.id, Images.Thumbnails.MICRO_KIND, null);
 	            lastMedia = image;
 	        } 
 	        else if (video != null)
 	        {
-	            bitmap = Video.Thumbnails.getThumbnail(resolver, video.id, Video.Thumbnails.MINI_KIND, null);
+	            bitmap = Video.Thumbnails.getThumbnail(resolver, video.id, Video.Thumbnails.MICRO_KIND, null);
 	            lastMedia = video;
 	        }
         } 
