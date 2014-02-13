@@ -300,7 +300,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
-
+		
 		startTime = System.currentTimeMillis();
 		msavedInstanceState = savedInstanceState;
 		mainContext = this.getBaseContext();
@@ -609,9 +609,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	protected void onResume()
-	{
+	{		
 		super.onResume();
-
+		
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
 				public void onTick(long millisUntilFinished) {
@@ -671,7 +671,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
-		
 	}
 
 	@Override
