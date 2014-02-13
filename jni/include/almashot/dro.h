@@ -90,17 +90,21 @@ Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float ga
 // Input:
 //         in - Input image in NV12 or NV21 format.
 //         lookup_table[256] - Tone table returned by ComputeToneTable.
+//         pull_uv - how much to enhance U and V 0..9 0=no saturation, 9(default)=enhance to the same level as Y
 //         sx, sy - Image width and height.
 // Output:
 //         out - Processed image.
 // Return:
 //         0 = all Ok
 //         1 = Not enough memory
-int Dro_ApplyToneTableNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int sx, int sy);
+int Dro_ApplyToneTableNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int pull_uv, int sx, int sy);
 
 // ApplyToneTableFilteredNV21 - same as ApplyToneTableNV21 but with noise reduction
 //
-int Dro_ApplyToneTableFilteredNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int filter, int sx, int sy);
+// Input:
+//         filter - amount of filtering to apply
+//         strong_filter - whether to apply soft-filter (==0, recommended), or strong-filter (==1, use only for extreme low-light)
+int Dro_ApplyToneTableFilteredNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int filter, int strong_filter, int pull_uv, int sx, int sy);
 
 // Description:
 //    Detects if a new histogram is sufficiently different from the base one.
