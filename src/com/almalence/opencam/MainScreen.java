@@ -80,6 +80,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+//<!-- -+-
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
 import com.almalence.opencam.billing.Inventory;
@@ -88,9 +89,8 @@ import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.util.AppRater;
-import com.almalence.util.Util;
-//<!-- -+-
 //-+- -->
+import com.almalence.util.Util;
 /* <!-- +++
 import com.almalence.opencam_plus.ui.AlmalenceGUI;
 import com.almalence.opencam_plus.ui.GLLayer;
