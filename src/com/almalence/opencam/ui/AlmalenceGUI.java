@@ -144,7 +144,8 @@ public class AlmalenceGUI extends GUI implements
 
 	private final int INFO_ALL = 0;
 	private final int INFO_NO = 1;
-	private final int INFO_PARAMS = 2;
+	private final int INFO_GRID = 2;
+	private final int INFO_PARAMS = 3;
 	private int infoSet = INFO_PARAMS;
 
 	public enum ShutterButton {
@@ -1458,9 +1459,9 @@ public class AlmalenceGUI extends GUI implements
 			infoLayout.requestLayout();
 		}
 		
-		infoSet = prefs.getInt("defaultInfoSet", 2);
-		if (infoSet == 2 && !isAnyViewOnViewfinder()) {
-			infoSet = 0;
+		infoSet = prefs.getInt("defaultInfoSet", INFO_PARAMS);
+		if (infoSet == INFO_PARAMS && !isAnyViewOnViewfinder()) {
+			infoSet = INFO_ALL;
 			prefs.edit().putInt("defaultInfoSet", infoSet).commit();
 		}
 		setInfo(false, 0, 0, false);
@@ -4123,14 +4124,14 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	private void infoSlide(boolean toLeft, float XtoVisible, float XtoInvisible) {
-		if ((infoSet == 0 & !toLeft) && isAnyViewOnViewfinder())
-			infoSet = 2;
-		else if (infoSet == 0 && !isAnyViewOnViewfinder())
-			infoSet = 1;
+		if ((infoSet == INFO_ALL & !toLeft) && isAnyViewOnViewfinder())
+			infoSet = INFO_PARAMS;
+		else if (infoSet == INFO_ALL && !isAnyViewOnViewfinder())
+			infoSet = INFO_NO;
 		else if (isAnyViewOnViewfinder())
-			infoSet = (infoSet + 1 * (toLeft ? 1 : -1)) % 3;
+			infoSet = (infoSet + 1 * (toLeft ? 1 : -1)) % 4;
 		else
-			infoSet = 0;
+			infoSet = INFO_ALL;
 		setInfo(toLeft, XtoVisible, XtoInvisible, true);
 
 		SharedPreferences prefs = PreferenceManager
@@ -4212,114 +4213,148 @@ public class AlmalenceGUI extends GUI implements
 		lrvisible.addAnimation(lrvisible_translate);
 
 		switch (infoSet) {
-		case INFO_ALL: {
-			hideSecondaryMenus();
-			unselectPrimaryTopMenuButtons(-1);
-
-			if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.paramsLayout).startAnimation(
-							toLeft ? rlvisible : lrvisible);
-				guiView.findViewById(R.id.paramsLayout).setVisibility(
-						View.VISIBLE);
-				((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
-						true);
+			case INFO_ALL: {
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+	
+				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.paramsLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.paramsLayout).setVisibility(
+							View.VISIBLE);
+					((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
+							true);
+				}
+	
+				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.GONE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.pluginsLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.pluginsLayout).setVisibility(
+							View.VISIBLE);
+	
+					if (isAnimate)
+						guiView.findViewById(R.id.infoLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.infoLayout).setVisibility(
+							View.VISIBLE);
+				}
+	
+				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.GONE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
+							View.VISIBLE);
+				}
+				break;
 			}
-
-			if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.GONE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.pluginsLayout).startAnimation(
-							toLeft ? rlvisible : lrvisible);
-				guiView.findViewById(R.id.pluginsLayout).setVisibility(
-						View.VISIBLE);
-
-				if (isAnimate)
-					guiView.findViewById(R.id.infoLayout).startAnimation(
-							toLeft ? rlvisible : lrvisible);
-				guiView.findViewById(R.id.infoLayout).setVisibility(
-						View.VISIBLE);
+	
+			case INFO_NO: {
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+	
+				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.paramsLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.paramsLayout)
+							.setVisibility(View.GONE);
+					((Panel) guiView.findViewById(R.id.topPanel)).reorder(true,
+							true);
+				}
+				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.pluginsLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.pluginsLayout).setVisibility(
+							View.GONE);
+	
+					if (isAnimate)
+						guiView.findViewById(R.id.infoLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
+				}
+				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
+							View.GONE);
+				}
+				break;
 			}
-
-			if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.GONE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-							toLeft ? rlvisible : lrvisible);
-				guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-						View.VISIBLE);
+	
+			case INFO_GRID: {
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+	
+				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.paramsLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.paramsLayout)
+							.setVisibility(View.GONE);
+					((Panel) guiView.findViewById(R.id.topPanel)).reorder(true,
+							true);
+				}
+				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.pluginsLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.pluginsLayout).setVisibility(
+							View.GONE);
+	
+					if (isAnimate)
+						guiView.findViewById(R.id.infoLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
+				}
+				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.GONE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
+							View.VISIBLE);
+				}
+				break;
 			}
-			break;
-		}
-
-		case INFO_NO: {
-			hideSecondaryMenus();
-			unselectPrimaryTopMenuButtons(-1);
-
-			if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.VISIBLE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.paramsLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.paramsLayout)
-						.setVisibility(View.GONE);
-				((Panel) guiView.findViewById(R.id.topPanel)).reorder(true,
-						true);
+			
+			case INFO_PARAMS: {
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+	
+				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.paramsLayout).startAnimation(
+								toLeft ? rlvisible : lrvisible);
+					guiView.findViewById(R.id.paramsLayout).setVisibility(
+							View.VISIBLE);
+					((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
+							true);
+				}
+				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.pluginsLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.pluginsLayout).setVisibility(
+							View.GONE);
+	
+					if (isAnimate)
+						guiView.findViewById(R.id.infoLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
+				}
+				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
+					if (isAnimate)
+						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
+								toLeft ? rlinvisible : lrinvisible);
+					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
+							View.GONE);
+				}
+				break;
 			}
-			if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.pluginsLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.pluginsLayout).setVisibility(
-						View.GONE);
-
-				if (isAnimate)
-					guiView.findViewById(R.id.infoLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
-			}
-			if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-						View.GONE);
-			}
-			break;
-		}
-
-		case INFO_PARAMS: {
-			hideSecondaryMenus();
-			unselectPrimaryTopMenuButtons(-1);
-
-			if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.paramsLayout).startAnimation(
-							toLeft ? rlvisible : lrvisible);
-				guiView.findViewById(R.id.paramsLayout).setVisibility(
-						View.VISIBLE);
-				((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
-						true);
-			}
-			if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.pluginsLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.pluginsLayout).setVisibility(
-						View.GONE);
-
-				if (isAnimate)
-					guiView.findViewById(R.id.infoLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
-			}
-			if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
-				if (isAnimate)
-					guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-							toLeft ? rlinvisible : lrinvisible);
-				guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-						View.GONE);
-			}
-			break;
-		}
-
 		}
 
 		rlinvisible.setAnimationListener(new AnimationListener() {
@@ -6715,44 +6750,53 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			switch (infoSet) {
-			case INFO_ALL: {
-				pluginLayout.startAnimation(out_animation);
-				fullscreenLayout.startAnimation(out_animation);
-				infoLayout.startAnimation(out_animation);
-				if ((difX < X) || !isAnyViewOnViewfinder())
-					paramsLayout.startAnimation(out_animation);
-			}
-				break;
-			case INFO_NO: {
-				if ((toLeft && difX < X) || (!toLeft && difX > X))
-					paramsLayout.startAnimation(in_animation);
-				else
-					paramsLayout.startAnimation(reverseout_animation);
-				if (!toLeft && isAnyViewOnViewfinder()) {
-					pluginLayout.startAnimation(in_animation);
-					fullscreenLayout.startAnimation(in_animation);
-					infoLayout.startAnimation(in_animation);
-				} else if (toLeft && difX > X && isAnyViewOnViewfinder()) {
-					pluginLayout.startAnimation(reverseout_animation);
-					fullscreenLayout.startAnimation(reverseout_animation);
-					infoLayout.startAnimation(reverseout_animation);
+				case INFO_ALL: {
+					pluginLayout.startAnimation(out_animation);
+					fullscreenLayout.startAnimation(out_animation);
+					infoLayout.startAnimation(out_animation);
+					if ((difX < X) || !isAnyViewOnViewfinder())
+						paramsLayout.startAnimation(out_animation);
 				}
-			}
-				break;
-			case INFO_PARAMS: {
-				if (difX > X)
-					paramsLayout.startAnimation(out_animation);
-				if (toLeft) {
-					pluginLayout.startAnimation(in_animation);
-					fullscreenLayout.startAnimation(in_animation);
-					infoLayout.startAnimation(in_animation);
-				} else if (difX < X) {
-					pluginLayout.startAnimation(reverseout_animation);
-					fullscreenLayout.startAnimation(reverseout_animation);
-					infoLayout.startAnimation(reverseout_animation);
+					break;
+				case INFO_NO: {
+					if ((toLeft && difX < X) || (!toLeft && difX > X))
+						fullscreenLayout.startAnimation(in_animation);
+					else
+						paramsLayout.startAnimation(reverseout_animation);
+					if (!toLeft && isAnyViewOnViewfinder()) {
+						pluginLayout.startAnimation(in_animation);
+						fullscreenLayout.startAnimation(in_animation);
+						infoLayout.startAnimation(in_animation);
+					} else if (toLeft && difX > X && isAnyViewOnViewfinder()) {
+						pluginLayout.startAnimation(reverseout_animation);
+						paramsLayout.startAnimation(reverseout_animation);
+						infoLayout.startAnimation(reverseout_animation);
+					}
 				}
-			}
-				break;
+					break;
+				case INFO_GRID: {
+					if (difX > X)//to INFO_NO
+						fullscreenLayout.startAnimation(out_animation);
+					else//to INFO_PARAMS
+					{
+						fullscreenLayout.startAnimation(out_animation);
+						paramsLayout.startAnimation(in_animation);
+					}
+				}
+					break;
+				case INFO_PARAMS: {
+					fullscreenLayout.startAnimation(in_animation);
+					if (difX > X)
+						paramsLayout.startAnimation(out_animation);
+					if (toLeft) {
+						pluginLayout.startAnimation(in_animation);
+						infoLayout.startAnimation(in_animation);
+					} else if (difX < X) {
+						pluginLayout.startAnimation(reverseout_animation);
+						infoLayout.startAnimation(reverseout_animation);
+					}
+				}
+					break;
 			}
 
 			Xprev = Math.round(difX);
@@ -6777,16 +6821,6 @@ public class AlmalenceGUI extends GUI implements
 		else
 			return myView.getTop() + getRelativeTop((View) myView.getParent());
 	}
-
-	// @Override
-	// public void autoFocus() {
-	// MainScreen.thiz.autoFocus(MainScreen.thiz);
-	// }
-
-	// @Override
-	// public void onAutoFocus(boolean focused, Camera paramCamera) {
-	// PluginManager.getInstance().onAutoFocus(focused, paramCamera);
-	// }
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
