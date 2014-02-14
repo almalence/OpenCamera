@@ -2672,7 +2672,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (mode.SKU.equals("plugin_almalence_hdr")) {
 			if (hdrPurchased == true)
 				return true;
-		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented")) {
+		} else if (mode.SKU.equals("plugin_almalence_panorama")) {
 			if (panoramaPurchased == true)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_moving_burst")) {

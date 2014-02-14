@@ -307,7 +307,7 @@
 	
 	    <export 	id="com.almalence.plugins.export"/>
 
-		<sku		id="plugin_almalence_panorama_augmented"/>
+		<sku		id="plugin_almalence_panorama"/>
 		
 		<howtotext  id=""/>
 	</mode>
