@@ -38,6 +38,7 @@
 <string-array name="volumeButtonArrayCommon">
    <item>Take picture</item>
    <item>Zoom</item>
+   <item>Exposure correction</item>
    <item>None</item>
 </string-array>
  
@@ -45,6 +46,7 @@
    <item>0</item>
    <item>1</item>
    <item>2</item>
+   <item>3</item>
 </string-array>
 
 <string-array name="delayedCaptureArrayCommon">

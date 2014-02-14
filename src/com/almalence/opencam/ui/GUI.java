@@ -243,6 +243,8 @@ public abstract class GUI
 	
 	abstract public void onHardwareFocusButtonPressed();
 	
+	abstract public void onVolumeBtnExpo(int keyCode);
+	
 //	abstract public void autoFocus();
 //	
 //	abstract public void onAutoFocus(boolean focused, Camera paramCamera);

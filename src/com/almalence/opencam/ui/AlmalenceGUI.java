@@ -4950,62 +4950,11 @@ public class AlmalenceGUI extends GUI implements
 
 		// EXPOSURE COMPENSATION BUTTONS (-\+)
 		case R.id.evMinusButton: {
-			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
-			if (evBar != null) {
-				int minValue = MainScreen.thiz.getMinExposureCompensation();
-				int step = 1;
-				int currProgress = evBar.getProgress();
-				int iEv = currProgress - step;
-				if (iEv < 0)
-					iEv = 0;
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera) {
-					Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-					params.setExposureCompensation(iEv + minValue);
-					MainScreen.thiz.setCameraParameters(params);
-				}
-
-				preferences
-						.edit()
-						.putInt(sEvPref,
-								Math.round((iEv + minValue)
-										* MainScreen.thiz
-												.getExposureCompensationStep()))
-						.commit();
-
-				evBar.setProgress(iEv);
-			}
+			expoMinus();
 		}
 			break;
 		case R.id.evPlusButton: {
-			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
-			if (evBar != null) {
-				int minValue = MainScreen.thiz.getMinExposureCompensation();
-				int maxValue = MainScreen.thiz.getMaxExposureCompensation();
-
-				int step = 1;
-
-				int currProgress = evBar.getProgress();
-				int iEv = currProgress + step;
-				if (iEv > maxValue - minValue)
-					iEv = maxValue - minValue;
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera) {
-					Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-					params.setExposureCompensation(iEv + minValue);
-					MainScreen.thiz.setCameraParameters(params);
-				}
-
-				preferences
-						.edit()
-						.putInt(sEvPref,
-								Math.round((iEv + minValue)
-										* MainScreen.thiz
-												.getExposureCompensationStep()))
-						.commit();
-
-				evBar.setProgress(iEv);
-			}
+			expoPlus();
 		}
 			break;
 		}
@@ -6843,6 +6792,77 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.H.sendMessage(msg);
 	}
 
+	@Override
+	public void onVolumeBtnExpo(int keyCode)
+	{
+		if ( keyCode == KeyEvent.KEYCODE_VOLUME_DOWN )
+			expoMinus();
+		else if ( keyCode == KeyEvent.KEYCODE_VOLUME_UP )
+			expoPlus();	
+	}
+	
+	private void expoMinus()
+	{
+		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
+		if (evBar != null) 
+		{
+			int minValue = MainScreen.thiz.getMinExposureCompensation();
+			int step = 1;
+			int currProgress = evBar.getProgress();
+			int iEv = currProgress - step;
+			if (iEv < 0)
+				iEv = 0;
+			Camera camera = MainScreen.thiz.getCamera();
+			if (null != camera) {
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				params.setExposureCompensation(iEv + minValue);
+				MainScreen.thiz.setCameraParameters(params);
+			}
+
+			preferences
+					.edit()
+					.putInt(sEvPref,
+							Math.round((iEv + minValue)
+									* MainScreen.thiz
+											.getExposureCompensationStep()))
+					.commit();
+
+			evBar.setProgress(iEv);
+		}
+	}
+	
+	private void expoPlus()
+	{
+		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
+		if (evBar != null) {
+			int minValue = MainScreen.thiz.getMinExposureCompensation();
+			int maxValue = MainScreen.thiz.getMaxExposureCompensation();
+
+			int step = 1;
+
+			int currProgress = evBar.getProgress();
+			int iEv = currProgress + step;
+			if (iEv > maxValue - minValue)
+				iEv = maxValue - minValue;
+			Camera camera = MainScreen.thiz.getCamera();
+			if (null != camera) {
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				params.setExposureCompensation(iEv + minValue);
+				MainScreen.thiz.setCameraParameters(params);
+			}
+
+			preferences
+					.edit()
+					.putInt(sEvPref,
+							Math.round((iEv + minValue)
+									* MainScreen.thiz
+											.getExposureCompensationStep()))
+					.commit();
+
+			evBar.setProgress(iEv);
+		}
+	}
+	
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar) {
 	}

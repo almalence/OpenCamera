@@ -249,7 +249,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static boolean launchTorch = false;
 	public static boolean goShopping = false;
-	
+
+	public static final int VOLUME_FUNC_SHUTTER = 0;
+	public static final int VOLUME_FUNC_ZOOM 	= 1;
+	public static final int VOLUME_FUNC_EXPO 	= 2;
+	public static final int VOLUME_FUNC_NONE	= 3;
 	
 	public static String deviceSS3_01;
 	public static String deviceSS3_02;
@@ -1771,14 +1775,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
-			String buttonFunc = prefs.getString("volumeButtonPrefCommon", "0");
-			if (buttonFunc.equals("0"))
+			int buttonFunc = Integer.parseInt(prefs.getString("volumeButtonPrefCommon", "0"));
+			if (buttonFunc == VOLUME_FUNC_SHUTTER)
 			{
 				MainScreen.guiManager.onHardwareFocusButtonPressed();
 				MainScreen.guiManager.onHardwareShutterButtonPressed();
 				return true;
 			}
-			else if (buttonFunc.equals("2"))
+			else if (buttonFunc == VOLUME_FUNC_EXPO)
+			{
+				MainScreen.guiManager.onVolumeBtnExpo(keyCode);
+				return true;
+			}
+			else if (buttonFunc == VOLUME_FUNC_NONE)
 				return true;
 		}
 		
