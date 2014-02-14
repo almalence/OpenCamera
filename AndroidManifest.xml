@@ -74,16 +74,15 @@
 		
 		<activity android:name=".FolderPicker"
 		        android:label="@string/choose_folder"/>
-		
-		<!-- +++		
+		<!-- 
 		<receiver android:name=".HWButtonStart" >
-		    <intent-filter android:priority="10000">         
+		    <intent-filter android:priority="1000">         
 		        <action android:name="android.intent.action.CAMERA_BUTTON" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
-		+++ -->
-		
+		 -->
+		 
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
  	<uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -100,5 +99,5 @@
 <!--  -+- -->
 
 	<uses-sdk 	android:minSdkVersion="14"
-	    		android:targetSdkVersion="18"/>
+	    		android:targetSdkVersion="19"/>
 </manifest> 

@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -255,6 +256,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		    	{
 			    	// message to capture image will be emitted 2 or 3 frames after setExposure
 					evLatency = 10;		// the minimum value at which Galaxy Nexus is changing exposure in a stable way
+					
+					//Note 3 need more time to change exposure.
+					if(Build.MODEL.contains("SM-N900"))
+						evLatency = 20;
 					
 		    	}
 		    	else
