@@ -28,10 +28,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -42,8 +40,8 @@ import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.R;
-import com.almalence.util.MemoryImageCache;
 //-+- -->
+import com.almalence.util.MemoryImageCache;
 
 public class ImageAdapter extends BaseAdapter {
 	final static int THUMBNAIL_WIDTH = 200;
