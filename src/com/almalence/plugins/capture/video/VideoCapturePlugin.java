@@ -992,6 +992,13 @@ public class VideoCapturePlugin extends PluginCapture
     				e.printStackTrace();
     				Log.e("Video", "Time lapse error catched" + e.getMessage());
     				swChecked = false;
+    				
+    				MainScreen.guiManager.lockControls = false;
+       		  		
+       		  		Message msg = new Message();
+       		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+       		  		msg.what = PluginManager.MSG_BROADCAST;
+       		  		MainScreen.H.sendMessage(msg);
     			}
     	    	
     	    	if(useProfile)
@@ -1064,6 +1071,17 @@ public class VideoCapturePlugin extends PluginCapture
 	        } catch (Exception e) {
 				e.printStackTrace();
 				Log.e("Video", "On shutter pressed " + e.getMessage());
+				
+				MainScreen.guiManager.lockControls = false;
+   		  		Message msg = new Message();
+   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+   		  		msg.what = PluginManager.MSG_BROADCAST;
+   		  		MainScreen.H.sendMessage(msg);
+	   		  	releaseMediaRecorder(); // release the MediaRecorder object
+	            camera.lock();         // take camera access back from MediaRecorder
+	            camera.stopPreview();
+		        camera.startPreview();
+		        
 				return;
 				//Toast.makeText(this, "Error during purchase " +e.getMessage(), Toast.LENGTH_LONG).show();
 			}
@@ -1094,6 +1112,16 @@ public class VideoCapturePlugin extends PluginCapture
     	        Log.d("Video", "Exception preparing MediaRecorder: " + e.getMessage());
     	        releaseMediaRecorder();
     	        Toast.makeText(MainScreen.thiz, "Failed to start video recording", Toast.LENGTH_LONG).show();
+    	        
+    	        MainScreen.guiManager.lockControls = false;
+   		  		Message msg = new Message();
+   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+   		  		msg.what = PluginManager.MSG_BROADCAST;
+   		  		MainScreen.H.sendMessage(msg);
+	            camera.lock();         // take camera access back from MediaRecorder
+	            camera.stopPreview();
+		        camera.startPreview();
+		        
     	        return;
     	    }
 
