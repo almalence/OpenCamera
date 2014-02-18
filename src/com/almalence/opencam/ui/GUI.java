@@ -161,6 +161,8 @@ public abstract class GUI
 	//all camera possibilities such as supported scene mode, flash mode and etc.
 	abstract public void onCameraCreate();
 	
+	abstract public void onPluginsInitialized();
+	
 	abstract public void onCameraSetup();
 	
 	abstract public void setupViewfinderPreviewSize(Camera.Parameters cp);

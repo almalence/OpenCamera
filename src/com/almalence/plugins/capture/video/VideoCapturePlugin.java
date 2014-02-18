@@ -486,51 +486,51 @@ public class VideoCapturePlugin extends PluginCapture
 	
 	public void onResume()
 	{
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
-        
-	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
-	    int quality = 0;
-	    switch (ImageSizeIdxPreference)
-	    {
-	    case 0:
-	    	quality = CamcorderProfile.QUALITY_QCIF;
-	    	quickControlIconID = R.drawable.gui_almalence_video_qcif;
-	    	break;
-	    case 1:
-	    	quality = CamcorderProfile.QUALITY_CIF;
-	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
-	    	break;
-	    case 2:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
-	    	break;
-	    case 3:
-	    	quality = CamcorderProfile.QUALITY_720P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_720;
-	    	break;
-	    case 4:
-	    	quality = CamcorderProfile.QUALITY_480P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
-	    	break;
-	    }
-	    
-	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
-	    {
-	    	ImageSizeIdxPreference=3;
-	    	quality = CamcorderProfile.QUALITY_720P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_720;
-	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
-	    	{
-	    		ImageSizeIdxPreference=4;
-    	    	quality = CamcorderProfile.QUALITY_480P;
-    	    	quickControlIconID = R.drawable.gui_almalence_video_480;    	    	
-	    	}
-	    }
-	    
-	    Editor editor = prefs.edit();
-	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
-	    editor.commit();
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//        preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+//        
+//	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+//	    int quality = 0;
+//	    switch (ImageSizeIdxPreference)
+//	    {
+//	    case 0:
+//	    	quality = CamcorderProfile.QUALITY_QCIF;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_qcif;
+//	    	break;
+//	    case 1:
+//	    	quality = CamcorderProfile.QUALITY_CIF;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
+//	    	break;
+//	    case 2:
+//	    	quality = CamcorderProfile.QUALITY_1080P;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+//	    	break;
+//	    case 3:
+//	    	quality = CamcorderProfile.QUALITY_720P;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_720;
+//	    	break;
+//	    case 4:
+//	    	quality = CamcorderProfile.QUALITY_480P;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+//	    	break;
+//	    }
+//	    
+//	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
+//	    {
+//	    	ImageSizeIdxPreference=3;
+//	    	quality = CamcorderProfile.QUALITY_720P;
+//	    	quickControlIconID = R.drawable.gui_almalence_video_720;
+//	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
+//	    	{
+//	    		ImageSizeIdxPreference=4;
+//    	    	quality = CamcorderProfile.QUALITY_480P;
+//    	    	quickControlIconID = R.drawable.gui_almalence_video_480;    	    	
+//	    	}
+//	    }
+//	    
+//	    Editor editor = prefs.edit();
+//	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+//	    editor.commit();
 	    
 	    PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", true).commit();
 	    
@@ -614,6 +614,17 @@ public class VideoCapturePlugin extends PluginCapture
     	if (null==camera)
     		return;
     	
+    	this.qualityQCIFSupported = false;
+    	this.qualityCIFSupported = false;
+    	this.quality480Supported = false;
+    	this.quality720Supported = false;
+    	this.quality1080Supported = false;
+    	previewSizes.put(CamcorderProfile.QUALITY_QCIF, false);
+    	previewSizes.put(CamcorderProfile.QUALITY_CIF, false);
+    	previewSizes.put(CamcorderProfile.QUALITY_480P, false);
+    	previewSizes.put(CamcorderProfile.QUALITY_720P, false);
+    	previewSizes.put(CamcorderProfile.QUALITY_1080P, false);
+    	
 		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 		List<Size> psz = cp.getSupportedPreviewSizes();
 		if(psz.contains(camera.new Size(176,144)))
@@ -641,6 +652,53 @@ public class VideoCapturePlugin extends PluginCapture
 			previewSizes.put(CamcorderProfile.QUALITY_1080P, true);
 			this.quality1080Supported = true;
 		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+        
+	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+	    int quality = 0;
+	    switch (ImageSizeIdxPreference)
+	    {
+	    case 0:
+	    	quality = CamcorderProfile.QUALITY_QCIF;
+	    	quickControlIconID = R.drawable.gui_almalence_video_qcif;
+	    	break;
+	    case 1:
+	    	quality = CamcorderProfile.QUALITY_CIF;
+	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
+	    	break;
+	    case 2:
+	    	quality = CamcorderProfile.QUALITY_1080P;
+	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	break;
+	    case 3:
+	    	quality = CamcorderProfile.QUALITY_720P;
+	    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	break;
+	    case 4:
+	    	quality = CamcorderProfile.QUALITY_480P;
+	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	break;
+	    }
+	    
+	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
+	    {
+	    	ImageSizeIdxPreference=3;
+	    	quality = CamcorderProfile.QUALITY_720P;
+	    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
+	    	{
+	    		ImageSizeIdxPreference=4;
+    	    	quality = CamcorderProfile.QUALITY_480P;
+    	    	quickControlIconID = R.drawable.gui_almalence_video_480;    	    	
+	    	}
+	    }
+	    
+	    Editor editor = prefs.edit();
+	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+	    editor.commit();
+	    
 		cp.setRecordingHint(true);
 		MainScreen.thiz.setCameraParameters(cp);
 	}
@@ -1012,7 +1070,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	    	mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 	    	    	mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 	    	    	
-	    	    	mMediaRecorder.setVideoEncodingBitRate(5246000);
+	    	    	//mMediaRecorder.setVideoEncodingBitRate(5246000);
 	    	    	
 	    	    	Size sz = null;
     	    		//if time lapse activated
