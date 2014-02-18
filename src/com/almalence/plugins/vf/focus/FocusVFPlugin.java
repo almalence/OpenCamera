@@ -275,8 +275,8 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onCameraParametersSetup()
 	{
-    	preferenceFocusMode = MainScreen.thiz.getFocusMode();//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("FocusModeValue", Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);    	
-    	
+    	preferenceFocusMode = MainScreen.thiz.getFocusMode();//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("FocusModeValue", Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+
     	initializeCapabilities();		
 		
 		initialize(MainScreen.getCameraMirrored(), 90);

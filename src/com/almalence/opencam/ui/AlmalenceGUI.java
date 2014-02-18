@@ -2641,6 +2641,12 @@ public class AlmalenceGUI extends GUI implements
 			MainScreen.H.sendMessage(msg);
 		}
 
+		
+	}
+	
+	@Override
+	public void onPluginsInitialized()
+	{	
 		// Hide all opened menu
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
@@ -2681,6 +2687,7 @@ public class AlmalenceGUI extends GUI implements
 		((Panel) guiView.findViewById(R.id.topPanel))
 				.setOnPanelListener(pListener);
 	}
+	
 
 	private boolean isCameraParameterSupported(String param) {
 		if (param != "" && topMenuPluginButtons.containsKey(param))

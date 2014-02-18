@@ -955,6 +955,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
+		guiManager.onPluginsInitialized();
 
 		// ----- Start preview and setup frame buffer if needed
 
@@ -1486,9 +1487,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public String getISOMode() {
 		if (camera != null) {
-			Camera.Parameters params = cameraParameters;
+			Camera.Parameters params = cameraParameters;			
 			if (params != null)
-				return params.get("iso");
+			{
+				String iso = null;
+				iso = params.get("iso");
+				if(iso == null)
+					iso = params.get("iso-speed");
+				
+				return iso;
+			}
 		}
 
 		return null;
