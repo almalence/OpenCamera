@@ -428,13 +428,22 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
-		if (!keepScreenOn)
+//		if (!keepScreenOn)
 		{
 			ScreenTimer = new CountDownTimer(180000, 180000) {
 				public void onTick(long millisUntilFinished) {
 				}
 	
 				public void onFinish() {
+					boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+					if (isVideoRecording || keepScreenOn)
+					{
+						//restart timer
+						ScreenTimer.start();
+						isScreenTimerRunning = true;
+						preview.setKeepScreenOn(true);
+						return;
+					}
 					preview.setKeepScreenOn(false);
 					isScreenTimerRunning = false;
 				}
@@ -669,12 +678,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			if (isScreenTimerRunning)
 				ScreenTimer.cancel();
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			keepScreenOn = prefs.getBoolean("keepScreenOn", false);
-			if (!keepScreenOn)
-			{
-				ScreenTimer.start();
-				isScreenTimerRunning = true;
-			}
+			ScreenTimer.start();
+			isScreenTimerRunning = true;
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
@@ -1030,26 +1035,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		ResolutionsNamesList = new ArrayList<String>();
 
 		////For debug file
-		File saveDir = PluginManager.getInstance().GetSaveDir();
-		File file = new File(
-        		saveDir, 
-        		"!!!ABC_DEBUG_COMMON.txt");
-		if (file.exists())
-		    file.delete();
-		try {
-			String data = "";
-			data = cp.flatten();
-			FileOutputStream out;
-			out = new FileOutputStream(file);
-			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
-			outputStreamWriter.write(data);
-			outputStreamWriter.write(data);
-			outputStreamWriter.flush();
-			outputStreamWriter.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		File saveDir = PluginManager.getInstance().GetSaveDir();
+//		File file = new File(
+//        		saveDir, 
+//        		"!!!ABC_DEBUG_COMMON.txt");
+//		if (file.exists())
+//		    file.delete();
+//		try {
+//			String data = "";
+//			data = cp.flatten();
+//			FileOutputStream out;
+//			out = new FileOutputStream(file);
+//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+//			outputStreamWriter.write(data);
+//			outputStreamWriter.write(data);
+//			outputStreamWriter.flush();
+//			outputStreamWriter.close();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		
 		List<Camera.Size> cs;
@@ -2760,6 +2765,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
     }
 // -+- -->
 	
+	//widget ad code
 	public static void CallStoreWidgetInstall(Activity act)
     {
     	try
