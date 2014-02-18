@@ -27,6 +27,8 @@ package com.almalence.opencam;
 import java.util.List;
 
 import android.preference.PreferenceActivity;
+import android.annotation.TargetApi;
+import android.os.Build;
 
 /***
 Preference activity class - manages preferences
@@ -55,5 +57,11 @@ public class Preferences extends PreferenceActivity
 	static public void closePrefs()
 	{
 		thiz.finish();
+	}
+	
+	@TargetApi( Build.VERSION_CODES.KITKAT )
+	@Override
+	protected boolean isValidFragment( String fragmentName ) {
+	    return true;
 	}
 }
