@@ -79,6 +79,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import com.almalence.util.AppWidgetNotifier;
 
 //<!-- -+-
 import com.almalence.opencam.billing.IabHelper;
@@ -358,6 +359,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		//application rating helper
 		AppRater.app_launched(this);
 		//-+- -->
+		
+		AppWidgetNotifier.app_launched(this);
 		
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
@@ -1804,6 +1807,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
     		{
     			return true;
     		}
+    		if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+    		{
+    			return true;
+    		}
     	}
 		//-+- -->
 		
@@ -2752,6 +2759,20 @@ public class MainScreen extends Activity implements View.OnClickListener,
     	}
     }
 // -+- -->
+	
+	public static void CallStoreWidgetInstall(Activity act)
+    {
+    	try
+    	{
+        	Intent intent = new Intent(Intent.ACTION_VIEW);
+       		intent.setData(Uri.parse("market://details?id=com.almalence.opencamwidget"));
+	        act.startActivity(intent);
+    	}
+    	catch(ActivityNotFoundException e)
+    	{
+    		return;
+    	}
+    }
 	
 	private void ResetOrSaveSettings()
 	{
