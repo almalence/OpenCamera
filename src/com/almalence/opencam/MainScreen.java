@@ -1411,6 +1411,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			Camera.Parameters camParams = MainScreen.cameraParameters;
 			String supportedIsoValues = camParams.get("iso-values");
 			String supportedIsoValues2 = camParams.get("iso-speed-values");
+			String supportedIsoValues3 = camParams.get("iso-mode-values");
 			//String iso = camParams.get("iso");
 			
 			String delims = "[,]+";
@@ -1420,6 +1421,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				ISOs = supportedIsoValues.split(delims);
 			else if(supportedIsoValues2 != "" && supportedIsoValues2 != null)
 				ISOs = supportedIsoValues2.split(delims);
+			else if(supportedIsoValues3 != "" && supportedIsoValues3 != null)
+				ISOs = supportedIsoValues3.split(delims);
 			
 			if(ISOs != null)
 			{

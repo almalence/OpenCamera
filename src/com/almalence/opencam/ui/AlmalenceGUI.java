@@ -390,6 +390,19 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
+	private final static Map<String, Integer> icons_default_iso = new Hashtable<String, Integer>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem), R.drawable.gui_almalence_settings_iso_auto);
+			put(MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem), R.drawable.gui_almalence_settings_iso_50);
+			put(MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem), R.drawable.gui_almalence_settings_iso_100);				
+			put(MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem), R.drawable.gui_almalence_settings_iso_200);
+			put(MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem), R.drawable.gui_almalence_settings_iso_400);
+			put(MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem), R.drawable.gui_almalence_settings_iso_800);
+			put(MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem), R.drawable.gui_almalence_settings_iso_1600);
+			put(MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem), R.drawable.gui_almalence_settings_iso_3200);			
+		}
+	};
+	
 	private final static Map<String, Integer> icons_metering = new Hashtable<String, Integer>() {
 		{
 			put(meteringAuto, R.drawable.gui_almalence_settings_metering_auto);
@@ -636,6 +649,19 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
+	private final static Map<String, String> iso2_keys = new Hashtable<String, String>() {
+		{
+			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
+			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem));
+		}
+	};
+	
 	private final static List<String> iso_default = new ArrayList<String>() {
 		{			
 			add(isoAuto);			
@@ -849,6 +875,8 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if(icons_iso.containsKey(isoMode))
 			return icons_iso.get(isoMode);
+		else if(icons_default_iso.containsKey(isoMode))
+			return icons_default_iso.get(isoMode);
 		else
 			return -1;
 	}
@@ -2427,11 +2455,12 @@ public class AlmalenceGUI extends GUI implements
 			while (it.hasNext()) {
 				String iso_key = it.next();
 				String iso_name = iso_keys.get(iso_key);
-				if (supported_iso != null && supported_iso.size() > 0 && supported_iso.contains(iso_name)) {
+				String iso2_name = iso2_keys.get(iso_key);
+				if (supported_iso != null && supported_iso.size() > 0 && (supported_iso.contains(iso_name) || supported_iso.contains(iso2_name))) {
 					activeISO.add(ISOButtons.get(iso_name));
 					activeISONames.add(iso_name);
 				}
-				else if(iso_default.contains(iso_name))
+				else if(supported_iso == null && iso_default.contains(iso_name))
 				{
 					activeISO.add(ISOButtons.get(iso_name));
 					activeISONames.add(iso_name);

@@ -195,12 +195,14 @@
     <string name="iso1600Key">6_ISO1600</string>
     <string name="iso3200Key">7_ISO3200</string>
     
-    <string name="isoAutoDefaultSystem">auto</string>    
+    <string name="isoAutoDefaultSystem">auto</string>
+    <string name="iso50DefaultSystem">50</string>    
     <string name="iso100DefaultSystem">100</string>
     <string name="iso200DefaultSystem">200</string>
     <string name="iso400DefaultSystem">400</string>
     <string name="iso800DefaultSystem">"800"</string>
     <string name="iso1600DefaultSystem">1600</string>
+    <string name="iso3200DefaultSystem">3200</string>
     
     <string name="meteringAutoSystem">Auto</string>
     <string name="meteringMatrixSystem">Matrix</string>
