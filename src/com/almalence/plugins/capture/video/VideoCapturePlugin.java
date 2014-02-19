@@ -179,7 +179,7 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		//change shutter icon
 		isRecording = false;
-		prefs.edit().putBoolean("videorecording", false);
+		prefs.edit().putBoolean("videorecording", false).commit();
 		
 		MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
 		
@@ -567,7 +567,7 @@ public class VideoCapturePlugin extends PluginCapture
             // inform the user that recording has stopped
             isRecording = false;
             showRecordingUI(isRecording);
-            prefs.edit().putBoolean("videorecording", false);
+            prefs.edit().putBoolean("videorecording", false).commit();
             
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
@@ -843,7 +843,7 @@ public class VideoCapturePlugin extends PluginCapture
             // inform the user that recording has stopped
             isRecording = false;
             showRecordingUI(isRecording);
-            PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("videorecording", false);
+            PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("videorecording", false).commit();
             
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
@@ -1189,7 +1189,7 @@ public class VideoCapturePlugin extends PluginCapture
             // inform the user that recording has started
             isRecording = true;
             showRecordingUI(isRecording);
-            prefs.edit().putBoolean("videorecording", true);
+            prefs.edit().putBoolean("videorecording", true).commit();
             
             //PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", true).commit();
             
@@ -1466,6 +1466,10 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		if (isRecording)
 			return;
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		interval = Integer.valueOf(prefs.getString("timelapseInterval", "0"));
+		measurementVal = Integer.valueOf(prefs.getString("timelapseMeasurementVal", "0"));
 		
 		//show time lapse settings
 		final Dialog d = new Dialog(MainScreen.thiz);
@@ -1500,7 +1504,6 @@ public class VideoCapturePlugin extends PluginCapture
 		        	np2.setEnabled(false);
 		        	np.setEnabled(false);
 		        	swChecked = false;
-//		        	bSet.setEnabled(false);
 		        }
 				else
 				{
@@ -1537,7 +1540,14 @@ public class VideoCapturePlugin extends PluginCapture
              if (swChecked == true)
              {
             	 measurementVal = np2.getValue();
-            	 interval  = np.getValue();
+            	 interval  		= np.getValue();
+            	 
+            	 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+            	 Editor editor = prefs.edit();
+         	     editor.putString("timelapseMeasurementVal", String.valueOf(measurementVal));
+         	     editor.putString("timelapseInterval", String.valueOf(interval));
+         	     editor.commit();
+         	    
             	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
              }
              else
