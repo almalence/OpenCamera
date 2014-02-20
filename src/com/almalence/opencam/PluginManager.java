@@ -1819,7 +1819,7 @@ public class PluginManager {
         
         if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
         {
-			dcimDir = Environment.getExternalStorageDirectory();			
+			dcimDir = Environment.getExternalStorageDirectory();
 			
 			// there are variations in sd-card directory namings
 			

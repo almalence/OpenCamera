@@ -835,7 +835,9 @@ public class VideoCapturePlugin extends PluginCapture
 	        if (cp!=null)
 	        {
 	        	SetCameraPreviewSize(cp);
-	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
+	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
+	   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	   	    		MainScreen.thiz.setVideoStabilization(false);
 	        }
 	        camera.startPreview();
             
@@ -907,6 +909,9 @@ public class VideoCapturePlugin extends PluginCapture
         
         	Date curDate = new Date();
         	SessionID = curDate.getTime();
+        	
+   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+   	    		MainScreen.thiz.setVideoStabilization(true);
         	
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
@@ -1155,8 +1160,8 @@ public class VideoCapturePlugin extends PluginCapture
    	    	mMediaRecorder.setOrientationHint(
    	    			MainScreen.getCameraMirrored()?
    	    			(MainScreen.getWantLandscapePhoto()?MainScreen.orientationMain:(MainScreen.orientationMain+180)%360)
-   	    			:MainScreen.orientationMain); 
-    	    
+   	    			:MainScreen.orientationMain);  	    	
+   	    	
     	    // Step 6: Prepare configured MediaRecorder
     	    try {
     	        mMediaRecorder.prepare();
