@@ -1269,6 +1269,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return false;		
 	}
 	
+	@TargetApi(15)
+	public void setVideoStabilization(boolean stabilization)
+	{
+		if(cameraParameters != null && cameraParameters.isVideoStabilizationSupported())
+		{
+			cameraParameters.setVideoStabilization(stabilization);
+			this.setCameraParameters(cameraParameters);
+		}
+	}
+	
 	public boolean isExposureLockSupported() {
 		if (camera != null && cameraParameters != null) {
 			if (cameraParameters.isAutoExposureLockSupported())
