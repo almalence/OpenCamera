@@ -54,7 +54,6 @@ public class ImageAdapter extends BaseAdapter {
 	private Context mContext = null;
 	private String[] imagePath = null;
 	private List<byte[]> mList;
-	private boolean mDisplayLandscape;
 	private boolean mCameraMirrored;
 	private MemoryImageCache cache = null;
 	private int mSelectedItem;
@@ -62,7 +61,6 @@ public class ImageAdapter extends BaseAdapter {
 	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored) {
 		mContext = context;
 		mList = list;
-		mDisplayLandscape = isLandscape;
 		mCameraMirrored = isMirrored;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
 		mGalleryItemBackground = a.getResourceId(

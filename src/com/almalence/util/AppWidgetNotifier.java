@@ -32,8 +32,14 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
+//-+- -->
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.R;
++++ --> */
 
 public class AppWidgetNotifier
 {
