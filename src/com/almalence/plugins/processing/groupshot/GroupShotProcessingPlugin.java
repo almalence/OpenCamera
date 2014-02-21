@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -144,6 +145,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     private TextView textVeiw;
 	
 	private Seamless mSeamless;
+	
+	private ImageAdapter mImageAdapter;
 	
 	/*
      * Group shot testing start
@@ -656,14 +659,15 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	        
 		}
-		
-		
+				
 	    private void setupImageSelector() {
+			mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270, mCameraMirrored);
 	        mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
-	        mGallery.setAdapter(new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270, mCameraMirrored));  		
-    		
+	        mGallery.setAdapter(mImageAdapter);
 	        mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+					mImageAdapter.setCurrentSeleted(position);
+					mImageAdapter.notifyDataSetChanged();
 					mGallery.setVisibility(Gallery.INVISIBLE);
 					mBaseFrame  = position;
 					mSeamless.setBaseFrame(mBaseFrame);

@@ -1847,10 +1847,10 @@ public class PluginManager {
 	                }					
 		            else
 		            {
-		            	memcardDir = new File(dcimDir, "external_SD");		// LG optimus 4xhd / LG p880
+		            	memcardDir = new File("/storage", "external_SD");		// LG optimus 4xhd / LG p880
 		                if (memcardDir.exists())
 		                {
-		    	            saveDir = new File(dcimDir, "external_SD/DCIM/" + abcDir);
+		    	            saveDir = new File("/storage", "external_SD/DCIM/" + abcDir);
 		                	usePhoneMem = false;
 		                }					
 			            else

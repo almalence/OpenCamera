@@ -389,30 +389,37 @@ public class ExportPlugin extends PluginExport
 				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
 				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
 				            
+				            values.put(ImageColumns.LATITUDE, l.getLatitude());
+				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
+
 				            //ei.setAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD, l.getProvider().toUpperCase());
 		                    if (l.hasAltitude()) {
 		                        l.getAltitude();
 		                        int alt = (int)l.getAltitude()*1000;
 		                        ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Integer.toString(alt) +"/1000");
-		                        ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
+		                        if (alt>=0)
+		                        	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
+		                        else
+		                        	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(1));
 		                    } else {
 		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Long.toString(0));
 		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
 		                    }
-		                    if (l.getTime() != 0) {
-			                    SimpleDateFormat formatterTime = new SimpleDateFormat("HH/1,mm/1,ss/1");
-			                    Date currentTime = new Date(l.getTime());
-			                    String asStringTime = formatterTime.format(currentTime);
-			                    ei.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, asStringTime);
-			                    
-			                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd");
-			                    Date currentDate = new Date(l.getTime());
-			                    String asString = formatter.format(currentDate);
-			                    ei.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, asString);
-			                }
+//		                    if (l.getTime() != 0) {
+//			                    SimpleDateFormat formatterTime = new SimpleDateFormat("HH/1,mm/1,ss/1");
+//			                    Date currentTime = new Date(l.getTime());
+//			                    String asGMTStringTime = currentTime.toGMTString();
+//			                    String asStringTime = formatterTime.format(currentTime);
+//			                    //ei.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, asStringTime);
+//			                    
+//			                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd");
+//			                    Date currentDate = new Date(l.getTime());
+//			                    String asString = formatter.format(currentDate);
+//			                    ei.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, asString);
+//			                }
 		                }
 			                
-		            	ei.saveAttributes();
+		            	//ei.saveAttributes();
 	            	}
 	            	else
 	            	{
