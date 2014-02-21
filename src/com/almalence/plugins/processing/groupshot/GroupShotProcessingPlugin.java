@@ -254,6 +254,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
     		}
     		
+    		if((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) && mCameraMirrored)
+    		{
+    			Matrix matrix = new Matrix();
+	    		matrix.postRotate((mDisplayOrientationOnStartProcessing+180)%360);
+	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
+    		}    		
+    		
     		previewBmpRealWidth = PreviewBmp.getWidth();
     		previewBmpRealHeight = PreviewBmp.getHeight();
     		
@@ -286,12 +293,26 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    			            if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-    			            {
-    				            ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + (mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90));
-    			            }
-    			            ei.saveAttributes();
-    		            }
+    			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+    		            	switch(mDisplayOrientationOnStartProcessing)
+    		            	{
+    		            	default:
+    		            	case 0:
+    		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+    		            		break;
+    		            	case 90:
+    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+    		            		break;
+    		            	case 180:
+    		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+    		            		break;
+    		            	case 270:
+    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+    		            		break;
+    		            	}
+    		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+    			            ei.saveAttributes();    		            
+		            	}
     	            }
     	        }
     	        catch (Exception e)
@@ -330,7 +351,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     {
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
-        SaveInputPreference = prefs.getBoolean("saveInputPrefObjectRemoval", false);
+        SaveInputPreference = prefs.getBoolean("saveInputPrefGroupShot", false);
     }
 	
 	private void getFaceRects()

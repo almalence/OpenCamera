@@ -348,13 +348,13 @@ public class ExportPlugin extends PluginExport
             	{
             	default:
             	case 0:
-            		orientation_tag = cameraMirrored ? String.valueOf(180) : String.valueOf(0);
+            		orientation_tag = String.valueOf(0);//cameraMirrored ? String.valueOf(180) : String.valueOf(0);
             		break;
             	case 90:
             		orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
             		break;
             	case 180:
-            		orientation_tag = cameraMirrored ? String.valueOf(0) : String.valueOf(180);
+            		orientation_tag = String.valueOf(180);//cameraMirrored ? String.valueOf(0) : String.valueOf(180);
             		break;
             	case 270:
             		orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
@@ -490,13 +490,13 @@ public class ExportPlugin extends PluginExport
 	            	{
 	            	default:
 	            	case 0:
-	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+	            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
 	            		break;
 	            	case 90:
 	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
 	            		break;
 	            	case 180:
-	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+	            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
 	            		break;
 	            	case 270:
 	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
