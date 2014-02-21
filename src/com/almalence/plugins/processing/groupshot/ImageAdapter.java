@@ -27,6 +27,9 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +49,7 @@ import com.almalence.util.MemoryImageCache;
 public class ImageAdapter extends BaseAdapter {
 	final static int THUMBNAIL_WIDTH = 200;
 	final static int THUMBNAIL_HEIGHT = 250;
+	final static int IMAGEVIEW_PADDING = 8;
 	int mGalleryItemBackground;
 	private Context mContext = null;
 	private String[] imagePath = null;
@@ -53,6 +57,7 @@ public class ImageAdapter extends BaseAdapter {
 	private boolean mDisplayLandscape;
 	private boolean mCameraMirrored;
 	private MemoryImageCache cache = null;
+	private int mSelectedItem;
 
 	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored) {
 		mContext = context;
@@ -184,6 +189,10 @@ public class ImageAdapter extends BaseAdapter {
 			return mList.size();
 		}
 	}
+	
+	public void setCurrentSeleted(int position) {
+		mSelectedItem = position;
+	}
 
 	public Object getItem(int position) {
 		return position;
@@ -195,25 +204,32 @@ public class ImageAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = (ImageView) new ImageView(mContext);
+		ImageView imageView;
+        if (convertView == null) {  // if it's not recycled, initialize some attributes
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setPadding(0, 0, 0, 0);
+        } else {
+            imageView = (ImageView) convertView;
         }
+        
     	final String Key = String.valueOf(position);
     	Bitmap b = cache.getBitmap(Key);
     	
     	if (b != null) {
-    		((ImageView) convertView).setImageBitmap(b);
+    		imageView.setImageBitmap(b);
     	} else {
-    		((ImageView) convertView).setImageBitmap(decodeJPEGfromData(position));
+    		imageView.setImageBitmap(decodeJPEGfromData(position));
     	}
 
-    	convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
-//		if(mDisplayLandscape)
-//			convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH));
-//		else
-//			convertView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
-    	((ImageView) convertView).setScaleType(ImageView.ScaleType.FIT_XY);
-    	convertView.setBackgroundResource(mGalleryItemBackground);
-		return convertView;
+    	if (position == mSelectedItem) {
+    		imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
+    		imageView.setBackgroundColor(0xFF00AAEA);
+        } else {
+        	imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
+        	imageView.setBackgroundColor(Color.WHITE);
+        }
+		return imageView;
 	}
 }
