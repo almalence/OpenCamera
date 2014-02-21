@@ -259,13 +259,13 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		            	{
     		            	default:
     		            	case 0:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+    		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
     		            		break;
     		            	case 90:
     		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
     		            		break;
     		            	case 180:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+    		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
     		            		break;
     		            	case 270:
     		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
@@ -434,7 +434,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+        	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+        	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
 	    mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
@@ -666,7 +667,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+            	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+            	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             break;
     	}    	

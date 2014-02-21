@@ -141,6 +141,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
 		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
+    	mCameraMirrored = MainScreen.getCameraMirrored();
         
         if(mDisplayOrientation == 0 || mDisplayOrientation == 180)
         {
@@ -263,13 +264,13 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		            	{
     		            	default:
     		            	case 0:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+    		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
     		            		break;
     		            	case 90:
     		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
     		            		break;
     		            	case 180:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+    		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
     		            		break;
     		            	case 270:
     		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
@@ -432,7 +433,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+        	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+        	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
         sequenceView = ((OrderControl)postProcessingView.findViewById(R.id.seqView));
@@ -441,7 +443,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	{
     		Bitmap bmp = thumbnails.get(i);
     		Matrix matrix = new Matrix();
-        	matrix.postRotate(90);
+        	matrix.postRotate(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270 : 90) : 90);
         	Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(),
         	        matrix, true);
 //        	mImgView.setImageBitmap(rotated);
@@ -580,6 +582,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
     	
+    	//PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? mDisplayOrientation : 0) : mDisplayOrientation));
     	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientation));
     	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
 		
@@ -629,7 +632,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+            	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+            	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             
             sequenceView.setEnabled(true);
