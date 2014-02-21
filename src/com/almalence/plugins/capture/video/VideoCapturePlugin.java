@@ -42,6 +42,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -1291,12 +1292,12 @@ public class VideoCapturePlugin extends PluginCapture
 			}
     	}
 		
-		if (pf!=null)
+		if (pf!=null && !MainScreen.thiz.mVideoStabilizationSupported)
     	{
-			//pf.findPreference("imageSizePrefVideo");
+			PreferenceCategory cat = (PreferenceCategory)pf.findPreference("Pref_VideoCapture_Category");
 			CheckBoxPreference cp = (CheckBoxPreference) pf.findPreference("videoStabilizationPref");
-			if(cp != null)
-				pf.getPreferenceScreen().removePreference(cp);
+			if(cp != null && cat != null)
+				cat.removePreference(cp);
     	}
 		
 	}

@@ -1,6 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
  
-<PreferenceCategory android:title="@string/Pref_Video_Category_Title">   
+<PreferenceCategory android:title="@string/Pref_Video_Category_Title"
+    				android:key="Pref_VideoCapture_Category">   
     	<ListPreference
 			android:title="@string/Pref_Video_ImageSize_Title"
 			android:key="imageSizePrefVideo"

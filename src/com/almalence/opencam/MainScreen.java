@@ -176,6 +176,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public boolean mFlashModeSupported = false;
 	public boolean mISOSupported = false;
 	public boolean mCameraChangeSupported = false;
+	
+	public boolean mVideoStabilizationSupported = false;
 
 	public static List<String> supportedSceneModes;
 	public static List<String> supportedWBModes;
@@ -855,6 +857,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		
 		cameraParameters = camera.getParameters(); //Initialize of camera parameters variable
+		
+		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	    	mVideoStabilizationSupported = isVideoStabilizationSupported();
 
 		PluginManager.getInstance().SelectDefaults();
 
@@ -1277,6 +1282,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			cameraParameters.setVideoStabilization(stabilization);
 			this.setCameraParameters(cameraParameters);
 		}
+	}
+	
+	@TargetApi(15)
+	public boolean isVideoStabilizationSupported()
+	{
+		if(cameraParameters != null)
+			return cameraParameters.isVideoStabilizationSupported();
+		
+		return false;
 	}
 	
 	public boolean isExposureLockSupported() {
