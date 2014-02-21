@@ -47,9 +47,9 @@ import com.almalence.opencam.R;
 import com.almalence.util.MemoryImageCache;
 
 public class ImageAdapter extends BaseAdapter {
-	final static int THUMBNAIL_WIDTH = 200;
-	final static int THUMBNAIL_HEIGHT = 250;
-	final static int IMAGEVIEW_PADDING = 8;
+	final static int THUMBNAIL_WIDTH = 150;
+	final static int THUMBNAIL_HEIGHT = 180;
+	final static int IMAGEVIEW_PADDING = 4;
 	int mGalleryItemBackground;
 	private Context mContext = null;
 	private String[] imagePath = null;
