@@ -40,7 +40,9 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -122,6 +124,8 @@ public class VideoCapturePlugin extends PluginCapture
     private View buttonsLayout;    
 
     private boolean snapshotSupported = false;
+    
+    private boolean videoStabilization = false;
     
     
     private static Hashtable<Integer, Boolean> previewSizes = new Hashtable<Integer, Boolean>()
@@ -836,7 +840,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        {
 	        	SetCameraPreviewSize(cp);
 	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
-	   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 	   	    		MainScreen.thiz.setVideoStabilization(false);
 	        }
 	        camera.startPreview();
@@ -910,7 +914,7 @@ public class VideoCapturePlugin extends PluginCapture
         	Date curDate = new Date();
         	SessionID = curDate.getTime();
         	
-   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
    	    		MainScreen.thiz.setVideoStabilization(true);
         	
         	shutterOff=true;
@@ -1203,7 +1207,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 	   		     public void onFinish() {
 	   		    	 shutterOff=false;
-	   		    	MainScreen.guiManager.lockControls = false;
 	   		    	if(!(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 	   						Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
 	   						Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
@@ -1288,6 +1291,15 @@ public class VideoCapturePlugin extends PluginCapture
 					break;
 			}
     	}
+		
+		if (pf!=null && !MainScreen.thiz.mVideoStabilizationSupported)
+    	{
+			PreferenceCategory cat = (PreferenceCategory)pf.findPreference("Pref_VideoCapture_Category");
+			CheckBoxPreference cp = (CheckBoxPreference) pf.findPreference("videoStabilizationPref");
+			if(cp != null && cat != null)
+				cat.removePreference(cp);
+    	}
+		
 	}
 	
 	private void getPrefs()
@@ -1295,6 +1307,8 @@ public class VideoCapturePlugin extends PluginCapture
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 
         CameraIDPreference = 0;
+        
+        videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
        
         readVideoPreferences(prefs);
     }
