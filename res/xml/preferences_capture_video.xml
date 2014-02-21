@@ -7,5 +7,10 @@
 			android:defaultValue="2"
 			android:entries="@array/dimsArrayVideo"
 			android:entryValues="@array/dimsValuesVideo" />
+    	<CheckBoxPreference
+            android:title="@string/Pref_Video_Stabilization_Title"
+            android:defaultValue="false"
+            android:summary="@string/Pref_Video_Stabilization_Summary"
+            android:key="videoStabilizationPref" />
 </PreferenceCategory>
 </PreferenceScreen>
