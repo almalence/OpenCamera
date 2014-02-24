@@ -55,6 +55,7 @@ public class ImageAdapter extends BaseAdapter {
 	private String[] imagePath = null;
 	private List<byte[]> mList;
 	private boolean mCameraMirrored;
+	private boolean mIsLandscape;
 	private MemoryImageCache cache = null;
 	private int mSelectedItem;
 
@@ -62,6 +63,7 @@ public class ImageAdapter extends BaseAdapter {
 		mContext = context;
 		mList = list;
 		mCameraMirrored = isMirrored;
+		mIsLandscape = isLandscape;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
 		mGalleryItemBackground = a.getResourceId(
 				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
@@ -144,7 +146,7 @@ public class ImageAdapter extends BaseAdapter {
 			bm.recycle();
 		
 		Matrix matrix = new Matrix();
-		matrix.postRotate(mCameraMirrored? -90 : 90);
+		matrix.postRotate(mCameraMirrored? (mIsLandscape ? (-90+180)%360 : -90) : 90);
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
 	

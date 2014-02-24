@@ -672,7 +672,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 //			}
 	        
 	        mImgView.setImageBitmap(PreviewBmpInitial);
-	        mImgView.setRotation(mCameraMirrored?180:0);
+	        mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
 	        
 	        textVeiw = ((TextView)postProcessingView.findViewById(R.id.groupshotTextView));
 	        textVeiw.setText("Loading image ...");
@@ -682,7 +682,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		}
 				
 	    private void setupImageSelector() {
-			mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270, mCameraMirrored);
+			mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
 	        mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 	        mGallery.setAdapter(mImageAdapter);
 	        mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -935,7 +935,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		}
             	
             	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
+            	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
         	}
 	        
 	        
@@ -987,7 +987,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 //			                                	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 //			                                	        matrix, true);
 			                                	mImgView.setImageBitmap(PreviewBmp);
-			                                	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);				                        		
+			                                	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);				                        		
 				                        	}
 				                        }
 				                    });
