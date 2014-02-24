@@ -2975,6 +2975,9 @@ public class AlmalenceGUI extends GUI implements
 
 			if (guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeISO, startDegree, endDegree, duration);
+			
+			if (guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
+				rotateViews(activeMetering, startDegree, endDegree, duration);
 		}
 	}
 
