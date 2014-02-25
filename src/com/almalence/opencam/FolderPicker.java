@@ -62,6 +62,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		"bootsdcard",
 		"emmc",
 		"extSdCard",
+		"ExtSDCard",
 		"sdcard0",
 		"sdcard1",
 		"sdcard2"
