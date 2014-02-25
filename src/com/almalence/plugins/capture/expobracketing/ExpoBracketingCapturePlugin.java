@@ -260,7 +260,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					//Note 3 need more time to change exposure.
 					if(Build.MODEL.contains("SM-N900"))
 						evLatency = 20;
-					
 		    	}
 		    	else
 		    	{
