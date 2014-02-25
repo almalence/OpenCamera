@@ -18,12 +18,22 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 
 import com.almalence.SwapHeap;
 
@@ -36,7 +46,10 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.R;
+import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
+import com.almalence.ui.Switch.Switch;
 
 
 /***
@@ -48,9 +61,113 @@ public class CapturePlugin extends PluginCapture
 	private boolean takingAlready=false;
 	private boolean aboutToTakePicture=false;
 	
+	public static String ModePreference;	// 0=DRO On 1=DRO Off
+	private Switch modeSwitcher;
+	
 	public CapturePlugin()
 	{
 		super("com.almalence.plugins.capture", 0, 0, 0, null);
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        ModePreference = prefs.getString("modeStandardPref", "1");
+        modeSwitcher.setTextOn("DRO On");
+        modeSwitcher.setTextOff("DRO Off");
+        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
+		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+				if (isChecked)				
+					ModePreference = "0";		        	
+				else			
+					ModePreference = "1";
+				
+				SharedPreferences.Editor editor = prefs.edit();		        	
+	        	editor.putString("modeStandardPref", ModePreference);
+	        	editor.commit();
+				
+			}
+		});
+		
+		if(PluginManager.getInstance().getProcessingCounter() == 0)
+			modeSwitcher.setEnabled(true);
+	}
+	
+	
+	@Override
+	public void onStart()
+	{
+		// Get the xml/preferences.xml preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
+        ModePreference = prefs.getString("modeStandardPref", "1");
+	}
+	
+	
+	@Override
+	public void onGUICreate()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				
+				specialLayout.removeView(view);
+			}
+		}		
+		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+		
+		this.modeSwitcher.setLayoutParams(params);
+		this.modeSwitcher.requestLayout();
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+	}
+	
+	
+	@Override
+	public void onStop()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
 	}
 	
 	@Override
@@ -81,6 +198,22 @@ public class CapturePlugin extends PluginCapture
 			}
 		}
 	}
+	
+	
+	@Override
+	public void onDefaultsSelect()
+	{
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
+        ModePreference = prefs.getString("modeStandardPref", "1");
+	}
+	
+	@Override
+	public void onShowPreferences()
+	{
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
+        ModePreference = prefs.getString("modeStandardPref", "1");
+	}
+	
 	
 	public void takePicture()
 	{
@@ -159,6 +292,8 @@ public class CapturePlugin extends PluginCapture
 		
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
     	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+    	
+    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
     	
 		try
 		{
