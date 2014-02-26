@@ -176,6 +176,7 @@ public class PluginManager {
 	public static final int MSG_FX_FINISHED = 10;
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
+	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
 
 	public static final int MSG_SET_EXPOSURE = 22;
 	public static final int MSG_NEXT_FRAME = 23;
