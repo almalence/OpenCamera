@@ -651,7 +651,7 @@ public class VideoCapturePlugin extends PluginCapture
 			previewSizes.put(CamcorderProfile.QUALITY_720P, true);
 			this.quality720Supported = true;
 		}
-		if(psz.contains(camera.new Size(1920,1080)))
+		if(psz.contains(camera.new Size(1920,1080)) || psz.contains(camera.new Size(1920,1088)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_1080P, true);
 			this.quality1080Supported = true;
@@ -1092,8 +1092,13 @@ public class VideoCapturePlugin extends PluginCapture
     	     	    	sz = camera.new Size(352,288);
     	     	    	break;
     	     	    case CamcorderProfile.QUALITY_1080P:
+    	     	    {
+    	     	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+    	     			List<Size> psz = cp.getSupportedPreviewSizes();    	     			
     	     	    	sz = camera.new Size(1920,1080);
-    	     	    	break;
+    	     	    	if(!psz.contains(sz))
+    	     	    		sz = camera.new Size(1920,1088);
+    	     	    } break;
     	     	    case CamcorderProfile.QUALITY_720P:
     	     	    	sz = camera.new Size(1280,720);
     	     	    	break;
