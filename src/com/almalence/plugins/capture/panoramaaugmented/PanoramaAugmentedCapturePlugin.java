@@ -552,6 +552,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     		
     		return true;
 		}
+		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		{
+			this.stopCapture();
+			
+			return true;
+		}
 		else if (command == PluginManager.MSG_BAD_FRAME)
 		{
 			Toast.makeText(
@@ -568,14 +574,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 					Toast.LENGTH_LONG).show();
 			return true;
 		}
-		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		else if (command == PluginManager.MSG_NOTIFY_LIMIT_REACHED)
 		{
 			Toast.makeText(
 					MainScreen.thiz,
 					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_stopcapture),
 					Toast.LENGTH_LONG).show();
-			this.stopCapture();
-			
 			return true;
 		}
 
@@ -998,6 +1002,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
+		else if (done)
+		{
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NOTIFY_LIMIT_REACHED;
 			msg.what = PluginManager.MSG_BROADCAST;
 			MainScreen.H.sendMessage(msg);
 		}
