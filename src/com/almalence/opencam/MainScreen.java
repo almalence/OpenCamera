@@ -1259,8 +1259,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			try
 			{
 				camera.setParameters(params);
-	//			cameraParameters = params;
-				cameraParameters = camera.getParameters();
+				cameraParameters = params;
+				//cameraParameters = camera.getParameters();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

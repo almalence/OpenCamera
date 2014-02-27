@@ -406,7 +406,7 @@ public class NightCapturePlugin extends PluginCapture
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString("modePref", defaultMode);
-		ImageSizeIdxPreference = prefs.getString("imageSizePrefNight", "-1");
+		ImageSizeIdxPreference = prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString("focusPref", defaultFocus);
 		SelectImageDimension();		
 	}
