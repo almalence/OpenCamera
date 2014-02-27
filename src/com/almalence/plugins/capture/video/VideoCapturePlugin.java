@@ -189,7 +189,7 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		onPreferenceCreate((PreferenceFragment)null);
 		
-		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    int quality = 0;
 	    switch (ImageSizeIdxPreference)
 	    {
@@ -241,7 +241,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    }	    
 	    
 	    Editor editor = prefs.edit();
-	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+	    editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
 	    editor.commit();
 	    
 	    
@@ -382,7 +382,7 @@ public class VideoCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		Editor editor = prefs.edit();
 		
-        int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+        int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    	
 	    int quality = 0;
 	    switch (ImageSizeIdxPreference)
@@ -390,27 +390,27 @@ public class VideoCapturePlugin extends PluginCapture
 	    case 0:
 	    	quality = CamcorderProfile.QUALITY_CIF;
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
-	    	editor.putString("imageSizePrefVideo", "1");
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "1");
 	    	break;
 	    case 1:
 	    	quality = CamcorderProfile.QUALITY_1080P;
 	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
-	    	editor.putString("imageSizePrefVideo", "2");
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2");
 	    	break;
 	    case 2:
 	    	quality = CamcorderProfile.QUALITY_720P;
 	    	quickControlIconID = R.drawable.gui_almalence_video_720;
-	    	editor.putString("imageSizePrefVideo", "3");
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "3");
 	    	break;
 	    case 3:
 	    	quality = CamcorderProfile.QUALITY_480P;
 	    	quickControlIconID = R.drawable.gui_almalence_video_480;
-	    	editor.putString("imageSizePrefVideo", "4");
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "4");
 	    	break;
 	    case 4:
 	    	quality = CamcorderProfile.QUALITY_QCIF;
 	    	quickControlIconID = R.drawable.gui_almalence_video_qcif;
-	    	editor.putString("imageSizePrefVideo", "0");
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "0");
 	    	break;
 	    }
 	    
@@ -418,8 +418,8 @@ public class VideoCapturePlugin extends PluginCapture
 	    
 	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
 	    {
-	    	ImageSizeIdxPreference = (Integer.parseInt(prefs.getString("imageSizePrefVideo", "2")) + 1)%5;
-	    	editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+	    	ImageSizeIdxPreference = (Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2")) + 1)%5;
+	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
 	    	onQuickControlClick();
 	    }
 	    
@@ -660,7 +660,7 @@ public class VideoCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         //preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
         
-	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    int quality = 0;
 	    switch (ImageSizeIdxPreference)
 	    {
@@ -700,7 +700,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    }
 	    
 	    Editor editor = prefs.edit();
-	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+	    editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
 	    editor.commit();
 	    
 		cp.setRecordingHint(true);
@@ -717,7 +717,7 @@ public class VideoCapturePlugin extends PluginCapture
         	Log.e("VideoCapturePlugin", "MainScreen.SetCameraPreviewSize MainScreen.thiz.getCameraParameters returned null!");    	
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    	
 	    boolean aspect169 = true;
 	    switch (ImageSizeIdxPreference)
@@ -930,7 +930,7 @@ public class VideoCapturePlugin extends PluginCapture
     	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
     	    
     	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+    	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
    	    	
     	    int quality = 0;
     	    switch (ImageSizeIdxPreference)
@@ -1016,7 +1016,7 @@ public class VideoCapturePlugin extends PluginCapture
     	    	useProfile = false;
 
     	    Editor editor = prefs.edit();
-    	    editor.putString("imageSizePrefVideo", String.valueOf(ImageSizeIdxPreference));
+    	    editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
     	    editor.commit();
 
     	    // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
@@ -1272,10 +1272,26 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		int imageSizePrefVideo = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
+		int imageSizePrefVideo = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 		if (pf!=null)
     	{
-			ListPreference lp = (ListPreference)pf.findPreference("imageSizePrefVideo");
+			ListPreference lp = (ListPreference)pf.findPreference("imageSizePrefVideoBack");
+	        ListPreference lp2 = (ListPreference)pf.findPreference("imageSizePrefVideoFront");
+	        
+	        PreferenceCategory cat = (PreferenceCategory)pf.findPreference("Pref_VideoCapture_Category");
+	        if(MainScreen.CameraIndex == 0 && lp2 != null && cat != null)
+	        {
+	        	cat.removePreference(lp2);
+	        }
+	        else if(lp != null && lp2 != null && cat != null)
+	        {
+	        	cat.removePreference(lp);
+	        	lp = lp2;
+	        }
+	        else if(lp == null)
+	        	lp = lp2;
+	        
+//			ListPreference lp = (ListPreference)pf.findPreference(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront");
 			lp.setEntries(entriesFin);
 			lp.setEntryValues(entryValuesFin);
 			
