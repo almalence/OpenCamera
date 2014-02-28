@@ -6,4 +6,7 @@
 	<string name="Pref_KeepScreenOn">Keep screen on</string>
 	<string name="Pref_KeepScreenOn_Summary">Avoid sleep mode while camera active</string>
 	
+	<string name="Pref_MaxScreenBrightness">Max screen brightness</string>
+	<string name="Pref_MaxScreenBrightness_Summary">Force the screen to maximum brightness</string>
+	
 </resources>

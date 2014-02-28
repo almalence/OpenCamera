@@ -26,8 +26,19 @@ package com.almalence.opencam;
 
 import java.util.List;
 
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 /***
@@ -40,6 +51,18 @@ public class Preferences extends PreferenceActivity
 	// Called only on Honeycomb and later
 	//loading headers for common and plugins
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		
+		boolean MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+		setScreenBrightness(MaxScreenBrightnessPreference);
+	}
+	
+	@Override
 	public void onBuildHeaders(List<Header> target) 
 	{
 		thiz=this;
@@ -51,12 +74,29 @@ public class Preferences extends PreferenceActivity
 			MainScreen.thiz.showUnlock=false;
 			startWithFragment("com.almalence.opencam.FragmentUpgrade", null, null, 0);
 		}
-		//-+- -->
+		//-+- -->		
 	}
 	
 	static public void closePrefs()
 	{
 		thiz.finish();
+	}
+	
+	static public void setScreenBrightness(boolean setMax)
+	{
+		//ContentResolver cResolver = getContentResolver();
+		Window window = thiz.getWindow();
+		
+		WindowManager.LayoutParams layoutpars = window.getAttributes();
+		
+        //Set the brightness of this window	
+		if(setMax)
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+		else
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+
+        //Apply attribute changes to this window
+        window.setAttributes(layoutpars);
 	}
 	
 	@TargetApi( Build.VERSION_CODES.KITKAT )

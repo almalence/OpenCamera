@@ -36,6 +36,7 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -199,6 +200,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static boolean SaveInputPreference;
 	public static String SaveToPreference;
 	public static boolean SortByDataPreference;
+	
+	public static boolean MaxScreenBrightnessPreference;
 
 	// Camera resolution variables and lists
 	public static final int MIN_MPIX_SUPPORTED = 1280 * 960;
@@ -320,7 +323,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);		
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
@@ -653,6 +656,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					SaveToPreference = prefs.getString("saveToPref", "0");
 					SortByDataPreference = prefs.getBoolean("sortByDataPref",
 							false);
+					
+					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+					setScreenBrightness(MaxScreenBrightnessPreference);
 
 					MainScreen.guiManager.onResume();
 					PluginManager.getInstance().onResume();
@@ -2046,6 +2052,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public static int getFocusState() {
 		return MainScreen.mFocusState;
+	}
+	
+	public void setScreenBrightness(boolean setMax)
+	{
+		//ContentResolver cResolver = getContentResolver();
+		Window window = getWindow();
+		
+		WindowManager.LayoutParams layoutpars = window.getAttributes();
+		
+        //Set the brightness of this window	
+		if(setMax)
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+		else
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+
+        //Apply attribute changes to this window
+        window.setAttributes(layoutpars);
 	}
 
 	/*******************************************************/

@@ -1,7 +1,8 @@
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="@string/Pref_VFCommon_Preference_Title">
+	<PreferenceCategory android:title="@string/Pref_VFCommon_Preference_Title"
+	    				android:key="Pref_VFCommon_Preference_Category">
 
 	    <CheckBoxPreference
 			android:title="@string/Pref_Common_DelayedCapture_Title"
@@ -14,5 +15,11 @@
 	        android:summary="@string/Pref_KeepScreenOn_Summary"
 	        android:defaultValue="false"
             android:key="keepScreenOn" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_MaxScreenBrightness"
+	        android:summary="@string/Pref_MaxScreenBrightness_Summary"
+	        android:defaultValue="false"
+            android:key="maxScreenBrightnessPref" />
 	</PreferenceCategory>
 </PreferenceScreen>
