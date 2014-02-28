@@ -36,7 +36,6 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -323,7 +322,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
