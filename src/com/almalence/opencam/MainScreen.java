@@ -199,6 +199,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static boolean SaveInputPreference;
 	public static String SaveToPreference;
 	public static boolean SortByDataPreference;
+	
+	public static boolean MaxScreenBrightnessPreference;
 
 	// Camera resolution variables and lists
 	public static final int MIN_MPIX_SUPPORTED = 1280 * 960;
@@ -653,6 +655,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					SaveToPreference = prefs.getString("saveToPref", "0");
 					SortByDataPreference = prefs.getBoolean("sortByDataPref",
 							false);
+					
+					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+					setScreenBrightness(MaxScreenBrightnessPreference);
 
 					MainScreen.guiManager.onResume();
 					PluginManager.getInstance().onResume();
@@ -1259,8 +1264,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			try
 			{
 				camera.setParameters(params);
-	//			cameraParameters = params;
-				cameraParameters = camera.getParameters();
+				cameraParameters = params;
+				//cameraParameters = camera.getParameters();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -2046,6 +2051,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public static int getFocusState() {
 		return MainScreen.mFocusState;
+	}
+	
+	public void setScreenBrightness(boolean setMax)
+	{
+		//ContentResolver cResolver = getContentResolver();
+		Window window = getWindow();
+		
+		WindowManager.LayoutParams layoutpars = window.getAttributes();
+		
+        //Set the brightness of this window	
+		if(setMax)
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+		else
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+
+        //Apply attribute changes to this window
+        window.setAttributes(layoutpars);
 	}
 
 	/*******************************************************/

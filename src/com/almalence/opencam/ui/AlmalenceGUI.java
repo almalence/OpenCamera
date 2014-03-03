@@ -5035,23 +5035,23 @@ public class AlmalenceGUI extends GUI implements
 			String isoNew = params.get(isoParam);			
 			if(isoNew == null)
 				isoNew = params.get(isoParam2);
-			if(mSceneMode.compareTo(sceneAuto) != 0)
-			{
-				isoNew = isoAuto;
-				if(params.get(isoParam) != null)
-					params.set(isoParam, isoAuto);
-				else if(params.get(isoParam2) != null)
-					params.set(isoParam2, isoAuto);
-				if(false == MainScreen.thiz.setCameraParameters(params))
-				{					
-					if(params.get(isoParam) != null)
-						params.set(isoParam, iso_default_values.get(isoAuto));
-					else if(params.get(isoParam2) != null)
-						params.set(isoParam2, iso_default_values.get(isoAuto));
-					MainScreen.thiz.setCameraParameters(params);	
-				}				
-				
-			}
+//			if(mSceneMode.compareTo(sceneAuto) != 0)
+//			{
+//				isoNew = isoAuto;
+//				if(params.get(isoParam) != null)
+//					params.set(isoParam, isoAuto);
+//				else if(params.get(isoParam2) != null)
+//					params.set(isoParam2, isoAuto);
+//				if(false == MainScreen.thiz.setCameraParameters(params))
+//				{					
+//					if(params.get(isoParam) != null)
+//						params.set(isoParam, iso_default_values.get(isoAuto));
+//					else if(params.get(isoParam2) != null)
+//						params.set(isoParam2, iso_default_values.get(isoAuto));
+//					MainScreen.thiz.setCameraParameters(params);					
+//				}
+//				params = MainScreen.thiz.getCameraParameters();
+//			}
 
 			// Save new params value
 			if(wbNew != null && WBModeButtons.containsKey(wbNew))

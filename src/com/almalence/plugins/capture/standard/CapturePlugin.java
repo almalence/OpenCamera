@@ -47,6 +47,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
 import com.almalence.ui.Switch.Switch;
@@ -86,10 +87,25 @@ public class CapturePlugin extends PluginCapture
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-				if (isChecked)				
-					ModePreference = "0";		        	
-				else			
+				int currEv = prefs.getInt(GUI.sEvPref, 0);
+				int newEv = currEv;
+				int minValue = MainScreen.thiz.getMinExposureCompensation();
+				if (isChecked)
+				{
+					newEv -= 1;
+					ModePreference = "0";
+				}
+				else
+				{
 					ModePreference = "1";
+				}
+				
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				if (params != null && newEv >= minValue)
+				{
+					params.setExposureCompensation(newEv);
+					MainScreen.thiz.setCameraParameters(params);
+				}
 				
 				SharedPreferences.Editor editor = prefs.edit();		        	
 	        	editor.putString("modeStandardPref", ModePreference);
@@ -100,6 +116,26 @@ public class CapturePlugin extends PluginCapture
 		
 		if(PluginManager.getInstance().getProcessingCounter() == 0)
 			modeSwitcher.setEnabled(true);
+	}
+	
+	@Override
+	public void onCameraParametersSetup()
+	{		
+		if (ModePreference.compareTo("0") == 0)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			int currEv = prefs.getInt(GUI.sEvPref, 0);
+			int newEv = currEv;
+			int minValue = MainScreen.thiz.getMinExposureCompensation();
+			newEv -= 1;
+			
+			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			if (params != null && newEv >= minValue)
+			{
+				params.setExposureCompensation(newEv);
+				MainScreen.thiz.setCameraParameters(params);
+			}
+		}
 	}
 	
 	

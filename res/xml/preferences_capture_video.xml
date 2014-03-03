@@ -4,7 +4,13 @@
     				android:key="Pref_VideoCapture_Category">   
     	<ListPreference
 			android:title="@string/Pref_Video_ImageSize_Title"
-			android:key="imageSizePrefVideo"
+			android:key="imageSizePrefVideoFront"
+			android:defaultValue="2"
+			android:entries="@array/dimsArrayVideo"
+			android:entryValues="@array/dimsValuesVideo" />
+    	<ListPreference
+			android:title="@string/Pref_Video_ImageSize_Title"
+			android:key="imageSizePrefVideoBack"
 			android:defaultValue="2"
 			android:entries="@array/dimsArrayVideo"
 			android:entryValues="@array/dimsValuesVideo" />

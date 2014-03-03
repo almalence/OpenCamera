@@ -28,13 +28,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 
@@ -111,7 +115,47 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					return true;
 				}
 			});
+        
+        
+        PreferenceCategory cat = (PreferenceCategory)this.findPreference("Pref_VFCommon_Preference_Category");
+		if(cat != null)
+		{
+			CheckBoxPreference cp = (CheckBoxPreference)cat.findPreference("maxScreenBrightnessPref");
+			if(cp != null)
+			{
+				cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+					// @Override
+					public boolean onPreferenceChange(Preference preference,
+							Object newValue) {
+						boolean value = Boolean.parseBoolean(newValue.toString());
+						setScreenBrightness(value);
+						return true;
+					}
+				});
+			}
+		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+		boolean MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+		setScreenBrightness(MaxScreenBrightnessPreference);
     }
+    
+    static public void setScreenBrightness(boolean setMax)
+	{
+		//ContentResolver cResolver = getContentResolver();
+		Window window = thiz.getActivity().getWindow();
+		
+		WindowManager.LayoutParams layoutpars = window.getAttributes();
+		
+        //Set the brightness of this window	
+		if(setMax)
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+		else
+			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+
+        //Apply attribute changes to this window
+        window.setAttributes(layoutpars);
+	}
     
     static public void closePrefs()
 	{
