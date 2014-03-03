@@ -82,6 +82,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
+import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
 import com.almalence.plugins.capture.night.NightCapturePlugin;
@@ -100,6 +101,7 @@ import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
 import com.almalence.plugins.processing.preshot.PreshotProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
+import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
@@ -299,6 +301,10 @@ public class PluginManager {
 		pluginList.put(burstCapturePlugin.getID(), burstCapturePlugin);
 		listCapture.add(burstCapturePlugin);
 		
+		BestShotCapturePlugin bestShotCapturePlugin = new BestShotCapturePlugin();
+		pluginList.put(bestShotCapturePlugin.getID(), bestShotCapturePlugin);
+		listCapture.add(bestShotCapturePlugin);
+		
 		ObjectRemovalCapturePlugin objectRemovalCapturePlugin = new ObjectRemovalCapturePlugin();
 		pluginList.put(objectRemovalCapturePlugin.getID(), objectRemovalCapturePlugin);
 		listCapture.add(objectRemovalCapturePlugin);
@@ -362,6 +368,10 @@ public class PluginManager {
 		PanoramaProcessingPlugin panoramaProcessingPlugin = new PanoramaProcessingPlugin();
 		pluginList.put(panoramaProcessingPlugin.getID(), panoramaProcessingPlugin);
 		listProcessing.add(panoramaProcessingPlugin);
+		
+		BestshotProcessingPlugin bestshotProcessingPlugin = new BestshotProcessingPlugin();
+		pluginList.put(bestshotProcessingPlugin.getID(), bestshotProcessingPlugin);
+		listProcessing.add(bestshotProcessingPlugin);
 		
 //		HiresPortraitProcessingPlugin hiresPortraitProcessingPlugin = new HiresPortraitProcessingPlugin();
 //		pluginList.put(hiresPortraitProcessingPlugin.getID(), hiresPortraitProcessingPlugin);

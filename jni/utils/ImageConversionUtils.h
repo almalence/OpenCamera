@@ -58,6 +58,19 @@ int DecodeAndRotateMultipleJpegs
 	int rotationDegree
 );
 
+int DecodeAndRotateMultipleJpegsNoRelease
+(
+	unsigned char **yuvFrame,
+	unsigned char **jpeg,
+	int *jpeg_length,
+	int sx,
+	int sy,
+	int nFrames,
+	int needRotation,
+	int cameraMirrored,
+	int rotationDegree
+);
+
 void TransformPlane32bit
 (
 	unsigned int * In,
