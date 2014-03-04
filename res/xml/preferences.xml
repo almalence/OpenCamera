@@ -4,7 +4,12 @@
 			android:title="@string/Pref_Common_Shutter_Title"
 			android:summary="@string/Pref_Common_Shutter_Summary"
 			android:defaultValue="false" 
-			android:key="shutterPrefCommon" />	
+			android:key="shutterPrefCommon" />
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_ShotOnTap_Title"
+			android:summary="@string/Pref_Common_ShotOnTap_Summary"
+			android:defaultValue="false" 
+			android:key="shotontapPrefCommon" />
 	<ListPreference
 		android:title="@string/Pref_Common_ImageSize_Title"
 		android:summary="@string/Pref_Common_ImageSize_Summary"
