@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Bestshot_Category_Title">Best Shot capture</string>
+    <string name="Pref_Bestshot_Preference_Title">Best Shot mode</string>
+    <string name="Pref_Bestshot_Preference_Summary">Set number of images in capture</string>
+
+    <string name="Pref_Bestshot_ImagesAmount_Title">Number of images in a Best Shot</string>
+    
+    <string name="Res_Bestshot_Images_Text"> images</string>
+    
+    <string name="Res_Bestshot_3">3 images</string>
+    <string name="Res_Bestshot_5">5 images</string>
+    <string name="Res_Bestshot_10">10 images</string>
+    
+</resources>

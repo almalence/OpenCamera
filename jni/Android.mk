@@ -73,8 +73,11 @@ include $(MY_CORE_PATH)/utils/Android.mk
 # Image Conversion and other utilities - interface to Java
 include $(MY_CORE_PATH)/utils-jni/Android.mk
 
-# Stadnard plugin
+# DRO plugin
 include $(MY_CORE_PATH)/dro/Android.mk
+
+# Bestshot plugin
+include $(MY_CORE_PATH)/bestshot/Android.mk
 
 # Night plugin
 include $(MY_CORE_PATH)/nightprocessing/Android.mk

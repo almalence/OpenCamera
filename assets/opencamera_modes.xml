@@ -335,4 +335,30 @@
 		<howtotext  id=""/>
 	</mode>
 	-->
+	
+	<mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
+	    
+	    <icon		id="gui_almalence_mode_bestshot"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+		<vf 		id="com.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
+	
+	    <capture 	id="com.almalence.plugins.bestshotcapture" />    
+	
+	    <processing	id="com.almalence.plugins.bestshotprocessing" />    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+	
+		<sku/>
+		
+		<howtotext  id=""/>
+		
+	</mode>
+	
 </config>	

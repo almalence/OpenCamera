@@ -39,4 +39,7 @@
 	<string name="hiresportrait_mode_name">Hires portrait</string>
 	<string name="hiresportrait_mode_howto"></string>
     
+	<string name="bestshot_mode_name">Best Shot</string>
+	<string name="bestshot_mode_howto"></string>
+	
 </resources>
