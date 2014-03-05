@@ -82,7 +82,7 @@ public class FocusVFPlugin extends PluginViewfinder
     private static final int STATE_SUCCESS = 3; // Focus finishes and succeeds.
     private static final int STATE_FAIL = 4; // Focus finishes and fails.
 
-    private boolean mFocusSupported = false;
+    private boolean mFocusSupported = true;
     private boolean mInitialized;
     private boolean mAeAwbLock;
     private Matrix mMatrix;
@@ -333,8 +333,8 @@ public class FocusVFPlugin extends PluginViewfinder
     {
         mInitialParams = MainScreen.thiz.getCameraParameters();
         initializeParameters(mInitialParams);
-        mFocusSupported = isSupported(Parameters.FOCUS_MODE_AUTO,
-                					  mInitialParams.getSupportedFocusModes());
+//        mFocusSupported = isSupported(Parameters.FOCUS_MODE_AUTO,
+//                					  mInitialParams.getSupportedFocusModes());
         mFocusAreaSupported = (mInitialParams.getMaxNumFocusAreas() > 0
                 && isSupported(Parameters.FOCUS_MODE_AUTO,
                         mInitialParams.getSupportedFocusModes()));
@@ -668,7 +668,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
     private void cancelAutoFocus()
     {
-        Log.v(TAG, "Cancel autofocus.");
+        Log.e(TAG, "Cancel autofocus.");
 
         Camera camera = MainScreen.thiz.getCamera();
         // Note: MainScreen.thiz.getFocusMode(); will return 'FOCUS_MODE_AUTO' if actual
