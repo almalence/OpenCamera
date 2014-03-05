@@ -1166,10 +1166,16 @@ public class VideoCapturePlugin extends PluginCapture
     	    // Step 5: Set the preview output
     	    mMediaRecorder.setPreviewDisplay(MainScreen.thiz.surfaceHolder.getSurface());
 
+//   	    	mMediaRecorder.setOrientationHint(
+//   	    			MainScreen.getCameraMirrored()?
+//   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.orientationMain:(MainScreen.orientationMain+180)%360)
+//   	    			:MainScreen.orientationMain);
+   	    	
    	    	mMediaRecorder.setOrientationHint(
    	    			MainScreen.getCameraMirrored()?
-   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.orientationMain:(MainScreen.orientationMain+180)%360)
-   	    			:MainScreen.orientationMain);  	    	
+   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.guiManager.getDisplayOrientation():(MainScreen.guiManager.getDisplayOrientation()+180)%360)
+   	    			:MainScreen.guiManager.getDisplayOrientation());
+
    	    	
     	    // Step 6: Prepare configured MediaRecorder
     	    try {
