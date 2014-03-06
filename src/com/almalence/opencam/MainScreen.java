@@ -188,6 +188,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// Common preferences
 	public static String ImageSizeIdxPreference;
 	public static boolean ShutterPreference = true;
+	public static boolean ShotOnTapPreference = false;
 	
 	public static boolean showHelp = false;
 	// public static boolean FullMediaRescan;
@@ -644,6 +645,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							: 1;
 					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 							false);
+					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+							false);
 					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
 							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
@@ -793,6 +796,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							: 1;
 					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 							false);
+					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+							false);
 					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
 							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
@@ -815,6 +820,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
 					: 1;
 			ShutterPreference = prefs.getBoolean("shutterPrefCommon", false);
+			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",false);
 			ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
 					"imageSizePrefCommonBack" : "imageSizePrefCommonFront",
 					"-1");
