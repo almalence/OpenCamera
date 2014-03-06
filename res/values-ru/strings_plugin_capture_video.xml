@@ -7,4 +7,9 @@
     
     <string name="Pref_Video_ImageSize_Title">Разрешение видео</string>
     <string name="Pref_Video_None">None</string>
+    
+    <string name="Pref_Video_Stabilization_Title">Видео стабилизация</string>
+    
+    <string name="Pref_Video_StartStandard_Title">Стандартная видео камера</string>
+    <string name="Pref_Video_StartStandard_Summary">Использовать стандартную камеру для записи видео</string>
 </resources>

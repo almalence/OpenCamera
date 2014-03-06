@@ -247,7 +247,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			try
 	        {
-	            File saveDir = PluginManager.getInstance().GetSaveDir();
+	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 	
 	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -291,9 +291,20 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			    		ev_mark -= 2.0;
 			    	
 			    	String evmark = String.format("_%+3.1fEv", ev_mark);
-		            File file = new File(
-		            		saveDir, fileFormat+evmark+".jpg"); 
-		            FileOutputStream os = new FileOutputStream(file);
+		            File file = new File(saveDir, fileFormat+evmark+".jpg"); 
+		            FileOutputStream os = null;
+		            try
+			    	{
+		            	os = new FileOutputStream(file);
+			    	}
+			    	catch (Exception e)
+			        {
+			    		//save always if not working saving to sdcard
+			        	e.printStackTrace();
+			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+			        	file = new File(saveDir, fileFormat+evmark+".jpg");
+			        	os = new FileOutputStream(file);
+			        }
 		            
 		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
 		            Boolean orientationLandscape = false;

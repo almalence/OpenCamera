@@ -181,7 +181,7 @@ public class ExportPlugin extends PluginExport
 		// save fused result
 		try
         {
-            File saveDir = PluginManager.getInstance().GetSaveDir();
+            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
 	    	Calendar d = Calendar.getInstance();
 		    	
@@ -253,7 +253,29 @@ public class ExportPlugin extends PluginExport
 	            	MainScreen.ForceFilename = null;
 	            }
 	
-	            FileOutputStream os = new FileOutputStream(file);
+		    	FileOutputStream os = null;
+		    	try
+		    	{
+		    		os = new FileOutputStream(file);
+		    	}
+		    	catch (Exception e)
+		        {
+		    		//save always if not working saving to sdcard
+		        	e.printStackTrace();
+		        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+		        	if (MainScreen.ForceFilename == null)
+		            {
+			    		file = new File(
+			            		saveDir, 
+			            		fileFormat);
+		            }
+		            else
+		            {
+		            	file = MainScreen.ForceFilename;
+		            	MainScreen.ForceFilename = null;
+		            }
+		        	os = new FileOutputStream(file);
+		        }	            
 	            
 	            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 	            

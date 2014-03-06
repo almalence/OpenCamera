@@ -90,7 +90,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
     			compressed_frame_len,
     			imagesAmount,
     			mImageWidth, mImageHeight);
-	        
+
 		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight, compressed_frame);				
 		Log.e("BESTSHOT", "best is " + idxResult);
 		AlmaShotBestShot.Release();

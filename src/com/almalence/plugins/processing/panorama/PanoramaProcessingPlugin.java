@@ -179,7 +179,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@SuppressLint("DefaultLocale")
 	private void saveFrames(final int[] images, final int offset, final int count, final int input_width, final int input_height)
 	{
-		final File saveDir = PluginManager.getInstance().GetSaveDir();
+		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 		
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -217,37 +217,46 @@ public class PanoramaProcessingPlugin extends PluginProcessing
         {			
         	final int optr = images[offset + i];
         	String index = String.format("_%02d", i);
-            final File file = new File(saveDir, fileFormat+index+".jpg");
+            File file = new File(saveDir, fileFormat+index+".jpg");
             
             FileOutputStream os = null;
             try
-            {
-            	os = new FileOutputStream(file);
-                final YuvImage out = new com.almalence.YuvImage(
-                		optr, ImageFormat.NV21, input_width, input_height, null);
-                
-                out.compressToJpeg(crop, 100, os);
-            }
-            catch (final IOException e)
-            {
-            	e.printStackTrace();
-            	throw new RuntimeException();
-            }
-            finally
-            {
-                try
-				{
-                	if (os != null)
-                	{
-                		os.close();
-                	}
-				} 
-                catch (final IOException e)
-				{
-                	e.printStackTrace();
-				}
-            }
+	    	{
+	            try
+		    	{
+	            	os = new FileOutputStream(file);
+		    	}
+		    	catch (Exception e)
+		        {
+		    		//save always if not working saving to sdcard
+		        	e.printStackTrace();
+		        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+		        	file = new File(saveDir, fileFormat+index+".jpg");
+		        	os = new FileOutputStream(file);
+		        }
+	    	}
+            catch (Exception e)
+	        {
+            	
+	        }
+            
+            final YuvImage out = new com.almalence.YuvImage(
+            		optr, ImageFormat.NV21, input_width, input_height, null);
+            
+            out.compressToJpeg(crop, 100, os);
         
+            try
+			{
+            	if (os != null)
+            	{
+            		os.close();
+            	}
+			} 
+            catch (final IOException e)
+			{
+            	e.printStackTrace();
+			}
+            
             try
             {
             	final ExifInterface ei = new ExifInterface(file.getAbsolutePath());

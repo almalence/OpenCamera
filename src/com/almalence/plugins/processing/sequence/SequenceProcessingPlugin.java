@@ -200,7 +200,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		{
     			try
     	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir();
+    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
     	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -236,10 +236,22 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	            {
     	            	
     	            	String index = String.format("_%02d", i);
-    		            File file = new File(
-    		            		saveDir, fileFormat+index+".jpg"); 
-    		            FileOutputStream os = new FileOutputStream(file);
+    		            File file = new File(saveDir, fileFormat+index+".jpg");
     		            
+    		            FileOutputStream os = null;
+    		            try
+    			    	{
+    		            	os = new FileOutputStream(file);
+    			    	}
+    			    	catch (Exception e)
+    			        {
+    			    		//save always if not working saving to sdcard
+    			        	e.printStackTrace();
+    			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+    			        	file = new File(saveDir, fileFormat+index+".jpg");
+    			        	os = new FileOutputStream(file);
+    			        }	   
+    		                		            
     		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
     		            Boolean orientationLandscape = false;
     		            if (resultOrientation == null)
@@ -483,31 +495,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		return;
 	}
 	
-	private void setupImageView() {
-//		mImgView.setOnTouchListener(new View.OnTouchListener()
-//        {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				if (event.getAction() == MotionEvent.ACTION_DOWN)
-//				{
-//			        float x = event.getY();
-//					float y = mDisplayHeight-1-event.getX();
-//					int objIndex = 0;
-//					try {
-//						objIndex = mAlmaCLRShot.getOccupiedObject(x, y);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//
-//					if (objIndex >= 1) {
-//						mObjStatus[objIndex-1] = !mObjStatus[objIndex-1];
-//					}
-//					mHandler.sendEmptyMessage(MSG_REDRAW);
-//				}
-//				return false;
-//			}
-//        });
-    }
 	
     public void setupSaveButton() {
     	// put save button on screen
@@ -534,19 +521,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	{
     		mDisplayOrientationCurrent = orientation;
     		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
-//
-//	    	if (PreviewBmp != null)
-//	        	PreviewBmp.recycle();
-//			PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-//			drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
-//			
-//	    	Matrix matrix = new Matrix();
-//	    	matrix.postRotate(mDisplayLandscapeCurrent?180:90);
-//	    	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-//	    	        matrix, true);
-//	    	mImgView.setImageBitmap(rotated);
-//	    	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
-//
     		if(postProcessingRun)
     			mSaveButton.setRotation(mLayoutOrientationCurrent);
     	}
@@ -560,11 +534,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		if (finishing == true)
 				return;
     		finishing = true;
-//    		try {
-//				mAlmaCLRShot.setObjectList(mObjStatus);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
     		savePicture(MainScreen.mainContext);
     		
     		mHandler.sendEmptyMessage(MSG_LEAVING);
@@ -576,13 +545,11 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	byte[] result = mAlmaCLRShot.processingSaveData();
 		int frame_len = result.length;
 		int frame = SwapHeap.SwapToHeap(result);
-		//boolean wantLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
-		//boolean cameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("framemirrored1" + Long.toString(sessionID)));
+
 		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
     	
-    	//PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? mDisplayOrientation : 0) : mDisplayOrientation));
     	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientation));
     	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
 		
@@ -600,7 +567,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	switch (msg.what)
     	{
     	case MSG_END_OF_LOADING:
-			setupImageView();
 			setupSaveButton();
 			postProcessingRun = true;
     		break;
@@ -624,7 +590,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             if (finishing == true)
 				return true;
     		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-//    		drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
             if (PreviewBmp != null) 
         	{
             	Matrix matrix = new Matrix();
@@ -632,7 +597,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
             	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             

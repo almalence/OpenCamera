@@ -23,6 +23,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -64,6 +65,10 @@ public class AppRater
 	
 	public static boolean showRateDialogIfNeeded(final Activity mContext)
 	{
+		//temp research - disable rater for 4.03 - 4.0.4
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+			return false;
+		
 		final SharedPreferences prefs = mContext.getSharedPreferences("apprater", 0);
 		if (prefs.getBoolean("dontshowagain", false))
 		{

@@ -5788,6 +5788,19 @@ public class AlmalenceGUI extends GUI implements
 
 						tmpActiveMode = mode;
 
+						if (mode.modeID.equals("video"))
+						{
+							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+							if (prefs.getBoolean("videoStartStandardPref", false))
+							{
+								PluginManager.getInstance().onPause(true);
+								Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
+							    //MainScreen.thiz.startActivityForResult(intent, 111);
+								MainScreen.thiz.startActivity(intent);
+							    return true;
+							}
+						}
+						
 						// <!-- -+-
 						if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
 							return false;
@@ -5875,6 +5888,19 @@ public class AlmalenceGUI extends GUI implements
 
 					tmpActiveMode = mode;
 
+					if (mode.modeID.equals("video"))
+					{
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+						if (prefs.getBoolean("videoStartStandardPref", false))
+						{
+							PluginManager.getInstance().onPause(true);
+							Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
+						    //MainScreen.thiz.startActivityForResult(intent, 111);
+						    MainScreen.thiz.startActivity(intent);
+						    return;
+						}
+					}
+					
 					// <!-- -+-
 					if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
 						return;

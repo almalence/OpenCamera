@@ -268,7 +268,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		{
     			try
     	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir();
+    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
     	
     	            for (int i = 0; i<imagesAmount; ++i)
     	            {
@@ -276,7 +276,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 
     		            File file = new File(
     		            		saveDir, 
-    		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM.jpg",
+    		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_GROUP.jpg",
     		            		d.get(Calendar.YEAR),
     		            		d.get(Calendar.MONTH)+1,
     		            		d.get(Calendar.DAY_OF_MONTH),
@@ -284,7 +284,26 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            		d.get(Calendar.MINUTE),
     		            		d.get(Calendar.SECOND)));
     	                
-    		            FileOutputStream os = new FileOutputStream(file);
+    		            FileOutputStream os = null;
+    		            try
+    			    	{
+    		            	os = new FileOutputStream(file);
+    			    	}
+    			    	catch (Exception e)
+    			        {
+    			    		//save always if not working saving to sdcard
+    			        	e.printStackTrace();
+    			        	file = new File(
+        		            		saveDir, 
+        		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM.jpg",
+        		            		d.get(Calendar.YEAR),
+        		            		d.get(Calendar.MONTH)+1,
+        		            		d.get(Calendar.DAY_OF_MONTH),
+        		            		d.get(Calendar.HOUR_OF_DAY),
+        		            		d.get(Calendar.MINUTE),
+        		            		d.get(Calendar.SECOND)));
+    			        	os = new FileOutputStream(file);
+    			        }
     		            
     		            if (os != null)
     		            {

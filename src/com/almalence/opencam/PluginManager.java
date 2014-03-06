@@ -1816,7 +1816,8 @@ public class PluginManager {
 //	}
 	
 	//get file saving directory
-	public File GetSaveDir()
+	//toInternalMemory - should be true only if force save to internal 
+	public File GetSaveDir(boolean forceSaveToInternalMemory)
     {
         File dcimDir, saveDir = null, memcardDir;
         boolean usePhoneMem = true;
@@ -1830,6 +1831,9 @@ public class PluginManager {
         
         if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
         {
+        	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        		Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+        	
 			dcimDir = Environment.getExternalStorageDirectory();
 			
 			// there are variations in sd-card directory namings
@@ -1910,8 +1914,12 @@ public class PluginManager {
         	usePhoneMem = false;
         }
         
+//        if (!saveDir.exists())
+//        {
+//        	usePhoneMem = true;
+//        }
         
-        if (usePhoneMem)		// phone memory (internal sd card)
+        if (usePhoneMem || forceSaveToInternalMemory)		// phone memory (internal sd card)
 		{
         	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
             saveDir = new File(dcimDir, abcDir); // "HDR");
