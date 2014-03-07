@@ -1,15 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
         
-	<CheckBoxPreference
-			android:title="@string/Pref_Common_Shutter_Title"
-			android:summary="@string/Pref_Common_Shutter_Summary"
-			android:defaultValue="false" 
-			android:key="shutterPrefCommon" />
-	<CheckBoxPreference
-			android:title="@string/Pref_Common_ShotOnTap_Title"
-			android:summary="@string/Pref_Common_ShotOnTap_Summary"
-			android:defaultValue="false" 
-			android:key="shotontapPrefCommon" />
 	<ListPreference
 		android:title="@string/Pref_Common_ImageSize_Title"
 		android:summary="@string/Pref_Common_ImageSize_Summary"
@@ -39,6 +29,11 @@
 		android:entries="@array/volumeButtonArrayCommon"
 		android:entryValues="@array/volumeButtonValuesCommon" />
 
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_ShotOnTap_Title"
+			android:summary="@string/Pref_Common_ShotOnTap_Summary"
+			android:defaultValue="false" 
+			android:key="shotontapPrefCommon" />
 	<!-- -+-  -->
 	<PreferenceScreen
 		 android:fragment="com.almalence.opencam.Fragment"
@@ -60,6 +55,12 @@
 		android:summary="@string/Pref_WhowHelp_Summary"
 		android:defaultValue="true" 
 		android:key="showHelpPrefCommon" />
+	
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_Shutter_Title"
+			android:summary="@string/Pref_Common_Shutter_Summary"
+			android:defaultValue="false" 
+			android:key="shutterPrefCommon" />
 	
     <Preference android:key="about" 
        	android:title="@string/Pref_About_Title" 

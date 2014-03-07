@@ -10,8 +10,8 @@
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
     <string name="Pref_Common_Shutter_Title">Silent operation</string>
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
-    <string name="Pref_Common_ShotOnTap_Title">Shot on tap</string>
-    <string name="Pref_Common_ShotOnTap_Summary">Perform picture taking by tap on screen after success focusing or immediately if focus isn\'t needed</string>
+    <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
     <string name="Pref_Common_JPEGQuality_Title">Jpeg quality</string>

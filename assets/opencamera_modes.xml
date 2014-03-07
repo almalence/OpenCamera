@@ -335,7 +335,7 @@
 		<howtotext  id=""/>
 	</mode>
 	-->
-	
+	<!-- 
 	<mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
 	    
 	    <icon		id="gui_almalence_mode_bestshot"/>
@@ -360,5 +360,5 @@
 		<howtotext  id=""/>
 		
 	</mode>
-	
+	-->
 </config>	
