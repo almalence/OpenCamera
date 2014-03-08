@@ -146,6 +146,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		this.getPrefs();
 		
 		this.checkCoordinatesRemapRequired();
+		
+		this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
+		
+		initSensors();
 	}
 	
 	private void deinit()
@@ -288,9 +292,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
 				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
 		
-		this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
+		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
 
-		initSensors();
+		//initSensors();
 	}
 	
 	@Override
@@ -535,7 +539,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	    	
     		camera.startPreview();
     		
-    		initSensors();	// attempt to fix LG G2 accelerometer slowdown 
+    		//initSensors();	// attempt to fix LG G2 accelerometer slowdown 
 
     		new CountDownTimer(1000, 330)
     		{
