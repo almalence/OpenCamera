@@ -25,6 +25,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.FloatMath;
+import android.util.Log;
 
 @SuppressLint("FloatMath")
 public class AugmentedRotationListener implements SensorEventListener
@@ -63,6 +64,8 @@ public class AugmentedRotationListener implements SensorEventListener
 	
 	private final boolean[] dataSynchObject = new boolean[2];
     
+	private boolean accelerometerValueIsFresh = false;
+	
 	private int magneticDataValid = 0;
 	private long timestamp_magnetic;
     private long timestamp_gyro;
@@ -84,13 +87,21 @@ public class AugmentedRotationListener implements SensorEventListener
 	@Override
 	public void onAccuracyChanged(final Sensor sensor, final int accuracy)
 	{
-
+		//if (sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+		//	Log.i("CameraTest", "Sensor.TYPE_ACCELEROMETER accuracy "+accuracy);
+		//else
+		//	Log.i("CameraTest", "sensor:" + sensor.getType() + "accuracy "+accuracy);
 	}
 	
 	@Override
 	public void onSensorChanged(final SensorEvent event)
 	{
 		final AugmentedRotationReceiver receiver;
+		
+		//if (event.sensor.getType() == Sensor.TYPE_GRAVITY) Log.i("CameraTest", "Sensor.TYPE_GRAVITY");
+		//else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) Log.i("CameraTest", "Sensor.TYPE_ACCELEROMETER");
+		//else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) Log.i("CameraTest", "Sensor.TYPE_GYROSCOPE");
+		//else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) Log.i("CameraTest", "Sensor.TYPE_MAGNETIC_FIELD");
 		
 		synchronized (this.receiverSynchObject)
 		{
@@ -117,15 +128,17 @@ public class AugmentedRotationListener implements SensorEventListener
 				{
 					switch(event.sensor.getType()) 
 					{
-				    //case Sensor.TYPE_GRAVITY:
-				    case Sensor.TYPE_ACCELEROMETER:
+				    case Sensor.TYPE_GRAVITY:
+				    //case Sensor.TYPE_ACCELEROMETER:
 				        System.arraycopy(event.values, 0, this.data_acceleration, 0, 3);
 				        this.calculateAccMagOrientation();
+				        accelerometerValueIsFresh = true;
 				        break;
 				 
 				    case Sensor.TYPE_GYROSCOPE:
 					    //Log.i("CameraTest", "Gyro: "+event.values[0]+" "+event.values[1]+" "+event.values[2]+" "+this.rate_magnetic[0]+" "+this.rate_magnetic[1]+" "+this.rate_magnetic[2]);
 				        this.gyroFunction(event);
+				        accelerometerValueIsFresh = false;
 				        break;
 
 				    case Sensor.TYPE_MAGNETIC_FIELD:
@@ -366,7 +379,7 @@ public class AugmentedRotationListener implements SensorEventListener
 		
 		//if (System.currentTimeMillis() - this.lastFusion >= 30)
 		{
-			this.calculateFusion();
+			this.calculateFusion(accelerometerValueIsFresh);
 			
 			//this.lastFusion = System.currentTimeMillis();
 		}
@@ -415,12 +428,15 @@ public class AugmentedRotationListener implements SensorEventListener
 		return nice;
 	}
 	
-	private void calculateFusion()
+	private void calculateFusion(boolean accelerometerValueIsFresh)
 	{
 
 		for (int i=0; i<3; ++i)
 		{
-			this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, GYRO_FUSION_CF);
+			if (accelerometerValueIsFresh)
+				this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, GYRO_FUSION_CF);
+			else
+				this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, 0);
 		
 			// magnetometer adds too much breathing
 			// possibly could still be applied if compensation in direction

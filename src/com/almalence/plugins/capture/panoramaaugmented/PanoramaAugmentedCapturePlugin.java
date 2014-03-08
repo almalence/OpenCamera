@@ -134,7 +134,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		this.capturing = false;
 		
 		this.sensorManager = (SensorManager)MainScreen.mainContext.getSystemService(Context.SENSOR_SERVICE);
-		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_ACCELEROMETER);
 		this.sensorMagnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 	}
@@ -146,9 +146,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		this.getPrefs();
 		
 		this.checkCoordinatesRemapRequired();
-		
-		this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
-		
+	}
+	
+	private void deinit()
+	{
+		deinitSensors();
+	}
+
+	
+	private void initSensors()
+	{
 		if (this.prefHardwareGyroscope)
 		{
 			this.sensorManager.registerListener(
@@ -171,15 +178,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				this.sensorAccelerometer,
 				SensorManager.SENSOR_DELAY_GAME);
 		
+		/* not using magnetometer for now
 		this.sensorManager.registerListener(
 				this.rotationListener,
 				this.sensorMagnetometer,
 				SensorManager.SENSOR_DELAY_GAME);
+		*/
 		
 		this.rotationListener.setReceiver(this.engine);
 	}
-	
-	private void deinit()
+
+	private void deinitSensors()
 	{
 		if (this.prefHardwareGyroscope)
 		{
@@ -194,6 +203,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		this.sensorManager.unregisterListener(this.rotationListener, this.sensorAccelerometer);
 		this.sensorManager.unregisterListener(this.rotationListener, this.sensorMagnetometer);
 	}
+	
 	
 	@Override
 	public void onDefaultsSelect()
@@ -277,6 +287,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
 				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+		
+		this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
+
+		initSensors();
 	}
 	
 	@Override
@@ -521,6 +535,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	    	
     		camera.startPreview();
     		
+    		initSensors();	// attempt to fix LG G2 accelerometer slowdown 
+
     		new CountDownTimer(1000, 330)
     		{
     			private boolean first = true;
