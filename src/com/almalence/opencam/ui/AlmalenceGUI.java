@@ -7504,6 +7504,7 @@ public class AlmalenceGUI extends GUI implements
 					//reset all show help settings
 					if (MainScreen.showHelp)
 					{
+						prefsEditor.putBoolean("droShowHelp", true);
 						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
 						prefsEditor.putBoolean("panoramaShowHelp", true);
 						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);

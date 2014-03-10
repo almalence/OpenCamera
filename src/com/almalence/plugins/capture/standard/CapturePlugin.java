@@ -110,7 +110,9 @@ public class CapturePlugin extends PluginCapture
 				SharedPreferences.Editor editor = prefs.edit();		        	
 	        	editor.putString("modeStandardPref", ModePreference);
 	        	editor.commit();
-				
+	        	
+	        	if (ModePreference.compareTo("0") == 0)
+	    			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 			}
 		});
 		
@@ -181,6 +183,9 @@ public class CapturePlugin extends PluginCapture
 		this.modeSwitcher.requestLayout();
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		
+		if (ModePreference.compareTo("0") == 0)
+			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 	}
 	
 	
