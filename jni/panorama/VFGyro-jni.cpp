@@ -454,8 +454,8 @@ JNIEXPORT jlong JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfG
 				curr_drift[i] = (prec_peak/sum)*HIST_SCALE_INV-MAX_DRIFT_RADS;
 			}
 
-			if (i==1)
-				__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "drift: %3.4f %3.2f", curr_drift[i], peak);
+			//if (i==1)
+			//	__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "drift: %3.4f %3.2f", curr_drift[i], peak);
 		}
 	}
 

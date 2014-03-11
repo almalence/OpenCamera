@@ -40,6 +40,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.ListPreference;
@@ -165,6 +166,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void initSensors()
 	{
+		//List<Sensor> ls = this.sensorManager.getSensorList(Sensor.TYPE_GRAVITY);
+		//for (int i=0; i<ls.size(); ++i)
+		//	Log.i("CameraTest", "sensor: "+ls.get(i).getName());
+		
 		if (this.prefHardwareGyroscope)
 		{
 			this.sensorManager.registerListener(
@@ -192,10 +197,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				this.sensorAccelerometer,
 				SensorManager.SENSOR_DELAY_GAME);
 		
-		this.sensorManager.registerListener(
-				this.rotationListener,
-				this.sensorGravity,
-				SensorManager.SENSOR_DELAY_GAME);
+		// some devices do not like gravity sensor
+		// e.g. on Ascend P2/P6 the GL layer will disappear if gravity sensor is registered
+		// (and no data will arrive from it either)
+		// so, use gravity sensor only on models where accelerometer sensor is no good
+		if (
+			Build.MODEL.contains("LG-D80")		// Accelerometer on LG G2 is very slow (D80x models) 
+			)
+		{
+			this.sensorManager.registerListener(
+					this.rotationListener,
+					this.sensorGravity,
+					SensorManager.SENSOR_DELAY_GAME);
+		}
 		
 		/*
 		// magnetometer - a lot of 'breathing'
