@@ -102,8 +102,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private float viewAngleY = 42.5f;
 
 	private SensorManager sensorManager;
+	private Sensor sensorGravity;
 	private Sensor sensorAccelerometer;
-	private Sensor sensorMagnetometer;
+	//private Sensor sensorMagnetometer;
 	private Sensor sensorGyroscope;
 	private VfGyroSensor sensorSoftGyroscope = null;
 	private boolean remapOrientation;
@@ -135,8 +136,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		this.capturing = false;
 		
 		this.sensorManager = (SensorManager)MainScreen.mainContext.getSystemService(Context.SENSOR_SERVICE);
-		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY); // (Sensor.TYPE_ACCELEROMETER);
-		this.sensorMagnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		//this.sensorMagnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 	}
 	
@@ -148,7 +150,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.checkCoordinatesRemapRequired();
 		
-		this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
+		this.rotationListener = new AugmentedRotationListener(
+				this.remapOrientation,
+				!this.prefHardwareGyroscope);
 		
 		initSensors();
 	}
@@ -176,20 +180,30 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			}
 			this.sensorSoftGyroscope.open();
 			this.sensorSoftGyroscope.SetListener(this.rotationListener);
+			//this.sensorSoftGyroscope.SetStabilityOnly(this.prefHardwareGyroscope);
 		}
+
 		
+		// on some devices accelerometer events are more frequent
+		// on some devices gravity events are more frequent
+		// we'll use both the same way to get updates as fast as possible
 		this.sensorManager.registerListener(
 				this.rotationListener,
 				this.sensorAccelerometer,
 				SensorManager.SENSOR_DELAY_GAME);
 		
-		/* not using magnetometer for now
+		this.sensorManager.registerListener(
+				this.rotationListener,
+				this.sensorGravity,
+				SensorManager.SENSOR_DELAY_GAME);
+		
+		/*
+		// magnetometer - a lot of 'breathing'
 		this.sensorManager.registerListener(
 				this.rotationListener,
 				this.sensorMagnetometer,
 				SensorManager.SENSOR_DELAY_GAME);
 		*/
-		
 		this.rotationListener.setReceiver(this.engine);
 	}
 
@@ -206,7 +220,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 		
 		this.sensorManager.unregisterListener(this.rotationListener, this.sensorAccelerometer);
-		this.sensorManager.unregisterListener(this.rotationListener, this.sensorMagnetometer);
+		this.sensorManager.unregisterListener(this.rotationListener, this.sensorGravity);
+		//this.sensorManager.unregisterListener(this.rotationListener, this.sensorMagnetometer);
 	}
 	
 	
