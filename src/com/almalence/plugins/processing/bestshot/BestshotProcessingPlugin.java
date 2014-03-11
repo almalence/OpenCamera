@@ -106,8 +106,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 		}
 		
-//		/**/
-//		File saveDir = PluginManager.getInstance().GetSaveDir();
+		/**/
+//		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 //		String fileFormat;
 //		for (int i =0;i<imagesAmount;i++)
 //		{
@@ -132,7 +132,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
 //				e.printStackTrace();
 //			}
 //			
-//			byte[] frame1 = SwapHeap.SwapFromHeap(
+//			byte[] frame1 = SwapHeap.CopyFromHeap(
 //					compressed_frame[i],
 //					compressed_frame_len[i]);
 //			try {
@@ -144,7 +144,6 @@ public class BestshotProcessingPlugin extends PluginProcessing
 //			}
 //			
 //		}
-		
 		/**/
 		int frame = compressed_frame[idxResult];
 		int len = compressed_frame_len[idxResult];

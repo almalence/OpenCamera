@@ -77,7 +77,7 @@ import com.almalence.util.Util;
 
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 
-public class PanoramaAugmentedCapturePlugin extends PluginCapture implements AutoFocusCallback
+public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements AutoFocusCallback
 {
 	private static final String TAG = "PanoramaAugmentedCapturePlugin";
 	
@@ -110,6 +110,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 
 	private volatile boolean capturing;
 	private boolean takingAlready = false;
+	private boolean aboutToTakePicture=false;
 	
 	private AugmentedRotationListener rotationListener;
 	
@@ -333,6 +334,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 						if (result <= 0)
 						{
 							this.stopCapture();
+							Message msg = new Message();
+		    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+		    				msg.what = PluginManager.MSG_BROADCAST;
+		    				MainScreen.H.sendMessage(msg);
+		    				MainScreen.guiManager.lockControls = false;
 						}
 						
 						return true;
@@ -515,8 +521,25 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 				{
 					this.isFirstFrame = true;
 					this.capturing = true;
-					this.takingAlready = true;
-					this.startCapture();
+//					this.takingAlready = true;
+//					this.startCapture();
+					String fm = MainScreen.thiz.getFocusMode();
+					int fs = MainScreen.getFocusState();
+					if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
+							MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+							&& fm != null
+							&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
+							|| fm.equals(Parameters.FOCUS_MODE_FIXED)
+							|| fm.equals(Parameters.FOCUS_MODE_EDOF)
+							|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+							|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+							&& !MainScreen.getAutoFocusLock())			
+							aboutToTakePicture = true;			
+					else if(takingAlready == false)
+					{
+						//takePicture();
+						startCapture();
+					}
 				}
 			}
 		}
@@ -903,39 +926,39 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		}
 	}
 	
-	private final AutoFocusCallback autoFocusCallbackReceiver = new AutoFocusCallback()
-	{
-		@Override
-		public void onAutoFocus(final boolean success, final Camera camera)
-		{
-			PanoramaAugmentedCapturePlugin.this.takePictureReal();
-		}
-	};
-	
-	private void tryAutoFocus()
-	{
-		try
-		{
-			final Camera camera = MainScreen.thiz.getCamera();
-	    	if (camera == null)
-	    	{
-	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
-	    		return;
-	    	}
-			camera.autoFocus(this.autoFocusCallbackReceiver);
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-			this.takePicture();
-		}
-	}
-	
-	@Override
-	public void onAutoFocus(final boolean success, final Camera camera)
-	{
-		
-	}
+//	private final AutoFocusCallback autoFocusCallbackReceiver = new AutoFocusCallback()
+//	{
+//		@Override
+//		public void onAutoFocus(final boolean success, final Camera camera)
+//		{
+//			PanoramaAugmentedCapturePlugin.this.takePictureReal();
+//		}
+//	};
+//	
+//	private void tryAutoFocus()
+//	{
+//		try
+//		{
+//			final Camera camera = MainScreen.thiz.getCamera();
+//	    	if (camera == null)
+//	    	{
+//	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
+//	    		return;
+//	    	}
+//			camera.autoFocus(this.autoFocusCallbackReceiver);
+//		}
+//		catch (final Throwable e)
+//		{
+//			e.printStackTrace();
+//			this.takePicture();
+//		}
+//	}
+//	
+//	@Override
+//	public void onAutoFocus(final boolean success, final Camera camera)
+//	{
+//		
+//	}
 	
 	@Override
 	public void takePicture()
@@ -945,27 +968,40 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			if (!this.capturing)
 			{
 				this.takingAlready = false;
+				aboutToTakePicture = false;
 				return;
 			}
 		}
 		
-		try
-		{
-			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
-			{
-				this.tryAutoFocus();
-			}
-			else
-			{
-				this.takePictureReal();
-			}
-		}
-		catch (final Throwable e)
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
+//			{
+//				this.tryAutoFocus();
+//			}
+//			else
+//			{
+//				this.takePictureReal();
+//			}
+//		}
+//		catch (final Throwable e)
+//		{
+//			e.printStackTrace();
+//		}
+		
+
+		takingAlready = true;
+		
+		takePictureReal();
 	}
 
+	@Override
+	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	{
+		if(aboutToTakePicture == true)
+			startCapture();
+	}
+	
 	private void takePictureReal()
 	{
 		Camera camera = MainScreen.thiz.getCamera();
