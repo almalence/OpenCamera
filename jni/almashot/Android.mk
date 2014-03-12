@@ -18,6 +18,6 @@ LOCAL_MODULE := almalib
 LOCAL_SRC_FILES := stub.cpp
 LOCAL_WHOLE_STATIC_LIBRARIES :=  almalib-static
 LOCAL_STATIC_LIBRARIES :=  gomp opencv_features2d opencv_imgproc opencv_calib3d opencv_video opencv_flann opencv_core opencv_tbb
-LOCAL_LDLIBS := -ldl -lz -llog
+LOCAL_LDLIBS := -ldl -lz -llog -lEGL -lGLESv2
 LOCAL_EXPORT_C_INCLUDES := $(MY_CORE_PATH)/include/almashot
 include $(BUILD_SHARED_LIBRARY)
