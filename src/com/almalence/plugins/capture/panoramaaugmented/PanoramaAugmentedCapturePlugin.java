@@ -362,24 +362,24 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     	MainScreen.setImageHeight(this.pictureHeight);
     }
 	
-	@Override
-	public void SetCameraPreviewSize(Camera.Parameters params)
-	{
-		final Camera camera = MainScreen.thiz.getCamera();
-    	if (camera == null)
-    		return;
-		
-		
-		final Size previewSize = this.getOptimalPreviewSize(
-				params.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
-
-		this.previewWidth = previewSize.width;
-		this.previewHeight = previewSize.height;
-		
-		params.setPreviewSize(previewSize.width, previewSize.height);
-		
-    	MainScreen.thiz.setCameraParameters(params);
-	}
+//	@Override
+//	public void SetCameraPreviewSize(Camera.Parameters params)
+//	{
+//		final Camera camera = MainScreen.thiz.getCamera();
+//    	if (camera == null)
+//    		return;
+//		
+//		
+//		final Size previewSize = this.getOptimalPreviewSize(
+//				params.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
+//
+//		this.previewWidth = previewSize.width;
+//		this.previewHeight = previewSize.height;
+//		
+//		params.setPreviewSize(previewSize.width, previewSize.height);
+//		
+//    	MainScreen.thiz.setCameraParameters(params);
+//	}
 	
 	@Override
 	public void SetCameraPictureSize()

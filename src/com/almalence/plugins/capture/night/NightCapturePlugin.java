@@ -564,53 +564,53 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 	
-	@Override
-	public void SetCameraPreviewSize(Camera.Parameters cp)
-	{		
-		// for super mode
-        nVFframesToBuffer = 0;
-        
-		int mode = Integer.parseInt(ModePreference);
-		
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-    	if(cp == null)
-        	Log.e("NightCapturePlugin", "MainScreen.setupCamera MainScreen.thiz.getCameraParameters returned null!");
-    	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
-    	
-    	if (mode == 1)		// hi-speed mode - set exact preview size as selected by user
-    	{    		
-    		Size s = camera.new Size(-1, -1);
-    		s.width = MainScreen.getImageWidth();
-    		s.height = MainScreen.getImageHeight();
-    		if(cs.contains(s))
-    			cp.setPreviewSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-    		else
-    		{
-    			Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-    	    	cp.setPreviewSize(os.width, os.height);
-    		}
-    	}
-    	else
-    	{
-	    	Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-	    	cp.setPreviewSize(os.width, os.height);
-    	}
-    	
-    	if(FocusPreference.compareTo("0") == 0 && !MainScreen.thiz.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_FIXED))
-        {
-        	FocusPreference = "1";
-        	
-        	// Get the xml/preferences.xml preferences
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        	SharedPreferences.Editor editor = prefs.edit();        	
-        	editor.putString("focusPref", "1");
-        	editor.commit();
-        }
-    	
-    	MainScreen.thiz.setCameraParameters(cp);
-	}
+//	@Override
+//	public void SetCameraPreviewSize(Camera.Parameters cp)
+//	{		
+//		// for super mode
+//        nVFframesToBuffer = 0;
+//        
+//		int mode = Integer.parseInt(ModePreference);
+//		
+//		Camera camera = MainScreen.thiz.getCamera();
+//    	if (null==camera)
+//    		return;
+//    	if(cp == null)
+//        	Log.e("NightCapturePlugin", "MainScreen.setupCamera MainScreen.thiz.getCameraParameters returned null!");
+//    	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
+//    	
+//    	if (mode == 1)		// hi-speed mode - set exact preview size as selected by user
+//    	{    		
+//    		Size s = camera.new Size(-1, -1);
+//    		s.width = MainScreen.getImageWidth();
+//    		s.height = MainScreen.getImageHeight();
+//    		if(cs.contains(s))
+//    			cp.setPreviewSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+//    		else
+//    		{
+//    			Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+//    	    	cp.setPreviewSize(os.width, os.height);
+//    		}
+//    	}
+//    	else
+//    	{
+//	    	Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+//	    	cp.setPreviewSize(os.width, os.height);
+//    	}
+//    	
+//    	if(FocusPreference.compareTo("0") == 0 && !MainScreen.thiz.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_FIXED))
+//        {
+//        	FocusPreference = "1";
+//        	
+//        	// Get the xml/preferences.xml preferences
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//        	SharedPreferences.Editor editor = prefs.edit();        	
+//        	editor.putString("focusPref", "1");
+//        	editor.commit();
+//        }
+//    	
+//    	MainScreen.thiz.setCameraParameters(cp);
+//	}
     
 	@Override
 	public void SetCameraPictureSize()

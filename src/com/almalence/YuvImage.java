@@ -21,6 +21,7 @@
 package com.almalence;
 
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -233,6 +234,16 @@ public class YuvImage {
     public static native boolean SaveJpegFreeOut (int oriYuv,
             int format, int width, int height, int[] offsets, int[] strides,
             int quality, OutputStream stream, byte[] tempStorage);
+    
+    
+    // Return: pointer to the frame data in heap converted to int
+    public static synchronized native int GetFrame(int frame);
+
+    // Return: error status (0 = all ok)
+    public static synchronized native int CreateYUVImage(
+    		ByteBuffer Y, ByteBuffer U, ByteBuffer V,
+    		int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
+    		int sx, int sy, int nFrame);
     
     static {
         System.loadLibrary("yuvimage");

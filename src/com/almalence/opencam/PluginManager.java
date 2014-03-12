@@ -49,6 +49,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -179,6 +180,15 @@ public class PluginManager {
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
 	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
+	
+	//For HALv3 code version
+	public static final int MSG_CAMERA_OPENED = 15;
+	public static final int MSG_SURFACE_READY = 16;
+	public static final int MSG_NOT_LEVEL_FULL = 17;
+	public static final int MSG_PROCESS = 18;
+	public static final int MSG_PROCESS_FINISHED = 19;
+	public static final int MSG_VOLUME_ZOOM = 20;
+	// ^^ For HALv3 code version
 
 	public static final int MSG_SET_EXPOSURE = 22;
 	public static final int MSG_NEXT_FRAME = 23;
@@ -1314,6 +1324,11 @@ public class PluginManager {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte,
 					paramCamera);
+	}
+	
+	void onImageAvailable(Image im) {
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onImageAvailable(im);
 	}
 
 	void onPreviewFrame(byte[] data, Camera paramCamera) {

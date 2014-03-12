@@ -280,6 +280,9 @@ public class ExportPlugin extends PluginExport
 		            y = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
 	            }
 	            
+//	            int x = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
+//	            int y = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
+	            
 	            Boolean writeOrientationTag = true;
 	            String writeOrientTag = PluginManager.getInstance().getFromSharedMem("writeorientationtag"+Long.toString(sessionID));
 	            if (writeOrientTag != null)

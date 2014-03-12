@@ -21,8 +21,11 @@ by Almalence Inc. All Rights Reserved.
 #include <jni.h>
 #include <android/log.h>
 
+#include "almashot.h"
 #include "CreateJavaOutputStreamAdaptor.h"
 #include "YuvToJpegEncoder.h"
+
+static unsigned char *yuv[50] = {NULL};
 
 extern "C" {
 JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
@@ -65,4 +68,75 @@ JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
 	env->ReleaseIntArrayElements(strides, imgStrides, 0);
 
 	return result;
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_YuvImage_GetFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	return (jint)yuv[index];
+}
+
+extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
+(
+		JNIEnv* env,
+		jobject thiz,
+		jobject bufY,
+		jobject bufU,
+		jobject bufV,
+		jint pixelStrideY,
+		jint rowStrideY,
+		jint pixelStrideU,
+		jint rowStrideU,
+		jint pixelStrideV,
+		jint rowStrideV,
+		jint sx,
+		jint sy,
+		jint n
+)
+{
+	int i, x, y;
+	Uint8 *Y, *U, *V;
+	Uint8 *UV;
+
+	// All Buffer objects have an effectiveDirectAddress field
+	Y = (Uint8*)env->GetDirectBufferAddress(bufY);
+	U = (Uint8*)env->GetDirectBufferAddress(bufU);
+	V = (Uint8*)env->GetDirectBufferAddress(bufV);
+
+	if ((Y == NULL) || (U == NULL) || (V == NULL))
+		return -1;
+
+	// extract crop as NV21 image
+	yuv[n] = (unsigned char *)malloc (sx*sy+sx*((sy+1)/2));
+	if (yuv[n] == NULL)
+		return -2;
+
+	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "Allocated memory for frame %d", n);
+
+	// Note: assumption of:
+	// - even w, h, x0 here (guaranteed by SZ requirements)
+	// - pixelStrideY=1 (guaranteed by android doc)
+	// - U,V being sub-sampled 2x horizontally and vertically
+	for (y=0; y<sy; y+=2)
+	{
+		// Y
+		memcpy (&yuv[n][y*sx],     &Y[y*rowStrideY],   sx);
+		memcpy (&yuv[n][(y+1)*sx], &Y[(y+1)*rowStrideY], sx);
+
+		// UV - no direct memcpy as swap may be needed
+		for (x=0; x<sx/2; ++x)
+		{
+			// U
+			yuv[n][sx*sy+(y/2)*sx+x*2+1] = U[x*pixelStrideU + (y/2)*rowStrideU];
+
+			// V
+			yuv[n][sx*sy+(y/2)*sx+x*2]   = V[x*pixelStrideV + (y/2)*rowStrideV];
+		}
+	}
+
+	return 0;
 }

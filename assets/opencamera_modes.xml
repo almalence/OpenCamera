@@ -68,7 +68,7 @@
 		<howtotext  id=""/>
 		
 	</mode> 
-	 -->
+
 	<mode id="burstmode" name="burst_mode_name"  savename="">
 	    
 	    <icon		id="gui_almalence_mode_burst"/>
@@ -311,6 +311,7 @@
 		
 		<howtotext  id=""/>
 	</mode>
+		 -->
 
 <!-- 
 	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">
@@ -334,7 +335,7 @@
 		
 		<howtotext  id=""/>
 	</mode>
-	-->
+
 	
 	<mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
 	    
@@ -360,5 +361,6 @@
 		<howtotext  id=""/>
 		
 	</mode>
+		-->
 	
 </config>	

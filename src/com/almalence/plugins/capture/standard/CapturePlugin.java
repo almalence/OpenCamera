@@ -18,13 +18,19 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CaptureRequest;
+import android.media.Image;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -35,6 +41,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 
+import com.almalence.YuvImage;
 import com.almalence.SwapHeap;
 
 /* <!-- +++
@@ -211,28 +218,32 @@ public class CapturePlugin extends PluginCapture
 	{
 		if(takingAlready == false)
 		{
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
+//			Date curDate = new Date();
+//			SessionID = curDate.getTime();
+//			
+//			MainScreen.thiz.MuteShutter(false);
+//			
+//			String fm = MainScreen.thiz.getFocusMode();
+//			int fs = MainScreen.getFocusState();
+//			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
+//					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+//					&& fm != null
+//					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
+//					|| fm.equals(Parameters.FOCUS_MODE_FIXED)
+//					|| fm.equals(Parameters.FOCUS_MODE_EDOF)
+//					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+//					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+//					&& !MainScreen.getAutoFocusLock())			
+//					aboutToTakePicture = true;			
+//			else if(takingAlready == false)
+//			{
+//				takePicture();
+//			}
 			
-			MainScreen.thiz.MuteShutter(false);
-			
-			String fm = MainScreen.thiz.getFocusMode();
-			int fs = MainScreen.getFocusState();
-			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
-					&& fm != null
-					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-					|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-					|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
-					&& !MainScreen.getAutoFocusLock())			
-					aboutToTakePicture = true;			
-			else if(takingAlready == false)
-			{
-				takePicture();
-			}
+			MainScreen.captureImage(1, ImageFormat.JPEG);
 		}
+		
+		
 	}
 	
 	
@@ -339,6 +350,75 @@ public class CapturePlugin extends PluginCapture
 		{
 			Log.i("Capture", "StartPreview fail");
 		}
+		
+		Message message = new Message();
+		message.obj = String.valueOf(SessionID);
+		message.what = PluginManager.MSG_CAPTURE_FINISHED;
+		MainScreen.H.sendMessage(message);
+
+		takingAlready = false;
+		aboutToTakePicture = false;
+	}
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		int frame = 0;
+		
+		if(im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+			
+			if (status != 0)
+				Log.e("CapturePlugin", "Error while cropping: "+status);
+			
+			
+			frame = YuvImage.GetFrame(0); 
+		}
+		else if(im.getFormat() == ImageFormat.JPEG)
+		{
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+			
+			int frame_len = jpeg.limit();
+			byte[] jpegByteArray = new byte[frame_len];
+			jpeg.get(jpegByteArray, 0, frame_len);
+//			byte[] jpegByteArray = jpeg.array();			
+//			int frame_len = jpegByteArray.length;
+			
+			frame = SwapHeap.SwapToHeap(jpegByteArray);
+			
+			PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+		}
+    	
+    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+		
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	
+    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
 		
 		Message message = new Message();
 		message.obj = String.valueOf(SessionID);

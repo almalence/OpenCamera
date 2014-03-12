@@ -16,7 +16,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center">
 	</SurfaceView>
-	</RelativeLayout>	
+	</RelativeLayout>
 	
 </RelativeLayout>
  

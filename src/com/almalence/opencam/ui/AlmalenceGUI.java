@@ -6238,9 +6238,9 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case VIEWFINDER_ZONE_FULLSCREEN: {
 			currParams.width = MainScreen.thiz.getPreviewSize() != null ? MainScreen.thiz
-					.getPreviewSize().width : 0;
+					.getPreviewSize().getWidth() : 0;
 			currParams.height = MainScreen.thiz.getPreviewSize() != null ? MainScreen.thiz
-					.getPreviewSize().height : 0;
+					.getPreviewSize().getHeight() : 0;
 			currParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			// if(currParams.width != currParams.height)
 			// {
