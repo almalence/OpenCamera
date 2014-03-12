@@ -211,7 +211,8 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
 		0, // 256*nTable[sensorGainPref],
 		deghTable[DeGhostPref],
-		-1, 8+saturated*8*16+1, 1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);	// hack to get brightening (pass enh. level in kelvin2 parameter)
+		-1, 9+saturated*9*16+1,	// hack to get brightening (pass enh. level in kelvin2 parameter)
+		1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);
 
 	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Preview completed");
 
