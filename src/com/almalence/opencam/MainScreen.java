@@ -29,9 +29,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+//import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -83,14 +85,16 @@ import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
-import com.almalence.opencam.billing.IabHelper;
-import com.almalence.opencam.billing.IabResult;
-import com.almalence.opencam.billing.Inventory;
-import com.almalence.opencam.billing.Purchase;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.util.AppRater;
+
+import org.onepf.oms.OpenIabHelper;
+import org.onepf.oms.appstore.googleUtils.IabHelper;
+import org.onepf.oms.appstore.googleUtils.IabResult;
+import org.onepf.oms.appstore.googleUtils.Inventory;
+import org.onepf.oms.appstore.googleUtils.Purchase;
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ui.AlmalenceGUI;
@@ -2079,7 +2083,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	/*******************************************************/
 	/************************ Billing ************************/
 // <!-- -+-
-	IabHelper mHelper;
+	OpenIabHelper mHelper;
 	
 	private boolean bOnSale = false;
 
@@ -2117,7 +2121,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			// Create the helper, passing it our context and the public key to
 			// verify signatures with
 			Log.v("Main billing", "Creating IAB helper.");
-			mHelper = new IabHelper(this, base64EncodedPublicKey);
+			Map<String, String> storeKeys = new HashMap<String, String>();
+	        storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKey);
+			mHelper = new OpenIabHelper(this, storeKeys);
 	
 			mHelper.enableDebugLogging(true);
 	

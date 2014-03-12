@@ -41,6 +41,9 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.ui.GUI;
+import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
