@@ -147,15 +147,18 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void SetupCameraParameters()
 	{
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
-		if(prm != null)
-		{
-			prm.setExposureCompensation(0);
-			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
-		}
+//		Camera camera = MainScreen.thiz.getCamera();
+//    	if (null==camera)
+//    		return;
+//		Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
+//		if(prm != null)
+//		{
+//			prm.setExposureCompensation(0);
+//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
+//		}
+		
+		MainScreen.thiz.resetExposureCompensation();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
 	}
 
 	public boolean delayedCaptureSupported(){return true;}

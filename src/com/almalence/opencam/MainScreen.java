@@ -1855,72 +1855,113 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 	
 	public boolean isExposureLockSupported() {
-		if (camera != null && cameraParameters != null) {
-			if (cameraParameters.isAutoExposureLockSupported())
-				return true;
-			else
-				return false;
-		} else
-			return false;
+//		if (camera != null && cameraParameters != null) {
+//			if (cameraParameters.isAutoExposureLockSupported())
+//				return true;
+//			else
+//				return false;
+//		} else
+//			return false;
+		return true;
 	}
 	
 	public boolean isWhiteBalanceLockSupported() {
-		if (camera != null && cameraParameters != null) {
-			if (cameraParameters.isAutoWhiteBalanceLockSupported())
-				return true;
-			else
-				return false;
-		} else
-			return false;
+//		if (camera != null && cameraParameters != null) {
+//			if (cameraParameters.isAutoWhiteBalanceLockSupported())
+//				return true;
+//			else
+//				return false;
+//		} else
+//			return false;
+		return true;
 	}
 
 	public boolean isExposureCompensationSupported() {
-		if (camera != null && cameraParameters != null) {
-			if (cameraParameters.getMinExposureCompensation() == 0
-					&& cameraParameters.getMaxExposureCompensation() == 0)
-				return false;
-			else
-				return true;
-		} else
-			return false;
+//		if (camera != null && cameraParameters != null) {
+//			if (cameraParameters.getMinExposureCompensation() == 0
+//					&& cameraParameters.getMaxExposureCompensation() == 0)
+//				return false;
+//			else
+//				return true;
+//		} else
+//			return false;
+		return true;
 	}
 
 	public int getMinExposureCompensation() {
-		if (camera != null && cameraParameters != null)
-			return cameraParameters.getMinExposureCompensation();
-		else
-			return 0;
+//		if (camera != null && cameraParameters != null)
+//			return cameraParameters.getMinExposureCompensation();
+//		else
+//			return 0;
+		if(camCharacter != null)
+		{
+			int expRange[] = camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			return expRange[0];
+		}
+		
+		return 0;
 	}
 
 	public int getMaxExposureCompensation() {
-		if (camera != null && cameraParameters != null)
-			return cameraParameters.getMaxExposureCompensation();
-		else
-			return 0;
+//		if (camera != null && cameraParameters != null)
+//			return cameraParameters.getMaxExposureCompensation();
+//		else
+//			return 0;
+		
+		if(camCharacter != null)
+		{
+			int expRange[] = camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			return expRange[1];
+		}
+		
+		return 0;
 	}
 
 	public float getExposureCompensationStep() {
-		if (camera != null && cameraParameters != null)
-			return cameraParameters.getExposureCompensationStep();
-		else
-			return 0;
+//		if (camera != null && cameraParameters != null)
+//			return cameraParameters.getExposureCompensationStep();
+//		else
+//			return 0;
+		
+		if(camCharacter != null)
+		{
+			float step = camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
+			Log.e("MainScreen", "exposure step = " + step);
+			return step;
+		}
+		
+		return 0;
 	}
 
 	public float getExposureCompensation() {
-		if (camera != null && cameraParameters != null)
-			return cameraParameters.getExposureCompensation()
-					* cameraParameters.getExposureCompensationStep();
-		else
-			return 0;
+//		if (camera != null && cameraParameters != null)
+//			return cameraParameters.getExposureCompensation()
+//					* cameraParameters.getExposureCompensationStep();
+//		else
+//			return 0;
+		
+		return 0;
 	}
 
 	public void resetExposureCompensation() {
-		if (camera != null) {
-			if (!isExposureCompensationSupported())
-				return;
-			Camera.Parameters params = cameraParameters;
-			params.setExposureCompensation(0);
-			setCameraParameters(params);
+//		if (camera != null) {
+//			if (!isExposureCompensationSupported())
+//				return;
+//			Camera.Parameters params = cameraParameters;
+//			params.setExposureCompensation(0);
+//			setCameraParameters(params);
+//		}
+		if(previewRequestBuilder != null && camDevice != null)
+		{		
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
+			try 
+			{
+				camDevice.setRepeatingRequest(previewRequestBuilder.build(), null, null);
+			}
+			catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -2187,11 +2228,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void setCameraExposureCompensation(int iEV) {
-		if (camera != null) {
-			Camera.Parameters params = cameraParameters;
-			if (params != null) {
-				params.setExposureCompensation(iEV);
-				setCameraParameters(params);
+//		if (camera != null) {
+//			Camera.Parameters params = cameraParameters;
+//			if (params != null) {
+//				params.setExposureCompensation(iEV);
+//				setCameraParameters(params);
+//			}
+//		}
+		if(previewRequestBuilder != null && camDevice != null)
+		{		
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
+			try 
+			{
+				camDevice.setRepeatingRequest(previewRequestBuilder.build(), null, null);
+			}
+			catch (CameraAccessException e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}

@@ -97,9 +97,13 @@ public class CapturePlugin extends PluginCapture
 				int currEv = prefs.getInt(GUI.sEvPref, 0);
 				int newEv = currEv;
 				int minValue = MainScreen.thiz.getMinExposureCompensation();
+				float expStep = MainScreen.thiz.getExposureCompensationStep();
 				if (isChecked)
 				{
-					newEv -= 1;
+					int diff = (int)Math.round(0.5/expStep);
+					if(diff < 1)
+						diff = 1;
+					newEv -= diff;
 					ModePreference = "0";
 				}
 				else
@@ -107,12 +111,16 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 				}
 				
-				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				if (params != null && newEv >= minValue)
-				{
-					params.setExposureCompensation(newEv);
-					MainScreen.thiz.setCameraParameters(params);
-				}
+//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				if (params != null && newEv >= minValue)
+//				{
+//					params.setExposureCompensation(newEv);
+//					MainScreen.thiz.setCameraParameters(params);
+//				}	
+
+				if(newEv >= minValue)
+					MainScreen.thiz.setCameraExposureCompensation(newEv);
+				
 				
 				SharedPreferences.Editor editor = prefs.edit();		        	
 	        	editor.putString("modeStandardPref", ModePreference);
@@ -136,12 +144,15 @@ public class CapturePlugin extends PluginCapture
 			int minValue = MainScreen.thiz.getMinExposureCompensation();
 			newEv -= 1;
 			
-			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-			if (params != null && newEv >= minValue)
-			{
-				params.setExposureCompensation(newEv);
-				MainScreen.thiz.setCameraParameters(params);
-			}
+//			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//			if (params != null && newEv >= minValue)
+//			{
+//				params.setExposureCompensation(newEv);
+//				MainScreen.thiz.setCameraParameters(params);
+//			}
+			
+			if(newEv >= minValue)
+				MainScreen.thiz.setCameraExposureCompensation(newEv);
 		}
 	}
 	

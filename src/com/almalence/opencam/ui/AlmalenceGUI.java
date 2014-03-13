@@ -57,6 +57,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CaptureRequest;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -2024,20 +2026,21 @@ public class AlmalenceGUI extends GUI implements
 				leftText.setText(minString);
 				rightText.setText(maxString);
 
-				mEV = initValue;
+				mEV = initValue;				
 				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
-				{
-					params.setExposureCompensation(mEV);
-					
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "Ev exception: " + e.getMessage());
-//					}
-				}
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					params.setExposureCompensation(mEV);
+//					
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "Ev exception: " + e.getMessage());
+////					}
+//				}
+				MainScreen.thiz.setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -6813,13 +6816,16 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
-		Camera camera = MainScreen.thiz.getCamera();
-		if (null == camera)
-			return;
+//		Camera camera = MainScreen.thiz.getCamera();
+//		if (null == camera)
+//			return;
+		
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		params.setExposureCompensation(iEv);
+//		MainScreen.thiz.setCameraParameters(params);
+		
 		int iEv = progress - MainScreen.thiz.getMaxExposureCompensation();
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		params.setExposureCompensation(iEv);
-		MainScreen.thiz.setCameraParameters(params);
+		MainScreen.thiz.setCameraExposureCompensation(iEv);
 
 		preferences.edit().putInt(sEvPref, iEv).commit();
 
@@ -6851,12 +6857,14 @@ public class AlmalenceGUI extends GUI implements
 			int iEv = currProgress - step;
 			if (iEv < 0)
 				iEv = 0;
-			Camera camera = MainScreen.thiz.getCamera();
-			if (null != camera) {
-				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				params.setExposureCompensation(iEv + minValue);
-				MainScreen.thiz.setCameraParameters(params);
-			}
+//			Camera camera = MainScreen.thiz.getCamera();
+//			if (null != camera) {
+//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				params.setExposureCompensation(iEv + minValue);
+//				MainScreen.thiz.setCameraParameters(params);
+//			}
+			
+			MainScreen.thiz.setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
@@ -6883,12 +6891,14 @@ public class AlmalenceGUI extends GUI implements
 			int iEv = currProgress + step;
 			if (iEv > maxValue - minValue)
 				iEv = maxValue - minValue;
-			Camera camera = MainScreen.thiz.getCamera();
-			if (null != camera) {
-				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				params.setExposureCompensation(iEv + minValue);
-				MainScreen.thiz.setCameraParameters(params);
-			}
+//			Camera camera = MainScreen.thiz.getCamera();
+//			if (null != camera) {
+//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				params.setExposureCompensation(iEv + minValue);
+//				MainScreen.thiz.setCameraParameters(params);
+//			}
+			
+			MainScreen.thiz.setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
