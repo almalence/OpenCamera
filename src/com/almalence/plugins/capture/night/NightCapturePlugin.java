@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLU;
 import android.os.Debug;
@@ -1148,6 +1149,13 @@ public class NightCapturePlugin extends PluginCapture
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 		msg.what = PluginManager.MSG_BROADCAST;
 		MainScreen.H.sendMessage(msg);
+	}
+	
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
 	}
 	
 	public void CaptureFrame(Camera paramCamera)

@@ -1222,8 +1222,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 ////					+ e.getMessage());
 ////		}
 ////
-//////		previewWidth = cameraParameters.getPreviewSize().width;
-//////		previewHeight = cameraParameters.getPreviewSize().height;
 ////		previewWidth = cameraParameters.getPreviewSize().width;
 ////		previewHeight = cameraParameters.getPreviewSize().height;
 //
@@ -1273,14 +1271,24 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		List<Surface> sfl = new ArrayList<Surface>();
 		
 		sfl.add(mCameraSurface);				// surface for viewfinder preview		
-		//sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
 		sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 
 		// configure camera with all the surfaces to be ever used
 		try {
 			camDevice.configureOutputs(sfl);
 		} catch (CameraAccessException e)	{
-			Log.d("MainScreen", "setting up configureOutputs failed");
+			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
+			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e) 
+		{
+			Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
+			e.printStackTrace();
+		}
+		catch (IllegalStateException e) 
+		{
+			Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
 			e.printStackTrace();
 		}
 		

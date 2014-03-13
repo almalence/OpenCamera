@@ -34,6 +34,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
+import android.media.Image;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.os.Build;
@@ -1644,6 +1645,12 @@ public class VideoCapturePlugin extends PluginCapture
 		MainScreen.H.sendMessage(message);
 
 		takingAlready = false;
+	}
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
 	}
 
 	@Override

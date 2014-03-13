@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -386,6 +387,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		return false;
 	}
 	
+	
+	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
 		int n = evIdx[frame_num]; 
@@ -472,6 +475,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		
 	}
 	
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
+	}
+	
 	private void getPrefs()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -482,6 +492,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         EvPreference = prefs.getString("evPrefExpoBracketing", "0");
     }
 
+	
+	@Override
 	public void onCameraSetup()
 	{
         // ----- Figure expo correction parameters

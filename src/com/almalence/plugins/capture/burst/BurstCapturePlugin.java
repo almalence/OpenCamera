@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -294,6 +295,14 @@ public class BurstCapturePlugin extends PluginCapture
 		}
 		takingAlready = false;
 	}
+	
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
+	}
+	
 	
 	@Override
 	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)

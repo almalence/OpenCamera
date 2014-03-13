@@ -23,6 +23,7 @@ import java.util.Date;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -235,6 +236,13 @@ public class SequenceCapturePlugin extends PluginCapture
 			  }.start();
 		}
 		takingAlready = false;
+	}
+	
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
 	}
 	
 	@Override

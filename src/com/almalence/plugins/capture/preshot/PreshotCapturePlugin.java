@@ -22,6 +22,7 @@ import java.util.Date;
 
 import android.content.SharedPreferences;
 import android.hardware.Camera;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -527,6 +528,15 @@ public class PreshotCapturePlugin extends PluginCapture
 			MainScreen.H.sendMessage(msg);
 		}
 	}
+    
+    
+    @Override
+	public void onImageAvailable(Image im)
+	{
+		
+	}
+    
+    
 	
 	void ProcessPauseBetweenShots()
     {

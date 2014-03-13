@@ -25,6 +25,7 @@ package com.almalence.opencam;
 
 
 import android.hardware.Camera;
+import android.media.Image;
 
 public abstract class PluginCapture extends Plugin
 {
@@ -45,6 +46,9 @@ public abstract class PluginCapture extends Plugin
 	
 	@Override
 	abstract public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
+
+	@Override
+	abstract public void onImageAvailable(Image im);
 	
 	@Override
 	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);

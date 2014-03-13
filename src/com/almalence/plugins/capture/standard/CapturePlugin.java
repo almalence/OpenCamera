@@ -66,7 +66,7 @@ Implements standard capture plugin - capture single image and save it in shared 
 
 public class CapturePlugin extends PluginCapture
 {
-	private boolean takingAlready=false;
+	//private boolean takingAlready=false;
 	private boolean aboutToTakePicture=false;
 	
 	public static String ModePreference;	// 0=DRO On 1=DRO Off
@@ -216,8 +216,8 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void OnShutterClick()
 	{
-		if(takingAlready == false)
-		{
+//		if(takingAlready == false)
+//		{
 //			Date curDate = new Date();
 //			SessionID = curDate.getTime();
 //			
@@ -238,12 +238,13 @@ public class CapturePlugin extends PluginCapture
 //			else if(takingAlready == false)
 //			{
 //				takePicture();
-//			}
-			
-			MainScreen.captureImage(1, ImageFormat.JPEG);
-		}
+//			}			
+//		}
 		
-		
+		if(ModePreference.compareTo("0") == 0)
+			MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
+		else
+			MainScreen.captureImage(1, ImageFormat.JPEG);		
 	}
 	
 	
@@ -262,15 +263,16 @@ public class CapturePlugin extends PluginCapture
 	}
 	
 	
+	@Override
 	public void takePicture()
 	{
-		if(takingAlready)
-		{
-			aboutToTakePicture = false;
-			return;
-		}
-		
-		takingAlready = true;
+//		if(takingAlready)
+//		{
+//			aboutToTakePicture = false;
+//			return;
+//		}
+//		
+//		takingAlready = true;
 		
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
@@ -284,39 +286,48 @@ public class CapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = MainScreen.thiz.getCamera();
-			if (camera != null)
-			{
-				// play tick sound
-				MainScreen.guiManager.showCaptureIndication();
-        		MainScreen.thiz.PlayShutter();
-        		
-        		try {
-        			camera.setPreviewCallback(null);
-        			camera.takePicture(null, null, null, MainScreen.thiz);
-				}
-        		catch (Exception e) 
-				{
-        			e.printStackTrace();
-    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
-    				takingAlready = false;
-    				Message msg = new Message();
-    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-    				msg.what = PluginManager.MSG_BROADCAST;
-    				MainScreen.H.sendMessage(msg);
-    				MainScreen.guiManager.lockControls = false;
-				}
-			}
+			// play tick sound
+			MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
+    		
+			if(ModePreference.compareTo("0") == 0)
+				MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
 			else
-			{
-				takingAlready = false;
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-				
-				MainScreen.guiManager.lockControls = false;
-			}						
+				MainScreen.captureImage(1, ImageFormat.JPEG);
+			
+//			Camera camera = MainScreen.thiz.getCamera();
+//			if (camera != null)
+//			{
+//				// play tick sound
+//				MainScreen.guiManager.showCaptureIndication();
+//        		MainScreen.thiz.PlayShutter();
+//        		
+//        		try {
+////        			camera.setPreviewCallback(null);
+////        			camera.takePicture(null, null, null, MainScreen.thiz);        			
+//				}
+//        		catch (Exception e) 
+//				{
+//        			e.printStackTrace();
+//    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+//    				takingAlready = false;
+//    				Message msg = new Message();
+//    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+//    				msg.what = PluginManager.MSG_BROADCAST;
+//    				MainScreen.H.sendMessage(msg);
+//    				MainScreen.guiManager.lockControls = false;
+//				}
+//			}
+//			else
+//			{
+//				takingAlready = false;
+//				Message msg = new Message();
+//				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+//				msg.what = PluginManager.MSG_BROADCAST;
+//				MainScreen.H.sendMessage(msg);
+//				
+//				MainScreen.guiManager.lockControls = false;
+//			}						
     		return true;
 		}
 		return false;
@@ -325,45 +336,46 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-		int frame_len = paramArrayOfByte.length;
-		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-    	
-    	if (frame == 0)
-    	{
-    		//NotEnoughMemory();
-    	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
-		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
-    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-    	
-    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
-    	
-		try
-		{
-			paramCamera.startPreview();
-		}
-		catch (RuntimeException e)
-		{
-			Log.i("Capture", "StartPreview fail");
-		}
-		
-		Message message = new Message();
-		message.obj = String.valueOf(SessionID);
-		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-		MainScreen.H.sendMessage(message);
-
-		takingAlready = false;
-		aboutToTakePicture = false;
+//		int frame_len = paramArrayOfByte.length;
+//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+//    	
+//    	if (frame == 0)
+//    	{
+//    		//NotEnoughMemory();
+//    	}
+//    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+//    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+//    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+//    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+//		
+//    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+//    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+//    	
+//    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
+//    	
+//		try
+//		{
+//			paramCamera.startPreview();
+//		}
+//		catch (RuntimeException e)
+//		{
+//			Log.i("Capture", "StartPreview fail");
+//		}
+//		
+//		Message message = new Message();
+//		message.obj = String.valueOf(SessionID);
+//		message.what = PluginManager.MSG_CAPTURE_FINISHED;
+//		MainScreen.H.sendMessage(message);
+//
+//		takingAlready = false;
+//		aboutToTakePicture = false;
 	}
 	
 	@Override
 	public void onImageAvailable(Image im)
 	{
 		int frame = 0;
+		int frame_len = 0;
 		
 		if(im.getFormat() == ImageFormat.YUV_420_888)
 		{
@@ -395,24 +407,24 @@ public class CapturePlugin extends PluginCapture
 				Log.e("CapturePlugin", "Error while cropping: "+status);
 			
 			
-			frame = YuvImage.GetFrame(0); 
+			frame = YuvImage.GetFrame(0);			
+			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);			
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
 		{
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 			
-			int frame_len = jpeg.limit();
+			frame_len = jpeg.limit();
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
 //			byte[] jpegByteArray = jpeg.array();			
 //			int frame_len = jpegByteArray.length;
 			
-			frame = SwapHeap.SwapToHeap(jpegByteArray);
-			
-			PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+			frame = SwapHeap.SwapToHeap(jpegByteArray);			
 		}
     	
     	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
     	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
 		
@@ -425,7 +437,6 @@ public class CapturePlugin extends PluginCapture
 		message.what = PluginManager.MSG_CAPTURE_FINISHED;
 		MainScreen.H.sendMessage(message);
 
-		takingAlready = false;
 		aboutToTakePicture = false;
 	}
 	

@@ -40,6 +40,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.ListPreference;
@@ -1036,6 +1037,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			MainScreen.H.sendMessage(msg);
 		}
 	}
+	
+	
+	@Override
+	public void onImageAvailable(Image im)
+	{
+		
+	}
+	
+	
 	
 	@SuppressLint("FloatMath")
 	private void stopCapture()

@@ -28,7 +28,7 @@ public final class AlmaShotDRO
     public static synchronized native int GetInputFrameNV21(int index, int sx, int sy);
     public static synchronized native int RotateResult(int result_yuv, int sx, int sy);
 
-    public static synchronized native int DroProcess(int sx, int sy, float max_amplify,
+    public static synchronized native int DroProcess(int yuv, int sx, int sy, float max_amplify,
     		boolean local_mapping, int filterStrength, int strongFilter, int pullUV);
     
     static 
