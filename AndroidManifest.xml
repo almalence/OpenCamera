@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="54"
+      android:versionCode="55"
       android:versionName="3.17">
 <!--  -+- -->
 
@@ -97,6 +97,7 @@
 	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
 <!-- -+-  -->
 	<uses-permission android:name="com.android.vending.BILLING"/>
+	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
 <!--  -+- -->
 
 	<uses-sdk 	android:minSdkVersion="14"

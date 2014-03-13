@@ -92,7 +92,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
     			mImageWidth, mImageHeight);
 
 		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight, compressed_frame);				
-		Log.e("BESTSHOT", "best is " + idxResult);
+		//Log.e("BESTSHOT", "best is " + idxResult);
 		AlmaShotBestShot.Release();
 
 		if(orientation == 90 || orientation == 270)

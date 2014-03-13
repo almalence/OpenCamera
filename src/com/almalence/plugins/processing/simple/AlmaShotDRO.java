@@ -33,7 +33,6 @@ public final class AlmaShotDRO
     
     static 
     {
-		System.loadLibrary("gbuffer");
 		System.loadLibrary("almalib");
         System.loadLibrary("almashot-dro");
     }

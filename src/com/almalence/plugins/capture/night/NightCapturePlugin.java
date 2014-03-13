@@ -35,6 +35,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.opengl.GLES10;
 import android.opengl.GLU;
+import android.os.Build;
 import android.os.Debug;
 import android.os.Message;
 import android.preference.ListPreference;
@@ -636,7 +637,7 @@ public class NightCapturePlugin extends PluginCapture
 		
 		cp = MainScreen.thiz.getCameraParameters();
 		List<String> sceneModes = cp.getSupportedSceneModes();
-		if(sceneModes != null && sceneModes.contains(Camera.Parameters.SCENE_MODE_NIGHT))
+		if(sceneModes != null && sceneModes.contains(Camera.Parameters.SCENE_MODE_NIGHT) && (!Build.MODEL.contains("Nexus")))
 		{
 			cp.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
 			MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);

@@ -66,7 +66,7 @@ public abstract class GUI
 	public final static String sISOPref = "ISOValue";
 	public final static String sMeteringModePref = "MeteringModeValue";
 	public final static String sDefaultValue = MainScreen.thiz.getResources().getString(R.string.sceneAutoSystem);
-	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
+	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusAutoSystem);//MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
 
 	public final static String isoParam = "iso";
 	public final static String isoParam2 = "iso-speed";

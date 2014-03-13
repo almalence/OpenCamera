@@ -184,7 +184,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     		
     		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight,
     			Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
-    			8, SaturatedColors? 8 : 0,
+    			9, SaturatedColors? 9 : 0,
     			imagesAmount);
     	}
     	System.gc();

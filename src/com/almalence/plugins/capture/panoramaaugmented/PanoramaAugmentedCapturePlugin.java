@@ -97,7 +97,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private int prefResolution;
 	private boolean prefHardwareGyroscope;
 	
-	private String preferenceFocusMode;
+	//private String preferenceFocusMode;
 	
 	private float viewAngleX = 54.8f;
 	private float viewAngleY = 42.5f;
@@ -318,9 +318,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
 		MainScreen.H.sendMessage(msg);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
-				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
+//				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
 		
 		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
 
@@ -343,8 +343,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			}
 		}
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
-        prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
+//        prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
 	}
 	
 	@Override
@@ -451,28 +451,28 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		cp.setJpegQuality(100);
     	
 
-		String sUserFocusMode = null;
+//		String sUserFocusMode = null;
 		
-		if (MainScreen.supportedFocusModes != null)
-		{
-			if (MainScreen.supportedFocusModes.contains(
-					Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-			{
-				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-			}
-		}
+//		if (MainScreen.supportedFocusModes != null)
+//		{
+//			if (MainScreen.supportedFocusModes.contains(
+//					Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
+//			{
+//				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+//			}
+//		}
     	
-    	if (sUserFocusMode != null)
-    	{
-        	cp.setFocusMode(sUserFocusMode);
-        	
-	    	PreferenceManager.getDefaultSharedPreferences(
-	    			MainScreen.mainContext).edit().putString(
-	    					MainScreen.getCameraMirrored()
-	    						? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, 
-	    								sUserFocusMode).commit();
-    	}
-		
+//    	if (sUserFocusMode != null)
+//    	{
+//        	cp.setFocusMode(sUserFocusMode);
+//        	
+//	    	PreferenceManager.getDefaultSharedPreferences(
+//	    			MainScreen.mainContext).edit().putString(
+//	    					MainScreen.getCameraMirrored()
+//	    						? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, 
+//	    								sUserFocusMode).commit();
+//    	}
+//		
 		try
 		{
 			this.viewAngleX = cp.getHorizontalViewAngle();
