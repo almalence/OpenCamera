@@ -201,6 +201,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
         getPrefs();
         
         Display display = ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();

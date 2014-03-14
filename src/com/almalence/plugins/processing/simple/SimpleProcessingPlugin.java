@@ -55,6 +55,8 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	public void onStartProcessing(long SessionID)
 	{
 		sessionID=SessionID;
+	
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
@@ -115,7 +117,6 @@ public class SimpleProcessingPlugin extends PluginProcessing
 			}
 			else
 			{
-				
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
 	    		int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)));
 	    		

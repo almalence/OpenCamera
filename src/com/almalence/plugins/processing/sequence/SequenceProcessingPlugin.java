@@ -138,6 +138,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		
 		sessionID=SessionID;
 
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
 		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
@@ -557,7 +559,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-		
 		mAlmaCLRShot.release();
     }
     

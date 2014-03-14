@@ -142,6 +142,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		
 		sessionID=SessionID;
 
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
     	mCameraMirrored = MainScreen.getCameraMirrored();
     	
@@ -563,7 +565,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-		
 //		try
 //        {	
 //			String[] filesSavedNames = new String[1];

@@ -78,6 +78,8 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(
 				MainScreen.thiz).getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		//this.prefLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));
 		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));		
 		this.prefLandscape = orient == 0 || orient == 180? true : false;
@@ -166,7 +168,6 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	     	PluginManager.getInstance().addToSharedMem("resultcrop1"+Long.toString(sessionID), String.valueOf(crop_y));
 	     	PluginManager.getInstance().addToSharedMem("resultcrop2"+Long.toString(sessionID), String.valueOf(crop_w));
 	     	PluginManager.getInstance().addToSharedMem("resultcrop3"+Long.toString(sessionID), String.valueOf(crop_h));
-	     	
 	     	AlmashotPanorama.release();
 		}
 		catch (final NumberFormatException e)

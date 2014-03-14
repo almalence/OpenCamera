@@ -169,6 +169,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		Log.e("HDR", "start processing");
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
     	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
@@ -215,7 +217,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			
 			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
-    	
     	
     		AlmaShotHDR.HDRFreeInstance();
 		    AlmaShotHDR.Release();

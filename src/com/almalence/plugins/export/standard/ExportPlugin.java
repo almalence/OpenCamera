@@ -216,7 +216,7 @@ public class ExportPlugin extends PluginExport
 	            		d.get(Calendar.HOUR_OF_DAY),
 	            		d.get(Calendar.MINUTE),
 	            		d.get(Calendar.SECOND));
-		    	String modeName = PluginManager.getInstance().getActiveMode().modeSaveName;
+		    	String modeName = PluginManager.getInstance().getFromSharedMem("modeSaveName"+Long.toString(sessionID));//PluginManager.getInstance().getActiveMode().modeSaveName;
 		    	switch (saveOption)
 		    	{
 		    	case 1://YEARMMDD_HHMMSS
