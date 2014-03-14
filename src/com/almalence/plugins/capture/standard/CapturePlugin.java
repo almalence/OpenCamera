@@ -93,9 +93,13 @@ public class CapturePlugin extends PluginCapture
 				int currEv = prefs.getInt(GUI.sEvPref, 0);
 				int newEv = currEv;
 				int minValue = MainScreen.thiz.getMinExposureCompensation();
+				float expStep = MainScreen.thiz.getExposureCompensationStep();
 				if (isChecked)
 				{
-					newEv -= 1;
+					int diff = (int)Math.round(0.5/expStep);
+					if(diff < 1)
+						diff = 1;
+					newEv -= diff;
 					ModePreference = "0";
 				}
 				else
