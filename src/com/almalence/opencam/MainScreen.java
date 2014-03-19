@@ -327,7 +327,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
@@ -2099,13 +2099,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	static final String SKU_UNLOCK_ALL = "unlock_all_forever";
 	static final String SKU_MOVING_SEQ = "plugin_almalence_moving_burst";
 	static final String SKU_GROUPSHOT = "plugin_almalence_groupshot";
-
+	
+	static final String SKU_SALE1 = "abc_sale_controller1";
+	static final String SKU_SALE2 = "abc_sale_controller2";
+	
 	static {
         OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
         OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
         OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
         OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
         OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
+        
+        OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
+        OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
 //
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_TSTORE, "tstore_sku_gas");
@@ -2145,7 +2151,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			Log.v("Main billing", "Creating IAB helper.");
 			Map<String, String> storeKeys = new HashMap<String, String>();
 	        storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
-	        storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyYandex);
+	        storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
 			mHelper = new OpenIabHelper(this, storeKeys);
 	
 			mHelper.enableDebugLogging(true);
@@ -2171,8 +2177,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						additionalSkuList.add(SKU_GROUPSHOT);
 						
 						//for sale
-						additionalSkuList.add("abc_sale_controller1");
-						additionalSkuList.add("abc_sale_controller2");
+						additionalSkuList.add(SKU_SALE1);
+						additionalSkuList.add(SKU_SALE2);
 		
 						Log.v("Main billing", "Setup successful. Querying inventory.");
 						mHelper.queryInventoryAsync(true, additionalSkuList,
@@ -2259,11 +2265,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 			
 			try{
-			//if (inventory.hasPurchase("abc_sale_controller1") && inventory.hasPurchase("abc_sale_controller2")) {
 				
-				String[] separated = inventory.getSkuDetails("abc_sale_controller1").getPrice().split(",");
+				String[] separated = inventory.getSkuDetails(SKU_SALE1).getPrice().split(",");
 				int price1 = Integer.valueOf(separated[0]);
-				String[] separated2 = inventory.getSkuDetails("abc_sale_controller2").getPrice().split(",");
+				String[] separated2 = inventory.getSkuDetails(SKU_SALE2).getPrice().split(",");
 				int price2 = Integer.valueOf(separated2[0]);
 				
 				if(price1<price2)
