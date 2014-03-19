@@ -58,6 +58,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -196,42 +197,42 @@ public class AlmalenceGUI extends GUI implements
 	private final static Integer icon_settings = R.drawable.gui_almalence_settings_more_settings;
 
 	// Android camera parameters constants
-	private final static String sceneAuto = MainScreen.thiz.getResources()
-			.getString(R.string.sceneAutoSystem);
-	private final static String sceneAction = MainScreen.thiz.getResources()
-			.getString(R.string.sceneActionSystem);
-	private final static String scenePortrait = MainScreen.thiz.getResources()
-			.getString(R.string.scenePortraitSystem);
-	private final static String sceneLandscape = MainScreen.thiz.getResources()
-			.getString(R.string.sceneLandscapeSystem);
-	private final static String sceneNight = MainScreen.thiz.getResources()
-			.getString(R.string.sceneNightSystem);
-	private final static String sceneNightPortrait = MainScreen.thiz
-			.getResources().getString(R.string.sceneNightPortraitSystem);
-	private final static String sceneTheatre = MainScreen.thiz.getResources()
-			.getString(R.string.sceneTheatreSystem);
-	private final static String sceneBeach = MainScreen.thiz.getResources()
-			.getString(R.string.sceneBeachSystem);
-	private final static String sceneSnow = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSnowSystem);
-	private final static String sceneSunset = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSunsetSystem);
-	private final static String sceneSteadyPhoto = MainScreen.thiz
-			.getResources().getString(R.string.sceneSteadyPhotoSystem);
-	private final static String sceneFireworks = MainScreen.thiz.getResources()
-			.getString(R.string.sceneFireworksSystem);
-	private final static String sceneSports = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSportsSystem);
-	private final static String sceneParty = MainScreen.thiz.getResources()
-			.getString(R.string.scenePartySystem);
-	private final static String sceneCandlelight = MainScreen.thiz
-			.getResources().getString(R.string.sceneCandlelightSystem);
-	private final static String sceneBarcode = MainScreen.thiz.getResources()
-			.getString(R.string.sceneBarcodeSystem);
-	private final static String sceneHDR = MainScreen.thiz.getResources()
-			.getString(R.string.sceneHDRSystem);
-	private final static String sceneAR = MainScreen.thiz.getResources()
-			.getString(R.string.sceneARSystem);
+//	private final static String sceneAuto = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneAutoSystem);
+//	private final static String sceneAction = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneActionSystem);
+//	private final static String scenePortrait = MainScreen.thiz.getResources()
+//			.getString(R.string.scenePortraitSystem);
+//	private final static String sceneLandscape = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneLandscapeSystem);
+//	private final static String sceneNight = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneNightSystem);
+//	private final static String sceneNightPortrait = MainScreen.thiz
+//			.getResources().getString(R.string.sceneNightPortraitSystem);
+//	private final static String sceneTheatre = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneTheatreSystem);
+//	private final static String sceneBeach = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneBeachSystem);
+//	private final static String sceneSnow = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneSnowSystem);
+//	private final static String sceneSunset = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneSunsetSystem);
+//	private final static String sceneSteadyPhoto = MainScreen.thiz
+//			.getResources().getString(R.string.sceneSteadyPhotoSystem);
+//	private final static String sceneFireworks = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneFireworksSystem);
+//	private final static String sceneSports = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneSportsSystem);
+//	private final static String sceneParty = MainScreen.thiz.getResources()
+//			.getString(R.string.scenePartySystem);
+//	private final static String sceneCandlelight = MainScreen.thiz
+//			.getResources().getString(R.string.sceneCandlelightSystem);
+//	private final static String sceneBarcode = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneBarcodeSystem);
+//	private final static String sceneHDR = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneHDRSystem);
+//	private final static String sceneAR = MainScreen.thiz.getResources()
+//			.getString(R.string.sceneARSystem);
 
 	private final static String wbAuto = MainScreen.thiz.getResources()
 			.getString(R.string.wbAutoSystem);
@@ -266,8 +267,9 @@ public class AlmalenceGUI extends GUI implements
 			.getResources().getString(R.string.focusContinuousVideoSystem);
 	private final static String focusContinuousPicture = MainScreen.thiz
 			.getResources().getString(R.string.focusContinuousPictureSystem);
-	private final static String focusAfLock = MainScreen.thiz
-			.getResources().getString(R.string.focusAfLockSystem);
+//	private final static String focusAfLock = MainScreen.thiz
+//			.getResources().getString(R.string.focusAfLockSystem);
+	private final static int focusAfLock = 10;
 
 	private final static String flashAuto = MainScreen.thiz.getResources()
 			.getString(R.string.flashAutoSystem);
@@ -308,74 +310,61 @@ public class AlmalenceGUI extends GUI implements
 
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
-	private final static Map<String, Integer> icons_scene = new Hashtable<String, Integer>() {
+	private final static Map<Integer, Integer> icons_scene = new Hashtable<Integer, Integer>() {
 		{
-			put(sceneAuto, R.drawable.gui_almalence_settings_scene_auto);
-			put(sceneAction, R.drawable.gui_almalence_settings_scene_action);
-			put(scenePortrait, R.drawable.gui_almalence_settings_scene_portrait);
-			put(sceneLandscape,
-					R.drawable.gui_almalence_settings_scene_landscape);
-			put(sceneNight, R.drawable.gui_almalence_settings_scene_night);
-			put(sceneNightPortrait,
-					R.drawable.gui_almalence_settings_scene_nightportrait);
-			put(sceneTheatre, R.drawable.gui_almalence_settings_scene_theater);
-			put(sceneBeach, R.drawable.gui_almalence_settings_scene_beach);
-			put(sceneSnow, R.drawable.gui_almalence_settings_scene_snow);
-			put(sceneSunset, R.drawable.gui_almalence_settings_scene_sunset);
-			put(sceneSteadyPhoto,
-					R.drawable.gui_almalence_settings_scene_steadyphoto);
-			put(sceneFireworks,
-					R.drawable.gui_almalence_settings_scene_fireworks);
-			put(sceneSports, R.drawable.gui_almalence_settings_scene_sports);
-			put(sceneParty, R.drawable.gui_almalence_settings_scene_party);
-			put(sceneCandlelight,
-					R.drawable.gui_almalence_settings_scene_candlelight);
-			put(sceneBarcode, R.drawable.gui_almalence_settings_scene_barcode);
-			put(sceneHDR, R.drawable.gui_almalence_settings_scene_hdr);
-			put(sceneAR, R.drawable.gui_almalence_settings_scene_ar);
+			put(CameraCharacteristics.CONTROL_MODE_AUTO, R.drawable.gui_almalence_settings_scene_auto);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_ACTION, R.drawable.gui_almalence_settings_scene_action);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT, R.drawable.gui_almalence_settings_scene_portrait);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE, R.drawable.gui_almalence_settings_scene_landscape);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT, R.drawable.gui_almalence_settings_scene_night);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT, R.drawable.gui_almalence_settings_scene_nightportrait);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE, R.drawable.gui_almalence_settings_scene_theater);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_BEACH, R.drawable.gui_almalence_settings_scene_beach);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SNOW, R.drawable.gui_almalence_settings_scene_snow);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET, R.drawable.gui_almalence_settings_scene_sunset);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO, R.drawable.gui_almalence_settings_scene_steadyphoto);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS, R.drawable.gui_almalence_settings_scene_fireworks);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS, R.drawable.gui_almalence_settings_scene_sports);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_PARTY, R.drawable.gui_almalence_settings_scene_party);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT, R.drawable.gui_almalence_settings_scene_candlelight);
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE, R.drawable.gui_almalence_settings_scene_barcode);
 		}
 	};
 
-	private final static Map<String, Integer> icons_wb = new Hashtable<String, Integer>() {
+	private final static Map<Integer, Integer> icons_wb = new Hashtable<Integer, Integer>() {
 		{
-			put(wbAuto, R.drawable.gui_almalence_settings_wb_auto);
-			put(wbIncandescent,
-					R.drawable.gui_almalence_settings_wb_incandescent);
-			put(wbFluorescent, R.drawable.gui_almalence_settings_wb_fluorescent);
-			put(wbWarmFluorescent,
-					R.drawable.gui_almalence_settings_wb_warmfluorescent);
-			put(wbDaylight, R.drawable.gui_almalence_settings_wb_daylight);
-			put(wbCloudyDaylight,
-					R.drawable.gui_almalence_settings_wb_cloudydaylight);
-			put(wbTwilight, R.drawable.gui_almalence_settings_wb_twilight);
-			put(wbShade, R.drawable.gui_almalence_settings_wb_shade);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_AUTO, R.drawable.gui_almalence_settings_wb_auto);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT, R.drawable.gui_almalence_settings_wb_incandescent);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT, R.drawable.gui_almalence_settings_wb_fluorescent);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT, R.drawable.gui_almalence_settings_wb_warmfluorescent);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT, R.drawable.gui_almalence_settings_wb_daylight);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT, R.drawable.gui_almalence_settings_wb_cloudydaylight);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT, R.drawable.gui_almalence_settings_wb_twilight);
+			put(CameraCharacteristics.CONTROL_AWB_MODE_SHADE, R.drawable.gui_almalence_settings_wb_shade);
 		}
 	};
 
-	private final static Map<String, Integer> icons_focus = new Hashtable<String, Integer>() {
+	private final static Map<Integer, Integer> icons_focus = new Hashtable<Integer, Integer>() {
 		{
-			put(focusAuto, R.drawable.gui_almalence_settings_focus_auto);
-			put(focusInfinity, R.drawable.gui_almalence_settings_focus_infinity);
-			put(focusNormal, R.drawable.gui_almalence_settings_focus_normal);
-			put(focusMacro, R.drawable.gui_almalence_settings_focus_macro);
-			put(focusFixed, R.drawable.gui_almalence_settings_focus_fixed);
-			put(focusEdof, R.drawable.gui_almalence_settings_focus_edof);
-			put(focusContinuousVideo,
-					R.drawable.gui_almalence_settings_focus_continiuousvideo);
-			put(focusContinuousPicture,
-					R.drawable.gui_almalence_settings_focus_continiuouspicture);
-			put(focusAfLock,
-					R.drawable.gui_almalence_settings_focus_aflock);
+			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, R.drawable.gui_almalence_settings_focus_auto);
+			//put(CameraCharacteristics.CONTROL_AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
+			//put(CameraCharacteristics.CONTROL_AF_MODE_NORMAL, R.drawable.gui_almalence_settings_focus_normal);
+			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, R.drawable.gui_almalence_settings_focus_macro);
+			//put(CameraCharacteristics.CONTROL_AF_MODE_FIXED, R.drawable.gui_almalence_settings_focus_fixed);
+			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, R.drawable.gui_almalence_settings_focus_edof);
+			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, R.drawable.gui_almalence_settings_focus_continiuousvideo);
+			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, R.drawable.gui_almalence_settings_focus_continiuouspicture);
+			put(focusAfLock, R.drawable.gui_almalence_settings_focus_aflock);
 		}
 	};
 
-	private final static Map<String, Integer> icons_flash = new Hashtable<String, Integer>() {
+	private final static Map<Integer, Integer> icons_flash = new Hashtable<Integer, Integer>() {
 		{
-			put(flashOff, R.drawable.gui_almalence_settings_flash_off);
-			put(flashAuto, R.drawable.gui_almalence_settings_flash_auto);
-			put(flashOn, R.drawable.gui_almalence_settings_flash_on);
-			put(flashRedEye, R.drawable.gui_almalence_settings_flash_redeye);
-			put(flashTorch, R.drawable.gui_almalence_settings_flash_torch);
+			put(CameraCharacteristics.FLASH_MODE_OFF, R.drawable.gui_almalence_settings_flash_off);
+			//put(CameraCharacteristics.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
+			put(CameraCharacteristics.FLASH_MODE_SINGLE, R.drawable.gui_almalence_settings_flash_on);
+			//put(flashRedEye, R.drawable.gui_almalence_settings_flash_redeye);
+			put(CameraCharacteristics.FLASH_MODE_TORCH, R.drawable.gui_almalence_settings_flash_torch);
 		}
 	};
 
@@ -405,237 +394,156 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-	private final static Map<String, Integer> icons_metering = new Hashtable<String, Integer>() {
+	private final static Map<Integer, Integer> icons_metering = new Hashtable<Integer, Integer>() {
 		{
-			put(meteringAuto, R.drawable.gui_almalence_settings_metering_auto);
-			put(meteringMatrix, R.drawable.gui_almalence_settings_metering_matrix);
-			put(meteringCenter, R.drawable.gui_almalence_settings_metering_center);				
-			put(meteringSpot, R.drawable.gui_almalence_settings_metering_spot);
+			put(0, R.drawable.gui_almalence_settings_metering_auto);
+			put(1, R.drawable.gui_almalence_settings_metering_matrix);
+			put(2, R.drawable.gui_almalence_settings_metering_center);				
+			put(3, R.drawable.gui_almalence_settings_metering_spot);
 		}
 	};
 
 	// List of localized names for camera parameters values	
-	private final static Map<String, String> names_scene = new Hashtable<String, String>() {
+	private final static Map<Integer, String> names_scene = new Hashtable<Integer, String>() {
 		{
-			put(sceneAuto,
-					MainScreen.thiz.getResources()
-							.getString(R.string.sceneAuto));
-			put(sceneAction,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneAction));
-			put(scenePortrait,
-					MainScreen.thiz.getResources().getString(
-							R.string.scenePortrait));
-			put(sceneLandscape,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneLandscape));
-			put(sceneNight,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneNight));
-			put(sceneNightPortrait,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneNightPortrait));
-			put(sceneTheatre,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneTheatre));
-			put(sceneBeach,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneBeach));
-			put(sceneSnow,
-					MainScreen.thiz.getResources()
-							.getString(R.string.sceneSnow));
-			put(sceneSunset,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneSunset));
-			put(sceneSteadyPhoto,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneSteadyPhoto));
-			put(sceneFireworks,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneFireworks));
-			put(sceneSports,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneSports));
-			put(sceneParty,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneParty));
-			put(sceneCandlelight,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneCandlelight));
-			put(sceneBarcode,
-					MainScreen.thiz.getResources().getString(
-							R.string.sceneBarcode));
-			put(sceneHDR,
-					MainScreen.thiz.getResources().getString(R.string.sceneHDR));
-			put(sceneAR,
-					MainScreen.thiz.getResources().getString(R.string.sceneAR));
+			put(CameraCharacteristics.CONTROL_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.sceneAuto));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_ACTION, MainScreen.thiz.getResources().getString(R.string.sceneAction));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.scenePortrait));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE,	MainScreen.thiz.getResources().getString(R.string.sceneLandscape));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT,	MainScreen.thiz.getResources().getString(R.string.sceneNight));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.sceneNightPortrait));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE, MainScreen.thiz.getResources().getString(R.string.sceneTheatre));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_BEACH,	MainScreen.thiz.getResources().getString(R.string.sceneBeach));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SNOW, MainScreen.thiz.getResources().getString(R.string.sceneSnow));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET, MainScreen.thiz.getResources().getString(R.string.sceneSunset));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO, MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhoto));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS, MainScreen.thiz.getResources().getString(R.string.sceneFireworks));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS, MainScreen.thiz.getResources().getString(R.string.sceneSports));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_PARTY, MainScreen.thiz.getResources().getString(R.string.sceneParty));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT, MainScreen.thiz.getResources().getString(R.string.sceneCandlelight));
+			put(CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE, MainScreen.thiz.getResources().getString(R.string.sceneBarcode));
 		}
 	};
 
-	private final static Map<String, String> names_wb = new Hashtable<String, String>() {
+	private final static Map<Integer, String> names_wb = new Hashtable<Integer, String>() {
 		{
-			put(wbAuto,
-					MainScreen.thiz.getResources().getString(R.string.wbAuto));
-			put(wbIncandescent,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbIncandescent));
-			put(wbFluorescent,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbFluorescent));
-			put(wbWarmFluorescent,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbWarmFluorescent));
-			put(wbDaylight,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbDaylight));
-			put(wbCloudyDaylight,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbCloudyDaylight));
-			put(wbTwilight,
-					MainScreen.thiz.getResources().getString(
-							R.string.wbTwilight));
-			put(wbShade,
-					MainScreen.thiz.getResources().getString(R.string.wbShade));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.wbAuto));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT, MainScreen.thiz.getResources().getString(R.string.wbIncandescent));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbFluorescent));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescent));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbDaylight));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylight));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT, MainScreen.thiz.getResources().getString(R.string.wbTwilight));
+			put(CameraCharacteristics.CONTROL_AWB_MODE_SHADE, MainScreen.thiz.getResources().getString(R.string.wbShade));
 		}
 	};
 
 
-	private final static Map<String, String> names_focus = new Hashtable<String, String>() {
+	private final static Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
 		{
-			put(focusAuto,
-					MainScreen.thiz.getResources()
-							.getString(R.string.focusAuto));
-			put(focusInfinity,
-					MainScreen.thiz.getResources().getString(
-							R.string.focusInfinity));
-			put(focusNormal,
-					MainScreen.thiz.getResources().getString(
-							R.string.focusNormal));
-			put(focusMacro,
-					MainScreen.thiz.getResources().getString(
-							R.string.focusMacro));
-			put(focusFixed,
-					MainScreen.thiz.getResources().getString(
-							R.string.focusFixed));
-			put(focusEdof,
-					MainScreen.thiz.getResources()
-							.getString(R.string.focusEdof));
-			put(focusContinuousVideo,
-					MainScreen.thiz.getResources().getString(
-							R.string.focusContinuousVideo));
-			put(focusContinuousPicture, MainScreen.thiz.getResources()
-					.getString(R.string.focusContinuousPicture));
+			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
+//			put(CameraCharacteristics.CONTROL_AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
+//			put(CameraCharacteristics.CONTROL_AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
+			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, MainScreen.thiz.getResources().getString(R.string.focusMacro));
+//			put(CameraCharacteristics.CONTROL_AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
+			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, MainScreen.thiz.getResources().getString(R.string.focusEdof));
+			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, MainScreen.thiz.getResources().getString(R.string.focusContinuousVideo));
+			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, MainScreen.thiz.getResources().getString(R.string.focusContinuousPicture));
 		}
 	};
 
-	private final static Map<String, String> names_flash = new Hashtable<String, String>() {
+	private final static Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
 		{
-			put(flashOff,
-					MainScreen.thiz.getResources().getString(R.string.flashOff));
-			put(flashAuto,
-					MainScreen.thiz.getResources()
-							.getString(R.string.flashAuto));
-			put(flashOn,
-					MainScreen.thiz.getResources().getString(R.string.flashOn));
-			put(flashRedEye,
-					MainScreen.thiz.getResources().getString(
-							R.string.flashRedEye));
-			put(flashTorch,
-					MainScreen.thiz.getResources().getString(
-							R.string.flashTorch));
+			put(CameraCharacteristics.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
+//			put(CameraCharacteristics.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
+			put(CameraCharacteristics.FLASH_MODE_SINGLE, MainScreen.thiz.getResources().getString(R.string.flashOn));
+//			put(CameraCharacteristics.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
+			put(CameraCharacteristics.FLASH_MODE_TORCH, MainScreen.thiz.getResources().getString(R.string.flashTorch));
 		}
 	};
 
 	private final static Map<String, String> names_iso = new Hashtable<String, String>() {
 		{
-			put(isoAuto,
-					MainScreen.thiz.getResources().getString(R.string.isoAuto));
-			put(iso50,
-					MainScreen.thiz.getResources().getString(R.string.iso50));
-			put(iso100,
-					MainScreen.thiz.getResources().getString(R.string.iso100));
-			put(iso200,
-					MainScreen.thiz.getResources().getString(R.string.iso200));
-			put(iso400,
-					MainScreen.thiz.getResources().getString(R.string.iso400));
-			put(iso800,
-					MainScreen.thiz.getResources().getString(R.string.iso800));
-			put(iso1600,
-					MainScreen.thiz.getResources().getString(R.string.iso1600));
-			put(iso3200,
-					MainScreen.thiz.getResources().getString(R.string.iso3200));
+			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAuto));
+			put(iso50, MainScreen.thiz.getResources().getString(R.string.iso50));
+			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100));
+			put(iso200, MainScreen.thiz.getResources().getString(R.string.iso200));
+			put(iso400, MainScreen.thiz.getResources().getString(R.string.iso400));
+			put(iso800, MainScreen.thiz.getResources().getString(R.string.iso800));
+			put(iso1600, MainScreen.thiz.getResources().getString(R.string.iso1600));
+			put(iso3200, MainScreen.thiz.getResources().getString(R.string.iso3200));
 		}
 	};
 	
-	private final static Map<String, String> names_metering = new Hashtable<String, String>() {
+	private final static Map<Integer, String> names_metering = new Hashtable<Integer, String>() {
 		{
-			put(meteringAuto, meteringAuto);
-			put(meteringMatrix, meteringMatrix);
-			put(meteringCenter, meteringCenter);
-			put(meteringSpot, meteringSpot);
+			put(0, meteringAuto);
+			put(1, meteringMatrix);
+			put(2, meteringCenter);
+			put(3, meteringSpot);
 		}
 	};
 	
-	private final static Map<String, String> scene_keys = new Hashtable<String, String>()
-	{
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.sceneAutoKey), sceneAuto);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneActionKey), sceneAction);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneARKey), sceneAR);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneBarcodeKey), sceneBarcode);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneBeachKey), sceneBeach);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneCandlelightKey), sceneCandlelight);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneFireworksKey), sceneFireworks);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneHDRKey), sceneHDR);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneLandscapeKey), sceneLandscape);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneNightKey), sceneNight);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneNightPortraitKey), sceneNightPortrait);
-			put(MainScreen.thiz.getResources().getString(R.string.scenePartyKey), sceneParty);
-			put(MainScreen.thiz.getResources().getString(R.string.scenePortraitKey), scenePortrait);		
-			put(MainScreen.thiz.getResources().getString(R.string.sceneSnowKey), sceneSnow);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneSportsKey), sceneSports);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhotoKey), sceneSteadyPhoto);
-			put(MainScreen.thiz.getResources().getString(R.string.sceneSunsetKey), sceneSunset);			
-			put(MainScreen.thiz.getResources().getString(R.string.sceneTheatreKey), sceneTheatre);			
-		}
-	};
+//	private final static Map<String, String> scene_keys = new Hashtable<String, String>()
+//	{
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneAutoKey), sceneAuto);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneActionKey), sceneAction);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneARKey), sceneAR);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneBarcodeKey), sceneBarcode);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneBeachKey), sceneBeach);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneCandlelightKey), sceneCandlelight);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneFireworksKey), sceneFireworks);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneHDRKey), sceneHDR);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneLandscapeKey), sceneLandscape);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneNightKey), sceneNight);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneNightPortraitKey), sceneNightPortrait);
+//			put(MainScreen.thiz.getResources().getString(R.string.scenePartyKey), sceneParty);
+//			put(MainScreen.thiz.getResources().getString(R.string.scenePortraitKey), scenePortrait);		
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneSnowKey), sceneSnow);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneSportsKey), sceneSports);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhotoKey), sceneSteadyPhoto);
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneSunsetKey), sceneSunset);			
+//			put(MainScreen.thiz.getResources().getString(R.string.sceneTheatreKey), sceneTheatre);			
+//		}
+//	};
 	
-	private final static Map<String, String> wb_keys = new Hashtable<String, String>() {
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.wbAutoKey), wbAuto);
-			put(MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylightKey), wbCloudyDaylight);
-			put(MainScreen.thiz.getResources().getString(R.string.wbDaylightKey), wbDaylight);
-			put(MainScreen.thiz.getResources().getString(R.string.wbFluorescentKey), wbFluorescent);
-			put(MainScreen.thiz.getResources().getString(R.string.wbIncandescentKey), wbIncandescent);
-			put(MainScreen.thiz.getResources().getString(R.string.wbShadeKey), wbShade);
-			put(MainScreen.thiz.getResources().getString(R.string.wbTwilightKey), wbTwilight);
-			put(MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescentKey), wbWarmFluorescent);
-		}
-	};
-	
-	private final static Map<String, String> focus_keys = new Hashtable<String, String>() {
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.focusAutoKey), focusAuto);
-			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousVideoKey), focusContinuousVideo);
-			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureKey), focusContinuousPicture);
-			put(MainScreen.thiz.getResources().getString(R.string.focusNormalKey), focusNormal);
-			put(MainScreen.thiz.getResources().getString(R.string.focusMacroKey), focusMacro);
-			put(MainScreen.thiz.getResources().getString(R.string.focusFixedKey), focusFixed);
-			put(MainScreen.thiz.getResources().getString(R.string.focusInfinityKey), focusInfinity);
-			put(MainScreen.thiz.getResources().getString(R.string.focusEdofKey), focusEdof);
-		}
-	};
-	
-	
-	private final static Map<String, String> flash_keys = new Hashtable<String, String>() {
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.flashAutoKey), flashAuto);
-			put(MainScreen.thiz.getResources().getString(R.string.flashOnKey), flashOn);
-			put(MainScreen.thiz.getResources().getString(R.string.flashOffKey), flashOff);
-			put(MainScreen.thiz.getResources().getString(R.string.flashRedEyeKey), flashRedEye);
-			put(MainScreen.thiz.getResources().getString(R.string.flashTorchKey), flashTorch);
-		}
-	};
+//	private final static Map<String, String> wb_keys = new Hashtable<String, String>() {
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.wbAutoKey), wbAuto);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylightKey), wbCloudyDaylight);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbDaylightKey), wbDaylight);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbFluorescentKey), wbFluorescent);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbIncandescentKey), wbIncandescent);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbShadeKey), wbShade);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbTwilightKey), wbTwilight);
+//			put(MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescentKey), wbWarmFluorescent);
+//		}
+//	};
+//	
+//	private final static Map<String, String> focus_keys = new Hashtable<String, String>() {
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.focusAutoKey), focusAuto);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousVideoKey), focusContinuousVideo);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureKey), focusContinuousPicture);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusNormalKey), focusNormal);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusMacroKey), focusMacro);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusFixedKey), focusFixed);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusInfinityKey), focusInfinity);
+//			put(MainScreen.thiz.getResources().getString(R.string.focusEdofKey), focusEdof);
+//		}
+//	};
+//	
+//	
+//	private final static Map<String, String> flash_keys = new Hashtable<String, String>() {
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.flashAutoKey), flashAuto);
+//			put(MainScreen.thiz.getResources().getString(R.string.flashOnKey), flashOn);
+//			put(MainScreen.thiz.getResources().getString(R.string.flashOffKey), flashOff);
+//			put(MainScreen.thiz.getResources().getString(R.string.flashRedEyeKey), flashRedEye);
+//			put(MainScreen.thiz.getResources().getString(R.string.flashTorchKey), flashTorch);
+//		}
+//	};
 
 	
 	private final static Map<String, String> iso_keys = new Hashtable<String, String>() {
@@ -677,18 +585,12 @@ public class AlmalenceGUI extends GUI implements
 	
 	private final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
 	{			
-			put(isoAuto,
-					MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
-			put(iso100,
-					MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
-			put(iso200,
-					MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
-			put(iso400,
-					MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
-			put(iso800,
-					MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
-			put(iso1600,
-					MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
+			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
+			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
+			put(iso200, MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
+			put(iso400, MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
+			put(iso800, MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
+			put(iso1600, MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
 		}
 	};
 
@@ -720,12 +622,12 @@ public class AlmalenceGUI extends GUI implements
 	private ElementAdapter isoAdapter;
 	private ElementAdapter meteringmodeAdapter;
 
-	private Map<String, View> SceneModeButtons;
-	private Map<String, View> WBModeButtons;
-	private Map<String, View> FocusModeButtons;
-	private Map<String, View> FlashModeButtons;
-	private Map<String, View> ISOButtons;
-	private Map<String, View> MeteringModeButtons;
+	private Map<Integer, View> SceneModeButtons;
+	private Map<Integer, View> WBModeButtons;
+	private Map<Integer, View> FocusModeButtons;
+	private Map<Integer, View> FlashModeButtons;
+	private Map<Integer, View> ISOButtons;
+	private Map<Integer, View> MeteringModeButtons;
 
 	// Camera settings values which is exist at current device
 	private List<View> activeScene;
@@ -735,12 +637,12 @@ public class AlmalenceGUI extends GUI implements
 	private List<View> activeISO;
 	private List<View> activeMetering;
 
-	private List<String> activeSceneNames;
-	private List<String> activeWBNames;
-	private List<String> activeFocusNames;
-	private List<String> activeFlashNames;
-	private List<String> activeISONames;
-	private List<String> activeMeteringNames;
+	private List<Integer> activeSceneNames;
+	private List<Integer> activeWBNames;
+	private List<Integer> activeFocusNames;
+	private List<Integer> activeFlashNames;
+	private List<Integer> activeISONames;
+	private List<Integer> activeMeteringNames;
 
 	private boolean isEVEnabled = true;
 	private boolean isSceneEnabled = true;
@@ -756,12 +658,12 @@ public class AlmalenceGUI extends GUI implements
 
 	// Current camera parameters
 	private int mEV = 0;
-	private String mSceneMode = null;
-	private String mFlashMode = null;
-	private String mFocusMode = null;
-	private String mWB = null;
-	private String mISO = null;
-	private String mMeteringMode = null;
+	private int mSceneMode = -1;
+	private int mFlashMode = -1;
+	private int mFocusMode = -1;
+	private int mWB = -1;
+	private int mISO = -1;
+	private int mMeteringMode = -1;
 
 	public boolean showAEAWLock = false;
 	
@@ -794,12 +696,12 @@ public class AlmalenceGUI extends GUI implements
 		isoAdapter = new ElementAdapter();
 		meteringmodeAdapter = new ElementAdapter();
 
-		SceneModeButtons = new Hashtable<String, View>();
-		WBModeButtons = new Hashtable<String, View>();
-		FocusModeButtons = new Hashtable<String, View>();
-		FlashModeButtons = new Hashtable<String, View>();
-		ISOButtons = new Hashtable<String, View>();
-		MeteringModeButtons = new Hashtable<String, View>();
+		SceneModeButtons = new Hashtable<Integer, View>();
+		WBModeButtons = new Hashtable<Integer, View>();
+		FocusModeButtons = new Hashtable<Integer, View>();
+		FlashModeButtons = new Hashtable<Integer, View>();
+		ISOButtons = new Hashtable<Integer, View>();
+		MeteringModeButtons = new Hashtable<Integer, View>();
 
 		activeScene = new ArrayList<View>();
 		activeWB = new ArrayList<View>();
@@ -808,12 +710,12 @@ public class AlmalenceGUI extends GUI implements
 		activeISO = new ArrayList<View>();
 		activeMetering = new ArrayList<View>();
 
-		activeSceneNames = new ArrayList<String>();
-		activeWBNames = new ArrayList<String>();
-		activeFocusNames = new ArrayList<String>();
-		activeFlashNames = new ArrayList<String>();
-		activeISONames = new ArrayList<String>();
-		activeMeteringNames = new ArrayList<String>();
+		activeSceneNames = new ArrayList<Integer>();
+		activeWBNames = new ArrayList<Integer>();
+		activeFocusNames = new ArrayList<Integer>();
+		activeFlashNames = new ArrayList<Integer>();
+		activeISONames = new ArrayList<Integer>();
+		activeMeteringNames = new ArrayList<Integer>();
 
 		settingsAdapter = new ElementAdapter();
 		settingsViews = new ArrayList<View>();
@@ -833,7 +735,7 @@ public class AlmalenceGUI extends GUI implements
 	 * need an icons of supported camera parameters (scene, iso, wb, flash,
 	 * focus) Methods return id of drawable icon
 	 */
-	public int getSceneIcon(String sceneMode)
+	public int getSceneIcon(int sceneMode)
 	{
 		if(icons_scene.containsKey(sceneMode))
 			return icons_scene.get(sceneMode);
@@ -841,7 +743,7 @@ public class AlmalenceGUI extends GUI implements
 			return -1;
 	}
 
-	public int getWBIcon(String wb)
+	public int getWBIcon(int wb)
 	{
 		if(icons_wb.containsKey(wb))
 			return icons_wb.get(wb);
@@ -849,7 +751,7 @@ public class AlmalenceGUI extends GUI implements
 			return -1;
 	}
 
-	public int getFocusIcon(String focusMode)
+	public int getFocusIcon(int focusMode)
 	{
 		if(icons_focus.containsKey(focusMode))
 		{
@@ -865,7 +767,7 @@ public class AlmalenceGUI extends GUI implements
 			return -1;
 	}
 
-	public int getFlashIcon(String flashMode)
+	public int getFlashIcon(int flashMode)
 	{
 		if(icons_flash.containsKey(flashMode))
 			return icons_flash.get(flashMode);
@@ -1298,10 +1200,10 @@ public class AlmalenceGUI extends GUI implements
 				names_focus, FocusModeButtons, MODE_FOCUS);
 		FlashModeButtons = initCameraParameterModeButtons(icons_flash,
 				names_flash, FlashModeButtons, MODE_FLASH);
-		ISOButtons = initCameraParameterModeButtons(icons_iso, names_iso,
-				ISOButtons, MODE_ISO);
-		MeteringModeButtons = initCameraParameterModeButtons(icons_metering, names_metering,
-				MeteringModeButtons, MODE_MET);
+//		ISOButtons = initCameraParameterModeButtons(icons_iso, names_iso,
+//				ISOButtons, MODE_ISO);
+//		MeteringModeButtons = initCameraParameterModeButtons(icons_metering, names_metering,
+//				MeteringModeButtons, MODE_MET);
 
 		// Create top menu buttons for plugins (each plugin may have only one
 		// top menu button)
@@ -1369,15 +1271,15 @@ public class AlmalenceGUI extends GUI implements
 		//-+- -->
 	}
 
-	private Map<String, View> initCameraParameterModeButtons(
-			Map<String, Integer> icons_map, Map<String, String> names_map,
-			Map<String, View> paramMap, final int mode) {
+	private Map<Integer, View> initCameraParameterModeButtons(
+			Map<Integer, Integer> icons_map, Map<Integer, String> names_map,
+			Map<Integer, View> paramMap, final int mode) {
 		paramMap.clear();
-		Set<String> keys = icons_map.keySet();		
-		Iterator<String> it = keys.iterator();
+		Set<Integer> keys = icons_map.keySet();		
+		Iterator<Integer> it = keys.iterator();
 		int mode_number = 0;
 		while (it.hasNext()) {
-			final String system_name = it.next();
+			final int system_name = it.next();
 			final String value_name = names_map.get(system_name);
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 			View paramMode = inflator.inflate(
@@ -2004,7 +1906,7 @@ public class AlmalenceGUI extends GUI implements
 
 			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 			if (evBar != null) {
-				int initValue = preferences.getInt(sEvPref, 0);
+				int initValue = preferences.getInt(MainScreen.sEvPref, 0);
 				evBar.setMax(maxValue - minValue);
 				evBar.setProgress(initValue + maxValue);
 
@@ -2052,24 +1954,32 @@ public class AlmalenceGUI extends GUI implements
 			mEVSupported = false;
 
 		// Create Scene mode button and adding supported scene modes
-		List<String> supported_scene = MainScreen.thiz.getSupportedSceneModes();
-		if (supported_scene != null && supported_scene.size() > 0 && activeScene != null) {
+		byte[] supported_scene = MainScreen.thiz.getSupportedSceneModes();
+		if (supported_scene != null && supported_scene.length > 0 && activeScene != null) {
 
 //			Set<String> keys = SceneModeButtons.keySet();
 //			Iterator<String> it = keys.iterator();
-			Collection<String> unsorted_keys = scene_keys.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String scene_key = it.next();
-				String scene_name = scene_keys.get(scene_key);
-				if (supported_scene.contains(scene_name)
-						&& scene_name != sceneHDR/* && scene_name != sceneNight*/)
-				{
-					if(scene_name.compareTo(sceneNight) != 0)
-						activeScene.add(SceneModeButtons.get(scene_name));
-					activeSceneNames.add(scene_name);
-				}
+			
+//			Collection<String> unsorted_keys = scene_keys.keySet();
+//			List<String> keys = Util.asSortedList(unsorted_keys);
+//			Iterator<String> it = keys.iterator();
+//			while (it.hasNext()) {
+//				String scene_key = it.next();
+//				String scene_name = scene_keys.get(scene_key);
+//				if (supported_scene.contains(scene_name)
+//						&& scene_name != sceneHDR/* && scene_name != sceneNight*/)
+//				{
+//					if(scene_name.compareTo(sceneNight) != 0)
+//						activeScene.add(SceneModeButtons.get(scene_name));
+//					activeSceneNames.add(scene_name);
+//				}
+//			}
+			
+			for(byte scene_name : supported_scene)
+			{
+				if(scene_name != CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT)
+					activeScene.add(SceneModeButtons.get(Integer.valueOf(scene_name)));
+				activeSceneNames.add(Integer.valueOf(scene_name));
 			}
 			
 			if(activeSceneNames.size() > 0)
@@ -2080,13 +1990,13 @@ public class AlmalenceGUI extends GUI implements
 						.findViewById(R.id.scenemodeGrid);
 				gridview.setAdapter(scenemodeAdapter);
 				
-				String initValue = preferences.getString(sSceneModePref,
-						sDefaultValue);
+				int initValue = preferences.getInt(MainScreen.sSceneModePref,
+						MainScreen.sDefaultValue);
 				if (!activeSceneNames.contains(initValue)) {
 					if (MainScreen.thiz.isFrontCamera())
 						initValue = activeSceneNames.get(0);
 					else
-						initValue = "auto";
+						initValue = CameraCharacteristics.CONTROL_MODE_AUTO;
 				}
 	
 				setButtonSelected(SceneModeButtons, initValue);
@@ -2100,47 +2010,54 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
+				MainScreen.thiz.setCameraSceneMode(mSceneMode);
 				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
-				{
-					params.setSceneMode(mSceneMode);			
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "Scene mode exception: " + e.getMessage());
-//					}
-				}
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					params.setSceneMode(mSceneMode);			
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "Scene mode exception: " + e.getMessage());
+////					}
+//				}
 			}
 			else
 			{
 				mSceneModeSupported = false;
-				mSceneMode = null;
+				mSceneMode = -1;
 			}
 		} 
 		else
 		{
 			mSceneModeSupported = false;
-			mSceneMode = null;
+			mSceneMode = -1;
 		}
 
 		// Create White Balance mode button and adding supported white balances
-		List<String> supported_wb = MainScreen.thiz.getSupportedWhiteBalance();
-		if (supported_wb != null && supported_wb.size() > 0 && activeWB != null) {
+		byte[] supported_wb = MainScreen.thiz.getSupportedWhiteBalance();
+		if (supported_wb != null && supported_wb.length > 0 && activeWB != null) {
 			//mWBSupported = true;
 
 			//Set<String> keys = WBModeButtons.keySet();
-			Collection<String> unsorted_keys = wb_keys.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String wb_key = it.next();
-				String wb_name = wb_keys.get(wb_key);
-				if (supported_wb.contains(wb_name)) {
-					activeWB.add(WBModeButtons.get(wb_name));
-					activeWBNames.add(wb_name);
-				}
+//			Collection<String> unsorted_keys = wb_keys.keySet();
+//			List<String> keys = Util.asSortedList(unsorted_keys);
+//			Iterator<String> it = keys.iterator();
+//			while (it.hasNext()) {
+//				String wb_key = it.next();
+//				String wb_name = wb_keys.get(wb_key);
+//				if (supported_wb.contains(wb_name)) {
+//					activeWB.add(WBModeButtons.get(wb_name));
+//					activeWBNames.add(wb_name);
+//				}
+//			}
+			
+			for(byte wb_name : supported_wb)
+			{				
+				activeWB.add(WBModeButtons.get(Integer.valueOf(wb_name)));
+				activeWBNames.add(Integer.valueOf(wb_name));
 			}
 			
 			if(activeWBNames.size() > 0)
@@ -2152,13 +2069,13 @@ public class AlmalenceGUI extends GUI implements
 				gridview.setNumColumns(activeWB.size() > 9 ? 4 : 3);
 				gridview.setAdapter(wbmodeAdapter);
 	
-				String initValue = preferences
-						.getString(sWBModePref, sDefaultValue);
-				if (!activeWBNames.contains(initValue)) {
+				int initValue = preferences.getInt(MainScreen.sWBModePref, MainScreen.sDefaultValue);
+				if (!activeWBNames.contains(initValue))
+				{
 					if (MainScreen.thiz.isFrontCamera())
 						initValue = activeWBNames.get(0);
 					else
-						initValue = sDefaultValue;
+						initValue = MainScreen.sDefaultValue;
 				}
 				setButtonSelected(WBModeButtons, initValue);
 				setCameraParameterValue(MODE_WB, initValue);
@@ -2170,46 +2087,53 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
+				MainScreen.thiz.setCameraWhiteBalance(mWB);
 				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
-				{
-					params.setWhiteBalance(mWB);
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "WB exception: " + e.getMessage());
-//					}
-				}
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					params.setWhiteBalance(mWB);
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "WB exception: " + e.getMessage());
+////					}
+//				}
 			}
 			else
 			{
 				mWBSupported = false;
-				mWB = null;
+				mWB = -1;
 			}
 		}
 		else
 		{
 			mWBSupported = false;
-			mWB = null;
+			mWB = -1;
 		}
 
 		// Create Focus mode button and adding supported focus modes
-		final List<String> supported_focus = MainScreen.thiz.getSupportedFocusModes();
-		if (supported_focus != null && supported_focus.size() > 0 && activeFocus != null) {
+		final byte[] supported_focus = MainScreen.thiz.getSupportedFocusModes();
+		if (supported_focus != null && supported_focus.length > 0 && activeFocus != null) {
 
 			//Set<String> keys = FocusModeButtons.keySet();
-			Collection<String> unsorted_keys = focus_keys.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String focus_key = it.next();
-				String focus_name = focus_keys.get(focus_key);
-				if (supported_focus.contains(focus_name)) {
-					activeFocus.add(FocusModeButtons.get(focus_name));
-					activeFocusNames.add(focus_name);
-				}
+//			Collection<String> unsorted_keys = focus_keys.keySet();
+//			List<String> keys = Util.asSortedList(unsorted_keys);
+//			Iterator<String> it = keys.iterator();
+//			while (it.hasNext()) {
+//				String focus_key = it.next();
+//				String focus_name = focus_keys.get(focus_key);
+//				if (supported_focus.contains(focus_name)) {
+//					activeFocus.add(FocusModeButtons.get(focus_name));
+//					activeFocusNames.add(focus_name);
+//				}
+//			}
+			
+			for(byte focus_name : supported_focus)
+			{				
+				activeFocus.add(FocusModeButtons.get(Integer.valueOf(focus_name)));
+				activeFocusNames.add(Integer.valueOf(focus_name));
 			}
 			
 			if(activeFocusNames.size() > 0)
@@ -2217,7 +2141,8 @@ public class AlmalenceGUI extends GUI implements
 				mFocusModeSupported = true;
 				defaultQuickControl3 = String.valueOf(MODE_FOCUS);
 				
-				if(supported_focus.contains("auto") || supported_focus.contains("macro"))
+				if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO) || 
+				   MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
 				{
 					LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 					View paramMode = inflator.inflate(
@@ -2250,29 +2175,31 @@ public class AlmalenceGUI extends GUI implements
 							Camera camera = MainScreen.thiz.getCamera();
 							if (null != camera && params != null)
 							{
-								String AFMode = "";
-								if(supported_focus.contains(focusAuto))
-									AFMode = focusAuto;
-								else if(supported_focus.contains(focusMacro))
-									AFMode = focusMacro;
+								int AFMode = -1;
+								if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO))
+									AFMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
+								else if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
+									AFMode = CameraCharacteristics.CONTROL_AF_MODE_MACRO;
 								else
-									AFMode = supported_focus.get(0);
+									AFMode = supported_focus[0];
 								
-								params.setFocusMode(AFMode);
-								try {
-									MainScreen.thiz.setCameraParameters(params);
-								} catch (Exception e) {
-									e.printStackTrace();
-									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
-								}
+								
+								MainScreen.thiz.setCameraFocusMode(AFMode);
+//								params.setFocusMode(AFMode);
+//								try {
+//									MainScreen.thiz.setCameraParameters(params);
+//								} catch (Exception e) {
+//									e.printStackTrace();
+//									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
+//								}
 								
 								String focusMode = MainScreen.thiz.getFocusMode();
 								
 								preferences
 								.edit()
-								.putString(
-										MainScreen.getCameraMirrored() ? sRearFocusModePref
-												: sFrontFocusModePref, AFMode).commit();
+								.putInt(
+										MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+												: MainScreen.sFrontFocusModePref, AFMode).commit();
 							}		
 							
 							Message msg = new Message();
@@ -2303,12 +2230,12 @@ public class AlmalenceGUI extends GUI implements
 				gridview.setNumColumns(activeFocus.size() > 9 ? 4 : 3);
 				gridview.setAdapter(focusmodeAdapter);
 	
-				String initValue = preferences.getString(MainScreen
-						.getCameraMirrored() ? sRearFocusModePref
-						: sFrontFocusModePref, sDefaultFocusValue);
+				int initValue = preferences.getInt(MainScreen
+						.getCameraMirrored() ? MainScreen.sRearFocusModePref
+						: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 				if (!activeFocusNames.contains(initValue)) {
-					if (activeFocusNames.contains(sDefaultValue))
-						initValue = sDefaultValue;
+					if (activeFocusNames.contains(MainScreen.sDefaultValue))
+						initValue = MainScreen.sDefaultValue;
 					else
 						initValue = activeFocusNames.get(0);
 	
@@ -2332,61 +2259,84 @@ public class AlmalenceGUI extends GUI implements
 						Log.e("onCameraCreate", "icons_focus.get exception: " + e.getMessage());
 					}
 				}
-	
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
+
+				
+				if(mFocusMode == focusAfLock)
 				{
-					if(mFocusMode.compareTo(focusAfLock) == 0)
-					{
-						String AFMode = "";
-						if(supported_focus.contains(focusAuto))
-							AFMode = focusAuto;
-						else if(supported_focus.contains(focusMacro))
-							AFMode = focusMacro;
-						else
-							AFMode = supported_focus.get(0);
-						
-						params.setFocusMode(AFMode);
-					}
-					else						
-						params.setFocusMode(mFocusMode);
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "focus exception: " + e.getMessage());
-//					}
+					int AFMode = -1;
+					if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO))
+						AFMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
+					else if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
+						AFMode = CameraCharacteristics.CONTROL_AF_MODE_MACRO;
+					else
+						AFMode = supported_focus[0];
+					
+					MainScreen.thiz.setCameraFocusMode(AFMode);
 				}
+				else						
+					MainScreen.thiz.setCameraFocusMode(mFocusMode);
+				
+				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					if(mFocusMode.compareTo(focusAfLock) == 0)
+//					{
+//						String AFMode = "";
+//						if(supported_focus.contains(focusAuto))
+//							AFMode = focusAuto;
+//						else if(supported_focus.contains(focusMacro))
+//							AFMode = focusMacro;
+//						else
+//							AFMode = supported_focus.get(0);
+//						
+//						params.setFocusMode(AFMode);
+//					}
+//					else						
+//						params.setFocusMode(mFocusMode);
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "focus exception: " + e.getMessage());
+////					}
+//				}
 			}
 			else
 			{
 				mFocusModeSupported = false;
-				mFocusMode = null;
+				mFocusMode = -1;
 			}
 		}
 		else
 		{
-			mFocusMode = null;
+			mFocusMode = -1;
 			mFocusModeSupported = false;
 		}
 
 		// Create Flash mode button and adding supported flash modes
-		List<String> supported_flash = MainScreen.thiz.getSupportedFlashModes();
-		if (supported_flash != null && supported_flash.size() > 0 && activeFlash != null &&
-				!(supported_flash.size() == 1 && supported_flash.contains(flashOff)))
+		byte[] supported_flash = MainScreen.thiz.getSupportedFlashModes();
+		if (supported_flash != null && supported_flash.length > 0 && activeFlash != null &&
+				!(supported_flash.length == 1 && MainScreen.isModeAvailable(supported_flash, CameraCharacteristics.FLASH_MODE_OFF)))
 		{			
 			//Set<String> keys = FlashModeButtons.keySet();
-			Collection<String> unsorted_keys = flash_keys.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String flash_key = it.next();
-				String flash_name = flash_keys.get(flash_key);
-				if (supported_flash.contains(flash_name)) {
-					activeFlash.add(FlashModeButtons.get(flash_name));
-					activeFlashNames.add(flash_name);
-				}
+//			Collection<String> unsorted_keys = flash_keys.keySet();
+//			List<String> keys = Util.asSortedList(unsorted_keys);
+//			Iterator<String> it = keys.iterator();
+//			while (it.hasNext()) {
+//				String flash_key = it.next();
+//				String flash_name = flash_keys.get(flash_key);
+//				if (supported_flash.contains(flash_name)) {
+//					activeFlash.add(FlashModeButtons.get(flash_name));
+//					activeFlashNames.add(flash_name);
+//				}
+//			}
+			
+			
+			for(byte flash_name : supported_flash)
+			{				
+				activeFlash.add(FlashModeButtons.get(Integer.valueOf(flash_name)));
+				activeFlashNames.add(Integer.valueOf(flash_name));
 			}
 			
 			if(activeFlashNames.size() > 0)
@@ -2400,13 +2350,13 @@ public class AlmalenceGUI extends GUI implements
 				gridview.setNumColumns(activeFlash.size() > 9 ? 4 : 3);
 				gridview.setAdapter(flashmodeAdapter);
 	
-				String initValue = preferences.getString(sFlashModePref,
-						sDefaultValue);
+				int initValue = preferences.getInt(MainScreen.sFlashModePref,
+						MainScreen.sDefaultFlashValue);
 				if (!activeFlashNames.contains(initValue)) {
 					if (MainScreen.thiz.isFrontCamera())
 						initValue = activeFlashNames.get(0);
 					else
-						initValue = sDefaultValue;
+						initValue = MainScreen.sDefaultFlashValue;
 				}
 				setButtonSelected(FlashModeButtons, initValue);
 				setCameraParameterValue(MODE_FLASH, initValue);
@@ -2419,124 +2369,127 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
+				
+				MainScreen.thiz.setCameraFlashMode(mFlashMode);
 				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
-				{
-					params.setFlashMode(mFlashMode);
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "Flash exception: " + e.getMessage());
-//					}
-				}
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					params.setFlashMode(mFlashMode);
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "Flash exception: " + e.getMessage());
+////					}
+//				}
 			}
 			else
 			{
 				mFlashModeSupported = false;
-				mFlashMode = null;	
+				mFlashMode = -1;	
 			}
 		}
 		else 
 		{
 			mFlashModeSupported = false;
-			mFlashMode = null;
+			mFlashMode = -1;
 		}
 
 		// Create ISO button and adding supported ISOs
-		List<String> supported_iso = MainScreen.thiz.getSupportedISO();
-		if ((supported_iso != null && supported_iso.size() > 0 && activeISO != null) ||
-				MainScreen.thiz.isISOSupported())
-		{
-
-			//Collection<String> unsorted_keys = ISOButtons.keySet();
-			//List<String> keys = Util.asSortedList(unsorted_keys);
-			Collection<String> unsorted_keys = iso_keys.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
-			while (it.hasNext()) {
-				String iso_key = it.next();
-				String iso_name = iso_keys.get(iso_key);
-				String iso2_name = iso2_keys.get(iso_key);
-				if (supported_iso != null && supported_iso.size() > 0 && (supported_iso.contains(iso_name) || supported_iso.contains(iso2_name))) {
-					activeISO.add(ISOButtons.get(iso_name));
-					activeISONames.add(iso_name);
-				}
-				else if(supported_iso == null && iso_default.contains(iso_name))
-				{
-					activeISO.add(ISOButtons.get(iso_name));
-					activeISONames.add(iso_name);
-				}
-			}
-			
-			if(activeISONames.size() > 0)
-			{
-				mISOSupported = true;
-
-				isoAdapter.Elements = activeISO;
-				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
-				gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
-				gridview.setAdapter(isoAdapter);
-	
-				String initValue = preferences.getString(sISOPref, sDefaultValue);
-				if (!activeISONames.contains(initValue)) {
-					if (MainScreen.thiz.isFrontCamera())
-						initValue = activeISONames.get(0);
-					else
-						initValue = sDefaultValue;
-	
-					preferences.edit().putString(sISOPref, initValue).commit();
-				}
-				setButtonSelected(ISOButtons, initValue);
-				setCameraParameterValue(MODE_ISO, initValue);
-	
-				if (icons_iso!=null && icons_iso.containsKey(initValue))
-				{
-					RotateImageView but = (RotateImageView) topMenuButtons
-							.get(MODE_ISO);
-					int icon_id = icons_iso.get(initValue);
-					but.setImageResource(icon_id);
-				}
-	
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				Camera camera = MainScreen.thiz.getCamera();
-				if (null != camera && params != null)
-				{
-					if(params.get(isoParam) != null)
-						params.set(isoParam, mISO);
-					else if(params.get(isoParam2) != null)
-						params.set(isoParam2, mISO);
-//					try {
-//						MainScreen.thiz.setCameraParameters(params);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("onCameraCreate", "ISO exception: " + e.getMessage());
-//					}
-				}
-			}
-			else
-			{
-				mISOSupported = false;
-				mISO = null;	
-			}
-		}		
-		else
-		{
-			mISOSupported = false;
-			mISO = null;
-		}
+//		List<String> supported_iso = MainScreen.thiz.getSupportedISO();
+//		if ((supported_iso != null && supported_iso.size() > 0 && activeISO != null) ||
+//				MainScreen.thiz.isISOSupported())
+//		{
+//
+//			//Collection<String> unsorted_keys = ISOButtons.keySet();
+//			//List<String> keys = Util.asSortedList(unsorted_keys);
+//			Collection<String> unsorted_keys = iso_keys.keySet();
+//			List<String> keys = Util.asSortedList(unsorted_keys);
+//			Iterator<String> it = keys.iterator();
+//			while (it.hasNext()) {
+//				String iso_key = it.next();
+//				String iso_name = iso_keys.get(iso_key);
+//				String iso2_name = iso2_keys.get(iso_key);
+//				if (supported_iso != null && supported_iso.size() > 0 && (supported_iso.contains(iso_name) || supported_iso.contains(iso2_name))) {
+//					activeISO.add(ISOButtons.get(iso_name));
+//					activeISONames.add(iso_name);
+//				}
+//				else if(supported_iso == null && iso_default.contains(iso_name))
+//				{
+//					activeISO.add(ISOButtons.get(iso_name));
+//					activeISONames.add(iso_name);
+//				}
+//			}
+//			
+//			if(activeISONames.size() > 0)
+//			{
+//				mISOSupported = true;
+//
+//				isoAdapter.Elements = activeISO;
+//				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
+//				gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
+//				gridview.setAdapter(isoAdapter);
+//	
+//				String initValue = preferences.getString(MainScreen.sISOPref, MainScreen.sDefaultValue);
+//				if (!activeISONames.contains(initValue)) {
+//					if (MainScreen.thiz.isFrontCamera())
+//						initValue = activeISONames.get(0);
+//					else
+//						initValue = MainScreen.sDefaultValue;
+//	
+//					preferences.edit().putString(MainScreen.sISOPref, initValue).commit();
+//				}
+//				setButtonSelected(ISOButtons, initValue);
+//				setCameraParameterValue(MODE_ISO, initValue);
+//	
+//				if (icons_iso!=null && icons_iso.containsKey(initValue))
+//				{
+//					RotateImageView but = (RotateImageView) topMenuButtons
+//							.get(MODE_ISO);
+//					int icon_id = icons_iso.get(initValue);
+//					but.setImageResource(icon_id);
+//				}
+//	
+//				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera camera = MainScreen.thiz.getCamera();
+//				if (null != camera && params != null)
+//				{
+//					if(params.get(MainScreen.isoParam) != null)
+//						params.set(MainScreen.isoParam, mISO);
+//					else if(params.get(MainScreen.isoParam2) != null)
+//						params.set(MainScreen.isoParam2, mISO);
+////					try {
+////						MainScreen.thiz.setCameraParameters(params);
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////						Log.e("onCameraCreate", "ISO exception: " + e.getMessage());
+////					}
+//				}
+//			}
+//			else
+//			{
+//				mISOSupported = false;
+//				mISO = null;	
+//			}
+//		}		
+//		else
+//		{
+//			mISOSupported = false;
+//			mISO = null;
+//		}
+		mISOSupported = false;
 		
 		
 		int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
 		if(iMeteringAreasSupported > 0)
 		{
-			Collection<String> unsorted_keys = names_metering.keySet();
-			List<String> keys = Util.asSortedList(unsorted_keys);
-			Iterator<String> it = keys.iterator();
+			Collection<Integer> unsorted_keys = names_metering.keySet();
+			List<Integer> keys = Util.asSortedList(unsorted_keys);
+			Iterator<Integer> it = keys.iterator();
 			while (it.hasNext())
 			{
-				String metering_name = it.next();
+				int metering_name = it.next();
 				activeMetering.add(MeteringModeButtons.get(metering_name));
 				activeMeteringNames.add(metering_name);
 			}
@@ -2551,8 +2504,8 @@ public class AlmalenceGUI extends GUI implements
 				gridview.setNumColumns(activeMetering.size() > 9 ? 4 : 3);
 				gridview.setAdapter(meteringmodeAdapter);
 	
-				String initValue = preferences.getString(sMeteringModePref,
-						sDefaultValue);
+				int initValue = preferences.getInt(MainScreen.sMeteringModePref,
+						MainScreen.sDefaultValue);
 				if (!activeMeteringNames.contains(initValue))
 						initValue = activeMeteringNames.get(0);
 				
@@ -2578,13 +2531,13 @@ public class AlmalenceGUI extends GUI implements
 			else
 			{
 				mMeteringAreasSupported = false;
-				mMeteringMode = null;	
+				mMeteringMode = -1;	
 			}
 		}
 		else
 		{
 			this.mMeteringAreasSupported = false;
-			this.mMeteringMode = null;
+			this.mMeteringMode = -1;
 		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -3067,7 +3020,7 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case FOCUS:
 			try {
-				if(mFocusMode.compareTo(focusAfLock) == 0)
+				if(mFocusMode == focusAfLock)
 					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
 				else
 					icon_id = icons_focus.get(mFocusMode);
@@ -3757,29 +3710,31 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_scene = MainScreen.thiz
-						.getSupportedSceneModes();
+				byte[] supported_scene = MainScreen.thiz.getSupportedSceneModes();
 				if (supported_scene == null)
 					return;
-				if (supported_scene.size() > 0) {
+				if (supported_scene.length > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
 					showParams(MODE_SCENE);
 				} else {
-					String newSceneMode;
-					ListIterator<String> it = supported_scene
-							.listIterator(supported_scene.indexOf(mSceneMode));
-					it.next();
-					if (it.hasNext())
-						newSceneMode = it.next();
-					else
-						newSceneMode = supported_scene.get(0);
-
-					Drawable icon = MainScreen.mainContext.getResources()
-							.getDrawable(icons_scene.get(newSceneMode));
-					((ImageView) v.findViewById(R.id.imageView))
-							.setImageDrawable(icon);
-					setSceneMode(newSceneMode);
+					
+					/*Old code. Used to change scene mode 'on the fly'*/
+					
+//					String newSceneMode;
+//					ListIterator<String> it = supported_scene
+//							.listIterator(supported_scene.indexOf(mSceneMode));
+//					it.next();
+//					if (it.hasNext())
+//						newSceneMode = it.next();
+//					else
+//						newSceneMode = supported_scene.get(0);
+//
+//					Drawable icon = MainScreen.mainContext.getResources()
+//							.getDrawable(icons_scene.get(newSceneMode));
+//					((ImageView) v.findViewById(R.id.imageView))
+//							.setImageDrawable(icon);
+//					setSceneMode(newSceneMode);
 				}
 			}
 		});
@@ -3798,27 +3753,29 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_wb = MainScreen.thiz
-						.getSupportedWhiteBalance();
+				byte[] supported_wb = MainScreen.thiz.getSupportedWhiteBalance();
 				if (supported_wb == null)
 					return;
-				if (supported_wb.size() > 0) {
+				if (supported_wb.length > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
 					showParams(MODE_WB);
 				} else {
-					String newWBMode;
-					ListIterator<String> it = supported_wb
-							.listIterator(supported_wb.indexOf(mWB));
-					it.next();
-					if (it.hasNext())
-						newWBMode = it.next();
-					else
-						newWBMode = supported_wb.get(0);
-
-					((ImageView) v.findViewById(R.id.imageView))
-							.setImageResource(icons_wb.get(newWBMode));
-					setWhiteBalance(newWBMode);
+					
+					/*Old code. Used to change wb mode 'on the fly'*/
+					
+//					String newWBMode;
+//					ListIterator<String> it = supported_wb
+//							.listIterator(supported_wb.indexOf(mWB));
+//					it.next();
+//					if (it.hasNext())
+//						newWBMode = it.next();
+//					else
+//						newWBMode = supported_wb.get(0);
+//
+//					((ImageView) v.findViewById(R.id.imageView))
+//							.setImageResource(icons_wb.get(newWBMode));
+//					setWhiteBalance(newWBMode);
 				}
 			}
 		});
@@ -3837,34 +3794,36 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_focus = MainScreen.thiz
-						.getSupportedFocusModes();
+				byte[] supported_focus = MainScreen.thiz.getSupportedFocusModes();
 				if (supported_focus == null)
 					return;
-				if (supported_focus.size() > 0) {
+				if (supported_focus.length > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
 					showParams(MODE_FOCUS);
 				} else {
-					String newFocusMode;
-					ListIterator<String> it = supported_focus
-							.listIterator(supported_focus.indexOf(mFocusMode));
-					it.next();
-					if (it.hasNext())
-						newFocusMode = it.next();
-					else
-						newFocusMode = supported_focus.get(0);
-
-					try {
-						Drawable icon = MainScreen.mainContext.getResources()
-								.getDrawable(icons_focus.get(newFocusMode));
-						((ImageView) v.findViewById(R.id.imageView)).setImageDrawable(icon);
-					} catch (Exception e) {
-						e.printStackTrace();
-						Log.e("createSettingFocusOnClick", "icons_focus.get exception: " + e.getMessage());
-					}
 					
-					setFocusMode(newFocusMode);
+					/*Old code. Used to change focus mode 'on the fly'*/
+					
+//					String newFocusMode;
+//					ListIterator<String> it = supported_focus
+//							.listIterator(supported_focus.indexOf(mFocusMode));
+//					it.next();
+//					if (it.hasNext())
+//						newFocusMode = it.next();
+//					else
+//						newFocusMode = supported_focus.get(0);
+//
+//					try {
+//						Drawable icon = MainScreen.mainContext.getResources()
+//								.getDrawable(icons_focus.get(newFocusMode));
+//						((ImageView) v.findViewById(R.id.imageView)).setImageDrawable(icon);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//						Log.e("createSettingFocusOnClick", "icons_focus.get exception: " + e.getMessage());
+//					}
+//					
+//					setFocusMode(newFocusMode);
 				}
 			}
 		});
@@ -3883,29 +3842,31 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_flash = MainScreen.thiz
-						.getSupportedFlashModes();
+				byte[] supported_flash = MainScreen.thiz.getSupportedFlashModes();
 				if (supported_flash == null)
 					return;
-				if (supported_flash.size() > 0) {
+				if (supported_flash.length > 0) {
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
 					showParams(MODE_FLASH);
 				} else {
-					String newFlashMode;
-					ListIterator<String> it = supported_flash
-							.listIterator(supported_flash.indexOf(mFlashMode));
-					it.next();
-					if (it.hasNext())
-						newFlashMode = it.next();
-					else
-						newFlashMode = supported_flash.get(0);
-
-					Drawable icon = MainScreen.mainContext.getResources()
-							.getDrawable(icons_flash.get(newFlashMode));
-					((ImageView) v.findViewById(R.id.imageView))
-							.setImageDrawable(icon);
-					setFlashMode(newFlashMode);
+					
+					/*Old code. Used to change flash mode 'on the fly'*/
+					
+//					String newFlashMode;
+//					ListIterator<String> it = supported_flash
+//							.listIterator(supported_flash.indexOf(mFlashMode));
+//					it.next();
+//					if (it.hasNext())
+//						newFlashMode = it.next();
+//					else
+//						newFlashMode = supported_flash.get(0);
+//
+//					Drawable icon = MainScreen.mainContext.getResources()
+//							.getDrawable(icons_flash.get(newFlashMode));
+//					((ImageView) v.findViewById(R.id.imageView))
+//							.setImageDrawable(icon);
+//					setFlashMode(newFlashMode);
 				}
 			}
 		});
@@ -3924,8 +3885,8 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_iso = MainScreen.thiz.getSupportedISO();
-				if ((supported_iso != null && supported_iso.size() > 0) ||
+				byte[] supported_iso = MainScreen.thiz.getSupportedISO();
+				if ((supported_iso != null && supported_iso.length > 0) ||
 				    MainScreen.thiz.isISOSupported())
 				{					
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
@@ -3934,20 +3895,23 @@ public class AlmalenceGUI extends GUI implements
 				}
 				else
 				{
-					String newISO;
-					ListIterator<String> it = supported_iso
-							.listIterator(supported_iso.indexOf(mISO));
-					it.next();
-					if (it.hasNext())
-						newISO = it.next();
-					else
-						newISO = supported_iso.get(0);
-
-					Drawable icon = MainScreen.mainContext.getResources()
-							.getDrawable(icons_iso.get(newISO));
-					((ImageView) v.findViewById(R.id.imageView))
-							.setImageDrawable(icon);
-					setISO(newISO);
+					
+					/*Old code. Used to change iso mode 'on the fly'*/
+					
+//					String newISO;
+//					ListIterator<String> it = supported_iso
+//							.listIterator(supported_iso.indexOf(mISO));
+//					it.next();
+//					if (it.hasNext())
+//						newISO = it.next();
+//					else
+//						newISO = supported_iso.get(0);
+//
+//					Drawable icon = MainScreen.mainContext.getResources()
+//							.getDrawable(icons_iso.get(newISO));
+//					((ImageView) v.findViewById(R.id.imageView))
+//							.setImageDrawable(icon);
+//					setISO(newISO);
 				}
 			}
 		});
@@ -5003,360 +4967,343 @@ public class AlmalenceGUI extends GUI implements
 		this.initSettingsMenu();
 	}
 
-	private void setSceneMode(String newMode)
+	private void setSceneMode(int newMode)
 	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (params != null)
-		{
-			if(newMode != null && SceneModeButtons.containsKey(newMode))
-			{
-				params.setSceneMode(newMode);
-				MainScreen.thiz.setCameraParameters(params);
-				mSceneMode = newMode;
-			}
-			else if(SceneModeButtons.containsKey(sceneAuto))
-			{
-				params.setSceneMode(sceneAuto);
-				MainScreen.thiz.setCameraParameters(params);
-				mSceneMode = sceneAuto;	
-			}
-			else if(params.getSupportedSceneModes() != null)
-			{
-				params.setSceneMode(params.getSupportedSceneModes().get(0));
-				MainScreen.thiz.setCameraParameters(params);
-				mSceneMode = params.getSupportedSceneModes().get(0);
-			}
-
-			// After change scene mode it may be changed other stuff such as
-			// flash, wb, focus mode.
-			// Need to get this information and update state of current
-			// parameters.
-			params = MainScreen.thiz.getCameraParameters();			
-			String wbNew = params.getWhiteBalance();
-			String flashNew = params.getFlashMode();
-			String focusNew = params.getFocusMode();
-			String isoNew = params.get(isoParam);			
-			if(isoNew == null)
-				isoNew = params.get(isoParam2);
-//			if(mSceneMode.compareTo(sceneAuto) != 0)
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (params != null)
+//		{
+//			if(newMode != null && SceneModeButtons.containsKey(newMode))
 //			{
-//				isoNew = isoAuto;
-//				if(params.get(isoParam) != null)
-//					params.set(isoParam, isoAuto);
-//				else if(params.get(isoParam2) != null)
-//					params.set(isoParam2, isoAuto);
-//				if(false == MainScreen.thiz.setCameraParameters(params))
-//				{					
-//					if(params.get(isoParam) != null)
-//						params.set(isoParam, iso_default_values.get(isoAuto));
-//					else if(params.get(isoParam2) != null)
-//						params.set(isoParam2, iso_default_values.get(isoAuto));
-//					MainScreen.thiz.setCameraParameters(params);					
+//				params.setSceneMode(newMode);
+//				MainScreen.thiz.setCameraParameters(params);
+//				mSceneMode = newMode;
+//			}
+//			else if(SceneModeButtons.containsKey(sceneAuto))
+//			{
+//				params.setSceneMode(sceneAuto);
+//				MainScreen.thiz.setCameraParameters(params);
+//				mSceneMode = sceneAuto;	
+//			}
+//			else if(params.getSupportedSceneModes() != null)
+//			{
+//				params.setSceneMode(params.getSupportedSceneModes().get(0));
+//				MainScreen.thiz.setCameraParameters(params);
+//				mSceneMode = params.getSupportedSceneModes().get(0);
+//			}
+//
+//			// After change scene mode it may be changed other stuff such as
+//			// flash, wb, focus mode.
+//			// Need to get this information and update state of current
+//			// parameters.
+//			params = MainScreen.thiz.getCameraParameters();			
+//			String wbNew = params.getWhiteBalance();
+//			String flashNew = params.getFlashMode();
+//			String focusNew = params.getFocusMode();
+//			String isoNew = params.get(MainScreen.isoParam);			
+//			if(isoNew == null)
+//				isoNew = params.get(MainScreen.isoParam2);
+//
+//			// Save new params value
+//			if(wbNew != null && WBModeButtons.containsKey(wbNew))
+//				mWB = wbNew;
+//			else if(WBModeButtons.containsKey(wbAuto))
+//				mWB = wbAuto;
+//			else if(params.getSupportedWhiteBalance() != null)
+//				mWB = params.getSupportedWhiteBalance().get(0);
+//			else
+//				mWB = null;
+//			
+//			if(focusNew != null && FocusModeButtons.containsKey(focusNew))
+//				mFocusMode = focusNew;
+//			else if(FocusModeButtons.containsKey(focusAuto))
+//				mFocusMode = focusAuto;
+//			else if(params.getSupportedFocusModes() != null)
+//				mFocusMode = params.getSupportedFocusModes().get(0);
+//			else
+//				mFocusMode = null;
+//			
+//			if(flashNew != null && FlashModeButtons.containsKey(flashNew))
+//				mFlashMode = flashNew;
+//			else if(FocusModeButtons.containsKey(flashAuto))
+//				mFlashMode = flashAuto;
+//			else if(params.getSupportedFlashModes() != null)
+//				mFlashMode = params.getSupportedFlashModes().get(0);
+//			else
+//				mFlashMode = null;
+//			
+//			if(isoNew != null && ISOButtons.containsKey(isoNew))
+//				mISO = isoNew;
+//			else if(ISOButtons.containsKey(isoAuto))
+//				mISO = isoAuto;
+//			else if(MainScreen.thiz.getSupportedISO() != null)
+//				mISO = MainScreen.thiz.getSupportedISO().get(0);
+//			else
+//				mISO = null;
+//
+//			// Set appropriate params buttons pressed
+//			setButtonSelected(SceneModeButtons, mSceneMode);
+//			setButtonSelected(WBModeButtons, mWB);
+//			setButtonSelected(FocusModeButtons, mFocusMode);
+//			setButtonSelected(FlashModeButtons, mFlashMode);
+//			setButtonSelected(ISOButtons, mISO);
+//
+//			// Update icons for other camera parameter buttons
+//			RotateImageView but = null;
+//			int icon_id = -1;
+//			if (mWB != null)
+//			{
+//				but = (RotateImageView) topMenuButtons.get(MODE_WB);
+//				icon_id = icons_wb.get(mWB);
+//				but.setImageResource(icon_id);
+//				preferences.edit().putString(MainScreen.sWBModePref, mWB).commit();
+//
+//				Message msg = new Message();
+//				msg.arg1 = PluginManager.MSG_WB_CHANGED;
+//				msg.what = PluginManager.MSG_BROADCAST;
+//				MainScreen.H.sendMessage(msg);
+//			}
+//			if (mFocusMode != null)
+//			{				
+//				try {
+//					but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+//					icon_id = icons_focus.get(mFocusMode);
+//					but.setImageResource(icon_id);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
 //				}
+//				
+//				preferences
+//						.edit()
+//						.putString(
+//								MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+//										: MainScreen.sFrontFocusModePref, mFocusMode)
+//						.commit();
+//
+//				Message msg = new Message();
+//				msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+//				msg.what = PluginManager.MSG_BROADCAST;
+//				MainScreen.H.sendMessage(msg);
+//			}
+//			if (mFlashMode != null)
+//			{
+//				but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
+//				icon_id = icons_flash.get(mFlashMode);
+//				but.setImageResource(icon_id);
+//				preferences.edit().putString(MainScreen.sFlashModePref, mFlashMode)
+//						.commit();
+//
+//				Message msg = new Message();
+//				msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
+//				msg.what = PluginManager.MSG_BROADCAST;
+//				MainScreen.H.sendMessage(msg);
+//			}
+//			if (mISO != null)
+//			{
+//				but = (RotateImageView) topMenuButtons.get(MODE_ISO);
+//				icon_id = icons_iso.get(mISO);
+//				but.setImageResource(icon_id);
+//				preferences.edit().putString(MainScreen.sISOPref, mISO).commit();
+//
+//				Message msg = new Message();
+//				msg.arg1 = PluginManager.MSG_ISO_CHANGED;
+//				msg.what = PluginManager.MSG_BROADCAST;
+//				MainScreen.H.sendMessage(msg);
+//			}
+//			preferences.edit().putString(MainScreen.sSceneModePref, newMode).commit();
+//		}
+//
+//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SCENE);
+//		int icon_id = icons_scene.get(mSceneMode);
+//		but.setImageResource(icon_id);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
+//
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
+	}
+
+	private void setWhiteBalance(int newMode)
+	{
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (newMode != null && params != null)
+//		{
+//			if ((mSceneMode != sceneAuto || mWB != newMode)
+//					&& MainScreen.thiz.mSceneModeSupported)
+//			{
+//				setSceneMode(sceneAuto);
 //				params = MainScreen.thiz.getCameraParameters();
 //			}
-
-			// Save new params value
-			if(wbNew != null && WBModeButtons.containsKey(wbNew))
-				mWB = wbNew;
-			else if(WBModeButtons.containsKey(wbAuto))
-				mWB = wbAuto;
-			else if(params.getSupportedWhiteBalance() != null)
-				mWB = params.getSupportedWhiteBalance().get(0);
-			else
-				mWB = null;
-			
-			if(focusNew != null && FocusModeButtons.containsKey(focusNew))
-				mFocusMode = focusNew;
-			else if(FocusModeButtons.containsKey(focusAuto))
-				mFocusMode = focusAuto;
-			else if(params.getSupportedFocusModes() != null)
-				mFocusMode = params.getSupportedFocusModes().get(0);
-			else
-				mFocusMode = null;
-			
-			if(flashNew != null && FlashModeButtons.containsKey(flashNew))
-				mFlashMode = flashNew;
-			else if(FocusModeButtons.containsKey(flashAuto))
-				mFlashMode = flashAuto;
-			else if(params.getSupportedFlashModes() != null)
-				mFlashMode = params.getSupportedFlashModes().get(0);
-			else
-				mFlashMode = null;
-			
-			if(isoNew != null && ISOButtons.containsKey(isoNew))
-				mISO = isoNew;
-			else if(ISOButtons.containsKey(isoAuto))
-				mISO = isoAuto;
-			else if(MainScreen.thiz.getSupportedISO() != null)
-				mISO = MainScreen.thiz.getSupportedISO().get(0);
-			else
-				mISO = null;
-
-			// Set appropriate params buttons pressed
-			setButtonSelected(SceneModeButtons, mSceneMode);
-			setButtonSelected(WBModeButtons, mWB);
-			setButtonSelected(FocusModeButtons, mFocusMode);
-			setButtonSelected(FlashModeButtons, mFlashMode);
-			setButtonSelected(ISOButtons, mISO);
-
-			// Update icons for other camera parameter buttons
-			RotateImageView but = null;
-			int icon_id = -1;
-			if (mWB != null)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_WB);
-				icon_id = icons_wb.get(mWB);
-				but.setImageResource(icon_id);
-				preferences.edit().putString(sWBModePref, mWB).commit();
-
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_WB_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			if (mFocusMode != null)
-			{				
-				try {
-					but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
-					icon_id = icons_focus.get(mFocusMode);
-					but.setImageResource(icon_id);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
-				}
-				
-				preferences
-						.edit()
-						.putString(
-								MainScreen.getCameraMirrored() ? sRearFocusModePref
-										: sFrontFocusModePref, mFocusMode)
-						.commit();
-
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			if (mFlashMode != null)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-				icon_id = icons_flash.get(mFlashMode);
-				but.setImageResource(icon_id);
-				preferences.edit().putString(sFlashModePref, mFlashMode)
-						.commit();
-
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			if (mISO != null)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_ISO);
-				icon_id = icons_iso.get(mISO);
-				but.setImageResource(icon_id);
-				preferences.edit().putString(sISOPref, mISO).commit();
-
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			preferences.edit().putString(sSceneModePref, newMode).commit();
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SCENE);
-		int icon_id = icons_scene.get(mSceneMode);
-		but.setImageResource(icon_id);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+//
+//			params = MainScreen.thiz.getCameraParameters();
+//			params.setWhiteBalance(newMode);
+//			MainScreen.thiz.setCameraParameters(params);
+//			mWB = newMode;
+//			setButtonSelected(WBModeButtons, mWB);
+//
+//			preferences.edit().putString(MainScreen.sWBModePref, newMode).commit();
+//		}
+//
+//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
+//		int icon_id = icons_wb.get(mWB);
+//		but.setImageResource(icon_id);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
+//
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_WB_CHANGED;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
 	}
 
-	private void setWhiteBalance(String newMode)
+	private void setFocusMode(int newMode)
 	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (newMode != null && params != null)
-		{
-			if ((mSceneMode != sceneAuto || mWB != newMode)
-					&& MainScreen.thiz.mSceneModeSupported)
-			{
-				setSceneMode(sceneAuto);
-				params = MainScreen.thiz.getCameraParameters();
-			}
-
-			params = MainScreen.thiz.getCameraParameters();
-			params.setWhiteBalance(newMode);
-			MainScreen.thiz.setCameraParameters(params);
-			mWB = newMode;
-			setButtonSelected(WBModeButtons, mWB);
-
-			preferences.edit().putString(sWBModePref, newMode).commit();
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
-		int icon_id = icons_wb.get(mWB);
-		but.setImageResource(icon_id);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_WB_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (newMode != null && params != null) {
+//			if (mSceneMode != sceneAuto && mFocusMode != focusAuto)
+//			{
+//				if (MainScreen.thiz.mSceneModeSupported)
+//					setSceneMode(sceneAuto);
+//				params = MainScreen.thiz.getCameraParameters();
+//			}
+//
+//			params = MainScreen.thiz.getCameraParameters();
+//			params.setFocusMode(newMode);
+//			MainScreen.thiz.setCameraParameters(params);
+//			mFocusMode = newMode;
+//			setButtonSelected(FocusModeButtons, mFocusMode);
+//
+//			preferences
+//					.edit()
+//					.putString(
+//							MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+//									: MainScreen.sFrontFocusModePref, newMode).commit();
+//		}
+//
+//		try {
+//			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+//			int icon_id = icons_focus.get(mFocusMode);
+//			but.setImageResource(icon_id);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
+//		}
+//		
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
+//		
+//		MainScreen.setAutoFocusLock(false);
 	}
 
-	private void setFocusMode(String newMode)
+	private void setFlashMode(int newMode)
 	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (newMode != null && params != null) {
-			if (mSceneMode != sceneAuto && mFocusMode != focusAuto)
-			{
-				if (MainScreen.thiz.mSceneModeSupported)
-					setSceneMode(sceneAuto);
-				params = MainScreen.thiz.getCameraParameters();
-			}
-
-			params = MainScreen.thiz.getCameraParameters();
-			params.setFocusMode(newMode);
-			MainScreen.thiz.setCameraParameters(params);
-			mFocusMode = newMode;
-			setButtonSelected(FocusModeButtons, mFocusMode);
-
-			preferences
-					.edit()
-					.putString(
-							MainScreen.getCameraMirrored() ? sRearFocusModePref
-									: sFrontFocusModePref, newMode).commit();
-		}
-
-		try {
-			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
-			int icon_id = icons_focus.get(mFocusMode);
-			but.setImageResource(icon_id);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
-		}
-		
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-		
-		MainScreen.setAutoFocusLock(false);
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (newMode != null && params != null) {
+//			if (mSceneMode != sceneAuto && mFlashMode != flashAuto
+//					&& MainScreen.thiz.mSceneModeSupported)
+//			{
+//				setSceneMode(sceneAuto);
+//				params = MainScreen.thiz.getCameraParameters();
+//			}
+//
+//			params = MainScreen.thiz.getCameraParameters();
+//			params.setFlashMode(newMode);
+//			MainScreen.thiz.setCameraParameters(params);
+//			mFlashMode = newMode;
+//			setButtonSelected(FlashModeButtons, mFlashMode);
+//
+//			preferences.edit().putString(MainScreen.sFlashModePref, newMode).commit();
+//		}
+//
+//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
+//		int icon_id = icons_flash.get(mFlashMode);
+//		but.setImageResource(icon_id);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
+//
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
 	}
 
-	private void setFlashMode(String newMode)
+	private void setISO(int newMode)
 	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (newMode != null && params != null) {
-			if (mSceneMode != sceneAuto && mFlashMode != flashAuto
-					&& MainScreen.thiz.mSceneModeSupported)
-			{
-				setSceneMode(sceneAuto);
-				params = MainScreen.thiz.getCameraParameters();
-			}
-
-			params = MainScreen.thiz.getCameraParameters();
-			params.setFlashMode(newMode);
-			MainScreen.thiz.setCameraParameters(params);
-			mFlashMode = newMode;
-			setButtonSelected(FlashModeButtons, mFlashMode);
-
-			preferences.edit().putString(sFlashModePref, newMode).commit();
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-		int icon_id = icons_flash.get(mFlashMode);
-		but.setImageResource(icon_id);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
-	}
-
-	private void setISO(String newMode)
-	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (newMode != null && params != null)
-		{
-			if (mSceneMode != null && (mSceneMode.compareTo(sceneAuto) != 0 && mISO.compareTo(newMode) != 0)
-					&& MainScreen.thiz.mSceneModeSupported)
-			{
-				setSceneMode(sceneAuto);
-				params = MainScreen.thiz.getCameraParameters();
-			}
-
-			if(params.get(isoParam) != null)
-				params.set(isoParam, newMode);
-			else if(params.get(isoParam2) != null)
-				params.set(isoParam2, newMode);
-			if(false == MainScreen.thiz.setCameraParameters(params))
-			{
-				if(params.get(isoParam) != null)
-					params.set(isoParam, iso_default_values.get(newMode));
-				else if(params.get(isoParam2) != null)
-					params.set(isoParam2, iso_default_values.get(newMode));
-				MainScreen.thiz.setCameraParameters(params);	
-			}
-			mISO = newMode;
-			setButtonSelected(ISOButtons, mISO);
-
-			preferences.edit().putString(sISOPref, newMode).commit();
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ISO);
-		int icon_id = icons_iso.get(mISO);
-		but.setImageResource(icon_id);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (newMode != null && params != null)
+//		{
+//			if (mSceneMode != null && (mSceneMode.compareTo(sceneAuto) != 0 && mISO.compareTo(newMode) != 0)
+//					&& MainScreen.thiz.mSceneModeSupported)
+//			{
+//				setSceneMode(sceneAuto);
+//				params = MainScreen.thiz.getCameraParameters();
+//			}
+//
+//			if(params.get(MainScreen.isoParam) != null)
+//				params.set(MainScreen.isoParam, newMode);
+//			else if(params.get(MainScreen.isoParam2) != null)
+//				params.set(MainScreen.isoParam2, newMode);
+//			if(false == MainScreen.thiz.setCameraParameters(params))
+//			{
+//				if(params.get(MainScreen.isoParam) != null)
+//					params.set(MainScreen.isoParam, iso_default_values.get(newMode));
+//				else if(params.get(MainScreen.isoParam2) != null)
+//					params.set(MainScreen.isoParam2, iso_default_values.get(newMode));
+//				MainScreen.thiz.setCameraParameters(params);	
+//			}
+//			mISO = newMode;
+//			setButtonSelected(ISOButtons, mISO);
+//
+//			preferences.edit().putString(MainScreen.sISOPref, newMode).commit();
+//		}
+//
+//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ISO);
+//		int icon_id = icons_iso.get(mISO);
+//		but.setImageResource(icon_id);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
+//
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
 	}
 	
-	private void setMeteringMode(String newMode)
+	private void setMeteringMode(int newMode)
 	{
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (newMode != null && params != null && !mMeteringMode.contains(newMode))
-		{
-			mMeteringMode = newMode;
-			setButtonSelected(MeteringModeButtons, mMeteringMode);
-
-			preferences.edit().putString(sMeteringModePref, newMode).commit();
-			MainScreen.thiz.setCameraMeteringMode(newMode);
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
-		int icon_id = icons_metering.get(mMeteringMode);
-		but.setImageResource(icon_id);
-
-		initSettingsMenu();
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		if (newMode != null && params != null && !mMeteringMode.contains(newMode))
+//		{
+//			mMeteringMode = newMode;
+//			setButtonSelected(MeteringModeButtons, mMeteringMode);
+//
+//			preferences.edit().putString(MainScreen.sMeteringModePref, newMode).commit();
+//			MainScreen.thiz.setCameraMeteringMode(newMode);
+//		}
+//
+//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
+//		int icon_id = icons_metering.get(mMeteringMode);
+//		but.setImageResource(icon_id);
+//
+//		initSettingsMenu();
+//		hideSecondaryMenus();
+//		unselectPrimaryTopMenuButtons(-1);
 	}
 
 	// Hide all pop-up layouts
@@ -5528,7 +5475,8 @@ public class AlmalenceGUI extends GUI implements
 		if (views != null) {
 			for (int i = 0; i < views.size(); i++) {
 				View param = views.get(i);
-				param.setLayoutParams(params);
+				if(param != null)
+					param.setLayoutParams(params);
 			}
 		}
 
@@ -5567,23 +5515,23 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.H.sendMessage(msg);
 	}
 
-	private void setButtonSelected(Map<String, View> buttonsList,
-			String mode_name) {
-		Set<String> keys = buttonsList.keySet();
-		Iterator<String> it = keys.iterator();
+	private void setButtonSelected(Map<Integer, View> buttonsList,
+			int mode_id) {
+		Set<Integer> keys = buttonsList.keySet();
+		Iterator<Integer> it = keys.iterator();
 		while (it.hasNext()) {
-			String it_button = it.next();
+			int it_button = it.next();
 			((RelativeLayout) buttonsList.get(it_button)).setPressed(false);
 		}
 
-		if ((mode_name != null) && buttonsList.containsKey(mode_name)) {
+		if (buttonsList.containsKey(mode_id)) {
 			RelativeLayout pressed_button = (RelativeLayout) buttonsList
-					.get(mode_name);
+					.get(mode_id);
 			pressed_button.setPressed(false);
 		}
 	}
 
-	private void setCameraParameterValue(int iParameter, String sValue) {
+	private void setCameraParameterValue(int iParameter, int sValue) {
 		switch (iParameter) {
 		case MODE_SCENE:
 			mSceneMode = sValue;
@@ -6827,7 +6775,7 @@ public class AlmalenceGUI extends GUI implements
 		int iEv = progress - MainScreen.thiz.getMaxExposureCompensation();
 		MainScreen.thiz.setCameraExposureCompensation(iEv);
 
-		preferences.edit().putInt(sEvPref, iEv).commit();
+		preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
 
 		mEV = iEv;
 
@@ -6868,7 +6816,7 @@ public class AlmalenceGUI extends GUI implements
 
 			preferences
 					.edit()
-					.putInt(sEvPref,
+					.putInt(MainScreen.sEvPref,
 							Math.round((iEv + minValue)
 									* MainScreen.thiz
 											.getExposureCompensationStep()))
@@ -6902,7 +6850,7 @@ public class AlmalenceGUI extends GUI implements
 
 			preferences
 					.edit()
-					.putInt(sEvPref,
+					.putInt(MainScreen.sEvPref,
 							Math.round((iEv + minValue)
 									* MainScreen.thiz
 											.getExposureCompensationStep()))

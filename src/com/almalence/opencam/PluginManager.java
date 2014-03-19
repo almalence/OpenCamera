@@ -1953,7 +1953,7 @@ public class PluginManager {
 
     private CountDownTimer timer=null;
     
-    public String flashModeBackUp = "";
+    public int flashModeBackUp = -1;
 	
 	final Handler countdownHandler = new Handler();
 	final Handler finalcountdownHandler = new Handler();

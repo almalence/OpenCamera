@@ -93,7 +93,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //		else if (secondCaptured || !firstCaptured)
 //		{
 //			Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-//			Camera.getCameraInfo(MainScreen.CameraIndex,cameraInfo);
+//			Camera.getCameraInfo(CameraController.CameraIndex,cameraInfo);
 //			if (cameraInfo.facing != Camera.CameraInfo.CAMERA_FACING_FRONT)
 //			{
 //				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -115,7 +115,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //		else if (firstCaptured)
 //		{
 //			Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-//			Camera.getCameraInfo(MainScreen.CameraIndex,cameraInfo);
+//			Camera.getCameraInfo(CameraController.CameraIndex,cameraInfo);
 //			if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
 //			{
 //				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -160,7 +160,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //		MainScreen.thiz.MuteShutter(false);
 //		
 //		String fm = MainScreen.thiz.getFocusMode();
-//		if(takingAlready == false && MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE
+//		if(takingAlready == false && MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE
 //				&& fm != null
 //				&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 //				|| fm.equals(Parameters.FOCUS_MODE_FIXED)

@@ -59,7 +59,7 @@ public class HiresPortraitProcessingPlugin //extends PluginProcessing
 //////		PluginManager.getInstance().removeFromSharedMemory("framemirrored2");
 ////
 ////		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-////		Camera.getCameraInfo(MainScreen.CameraIndex,cameraInfo);
+////		Camera.getCameraInfo(CameraController.CameraIndex,cameraInfo);
 ////		if (cameraInfo.facing != Camera.CameraInfo.CAMERA_FACING_FRONT)
 ////		{
 ////			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);

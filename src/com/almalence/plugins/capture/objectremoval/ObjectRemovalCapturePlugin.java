@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -112,8 +113,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			
 			String fm = MainScreen.thiz.getFocusMode();
 	
-			if(fm != null && takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+			if(fm != null && takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
 	        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)

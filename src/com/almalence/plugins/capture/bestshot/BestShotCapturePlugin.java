@@ -30,6 +30,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -157,8 +158,8 @@ public class BestShotCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(true);
 			
 			String fm = MainScreen.thiz.getFocusMode();
-			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& fm != null
 					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)

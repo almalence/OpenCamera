@@ -39,6 +39,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -190,7 +191,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mState = STATE_IDLE;
 		updateFocusUI();
 		
-		MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+		MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
 	}
 	
     @Override
@@ -200,7 +201,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mState = STATE_INACTIVE;
 		updateFocusUI();
 		
-		MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+		MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
 		
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
@@ -265,7 +266,7 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onPause()
 	{
-    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
+    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		releaseSoundPlayer();
 		removeMessages();		
 	}	
@@ -483,7 +484,7 @@ public class FocusVFPlugin extends PluginViewfinder
 //        {
 //            // User has released the focus key before focus completes.
 //            // Do nothing.
-//        	//MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+//        	//MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
 //        }        
 //    }
     
@@ -631,7 +632,7 @@ public class FocusVFPlugin extends PluginViewfinder
     public void onPreviewStarted()
     {
         mState = STATE_IDLE;
-        MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }
 
     public void onPreviewStopped()
@@ -641,7 +642,7 @@ public class FocusVFPlugin extends PluginViewfinder
         // If auto focus was in progress, it would have been canceled.
         updateFocusUI();
         
-        MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }
 
     public void onCameraReleased()
@@ -664,7 +665,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	        mHandler.removeMessages(RESET_TOUCH_FOCUS);
         }
         
-        //MainScreen.setFocusState(MainScreen.FOCUS_STATE_FOCUSING);
+        //MainScreen.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
     }
 
     private void cancelAutoFocus()
@@ -705,12 +706,12 @@ public class FocusVFPlugin extends PluginViewfinder
 //        
 //        //MainScreen.guiManager.cancelAutoFocus();        
 //        mState = STATE_IDLE;
-//        MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+//        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
 //
 //        updateFocusUI();
 //        mHandler.removeMessages(RESET_TOUCH_FOCUS);
         
-        //MainScreen.setFocusState(MainScreen.FOCUS_STATE_IDLE);
+        //MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }   
  
     public void initializeSoundPlayers(AssetFileDescriptor fd_ok, AssetFileDescriptor fd_false)
@@ -759,7 +760,7 @@ public class FocusVFPlugin extends PluginViewfinder
     
     public void setFocusMode(String focus_mode)
     {
-    	mPreferences.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, focus_mode).commit();
+    	mPreferences.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, focus_mode).commit();
     	preferenceFocusMode = focus_mode;
     }
 

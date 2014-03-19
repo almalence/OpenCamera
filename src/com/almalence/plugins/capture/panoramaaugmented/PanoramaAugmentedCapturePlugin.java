@@ -40,6 +40,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -57,6 +58,7 @@ import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -203,7 +205,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
 				
-		final String sizeKey = PREFERENCES_KEY_RESOLUTION + MainScreen.CameraIndex;
+		final String sizeKey = PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex;
 		
 		if (!prefs.contains(sizeKey))
 		{
@@ -277,7 +279,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
-				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+				? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
 	}
 	
 	@Override
@@ -297,7 +299,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		}
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
-        prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
+        prefs.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 	}
 	
 	@Override
@@ -401,10 +403,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 
 		String sUserFocusMode = null;
 		
-		if (MainScreen.supportedFocusModes != null)
+		if (CameraController.supportedFocusModes != null)
 		{
-			if (MainScreen.supportedFocusModes.contains(
-					Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
+//			if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
+			if (MainScreen.isModeAvailable(CameraController.supportedFocusModes,CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE))
 			{
 				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
 			}
@@ -417,7 +419,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	    	PreferenceManager.getDefaultSharedPreferences(
 	    			MainScreen.mainContext).edit().putString(
 	    					MainScreen.getCameraMirrored()
-	    						? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, 
+	    						? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, 
 	    								sUserFocusMode).commit();
     	}
 		
@@ -594,7 +596,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		try
 		{
 			this.prefResolution = Integer.parseInt(prefs.getString(
-					PREFERENCES_KEY_RESOLUTION + MainScreen.CameraIndex, "0"));
+					PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex, "0"));
 		}
 		catch (final Exception e)
 		{
@@ -617,7 +619,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 
 	        if (lp != null)
 	        {
-	        	lp.setKey(PREFERENCES_KEY_RESOLUTION + MainScreen.CameraIndex);
+	        	lp.setKey(PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex);
 	        	
 		        lp.setEntries(entries);
 		        lp.setEntryValues(entryValues);

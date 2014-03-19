@@ -206,11 +206,11 @@ public abstract class Plugin
 //	protected void openCameraFrontOrRear()
 //	{
 //		if (Camera.getNumberOfCameras() > 0) {
-//			MainScreen.thiz.setCamera(Camera.open(MainScreen.CameraIndex));
+//			MainScreen.thiz.setCamera(Camera.open(CameraController.CameraIndex));
 //		}
 //
 //		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-//		Camera.getCameraInfo(MainScreen.CameraIndex,
+//		Camera.getCameraInfo(CameraController.CameraIndex,
 //				cameraInfo);
 //
 //		if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
@@ -315,7 +315,7 @@ public abstract class Plugin
 			}
 		}
 
-		MainScreen.CapIdx = CaptureIdx;
+		CameraController.CapIdx = CaptureIdx;
 		MainScreen.setImageWidth(CaptureWidth);
 		MainScreen.setImageHeight(CaptureHeight);
 		

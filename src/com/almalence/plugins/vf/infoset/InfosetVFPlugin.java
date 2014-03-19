@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.hardware.camera2.CameraCharacteristics;
 import android.os.BatteryManager;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -37,6 +38,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -179,32 +181,32 @@ public class InfosetVFPlugin extends PluginViewfinder
 		Preference flashPref = preferenceFragment.findPreference("useFlashMonitorPrefInfoset");
 		Preference isoPref = preferenceFragment.findPreference("useISOMonitorPrefInfoset");
 		
-		if(MainScreen.thiz.mEVSupported)
+		if(MainScreen.cameraController.mEVSupported)
 			evPref.setEnabled(true);
 		else
 			evPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mSceneModeSupported)
+		if(MainScreen.cameraController.mSceneModeSupported)
 			scenePref.setEnabled(true);
 		else
 			scenePref.setEnabled(false);
 		
-		if(MainScreen.thiz.mWBSupported)
+		if(MainScreen.cameraController.mWBSupported)
 			wbPref.setEnabled(true);
 		else
 			wbPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mFocusModeSupported)
+		if(MainScreen.cameraController.mFocusModeSupported)
 			focusPref.setEnabled(true);
 		else
 			focusPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mFlashModeSupported)
+		if(MainScreen.cameraController.mFlashModeSupported)
 			flashPref.setEnabled(true);
 		else
 			flashPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mISOSupported)
+		if(MainScreen.cameraController.mISOSupported)
 			isoPref.setEnabled(true);
 		else
 			isoPref.setEnabled(false);		
@@ -278,7 +280,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			sceneInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon("auto")));
+//			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon("auto")));
+			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(CameraCharacteristics.CONTROL_MODE_AUTO)));
 			sceneInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(sceneInfoImage);
@@ -288,7 +291,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			wbInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon("auto")));
+//			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon("auto")));
+			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(CameraCharacteristics.CONTROL_AWB_MODE_AUTO)));
 			wbInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(wbInfoImage);
@@ -298,7 +302,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			focusInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon("auto")));
+//			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon("auto")));
+			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(CameraCharacteristics.CONTROL_AF_MODE_AUTO)));
 			focusInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(focusInfoImage);
@@ -308,7 +313,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			flashInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon("auto")));
+//			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon("auto")));
+			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(CameraCharacteristics.FLASH_MODE_SINGLE)));
 			flashInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(flashInfoImage);
@@ -413,13 +419,13 @@ public class InfosetVFPlugin extends PluginViewfinder
 			String scene = MainScreen.thiz.getSceneMode();
 			if(scene != null && scene != "" && sceneInfoImage != null && MainScreen.thiz.isSceneModeSupported())
 			{
-				int scene_id = MainScreen.thiz.getSceneIcon(scene);
-				if(scene_id != -1)
-				{
-					sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(scene_id));
-					sceneInfoImage.setVisibility(View.VISIBLE);
-				}
-				else
+//				int scene_id = MainScreen.thiz.getSceneIcon(scene);
+//				if(scene_id != -1)
+//				{
+//					sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(scene_id));
+//					sceneInfoImage.setVisibility(View.VISIBLE);
+//				}
+//				else
 					sceneInfoImage.setVisibility(View.GONE);
 			}
 			else
@@ -431,13 +437,13 @@ public class InfosetVFPlugin extends PluginViewfinder
 			String wb = MainScreen.thiz.getWBMode();
 			if(wb != null && wb != "" && wbInfoImage != null && MainScreen.thiz.isWhiteBalanceSupported())
 			{
-				int wb_id = MainScreen.thiz.getWBIcon(wb);
-				if(wb_id != -1)
-				{
-					wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(wb_id));
-					wbInfoImage.setVisibility(View.VISIBLE);
-				}
-				else
+//				int wb_id = MainScreen.thiz.getWBIcon(wb);
+//				if(wb_id != -1)
+//				{
+//					wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(wb_id));
+//					wbInfoImage.setVisibility(View.VISIBLE);
+//				}
+//				else
 					wbInfoImage.setVisibility(View.GONE);
 			}
 			else
@@ -449,13 +455,13 @@ public class InfosetVFPlugin extends PluginViewfinder
 			String focus = MainScreen.thiz.getFocusMode();
 			if(focus != null && focus != "" && focusInfoImage != null && MainScreen.thiz.isFocusModeSupported())
 			{
-				int focus_id = MainScreen.thiz.getFocusIcon(focus);
-				if(focus_id != -1)
-				{
-					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
-					focusInfoImage.setVisibility(View.VISIBLE);
-				}
-				else
+//				int focus_id = MainScreen.thiz.getFocusIcon(focus);
+//				if(focus_id != -1)
+//				{
+//					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
+//					focusInfoImage.setVisibility(View.VISIBLE);
+//				}
+//				else
 					focusInfoImage.setVisibility(View.GONE);
 			}
 			else
@@ -467,13 +473,13 @@ public class InfosetVFPlugin extends PluginViewfinder
 			String flash = MainScreen.thiz.getFlashMode();
 			if(flash != null && flash != "" && flashInfoImage != null && MainScreen.thiz.isFlashModeSupported())
 			{
-				int flash_id = MainScreen.thiz.getFlashIcon(flash);
-				if(flash_id != -1)
-				{
-					flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(flash_id));
-					flashInfoImage.setVisibility(View.VISIBLE);
-				}
-				else
+//				int flash_id = MainScreen.thiz.getFlashIcon(flash);
+//				if(flash_id != -1)
+//				{
+//					flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(flash_id));
+//					flashInfoImage.setVisibility(View.VISIBLE);
+//				}
+//				else
 					flashInfoImage.setVisibility(View.GONE);
 			}
 			else
@@ -534,9 +540,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 				String scene = MainScreen.thiz.getSceneMode();
 				if(scene != null && scene != "" && sceneInfoImage != null)
 				{
-					int scene_id = MainScreen.thiz.getSceneIcon(scene);
-					if(scene_id != -1)
-						sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(scene_id));
+//					int scene_id = MainScreen.thiz.getSceneIcon(scene);
+//					if(scene_id != -1)
+//						sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(scene_id));
 				}
 //					sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(scene)));
 			}			
@@ -548,9 +554,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 				String wb = MainScreen.thiz.getWBMode();
 				if(wb != null && wb != "" && wbInfoImage != null)
 				{
-					int wb_id = MainScreen.thiz.getWBIcon(wb);
-					if(wb_id != -1)
-						wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(wb_id));
+//					int wb_id = MainScreen.thiz.getWBIcon(wb);
+//					if(wb_id != -1)
+//						wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(wb_id));
 				}
 //					wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(wb)));
 			}			
@@ -562,9 +568,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 				String focus = MainScreen.thiz.getFocusMode();
 				if(focus != null && focus != "" && focusInfoImage != null)
 				{
-					int focus_id = MainScreen.thiz.getFocusIcon(focus);
-					if(focus_id != -1)
-						focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
+//					int focus_id = MainScreen.thiz.getFocusIcon(focus);
+//					if(focus_id != -1)
+//						focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
 				}
 //					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(focus)));
 			}			
@@ -576,9 +582,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 				String flash = MainScreen.thiz.getFlashMode();
 				if(flash != null && flash != "" && flashInfoImage != null)
 				{
-					int flash_id = MainScreen.thiz.getFlashIcon(flash);
-					if(flash_id != -1)
-						flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(flash_id));
+//					int flash_id = MainScreen.thiz.getFlashIcon(flash);
+//					if(flash_id != -1)
+//						flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(flash_id));
 				}
 				//flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(flash)));
 			}			

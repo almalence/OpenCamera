@@ -56,21 +56,7 @@ Extend GUI class to implement new GUI.
 ***/
 
 public abstract class GUI
-{
-	public final static String sEvPref = "EvCompensationValue";
-	public final static String sSceneModePref = "SceneModeValue";
-	public final static String sWBModePref = "WBModeValue";
-	public final static String sFrontFocusModePref = "FrontFocusModeValue";
-	public final static String sRearFocusModePref = "RearFocusModeValue";
-	public final static String sFlashModePref = "FlashModeValue";
-	public final static String sISOPref = "ISOValue";
-	public final static String sMeteringModePref = "MeteringModeValue";
-	public final static String sDefaultValue = MainScreen.thiz.getResources().getString(R.string.sceneAutoSystem);
-	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
-
-	public final static String isoParam = "iso";
-	public final static String isoParam2 = "iso-speed";
-	
+{	
 	// Flags to know which camera feature supported at current device
 	public boolean mEVSupported = false;	
 	public boolean mSceneModeSupported = false;
@@ -222,13 +208,13 @@ public abstract class GUI
 	 * Supplementary methods for those plugins that need an icons of supported camera parameters (scene, iso, wb, flash, focus)
 	 * Methods return id of drawable icon 
 	*/
-	abstract public int getSceneIcon(String sceneMode);
+	abstract public int getSceneIcon(int sceneMode);
 	
-	abstract public int getWBIcon(String wb);
+	abstract public int getWBIcon(int wb);
 	
-	abstract public int getFocusIcon(String focusMode);
+	abstract public int getFocusIcon(int focusMode);
 	
-	abstract public int getFlashIcon(String flashMode);
+	abstract public int getFlashIcon(int flashMode);
 	
 	abstract public int getISOIcon(String isoMode);
 

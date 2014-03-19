@@ -94,7 +94,7 @@ public class CapturePlugin extends PluginCapture
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-				int currEv = prefs.getInt(GUI.sEvPref, 0);
+				int currEv = prefs.getInt(MainScreen.sEvPref, 0);
 				int newEv = currEv;
 				int minValue = MainScreen.thiz.getMinExposureCompensation();
 				float expStep = MainScreen.thiz.getExposureCompensationStep();
@@ -139,7 +139,7 @@ public class CapturePlugin extends PluginCapture
 		if (ModePreference.compareTo("0") == 0)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			int currEv = prefs.getInt(GUI.sEvPref, 0);
+			int currEv = prefs.getInt(MainScreen.sEvPref, 0);
 			int newEv = currEv;
 			int minValue = MainScreen.thiz.getMinExposureCompensation();
 			newEv -= 1;
@@ -236,8 +236,8 @@ public class CapturePlugin extends PluginCapture
 //			
 //			String fm = MainScreen.thiz.getFocusMode();
 //			int fs = MainScreen.getFocusState();
-//			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-//					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
+//			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+//					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 //					&& fm != null
 //					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 //					|| fm.equals(Parameters.FOCUS_MODE_FIXED)
@@ -251,6 +251,8 @@ public class CapturePlugin extends PluginCapture
 //				takePicture();
 //			}			
 //		}
+		
+		Log.e("CapturePlugin", "onShutterClick");
 		
 		if(ModePreference.compareTo("0") == 0)
 			MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
@@ -390,6 +392,7 @@ public class CapturePlugin extends PluginCapture
 		
 		if(im.getFormat() == ImageFormat.YUV_420_888)
 		{
+			Log.e("CapturePlugin", "YUV Image received");
 			ByteBuffer Y = im.getPlanes()[0].getBuffer();
 			ByteBuffer U = im.getPlanes()[1].getBuffer();
 			ByteBuffer V = im.getPlanes()[2].getBuffer();
@@ -423,6 +426,7 @@ public class CapturePlugin extends PluginCapture
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
 		{
+			Log.e("CapturePlugin", "JPEG Image received");
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 			
 			frame_len = jpeg.limit();
