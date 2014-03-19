@@ -58,8 +58,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private static final int TIP_FRAMES_COUNT = 2;
 	
-	public static final float FRAME_INTERSECTION_PART = 0.30f; // 0.37f;
-
+	public static final float FRAME_INTERSECTION_PART = 0.30f; // 0.37f;// how much panorama frames should intersect
+	public static final float FRAME_MISS_DISTANCE = 0.1f;	// 0.2f;	// maximum allowed miss from ideal frame position 
+	
 	public static final long FRAME_WHITE_FADE_IN = 500;
 	public static final long FRAME_WHITE_FADE_OUT = 400;
 	
@@ -750,7 +751,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			goodPlace = (framesCount == 0)
 					|| (this.state == STATE_TAKINGPICTURE
-						&& targetFrame.distance() < 0.2f);
+						&& targetFrame.distance() < FRAME_MISS_DISTANCE);
 		}
 
 		if (goodPlace)
