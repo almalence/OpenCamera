@@ -129,7 +129,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = true;
+	public static boolean isHALv3 = false;
 
 	private Object syncObject = new Object();
 
@@ -151,8 +151,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //	cameraAvailableListener availListener = null;
 //	private static CameraDevice camDevice = null;
 //	CaptureRequest.Builder previewRequestBuilder = null;
-	private static ImageReader mImageReaderYUV;
-	private static ImageReader mImageReaderJPEG;
+	public static ImageReader mImageReaderYUV;
+	public static ImageReader mImageReaderJPEG;
 //	String[] cameraIdList={""};
 //	
 //	public static boolean cameraConfigured = false;
@@ -179,9 +179,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	// shared between activities
 	public static int surfaceWidth, surfaceHeight;
-	private static int imageWidth, imageHeight;
+	public static int imageWidth, imageHeight;
 	public static int previewWidth, previewHeight;
-	private static int saveImageWidth, saveImageHeight;
+	public static int saveImageWidth, saveImageHeight;
 //	public static PowerManager pm = null;
 
 	private CountDownTimer ScreenTimer = null;
@@ -715,26 +715,29 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{			
 			if(!isHALv3)
 			{
-				new CountDownTimer(50, 50) 
-				{
-					public void onTick(long millisUntilFinished)
-					{
-					}
-	
-					public void onFinish()
-					{
-						onResumeMain(false);
-					}
-				}.start();
+				onResumeMain(isHALv3);
+//				new CountDownTimer(50, 50) 
+//				{
+//					@Override
+//					public void onTick(long millisUntilFinished)
+//					{
+//					}
+//	
+//					@Override
+//					public void onFinish()
+//					{
+//						onResumeMain(isHALv3);
+//					}
+//				}.start();
 			}
 			else
 			{
-				onResumeMain(true);
+				onResumeMain(isHALv3);
 			}
 		}
 	}
 	
-	private void onResumeMain(boolean isHALv3)
+	public void onResumeMain(boolean isHALv3)
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -767,15 +770,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		if(isHALv3)
 		{
-			setupCamera(null);
+			cameraController.setupCamera(null);
 		}
 		else
 		{
 			if (surfaceCreated && (CameraController.camera == null)) {
 				MainScreen.thiz.findViewById(R.id.mainLayout2)
 						.setVisibility(View.VISIBLE);
-				setupCamera(surfaceHolder);				
-			}			
+				cameraController.setupCamera(surfaceHolder);				
+			}
 		}
 
 		if (glView != null && CameraController.camDevice != null)
@@ -905,63 +908,49 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		if (!isCreating)
 		{
-//			new CountDownTimer(50, 50) {
-//				public void onTick(long millisUntilFinished) {
-//
+			if(!isHALv3)
+			{
+				onSurfaceChangedMain(holder, width, height);
+//			new CountDownTimer(50, 50) 
+//			{
+//				public void onTick(long millisUntilFinished)
+//				{
 //				}
-//
-//				public void onFinish() {
-//					SharedPreferences prefs = PreferenceManager
-//							.getDefaultSharedPreferences(MainScreen.mainContext);
-//					CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-//							: 1;
-//					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-//							false);
-//					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-//							false);
-//					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
-//							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-//					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-//
-//					if (!MainScreen.thiz.mPausing && surfaceCreated
-//							&& (camera == null)) {
-//						surfaceWidth = width;
-//						surfaceHeight = height;
-//						MainScreen.thiz.findViewById(R.id.mainLayout2)
-//								.setVisibility(View.VISIBLE);
-//						
-//						H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
-////						setupCamera(holder);
-////						PluginManager.getInstance().onGUICreate();
-////						MainScreen.guiManager.onGUICreate();
-//					}
+//				public void onFinish()
+//				{
+//					onSurfaceChangedMain(holder, width, height);
 //				}
 //			}.start();
-			
-			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.mainContext);
-			CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-					: 1;
-			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-					false);
-			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-					false);
-			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-					"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-
-			if (!MainScreen.thiz.mPausing && surfaceCreated
-					&& (CameraController.camera == null)) {
-				surfaceWidth = width;
-				surfaceHeight = height;
-				MainScreen.thiz.findViewById(R.id.mainLayout2)
-						.setVisibility(View.VISIBLE);
-				
-				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
-//				setupCamera(holder);
-//				PluginManager.getInstance().onGUICreate();
-//				MainScreen.guiManager.onGUICreate();
 			}
+			else
+			{
+				onSurfaceChangedMain(holder, width, height);
+			}
+			
+//			SharedPreferences prefs = PreferenceManager
+//					.getDefaultSharedPreferences(MainScreen.mainContext);
+//			CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+//					: 1;
+//			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+//					false);
+//			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+//					false);
+//			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+//					"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+//			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+//
+//			if (!MainScreen.thiz.mPausing && surfaceCreated
+//					&& (CameraController.camera == null)) {
+//				surfaceWidth = width;
+//				surfaceHeight = height;
+//				MainScreen.thiz.findViewById(R.id.mainLayout2)
+//						.setVisibility(View.VISIBLE);
+//				
+//				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+////				setupCamera(holder);
+////				PluginManager.getInstance().onGUICreate();
+////				MainScreen.guiManager.onGUICreate();
+//			}
 		}
 		else {
 			SharedPreferences prefs = PreferenceManager
@@ -975,339 +964,102 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					"-1");
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
-			if (!MainScreen.thiz.mPausing && surfaceCreated && (CameraController.camera == null)) {
+			if (!MainScreen.thiz.mPausing && surfaceCreated) {
 				surfaceWidth = width;
 				surfaceHeight = height;
 			}
 		}
 	}
+	
+	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
+	{
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+				: 1;
+		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+				false);
+		ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+				false);
+		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
-
-//	@TargetApi(9)
-//	protected void openCameraFrontOrRear() {
-//		if (Camera.getNumberOfCameras() > 0) {
-//			camera = Camera.open(CameraController.CameraIndex);
-//		}
-//
-//		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-//		Camera.getCameraInfo(CameraIndex, cameraInfo);
-//
-//		if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-//			CameraMirrored = true;
-//		else
-//			CameraMirrored = false;
-//	}
-
-	public void setupCamera(SurfaceHolder surface) {
-//		if (camera == null) {
-//			try {
-//				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-//					openCameraFrontOrRear();
-//				} else {
-//					camera = Camera.open();
-//				}
-//			} catch (RuntimeException e) {
-//				camera = null;
-//			}
-//
-//			if (camera == null) {
-//				Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-//				return;
-//			}
-//		}
-//		
-//		cameraParameters = camera.getParameters(); //Initialize of camera parameters variable
-
-
-
-
-
-		// HALv3 open camera -----------------------------------------------------------------
-		try
-		{
-			cameraController.manager.openCamera (cameraController.cameraIdList[CameraController.CameraIndex], new openListener(), null);
+		if (!MainScreen.thiz.mPausing && surfaceCreated
+				&& (CameraController.camera == null)) {
+			surfaceWidth = width;
+			surfaceHeight = height;
+			MainScreen.thiz.findViewById(R.id.mainLayout2)
+					.setVisibility(View.VISIBLE);			
+			
+			if(isHALv3)
+				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+			else
+			{
+				cameraController.setupCamera(holder);
+				PluginManager.getInstance().onGUICreate();
+				MainScreen.guiManager.onGUICreate();
+			}
 		}
-		catch (CameraAccessException e)
-		{
-			Log.d("MainScreen", "manager.openCamera failed");
-			e.printStackTrace();
-		}
-		
-		// find suitable image sizes for preview and capture
-		try	{
-			CameraController.camCharacter = cameraController.manager.getCameraCharacteristics(cameraController.cameraIdList[CameraController.CameraIndex]);
-		} catch (CameraAccessException e) {
-			Log.d("MainScreen", "getCameraCharacteristics failed");
-			e.printStackTrace();
-		}
-		
-		if (CameraController.camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT)
-			CameraController.CameraMirrored = true;
-		else
-			CameraController.CameraMirrored = false;
-		
-		// Add an Availability Listener as Cameras become available or unavailable
-		cameraController.availListener = cameraController.new cameraAvailableListener();
-		cameraController.manager.addAvailabilityListener(cameraController.availListener, null);
-		
-		cameraController.mVideoStabilizationSupported = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null? false : true;
-		
-		// check that full hw level is supported
-		if (CameraController.camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) != CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) 
-			H.sendEmptyMessage(PluginManager.MSG_NOT_LEVEL_FULL);		
-		// ^^ HALv3 open camera -----------------------------------------------------------------		
-		
-		
-		
-		
-		
-		
-//		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-//	    	mVideoStabilizationSupported = isVideoStabilizationSupported();
-
-		PluginManager.getInstance().SelectDefaults();
-
-		// screen rotation
-//		try {
-//			camera.setDisplayOrientation(90);
-//		} catch (RuntimeException e) {
-//			e.printStackTrace();
-//		}
-//
-//		try {
-//			camera.setPreviewDisplay(holder);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//		if (MainScreen.camera == null)
-//			return;
-		//Camera.Parameters cp = MainScreen.cameraParameters;
-		
-		PopulateCameraDimensions();
-		CameraController.ResolutionsMPixListIC = CameraController.ResolutionsMPixList;
-		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
-		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
-
-		PluginManager.getInstance().SelectImageDimension(); // updates SX, SY
-															// values
-
-		
-		//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
-		surfaceHolder.setFixedSize(1280, 720);
-		surfaceHolder.addCallback(this);
-		
-		// HALv3 code -------------------------------------------------------------------
-//		if (mImageReader == null)
-//		{
-//	        mImageReader = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 2);
-//			mImageReader.setOnImageAvailableListener(new imageAvailableListener(), null);
-//		}
-		
-		mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 2);
-		mImageReaderYUV.setOnImageAvailableListener(new imageAvailableListener(), null);
-		
-		mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 2);
-		mImageReaderJPEG.setOnImageAvailableListener(new imageAvailableListener(), null);
-		
-		// prepare list of surfaces to be used in capture requests
-//		List<Surface> sfl = new ArrayList<Surface>();
-//		
-//		sfl.add(mCameraSurface);				// surface for viewfinder preview		
-//		sfl.add(mImageReader.getSurface());		// surface for image capture
-//
-//		// configure camera with all the surfaces to be ever used
-//		try {
-//			camDevice.configureOutputs(sfl);
-//		} catch (CameraAccessException e)	{
-//			Log.d("MainScreen", "setting up configureOutputs failed");
-//			e.printStackTrace();
-//		}
-//		
-//		try
-//		{
-//			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-//			previewRequestBuilder.addTarget(mCameraSurface);			
-//		}
-//		catch (CameraAccessException e)
-//		{
-//			Log.d("MainScreen", "setting up preview failed");
-//			e.printStackTrace();
-//		}
-//		// ^^ HALv3 code -------------------------------------------------------------------
-//		
-//		
-//		
-//		// ----- Select preview dimensions with ratio correspondent to full-size
-//		// image
-////		PluginManager.getInstance().SetCameraPreviewSize(cameraParameters);
-////
-////		guiManager.setupViewfinderPreviewSize(cameraParameters);
-//
-////		Size previewSize = cameraParameters.getPreviewSize();
-//
-//		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
-//			if (glView == null) {
-//				glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
-//				glView.setLayoutParams(new LayoutParams(
-//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-//				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-//						glView, 1);
-//				glView.setZOrderMediaOverlay(true);
-//				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-//			}
-//		} else {
-//			((RelativeLayout) findViewById(R.id.mainLayout2))
-//					.removeView(glView);
-//			glView = null;
-//		}
-//
-//		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) preview
-//				.getLayoutParams();
-//		if (glView != null) {
-//			glView.setVisibility(View.VISIBLE);
-//			glView.setLayoutParams(lp);
-//		} else {
-//			if (glView != null)
-//				glView.setVisibility(View.GONE);
-//		}
-//
-////		pviewBuffer = new byte[previewSize.width
-////				* previewSize.height
-////				* ImageFormat.getBitsPerPixel(cameraParameters
-////						.getPreviewFormat()) / 8];
-//
-////		camera.setErrorCallback(MainScreen.thiz);
-//
-//		supportedSceneModes = getSupportedSceneModes();
-//		supportedWBModes = getSupportedWhiteBalance();
-//		supportedFocusModes = getSupportedFocusModes();
-//		supportedFlashModes = getSupportedFlashModes();
-//		supportedISOModes = getSupportedISO();
-//
-//		PluginManager.getInstance().SetCameraPictureSize();
-//		PluginManager.getInstance().SetupCameraParameters();
-//		//cp = cameraParameters;
-//
-////		try {
-////			//Log.i("CameraTest", Build.MODEL);
-////			if (Build.MODEL.contains("Nexus 5"))
-////			{
-////				cameraParameters.setPreviewFpsRange(7000, 30000);
-////				setCameraParameters(cameraParameters);
-////			}
-////			
-////			//Log.i("CameraTest", "fps ranges "+range.size()+" " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] + " " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-////			//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-////			//cameraParameters.setPreviewFpsRange(7000, 30000);
-////			// an obsolete but much more reliable way of setting preview to a reasonable fps range
-////			// Nexus 5 is giving preview which is too dark without this
-////			//cameraParameters.setPreviewFrameRate(30);
-////		
-////			
-////		} catch (RuntimeException e) {
-////			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
-////					+ e.getMessage());
-////		}
-////
-////		previewWidth = cameraParameters.getPreviewSize().width;
-////		previewHeight = cameraParameters.getPreviewSize().height;
-//
-////		Util.initialize(mainContext);
-////		Util.initializeMeteringMatrix();
-////		
-////		prepareMeteringAreas();
-//
-//		guiManager.onCameraCreate();
-//		PluginManager.getInstance().onCameraParametersSetup();
-//		guiManager.onPluginsInitialized();
-//
-//		// ----- Start preview and setup frame buffer if needed
-//
-//		// ToDo: call camera release sequence from onPause somewhere ???
-//		new CountDownTimer(10, 10) {
-//			@Override
-//			public void onFinish() {
-////				try // exceptions sometimes happen here when resuming after
-////					// processing
-////				{
-////					camera.startPreview();
-////				} catch (RuntimeException e) {
-////					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-////					return;
-////				}
-////
-////				camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
-////				camera.addCallbackBuffer(pviewBuffer);
-//
-//				PluginManager.getInstance().onCameraSetup();
-//				guiManager.onCameraSetup();
-//				MainScreen.mApplicationStarted = true;
-//			}
-//
-//			@Override
-//			public void onTick(long millisUntilFinished) {
-//			}
-//		}.start();
-	}
+	}	
 	
 	
 	public void configureCamera()
 	{
 		Log.e("MainScreen", "configureCamera()");
 		// prepare list of surfaces to be used in capture requests
-		List<Surface> sfl = new ArrayList<Surface>();
-		
-		sfl.add(mCameraSurface);				// surface for viewfinder preview		
-		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-		sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
-
-		// configure camera with all the surfaces to be ever used
-		try {
-			CameraController.camDevice.configureOutputs(sfl);
-		} catch (CameraAccessException e)	{
-			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
-			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e) 
+		if(isHALv3)
 		{
-			Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
-			e.printStackTrace();
-		}
-		catch (IllegalStateException e) 
-		{
-			Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
-			e.printStackTrace();
-		}
-		
-		try
-		{
-			cameraController.previewRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-			cameraController.previewRequestBuilder.addTarget(mCameraSurface);
+			List<Surface> sfl = new ArrayList<Surface>();
+			
+			sfl.add(mCameraSurface);				// surface for viewfinder preview		
+			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+			sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+	
+			// configure camera with all the surfaces to be ever used
 			try {
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
-			} catch (CameraAccessException e) {
+				CameraController.camDevice.configureOutputs(sfl);
+			} catch (CameraAccessException e)	{
+				Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
 				e.printStackTrace();
 			}
+			catch (IllegalArgumentException e) 
+			{
+				Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
+				e.printStackTrace();
+			}
+			catch (IllegalStateException e) 
+			{
+				Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
+				e.printStackTrace();
+			}
+			
+			try
+			{
+				cameraController.previewRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+				cameraController.previewRequestBuilder.addTarget(mCameraSurface);
+				try {
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				} catch (CameraAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			catch (CameraAccessException e)
+			{
+				Log.d("MainScreen", "setting up preview failed");
+				e.printStackTrace();
+			}
+			// ^^ HALv3 code -------------------------------------------------------------------
 		}
-		catch (CameraAccessException e)
+		else
 		{
-			Log.d("MainScreen", "setting up preview failed");
-			e.printStackTrace();
+			// ----- Select preview dimensions with ratio correspondent to full-size
+			// image
+			PluginManager.getInstance().SetCameraPreviewSize(CameraController.cameraParameters);
+	
+			guiManager.setupViewfinderPreviewSize(CameraController.cameraParameters);
 		}
-		// ^^ HALv3 code -------------------------------------------------------------------
-		
-		
-		
-		// ----- Select preview dimensions with ratio correspondent to full-size
-		// image
-//				PluginManager.getInstance().SetCameraPreviewSize(cameraParameters);
-//
-//				guiManager.setupViewfinderPreviewSize(cameraParameters);
-
-//				Size previewSize = cameraParameters.getPreviewSize();
 
 		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
 			if (glView == null) {
@@ -1335,12 +1087,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				glView.setVisibility(View.GONE);
 		}
 
-//				pviewBuffer = new byte[previewSize.width
-//						* previewSize.height
-//						* ImageFormat.getBitsPerPixel(cameraParameters
-//								.getPreviewFormat()) / 8];
-
-//				camera.setErrorCallback(MainScreen.thiz);
+////				pviewBuffer = new byte[previewSize.width
+////						* previewSize.height
+////						* ImageFormat.getBitsPerPixel(cameraParameters
+////								.getPreviewFormat()) / 8];
+//
+////				camera.setErrorCallback(MainScreen.thiz);
 
 		CameraController.supportedSceneModes = getSupportedSceneModes();
 		CameraController.supportedWBModes = getSupportedWhiteBalance();
@@ -1352,36 +1104,39 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().SetupCameraParameters();
 		//cp = cameraParameters;
 
-//				try {
-//					//Log.i("CameraTest", Build.MODEL);
-//					if (Build.MODEL.contains("Nexus 5"))
-//					{
-//						cameraParameters.setPreviewFpsRange(7000, 30000);
-//						setCameraParameters(cameraParameters);
-//					}
-//					
-//					//Log.i("CameraTest", "fps ranges "+range.size()+" " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] + " " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-//					//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-//					//cameraParameters.setPreviewFpsRange(7000, 30000);
-//					// an obsolete but much more reliable way of setting preview to a reasonable fps range
-//					// Nexus 5 is giving preview which is too dark without this
-//					//cameraParameters.setPreviewFrameRate(30);
-//				
-//					
-//				} catch (RuntimeException e) {
-//					Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
-//							+ e.getMessage());
-//				}
-//
-////				previewWidth = cameraParameters.getPreviewSize().width;
-////				previewHeight = cameraParameters.getPreviewSize().height;
+		if(!isHALv3)
+		{
+			try {
+				//Log.i("CameraTest", Build.MODEL);
+				if (Build.MODEL.contains("Nexus 5"))
+				{
+					CameraController.cameraParameters.setPreviewFpsRange(7000, 30000);
+					setCameraParameters(CameraController.cameraParameters);
+				}
+				
+				//Log.i("CameraTest", "fps ranges "+range.size()+" " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] + " " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+				//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+				//cameraParameters.setPreviewFpsRange(7000, 30000);
+				// an obsolete but much more reliable way of setting preview to a reasonable fps range
+				// Nexus 5 is giving preview which is too dark without this
+				//cameraParameters.setPreviewFrameRate(30);
+			
+				
+			} catch (RuntimeException e) {
+				Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
+						+ e.getMessage());
+			}
+
 //				previewWidth = cameraParameters.getPreviewSize().width;
 //				previewHeight = cameraParameters.getPreviewSize().height;
+			previewWidth = CameraController.cameraParameters.getPreviewSize().width;
+			previewHeight = CameraController.cameraParameters.getPreviewSize().height;
+		}
 
-//				Util.initialize(mainContext);
-//				Util.initializeMeteringMatrix();
+				Util.initialize(mainContext);
+				Util.initializeMeteringMatrix();
 //				
-//				prepareMeteringAreas();
+				prepareMeteringAreas();
 
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
@@ -1390,20 +1145,25 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// ----- Start preview and setup frame buffer if needed
 
 		// ToDo: call camera release sequence from onPause somewhere ???
-		new CountDownTimer(10, 10) {
+		new CountDownTimer(10, 10)
+		{
 			@Override
-			public void onFinish() {
-//						try // exceptions sometimes happen here when resuming after
-//							// processing
-//						{
-//							camera.startPreview();
-//						} catch (RuntimeException e) {
-//							Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-//							return;
-//						}
-//
-//						camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
-//						camera.addCallbackBuffer(pviewBuffer);
+			public void onFinish() 
+			{
+				if(!isHALv3)
+				{
+					try // exceptions sometimes happen here when resuming after
+						// processing
+					{
+						CameraController.camera.startPreview();
+					} catch (RuntimeException e) {
+						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						return;
+					}
+	
+					CameraController.camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
+					CameraController.camera.addCallbackBuffer(pviewBuffer);
+				}
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
@@ -1416,119 +1176,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}.start();		
 	}
-	
-	
-	// HALv3 ------------------------------------------------ camera-related listeners
-
-		// Note: never received onCameraAvailable notifications, only onCameraUnavailable
-		private class cameraAvailableListener extends CameraManager.AvailabilityListener
-		{
-			@Override
-			public void onCameraAvailable(java.lang.String cameraId)
-			{
-				// should we call this?
-				super.onCameraAvailable(cameraId);
-				
-				Log.d("MainScreen", "CameraManager.AvailabilityListener.onCameraAvailable");
-			}
-			
-			@Override
-			public void onCameraUnavailable(java.lang.String cameraId)
-			{
-				// should we call this?
-				super.onCameraUnavailable(cameraId);
-				
-				Log.d("MainScreen", "CameraManager.AvailabilityListener.onCameraUnavailable");
-			}
-		}
-
-		private class openListener extends CameraDevice.StateListener
-		{
-			@Override
-			public void onDisconnected(CameraDevice arg0) {
-				Log.d("MainScreen", "CameraDevice.StateListener.onDisconnected");
-			}
-
-			@Override
-			public void onError(CameraDevice arg0, int arg1) {
-				Log.d("MainScreen", "CameraDevice.StateListener.onError: "+arg1);
-			}
-
-			@Override
-			public void onOpened(CameraDevice arg0)
-			{
-				Log.d("MainScreen", "CameraDevice.StateListener.onOpened");
-
-				CameraController.camDevice = arg0;
-				
-				H.sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
-
-				//dumpCameraCharacteristics();
-			}
-		}
-
-		// Note: there other onCaptureXxxx methods in this listener which we do not implement
-		private class captureListener extends CameraDevice.CaptureListener
-		{
-			@Override
-			public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
-			{
-				Log.d("MainScreen", "CameraDevice.CaptureListener.onCaptureCompleted");
-				
-				// Note: result arriving here is just image metadata, not the image itself
-				// good place to extract sensor gain and other parameters
-
-				// Note: not sure which units are used for exposure time (ms?)
-//				currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-//				currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
-				
-				//dumpCaptureResult(result);
-				try {
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
-				} catch (CameraAccessException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		private class imageAvailableListener implements ImageReader.OnImageAvailableListener
-		{
-			@Override
-			public void onImageAvailable(ImageReader ir)
-			{
-				Log.e("MainScreen", "ImageReader.OnImageAvailableListener.onImageAvailable");
-				
-				// Contrary to what is written in Aptina presentation acquireLatestImage is not working as described
-				// Google: Also, not working as described in android docs (should work the same as acquireNextImage in our case, but it is not)
-				//Image im = ir.acquireLatestImage();
-				Image im = ir.acquireNextImage();
-				
-				PluginManager.getInstance().onImageAvailable(im);
-				CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
-				
-//				if (nFrame<NUM_FRAMES)
-//					ExtractCentralCrop(im, nFrame);
-//				else
-//					ExtractDigitalZoomImage(im, nFrame);
-//				
-//				++nFrame;
-//				
-//				// dump image data as-is to file
-//				//dumpImageData(im);
-//				
-//				// Image should be closed after we are done with it
-				im.close();
-//				
-//				if (nFrame==NUM_FRAMES+1)
-//					H.sendEmptyMessage(MSG_PROCESS);
-//				//else
-//				//	H.sendEmptyMessage(MSG_CAPTURE_NEXT);
-			}
-		}
-	// ^^ HALv3 code -------------------------------------------------------------- camera-related listeners
-		
-		
-		
 		
 	
 	private void prepareMeteringAreas()
@@ -1563,140 +1210,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		mMeteringAreaSpot.add(new Area(spotRect, 1000));
 	}
 
-	public static void PopulateCameraDimensions() {
-		CameraController.ResolutionsMPixList = new ArrayList<Long>();
-		CameraController.ResolutionsIdxesList = new ArrayList<String>();
-		CameraController.ResolutionsNamesList = new ArrayList<String>();
-
-		////For debug file
-//		File saveDir = PluginManager.getInstance().GetSaveDir();
-//		File file = new File(
-//        		saveDir, 
-//        		"!!!ABC_DEBUG_COMMON.txt");
-//		if (file.exists())
-//		    file.delete();
-//		try {
-//			String data = "";
-//			data = cp.flatten();
-//			FileOutputStream out;
-//			out = new FileOutputStream(file);
-//			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.write(data);
-//			outputStreamWriter.flush();
-//			outputStreamWriter.close();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-		//List<Camera.Size> cs;
-		//int MinMPIX = MIN_MPIX_SUPPORTED;
-		//cs = cp.getSupportedPictureSizes();
-		
-		int MinMPIX = CameraController.MIN_MPIX_SUPPORTED;
-		CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
-    	Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
-
-		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
-
-		int iHighestIndex = 0;
-		Size sHighest = cs[iHighestIndex];
-
-//		/////////////////////////		
-//		try {
-//			File saveDir2 = PluginManager.getInstance().GetSaveDir();
-//			File file2 = new File(
-//	        		saveDir2, 
-//	        		"!!!ABC_DEBUG.txt");
-//			if (file2.exists())
-//			    file2.delete();
-//			FileOutputStream out2;
-//			out2 = new FileOutputStream(file2);
-//			OutputStreamWriter outputStreamWriter2 = new OutputStreamWriter(out2);
-//
-//			for (int ii = 0; ii < cs.size(); ++ii) {
-//				Size s = cs.get(ii);
-//					String data = "cs.size() = "+cs.size()+ " " +"size "+ ii + " = " + s.width + "x" +s.height;
-//					outputStreamWriter2.write(data);
-//					outputStreamWriter2.flush();
-//			}
-//			outputStreamWriter2.close();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		/////////////////////////
-		
-		int ii = 0;
-		for(Size s : cs)
-		{
-//		for (int ii = 0; ii < cs.size(); ++ii) {
-//			Size s = cs.get(ii);
-
-			if ((long) s.getWidth() * s.getHeight() > (long) sHighest.getWidth()
-					* sHighest.getHeight()) {
-				sHighest = s;
-				iHighestIndex = ii;
-			}
-
-			if ((long) s.getWidth() * s.getHeight() < MinMPIX)
-				continue;
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			// find good location in a list
-			int loc;
-			for (loc = 0; loc < CameraController.ResolutionsMPixList.size(); ++loc)
-				if (CameraController.ResolutionsMPixList.get(loc) < lmpix)
-					break;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(loc,
-					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
-			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			
-			ii++;
-		}
-
-		if (CameraController.ResolutionsNamesList.size() == 0) {
-			Size s = cs[iHighestIndex];
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(0,
-					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(0, String.format("%d", 0));
-			CameraController.ResolutionsMPixList.add(0, lmpix);
-		}
-
-		return;
-	}
+	
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
@@ -2549,7 +2063,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			
 			// requests for SZ input frames
 			for (int n=0; n<nFrames; ++n)
-				CameraController.camDevice.capture(stillRequestBuilder.build(), MainScreen.thiz.new captureListener() , null);
+				CameraController.camDevice.capture(stillRequestBuilder.build(), cameraController.new captureListener() , null);
 			
 			// One more capture for comparison with a standard frame
 //			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
