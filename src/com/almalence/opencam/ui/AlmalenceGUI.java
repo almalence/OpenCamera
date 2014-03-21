@@ -112,6 +112,7 @@ import com.almalence.ui.Panel.OnPanelListener;
 
 import com.almalence.googsharing.Thumbnail;
 
+import com.almalence.opencam.CameraController;
 //<!-- -+-
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
@@ -196,91 +197,7 @@ public class AlmalenceGUI extends GUI implements
 	private final static Integer icon_cam = R.drawable.gui_almalence_settings_changecamera;
 	private final static Integer icon_settings = R.drawable.gui_almalence_settings_more_settings;
 
-	// Android camera parameters constants
-//	private final static String sceneAuto = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneAutoSystem);
-//	private final static String sceneAction = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneActionSystem);
-//	private final static String scenePortrait = MainScreen.thiz.getResources()
-//			.getString(R.string.scenePortraitSystem);
-//	private final static String sceneLandscape = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneLandscapeSystem);
-//	private final static String sceneNight = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneNightSystem);
-//	private final static String sceneNightPortrait = MainScreen.thiz
-//			.getResources().getString(R.string.sceneNightPortraitSystem);
-//	private final static String sceneTheatre = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneTheatreSystem);
-//	private final static String sceneBeach = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneBeachSystem);
-//	private final static String sceneSnow = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneSnowSystem);
-//	private final static String sceneSunset = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneSunsetSystem);
-//	private final static String sceneSteadyPhoto = MainScreen.thiz
-//			.getResources().getString(R.string.sceneSteadyPhotoSystem);
-//	private final static String sceneFireworks = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneFireworksSystem);
-//	private final static String sceneSports = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneSportsSystem);
-//	private final static String sceneParty = MainScreen.thiz.getResources()
-//			.getString(R.string.scenePartySystem);
-//	private final static String sceneCandlelight = MainScreen.thiz
-//			.getResources().getString(R.string.sceneCandlelightSystem);
-//	private final static String sceneBarcode = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneBarcodeSystem);
-//	private final static String sceneHDR = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneHDRSystem);
-//	private final static String sceneAR = MainScreen.thiz.getResources()
-//			.getString(R.string.sceneARSystem);
-
-	private final static String wbAuto = MainScreen.thiz.getResources()
-			.getString(R.string.wbAutoSystem);
-	private final static String wbIncandescent = MainScreen.thiz.getResources()
-			.getString(R.string.wbIncandescentSystem);
-	private final static String wbFluorescent = MainScreen.thiz.getResources()
-			.getString(R.string.wbFluorescentSystem);
-	private final static String wbWarmFluorescent = MainScreen.thiz
-			.getResources().getString(R.string.wbWarmFluorescentSystem);
-	private final static String wbDaylight = MainScreen.thiz.getResources()
-			.getString(R.string.wbDaylightSystem);
-	private final static String wbCloudyDaylight = MainScreen.thiz
-			.getResources().getString(R.string.wbCloudyDaylightSystem);
-	private final static String wbTwilight = MainScreen.thiz.getResources()
-			.getString(R.string.wbTwilightSystem);
-	private final static String wbShade = MainScreen.thiz.getResources()
-			.getString(R.string.wbShadeSystem);
-
-	private final static String focusAuto = MainScreen.thiz.getResources()
-			.getString(R.string.focusAutoSystem);
-	private final static String focusInfinity = MainScreen.thiz.getResources()
-			.getString(R.string.focusInfinitySystem);
-	private final static String focusNormal = MainScreen.thiz.getResources()
-			.getString(R.string.focusNormalSystem);
-	private final static String focusMacro = MainScreen.thiz.getResources()
-			.getString(R.string.focusMacroSystem);
-	private final static String focusFixed = MainScreen.thiz.getResources()
-			.getString(R.string.focusFixedSystem);
-	private final static String focusEdof = MainScreen.thiz.getResources()
-			.getString(R.string.focusEdofSystem);
-	private final static String focusContinuousVideo = MainScreen.thiz
-			.getResources().getString(R.string.focusContinuousVideoSystem);
-	private final static String focusContinuousPicture = MainScreen.thiz
-			.getResources().getString(R.string.focusContinuousPictureSystem);
-//	private final static String focusAfLock = MainScreen.thiz
-//			.getResources().getString(R.string.focusAfLockSystem);
 	private final static int focusAfLock = 10;
-
-	private final static String flashAuto = MainScreen.thiz.getResources()
-			.getString(R.string.flashAutoSystem);
-	private final static String flashOn = MainScreen.thiz.getResources()
-			.getString(R.string.flashOnSystem);
-	private final static String flashOff = MainScreen.thiz.getResources()
-			.getString(R.string.flashOffSystem);
-	private final static String flashRedEye = MainScreen.thiz.getResources()
-			.getString(R.string.flashRedEyeSystem);
-	private final static String flashTorch = MainScreen.thiz.getResources()
-			.getString(R.string.flashTorchSystem);
 
 	private final static String isoAuto = MainScreen.thiz.getResources()
 			.getString(R.string.isoAutoSystem);
@@ -4972,239 +4889,245 @@ public class AlmalenceGUI extends GUI implements
 //		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 //		if (params != null)
 //		{
-//			if(newMode != null && SceneModeButtons.containsKey(newMode))
-//			{
+			if(newMode != -1 && SceneModeButtons.containsKey(newMode))
+			{
 //				params.setSceneMode(newMode);
 //				MainScreen.thiz.setCameraParameters(params);
-//				mSceneMode = newMode;
-//			}
-//			else if(SceneModeButtons.containsKey(sceneAuto))
-//			{
+				MainScreen.thiz.setCameraSceneMode(newMode);
+				mSceneMode = newMode;
+			}
+			else if(SceneModeButtons.containsKey(CameraCharacteristics.CONTROL_MODE_AUTO))
+			{
 //				params.setSceneMode(sceneAuto);
 //				MainScreen.thiz.setCameraParameters(params);
-//				mSceneMode = sceneAuto;	
-//			}
-//			else if(params.getSupportedSceneModes() != null)
-//			{
+				MainScreen.thiz.setCameraSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+				mSceneMode = CameraCharacteristics.CONTROL_MODE_AUTO;	
+			}
+			else if(MainScreen.thiz.getSupportedSceneModes() != null)
+			{
 //				params.setSceneMode(params.getSupportedSceneModes().get(0));
 //				MainScreen.thiz.setCameraParameters(params);
-//				mSceneMode = params.getSupportedSceneModes().get(0);
-//			}
-//
-//			// After change scene mode it may be changed other stuff such as
-//			// flash, wb, focus mode.
-//			// Need to get this information and update state of current
-//			// parameters.
-//			params = MainScreen.thiz.getCameraParameters();			
-//			String wbNew = params.getWhiteBalance();
-//			String flashNew = params.getFlashMode();
-//			String focusNew = params.getFocusMode();
-//			String isoNew = params.get(MainScreen.isoParam);			
-//			if(isoNew == null)
-//				isoNew = params.get(MainScreen.isoParam2);
-//
-//			// Save new params value
-//			if(wbNew != null && WBModeButtons.containsKey(wbNew))
-//				mWB = wbNew;
-//			else if(WBModeButtons.containsKey(wbAuto))
-//				mWB = wbAuto;
-//			else if(params.getSupportedWhiteBalance() != null)
-//				mWB = params.getSupportedWhiteBalance().get(0);
-//			else
-//				mWB = null;
-//			
-//			if(focusNew != null && FocusModeButtons.containsKey(focusNew))
-//				mFocusMode = focusNew;
-//			else if(FocusModeButtons.containsKey(focusAuto))
-//				mFocusMode = focusAuto;
-//			else if(params.getSupportedFocusModes() != null)
-//				mFocusMode = params.getSupportedFocusModes().get(0);
-//			else
-//				mFocusMode = null;
-//			
-//			if(flashNew != null && FlashModeButtons.containsKey(flashNew))
-//				mFlashMode = flashNew;
-//			else if(FocusModeButtons.containsKey(flashAuto))
-//				mFlashMode = flashAuto;
-//			else if(params.getSupportedFlashModes() != null)
-//				mFlashMode = params.getSupportedFlashModes().get(0);
-//			else
-//				mFlashMode = null;
-//			
-//			if(isoNew != null && ISOButtons.containsKey(isoNew))
-//				mISO = isoNew;
-//			else if(ISOButtons.containsKey(isoAuto))
-//				mISO = isoAuto;
-//			else if(MainScreen.thiz.getSupportedISO() != null)
-//				mISO = MainScreen.thiz.getSupportedISO().get(0);
-//			else
-//				mISO = null;
-//
-//			// Set appropriate params buttons pressed
-//			setButtonSelected(SceneModeButtons, mSceneMode);
-//			setButtonSelected(WBModeButtons, mWB);
-//			setButtonSelected(FocusModeButtons, mFocusMode);
-//			setButtonSelected(FlashModeButtons, mFlashMode);
-//			setButtonSelected(ISOButtons, mISO);
-//
-//			// Update icons for other camera parameter buttons
-//			RotateImageView but = null;
-//			int icon_id = -1;
-//			if (mWB != null)
-//			{
-//				but = (RotateImageView) topMenuButtons.get(MODE_WB);
-//				icon_id = icons_wb.get(mWB);
-//				but.setImageResource(icon_id);
-//				preferences.edit().putString(MainScreen.sWBModePref, mWB).commit();
-//
-//				Message msg = new Message();
-//				msg.arg1 = PluginManager.MSG_WB_CHANGED;
-//				msg.what = PluginManager.MSG_BROADCAST;
-//				MainScreen.H.sendMessage(msg);
-//			}
-//			if (mFocusMode != null)
-//			{				
-//				try {
-//					but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
-//					icon_id = icons_focus.get(mFocusMode);
-//					but.setImageResource(icon_id);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
-//				}
-//				
-//				preferences
-//						.edit()
-//						.putString(
-//								MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
-//										: MainScreen.sFrontFocusModePref, mFocusMode)
-//						.commit();
-//
-//				Message msg = new Message();
-//				msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-//				msg.what = PluginManager.MSG_BROADCAST;
-//				MainScreen.H.sendMessage(msg);
-//			}
-//			if (mFlashMode != null)
-//			{
-//				but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-//				icon_id = icons_flash.get(mFlashMode);
-//				but.setImageResource(icon_id);
-//				preferences.edit().putString(MainScreen.sFlashModePref, mFlashMode)
-//						.commit();
-//
-//				Message msg = new Message();
-//				msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-//				msg.what = PluginManager.MSG_BROADCAST;
-//				MainScreen.H.sendMessage(msg);
-//			}
-//			if (mISO != null)
-//			{
-//				but = (RotateImageView) topMenuButtons.get(MODE_ISO);
-//				icon_id = icons_iso.get(mISO);
-//				but.setImageResource(icon_id);
-//				preferences.edit().putString(MainScreen.sISOPref, mISO).commit();
-//
-//				Message msg = new Message();
-//				msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-//				msg.what = PluginManager.MSG_BROADCAST;
-//				MainScreen.H.sendMessage(msg);
-//			}
-//			preferences.edit().putString(MainScreen.sSceneModePref, newMode).commit();
+				MainScreen.thiz.setCameraSceneMode(MainScreen.thiz.getSupportedSceneModes()[0]);
+				mSceneMode = MainScreen.thiz.getSupportedSceneModes()[0];
+			}
+
+			if(!MainScreen.isHALv3)
+			{
+				// After change scene mode it may be changed other stuff such as
+				// flash, wb, focus mode.
+				// Need to get this information and update state of current
+				// parameters.
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
+				String wbNew = params.getWhiteBalance();
+				String flashNew = params.getFlashMode();
+				String focusNew = params.getFocusMode();
+				String isoNew = params.get(CameraController.isoParam);			
+				if(isoNew == null)
+					isoNew = params.get(CameraController.isoParam2);
+	
+				// Save new params value
+				if(wbNew != null && WBModeButtons.containsKey(CameraController.key_wb.get(wbNew)))
+					mWB = CameraController.key_wb.get(wbNew);
+				else if(WBModeButtons.containsKey(CameraCharacteristics.CONTROL_AWB_MODE_AUTO))
+					mWB = CameraCharacteristics.CONTROL_AWB_MODE_AUTO;
+				else if(params.getSupportedWhiteBalance() != null)
+					mWB = MainScreen.thiz.getSupportedWhiteBalance()[0];
+				else
+					mWB = -1;
+				
+				if(focusNew != null && FocusModeButtons.containsKey(CameraController.key_focus.get(focusNew)))
+					mFocusMode = CameraController.key_focus.get(focusNew);
+				else if(FocusModeButtons.containsKey(CameraCharacteristics.CONTROL_AF_MODE_AUTO))
+					mFocusMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
+				else if(params.getSupportedFocusModes() != null)
+					mFocusMode = MainScreen.thiz.getSupportedFocusModes()[0];
+				else
+					mFocusMode = -1;
+				
+				if(flashNew != null && FlashModeButtons.containsKey(CameraController.key_flash.get(flashNew)))
+					mFlashMode = CameraController.key_flash.get(flashNew);
+				else if(FocusModeButtons.containsKey(CameraController.FLASH_MODE_AUTO))
+					mFlashMode = CameraController.FLASH_MODE_AUTO;
+				else if(params.getSupportedFlashModes() != null)
+					mFlashMode = MainScreen.thiz.getSupportedFlashModes()[0];
+				else
+					mFlashMode = -1;
+				
+//				if(isoNew != null && ISOButtons.containsKey(isoNew))
+//					mISO = isoNew;
+//				else if(ISOButtons.containsKey(isoAuto))
+//					mISO = isoAuto;
+//				else if(MainScreen.thiz.getSupportedISO() != null)
+//					mISO = MainScreen.thiz.getSupportedISO().get(0);
+//				else
+//					mISO = null;
+			}
+
+			// Set appropriate params buttons pressed
+			setButtonSelected(SceneModeButtons, mSceneMode);
+			setButtonSelected(WBModeButtons, mWB);
+			setButtonSelected(FocusModeButtons, mFocusMode);
+			setButtonSelected(FlashModeButtons, mFlashMode);
+			//setButtonSelected(ISOButtons, mISO);
+
+			// Update icons for other camera parameter buttons
+			RotateImageView but = null;
+			int icon_id = -1;
+			if (mWB != -1)
+			{
+				but = (RotateImageView) topMenuButtons.get(MODE_WB);
+				icon_id = icons_wb.get(mWB);
+				but.setImageResource(icon_id);
+				preferences.edit().putInt(MainScreen.sWBModePref, mWB).commit();
+
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_WB_CHANGED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			if (mFocusMode != -1)
+			{				
+				try {
+					but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+					icon_id = icons_focus.get(mFocusMode);
+					but.setImageResource(icon_id);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
+				}
+				
+				preferences
+						.edit()
+						.putInt(
+								MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+										: MainScreen.sFrontFocusModePref, mFocusMode)
+						.commit();
+
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			if (mFlashMode != -1)
+			{
+				but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
+				icon_id = icons_flash.get(mFlashMode);
+				but.setImageResource(icon_id);
+				preferences.edit().putInt(MainScreen.sFlashModePref, mFlashMode)
+						.commit();
+
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			if (mISO != -1)
+			{
+				but = (RotateImageView) topMenuButtons.get(MODE_ISO);
+				icon_id = icons_iso.get(mISO);
+				but.setImageResource(icon_id);
+				preferences.edit().putInt(MainScreen.sISOPref, mISO).commit();
+
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_ISO_CHANGED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			preferences.edit().putInt(MainScreen.sSceneModePref, newMode).commit();
 //		}
-//
-//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SCENE);
-//		int icon_id = icons_scene.get(mSceneMode);
-//		but.setImageResource(icon_id);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
-//
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
+
+		but = (RotateImageView) topMenuButtons.get(MODE_SCENE);
+		icon_id = icons_scene.get(mSceneMode);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 
 	private void setWhiteBalance(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//		if (newMode != null && params != null)
-//		{
-//			if ((mSceneMode != sceneAuto || mWB != newMode)
-//					&& MainScreen.thiz.mSceneModeSupported)
-//			{
-//				setSceneMode(sceneAuto);
-//				params = MainScreen.thiz.getCameraParameters();
-//			}
-//
-//			params = MainScreen.thiz.getCameraParameters();
-//			params.setWhiteBalance(newMode);
-//			MainScreen.thiz.setCameraParameters(params);
-//			mWB = newMode;
-//			setButtonSelected(WBModeButtons, mWB);
-//
-//			preferences.edit().putString(MainScreen.sWBModePref, newMode).commit();
-//		}
-//
-//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
-//		int icon_id = icons_wb.get(mWB);
-//		but.setImageResource(icon_id);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
-//
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_WB_CHANGED;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
+		if (newMode != -1)
+		{
+			if(!MainScreen.isHALv3)
+			{
+				if ((mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO || mWB != newMode)
+						&& CameraController.getInstance().mSceneModeSupported)
+				{
+					setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+				}
+			}
+//				Camera.Parameters params = CameraController.cameraParameters;
+//				params.setWhiteBalance(CameraController.mode_wb.get(newMode));
+//				MainScreen.thiz.setCameraParameters(params);
+			
+			MainScreen.thiz.setCameraWhiteBalance(newMode);
+			
+			mWB = newMode;
+			setButtonSelected(WBModeButtons, mWB);
+
+			preferences.edit().putInt(MainScreen.sWBModePref, newMode).commit();
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
+		int icon_id = icons_wb.get(mWB);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_WB_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 
 	private void setFocusMode(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//		if (newMode != null && params != null) {
-//			if (mSceneMode != sceneAuto && mFocusMode != focusAuto)
-//			{
-//				if (MainScreen.thiz.mSceneModeSupported)
-//					setSceneMode(sceneAuto);
-//				params = MainScreen.thiz.getCameraParameters();
-//			}
-//
-//			params = MainScreen.thiz.getCameraParameters();
-//			params.setFocusMode(newMode);
-//			MainScreen.thiz.setCameraParameters(params);
-//			mFocusMode = newMode;
-//			setButtonSelected(FocusModeButtons, mFocusMode);
-//
-//			preferences
-//					.edit()
-//					.putString(
-//							MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
-//									: MainScreen.sFrontFocusModePref, newMode).commit();
-//		}
-//
-//		try {
-//			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
-//			int icon_id = icons_focus.get(mFocusMode);
-//			but.setImageResource(icon_id);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
-//		}
-//		
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
-//		
-//		MainScreen.setAutoFocusLock(false);
+		if (newMode != -1 )
+		{
+			if(!MainScreen.isHALv3)
+			{
+				if (mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO && mFocusMode != CameraCharacteristics.CONTROL_AF_MODE_AUTO)
+				{
+					if (CameraController.getInstance().mSceneModeSupported)
+						setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+				}
+			}
+
+			MainScreen.thiz.setCameraFocusMode(newMode);
+			
+			mFocusMode = newMode;
+			setButtonSelected(FocusModeButtons, mFocusMode);
+
+			preferences.edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, newMode).commit();
+		}
+
+		try {
+			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+			int icon_id = icons_focus.get(mFocusMode);
+			but.setImageResource(icon_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
+		}
+		
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+		
+		MainScreen.setAutoFocusLock(false);
 	}
 
 	private void setFlashMode(int newMode)

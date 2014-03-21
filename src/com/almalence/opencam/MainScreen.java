@@ -434,8 +434,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		preview.setKeepScreenOn(true);
 
 		surfaceHolder = preview.getHolder();
-		//surfaceHolder.addCallback(this);
-		//surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		if(!isHALv3)
+		{
+			surfaceHolder.addCallback(this);
+			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		}
 
 		orientListener = new OrientationEventListener(this) {
 			@Override
@@ -1362,7 +1365,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return false;
 	}
 	
-	public boolean isExposureLockSupported() {
+	public boolean isExposureLockSupported()
+	{
 //		if (camera != null && cameraParameters != null) {
 //			if (cameraParameters.isAutoExposureLockSupported())
 //				return true;
@@ -1373,7 +1377,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return true;
 	}
 	
-	public boolean isWhiteBalanceLockSupported() {
+	public boolean isWhiteBalanceLockSupported()
+	{
 //		if (camera != null && cameraParameters != null) {
 //			if (cameraParameters.isAutoWhiteBalanceLockSupported())
 //				return true;
@@ -1384,182 +1389,262 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return true;
 	}
 
-	public boolean isExposureCompensationSupported() {
-//		if (camera != null && cameraParameters != null) {
-//			if (cameraParameters.getMinExposureCompensation() == 0
-//					&& cameraParameters.getMaxExposureCompensation() == 0)
-//				return false;
-//			else
-//				return true;
-//		} else
-//			return false;
-		
-		if(CameraController.camCharacter != null)
+	public boolean isExposureCompensationSupported()
+	{
+		if(!isHALv3)
 		{
-			int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[1] == expRange[0] ? false : true;
+			if (CameraController.camera != null && CameraController.cameraParameters != null) {
+				if (CameraController.cameraParameters.getMinExposureCompensation() == 0
+						&& CameraController.cameraParameters.getMaxExposureCompensation() == 0)
+					return false;
+				else
+					return true;
+			} else
+				return false;
 		}
-		
-		return false;
-	}
-
-	public int getMinExposureCompensation() {
-//		if (camera != null && cameraParameters != null)
-//			return cameraParameters.getMinExposureCompensation();
-//		else
-//			return 0;
-		if(CameraController.camCharacter != null)
+		else
 		{
-			int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[0];
+			if(CameraController.camCharacter != null)
+			{
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[1] == expRange[0] ? false : true;
+			}
+			
+			return false;
 		}
-		
-		return 0;
 	}
 
-	public int getMaxExposureCompensation() {
-//		if (camera != null && cameraParameters != null)
-//			return cameraParameters.getMaxExposureCompensation();
-//		else
-//			return 0;
-		
-		if(CameraController.camCharacter != null)
+	public int getMinExposureCompensation()
+	{
+		if(!isHALv3)
 		{
-			int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[1];
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getMinExposureCompensation();
+			else
+				return 0;
 		}
-		
-		return 0;
-	}
-
-	public float getExposureCompensationStep() {
-//		if (camera != null && cameraParameters != null)
-//			return cameraParameters.getExposureCompensationStep();
-//		else
-//			return 0;
-		
-		if(CameraController.camCharacter != null)
+		else
 		{
-			float step = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
-			return step;
+			if(CameraController.camCharacter != null)
+			{
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[0];
+			}
+			
+			return 0;
 		}
-		
-		return 0;
 	}
 
-	public float getExposureCompensation() {
-//		if (camera != null && cameraParameters != null)
-//			return cameraParameters.getExposureCompensation()
-//					* cameraParameters.getExposureCompensationStep();
-//		else
-//			return 0;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		float currEv = prefs.getFloat(MainScreen.sEvPref, 0);
-		
-		return currEv;
-	}
-
-	public void resetExposureCompensation() {
-//		if (camera != null) {
-//			if (!isExposureCompensationSupported())
-//				return;
-//			Camera.Parameters params = cameraParameters;
-//			params.setExposureCompensation(0);
-//			setCameraParameters(params);
-//		}
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+	public int getMaxExposureCompensation()
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getMaxExposureCompensation();
+			else
+				return 0;
+		}
+		else
 		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-			try 
+			if(CameraController.camCharacter != null)
 			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[1];
 			}
-			catch (CameraAccessException e)
+			
+			return 0;
+		}
+	}
+
+	public float getExposureCompensationStep()
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getExposureCompensationStep();
+			else
+				return 0;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
 			{
-				e.printStackTrace();
+				float step = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
+				return step;
+			}
+			
+			return 0;
+		}
+	}
+
+	public float getExposureCompensation()
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getExposureCompensation()
+						* CameraController.cameraParameters.getExposureCompensationStep();
+			else
+				return 0;
+		}
+		else
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			float currEv = prefs.getFloat(MainScreen.sEvPref, 0);
+			
+			return currEv;
+		}
+	}
+
+	public void resetExposureCompensation()
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null) {
+				if (!isExposureCompensationSupported())
+					return;
+				Camera.Parameters params = CameraController.cameraParameters;
+				params.setExposureCompensation(0);
+				setCameraParameters(params);
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public boolean isSceneModeSupported() {
+	public boolean isSceneModeSupported()
+	{
+//		if(!isHALv3)
+//		{
 //		List<String> supported_scene = getSupportedSceneModes();
 //		if (supported_scene != null && supported_scene.size() > 0)
 //			return true;
 //		else
 //			return false;
+//		}
+//		else
+//		{
+//			if(CameraController.camCharacter != null)
+//			{
+//				byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+//				if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+//					return true;				
+//			}
+//			
+//			return false;
+//		}
 		
-		if(CameraController.camCharacter != null)
-		{
-			byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
-			if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
-				return true;				
-		}
 		
-		return false;
+		byte supported_scene[] = getSupportedSceneModes();
+		if (supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+			return true;
+		else
+			return false;
 	}
 
-	public byte[] getSupportedSceneModes() {
-//		if (camera != null)
-//			return cameraParameters.getSupportedSceneModes();
-//
-//		return null;
-		
-		if(CameraController.camCharacter != null)
+	public byte[] getSupportedSceneModes()
+	{
+		if(!isHALv3)
 		{
-			byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
-			if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
-				return scenes;				
+			if (CameraController.camera != null)
+			{
+				List<String> sceneModes = CameraController.cameraParameters.getSupportedSceneModes();
+				byte scenes[] = new byte[sceneModes.size()];
+				for(int i = 0; i < sceneModes.size(); i++)
+					scenes[i] = CameraController.key_scene.get(sceneModes.get(i)).byteValue();
+				
+				return scenes;
+			}
+	
+			return null;
 		}
-		
-		return null;
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+				if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+					return scenes;				
+			}
+			
+			return null;
+		}
 	}
 
-	public boolean isWhiteBalanceSupported() {
+	public boolean isWhiteBalanceSupported()
+	{
 //		List<String> supported_wb = getSupportedWhiteBalance();
 //		if (supported_wb != null && supported_wb.size() > 0)
 //			return true;
 //		else
 //			return false;
+
 		
-		if(CameraController.camCharacter != null)
-		{
-			byte wbs[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
-			if(wbs.length > 0)
-				return true;				
-		}
-		
-		return false;
+		byte supported_wb[] = getSupportedWhiteBalance();
+		if (supported_wb != null && supported_wb.length > 0)
+			return true;
+		else
+			return false;
 	}
 
-	public byte[] getSupportedWhiteBalance() {
+	public byte[] getSupportedWhiteBalance()
+	{
 //		if (camera != null)
 //			return cameraParameters.getSupportedWhiteBalance();
 		
-		if(CameraController.camCharacter != null)
+		if(!isHALv3)
 		{
-			byte wbs[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
-			if(wbs.length > 0)
-				return wbs;				
+			if (CameraController.camera != null)
+			{
+				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();
+				byte wb[] = new byte[wbModes.size()];
+				for(int i = 0; i < wbModes.size(); i++)
+					wb[i] = CameraController.key_wb.get(wbModes.get(i)).byteValue();
+				
+				return wb;
+			}
+	
+			return null;
 		}
-
-		return null;
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte wb[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+				if(wb.length > 0 )
+					return wb;				
+			}
+			
+			return null;
+		}
 	}
 
-	public boolean isFocusModeSupported() {
+	public boolean isFocusModeSupported()
+	{
 //		List<String> supported_focus = getSupportedFocusModes();
 //		if (supported_focus != null && supported_focus.size() > 0)
 //			return true;
 //		else
 //			return false;
 		
-		if(CameraController.camCharacter != null)
-		{
-			byte afs[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
-			if(afs.length > 0)
-				return true;				
-		}
-		
-		return false;
+		byte supported_focus[] = getSupportedFocusModes();
+		if (supported_focus != null && supported_focus.length > 0)
+			return true;
+		else
+			return false;
 	}
 
 	public byte[] getSupportedFocusModes() {
@@ -1568,14 +1653,31 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //
 //		return null;
 		
-		if(CameraController.camCharacter != null)
+		if(!isHALv3)
 		{
-			byte afs[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
-			if(afs.length > 0)
-				return afs;				
+			if (CameraController.camera != null)
+			{
+				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();
+				byte focus[] = new byte[focusModes.size()];
+				for(int i = 0; i < focusModes.size(); i++)
+					focus[i] = CameraController.key_focus.get(focusModes.get(i)).byteValue();
+				
+				return focus;
+			}
+	
+			return null;
 		}
-
-		return null;
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte focus[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+				if(focus.length > 0 )
+					return focus;				
+			}
+			
+			return null;
+		}
 	}
 
 	public boolean isFlashModeSupported() {
@@ -1585,9 +1687,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //		else
 //			return false;
 		
-		if(CameraController.camCharacter != null)
+		if(isHALv3)
 		{
-			return CameraController.camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == 1? true : false;						
+			if(CameraController.camCharacter != null)
+			{
+				return CameraController.camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == 1? true : false;						
+			}
+		}
+		else
+		{
+			byte supported_flash[] = getSupportedFlashModes();
+			if (supported_flash != null && supported_flash.length > 0)
+				return true;
 		}
 		
 		return false;
@@ -1599,13 +1710,28 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //
 //		return null;
 		
-		if(isFlashModeSupported())
+		if(isHALv3)
 		{
-			byte flash[] = new byte[3];
-			flash[0] = CameraCharacteristics.FLASH_MODE_OFF;
-			flash[1] = CameraCharacteristics.FLASH_MODE_SINGLE;
-			flash[2] = CameraCharacteristics.FLASH_MODE_TORCH;
-			return flash;
+			if(isFlashModeSupported())
+			{
+				byte flash[] = new byte[3];
+				flash[0] = CameraCharacteristics.FLASH_MODE_OFF;
+				flash[1] = CameraCharacteristics.FLASH_MODE_SINGLE;
+				flash[2] = CameraCharacteristics.FLASH_MODE_TORCH;
+				return flash;
+			}
+		}
+		else
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
+				byte flash[] = new byte[flashModes.size()];
+				for(int i = 0; i < flashModes.size(); i++)
+					flash[i] = CameraController.key_flash.get(flashModes.get(i)).byteValue();
+				
+				return flash;
+			}
 		}
 
 		return null;		
@@ -1665,9 +1791,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //		}
 //		
 //		return 0;
+		
+		if(isHALv3)
+		{
 		if(CameraController.camCharacter != null)
 		{
 			return CameraController.camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS);						
+		}
+		}
+		else if(CameraController.camera != null)
+		{
+			Camera.Parameters camParams = CameraController.cameraParameters;
+			return camParams.getMaxNumMeteringAreas();
 		}
 		
 		return 0;
@@ -1754,93 +1889,128 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return null;
 	}
 
-	public void setCameraSceneMode(int mode) {
-//		if (camera != null) {
-//			Camera.Parameters params = cameraParameters;
-//			if (params != null) {
-//				params.setSceneMode(mode);
-//				setCameraParameters(params);
-//			}
-//		}
-		
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
-		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
-			try 
+	public void setCameraSceneMode(int mode)
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null)
 			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setSceneMode(CameraController.mode_scene.get(mode));
+					setCameraParameters(params);
+				}
 			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public void setCameraWhiteBalance(int mode) {
-//		if (camera != null) {
-//			Camera.Parameters params = cameraParameters;
-//			if (params != null) {
-//				params.setWhiteBalance(mode);
-//				setCameraParameters(params);
-//			}
-//		}
-		
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
-		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
-			try 
+
+	public void setCameraWhiteBalance(int mode)
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null)
 			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setWhiteBalance(CameraController.mode_wb.get(mode));
+					setCameraParameters(params);
+				}
 			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public void setCameraFocusMode(int mode) {
-//		if (camera != null) {
-//			Camera.Parameters params = cameraParameters;
-//			if (params != null) {
-//				params.setFocusMode(mode);
-//				setCameraParameters(params);
-//				mAFLocked = false;
-//			}
-//		}
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
-		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
-			try 
+	public void setCameraFocusMode(int mode)
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null)
 			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setFocusMode(CameraController.mode_focus.get(mode));
+					setCameraParameters(params);
+					mAFLocked = false;
+				}
 			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public void setCameraFlashMode(int mode) {
-//		if (camera != null) {
-//			Camera.Parameters params = cameraParameters;
-//			if (params != null && mode != "") {
-//				params.setFlashMode(mode);
-//				setCameraParameters(params);
-//			}
-//		}
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
-		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
-			try 
+	public void setCameraFlashMode(int mode)
+	{
+		if(!isHALv3)
+		{
+			if (CameraController.camera != null)
 			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setFlashMode(CameraController.mode_flash.get(mode));
+					setCameraParameters(params);
+				}
 			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -243,9 +243,11 @@ public abstract class Plugin
 //    	if (null==camera)
 //    		return;
 //		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-//		List<Camera.Size> cs = cp.getSupportedPictureSizes();    	
-    	CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
-    	Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+//		List<Camera.Size> cs = cp.getSupportedPictureSizes();
+    	
+    	//CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
+    	//Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+    	List<Camera.Size> cs = CameraController.ResolutionsSizeList;
 		int Capture5mIdx = -1;
 		long Capture5mMpix = 0;
 		int Capture5mWidth = 0;
@@ -258,19 +260,19 @@ public abstract class Plugin
 
 		// figure default resolution
 		int ii = 0;
-		for(Size s : cs)
+		for(Camera.Size s : cs)
 		{
 //		for (int ii = 0; ii < cs.size(); ++ii) {
 			//Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
+			long mpix = (long) s.width * s.height;
 
 			if ((mpix >= MIN_MPIX_SUPPORTED)
 					&& (mpix < maxMpix)) {
 				if (mpix > Capture5mMpix) {
 					Capture5mIdx = ii;
 					Capture5mMpix = mpix;
-					Capture5mWidth = s.getWidth();
-					Capture5mHeight = s.getHeight();
+					Capture5mWidth = s.width;
+					Capture5mHeight = s.height;
 				}
 			}
 			
@@ -278,26 +280,26 @@ public abstract class Plugin
 		}
 
 		ii = 0;
-		for(Size s : cs)
+		for(Camera.Size s : cs)
 		{
 //		for (int ii = 0; ii < cs.size(); ++ii) {
 //			Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
+			long mpix = (long) s.width * s.height;
 
 			if ((ii == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
 				prefFound = true;
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.getWidth();
-				CaptureHeight = s.getHeight();
+				CaptureWidth = s.width;
+				CaptureHeight = s.height;
 				break;
 			}
 
 			if (mpix > CaptureMpix) {
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.getWidth();
-				CaptureHeight = s.getHeight();
+				CaptureWidth = s.width;
+				CaptureHeight = s.height;
 			}
 			
 			ii++;
@@ -326,22 +328,22 @@ public abstract class Plugin
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {
-//		Camera camera = MainScreen.thiz.getCamera();
-//    	if (null==camera)
-//    		return;
-//		List<Camera.Size> cs = cp.getSupportedPreviewSizes();
-//
-//		Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
-//				MainScreen.getImageHeight());
-//		cp.setPreviewSize(os.width, os.height);
-//		try
-//        {
-//			MainScreen.thiz.setCameraParameters(cp);
-//		}
-//		catch(RuntimeException e)
-//	    {
-//	    	Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
-//	    }
+		Camera camera = MainScreen.thiz.getCamera();
+    	if (null==camera)
+    		return;
+		List<Camera.Size> cs = cp.getSupportedPreviewSizes();
+
+		Camera.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
+				MainScreen.getImageHeight());
+		cp.setPreviewSize(os.width, os.height);
+		try
+        {
+			MainScreen.thiz.setCameraParameters(cp);
+		}
+		catch(RuntimeException e)
+	    {
+	    	Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
+	    }
 	}
 	
 	public void SetCameraPictureSize() {
@@ -366,40 +368,40 @@ public abstract class Plugin
 	}
 	
 	// from google example
-//	protected Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
-//		final double ASPECT_TOLERANCE = 0.05;
-//		double targetRatio = (double) w / h;
-//		if (sizes == null)
-//			return null;
-//
-//		Size optimalSize = null;
-//		double minDiff = Double.MAX_VALUE;
-//
-//		int targetHeight = h;
-//
-//		// Try to find an size match aspect ratio and size
-//		for (Size size : sizes) {
-//			double ratio = (double) size.width / size.height;
-//			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-//				continue;
-//			if (Math.abs(size.height - targetHeight) < minDiff) {
-//				optimalSize = size;
-//				minDiff = Math.abs(size.height - targetHeight);
-//			}
-//		}
-//
-//		// Cannot find the one match the aspect ratio, ignore the requirement
-//		if (optimalSize == null) {
-//			minDiff = Double.MAX_VALUE;
-//			for (Size size : sizes) {
-//				if (Math.abs(size.height - targetHeight) < minDiff) {
-//					optimalSize = size;
-//					minDiff = Math.abs(size.height - targetHeight);
-//				}
-//			}
-//		}
-//		return optimalSize;
-//	}
+	protected Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+		final double ASPECT_TOLERANCE = 0.05;
+		double targetRatio = (double) w / h;
+		if (sizes == null)
+			return null;
+
+		Camera.Size optimalSize = null;
+		double minDiff = Double.MAX_VALUE;
+
+		int targetHeight = h;
+
+		// Try to find an size match aspect ratio and size
+		for (Camera.Size size : sizes) {
+			double ratio = (double) size.width / size.height;
+			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+				continue;
+			if (Math.abs(size.height - targetHeight) < minDiff) {
+				optimalSize = size;
+				minDiff = Math.abs(size.height - targetHeight);
+			}
+		}
+
+		// Cannot find the one match the aspect ratio, ignore the requirement
+		if (optimalSize == null) {
+			minDiff = Double.MAX_VALUE;
+			for (Camera.Size size : sizes) {
+				if (Math.abs(size.height - targetHeight) < minDiff) {
+					optimalSize = size;
+					minDiff = Math.abs(size.height - targetHeight);
+				}
+			}
+		}
+		return optimalSize;
+	}
 	
 	//called after camera parameters setup
 	public void onCameraSetup(){}
