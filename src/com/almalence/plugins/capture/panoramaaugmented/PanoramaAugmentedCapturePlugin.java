@@ -99,7 +99,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	private int prefResolution;
 	private boolean prefHardwareGyroscope;
 	
-	private String preferenceFocusMode;
+	private int preferenceFocusMode;
 	
 	private float viewAngleX = 54.8f;
 	private float viewAngleY = 42.5f;
@@ -278,8 +278,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		MainScreen.H.sendMessage(msg);
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
-				? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+		preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored() 
+				? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_AUTO);
 	}
 	
 	@Override
@@ -299,7 +299,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		}
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
-        prefs.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+        prefs.edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 	}
 	
 	@Override
@@ -401,23 +401,23 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		cp.setJpegQuality(100);
     	
 
-		String sUserFocusMode = null;
+		int sUserFocusMode = -1;
 		
 		if (CameraController.supportedFocusModes != null)
 		{
 //			if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
 			if (MainScreen.isModeAvailable(CameraController.supportedFocusModes,CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE))
 			{
-				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+				sUserFocusMode = CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
 			}
 		}
     	
-    	if (sUserFocusMode != null)
+    	if (sUserFocusMode != -1)
     	{
-        	cp.setFocusMode(sUserFocusMode);
+        	MainScreen.thiz.setCameraFocusMode(sUserFocusMode);
         	
 	    	PreferenceManager.getDefaultSharedPreferences(
-	    			MainScreen.mainContext).edit().putString(
+	    			MainScreen.mainContext).edit().putInt(
 	    					MainScreen.getCameraMirrored()
 	    						? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, 
 	    								sUserFocusMode).commit();
@@ -875,7 +875,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			if (!this.takingAlready)
 			{
 				final int state = this.engine.getPictureTakingState(
-						MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO));
+						MainScreen.thiz.getFocusMode() == CameraCharacteristics.CONTROL_AF_MODE_AUTO);
 				
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
@@ -934,7 +934,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		try
 		{
-			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
+			if (MainScreen.thiz.getFocusMode() == CameraCharacteristics.CONTROL_AF_MODE_AUTO)
 			{
 				this.tryAutoFocus();
 			}

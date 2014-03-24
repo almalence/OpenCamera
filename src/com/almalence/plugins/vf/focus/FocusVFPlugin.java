@@ -114,7 +114,7 @@ public class FocusVFPlugin extends PluginViewfinder
   	
   	private boolean mFocusDisabled = false;
 
-  	private String preferenceFocusMode;
+  	private int preferenceFocusMode;
 
     private class MainHandler extends Handler
     {
@@ -266,7 +266,7 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onPause()
 	{
-    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		releaseSoundPlayer();
 		removeMessages();		
 	}	
@@ -758,11 +758,11 @@ public class FocusVFPlugin extends PluginViewfinder
         return mFocusMode;
     }
     
-    public void setFocusMode(String focus_mode)
-    {
-    	mPreferences.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, focus_mode).commit();
-    	preferenceFocusMode = focus_mode;
-    }
+//    public void setFocusMode(String focus_mode)
+//    {
+//    	mPreferences.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, focus_mode).commit();
+//    	preferenceFocusMode = focus_mode;
+//    }
 
 //    public List<Area> getFocusAreas()
 //    {
@@ -966,8 +966,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 		else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
-			String fm = MainScreen.thiz.getFocusMode();
-			if (fm != null)
+			int fm = MainScreen.thiz.getFocusMode();
+			if (fm != -1)
 				preferenceFocusMode = fm;
 		}
 		else if (arg1 == PluginManager.MSG_PREVIEW_CHANGED)

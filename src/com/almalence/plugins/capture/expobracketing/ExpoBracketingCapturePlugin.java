@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -190,23 +191,23 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             cur_ev = 0;
             frame_num = 0;
 
-            String fm = MainScreen.thiz.getFocusMode();
+            int focusMode = MainScreen.thiz.getFocusMode();
     		if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
     				MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-    				&& fm != null
-    				&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-       				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-       				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-       				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-   	    			|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+    				&& focusMode != -1
+    				&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+   	      				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+   	    				 focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+   	    				 focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+   	    				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
    	    			&& !MainScreen.getAutoFocusLock())
     			aboutToTakePicture = true;
-    		else if(takingAlready == false || (fm != null
-    									   && (fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) ||
-    										   fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ||
-    										   fm.equals(Parameters.FOCUS_MODE_INFINITY) ||
-    										   fm.equals(Parameters.FOCUS_MODE_FIXED) ||
-    										   fm.equals(Parameters.FOCUS_MODE_EDOF))))
+    		else if(takingAlready == false || (focusMode != -1
+    									   && (focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+							      			   focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+							    			   focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+							    			   focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+							    			   focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)))
     		{
     			Camera camera = MainScreen.thiz.getCamera();
     	    	if (null==camera)

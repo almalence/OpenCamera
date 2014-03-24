@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -157,15 +158,15 @@ public class BestShotCapturePlugin extends PluginCapture
 			
 			MainScreen.thiz.MuteShutter(true);
 			
-			String fm = MainScreen.thiz.getFocusMode();
+			int focusMode = MainScreen.thiz.getFocusMode();
 			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
 					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					&& fm != null
-					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-	        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+					&& focusMode != -1
+					&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+	      				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+	    				 focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+	    				 focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+	    				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
 	        				&& !MainScreen.getAutoFocusLock())
 				takingAlready = true;			
 			else if(takingAlready == false)

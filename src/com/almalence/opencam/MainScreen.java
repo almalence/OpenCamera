@@ -1845,21 +1845,34 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return null;
 	}
 
-	public String getFocusMode() {
+	public int getFocusMode()
+	{
 		
-		try {
-			if (CameraController.camera != null) {
-				Camera.Parameters params = CameraController.cameraParameters;
-				if (params != null)
-					return params.getFocusMode();
+		if(!isHALv3)
+		{
+			try
+			{
+				if (CameraController.camera != null)
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+					{
+						return CameraController.key_focus.get(params.getFocusMode());
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("MainScreen", "getFocusMode exception: " + e.getMessage());
 			}
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			Log.e("MainScreen", "getFocusMode exception: " + e.getMessage());
+		else
+		{
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(getCameraMirrored()? sRearFocusModePref : sFrontFocusModePref, -1);
 		}
 
-		return null;
+		return -1;
 	}
 
 	public String getFlashMode() {
@@ -2273,7 +2286,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		synchronized (MainScreen.thiz.syncObject) {
 			if (CameraController.camera != null) {
 				if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING) {
-					String fm = thiz.getFocusMode();
+					//int fm = thiz.getFocusMode();
 					// Log.e("", "mCaptureState = " + mCaptureState);
 					setFocusState(CameraController.FOCUS_STATE_FOCUSING);
 					try {

@@ -264,10 +264,10 @@ public class AlmalenceGUI extends GUI implements
 	private final static Map<Integer, Integer> icons_focus = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, R.drawable.gui_almalence_settings_focus_auto);
-			//put(CameraCharacteristics.CONTROL_AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
-			//put(CameraCharacteristics.CONTROL_AF_MODE_NORMAL, R.drawable.gui_almalence_settings_focus_normal);
+			put(CameraController.CONTROL_AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
+			put(CameraController.CONTROL_AF_MODE_NORMAL, R.drawable.gui_almalence_settings_focus_normal);
 			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, R.drawable.gui_almalence_settings_focus_macro);
-			//put(CameraCharacteristics.CONTROL_AF_MODE_FIXED, R.drawable.gui_almalence_settings_focus_fixed);
+			put(CameraController.CONTROL_AF_MODE_FIXED, R.drawable.gui_almalence_settings_focus_fixed);
 			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, R.drawable.gui_almalence_settings_focus_edof);
 			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, R.drawable.gui_almalence_settings_focus_continiuousvideo);
 			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, R.drawable.gui_almalence_settings_focus_continiuouspicture);
@@ -278,9 +278,9 @@ public class AlmalenceGUI extends GUI implements
 	private final static Map<Integer, Integer> icons_flash = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraCharacteristics.FLASH_MODE_OFF, R.drawable.gui_almalence_settings_flash_off);
-			//put(CameraCharacteristics.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
+			put(CameraController.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
 			put(CameraCharacteristics.FLASH_MODE_SINGLE, R.drawable.gui_almalence_settings_flash_on);
-			//put(flashRedEye, R.drawable.gui_almalence_settings_flash_redeye);
+			put(CameraController.FLASH_MODE_REDEYE, R.drawable.gui_almalence_settings_flash_redeye);
 			put(CameraCharacteristics.FLASH_MODE_TORCH, R.drawable.gui_almalence_settings_flash_torch);
 		}
 	};
@@ -359,10 +359,10 @@ public class AlmalenceGUI extends GUI implements
 	private final static Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
 		{
 			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
-//			put(CameraCharacteristics.CONTROL_AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
-//			put(CameraCharacteristics.CONTROL_AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
+			put(CameraController.CONTROL_AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
+			put(CameraController.CONTROL_AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
 			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, MainScreen.thiz.getResources().getString(R.string.focusMacro));
-//			put(CameraCharacteristics.CONTROL_AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
+			put(CameraController.CONTROL_AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
 			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, MainScreen.thiz.getResources().getString(R.string.focusEdof));
 			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, MainScreen.thiz.getResources().getString(R.string.focusContinuousVideo));
 			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, MainScreen.thiz.getResources().getString(R.string.focusContinuousPicture));
@@ -372,9 +372,9 @@ public class AlmalenceGUI extends GUI implements
 	private final static Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
 		{
 			put(CameraCharacteristics.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
-//			put(CameraCharacteristics.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
+			put(CameraController.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
 			put(CameraCharacteristics.FLASH_MODE_SINGLE, MainScreen.thiz.getResources().getString(R.string.flashOn));
-//			put(CameraCharacteristics.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
+			put(CameraController.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
 			put(CameraCharacteristics.FLASH_MODE_TORCH, MainScreen.thiz.getResources().getString(R.string.flashTorch));
 		}
 	};
@@ -2110,7 +2110,7 @@ public class AlmalenceGUI extends GUI implements
 //									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
 //								}
 								
-								String focusMode = MainScreen.thiz.getFocusMode();
+//								int focusMode = MainScreen.thiz.getFocusMode();
 								
 								preferences
 								.edit()
@@ -2128,7 +2128,7 @@ public class AlmalenceGUI extends GUI implements
 							hideSecondaryMenus();
 							unselectPrimaryTopMenuButtons(-1);
 							
-							String focusMode = MainScreen.thiz.getFocusMode();
+//							int focusMode = MainScreen.thiz.getFocusMode();
 							
 							guiView.findViewById(R.id.topPanel).setVisibility(
 									View.VISIBLE);
@@ -5132,36 +5132,34 @@ public class AlmalenceGUI extends GUI implements
 
 	private void setFlashMode(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//		if (newMode != null && params != null) {
-//			if (mSceneMode != sceneAuto && mFlashMode != flashAuto
-//					&& MainScreen.thiz.mSceneModeSupported)
-//			{
-//				setSceneMode(sceneAuto);
-//				params = MainScreen.thiz.getCameraParameters();
-//			}
-//
-//			params = MainScreen.thiz.getCameraParameters();
-//			params.setFlashMode(newMode);
-//			MainScreen.thiz.setCameraParameters(params);
-//			mFlashMode = newMode;
-//			setButtonSelected(FlashModeButtons, mFlashMode);
-//
-//			preferences.edit().putString(MainScreen.sFlashModePref, newMode).commit();
-//		}
-//
-//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-//		int icon_id = icons_flash.get(mFlashMode);
-//		but.setImageResource(icon_id);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
-//
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
+		if (newMode != -1)
+		{
+			if(!MainScreen.isHALv3)
+			{
+				if (mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO && mFlashMode != CameraController.FLASH_MODE_AUTO
+						&& CameraController.getInstance().mSceneModeSupported)
+					setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+			}
+
+			MainScreen.thiz.setCameraFlashMode(newMode);
+			mFlashMode = newMode;
+			setButtonSelected(FlashModeButtons, mFlashMode);
+
+			preferences.edit().putInt(MainScreen.sFlashModePref, newMode).commit();
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
+		int icon_id = icons_flash.get(mFlashMode);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 
 	private void setISO(int newMode)

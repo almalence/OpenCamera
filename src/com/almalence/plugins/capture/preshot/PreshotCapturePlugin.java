@@ -79,7 +79,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	public static boolean RefocusPreference;
 	public static boolean AutostartPreference;
 	public static String PauseBetweenShots;
-	private String preferenceFocusMode;
+	private int preferenceFocusMode;
 	
 	public static boolean isSlowMode = false;
 	
@@ -111,7 +111,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("UseFocus", false).commit();
-		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);        
+		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_AUTO);        
 
 		MainScreen.thiz.MuteShutter(false);
 		
@@ -124,7 +124,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		StopBuffering();
 		inCapture = false;
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("UseFocus", true).commit();		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		
 	}
 	
@@ -227,7 +227,7 @@ public class PreshotCapturePlugin extends PluginCapture
 					cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);			
 					MainScreen.thiz.setCameraParameters(cp);
 					
-					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).commit();
+					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO).commit();
 				}				
 			}
 			catch (Exception e)
@@ -466,12 +466,12 @@ public class PreshotCapturePlugin extends PluginCapture
     		// start series
             try		// some crappy models have autoFocus() = null
             {
-            	String fm = MainScreen.thiz.getFocusMode();
-            	if(!(fm.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
-        			 fm.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0 ||
-					 fm.compareTo(Camera.Parameters.FOCUS_MODE_INFINITY) == 0 ||
-					 fm.compareTo(Camera.Parameters.FOCUS_MODE_FIXED) == 0 ||
-					 fm.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0)
+            	int focusMode = MainScreen.thiz.getFocusMode();
+            	if(!(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+      				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+    				  focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+    				  focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+    				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
 					 && !MainScreen.getAutoFocusLock())
             	{
         			if(!MainScreen.autoFocus())
@@ -568,13 +568,13 @@ public class PreshotCapturePlugin extends PluginCapture
     		Camera camera = MainScreen.thiz.getCamera();
         	if (null==camera)
         		return;
-    		String focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, "auto");
+    		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 			if (RefocusPreference||(counter>=REFOCUS_INTERVAL) &&
-				!(focusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == 0 ||
-				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) == 0 ||
-				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_INFINITY) == 0) ||
-				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_FIXED) == 0 ||
-				  focusMode.compareTo(Camera.Parameters.FOCUS_MODE_EDOF) == 0
+				!(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+				  focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+				  focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
 				  && !MainScreen.getAutoFocusLock())
 			{
 				Log.v("", "1");

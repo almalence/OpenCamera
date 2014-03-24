@@ -452,16 +452,16 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useFocusMonitor && focusInfoImage != null)
 		{
-			String focus = MainScreen.thiz.getFocusMode();
-			if(focus != null && focus != "" && focusInfoImage != null && MainScreen.thiz.isFocusModeSupported())
+			int focus = MainScreen.thiz.getFocusMode();
+			if(focus != -1 && focusInfoImage != null && MainScreen.thiz.isFocusModeSupported())
 			{
-//				int focus_id = MainScreen.thiz.getFocusIcon(focus);
-//				if(focus_id != -1)
-//				{
-//					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
-//					focusInfoImage.setVisibility(View.VISIBLE);
-//				}
-//				else
+				int focus_id = MainScreen.thiz.getFocusIcon(focus);
+				if(focus_id != -1)
+				{
+					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
+					focusInfoImage.setVisibility(View.VISIBLE);
+				}
+				else
 					focusInfoImage.setVisibility(View.GONE);
 			}
 			else
@@ -565,14 +565,14 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if(this.useFocusMonitor && focusInfoImage != null)
 			{
-				String focus = MainScreen.thiz.getFocusMode();
-				if(focus != null && focus != "" && focusInfoImage != null)
+				int focus = MainScreen.thiz.getFocusMode();
+				if(focus != -1 && focusInfoImage != null)
 				{
-//					int focus_id = MainScreen.thiz.getFocusIcon(focus);
-//					if(focus_id != -1)
-//						focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
+					int focus_id = MainScreen.thiz.getFocusIcon(focus);
+					if(focus_id != -1)
+						focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
 				}
-//					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(focus)));
+					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(focus)));
 			}			
 		}
 		else if (arg1 == PluginManager.MSG_FLASH_CHANGED) 

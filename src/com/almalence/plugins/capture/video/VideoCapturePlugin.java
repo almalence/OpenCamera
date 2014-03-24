@@ -33,6 +33,7 @@ import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
@@ -116,7 +117,7 @@ public class VideoCapturePlugin extends PluginCapture
     
     private static File fileSaved=null;
 
-    private String preferenceFocusMode;
+    private int preferenceFocusMode;
     
     private RotateImageView timeLapseButton;
     private RotateImageView takePictureButton;
@@ -493,7 +494,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onResume()
 	{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
+        preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_AUTO);
 //        
 //	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
 //	    int quality = 0;
@@ -552,7 +553,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onPause()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        prefs.edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+        prefs.edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
         
         Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
@@ -794,7 +795,7 @@ public class VideoCapturePlugin extends PluginCapture
 			cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 			MainScreen.thiz.setCameraParameters(cp);
 		}
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO).commit();
 	}
 	
 	private void releaseMediaRecorder()
