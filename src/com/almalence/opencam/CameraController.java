@@ -8,6 +8,7 @@ import java.util.Map;
 
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.hardware.CameraInfo;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -275,6 +276,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static byte[] supportedISOModes;
 	
 	
+	public static int maxRegionsSupported;
+	
+	
 	public static int CameraIndex = 0;
 	public static boolean CameraMirrored = false;
 	
@@ -285,7 +289,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	//Lists of resolutions, their indexes and names (for capturing and preview)
 	public static List<Long> ResolutionsMPixList;
-	public static List<Camera.Size> ResolutionsSizeList;
+	public static List<CameraController.Size> ResolutionsSizeList;
 	public static List<String> ResolutionsIdxesList;
 	public static List<String> ResolutionsNamesList;
 
@@ -631,21 +635,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static void PopulateCameraDimensionsHALv3(){
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
-		CameraController.ResolutionsSizeList = new ArrayList<Camera.Size>();
+		CameraController.ResolutionsSizeList = new ArrayList<CameraController.Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();
 		
 		int MinMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
-		Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+		android.hardware.camera2.Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
 
 		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
 
 		int iHighestIndex = 0;		
-		Size sHighest = cs[iHighestIndex];
+		android.hardware.camera2.Size sHighest = cs[iHighestIndex];
 		
 		int ii = 0;
-		for(Size s : cs)
+		for(android.hardware.camera2.Size s : cs)
 		{
 			if ((long) s.getWidth() * s.getHeight() > (long) sHighest.getWidth()
 					* sHighest.getHeight()) {
@@ -680,13 +684,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
 			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			CameraController.ResolutionsSizeList.add(loc, camera.new Size(s.getWidth(), s.getHeight()));
+			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(s.getWidth(), s.getHeight()));
 			
 			ii++;
 		}
 
 		if (CameraController.ResolutionsNamesList.size() == 0) {
-			Size s = cs[iHighestIndex];
+			android.hardware.camera2.Size s = cs[iHighestIndex];
 
 			Long lmpix = (long) s.getWidth() * s.getHeight();
 			float mpix = (float) lmpix / 1000000.f;
@@ -706,7 +710,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
 			CameraController.ResolutionsIdxesList.add(0, String.format("%d", 0));
 			CameraController.ResolutionsMPixList.add(0, lmpix);
-			CameraController.ResolutionsSizeList.add(0, camera.new Size(s.getWidth(), s.getHeight()));
+			CameraController.ResolutionsSizeList.add(0, CameraController.getInstance().new Size(s.getWidth(), s.getHeight()));
 		}
 
 		return;
@@ -716,7 +720,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void PopulateCameraDimensions()
 	{
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
-		CameraController.ResolutionsSizeList = new ArrayList<Camera.Size>();
+		CameraController.ResolutionsSizeList = new ArrayList<Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();	
 		
@@ -768,7 +772,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
 			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			CameraController.ResolutionsSizeList.add(loc, s);
+			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(s.width, s.height));
 			
 			ii++;
 		}
@@ -794,11 +798,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
 			CameraController.ResolutionsIdxesList.add(0, String.format("%d", 0));
 			CameraController.ResolutionsMPixList.add(0, lmpix);
-			CameraController.ResolutionsSizeList.add(0, s);
+			CameraController.ResolutionsSizeList.add(0, CameraController.getInstance().new Size(s.width, s.height));
 		}
 
 		return;
-	}	
+	}
+	
+	
+	public static int getNumberOfCameras()
+	{
+		if(!MainScreen.isHALv3)
+			return Camera.getNumberOfCameras();
+		else
+			return CameraController.getInstance().cameraIdList.length;
+	}
 	
 
 	@Override
@@ -836,6 +849,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 	}
 	
+	
+	//------------ CAMERA PARAMETERS AND CAPABILITIES SECTION-------------------------------------------
+	public static boolean isAutoExposureLockSupported()
+	{
+		return false;
+	}
+	
+	public static boolean isAutoWhiteBalanceLockSupported()
+	{
+		return false;
+	}
+	//^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
 	
 	
 	
@@ -926,4 +951,27 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 		// ^^ HALv3 code -------------------------------------------------------------- camera-related listeners
+	
+	
+	public class Size
+	{
+		private int width;
+		private int height;
+		
+		Size(int w, int h)
+		{
+			width = w;
+			height = h;
+		}
+		
+		public int getWidth()
+		{
+			return width;
+		}
+		
+		public int getHeight()
+		{
+			return height;
+		}
+	}
 }

@@ -28,6 +28,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.media.Image;
@@ -44,6 +45,7 @@ import android.widget.RelativeLayout;
 import com.almalence.YuvImage;
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -66,7 +68,7 @@ Implements standard capture plugin - capture single image and save it in shared 
 
 public class CapturePlugin extends PluginCapture
 {
-	//private boolean takingAlready=false;
+	private boolean takingAlready=false;
 	private boolean aboutToTakePicture=false;
 	
 	public static String ModePreference;	// 0=DRO On 1=DRO Off
@@ -227,37 +229,40 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void OnShutterClick()
 	{
-//		if(takingAlready == false)
-//		{
-//			Date curDate = new Date();
-//			SessionID = curDate.getTime();
-//			
-//			MainScreen.thiz.MuteShutter(false);
-//			
-//			String fm = MainScreen.thiz.getFocusMode();
-//			int fs = MainScreen.getFocusState();
-//			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-//					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-//					&& fm != null
-//					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-//					|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-//					|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-//					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-//					|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
-//					&& !MainScreen.getAutoFocusLock())			
-//					aboutToTakePicture = true;			
-//			else if(takingAlready == false)
-//			{
-//				takePicture();
-//			}			
-//		}
-		
-		Log.e("CapturePlugin", "onShutterClick");
-		
-		if(ModePreference.compareTo("0") == 0)
-			MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
+		if(!MainScreen.isHALv3)
+		{
+			if(takingAlready == false)
+			{
+				Date curDate = new Date();
+				SessionID = curDate.getTime();
+				
+				MainScreen.thiz.MuteShutter(false);
+				
+				int focusMode = MainScreen.thiz.getFocusMode();
+				int fs = MainScreen.getFocusState();
+				if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+						MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+						&& focusMode != -1
+						&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
+			      				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
+			    				  focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
+			    				  focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
+			    				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
+						&& !MainScreen.getAutoFocusLock())			
+						aboutToTakePicture = true;			
+				else if(takingAlready == false)
+				{
+					takePicture();
+				}			
+			}
+		}
 		else
-			MainScreen.captureImage(1, ImageFormat.JPEG);		
+		{
+			if(ModePreference.compareTo("0") == 0)
+				MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
+			else
+				MainScreen.captureImage(1, ImageFormat.JPEG);
+		}
 	}
 	
 	
@@ -279,13 +284,16 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-//		if(takingAlready)
-//		{
-//			aboutToTakePicture = false;
-//			return;
-//		}
-//		
-//		takingAlready = true;
+		if(!MainScreen.isHALv3)
+		{
+			if(takingAlready)
+			{
+				aboutToTakePicture = false;
+				return;
+			}
+			
+			takingAlready = true;
+		}
 		
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
@@ -303,44 +311,50 @@ public class CapturePlugin extends PluginCapture
 			MainScreen.guiManager.showCaptureIndication();
     		MainScreen.thiz.PlayShutter();
     		
+    		if(MainScreen.isHALv3)
+    		{
 			if(ModePreference.compareTo("0") == 0)
 				MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
 			else
 				MainScreen.captureImage(1, ImageFormat.JPEG);
+    		}
+    		else
+    		{
 			
-//			Camera camera = MainScreen.thiz.getCamera();
-//			if (camera != null)
-//			{
-//				// play tick sound
-//				MainScreen.guiManager.showCaptureIndication();
-//        		MainScreen.thiz.PlayShutter();
-//        		
-//        		try {
-////        			camera.setPreviewCallback(null);
-////        			camera.takePicture(null, null, null, MainScreen.thiz);        			
-//				}
-//        		catch (Exception e) 
-//				{
-//        			e.printStackTrace();
-//    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
-//    				takingAlready = false;
-//    				Message msg = new Message();
-//    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-//    				msg.what = PluginManager.MSG_BROADCAST;
-//    				MainScreen.H.sendMessage(msg);
-//    				MainScreen.guiManager.lockControls = false;
-//				}
-//			}
-//			else
-//			{
-//				takingAlready = false;
-//				Message msg = new Message();
-//				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-//				msg.what = PluginManager.MSG_BROADCAST;
-//				MainScreen.H.sendMessage(msg);
-//				
-//				MainScreen.guiManager.lockControls = false;
-//			}						
+				Camera camera = MainScreen.thiz.getCamera();
+				if (camera != null)
+				{
+					// play tick sound
+					MainScreen.guiManager.showCaptureIndication();
+	        		MainScreen.thiz.PlayShutter();
+	        		
+	        		try {
+	        			camera.setPreviewCallback(null);
+	        			camera.takePicture(null, null, null, MainScreen.thiz);        			
+					}
+	        		catch (Exception e) 
+					{
+	        			e.printStackTrace();
+	    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+	    				takingAlready = false;
+	    				Message msg = new Message();
+	    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+	    				msg.what = PluginManager.MSG_BROADCAST;
+	    				MainScreen.H.sendMessage(msg);
+	    				MainScreen.guiManager.lockControls = false;
+					}
+				}
+				else
+				{
+					takingAlready = false;
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);
+					
+					MainScreen.guiManager.lockControls = false;
+				}
+    		}
     		return true;
 		}
 		return false;
@@ -349,39 +363,39 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-//		int frame_len = paramArrayOfByte.length;
-//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-//    	
-//    	if (frame == 0)
-//    	{
-//    		//NotEnoughMemory();
-//    	}
-//    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-//    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-//    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-//    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
-//		
-//    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
-//    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-//    	
-//    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
-//    	
-//		try
-//		{
-//			paramCamera.startPreview();
-//		}
-//		catch (RuntimeException e)
-//		{
-//			Log.i("Capture", "StartPreview fail");
-//		}
-//		
-//		Message message = new Message();
-//		message.obj = String.valueOf(SessionID);
-//		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-//		MainScreen.H.sendMessage(message);
-//
-//		takingAlready = false;
-//		aboutToTakePicture = false;
+		int frame_len = paramArrayOfByte.length;
+		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+    	
+    	if (frame == 0)
+    	{
+    		//NotEnoughMemory();
+    	}
+    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+		
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+    	
+    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
+    	
+		try
+		{
+			paramCamera.startPreview();
+		}
+		catch (RuntimeException e)
+		{
+			Log.i("Capture", "StartPreview fail");
+		}
+		
+		Message message = new Message();
+		message.obj = String.valueOf(SessionID);
+		message.what = PluginManager.MSG_CAPTURE_FINISHED;
+		MainScreen.H.sendMessage(message);
+
+		takingAlready = false;
+		aboutToTakePicture = false;
 	}
 	
 	@Override

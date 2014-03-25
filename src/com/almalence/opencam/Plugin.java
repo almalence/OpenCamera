@@ -219,7 +219,8 @@ public abstract class Plugin
 //			MainScreen.setCameraMirrored(false);		
 //	}
 	
-	public void SelectImageDimension() {
+	public void SelectImageDimension()
+	{
 		// ----- Figure how much memory do we have and possibly limit resolution
 		long maxMem = Runtime.getRuntime().maxMemory();// -
 														// Debug.getNativeHeapAllocatedSize();
@@ -247,7 +248,7 @@ public abstract class Plugin
     	
     	//CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
     	//Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
-    	List<Camera.Size> cs = CameraController.ResolutionsSizeList;
+    	List<CameraController.Size> cs = CameraController.ResolutionsSizeList;
 		int Capture5mIdx = -1;
 		long Capture5mMpix = 0;
 		int Capture5mWidth = 0;
@@ -260,19 +261,19 @@ public abstract class Plugin
 
 		// figure default resolution
 		int ii = 0;
-		for(Camera.Size s : cs)
+		for(CameraController.Size s : cs)
 		{
 //		for (int ii = 0; ii < cs.size(); ++ii) {
 			//Size s = cs.get(ii);
-			long mpix = (long) s.width * s.height;
+			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((mpix >= MIN_MPIX_SUPPORTED)
 					&& (mpix < maxMpix)) {
 				if (mpix > Capture5mMpix) {
 					Capture5mIdx = ii;
 					Capture5mMpix = mpix;
-					Capture5mWidth = s.width;
-					Capture5mHeight = s.height;
+					Capture5mWidth = s.getWidth();
+					Capture5mHeight = s.getHeight();
 				}
 			}
 			
@@ -280,26 +281,26 @@ public abstract class Plugin
 		}
 
 		ii = 0;
-		for(Camera.Size s : cs)
+		for(CameraController.Size s : cs)
 		{
 //		for (int ii = 0; ii < cs.size(); ++ii) {
 //			Size s = cs.get(ii);
-			long mpix = (long) s.width * s.height;
+			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((ii == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
 				prefFound = true;
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.width;
-				CaptureHeight = s.height;
+				CaptureWidth = s.getWidth();
+				CaptureHeight = s.getHeight();
 				break;
 			}
 
 			if (mpix > CaptureMpix) {
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.width;
-				CaptureHeight = s.height;
+				CaptureWidth = s.getWidth();
+				CaptureHeight = s.getHeight();
 			}
 			
 			ii++;

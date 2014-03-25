@@ -1102,6 +1102,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		CameraController.supportedFocusModes = getSupportedFocusModes();
 		CameraController.supportedFlashModes = getSupportedFlashModes();
 		CameraController.supportedISOModes = getSupportedISO();
+		
+		CameraController.maxRegionsSupported = getMaxNumMeteringAreas();
 
 		PluginManager.getInstance().SetCameraPictureSize();
 		PluginManager.getInstance().SetupCameraParameters();
@@ -1825,24 +1827,54 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	
 
-	public String getSceneMode() {
-		if (CameraController.camera != null) {
-			Camera.Parameters params = CameraController.cameraParameters;
-			if (params != null)
-				return params.getSceneMode();
+	public int getSceneMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_scene.get(params.getSceneMode());
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getSceneMode exception: " + e.getMessage());
+				}
+			}
 		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(sSceneModePref, -1);
 
-		return null;
+		return -1;
 	}
 
-	public String getWBMode() {
-		if (CameraController.camera != null) {
-			Camera.Parameters params = CameraController.cameraParameters;
-			if (params != null)
-				return params.getWhiteBalance();
+	public int getWBMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_wb.get(params.getWhiteBalance());
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getWBMode exception: " + e.getMessage());
+				}
+			}
 		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(sWBModePref, -1);
 
-		return null;
+		return -1;
 	}
 
 	public int getFocusMode()
@@ -1856,9 +1888,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				{
 					Camera.Parameters params = CameraController.cameraParameters;
 					if (params != null)
-					{
 						return CameraController.key_focus.get(params.getFocusMode());
-					}
 				}
 			}
 			catch (Exception e)
@@ -1868,34 +1898,52 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}
 		else
-		{
 			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(getCameraMirrored()? sRearFocusModePref : sFrontFocusModePref, -1);
-		}
 
 		return -1;
 	}
 
-	public String getFlashMode() {
-		if (CameraController.camera != null) {
-			Camera.Parameters params = CameraController.cameraParameters;
-			if (params != null)
-				return params.getFlashMode();
+	public int getFlashMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_flash.get(params.getFlashMode());
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getFlashMode exception: " + e.getMessage());
+				}
+			}
 		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(sFlashModePref, -1);
 
-		return null;
+		return -1;
 	}
 
-	public String getISOMode() {
-		if (CameraController.camera != null) {
-			Camera.Parameters params = CameraController.cameraParameters;			
-			if (params != null)
+	public String getISOMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
 			{
-				String iso = null;
-				iso = params.get("iso");
-				if(iso == null)
-					iso = params.get("iso-speed");
-				
-				return iso;
+				Camera.Parameters params = CameraController.cameraParameters;			
+				if (params != null)
+				{
+					String iso = null;
+					iso = params.get("iso");
+					if(iso == null)
+						iso = params.get("iso-speed");
+					
+					return iso;
+				}
 			}
 		}
 
@@ -1930,6 +1978,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					e.printStackTrace();
 				}
 			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.sSceneModePref, mode).commit();
 		}
 	}
 
@@ -1962,6 +2012,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					e.printStackTrace();
 				}
 			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.sWBModePref, mode).commit();
 		}
 	}
 
@@ -1994,6 +2046,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					e.printStackTrace();
 				}
 			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mode).commit();
 		}
 	}
 
@@ -2025,6 +2079,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					e.printStackTrace();
 				}
 			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.sFlashModePref, mode).commit();
 		}
 	}
 
@@ -2091,27 +2147,37 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		currentMeteringMode = mode;
 	}
 
-	public void setCameraExposureCompensation(int iEV) {
-//		if (camera != null) {
-//			Camera.Parameters params = cameraParameters;
-//			if (params != null) {
-//				params.setExposureCompensation(iEV);
-//				setCameraParameters(params);
-//			}
-//		}
-		if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
-		{		
-			cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
-			try 
-			{
-				CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
-			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+	public void setCameraExposureCompensation(int iEV)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null) {
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null) {
+					params.setExposureCompensation(iEV);
+					setCameraParameters(params);
+				}
 			}
 		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
+		}
 	}
+	
 
 	/*
 	 * CAMERA PARAMETERS SECTION Supplementary methods for those plugins that
@@ -2212,12 +2278,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static void captureImage(int nFrames, int fm)
 	{
 		// stop preview
-		try {
-			CameraController.camDevice.stopRepeating();
-		} catch (CameraAccessException e1) {
-			Log.e("MainScreen", "Can't stop preview");
-			e1.printStackTrace();
-		}
+//		try {
+//			CameraController.camDevice.stopRepeating();
+//		} catch (CameraAccessException e1) {
+//			Log.e("MainScreen", "Can't stop preview");
+//			e1.printStackTrace();
+//		}
 		
 		// create capture requests for the burst of still images
 		CaptureRequest.Builder stillRequestBuilder = null;

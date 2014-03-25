@@ -1285,7 +1285,8 @@ public class PluginManager {
 		isDefaultsSelected = true;	
 	}
 	
-	public void SelectImageDimension() {
+	public void SelectImageDimension()
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).SelectImageDimension();
 	}

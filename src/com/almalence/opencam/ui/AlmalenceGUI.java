@@ -2790,8 +2790,11 @@ public class AlmalenceGUI extends GUI implements
 		return emptyView;
 	}
 
-	void addCameraChangeButton() {
-		if (Camera.getNumberOfCameras() > 1) {
+	void addCameraChangeButton()
+	{
+		//if (Camera.getNumberOfCameras() > 1)
+		if (CameraController.getNumberOfCameras() > 1)
+		{
 			mCameraChangeSupported = true;
 
 			RotateImageView but = (RotateImageView) topMenuButtons
