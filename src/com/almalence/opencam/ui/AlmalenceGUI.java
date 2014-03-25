@@ -7470,7 +7470,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		//check show help settings
 		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", true);
-		if (false == needToShow && MainScreen.showHelp != true)
+		if (false == needToShow || MainScreen.showHelp == false)
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
@@ -7484,8 +7484,8 @@ public class AlmalenceGUI extends GUI implements
 		TextView helpText = (TextView)guiView.findViewById(R.id.helpText);
 		helpText.setText(text);
 		
-		final CheckBox ck = (CheckBox)guiView.findViewById(R.id.helpCheckBox);
-		ck.setChecked(false);
+//		final CheckBox ck = (CheckBox)guiView.findViewById(R.id.helpCheckBox);
+//		ck.setChecked(false);
 		
 		TextView helpTextModeName = (TextView)guiView.findViewById(R.id.helpTextModeName);
 		helpTextModeName.setText(modeName);
@@ -7497,19 +7497,46 @@ public class AlmalenceGUI extends GUI implements
 			{
 				help.setVisibility(View.GONE);
 				
-				if (ck.isChecked())
+//				if (ck.isChecked())
+//				{
+//					Editor prefsEditor = prefs.edit();
+//					//prefsEditor.putBoolean("showHelpPrefCommon", false);
+//					//reset all show help settings
+////					if (MainScreen.showHelp)
+////					{
+////						prefsEditor.putBoolean("droShowHelp", true);
+////						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+////						prefsEditor.putBoolean("panoramaShowHelp", true);
+////						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+////						prefsEditor.putBoolean("objectRemovalShowHelp", true);
+////					}
+//					
+//					prefsEditor.putBoolean(preference, false);
+//					prefsEditor.commit();
+//				}				
+			}
+		});
+		
+		Button buttonDontShow = (Button)guiView.findViewById(R.id.buttonDontShow);
+		buttonDontShow.setOnClickListener(new OnClickListener() 
+		{
+			public void onClick(View v) 
+			{
+				help.setVisibility(View.GONE);
+				
+//				if (ck.isChecked())
 				{
 					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("showHelpPrefCommon", false);
+					//prefsEditor.putBoolean("showHelpPrefCommon", false);
 					//reset all show help settings
-					if (MainScreen.showHelp)
-					{
-						prefsEditor.putBoolean("droShowHelp", true);
-						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
-						prefsEditor.putBoolean("panoramaShowHelp", true);
-						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
-						prefsEditor.putBoolean("objectRemovalShowHelp", true);
-					}
+//					if (MainScreen.showHelp)
+//					{
+//						prefsEditor.putBoolean("droShowHelp", true);
+//						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+//						prefsEditor.putBoolean("panoramaShowHelp", true);
+//						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+//						prefsEditor.putBoolean("objectRemovalShowHelp", true);
+//					}
 					
 					prefsEditor.putBoolean(preference, false);
 					prefsEditor.commit();

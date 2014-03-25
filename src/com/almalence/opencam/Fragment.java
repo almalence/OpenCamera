@@ -26,6 +26,7 @@ package com.almalence.opencam;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,6 +79,31 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
                 Toast.makeText(MainScreen.thiz,
                 		MainScreen.thiz.getResources().getString(R.string.Pref_About),
                         Toast.LENGTH_LONG).show();
+
+                return true;
+            }
+        });
+        
+        
+        CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
+        if (helpPref!=null)
+        	helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick(Preference preference)
+            {
+                if (((CheckBoxPreference)preference).isChecked())
+                {
+                	SharedPreferences prefs = PreferenceManager
+            				.getDefaultSharedPreferences(MainScreen.mainContext);
+                	Editor prefsEditor = prefs.edit();
+                	prefsEditor.putBoolean("droShowHelp", true);
+					prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+					prefsEditor.putBoolean("panoramaShowHelp", true);
+					prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+					prefsEditor.putBoolean("objectRemovalShowHelp", true);
+					prefsEditor.putBoolean("bestShotShowHelp", true);
+					prefsEditor.commit();
+                }
 
                 return true;
             }

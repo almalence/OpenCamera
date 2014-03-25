@@ -83,7 +83,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("bestshotImagesAmount", "3"));
+			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "3"));
 		}
 		catch (Exception e)
 		{
@@ -108,7 +108,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("bestshotImagesAmount", "1"));
+        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "3"));
         int selected = 0;
         switch (val)
         {
@@ -129,20 +129,26 @@ public class BestShotCapturePlugin extends PluginCapture
         {
         case 0:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-        	editor.putString("bestshotImagesAmount", "3");
+        	editor.putString("BestshotImagesAmount", "3");
         	break;
         case 1:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-        	editor.putString("bestshotImagesAmount", "5");
+        	editor.putString("BestshotImagesAmount", "5");
         	break;
         case 2:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-        	editor.putString("bestshotImagesAmount", "10");
+        	editor.putString("BestshotImagesAmount", "10");
         	break;
         }
     	editor.commit();
 	}
 
+	@Override
+	public void onGUICreate()
+	{
+		MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
+	}
+	
 	public boolean delayedCaptureSupported(){return true;}
 	
 	@Override

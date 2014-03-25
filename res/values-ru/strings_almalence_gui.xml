@@ -16,6 +16,7 @@
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
     <string name="Pref_Common_JPEGQuality_Title">Качество jpeg</string>
     <string name="blockingText">Подождите, идет обработка...</string>
+	<string name="helpTextDontShow">Больше не показывать</string>
 
     <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
     <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>

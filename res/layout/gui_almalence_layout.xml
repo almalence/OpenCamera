@@ -819,45 +819,65 @@
 				</ImageView>
 			</LinearLayout>
 			
-            <TextView
-				android:id="@+id/helpText"
-				android:textSize="17sp"
-				android:textColor="#5A5E5E"
-				android:background="@android:color/transparent"
-				android:layout_height="wrap_content"
+		    <ScrollView 
+		    android:id="@+id/helpScroll"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:layout_below="@+id/helpImageLayout"
+		    android:layout_marginBottom="10dip"
+		    >
+	            <RelativeLayout
+			        android:layout_width="fill_parent"
+			        android:layout_height="fill_parent" >
+	            <TextView
+					android:id="@+id/helpText"
+					android:textSize="17sp"
+					android:textColor="#5A5E5E"
+					android:background="@android:color/transparent"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_margin="5dip"
+					
+					>
+				</TextView>
+
+				<LinearLayout
+				android:id="@+id/helpTextLayout"
 				android:layout_width="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_margin="5dip"
-				android:layout_below="@+id/helpImageLayout"
-				>
-			</TextView>
-			
-            <CheckBox
-				android:id="@+id/helpCheckBox"
-				android:textSize="17sp"
-				android:textColor="#5A5E5E"
-				android:text="Don't show this again"
-				android:background="@android:color/transparent"
 				android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_margin="5dip"
+				android:layout_margin="2dip"
+				android:orientation="horizontal"       
+				android:layout_centerHorizontal="true"
 				android:layout_below="@+id/helpText"
 				>
-			</CheckBox>
-			
-            <Button 
-                android:id="@+id/buttonOk"
-                android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dip"
-                android:text="OK"
-                android:textColor="#5A5E5E"
-                android:textSize="20sp"
-                android:background="@android:color/transparent">
-            </Button>
+		            <Button 
+		                android:id="@+id/buttonOk"
+		                android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+		                android:layout_alignParentBottom="true"
+		                android:textSize="17sp"
+		                android:text="OK"
+		                android:textColor="#FFFFFF"
+		                android:paddingRight="35dip"
+		                android:paddingLeft="35dip"
+		                >
+		            </Button>
+		            
+		            <Button 
+		                android:id="@+id/buttonDontShow"
+		                android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+		                android:layout_alignParentBottom="true"
+		                android:textSize="17sp"
+		                android:text="@string/helpTextDontShow"
+		                android:textColor="#FFFFFF"
+		                >
+		            </Button>
+	            </LinearLayout>
+	            
+	            </RelativeLayout>
+   			</ScrollView>
 			
 	</RelativeLayout>
 	

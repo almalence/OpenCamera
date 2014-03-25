@@ -32,12 +32,14 @@ import android.graphics.Rect;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 

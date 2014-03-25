@@ -908,6 +908,10 @@ public class PluginManager {
 		{
 			AddModeSettings("panorama_augmented", pf);
 		}
+		else if ("bestshotmode".equals(settings))
+		{
+			AddModeSettings("bestshotmode", pf);
+		}
 //			List<Mode> modes = ConfigParser.getInstance().getList();
 //			for (int i = 0; i < modes.size(); i++)
 //			{
@@ -1831,8 +1835,8 @@ public class PluginManager {
         
         if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
         {
-        	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        		Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+//        	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+//        		Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
         	
 			dcimDir = Environment.getExternalStorageDirectory();
 			
