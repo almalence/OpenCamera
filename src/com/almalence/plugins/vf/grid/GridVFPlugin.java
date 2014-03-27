@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.Plugin;
@@ -88,7 +89,7 @@ public class GridVFPlugin extends PluginViewfinder
 	@Override
 	public void onGUICreate()
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
 		refreshPreferences();
@@ -158,10 +159,10 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 		
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		Size previewSize = MainScreen.thiz.getCameraParameters().getPreviewSize();
+		Size previewSize = CameraController.getInstance().getCameraParameters().getPreviewSize();
 		
 		float ratio = (float)previewSize.width/previewSize.height;
 

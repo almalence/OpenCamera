@@ -45,7 +45,7 @@
 		<howtotext  id=""/>
 		
 	</mode>
-	<!-- 
+	 
 	<mode id="selftimer" name="selftimer_mode_name"  savename="">
 	
 	    <icon		id="gui_almalence_mode_selftimer"/>
@@ -311,7 +311,7 @@
 		
 		<howtotext  id=""/>
 	</mode>
-		 -->
+		 
 
 <!-- 
 	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">

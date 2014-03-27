@@ -40,7 +40,6 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -59,6 +58,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -279,7 +279,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored() 
-				? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_AUTO);
+				? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 	}
 	
 	@Override
@@ -347,11 +347,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     {
 		this.init();
 		
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
 		
-		final Parameters params = MainScreen.thiz.getCameraParameters();
+		final Parameters params = CameraController.getInstance().getCameraParameters();
 		final List<Camera.Size> cs = params.getSupportedPictureSizes();
 		
 		final Size size = cs.get(this.prefResolution);
@@ -368,7 +368,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 //	@Override
 //	public void SetCameraPreviewSize(Camera.Parameters params)
 //	{
-//		final Camera camera = MainScreen.thiz.getCamera();
+//		final Camera camera = CameraController.getInstance().getCamera();
 //    	if (camera == null)
 //    		return;
 //		
@@ -381,13 +381,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 //		
 //		params.setPreviewSize(previewSize.width, previewSize.height);
 //		
-//    	MainScreen.thiz.setCameraParameters(params);
+//    	CameraController.getInstance().setCameraParameters(params);
 //	}
 	
 	@Override
 	public void SetCameraPictureSize()
 	{
-		final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (cp == null)
 		{
 			return;
@@ -406,15 +406,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		if (CameraController.supportedFocusModes != null)
 		{
 //			if (MainScreen.supportedFocusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-			if (MainScreen.isModeAvailable(CameraController.supportedFocusModes,CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE))
+			if (CameraController.isModeAvailable(CameraController.supportedFocusModes,CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 			{
-				sUserFocusMode = CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
+				sUserFocusMode = CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 			}
 		}
     	
     	if (sUserFocusMode != -1)
     	{
-        	MainScreen.thiz.setCameraFocusMode(sUserFocusMode);
+        	CameraController.getInstance().setCameraFocusMode(sUserFocusMode);
         	
 	    	PreferenceManager.getDefaultSharedPreferences(
 	    			MainScreen.mainContext).edit().putInt(
@@ -444,7 +444,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			// Some bugged camera drivers pop ridiculous exception here 
 		}
 
-    	MainScreen.thiz.setCameraParameters(cp);
+    	CameraController.getInstance().setCameraParameters(cp);
     	
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 		
@@ -513,7 +513,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	{
 		if (command == PluginManager.MSG_NEXT_FRAME)
 		{
-			final Camera camera = MainScreen.thiz.getCamera();
+			final Camera camera = CameraController.getInstance().getCamera();
 	    	if (camera == null)
 	    	{
 	    		Log.e("Almalence", "onBroadcast(): camera is null");
@@ -737,10 +737,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
     	ResolutionsPictureIdxesList.clear();
     	ResolutionsPictureSizesList.clear();
 		
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		final Parameters cp = MainScreen.thiz.getCameraParameters();
+		final Parameters cp = CameraController.getInstance().getCameraParameters();
 		final List<Camera.Size> cs = cp.getSupportedPictureSizes();   
         
         int maxIndex = 0;
@@ -875,7 +875,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 			if (!this.takingAlready)
 			{
 				final int state = this.engine.getPictureTakingState(
-						MainScreen.thiz.getFocusMode() == CameraCharacteristics.CONTROL_AF_MODE_AUTO);
+						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 				
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
@@ -899,7 +899,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	{
 		try
 		{
-			final Camera camera = MainScreen.thiz.getCamera();
+			final Camera camera = CameraController.getInstance().getCamera();
 	    	if (camera == null)
 	    	{
 	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
@@ -934,7 +934,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 		
 		try
 		{
-			if (MainScreen.thiz.getFocusMode() == CameraCharacteristics.CONTROL_AF_MODE_AUTO)
+			if (CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO)
 			{
 				this.tryAutoFocus();
 			}
@@ -951,7 +951,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 
 	private void takePictureReal()
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (camera == null)
     	{
     		synchronized (this.engine)

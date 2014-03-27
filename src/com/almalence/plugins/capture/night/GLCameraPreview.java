@@ -30,6 +30,7 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
@@ -147,10 +148,10 @@ public class GLCameraPreview {
 	    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 	    //gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
 
-	    Camera camera = MainScreen.thiz.getCamera();
+	    Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		if(params == null)
 		{
 			return;

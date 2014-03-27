@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -33,6 +32,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -149,17 +149,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void SetupCameraParameters()
 	{
-//		Camera camera = MainScreen.thiz.getCamera();
+//		Camera camera = CameraController.getInstance().getCamera();
 //    	if (null==camera)
 //    		return;
-//		Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
 //		if(prm != null)
 //		{
 //			prm.setExposureCompensation(0);
 //			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
 //		}
 		
-		MainScreen.thiz.resetExposureCompensation();
+		CameraController.getInstance().resetExposureCompensation();
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
 	}
 
@@ -191,25 +191,25 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             cur_ev = 0;
             frame_num = 0;
 
-            int focusMode = MainScreen.thiz.getFocusMode();
+            int focusMode = CameraController.getInstance().getFocusMode();
     		if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
     				MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
     				&& focusMode != -1
-    				&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
-   	      				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
-   	    				 focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
-   	    				 focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
-   	    				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
+    				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+   	      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+   	    				 focusMode == CameraParameters.AF_MODE_INFINITY ||
+   	    				 focusMode == CameraParameters.AF_MODE_FIXED ||
+   	    				 focusMode == CameraParameters.AF_MODE_EDOF)
    	    			&& !MainScreen.getAutoFocusLock())
     			aboutToTakePicture = true;
     		else if(takingAlready == false || (focusMode != -1
-    									   && (focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
-							      			   focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
-							    			   focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
-							    			   focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
-							    			   focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)))
+    									   && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+							      			   focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+							    			   focusMode == CameraParameters.AF_MODE_INFINITY ||
+							    			   focusMode == CameraParameters.AF_MODE_FIXED ||
+							    			   focusMode == CameraParameters.AF_MODE_EDOF)))
     		{
-    			Camera camera = MainScreen.thiz.getCamera();
+    			Camera camera = CameraController.getInstance().getCamera();
     	    	if (null==camera)
     	    	{
     	    		inCapture = false;
@@ -239,19 +239,19 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
 		if (arg1 == PluginManager.MSG_SET_EXPOSURE) 
 		{
     		if (camera != null)		// paranoia
     		{
-	        	Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
+	        	Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
 	            if (UseLumaAdaptation && LumaAdaptationAvailable)
 	            	prm.set("luma-adaptation", evRequested);
 	            else
 	            	prm.setExposureCompensation(evRequested);
 		    	try
 		    	{
-		    		MainScreen.thiz.setCameraParameters(prm);
+		    		CameraController.getInstance().setCameraParameters(prm);
 		    	}
 		    	catch (RuntimeException e)
 		    	{
@@ -332,7 +332,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
 	    			MainScreen.H.sendMessage(message);
 	    			
-	            	MainScreen.thiz.resetExposureCompensation();
+	            	CameraController.getInstance().resetExposureCompensation();
 	            }
     		}
     		return true;
@@ -348,13 +348,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	        	// let's try to set the exposure two times, catching possible throws on differing models
 		    	try
 		    	{
-		        	Camera.Parameters prm = MainScreen.thiz.getCameraParameters();
+		        	Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
 
 		            if (UseLumaAdaptation && LumaAdaptationAvailable)
 		            	prm.set("luma-adaptation", evRequested);
 		            else
 		            	prm.setExposureCompensation(evRequested);
-		            MainScreen.thiz.setCameraParameters(prm);
+		            CameraController.getInstance().setCameraParameters(prm);
 		    	}
 		    	catch (RuntimeException e)
 		    	{
@@ -384,7 +384,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
 	    			MainScreen.H.sendMessage(message);
 	    			
-	            	MainScreen.thiz.resetExposureCompensation();
+	            	CameraController.getInstance().resetExposureCompensation();
 				}
     		}
     		return true;
@@ -441,7 +441,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
 			MainScreen.H.sendMessage(message);
 			
-        	MainScreen.thiz.resetExposureCompensation();
+        	CameraController.getInstance().resetExposureCompensation();
 			return;
 		}
     	
@@ -510,10 +510,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	int ev_inc;
         int min_ev, max_ev;
         
-        Camera camera = MainScreen.thiz.getCamera();
+        Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
         
         String luma = cp.get("luma-adaptation");
         if (luma == null)

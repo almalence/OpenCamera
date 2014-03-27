@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.CameraInfo;
@@ -20,6 +22,7 @@ import android.hardware.camera2.Size;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -119,43 +122,43 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// List of localized names for camera parameters values	
 	public final static Map<Integer, String> mode_scene = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_MODE_AUTO, sceneAuto);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_ACTION, sceneAction);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT, scenePortrait);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE,	sceneLandscape);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT,	sceneNight);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT, sceneNightPortrait);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE, sceneTheatre);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BEACH,	sceneBeach);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SNOW, sceneSnow);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET, sceneSunset);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO, sceneSteadyPhoto);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS, sceneFireworks);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS, sceneSports);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PARTY, sceneParty);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT, sceneCandlelight);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE, sceneBarcode);
+			put(CameraParameters.SCENE_MODE_AUTO, sceneAuto);
+			put(CameraParameters.SCENE_MODE_ACTION, sceneAction);
+			put(CameraParameters.SCENE_MODE_PORTRAIT, scenePortrait);
+			put(CameraParameters.SCENE_MODE_LANDSCAPE,	sceneLandscape);
+			put(CameraParameters.SCENE_MODE_NIGHT,	sceneNight);
+			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, sceneNightPortrait);
+			put(CameraParameters.SCENE_MODE_THEATRE, sceneTheatre);
+			put(CameraParameters.SCENE_MODE_BEACH,	sceneBeach);
+			put(CameraParameters.SCENE_MODE_SNOW, sceneSnow);
+			put(CameraParameters.SCENE_MODE_SUNSET, sceneSunset);
+			put(CameraParameters.SCENE_MODE_STEADYPHOTO, sceneSteadyPhoto);
+			put(CameraParameters.SCENE_MODE_FIREWORKS, sceneFireworks);
+			put(CameraParameters.SCENE_MODE_SPORTS, sceneSports);
+			put(CameraParameters.SCENE_MODE_PARTY, sceneParty);
+			put(CameraParameters.SCENE_MODE_CANDLELIGHT, sceneCandlelight);
+			put(CameraParameters.SCENE_MODE_BARCODE, sceneBarcode);
 		}
 	};
 	
 	public final static Map<String, Integer> key_scene = new Hashtable<String, Integer>() {
 		{
-			put(sceneAuto, CameraCharacteristics.CONTROL_MODE_AUTO);
-			put(sceneAction, CameraCharacteristics.CONTROL_SCENE_MODE_ACTION);
-			put(scenePortrait, CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT);
-			put(sceneLandscape, CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE);
-			put(sceneNight, CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT);
-			put(sceneNightPortrait, CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT);
-			put(sceneTheatre, CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE);
-			put(sceneBeach, CameraCharacteristics.CONTROL_SCENE_MODE_BEACH);
-			put(sceneSnow, CameraCharacteristics.CONTROL_SCENE_MODE_SNOW);
-			put(sceneSunset, CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET);
-			put(sceneSteadyPhoto, CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO);
-			put(sceneFireworks, CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS);
-			put(sceneSports, CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS);
-			put(sceneParty, CameraCharacteristics.CONTROL_SCENE_MODE_PARTY);
-			put(sceneCandlelight, CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT);
-			put(sceneBarcode, CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE);
+			put(sceneAuto, CameraParameters.SCENE_MODE_AUTO);
+			put(sceneAction, CameraParameters.SCENE_MODE_ACTION);
+			put(scenePortrait, CameraParameters.SCENE_MODE_PORTRAIT);
+			put(sceneLandscape, CameraParameters.SCENE_MODE_LANDSCAPE);
+			put(sceneNight, CameraParameters.SCENE_MODE_NIGHT);
+			put(sceneNightPortrait, CameraParameters.SCENE_MODE_NIGHT_PORTRAIT);
+			put(sceneTheatre, CameraParameters.SCENE_MODE_THEATRE);
+			put(sceneBeach, CameraParameters.SCENE_MODE_BEACH);
+			put(sceneSnow, CameraParameters.SCENE_MODE_SNOW);
+			put(sceneSunset, CameraParameters.SCENE_MODE_SUNSET);
+			put(sceneSteadyPhoto, CameraParameters.SCENE_MODE_STEADYPHOTO);
+			put(sceneFireworks, CameraParameters.SCENE_MODE_FIREWORKS);
+			put(sceneSports, CameraParameters.SCENE_MODE_SPORTS);
+			put(sceneParty, CameraParameters.SCENE_MODE_PARTY);
+			put(sceneCandlelight, CameraParameters.SCENE_MODE_CANDLELIGHT);
+			put(sceneBarcode, CameraParameters.SCENE_MODE_BARCODE);
 		}
 	};
 	
@@ -163,80 +166,80 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public final static Map<Integer, String> mode_wb = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_AWB_MODE_AUTO, wbAuto);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT, wbIncandescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT, wbFluorescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT, wbDaylight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT, wbTwilight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_SHADE, wbShade);
+			put(CameraParameters.AWB_MODE_AUTO, wbAuto);
+			put(CameraParameters.AWB_MODE_INCANDESCENT, wbIncandescent);
+			put(CameraParameters.AWB_MODE_FLUORESCENT, wbFluorescent);
+			put(CameraParameters.AWB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
+			put(CameraParameters.AWB_MODE_DAYLIGHT, wbDaylight);
+			put(CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
+			put(CameraParameters.AWB_MODE_TWILIGHT, wbTwilight);
+			put(CameraParameters.AWB_MODE_SHADE, wbShade);
 		}
 	};
 	
 	public final static Map<String, Integer> key_wb = new Hashtable<String, Integer>() {
 		{
-			put(wbAuto, CameraCharacteristics.CONTROL_AWB_MODE_AUTO);
-			put(wbIncandescent, CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT);
-			put(wbFluorescent, CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT);
-			put(wbWarmFluorescent, CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT);
-			put(wbDaylight, CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT);
-			put(wbCloudyDaylight, CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT);
-			put(wbTwilight, CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT);
-			put(wbShade, CameraCharacteristics.CONTROL_AWB_MODE_SHADE);
+			put(wbAuto, CameraParameters.AWB_MODE_AUTO);
+			put(wbIncandescent, CameraParameters.AWB_MODE_INCANDESCENT);
+			put(wbFluorescent, CameraParameters.AWB_MODE_FLUORESCENT);
+			put(wbWarmFluorescent, CameraParameters.AWB_MODE_WARM_FLUORESCENT);
+			put(wbDaylight, CameraParameters.AWB_MODE_DAYLIGHT);
+			put(wbCloudyDaylight, CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT);
+			put(wbTwilight, CameraParameters.AWB_MODE_TWILIGHT);
+			put(wbShade, CameraParameters.AWB_MODE_SHADE);
 		}
 	};
 
 
-	public final static int CONTROL_AF_MODE_INFINITY = 6;
-	public final static int CONTROL_AF_MODE_NORMAL = 7;
-	public final static int CONTROL_AF_MODE_FIXED = 8;
+//	public final static int CONTROL_AF_MODE_INFINITY = 6;
+//	public final static int CONTROL_AF_MODE_NORMAL = 7;
+//	public final static int CONTROL_AF_MODE_FIXED = 8;
 	public final static Map<Integer, String> mode_focus = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, focusAuto);
-			put(CameraController.CONTROL_AF_MODE_INFINITY, focusInfinity);
-			put(CameraController.CONTROL_AF_MODE_NORMAL, focusNormal);
-			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, focusMacro);
-			put(CameraController.CONTROL_AF_MODE_FIXED, focusFixed);
-			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, focusEdof);
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, focusContinuousVideo);
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, focusContinuousPicture);
+			put(CameraParameters.AF_MODE_AUTO, focusAuto);
+			put(CameraParameters.AF_MODE_INFINITY, focusInfinity);
+			put(CameraParameters.AF_MODE_NORMAL, focusNormal);
+			put(CameraParameters.AF_MODE_MACRO, focusMacro);
+			put(CameraParameters.AF_MODE_FIXED, focusFixed);
+			put(CameraParameters.AF_MODE_EDOF, focusEdof);
+			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, focusContinuousVideo);
+			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, focusContinuousPicture);
 		}
 	};
 	
 	public final static Map<String, Integer> key_focus = new Hashtable<String, Integer>() {
 		{
-			put(focusAuto, CameraCharacteristics.CONTROL_AF_MODE_AUTO);
-			put(focusInfinity, CameraController.CONTROL_AF_MODE_INFINITY);
-			put(focusNormal, CameraController.CONTROL_AF_MODE_NORMAL);
-			put(focusMacro, CameraCharacteristics.CONTROL_AF_MODE_MACRO);
-			put(focusFixed, CameraController.CONTROL_AF_MODE_FIXED);
-			put(focusEdof, CameraCharacteristics.CONTROL_AF_MODE_EDOF);
-			put(focusContinuousVideo, CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
-			put(focusContinuousPicture, CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+			put(focusAuto, CameraParameters.AF_MODE_AUTO);
+			put(focusInfinity, CameraParameters.AF_MODE_INFINITY);
+			put(focusNormal, CameraParameters.AF_MODE_NORMAL);
+			put(focusMacro, CameraParameters.AF_MODE_MACRO);
+			put(focusFixed, CameraParameters.AF_MODE_FIXED);
+			put(focusEdof, CameraParameters.AF_MODE_EDOF);
+			put(focusContinuousVideo, CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+			put(focusContinuousPicture, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 		}
 	};
 
 	
-	public final static int FLASH_MODE_AUTO = 3;
-	public final static int FLASH_MODE_REDEYE = 4;
+//	public final static int FLASH_MODE_AUTO = 3;
+//	public final static int FLASH_MODE_REDEYE = 4;
 	public final static Map<Integer, String> mode_flash = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.FLASH_MODE_OFF, flashOff);
-			put(CameraController.FLASH_MODE_AUTO, flashAuto);
-			put(CameraCharacteristics.FLASH_MODE_SINGLE, flashOn);
-			put(CameraController.FLASH_MODE_REDEYE, flashRedEye);
-			put(CameraCharacteristics.FLASH_MODE_TORCH, flashTorch);
+			put(CameraParameters.FLASH_MODE_OFF, flashOff);
+			put(CameraParameters.FLASH_MODE_AUTO, flashAuto);
+			put(CameraParameters.FLASH_MODE_SINGLE, flashOn);
+			put(CameraParameters.FLASH_MODE_REDEYE, flashRedEye);
+			put(CameraParameters.FLASH_MODE_TORCH, flashTorch);
 		}
 	};
 	
 	public final static Map<String, Integer> key_flash = new Hashtable<String, Integer>() {
 		{
-			put(flashOff, CameraCharacteristics.FLASH_MODE_OFF);
-			put(flashAuto, CameraController.FLASH_MODE_AUTO);
-			put(flashOn, CameraCharacteristics.FLASH_MODE_SINGLE);
-			put(flashRedEye, CameraController.FLASH_MODE_REDEYE);
-			put(flashTorch, CameraCharacteristics.FLASH_MODE_TORCH);
+			put(flashOff, CameraParameters.FLASH_MODE_OFF);
+			put(flashAuto, CameraParameters.FLASH_MODE_AUTO);
+			put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
+			put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
+			put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
 		}
 	};
 		
@@ -244,8 +247,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static CameraController cameraController;
 	
 	//Old camera interface
-	public static Camera camera = null;
-	public static Camera.Parameters cameraParameters = null;
+	private static Camera camera = null;
+	private static Camera.Parameters cameraParameters = null;
 	
 	//HALv3 camera's objects
 	public CameraManager manager = null;
@@ -313,12 +316,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static int mFocusState = FOCUS_STATE_IDLE;
 	public static int mCaptureState = CAPTURE_STATE_IDLE;
 	
-	
-	//Possible names of iso in CameraParameters variable
-	public final static String isoParam = "iso";
-	public final static String isoParam2 = "iso-speed";
-	
-	
 	//Singleton access function
 	public static CameraController getInstance()
 	{
@@ -367,7 +364,42 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void onPause()
 	{
+		//reset torch
+		if(!MainScreen.isHALv3)
+		{
+			try 
+	    	{
+	    		 Camera.Parameters p = cameraController.getCameraParameters();
+	    		 if (p != null && cameraController.isFlashModeSupported())
+	        	 {	
+	    			 p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+	    			 cameraController.setCameraParameters(p);
+	        	 }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
 		
+			if (CameraController.camera != null)
+			{
+				CameraController.camera.setPreviewCallback(null);
+				CameraController.camera.stopPreview();
+				CameraController.camera.release();
+				CameraController.camera = null;
+				CameraController.cameraParameters = null;
+			}
+		}
+		else
+		{
+			// HALv3 code -----------------------------------------
+			if ((cameraController.availListener != null) && (cameraController.manager != null))
+				cameraController.manager.removeAvailabilityListener(cameraController.availListener);
+			
+			if (CameraController.camDevice != null)
+			{
+				CameraController.camDevice.close();
+				CameraController.camDevice = null;
+			}
+		}
 	}
 	
 	public void onStop()
@@ -405,7 +437,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.cameraParameters = CameraController.camera.getParameters(); //Initialize of camera parameters variable
 			
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-				cameraController.mVideoStabilizationSupported = MainScreen.thiz.isVideoStabilizationSupported();
+				cameraController.mVideoStabilizationSupported = isVideoStabilizationSupported();
 		}
 		else
 		{
@@ -577,7 +609,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 ////		previewWidth = cameraParameters.getPreviewSize().width;
 ////		previewHeight = cameraParameters.getPreviewSize().height;
 //
-////		Util.initialize(mainContext);
+////		Util.initialize(MainScreen.mainContext);
 ////		Util.initializeMeteringMatrix();
 ////		
 ////		prepareMeteringAreas();
@@ -632,15 +664,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.CameraMirrored = false;
 	}
 	
+	public static boolean isCameraCreated()
+	{
+		if(!MainScreen.isHALv3)
+			return camera != null;
+		else
+			return camDevice != null;
+				
+	}
 	
-	public static void PopulateCameraDimensionsHALv3(){
+	
+	public void PopulateCameraDimensionsHALv3(){
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
 		CameraController.ResolutionsSizeList = new ArrayList<CameraController.Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();
 		
 		int MinMPIX = CameraController.MIN_MPIX_SUPPORTED;
-		CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
+		CameraCharacteristics params = getCameraParameters2();
 		android.hardware.camera2.Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
 
 		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
@@ -717,7 +758,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	
-	public static void PopulateCameraDimensions()
+	public void PopulateCameraDimensions()
 	{
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
 		CameraController.ResolutionsSizeList = new ArrayList<Size>();
@@ -726,7 +767,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		
 		int MinMPIX = CameraController.MIN_MPIX_SUPPORTED;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = getCameraParameters();
 		List<Camera.Size> cs = cp.getSupportedPictureSizes();
 
 		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
@@ -813,6 +854,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return CameraController.getInstance().cameraIdList.length;
 	}
 	
+	public void updateCameraFeatures()
+	{
+		mEVSupported = isExposureCompensationSupported();
+		mSceneModeSupported = isSceneModeSupported();
+		mWBSupported = isWhiteBalanceSupported();
+		mFocusModeSupported = isFocusModeSupported();
+		mFlashModeSupported = isFlashModeSupported();
+		mISOSupported = isISOSupported();
+	}
+	
 
 	@Override
 	public void onShutter()
@@ -860,6 +911,858 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return false;
 	}
+	
+	/*
+	 * CAMERA parameters access functions
+	 * 
+	 * Camera.Parameters get/set Camera scene modes getSupported/set Camera
+	 * white balance getSupported/set Camera focus modes getSupported/set Camera
+	 * flash modes getSupported/set
+	 * 
+	 * For API14 Camera focus areas get/set Camera metering areas get/set
+	 */
+	public boolean isFrontCamera()
+	{
+		return CameraMirrored;
+	}
+
+	public static Camera getCamera()
+	{
+		return camera;
+	}
+	
+	public static CameraDevice getCamera2()
+	{
+		return camDevice;
+	}	
+
+	public static void setCamera(Camera cam) {
+		CameraController.camera = cam;
+	}
+
+	public Camera.Parameters getCameraParameters() {
+		if (CameraController.camera != null && CameraController.cameraParameters != null)
+			return CameraController.cameraParameters;
+
+		return null;
+	}
+	
+	public CameraCharacteristics getCameraParameters2() {
+		if (CameraController.camCharacter != null)
+			return CameraController.camCharacter;
+
+		return null;
+	}
+
+	public boolean setCameraParameters(Camera.Parameters params) {
+		if (params != null && CameraController.camera != null)
+		{			
+			try
+			{
+				CameraController.camera.setParameters(params);
+				CameraController.cameraParameters = params;
+				//cameraParameters = camera.getParameters();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				Log.e("MainScreen", "setCameraParameters exception: " + e.getMessage());
+				return false;
+			}
+			
+			return true;
+		}
+		
+		return false;		
+	}
+	
+	public static void startCameraPreview()
+	{
+		if(camera != null)
+			camera.startPreview();
+	}
+	
+	@TargetApi(15)
+	public void setVideoStabilization(boolean stabilization)
+	{
+		if(CameraController.cameraParameters != null && CameraController.cameraParameters.isVideoStabilizationSupported())
+		{
+			CameraController.cameraParameters.setVideoStabilization(stabilization);
+			this.setCameraParameters(CameraController.cameraParameters);
+		}
+	}
+	
+	@TargetApi(15)
+	public boolean isVideoStabilizationSupported()
+	{
+		if(CameraController.cameraParameters != null)
+			return CameraController.cameraParameters.isVideoStabilizationSupported();
+		
+		return false;
+	}
+	
+	public boolean isExposureLockSupported()
+	{
+//		if (camera != null && cameraParameters != null) {
+//			if (cameraParameters.isAutoExposureLockSupported())
+//				return true;
+//			else
+//				return false;
+//		} else
+//			return false;
+		return true;
+	}
+	
+	public boolean isWhiteBalanceLockSupported()
+	{
+//		if (camera != null && cameraParameters != null) {
+//			if (cameraParameters.isAutoWhiteBalanceLockSupported())
+//				return true;
+//			else
+//				return false;
+//		} else
+//			return false;
+		return true;
+	}
+
+	public boolean isExposureCompensationSupported()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null) {
+				if (CameraController.cameraParameters.getMinExposureCompensation() == 0
+						&& CameraController.cameraParameters.getMaxExposureCompensation() == 0)
+					return false;
+				else
+					return true;
+			} else
+				return false;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[1] == expRange[0] ? false : true;
+			}
+			
+			return false;
+		}
+	}
+
+	public int getMinExposureCompensation()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getMinExposureCompensation();
+			else
+				return 0;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[0];
+			}
+			
+			return 0;
+		}
+	}
+
+	public int getMaxExposureCompensation()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getMaxExposureCompensation();
+			else
+				return 0;
+		}
+		else
+		{		
+			if(CameraController.camCharacter != null)
+			{
+				int expRange[] = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+				return expRange[1];
+			}
+			
+			return 0;
+		}
+	}
+
+	public float getExposureCompensationStep()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getExposureCompensationStep();
+			else
+				return 0;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				float step = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
+				return step;
+			}
+			
+			return 0;
+		}
+	}
+
+	public float getExposureCompensation()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+				return CameraController.cameraParameters.getExposureCompensation()
+						* CameraController.cameraParameters.getExposureCompensationStep();
+			else
+				return 0;
+		}
+		else
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			float currEv = prefs.getFloat(MainScreen.sEvPref, 0);
+			
+			return currEv;
+		}
+	}
+
+	public void resetExposureCompensation()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null) {
+				if (!isExposureCompensationSupported())
+					return;
+				Camera.Parameters params = CameraController.cameraParameters;
+				params.setExposureCompensation(0);
+				setCameraParameters(params);
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public boolean isSceneModeSupported()
+	{
+//		if(!MainScreen.isHALv3)
+//		{
+//		List<String> supported_scene = getSupportedSceneModes();
+//		if (supported_scene != null && supported_scene.size() > 0)
+//			return true;
+//		else
+//			return false;
+//		}
+//		else
+//		{
+//			if(CameraController.camCharacter != null)
+//			{
+//				byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+//				if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+//					return true;				
+//			}
+//			
+//			return false;
+//		}
+		
+		
+		byte supported_scene[] = getSupportedSceneModes();
+		if (supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+			return true;
+		else
+			return false;
+	}
+
+	public byte[] getSupportedSceneModes()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> sceneModes = CameraController.cameraParameters.getSupportedSceneModes();
+				byte scenes[] = new byte[sceneModes.size()];
+				for(int i = 0; i < sceneModes.size(); i++)
+					scenes[i] = CameraController.key_scene.get(sceneModes.get(i)).byteValue();
+				
+				return scenes;
+			}
+	
+			return null;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte scenes[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+				if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+					return scenes;				
+			}
+			
+			return null;
+		}
+	}
+
+	public boolean isWhiteBalanceSupported()
+	{
+//		List<String> supported_wb = getSupportedWhiteBalance();
+//		if (supported_wb != null && supported_wb.size() > 0)
+//			return true;
+//		else
+//			return false;
+
+		
+		byte supported_wb[] = getSupportedWhiteBalance();
+		if (supported_wb != null && supported_wb.length > 0)
+			return true;
+		else
+			return false;
+	}
+
+	public byte[] getSupportedWhiteBalance()
+	{
+//		if (camera != null)
+//			return cameraParameters.getSupportedWhiteBalance();
+		
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();
+				byte wb[] = new byte[wbModes.size()];
+				for(int i = 0; i < wbModes.size(); i++)
+					wb[i] = CameraController.key_wb.get(wbModes.get(i)).byteValue();
+				
+				return wb;
+			}
+	
+			return null;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte wb[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+				if(wb.length > 0 )
+					return wb;				
+			}
+			
+			return null;
+		}
+	}
+
+	public boolean isFocusModeSupported()
+	{
+//		List<String> supported_focus = getSupportedFocusModes();
+//		if (supported_focus != null && supported_focus.size() > 0)
+//			return true;
+//		else
+//			return false;
+		
+		byte supported_focus[] = getSupportedFocusModes();
+		if (supported_focus != null && supported_focus.length > 0)
+			return true;
+		else
+			return false;
+	}
+
+	public byte[] getSupportedFocusModes() {
+//		if (camera != null)
+//			return cameraParameters.getSupportedFocusModes();
+//
+//		return null;
+		
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();
+				byte focus[] = new byte[focusModes.size()];
+				for(int i = 0; i < focusModes.size(); i++)
+					focus[i] = CameraController.key_focus.get(focusModes.get(i)).byteValue();
+				
+				return focus;
+			}
+	
+			return null;
+		}
+		else
+		{
+			if(CameraController.camCharacter != null)
+			{
+				byte focus[]  = CameraController.camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+				if(focus.length > 0 )
+					return focus;				
+			}
+			
+			return null;
+		}
+	}
+
+	public boolean isFlashModeSupported() {
+//		List<String> supported_flash = getSupportedFlashModes();
+//		if (supported_flash != null && supported_flash.size() > 0)
+//			return true;
+//		else
+//			return false;
+		
+		if(MainScreen.isHALv3)
+		{
+			if(CameraController.camCharacter != null)
+			{
+				return CameraController.camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == 1? true : false;						
+			}
+		}
+		else
+		{
+			byte supported_flash[] = getSupportedFlashModes();
+			if (supported_flash != null && supported_flash.length > 0)
+				return true;
+		}
+		
+		return false;
+	}
+
+	public byte[] getSupportedFlashModes() {		
+//		if (camera != null)
+//			return cameraParameters.getSupportedFlashModes();
+//
+//		return null;
+		
+		if(MainScreen.isHALv3)
+		{
+			if(isFlashModeSupported())
+			{
+				byte flash[] = new byte[3];
+				flash[0] = CameraCharacteristics.FLASH_MODE_OFF;
+				flash[1] = CameraCharacteristics.FLASH_MODE_SINGLE;
+				flash[2] = CameraCharacteristics.FLASH_MODE_TORCH;
+				return flash;
+			}
+		}
+		else
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
+				byte flash[] = new byte[flashModes.size()];
+				for(int i = 0; i < flashModes.size(); i++)
+					flash[i] = CameraController.key_flash.get(flashModes.get(i)).byteValue();
+				
+				return flash;
+			}
+		}
+
+		return null;		
+	}
+
+	public boolean isISOSupported() {
+//		List<String> supported_iso = getSupportedISO();
+//		String isoSystem = CameraController.getInstance().getCameraParameters().get("iso");
+//		String isoSystem2 = CameraController.getInstance().getCameraParameters().get("iso-speed");
+//		if ((supported_iso != null && supported_iso.size() > 0) || isoSystem != null || isoSystem2 != null)
+//			return true;
+//		else
+//			return false;
+		return false;
+	}
+
+	public byte[] getSupportedISO()
+	{
+//		if (camera != null)
+//		{
+//			Camera.Parameters camParams = MainScreen.cameraParameters;
+//			String supportedIsoValues = camParams.get("iso-values");
+//			String supportedIsoValues2 = camParams.get("iso-speed-values");
+//			String supportedIsoValues3 = camParams.get("iso-mode-values");
+//			//String iso = camParams.get("iso");
+//			
+//			String delims = "[,]+";
+//			String[] ISOs = null;
+//			
+//			if (supportedIsoValues != "" && supportedIsoValues != null)
+//				ISOs = supportedIsoValues.split(delims);
+//			else if(supportedIsoValues2 != "" && supportedIsoValues2 != null)
+//				ISOs = supportedIsoValues2.split(delims);
+//			else if(supportedIsoValues3 != "" && supportedIsoValues3 != null)
+//				ISOs = supportedIsoValues3.split(delims);
+//			
+//			if(ISOs != null)
+//			{
+//				List<String> isoList = new ArrayList<String>();				
+//				for (int i = 0; i < ISOs.length; i++)
+//					isoList.add(ISOs[i]);
+//
+//				return isoList;
+//			}
+//		}
+
+		return null;
+	}	
+	
+	
+	public int getMaxNumMeteringAreas()
+	{
+//		if(camera != null)
+//		{
+//			Camera.Parameters camParams = MainScreen.cameraParameters;
+//			return camParams.getMaxNumMeteringAreas();
+//		}
+//		
+//		return 0;
+		
+		if(MainScreen.isHALv3)
+		{
+		if(CameraController.camCharacter != null)
+		{
+			return CameraController.camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS);						
+		}
+		}
+		else if(CameraController.camera != null)
+		{
+			Camera.Parameters camParams = CameraController.cameraParameters;
+			return camParams.getMaxNumMeteringAreas();
+		}
+		
+		return 0;
+	}
+	
+	
+	public static boolean isModeAvailable(byte[] modeList, int mode)
+	{
+		boolean isAvailable = false;
+		for(int currMode : modeList)
+		{
+			if(currMode == mode)
+			{
+				isAvailable = true;
+				break;
+			}
+		}
+		return isAvailable;
+	}
+	
+	
+
+	public int getSceneMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_scene.get(params.getSceneMode());
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getSceneMode exception: " + e.getMessage());
+				}
+			}
+		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sSceneModePref, -1);
+
+		return -1;
+	}
+
+	public int getWBMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_wb.get(params.getWhiteBalance());
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getWBMode exception: " + e.getMessage());
+				}
+			}
+		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sWBModePref, -1);
+
+		return -1;
+	}
+
+	public int getFocusMode()
+	{
+		
+		if(!MainScreen.isHALv3)
+		{
+			try
+			{
+				if (CameraController.camera != null)
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_focus.get(params.getFocusMode());
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("MainScreen", "getFocusMode exception: " + e.getMessage());
+			}
+		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraMirrored? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+
+		return -1;
+	}
+
+	public int getFlashMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.cameraParameters;
+					if (params != null)
+						return CameraController.key_flash.get(params.getFlashMode());
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					Log.e("MainScreen", "getFlashMode exception: " + e.getMessage());
+				}
+			}
+		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sFlashModePref, -1);
+
+		return -1;
+	}
+
+	public String getISOMode()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				Camera.Parameters params = CameraController.cameraParameters;			
+				if (params != null)
+				{
+					String iso = null;
+					iso = params.get("iso");
+					if(iso == null)
+						iso = params.get("iso-speed");
+					
+					return iso;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public void setCameraSceneMode(int mode)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setSceneMode(CameraController.mode_scene.get(mode));
+					setCameraParameters(params);
+				}
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sSceneModePref, mode).commit();
+		}
+	}
+
+
+	public void setCameraWhiteBalance(int mode)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setWhiteBalance(CameraController.mode_wb.get(mode));
+					setCameraParameters(params);
+				}
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sWBModePref, mode).commit();
+		}
+	}
+
+	public void setCameraFocusMode(int mode)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setFocusMode(CameraController.mode_focus.get(mode));
+					setCameraParameters(params);
+					MainScreen.mAFLocked = false;
+				}
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mode).commit();
+		}
+	}
+
+	public void setCameraFlashMode(int mode)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null)
+				{
+					params.setFlashMode(CameraController.mode_flash.get(mode));
+					setCameraParameters(params);
+				}
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sFlashModePref, mode).commit();
+		}
+	}
+
+	public void setCameraISO(String mode) {
+		if (CameraController.camera != null) {
+			Camera.Parameters params = CameraController.cameraParameters;
+			if (params != null) {
+				if(params.get("iso") != null)
+					params.set("iso", mode);
+				else if(params.get("iso-speed") != null)
+					params.set("iso-speed", mode);
+				
+				setCameraParameters(params);
+			}
+		}
+	}
+	
+	
+
+	public void setCameraExposureCompensation(int iEV)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null) {
+				Camera.Parameters params = CameraController.cameraParameters;
+				if (params != null) {
+					params.setExposureCompensation(iEV);
+					setCameraParameters(params);
+				}
+			}
+		}
+		else
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
+		}
+	}	
 	//^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
 	
 	
@@ -958,7 +1861,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		private int width;
 		private int height;
 		
-		Size(int w, int h)
+		public Size(int w, int h)
 		{
 			width = w;
 			height = h;

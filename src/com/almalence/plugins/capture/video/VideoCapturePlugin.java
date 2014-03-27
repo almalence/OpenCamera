@@ -31,9 +31,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
-import android.hardware.camera2.CameraCharacteristics;
 import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
@@ -69,6 +67,7 @@ import android.widget.Toast;
 import com.almalence.SwapHeap;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -83,7 +82,6 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
-import com.almalence.opencam.ui.GUI;
 //-+- -->
 
 import com.almalence.ui.RotateImageView;
@@ -302,10 +300,10 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
 		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
 	    if (camera != null)
 	    {
-	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+	    	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
         	if (cp!=null)
         	{
         		if  (cp.isVideoSnapshotSupported())
@@ -366,7 +364,7 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseButton.invalidate();
 		timeLapseButton.requestLayout();
 	
-		//List<Camera.Size> mResolutions = MainScreen.thiz.getCameraParameters().getSupportedVideoSizes();
+		//List<Camera.Size> mResolutions = CameraController.getInstance().getCameraParameters().getSupportedVideoSizes();
 		
 		if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -426,15 +424,17 @@ public class VideoCapturePlugin extends PluginCapture
 	    	onQuickControlClick();
 	    }
 	    
-	    Camera camera = MainScreen.thiz.getCamera();
+	    Camera camera = CameraController.getInstance().getCamera();
 	    if (camera != null)
 	    {
 	    	camera.stopPreview();
-	        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 	        if (cp!=null)
 	        {
 	        	SetCameraPreviewSize(cp);
-	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
+	        	Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
+	        	MainScreen.guiManager.setupViewfinderPreviewSize(CameraController.getInstance().new Size(sz.width, sz.height));
+//	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
 	        }
 	        camera.startPreview();
 	        
@@ -494,7 +494,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onResume()
 	{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_AUTO);
+        preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 //        
 //	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString("imageSizePrefVideo", "2"));
 //	    int quality = 0;
@@ -555,7 +555,7 @@ public class VideoCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         prefs.edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
         
-        Camera camera = MainScreen.thiz.getCamera();
+        Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
 		if (isRecording) {
@@ -584,9 +584,9 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		if(camera != null)
 		{
-			Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			cp.setRecordingHint(false);
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		
 		if(this.buttonsLayout != null)
@@ -617,7 +617,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onCameraParametersSetup()
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
     	
@@ -632,7 +632,7 @@ public class VideoCapturePlugin extends PluginCapture
     	previewSizes.put(CamcorderProfile.QUALITY_720P, false);
     	previewSizes.put(CamcorderProfile.QUALITY_1080P, false);
     	
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		List<Size> psz = cp.getSupportedPreviewSizes();
 		if(psz.contains(camera.new Size(176,144)))
 		{
@@ -707,17 +707,17 @@ public class VideoCapturePlugin extends PluginCapture
 	    editor.commit();
 	    
 		cp.setRecordingHint(true);
-		MainScreen.thiz.setCameraParameters(cp);
+		CameraController.getInstance().setCameraParameters(cp);
 	}
 	
 	@Override
 	public void SetCameraPreviewSize(Camera.Parameters cp)
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
     	if(cp == null)
-        	Log.e("VideoCapturePlugin", "MainScreen.SetCameraPreviewSize MainScreen.thiz.getCameraParameters returned null!");    	
+        	Log.e("VideoCapturePlugin", "MainScreen.SetCameraPreviewSize CameraController.getInstance().getCameraParameters returned null!");    	
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
@@ -739,13 +739,13 @@ public class VideoCapturePlugin extends PluginCapture
 	    Camera.Size sz = getBestPreviewSize(aspect169);
 	    cp.setPreviewSize(sz.width, sz.height);    	
     	
-    	MainScreen.thiz.setCameraParameters(cp);
+    	CameraController.getInstance().setCameraParameters(cp);
 	}
 	
 	//Get optimal supported preview size with aspect ration 16:9 or 4:3
 	private Camera.Size getBestPreviewSize(boolean aspect169)
 	{
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
     	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
 
     	Camera.Size sz = cs.get(0);
@@ -782,10 +782,10 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void SetCameraPictureSize() 
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setJpegQuality(95);
@@ -793,15 +793,15 @@ public class VideoCapturePlugin extends PluginCapture
 		if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
 		{
 			cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
 	}
 	
 	private void releaseMediaRecorder()
 	{
 		captureRate = 24;
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
         if (mMediaRecorder != null) {
@@ -820,7 +820,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		if (shutterOff)
 			return;
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
 		if (isRecording) 
@@ -838,13 +838,15 @@ public class VideoCapturePlugin extends PluginCapture
             camera.lock();         // take camera access back from MediaRecorder
 
             camera.stopPreview();
-	        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 	        if (cp!=null)
 	        {
 	        	SetCameraPreviewSize(cp);
-	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
+	        	Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
+	        	MainScreen.guiManager.setupViewfinderPreviewSize(CameraController.getInstance().new Size(sz.width, sz.height));
+//	        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
 	   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-	   	    		MainScreen.thiz.setVideoStabilization(false);
+	   	    		CameraController.getInstance().setVideoStabilization(false);
 	        }
 	        camera.startPreview();
             
@@ -918,7 +920,7 @@ public class VideoCapturePlugin extends PluginCapture
         	SessionID = curDate.getTime();
         	
    	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-   	    		MainScreen.thiz.setVideoStabilization(true);
+   	    		CameraController.getInstance().setVideoStabilization(true);
         	
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
@@ -1096,7 +1098,7 @@ public class VideoCapturePlugin extends PluginCapture
     	     	    	break;
     	     	    case CamcorderProfile.QUALITY_1080P:
     	     	    {
-    	     	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+    	     	    	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
     	     			List<Size> psz = cp.getSupportedPreviewSizes();    	     			
     	     	    	sz = camera.new Size(1920,1080);
     	     	    	if(!psz.contains(sz))
@@ -1112,9 +1114,9 @@ public class VideoCapturePlugin extends PluginCapture
 	    	    	mMediaRecorder.setVideoSize(sz.width, sz.height);	    	    	
     	    	}
     	    	
-//    	    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//    	    	Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //    	    	params.set("cam_mode",1);
-//    	    	MainScreen.thiz.setCameraParameters(params);
+//    	    	CameraController.getInstance().setCameraParameters(params);
     	    	
     	    	if (swChecked)
     	    	{
@@ -1135,7 +1137,7 @@ public class VideoCapturePlugin extends PluginCapture
     	    		captureRate = 1/(val1 * val2);
     	    		mMediaRecorder.setCaptureRate(captureRate);
     	    	}
-//    	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+//    	    	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 //    	        if (cp!=null)
 //    	        {
 //    	        	Log.e("Video", "cp null");
@@ -1484,7 +1486,7 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		takingAlready = true;		
 		
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
 		if (camera != null)		// paranoia
 		{
 			//MainScreen.thiz.PlayShutter();

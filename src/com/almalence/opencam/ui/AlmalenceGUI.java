@@ -55,11 +55,10 @@ import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
-import android.hardware.Camera.Size;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CaptureRequest;
+//import android.hardware.Camera;
+//import android.hardware.Camera.Size;
+//import android.hardware.camera2.CameraAccessException;
+//import android.hardware.camera2.CaptureRequest;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -113,6 +112,7 @@ import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.googsharing.Thumbnail;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 //<!-- -+-
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
@@ -229,59 +229,59 @@ public class AlmalenceGUI extends GUI implements
 	// white balance, iso)
 	private final static Map<Integer, Integer> icons_scene = new Hashtable<Integer, Integer>() {
 		{
-			put(CameraCharacteristics.CONTROL_MODE_AUTO, R.drawable.gui_almalence_settings_scene_auto);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_ACTION, R.drawable.gui_almalence_settings_scene_action);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT, R.drawable.gui_almalence_settings_scene_portrait);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE, R.drawable.gui_almalence_settings_scene_landscape);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT, R.drawable.gui_almalence_settings_scene_night);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT, R.drawable.gui_almalence_settings_scene_nightportrait);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE, R.drawable.gui_almalence_settings_scene_theater);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BEACH, R.drawable.gui_almalence_settings_scene_beach);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SNOW, R.drawable.gui_almalence_settings_scene_snow);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET, R.drawable.gui_almalence_settings_scene_sunset);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO, R.drawable.gui_almalence_settings_scene_steadyphoto);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS, R.drawable.gui_almalence_settings_scene_fireworks);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS, R.drawable.gui_almalence_settings_scene_sports);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PARTY, R.drawable.gui_almalence_settings_scene_party);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT, R.drawable.gui_almalence_settings_scene_candlelight);
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE, R.drawable.gui_almalence_settings_scene_barcode);
+			put(CameraParameters.SCENE_MODE_AUTO, R.drawable.gui_almalence_settings_scene_auto);
+			put(CameraParameters.SCENE_MODE_ACTION, R.drawable.gui_almalence_settings_scene_action);
+			put(CameraParameters.SCENE_MODE_PORTRAIT, R.drawable.gui_almalence_settings_scene_portrait);
+			put(CameraParameters.SCENE_MODE_LANDSCAPE, R.drawable.gui_almalence_settings_scene_landscape);
+			put(CameraParameters.SCENE_MODE_NIGHT, R.drawable.gui_almalence_settings_scene_night);
+			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, R.drawable.gui_almalence_settings_scene_nightportrait);
+			put(CameraParameters.SCENE_MODE_THEATRE, R.drawable.gui_almalence_settings_scene_theater);
+			put(CameraParameters.SCENE_MODE_BEACH, R.drawable.gui_almalence_settings_scene_beach);
+			put(CameraParameters.SCENE_MODE_SNOW, R.drawable.gui_almalence_settings_scene_snow);
+			put(CameraParameters.SCENE_MODE_SUNSET, R.drawable.gui_almalence_settings_scene_sunset);
+			put(CameraParameters.SCENE_MODE_STEADYPHOTO, R.drawable.gui_almalence_settings_scene_steadyphoto);
+			put(CameraParameters.SCENE_MODE_FIREWORKS, R.drawable.gui_almalence_settings_scene_fireworks);
+			put(CameraParameters.SCENE_MODE_SPORTS, R.drawable.gui_almalence_settings_scene_sports);
+			put(CameraParameters.SCENE_MODE_PARTY, R.drawable.gui_almalence_settings_scene_party);
+			put(CameraParameters.SCENE_MODE_CANDLELIGHT, R.drawable.gui_almalence_settings_scene_candlelight);
+			put(CameraParameters.SCENE_MODE_BARCODE, R.drawable.gui_almalence_settings_scene_barcode);
 		}
 	};
 
 	private final static Map<Integer, Integer> icons_wb = new Hashtable<Integer, Integer>() {
 		{
-			put(CameraCharacteristics.CONTROL_AWB_MODE_AUTO, R.drawable.gui_almalence_settings_wb_auto);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT, R.drawable.gui_almalence_settings_wb_incandescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT, R.drawable.gui_almalence_settings_wb_fluorescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT, R.drawable.gui_almalence_settings_wb_warmfluorescent);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT, R.drawable.gui_almalence_settings_wb_daylight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT, R.drawable.gui_almalence_settings_wb_cloudydaylight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT, R.drawable.gui_almalence_settings_wb_twilight);
-			put(CameraCharacteristics.CONTROL_AWB_MODE_SHADE, R.drawable.gui_almalence_settings_wb_shade);
+			put(CameraParameters.AWB_MODE_AUTO, R.drawable.gui_almalence_settings_wb_auto);
+			put(CameraParameters.AWB_MODE_INCANDESCENT, R.drawable.gui_almalence_settings_wb_incandescent);
+			put(CameraParameters.AWB_MODE_FLUORESCENT, R.drawable.gui_almalence_settings_wb_fluorescent);
+			put(CameraParameters.AWB_MODE_WARM_FLUORESCENT, R.drawable.gui_almalence_settings_wb_warmfluorescent);
+			put(CameraParameters.AWB_MODE_DAYLIGHT, R.drawable.gui_almalence_settings_wb_daylight);
+			put(CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT, R.drawable.gui_almalence_settings_wb_cloudydaylight);
+			put(CameraParameters.AWB_MODE_TWILIGHT, R.drawable.gui_almalence_settings_wb_twilight);
+			put(CameraParameters.AWB_MODE_SHADE, R.drawable.gui_almalence_settings_wb_shade);
 		}
 	};
 
 	private final static Map<Integer, Integer> icons_focus = new Hashtable<Integer, Integer>() {
 		{
-			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, R.drawable.gui_almalence_settings_focus_auto);
-			put(CameraController.CONTROL_AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
-			put(CameraController.CONTROL_AF_MODE_NORMAL, R.drawable.gui_almalence_settings_focus_normal);
-			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, R.drawable.gui_almalence_settings_focus_macro);
-			put(CameraController.CONTROL_AF_MODE_FIXED, R.drawable.gui_almalence_settings_focus_fixed);
-			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, R.drawable.gui_almalence_settings_focus_edof);
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, R.drawable.gui_almalence_settings_focus_continiuousvideo);
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, R.drawable.gui_almalence_settings_focus_continiuouspicture);
+			put(CameraParameters.AF_MODE_AUTO, R.drawable.gui_almalence_settings_focus_auto);
+			put(CameraParameters.AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
+			put(CameraParameters.AF_MODE_NORMAL, R.drawable.gui_almalence_settings_focus_normal);
+			put(CameraParameters.AF_MODE_MACRO, R.drawable.gui_almalence_settings_focus_macro);
+			put(CameraParameters.AF_MODE_FIXED, R.drawable.gui_almalence_settings_focus_fixed);
+			put(CameraParameters.AF_MODE_EDOF, R.drawable.gui_almalence_settings_focus_edof);
+			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, R.drawable.gui_almalence_settings_focus_continiuousvideo);
+			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, R.drawable.gui_almalence_settings_focus_continiuouspicture);
 			put(focusAfLock, R.drawable.gui_almalence_settings_focus_aflock);
 		}
 	};
 
 	private final static Map<Integer, Integer> icons_flash = new Hashtable<Integer, Integer>() {
 		{
-			put(CameraCharacteristics.FLASH_MODE_OFF, R.drawable.gui_almalence_settings_flash_off);
-			put(CameraController.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
-			put(CameraCharacteristics.FLASH_MODE_SINGLE, R.drawable.gui_almalence_settings_flash_on);
-			put(CameraController.FLASH_MODE_REDEYE, R.drawable.gui_almalence_settings_flash_redeye);
-			put(CameraCharacteristics.FLASH_MODE_TORCH, R.drawable.gui_almalence_settings_flash_torch);
+			put(CameraParameters.FLASH_MODE_OFF, R.drawable.gui_almalence_settings_flash_off);
+			put(CameraParameters.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
+			put(CameraParameters.FLASH_MODE_SINGLE, R.drawable.gui_almalence_settings_flash_on);
+			put(CameraParameters.FLASH_MODE_REDEYE, R.drawable.gui_almalence_settings_flash_redeye);
+			put(CameraParameters.FLASH_MODE_TORCH, R.drawable.gui_almalence_settings_flash_torch);
 		}
 	};
 
@@ -323,59 +323,59 @@ public class AlmalenceGUI extends GUI implements
 	// List of localized names for camera parameters values	
 	private final static Map<Integer, String> names_scene = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.sceneAuto));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_ACTION, MainScreen.thiz.getResources().getString(R.string.sceneAction));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.scenePortrait));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_LANDSCAPE,	MainScreen.thiz.getResources().getString(R.string.sceneLandscape));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT,	MainScreen.thiz.getResources().getString(R.string.sceneNight));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.sceneNightPortrait));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_THEATRE, MainScreen.thiz.getResources().getString(R.string.sceneTheatre));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BEACH,	MainScreen.thiz.getResources().getString(R.string.sceneBeach));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SNOW, MainScreen.thiz.getResources().getString(R.string.sceneSnow));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SUNSET, MainScreen.thiz.getResources().getString(R.string.sceneSunset));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_STEADYPHOTO, MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhoto));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_FIREWORKS, MainScreen.thiz.getResources().getString(R.string.sceneFireworks));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_SPORTS, MainScreen.thiz.getResources().getString(R.string.sceneSports));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_PARTY, MainScreen.thiz.getResources().getString(R.string.sceneParty));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_CANDLELIGHT, MainScreen.thiz.getResources().getString(R.string.sceneCandlelight));
-			put(CameraCharacteristics.CONTROL_SCENE_MODE_BARCODE, MainScreen.thiz.getResources().getString(R.string.sceneBarcode));
+			put(CameraParameters.SCENE_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.sceneAuto));
+			put(CameraParameters.SCENE_MODE_ACTION, MainScreen.thiz.getResources().getString(R.string.sceneAction));
+			put(CameraParameters.SCENE_MODE_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.scenePortrait));
+			put(CameraParameters.SCENE_MODE_LANDSCAPE,	MainScreen.thiz.getResources().getString(R.string.sceneLandscape));
+			put(CameraParameters.SCENE_MODE_NIGHT,	MainScreen.thiz.getResources().getString(R.string.sceneNight));
+			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.sceneNightPortrait));
+			put(CameraParameters.SCENE_MODE_THEATRE, MainScreen.thiz.getResources().getString(R.string.sceneTheatre));
+			put(CameraParameters.SCENE_MODE_BEACH,	MainScreen.thiz.getResources().getString(R.string.sceneBeach));
+			put(CameraParameters.SCENE_MODE_SNOW, MainScreen.thiz.getResources().getString(R.string.sceneSnow));
+			put(CameraParameters.SCENE_MODE_SUNSET, MainScreen.thiz.getResources().getString(R.string.sceneSunset));
+			put(CameraParameters.SCENE_MODE_STEADYPHOTO, MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhoto));
+			put(CameraParameters.SCENE_MODE_FIREWORKS, MainScreen.thiz.getResources().getString(R.string.sceneFireworks));
+			put(CameraParameters.SCENE_MODE_SPORTS, MainScreen.thiz.getResources().getString(R.string.sceneSports));
+			put(CameraParameters.SCENE_MODE_PARTY, MainScreen.thiz.getResources().getString(R.string.sceneParty));
+			put(CameraParameters.SCENE_MODE_CANDLELIGHT, MainScreen.thiz.getResources().getString(R.string.sceneCandlelight));
+			put(CameraParameters.SCENE_MODE_BARCODE, MainScreen.thiz.getResources().getString(R.string.sceneBarcode));
 		}
 	};
 
 	private final static Map<Integer, String> names_wb = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_AWB_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.wbAuto));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_INCANDESCENT, MainScreen.thiz.getResources().getString(R.string.wbIncandescent));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbFluorescent));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_WARM_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescent));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbDaylight));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylight));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_TWILIGHT, MainScreen.thiz.getResources().getString(R.string.wbTwilight));
-			put(CameraCharacteristics.CONTROL_AWB_MODE_SHADE, MainScreen.thiz.getResources().getString(R.string.wbShade));
+			put(CameraParameters.AWB_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.wbAuto));
+			put(CameraParameters.AWB_MODE_INCANDESCENT, MainScreen.thiz.getResources().getString(R.string.wbIncandescent));
+			put(CameraParameters.AWB_MODE_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbFluorescent));
+			put(CameraParameters.AWB_MODE_WARM_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescent));
+			put(CameraParameters.AWB_MODE_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbDaylight));
+			put(CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylight));
+			put(CameraParameters.AWB_MODE_TWILIGHT, MainScreen.thiz.getResources().getString(R.string.wbTwilight));
+			put(CameraParameters.AWB_MODE_SHADE, MainScreen.thiz.getResources().getString(R.string.wbShade));
 		}
 	};
 
 
 	private final static Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.CONTROL_AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
-			put(CameraController.CONTROL_AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
-			put(CameraController.CONTROL_AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
-			put(CameraCharacteristics.CONTROL_AF_MODE_MACRO, MainScreen.thiz.getResources().getString(R.string.focusMacro));
-			put(CameraController.CONTROL_AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
-			put(CameraCharacteristics.CONTROL_AF_MODE_EDOF, MainScreen.thiz.getResources().getString(R.string.focusEdof));
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO, MainScreen.thiz.getResources().getString(R.string.focusContinuousVideo));
-			put(CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE, MainScreen.thiz.getResources().getString(R.string.focusContinuousPicture));
+			put(CameraParameters.AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
+			put(CameraParameters.AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
+			put(CameraParameters.AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
+			put(CameraParameters.AF_MODE_MACRO, MainScreen.thiz.getResources().getString(R.string.focusMacro));
+			put(CameraParameters.AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
+			put(CameraParameters.AF_MODE_EDOF, MainScreen.thiz.getResources().getString(R.string.focusEdof));
+			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, MainScreen.thiz.getResources().getString(R.string.focusContinuousVideo));
+			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, MainScreen.thiz.getResources().getString(R.string.focusContinuousPicture));
 		}
 	};
 
 	private final static Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
 		{
-			put(CameraCharacteristics.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
-			put(CameraController.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
-			put(CameraCharacteristics.FLASH_MODE_SINGLE, MainScreen.thiz.getResources().getString(R.string.flashOn));
-			put(CameraController.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
-			put(CameraCharacteristics.FLASH_MODE_TORCH, MainScreen.thiz.getResources().getString(R.string.flashTorch));
+			put(CameraParameters.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
+			put(CameraParameters.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
+			put(CameraParameters.FLASH_MODE_SINGLE, MainScreen.thiz.getResources().getString(R.string.flashOn));
+			put(CameraParameters.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
+			put(CameraParameters.FLASH_MODE_TORCH, MainScreen.thiz.getResources().getString(R.string.flashTorch));
 		}
 	};
 
@@ -1452,15 +1452,16 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	@Override
-	public void setupViewfinderPreviewSize(Camera.Parameters cp) {
-		Camera camera = MainScreen.thiz.getCamera();
-		if (null == camera)
-			return;
+	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
+	{
+//		Camera camera = CameraController.getInstance().getCamera();
+//		if (null == camera)
+//			return;
+//
+//		// ----- Adjust preview size to have proper aspect ratio
+//		Size previewSize = cp.getPreviewSize();
 
-		// ----- Adjust preview size to have proper aspect ratio
-		Size previewSize = cp.getPreviewSize();
-
-		float cameraAspect = (float) previewSize.width / previewSize.height;
+		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
 
 		RelativeLayout ll = (RelativeLayout) MainScreen.thiz
 				.findViewById(R.id.mainLayout1);
@@ -1788,14 +1789,14 @@ public class AlmalenceGUI extends GUI implements
 
 		createPluginTopMenuButtons();
 		
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		
-		if(MainScreen.thiz.isExposureLockSupported())
+		if(CameraController.getInstance().isExposureLockSupported())
 		{
 			mEVLockSupported = true;
 			//AeUnlock();
 		}
-		if(MainScreen.thiz.isWhiteBalanceLockSupported())
+		if(CameraController.getInstance().isWhiteBalanceLockSupported())
 		{
 			mWBLockSupported = true;
 			//AwUnlock();
@@ -1812,14 +1813,14 @@ public class AlmalenceGUI extends GUI implements
 //		}
 
 		// Create Exposure compensation button and slider with supported values
-		if (MainScreen.thiz.isExposureCompensationSupported()) {
+		if (CameraController.getInstance().isExposureCompensationSupported()) {
 			mEVSupported = true;
 			defaultQuickControl1 = String.valueOf(MODE_EV);
 
-			float ev_step = MainScreen.thiz.getExposureCompensationStep();
+			float ev_step = CameraController.getInstance().getExposureCompensationStep();
 
-			int minValue = MainScreen.thiz.getMinExposureCompensation();
-			int maxValue = MainScreen.thiz.getMaxExposureCompensation();
+			int minValue = CameraController.getInstance().getMinExposureCompensation();
+			int maxValue = CameraController.getInstance().getMaxExposureCompensation();
 
 			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 			if (evBar != null) {
@@ -1846,20 +1847,20 @@ public class AlmalenceGUI extends GUI implements
 				rightText.setText(maxString);
 
 				mEV = initValue;				
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					params.setExposureCompensation(mEV);
 //					
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "Ev exception: " + e.getMessage());
 ////					}
 //				}
-				MainScreen.thiz.setCameraExposureCompensation(mEV);
+				CameraController.getInstance().setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -1871,7 +1872,7 @@ public class AlmalenceGUI extends GUI implements
 			mEVSupported = false;
 
 		// Create Scene mode button and adding supported scene modes
-		byte[] supported_scene = MainScreen.thiz.getSupportedSceneModes();
+		byte[] supported_scene = CameraController.getInstance().getSupportedSceneModes();
 		if (supported_scene != null && supported_scene.length > 0 && activeScene != null) {
 
 //			Set<String> keys = SceneModeButtons.keySet();
@@ -1894,7 +1895,7 @@ public class AlmalenceGUI extends GUI implements
 			
 			for(byte scene_name : supported_scene)
 			{
-				if(scene_name != CameraCharacteristics.CONTROL_SCENE_MODE_NIGHT)
+				if(scene_name != CameraParameters.SCENE_MODE_NIGHT)
 					activeScene.add(SceneModeButtons.get(Integer.valueOf(scene_name)));
 				activeSceneNames.add(Integer.valueOf(scene_name));
 			}
@@ -1910,10 +1911,10 @@ public class AlmalenceGUI extends GUI implements
 				int initValue = preferences.getInt(MainScreen.sSceneModePref,
 						MainScreen.sDefaultValue);
 				if (!activeSceneNames.contains(initValue)) {
-					if (MainScreen.thiz.isFrontCamera())
+					if (CameraController.getInstance().isFrontCamera())
 						initValue = activeSceneNames.get(0);
 					else
-						initValue = CameraCharacteristics.CONTROL_MODE_AUTO;
+						initValue = CameraParameters.SCENE_MODE_AUTO;
 				}
 	
 				setButtonSelected(SceneModeButtons, initValue);
@@ -1927,14 +1928,14 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
-				MainScreen.thiz.setCameraSceneMode(mSceneMode);
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				CameraController.getInstance().setCameraSceneMode(mSceneMode);
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					params.setSceneMode(mSceneMode);			
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "Scene mode exception: " + e.getMessage());
@@ -1954,7 +1955,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// Create White Balance mode button and adding supported white balances
-		byte[] supported_wb = MainScreen.thiz.getSupportedWhiteBalance();
+		byte[] supported_wb = CameraController.getInstance().getSupportedWhiteBalance();
 		if (supported_wb != null && supported_wb.length > 0 && activeWB != null) {
 			//mWBSupported = true;
 
@@ -1989,7 +1990,7 @@ public class AlmalenceGUI extends GUI implements
 				int initValue = preferences.getInt(MainScreen.sWBModePref, MainScreen.sDefaultValue);
 				if (!activeWBNames.contains(initValue))
 				{
-					if (MainScreen.thiz.isFrontCamera())
+					if (CameraController.getInstance().isFrontCamera())
 						initValue = activeWBNames.get(0);
 					else
 						initValue = MainScreen.sDefaultValue;
@@ -2004,14 +2005,14 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
-				MainScreen.thiz.setCameraWhiteBalance(mWB);
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				CameraController.getInstance().setCameraWhiteBalance(mWB);
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					params.setWhiteBalance(mWB);
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "WB exception: " + e.getMessage());
@@ -2031,7 +2032,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// Create Focus mode button and adding supported focus modes
-		final byte[] supported_focus = MainScreen.thiz.getSupportedFocusModes();
+		final byte[] supported_focus = CameraController.getInstance().getSupportedFocusModes();
 		if (supported_focus != null && supported_focus.length > 0 && activeFocus != null) {
 
 			//Set<String> keys = FocusModeButtons.keySet();
@@ -2058,8 +2059,8 @@ public class AlmalenceGUI extends GUI implements
 				mFocusModeSupported = true;
 				defaultQuickControl3 = String.valueOf(MODE_FOCUS);
 				
-				if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO) || 
-				   MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
+				if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO) || 
+				   CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
 				{
 					LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 					View paramMode = inflator.inflate(
@@ -2088,36 +2089,48 @@ public class AlmalenceGUI extends GUI implements
 							
 							mFocusMode = focusAfLock;
 							
-							Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-							Camera camera = MainScreen.thiz.getCamera();
-							if (null != camera && params != null)
-							{
-								int AFMode = -1;
-								if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO))
-									AFMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
-								else if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
-									AFMode = CameraCharacteristics.CONTROL_AF_MODE_MACRO;
-								else
-									AFMode = supported_focus[0];
-								
-								
-								MainScreen.thiz.setCameraFocusMode(AFMode);
-//								params.setFocusMode(AFMode);
-//								try {
-//									MainScreen.thiz.setCameraParameters(params);
-//								} catch (Exception e) {
-//									e.printStackTrace();
-//									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
-//								}
-								
-//								int focusMode = MainScreen.thiz.getFocusMode();
-								
-								preferences
-								.edit()
-								.putInt(
-										MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
-												: MainScreen.sFrontFocusModePref, AFMode).commit();
-							}		
+//							Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//							Camera camera = CameraController.getInstance().getCamera();
+//							if (null != camera && params != null)
+//							{
+//								int AFMode = -1;
+//								if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
+//									AFMode = CameraParameters.AF_MODE_AUTO;
+//								else if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
+//									AFMode = CameraParameters.AF_MODE_MACRO;
+//								else
+//									AFMode = supported_focus[0];
+//								
+//								
+//								CameraController.getInstance().setCameraFocusMode(AFMode);
+////								params.setFocusMode(AFMode);
+////								try {
+////									CameraController.getInstance().setCameraParameters(params);
+////								} catch (Exception e) {
+////									e.printStackTrace();
+////									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
+////								}
+//								
+////								int focusMode = CameraController.getInstance().getFocusMode();
+//								
+//								preferences
+//								.edit()
+//								.putInt(
+//										MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+//												: MainScreen.sFrontFocusModePref, AFMode).commit();
+//							}
+							
+							int AFMode = -1;
+							if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
+								AFMode = CameraParameters.AF_MODE_AUTO;
+							else if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
+								AFMode = CameraParameters.AF_MODE_MACRO;
+							else
+								AFMode = supported_focus[0];
+							
+							CameraController.getInstance().setCameraFocusMode(AFMode);
+							
+							preferences.edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, AFMode).commit();
 							
 							Message msg = new Message();
 							msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
@@ -2128,7 +2141,7 @@ public class AlmalenceGUI extends GUI implements
 							hideSecondaryMenus();
 							unselectPrimaryTopMenuButtons(-1);
 							
-//							int focusMode = MainScreen.thiz.getFocusMode();
+//							int focusMode = CameraController.getInstance().getFocusMode();
 							
 							guiView.findViewById(R.id.topPanel).setVisibility(
 									View.VISIBLE);
@@ -2181,20 +2194,20 @@ public class AlmalenceGUI extends GUI implements
 				if(mFocusMode == focusAfLock)
 				{
 					int AFMode = -1;
-					if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_AUTO))
-						AFMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
-					else if(MainScreen.isModeAvailable(supported_focus, CameraCharacteristics.CONTROL_AF_MODE_MACRO))
-						AFMode = CameraCharacteristics.CONTROL_AF_MODE_MACRO;
+					if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
+						AFMode = CameraParameters.AF_MODE_AUTO;
+					else if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
+						AFMode = CameraParameters.AF_MODE_MACRO;
 					else
 						AFMode = supported_focus[0];
 					
-					MainScreen.thiz.setCameraFocusMode(AFMode);
+					CameraController.getInstance().setCameraFocusMode(AFMode);
 				}
 				else						
-					MainScreen.thiz.setCameraFocusMode(mFocusMode);
+					CameraController.getInstance().setCameraFocusMode(mFocusMode);
 				
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					if(mFocusMode.compareTo(focusAfLock) == 0)
@@ -2212,7 +2225,7 @@ public class AlmalenceGUI extends GUI implements
 //					else						
 //						params.setFocusMode(mFocusMode);
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "focus exception: " + e.getMessage());
@@ -2232,9 +2245,9 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// Create Flash mode button and adding supported flash modes
-		byte[] supported_flash = MainScreen.thiz.getSupportedFlashModes();
+		byte[] supported_flash = CameraController.getInstance().getSupportedFlashModes();
 		if (supported_flash != null && supported_flash.length > 0 && activeFlash != null &&
-				!(supported_flash.length == 1 && MainScreen.isModeAvailable(supported_flash, CameraCharacteristics.FLASH_MODE_OFF)))
+				!(supported_flash.length == 1 && CameraController.isModeAvailable(supported_flash, CameraParameters.FLASH_MODE_OFF)))
 		{			
 			//Set<String> keys = FlashModeButtons.keySet();
 //			Collection<String> unsorted_keys = flash_keys.keySet();
@@ -2270,7 +2283,7 @@ public class AlmalenceGUI extends GUI implements
 				int initValue = preferences.getInt(MainScreen.sFlashModePref,
 						MainScreen.sDefaultFlashValue);
 				if (!activeFlashNames.contains(initValue)) {
-					if (MainScreen.thiz.isFrontCamera())
+					if (CameraController.getInstance().isFrontCamera())
 						initValue = activeFlashNames.get(0);
 					else
 						initValue = MainScreen.sDefaultFlashValue;
@@ -2287,14 +2300,14 @@ public class AlmalenceGUI extends GUI implements
 				}
 	
 				
-				MainScreen.thiz.setCameraFlashMode(mFlashMode);
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				CameraController.getInstance().setCameraFlashMode(mFlashMode);
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					params.setFlashMode(mFlashMode);
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "Flash exception: " + e.getMessage());
@@ -2314,9 +2327,9 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// Create ISO button and adding supported ISOs
-//		List<String> supported_iso = MainScreen.thiz.getSupportedISO();
+//		List<String> supported_iso = CameraController.getInstance().getSupportedISO();
 //		if ((supported_iso != null && supported_iso.size() > 0 && activeISO != null) ||
-//				MainScreen.thiz.isISOSupported())
+//				CameraController.getInstance().isISOSupported())
 //		{
 //
 //			//Collection<String> unsorted_keys = ISOButtons.keySet();
@@ -2350,7 +2363,7 @@ public class AlmalenceGUI extends GUI implements
 //	
 //				String initValue = preferences.getString(MainScreen.sISOPref, MainScreen.sDefaultValue);
 //				if (!activeISONames.contains(initValue)) {
-//					if (MainScreen.thiz.isFrontCamera())
+//					if (CameraController.getInstance().isFrontCamera())
 //						initValue = activeISONames.get(0);
 //					else
 //						initValue = MainScreen.sDefaultValue;
@@ -2368,8 +2381,8 @@ public class AlmalenceGUI extends GUI implements
 //					but.setImageResource(icon_id);
 //				}
 //	
-//				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+//				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					if(params.get(MainScreen.isoParam) != null)
@@ -2377,7 +2390,7 @@ public class AlmalenceGUI extends GUI implements
 //					else if(params.get(MainScreen.isoParam2) != null)
 //						params.set(MainScreen.isoParam2, mISO);
 ////					try {
-////						MainScreen.thiz.setCameraParameters(params);
+////						CameraController.getInstance().setCameraParameters(params);
 ////					} catch (Exception e) {
 ////						e.printStackTrace();
 ////						Log.e("onCameraCreate", "ISO exception: " + e.getMessage());
@@ -2398,7 +2411,7 @@ public class AlmalenceGUI extends GUI implements
 		mISOSupported = false;
 		
 		
-		int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
+		int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
 		if(iMeteringAreasSupported > 0)
 		{
 			Collection<Integer> unsorted_keys = names_metering.keySet();
@@ -2438,8 +2451,8 @@ public class AlmalenceGUI extends GUI implements
 				}
 				
 				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
-				//Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//				Camera camera = MainScreen.thiz.getCamera();
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
 //				{
 //					params.setFlashMode(mFlashMode);
@@ -2463,14 +2476,14 @@ public class AlmalenceGUI extends GUI implements
 		} else
 			mCameraChangeSupported = false;
 		
-		try
-		{
-			MainScreen.thiz.setCameraParameters(params);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("AlmalenceGUI", "setCameraParameters exception(in onCameraCreate method): " + e.getMessage());
-		}
+//		try
+//		{
+//			CameraController.getInstance().setCameraParameters(params);
+//		} catch (Exception e)
+//		{
+//			e.printStackTrace();
+//			Log.e("AlmalenceGUI", "setCameraParameters exception(in onCameraCreate method): " + e.getMessage());
+//		}
 			
 
 		SharedPreferences prefs = PreferenceManager
@@ -3630,7 +3643,7 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				byte[] supported_scene = MainScreen.thiz.getSupportedSceneModes();
+				byte[] supported_scene = CameraController.getInstance().getSupportedSceneModes();
 				if (supported_scene == null)
 					return;
 				if (supported_scene.length > 0) {
@@ -3673,7 +3686,7 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				byte[] supported_wb = MainScreen.thiz.getSupportedWhiteBalance();
+				byte[] supported_wb = CameraController.getInstance().getSupportedWhiteBalance();
 				if (supported_wb == null)
 					return;
 				if (supported_wb.length > 0) {
@@ -3714,7 +3727,7 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				byte[] supported_focus = MainScreen.thiz.getSupportedFocusModes();
+				byte[] supported_focus = CameraController.getInstance().getSupportedFocusModes();
 				if (supported_focus == null)
 					return;
 				if (supported_focus.length > 0) {
@@ -3762,7 +3775,7 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				byte[] supported_flash = MainScreen.thiz.getSupportedFlashModes();
+				byte[] supported_flash = CameraController.getInstance().getSupportedFlashModes();
 				if (supported_flash == null)
 					return;
 				if (supported_flash.length > 0) {
@@ -3805,9 +3818,9 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				byte[] supported_iso = MainScreen.thiz.getSupportedISO();
+				byte[] supported_iso = CameraController.getInstance().getSupportedISO();
 				if ((supported_iso != null && supported_iso.length > 0) ||
-				    MainScreen.thiz.isISOSupported())
+				    CameraController.getInstance().isISOSupported())
 				{					
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
 							false, false);
@@ -3850,7 +3863,7 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
+				int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
 				if (iMeteringAreasSupported > 0)
 				{					
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
@@ -4889,29 +4902,29 @@ public class AlmalenceGUI extends GUI implements
 
 	private void setSceneMode(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //		if (params != null)
 //		{
 			if(newMode != -1 && SceneModeButtons.containsKey(newMode))
 			{
 //				params.setSceneMode(newMode);
-//				MainScreen.thiz.setCameraParameters(params);
-				MainScreen.thiz.setCameraSceneMode(newMode);
+//				CameraController.getInstance().setCameraParameters(params);
+				CameraController.getInstance().setCameraSceneMode(newMode);
 				mSceneMode = newMode;
 			}
-			else if(SceneModeButtons.containsKey(CameraCharacteristics.CONTROL_MODE_AUTO))
+			else if(SceneModeButtons.containsKey(CameraParameters.SCENE_MODE_AUTO))
 			{
 //				params.setSceneMode(sceneAuto);
-//				MainScreen.thiz.setCameraParameters(params);
-				MainScreen.thiz.setCameraSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
-				mSceneMode = CameraCharacteristics.CONTROL_MODE_AUTO;	
+//				CameraController.getInstance().setCameraParameters(params);
+				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
+				mSceneMode = CameraParameters.SCENE_MODE_AUTO;	
 			}
-			else if(MainScreen.thiz.getSupportedSceneModes() != null)
+			else if(CameraController.getInstance().getSupportedSceneModes() != null)
 			{
 //				params.setSceneMode(params.getSupportedSceneModes().get(0));
-//				MainScreen.thiz.setCameraParameters(params);
-				MainScreen.thiz.setCameraSceneMode(MainScreen.thiz.getSupportedSceneModes()[0]);
-				mSceneMode = MainScreen.thiz.getSupportedSceneModes()[0];
+//				CameraController.getInstance().setCameraParameters(params);
+				CameraController.getInstance().setCameraSceneMode(CameraController.getInstance().getSupportedSceneModes()[0]);
+				mSceneMode = CameraController.getInstance().getSupportedSceneModes()[0];
 			}
 
 			if(!MainScreen.isHALv3)
@@ -4920,39 +4933,45 @@ public class AlmalenceGUI extends GUI implements
 				// flash, wb, focus mode.
 				// Need to get this information and update state of current
 				// parameters.
-				Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
-				String wbNew = params.getWhiteBalance();
-				String flashNew = params.getFlashMode();
-				String focusNew = params.getFocusMode();
-				String isoNew = params.get(CameraController.isoParam);			
-				if(isoNew == null)
-					isoNew = params.get(CameraController.isoParam2);
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
+//				String wbNew = params.getWhiteBalance();
+//				String flashNew = params.getFlashMode();
+//				String focusNew = params.getFocusMode();
+//				String isoNew = params.get(CameraParameters.isoParam);
+				
+				int wbNew = CameraController.getInstance().getWBMode();
+				int flashNew = CameraController.getInstance().getFlashMode();
+				int focusNew = CameraController.getInstance().getFocusMode();
+				String isoNew = CameraController.getInstance().getISOMode();
+				
+//				if(isoNew == null)
+//					isoNew = params.get(CameraParameters.isoParam2);
 	
 				// Save new params value
-				if(wbNew != null && WBModeButtons.containsKey(CameraController.key_wb.get(wbNew)))
-					mWB = CameraController.key_wb.get(wbNew);
-				else if(WBModeButtons.containsKey(CameraCharacteristics.CONTROL_AWB_MODE_AUTO))
-					mWB = CameraCharacteristics.CONTROL_AWB_MODE_AUTO;
-				else if(params.getSupportedWhiteBalance() != null)
-					mWB = MainScreen.thiz.getSupportedWhiteBalance()[0];
+				if(wbNew != -1 && WBModeButtons.containsKey(wbNew))
+					mWB = wbNew;
+				else if(WBModeButtons.containsKey(CameraParameters.AWB_MODE_AUTO))
+					mWB = CameraParameters.AWB_MODE_AUTO;
+				else if(CameraController.getInstance().isWhiteBalanceSupported())
+					mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
 				else
 					mWB = -1;
 				
-				if(focusNew != null && FocusModeButtons.containsKey(CameraController.key_focus.get(focusNew)))
-					mFocusMode = CameraController.key_focus.get(focusNew);
-				else if(FocusModeButtons.containsKey(CameraCharacteristics.CONTROL_AF_MODE_AUTO))
-					mFocusMode = CameraCharacteristics.CONTROL_AF_MODE_AUTO;
-				else if(params.getSupportedFocusModes() != null)
-					mFocusMode = MainScreen.thiz.getSupportedFocusModes()[0];
+				if(focusNew != -1 && FocusModeButtons.containsKey(focusNew))
+					mFocusMode = focusNew;
+				else if(FocusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
+					mFocusMode = CameraParameters.AF_MODE_AUTO;
+				else if(CameraController.getInstance().isFocusModeSupported())
+					mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
 				else
 					mFocusMode = -1;
 				
-				if(flashNew != null && FlashModeButtons.containsKey(CameraController.key_flash.get(flashNew)))
-					mFlashMode = CameraController.key_flash.get(flashNew);
-				else if(FocusModeButtons.containsKey(CameraController.FLASH_MODE_AUTO))
-					mFlashMode = CameraController.FLASH_MODE_AUTO;
-				else if(params.getSupportedFlashModes() != null)
-					mFlashMode = MainScreen.thiz.getSupportedFlashModes()[0];
+				if(flashNew != -1 && FlashModeButtons.containsKey(flashNew))
+					mFlashMode = flashNew;
+				else if(FocusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
+					mFlashMode = CameraParameters.FLASH_MODE_AUTO;
+				else if(CameraController.getInstance().isFlashModeSupported())
+					mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
 				else
 					mFlashMode = -1;
 				
@@ -4960,8 +4979,8 @@ public class AlmalenceGUI extends GUI implements
 //					mISO = isoNew;
 //				else if(ISOButtons.containsKey(isoAuto))
 //					mISO = isoAuto;
-//				else if(MainScreen.thiz.getSupportedISO() != null)
-//					mISO = MainScreen.thiz.getSupportedISO().get(0);
+//				else if(CameraController.getInstance().getSupportedISO() != null)
+//					mISO = CameraController.getInstance().getSupportedISO().get(0);
 //				else
 //					mISO = null;
 			}
@@ -5059,17 +5078,17 @@ public class AlmalenceGUI extends GUI implements
 		{
 			if(!MainScreen.isHALv3)
 			{
-				if ((mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO || mWB != newMode)
+				if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
 						&& CameraController.getInstance().mSceneModeSupported)
 				{
-					setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				}
 			}
 //				Camera.Parameters params = CameraController.cameraParameters;
 //				params.setWhiteBalance(CameraController.mode_wb.get(newMode));
-//				MainScreen.thiz.setCameraParameters(params);
+//				CameraController.getInstance().setCameraParameters(params);
 			
-			MainScreen.thiz.setCameraWhiteBalance(newMode);
+			CameraController.getInstance().setCameraWhiteBalance(newMode);
 			
 			mWB = newMode;
 			setButtonSelected(WBModeButtons, mWB);
@@ -5097,14 +5116,14 @@ public class AlmalenceGUI extends GUI implements
 		{
 			if(!MainScreen.isHALv3)
 			{
-				if (mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO && mFocusMode != CameraCharacteristics.CONTROL_AF_MODE_AUTO)
+				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
 				{
 					if (CameraController.getInstance().mSceneModeSupported)
-						setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+						setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				}
 			}
 
-			MainScreen.thiz.setCameraFocusMode(newMode);
+			CameraController.getInstance().setCameraFocusMode(newMode);
 			
 			mFocusMode = newMode;
 			setButtonSelected(FocusModeButtons, mFocusMode);
@@ -5139,12 +5158,12 @@ public class AlmalenceGUI extends GUI implements
 		{
 			if(!MainScreen.isHALv3)
 			{
-				if (mSceneMode != CameraCharacteristics.CONTROL_MODE_AUTO && mFlashMode != CameraController.FLASH_MODE_AUTO
+				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
 						&& CameraController.getInstance().mSceneModeSupported)
-					setSceneMode(CameraCharacteristics.CONTROL_MODE_AUTO);
+					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 			}
 
-			MainScreen.thiz.setCameraFlashMode(newMode);
+			CameraController.getInstance().setCameraFlashMode(newMode);
 			mFlashMode = newMode;
 			setButtonSelected(FlashModeButtons, mFlashMode);
 
@@ -5167,27 +5186,27 @@ public class AlmalenceGUI extends GUI implements
 
 	private void setISO(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //		if (newMode != null && params != null)
 //		{
 //			if (mSceneMode != null && (mSceneMode.compareTo(sceneAuto) != 0 && mISO.compareTo(newMode) != 0)
 //					&& MainScreen.thiz.mSceneModeSupported)
 //			{
 //				setSceneMode(sceneAuto);
-//				params = MainScreen.thiz.getCameraParameters();
+//				params = CameraController.getInstance().getCameraParameters();
 //			}
 //
 //			if(params.get(MainScreen.isoParam) != null)
 //				params.set(MainScreen.isoParam, newMode);
 //			else if(params.get(MainScreen.isoParam2) != null)
 //				params.set(MainScreen.isoParam2, newMode);
-//			if(false == MainScreen.thiz.setCameraParameters(params))
+//			if(false == CameraController.getInstance().setCameraParameters(params))
 //			{
 //				if(params.get(MainScreen.isoParam) != null)
 //					params.set(MainScreen.isoParam, iso_default_values.get(newMode));
 //				else if(params.get(MainScreen.isoParam2) != null)
 //					params.set(MainScreen.isoParam2, iso_default_values.get(newMode));
-//				MainScreen.thiz.setCameraParameters(params);	
+//				CameraController.getInstance().setCameraParameters(params);	
 //			}
 //			mISO = newMode;
 //			setButtonSelected(ISOButtons, mISO);
@@ -5211,14 +5230,14 @@ public class AlmalenceGUI extends GUI implements
 	
 	private void setMeteringMode(int newMode)
 	{
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //		if (newMode != null && params != null && !mMeteringMode.contains(newMode))
 //		{
 //			mMeteringMode = newMode;
 //			setButtonSelected(MeteringModeButtons, mMeteringMode);
 //
 //			preferences.edit().putString(MainScreen.sMeteringModePref, newMode).commit();
-//			MainScreen.thiz.setCameraMeteringMode(newMode);
+//			CameraController.getInstance().setCameraMeteringMode(newMode);
 //		}
 //
 //		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
@@ -6688,16 +6707,16 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
-//		Camera camera = MainScreen.thiz.getCamera();
+//		Camera camera = CameraController.getInstance().getCamera();
 //		if (null == camera)
 //			return;
 		
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //		params.setExposureCompensation(iEv);
-//		MainScreen.thiz.setCameraParameters(params);
+//		CameraController.getInstance().setCameraParameters(params);
 		
-		int iEv = progress - MainScreen.thiz.getMaxExposureCompensation();
-		MainScreen.thiz.setCameraExposureCompensation(iEv);
+		int iEv = progress - CameraController.getInstance().getMaxExposureCompensation();
+		CameraController.getInstance().setCameraExposureCompensation(iEv);
 
 		preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
 
@@ -6723,26 +6742,26 @@ public class AlmalenceGUI extends GUI implements
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null) 
 		{
-			int minValue = MainScreen.thiz.getMinExposureCompensation();
+			int minValue = CameraController.getInstance().getMinExposureCompensation();
 			int step = 1;
 			int currProgress = evBar.getProgress();
 			int iEv = currProgress - step;
 			if (iEv < 0)
 				iEv = 0;
-//			Camera camera = MainScreen.thiz.getCamera();
+//			Camera camera = CameraController.getInstance().getCamera();
 //			if (null != camera) {
-//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //				params.setExposureCompensation(iEv + minValue);
-//				MainScreen.thiz.setCameraParameters(params);
+//				CameraController.getInstance().setCameraParameters(params);
 //			}
 			
-			MainScreen.thiz.setCameraExposureCompensation(iEv + minValue);
+			CameraController.getInstance().setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
 							Math.round((iEv + minValue)
-									* MainScreen.thiz
+									* CameraController.getInstance()
 											.getExposureCompensationStep()))
 					.commit();
 
@@ -6754,8 +6773,8 @@ public class AlmalenceGUI extends GUI implements
 	{
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null) {
-			int minValue = MainScreen.thiz.getMinExposureCompensation();
-			int maxValue = MainScreen.thiz.getMaxExposureCompensation();
+			int minValue = CameraController.getInstance().getMinExposureCompensation();
+			int maxValue = CameraController.getInstance().getMaxExposureCompensation();
 
 			int step = 1;
 
@@ -6763,20 +6782,20 @@ public class AlmalenceGUI extends GUI implements
 			int iEv = currProgress + step;
 			if (iEv > maxValue - minValue)
 				iEv = maxValue - minValue;
-//			Camera camera = MainScreen.thiz.getCamera();
+//			Camera camera = CameraController.getInstance().getCamera();
 //			if (null != camera) {
-//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //				params.setExposureCompensation(iEv + minValue);
-//				MainScreen.thiz.setCameraParameters(params);
+//				CameraController.getInstance().setCameraParameters(params);
 //			}
 			
-			MainScreen.thiz.setCameraExposureCompensation(iEv + minValue);
+			CameraController.getInstance().setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
 							Math.round((iEv + minValue)
-									* MainScreen.thiz
+									* CameraController.getInstance()
 											.getExposureCompensationStep()))
 					.commit();
 

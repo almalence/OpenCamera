@@ -1349,7 +1349,7 @@ public class PluginManager {
 	}
 	
 	public void SetupCameraParameters() {
-		MainScreen.thiz.updateCameraFeatures();
+		CameraController.getInstance().updateCameraFeatures();
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).SetupCameraParameters();
 		if (null != pluginList.get(activeCapture))
@@ -1676,7 +1676,7 @@ public class PluginManager {
 	}
 	
 	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID) {		
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		if (params==null)
 			return false;
 		
@@ -1688,7 +1688,7 @@ public class PluginManager {
 		
 		String s4 = null;
 		if(MainScreen.guiManager.mISOSupported)
-			s4 = MainScreen.thiz.getISOMode();
+			s4 = CameraController.getInstance().getISOMode();
 		
 		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
 		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
@@ -1990,7 +1990,7 @@ public class PluginManager {
 		    	 
 	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
 	    		 
-		         Camera camera = MainScreen.thiz.getCamera();
+		         Camera camera = CameraController.getInstance().getCamera();
 		     	 if (null==camera)
 		     		return;
 		         
@@ -2000,9 +2000,9 @@ public class PluginManager {
 			         {
 			        	try 
 			        	{
-			        		 Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+			        		 Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 				        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-				        	 MainScreen.thiz.setCameraParameters(p);
+				        	 CameraController.getInstance().setCameraParameters(p);
 						} catch (Exception e) {
 							e.printStackTrace();
 							Log.e("Self-timer", "Torch exception: " + e.getMessage());
@@ -2020,11 +2020,11 @@ public class PluginManager {
 		    	 countdownHandler.removeCallbacks(FlashOff);	 
 		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
 		         
-		 	    Camera camera = MainScreen.thiz.getCamera();
+		 	    Camera camera = CameraController.getInstance().getCamera();
 		    	if (camera != null)		// paranoia
 				{
-					if(MainScreen.thiz.getSupportedFlashModes() != null)
-		    			MainScreen.thiz.setCameraFlashMode(flashModeBackUp);
+					if(CameraController.getInstance().getSupportedFlashModes() != null)
+						CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
 					
 					Message msg = new Message();
 					msg.what = PluginManager.MSG_DELAYED_CAPTURE;
@@ -2074,24 +2074,24 @@ public class PluginManager {
     
     private Runnable FlashOff = new Runnable() {
         public void run() {
-        	Camera camera = MainScreen.thiz.getCamera();
+        	Camera camera = CameraController.getInstance().getCamera();
         	if (null==camera)
         		return;
-        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
        	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-       	 	MainScreen.thiz.setCameraParameters(p); 
+       	 	CameraController.getInstance().setCameraParameters(p); 
         }
     };
     
     private Runnable FlashBlink = new Runnable() {
     	boolean isFlashON = false;
         public void run() {
-        	Camera camera = MainScreen.thiz.getCamera();
+        	Camera camera = CameraController.getInstance().getCamera();
         	if (null==camera)
         		return;
         	
         	try {
-	        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+	        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 	        	if(isFlashON)
 	        	{
 	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -2102,7 +2102,7 @@ public class PluginManager {
 	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 	       	 		isFlashON = true;
 	        	}
-	        	MainScreen.thiz.setCameraParameters(p);
+	        	CameraController.getInstance().setCameraParameters(p);
         	} catch (Exception e) {
 				e.printStackTrace();
 				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());

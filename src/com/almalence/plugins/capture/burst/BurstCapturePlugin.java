@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -32,6 +31,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -181,15 +181,15 @@ public class BurstCapturePlugin extends PluginCapture
 			
 			MainScreen.thiz.MuteShutter(true);
 			
-			int focusMode = MainScreen.thiz.getFocusMode();
+			int focusMode = CameraController.getInstance().getFocusMode();
 			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
 					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& focusMode != -1
-					&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
-		      				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
-		    				 focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
-		    				 focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
-		    				 focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
+					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+		      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+		    				 focusMode == CameraParameters.AF_MODE_INFINITY ||
+		    				 focusMode == CameraParameters.AF_MODE_FIXED ||
+		    				 focusMode == CameraParameters.AF_MODE_EDOF)
 	        				&& !MainScreen.getAutoFocusLock())
 				takingAlready = true;			
 			else if(takingAlready == false)
@@ -326,7 +326,7 @@ public class BurstCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = MainScreen.thiz.getCamera();
+			Camera camera = CameraController.getInstance().getCamera();
 			if (camera != null)
 			{
 				// play tick sound

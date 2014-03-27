@@ -206,7 +206,7 @@ public abstract class Plugin
 //	protected void openCameraFrontOrRear()
 //	{
 //		if (Camera.getNumberOfCameras() > 0) {
-//			MainScreen.thiz.setCamera(Camera.open(CameraController.CameraIndex));
+//			CameraController.getInstance().setCamera(Camera.open(CameraController.CameraIndex));
 //		}
 //
 //		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -240,13 +240,13 @@ public abstract class Plugin
     	}
 
 		// ----- Find max-resolution capture dimensions
-//    	Camera camera = MainScreen.thiz.getCamera();
+//    	Camera camera = CameraController.getInstance().getCamera();
 //    	if (null==camera)
 //    		return;
-//		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 //		List<Camera.Size> cs = cp.getSupportedPictureSizes();
     	
-    	//CameraCharacteristics params = MainScreen.thiz.getCameraParameters2();
+    	//CameraCharacteristics params = CameraController.getInstance().getCameraParameters2();
     	//Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
     	List<CameraController.Size> cs = CameraController.ResolutionsSizeList;
 		int Capture5mIdx = -1;
@@ -329,7 +329,7 @@ public abstract class Plugin
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
 		List<Camera.Size> cs = cp.getSupportedPreviewSizes();
@@ -339,7 +339,7 @@ public abstract class Plugin
 		cp.setPreviewSize(os.width, os.height);
 		try
         {
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {
@@ -348,19 +348,19 @@ public abstract class Plugin
 	}
 	
 	public void SetCameraPictureSize() {
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
     	
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setJpegQuality(jpegQuality);
 		try
         {
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {

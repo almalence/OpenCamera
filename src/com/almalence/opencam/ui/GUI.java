@@ -35,6 +35,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.Plugin;
@@ -151,7 +152,7 @@ public abstract class GUI
 	
 	abstract public void onCameraSetup();
 	
-	abstract public void setupViewfinderPreviewSize(Camera.Parameters cp);
+	abstract public void setupViewfinderPreviewSize(CameraController.Size previewSize);
 
 	abstract public void menuButtonPressed();
 	

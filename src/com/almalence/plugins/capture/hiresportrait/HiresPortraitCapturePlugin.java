@@ -159,7 +159,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //		
 //		MainScreen.thiz.MuteShutter(false);
 //		
-//		String fm = MainScreen.thiz.getFocusMode();
+//		String fm = CameraController.getInstance().getFocusMode();
 //		if(takingAlready == false && MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE
 //				&& fm != null
 //				&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
@@ -184,7 +184,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 ////		
 ////		takingAlready = true;		
 ////		
-//		Camera camera = MainScreen.thiz.getCamera();
+//		Camera camera = CameraController.getInstance().getCamera();
 //		if (camera != null)		// paranoia
 //		{
 //			
@@ -215,7 +215,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //	{
 //		if (captureFront)
 //		{//save frame from front camera
-//			Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+//			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 //			int fov = (int)cp.getHorizontalViewAngle();
 //			// some devices report incorrect FOV values, use typical view angles then
 //			if (fov >= 150)
@@ -278,7 +278,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //			else
 //				frmcnt=0;
 //			
-//			Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+//			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 //	        
 //			int fov = (int)cp.getHorizontalViewAngle();
 //			// some devices report incorrect FOV values, use typical view angles then

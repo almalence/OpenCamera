@@ -26,11 +26,6 @@ import java.util.List;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CaptureRequest;
 import android.media.Image;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -46,6 +41,7 @@ import com.almalence.YuvImage;
 import com.almalence.SwapHeap;
 
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -56,8 +52,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
-import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
 import com.almalence.ui.Switch.Switch;
 
@@ -98,8 +92,8 @@ public class CapturePlugin extends PluginCapture
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 				int currEv = prefs.getInt(MainScreen.sEvPref, 0);
 				int newEv = currEv;
-				int minValue = MainScreen.thiz.getMinExposureCompensation();
-				float expStep = MainScreen.thiz.getExposureCompensationStep();
+				int minValue = CameraController.getInstance().getMinExposureCompensation();
+				float expStep = CameraController.getInstance().getExposureCompensationStep();
 				if (isChecked)
 				{
 					int diff = (int)Math.round(0.5/expStep);
@@ -113,15 +107,15 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 				}
 				
-//				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //				if (params != null && newEv >= minValue)
 //				{
 //					params.setExposureCompensation(newEv);
-//					MainScreen.thiz.setCameraParameters(params);
+//					CameraController.getInstance().setCameraParameters(params);
 //				}	
 
 				if(newEv >= minValue)
-					MainScreen.thiz.setCameraExposureCompensation(newEv);
+					CameraController.getInstance().setCameraExposureCompensation(newEv);
 				
 				
 				SharedPreferences.Editor editor = prefs.edit();		        	
@@ -143,18 +137,18 @@ public class CapturePlugin extends PluginCapture
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 			int currEv = prefs.getInt(MainScreen.sEvPref, 0);
 			int newEv = currEv;
-			int minValue = MainScreen.thiz.getMinExposureCompensation();
+			int minValue = CameraController.getInstance().getMinExposureCompensation();
 			newEv -= 1;
 			
-//			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //			if (params != null && newEv >= minValue)
 //			{
 //				params.setExposureCompensation(newEv);
-//				MainScreen.thiz.setCameraParameters(params);
+//				CameraController.getInstance().setCameraParameters(params);
 //			}
 			
 			if(newEv >= minValue)
-				MainScreen.thiz.setCameraExposureCompensation(newEv);
+				CameraController.getInstance().setCameraExposureCompensation(newEv);
 		}
 	}
 	
@@ -238,16 +232,16 @@ public class CapturePlugin extends PluginCapture
 				
 				MainScreen.thiz.MuteShutter(false);
 				
-				int focusMode = MainScreen.thiz.getFocusMode();
+				int focusMode = CameraController.getInstance().getFocusMode();
 				int fs = MainScreen.getFocusState();
-				if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-						MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
+						fs == CameraController.FOCUS_STATE_FOCUSING)
 						&& focusMode != -1
-						&& !(focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_PICTURE ||
-			      				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_CONTINUOUS_VIDEO ||
-			    				  focusMode == CameraController.CONTROL_AF_MODE_INFINITY ||
-			    				  focusMode == CameraController.CONTROL_AF_MODE_FIXED ||
-			    				  focusMode == CameraCharacteristics.CONTROL_AF_MODE_EDOF)
+						&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+			      				  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+			    				  focusMode == CameraParameters.AF_MODE_INFINITY ||
+			    				  focusMode == CameraParameters.AF_MODE_FIXED ||
+			    				  focusMode == CameraParameters.AF_MODE_EDOF)
 						&& !MainScreen.getAutoFocusLock())			
 						aboutToTakePicture = true;			
 				else if(takingAlready == false)
@@ -321,7 +315,7 @@ public class CapturePlugin extends PluginCapture
     		else
     		{
 			
-				Camera camera = MainScreen.thiz.getCamera();
+				Camera camera = CameraController.getInstance().getCamera();
 				if (camera != null)
 				{
 					// play tick sound
@@ -403,6 +397,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		int frame = 0;
 		int frame_len = 0;
+		boolean isYUV = false;
 		
 		if(im.getFormat() == ImageFormat.YUV_420_888)
 		{
@@ -436,7 +431,8 @@ public class CapturePlugin extends PluginCapture
 			
 			
 			frame = YuvImage.GetFrame(0);			
-			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);			
+			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			isYUV = true;
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
 		{
@@ -459,6 +455,7 @@ public class CapturePlugin extends PluginCapture
 		
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
     	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
     	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
 		
 		Message message = new Message();

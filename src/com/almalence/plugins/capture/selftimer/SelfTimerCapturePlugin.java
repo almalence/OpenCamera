@@ -212,14 +212,14 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //	public void OnShutterClick()
 //	{
 //		flashModeBackUp = "";
-////		Camera cam = MainScreen.thiz.getCamera();
+////		Camera cam = CameraController.getInstance().getCamera();
 ////		if (cam != null)
 ////		{
-////			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+////			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 ////			if (params != null)
 ////				flashModeBackUp = params.getFlashMode();
 ////		}
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //		if (params != null)
 //			flashModeBackUp = params.getFlashMode();
 //		if (takingAlready == false)
@@ -258,7 +258,7 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //			         countdownLayout.setVisibility(View.VISIBLE);
 //			         countdownView.startAnimation(countdownAnimation);
 //		         }
-//		         Camera camera = MainScreen.thiz.getCamera();
+//		         Camera camera = CameraController.getInstance().getCamera();
 //		     	 if (null==camera)
 //		     		return;
 //		         
@@ -268,9 +268,9 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //			         {
 //			        	try 
 //			        	{
-//			        		 Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+//			        		 Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 //				        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-//				        	 MainScreen.thiz.setCameraParameters(p);
+//				        	 CameraController.getInstance().setCameraParameters(p);
 //						} catch (Exception e) {
 //							e.printStackTrace();
 //							Log.e("Self-timer", "Torch exception: " + e.getMessage());
@@ -294,11 +294,11 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //		         countdownHandler.removeCallbacks(FlashOff);	 
 //		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
 //		         
-//		 	    Camera camera = MainScreen.thiz.getCamera();
+//		 	    Camera camera = CameraController.getInstance().getCamera();
 //		    	if (camera != null)		// paranoia
 //				{
 //		    		if(MainScreen.thiz.getSupportedFlashModes() != null)
-//		    			MainScreen.thiz.setCameraFlashMode(flashModeBackUp);
+//		    			CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
 //
 //		    		new CountDownTimer(300, 300) {
 //						public void onTick(long millisUntilFinished) {
@@ -357,24 +357,24 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //    
 //    private Runnable FlashOff = new Runnable() {
 //        public void run() {
-//        	Camera camera = MainScreen.thiz.getCamera();
+//        	Camera camera = CameraController.getInstance().getCamera();
 //        	if (null==camera)
 //        		return;
-//        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+//        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 //       	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-//       	 	MainScreen.thiz.setCameraParameters(p); 
+//       	 	CameraController.getInstance().setCameraParameters(p); 
 //        }
 //    };
 //    
 //    private Runnable FlashBlink = new Runnable() {
 //    	boolean isFlashON = false;
 //        public void run() {
-//        	Camera camera = MainScreen.thiz.getCamera();
+//        	Camera camera = CameraController.getInstance().getCamera();
 //        	if (null==camera)
 //        		return;
 //        	
 //        	try {
-//	        	Camera.Parameters p = MainScreen.thiz.getCameraParameters();
+//	        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 //	        	if(isFlashON)
 //	        	{
 //	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -385,7 +385,7 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 //	       	 		isFlashON = true;
 //	        	}
-//	        	MainScreen.thiz.setCameraParameters(p);
+//	        	CameraController.getInstance().setCameraParameters(p);
 //        	} catch (Exception e) {
 //				e.printStackTrace();
 //				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());
@@ -450,7 +450,7 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //	{
 //		if (arg1 == PluginManager.MSG_TAKE_PICTURE)
 //		{
-//			Camera camera = MainScreen.thiz.getCamera();
+//			Camera camera = CameraController.getInstance().getCamera();
 //    		if (camera != null)
 //    		{
 //	    		MainScreen.guiManager.showCaptureIndication();

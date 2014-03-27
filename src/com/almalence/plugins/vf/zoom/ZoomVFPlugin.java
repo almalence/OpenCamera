@@ -46,6 +46,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -312,10 +313,10 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		zoomCurrent = 0;				
 
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
         if (cp.isZoomSupported())
         {
         	zoomBar.setMax(cp.getMaxZoom());
@@ -328,10 +329,10 @@ public class ZoomVFPlugin extends PluginViewfinder
 	
 	private void zoomModify(int delta)
 	{
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getInstance().getCamera();
     	if (null==camera)
     		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (cp==null)
 			return;
 		
@@ -352,7 +353,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					
 				cp.setZoom(zoomCurrent);
 					
-				MainScreen.thiz.setCameraParameters(cp);
+				CameraController.getInstance().setCameraParameters(cp);
 				
 				zoomBar.setProgressAndThumb(zoomCurrent);
 			}

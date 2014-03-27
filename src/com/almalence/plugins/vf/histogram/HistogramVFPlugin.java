@@ -34,6 +34,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginViewfinder;
@@ -367,7 +368,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		if (params == null)
 			return;
 

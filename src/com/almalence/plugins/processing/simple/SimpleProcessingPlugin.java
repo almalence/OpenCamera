@@ -79,19 +79,26 @@ public class SimpleProcessingPlugin extends PluginProcessing
 			{
 				AlmaShotDRO.Initialize();
 				
-//				int compressed_frame[] = new int[1];
-//		        int compressed_frame_len[] = new int[1];
-//
-//				compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
-//				compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i +Long.toString(sessionID)));
-//				
-//				AlmaShotDRO.ConvertFromJpeg(
-//		    			compressed_frame,
-//		    			compressed_frame_len,
-//		    			1,
-//		    			mImageWidth, mImageHeight);
-				
-				int inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
+				int inputYUV = 0;
+				boolean isYUV = Boolean.getBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+				if(!isYUV)
+				{
+					int compressed_frame[] = new int[1];
+			        int compressed_frame_len[] = new int[1];
+	
+					compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
+					compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i +Long.toString(sessionID)));
+					
+					AlmaShotDRO.ConvertFromJpeg(
+			    			compressed_frame,
+			    			compressed_frame_len,
+			    			1,
+			    			mImageWidth, mImageHeight);
+					
+					inputYUV = AlmaShotDRO.GetInputFrameNV21(0, mImageWidth, mImageHeight);
+				}
+				else				
+					inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
 		        
 				int yuv = AlmaShotDRO.DroProcess(inputYUV,
 						mImageWidth, mImageHeight, 
