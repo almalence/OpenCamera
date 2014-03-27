@@ -1045,8 +1045,25 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	}
     	
     	this.coordsRecorded = false;
-    	camera.setPreviewCallback(null);
-		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
+    	
+    	try {
+    		camera.setPreviewCallback(null);
+    		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			Log.e("Panorama capture", "takePicture exception: " + e.getMessage());
+			
+			final Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+			
+			takingAlready = false;
+			capturing = false;
+			aboutToTakePicture = false;
+		}
 	}
 
 	@Override

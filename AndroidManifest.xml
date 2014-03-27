@@ -82,6 +82,17 @@
 		    </intent-filter>            
 		</receiver>
 		 -->
+		
+		<!-- Uncomment for Zmazon market 1st part 
+		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
+	    	<intent-filter>
+	        	<action
+	            	android:name="com.amazon.inapp.purchasing.NOTIFY"
+	            	android:permission="com.amazon.inapp.purchasing.Permission.NOTIFY"
+	    	    />
+		    </intent-filter>
+		</receiver>
+		-->
 		 
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
@@ -99,6 +110,10 @@
 	<uses-permission android:name="com.android.vending.BILLING"/>
 	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
 <!--  -+- -->
+
+	<!-- Uncomment for Zmazon market 2nd part 
+	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
+	-->
 
 	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="19"/>

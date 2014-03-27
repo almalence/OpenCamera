@@ -7063,8 +7063,10 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		try {
-			MainScreen.thiz.startActivity(new Intent(
-					"com.android.camera.action.REVIEW", uri));
+			MainScreen.thiz.startActivity(new Intent(Intent.ACTION_VIEW,
+					uri));
+//			MainScreen.thiz.startActivity(new Intent(
+//					"com.android.camera.action.REVIEW", uri));
 		} catch (ActivityNotFoundException ex) {
 			try {
 				MainScreen.thiz.startActivity(new Intent(Intent.ACTION_VIEW,
