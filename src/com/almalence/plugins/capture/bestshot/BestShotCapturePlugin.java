@@ -22,6 +22,7 @@ import java.util.Date;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.media.Image;
@@ -159,8 +160,8 @@ public class BestShotCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(true);
 			
 			int focusMode = CameraController.getInstance().getFocusMode();
-			if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-					MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+			if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+					CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& focusMode != -1
 					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
 	      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
@@ -267,7 +268,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onAutoFocus(boolean paramBoolean)
 	{
 		if(takingAlready == true)
 			takePicture();
@@ -278,39 +279,26 @@ public class BestShotCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = CameraController.getInstance().getCamera();
-			if (camera != null)
-			{
-				// play tick sound
-				MainScreen.guiManager.showCaptureIndication();
-        		MainScreen.thiz.PlayShutter();
-        		
-        		try {
-        			camera.setPreviewCallback(null);
-        			camera.takePicture(null, null, null, MainScreen.thiz);
-				}catch (Exception e) {
-					e.printStackTrace();
-					Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
-					inCapture = false;
-					takingAlready = false;
-					Message msg = new Message();
-	    			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-	    			msg.what = PluginManager.MSG_BROADCAST;
-	    			MainScreen.H.sendMessage(msg);	    			
-	    			MainScreen.guiManager.lockControls = false;
-				}
+			// play tick sound
+			MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
+    		
+    		try 
+    		{
+    			CameraController.captureImage(1, ImageFormat.JPEG);
 			}
-			else
+    		catch (Exception e)
 			{
+				e.printStackTrace();
+				Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);
-    			
+    			MainScreen.H.sendMessage(msg);	    			
     			MainScreen.guiManager.lockControls = false;
-			}			
+			}				
     		return true;
 		}
 		return false;

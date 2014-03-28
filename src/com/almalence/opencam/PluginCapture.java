@@ -42,7 +42,7 @@ public abstract class PluginCapture extends Plugin
 	abstract public void OnShutterClick();
 	
 	@Override
-	abstract public void onAutoFocus(boolean paramBoolean, Camera paramCamera);
+	abstract public void onAutoFocus(boolean paramBoolean);
 	
 	@Override
 	abstract public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);

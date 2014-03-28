@@ -188,11 +188,11 @@ public abstract class Plugin
 /******************************************************************************************************
 	VF/Capture Interfaces
 ******************************************************************************************************/
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera){}
+	public void onAutoFocus(boolean paramBoolean){}
 	
 	public void takePicture(){}
 	
-	public void onShutter(){};
+	public void onShutter(){}
 	
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera){}
 	

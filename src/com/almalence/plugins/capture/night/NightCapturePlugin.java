@@ -30,6 +30,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
@@ -1089,15 +1090,15 @@ public class NightCapturePlugin extends PluginCapture
             {	// if FOCUS_MODE_FIXED
 	        	if (!takingAlready)
 	        	{
-		        	CaptureFrame(camera);
+		        	CaptureFrame();
 		    		takingAlready = true;
 	        	}
             }
             else
             {
             	int focusMode = CameraController.getInstance().getFocusMode();
-        		if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-        				MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+        		if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+        				CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
         				&& focusMode != -1
         				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
        	      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
@@ -1109,7 +1110,7 @@ public class NightCapturePlugin extends PluginCapture
         		else if(takingAlready == false || (focusMode != -1 && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
         				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)))
         		{
-        			CaptureFrame(camera);
+        			CaptureFrame();
                 	takingAlready = true;
         		}
         		else
@@ -1163,7 +1164,7 @@ public class NightCapturePlugin extends PluginCapture
 		
 	}
 	
-	public void CaptureFrame(Camera paramCamera)
+	public void CaptureFrame()
     {
 		if (Integer.parseInt(ModePreference) == 1)	// hi-speed mode
     	{
@@ -1181,8 +1182,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		paramCamera.setPreviewCallback(null);
-	    		paramCamera.takePicture(null, null, null, MainScreen.thiz);
+        		CameraController.captureImage(1, ImageFormat.JPEG);
 	    	}
 	    	catch (RuntimeException e)
 	    	{
@@ -1367,13 +1367,13 @@ public class NightCapturePlugin extends PluginCapture
 ******************************************************************************************************/
 
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onAutoFocus(boolean paramBoolean)
     {
         if (inCapture) // disregard autofocus success (paramBoolean)
         {
         	if(aboutToTakePicture == true)
         	{
-    			CaptureFrame(paramCamera);
+    			CaptureFrame();
     			takingAlready = true;
         	}
         	
@@ -1399,7 +1399,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = CameraController.getInstance().getCamera();
+			Camera camera = CameraController.getCamera();
     		if (camera != null)
     		{
     			camera.startPreview();
@@ -1414,11 +1414,11 @@ public class NightCapturePlugin extends PluginCapture
 		            	{
 		            		takingAlready = false;
 		            		aboutToTakePicture = true;
-		                    camera.autoFocus(MainScreen.thiz);
+		                    camera.autoFocus(CameraController.getInstance());
 		            	}
 		            	else
 		            	{
-		            		CaptureFrame(camera);
+		            		CaptureFrame();
 		            	}
 					}
 					catch (RuntimeException e)

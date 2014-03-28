@@ -451,6 +451,20 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	else return -1;
 }
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_GetYUVFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	if(yuv[index] != NULL)
+	{
+		return (jint)yuv[index];
+	}
+	else return -1;
+}
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_RotateResult
 (
 	JNIEnv* env,

@@ -1301,14 +1301,13 @@ public class PluginManager {
 			pluginList.get(activeCapture).SetCameraPictureSize();
 	}
 
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera) {
+	public void onAutoFocus(boolean paramBoolean) {
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onAutoFocus(paramBoolean,
-					paramCamera);
+			pluginList.get(activeVF.get(i)).onAutoFocus(paramBoolean);
 
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture)
-					.onAutoFocus(paramBoolean, paramCamera);
+					.onAutoFocus(paramBoolean);
 	}
 
 	void takePicture() {

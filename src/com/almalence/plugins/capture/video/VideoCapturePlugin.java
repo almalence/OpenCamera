@@ -30,6 +30,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
@@ -1477,7 +1478,7 @@ public class VideoCapturePlugin extends PluginCapture
     }
 
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera){}
+	public void onAutoFocus(boolean paramBoolean){}
 
 	public void takePicture()
 	{
@@ -1485,25 +1486,14 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 		
 		takingAlready = true;		
-		
-		Camera camera = CameraController.getInstance().getCamera();
-		if (camera != null)		// paranoia
-		{
-			//MainScreen.thiz.PlayShutter();
-			
-	    	try {
-	    		camera.setPreviewCallback(null);
-	    		camera.takePicture(null, null, null, MainScreen.thiz);
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e("Video capture still image", "takePicture exception: " + e.getMessage());
-				takingAlready = false;				
-			}
-		}
-		else
-		{
-			takingAlready = false;			
-		}
+
+    	try {
+    		CameraController.captureImage(1, ImageFormat.JPEG);;
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Video capture still image", "takePicture exception: " + e.getMessage());
+			takingAlready = false;				
+		}		
 	}
 
 	//timelapse values

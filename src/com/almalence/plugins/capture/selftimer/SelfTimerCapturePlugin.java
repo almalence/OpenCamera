@@ -441,7 +441,7 @@ public class SelfTimerCapturePlugin {//extends PluginCapture {
 //	}
 //
 //	@Override
-//	public void onAutoFocus(boolean paramBoolean, Camera paramCamera){}
+//	public void onAutoFocus(boolean paramBoolean){}
 //
 //	@Override
 //	public void onPreviewFrame(byte[] data, Camera paramCamera){}

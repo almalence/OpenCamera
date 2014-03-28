@@ -22,12 +22,13 @@ import android.hardware.camera2.Size;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback, Camera.PreviewCallback, Camera.ShutterCallback
+public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback, Camera.PreviewCallback
 {
 	private final String TAG = "CameraController";
 	
@@ -249,6 +250,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//Old camera interface
 	private static Camera camera = null;
 	private static Camera.Parameters cameraParameters = null;
+	public byte[] pviewBuffer;
 	
 	//HALv3 camera's objects
 	public CameraManager manager = null;
@@ -315,6 +317,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static int mFocusState = FOCUS_STATE_IDLE;
 	public static int mCaptureState = CAPTURE_STATE_IDLE;
+	
+	
+	private Object syncObject = new Object();
 	
 	//Singleton access function
 	public static CameraController getInstance()
@@ -863,43 +868,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		mFlashModeSupported = isFlashModeSupported();
 		mISOSupported = isISOSupported();
 	}
-	
-
-	@Override
-	public void onShutter()
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPreviewFrame(byte[] arg0, Camera arg1)
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onError(int arg0, Camera arg1)
 	{
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void onAutoFocus(boolean arg0, Camera arg1)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPictureTaken(byte[] arg0, Camera arg1)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	
+	}	
 	
 	//------------ CAMERA PARAMETERS AND CAPABILITIES SECTION-------------------------------------------
 	public static boolean isAutoExposureLockSupported()
@@ -1762,8 +1737,268 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
 		}
-	}	
+	}
+	
+	
+	public static void setFocusState(int state)
+	{
+		if (state != CameraController.FOCUS_STATE_IDLE
+				&& state != CameraController.FOCUS_STATE_FOCUSED
+				&& state != CameraController.FOCUS_STATE_FAIL)
+			return;
+
+		mFocusState = state;
+
+		Message msg = new Message();
+		msg.what = PluginManager.MSG_BROADCAST;
+		msg.arg1 = PluginManager.MSG_FOCUS_STATE_CHANGED;
+		MainScreen.H.sendMessage(msg);
+	}
+
+	public static int getFocusState()
+	{
+		return mFocusState;
+	}
 	//^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
+	
+	
+	
+	//------------ CAPTURE AND FOCUS FUNCTION ----------------------------
+	
+//	public static boolean takePicture()
+//	{
+//		synchronized (CameraController.getInstance().syncObject)
+//		{
+//			if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
+//			{
+//				mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+//				// Log.e("", "mFocusState = " + getFocusState());
+//				camera.setPreviewCallback(null);
+//				camera.takePicture(null, null, null, MainScreen.thiz);
+//				return true;
+//			}
+//
+//			return false;
+//		}
+//	}
+	
+	public static boolean captureImage(int nFrames, int format)
+	{
+		//In old camera interface we can capture only JPEG images, so image format parameter will be ignored.
+		if(!MainScreen.isHALv3)
+		{
+			synchronized (CameraController.getInstance().syncObject)
+			{
+				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
+				{
+					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+					// Log.e("", "mFocusState = " + getFocusState());
+					camera.setPreviewCallback(null);
+					camera.takePicture(null, null, null, CameraController.getInstance());
+					return true;
+				}
+
+				return false;
+			}
+		}
+		else
+		{
+			// stop preview
+	//		try {
+	//			CameraController.camDevice.stopRepeating();
+	//		} catch (CameraAccessException e1) {
+	//			Log.e("MainScreen", "Can't stop preview");
+	//			e1.printStackTrace();
+	//		}
+			
+			// create capture requests for the burst of still images
+			CaptureRequest.Builder stillRequestBuilder = null;
+			try
+			{
+				stillRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+				// no re-focus needed, already focused in preview, so keeping the same focusing mode for snapshot
+				stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+				// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
+				//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+				if(format == ImageFormat.JPEG)
+					stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
+				else
+					stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
+	
+				// Google: throw: "Burst capture implemented yet", when to expect implementation?
+				/*
+				List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
+				for (int n=0; n<NUM_FRAMES; ++n)
+					requests.add(stillRequestBuilder.build());
+				
+				camDevice.captureBurst(requests, new captureListener() , null);
+				*/
+				
+				// requests for SZ input frames
+				for (int n=0; n<nFrames; ++n)
+					CameraController.camDevice.capture(stillRequestBuilder.build(), cameraController.new captureListener() , null);
+				
+				// One more capture for comparison with a standard frame
+	//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+	//			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+	//			// set crop area for the scaler to have interpolation applied by camera HW
+	//			stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCrop);
+	//			camDevice.capture(stillRequestBuilder.build(), new captureListener() , null);
+			}
+			catch (CameraAccessException e)
+			{
+				Log.e("MainScreen", "setting up still image capture request failed");
+				e.printStackTrace();
+				throw new RuntimeException();
+			}
+		}
+		
+		return false;
+	}
+
+	public static boolean autoFocus(Camera.AutoFocusCallback listener)
+	{
+		synchronized (CameraController.getInstance().syncObject)
+		{
+			if(!MainScreen.isHALv3)
+			{
+			if (CameraController.getCamera() != null)
+			{
+				if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING)
+				{
+					CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
+					try {
+						CameraController.getCamera().autoFocus(listener);
+					}catch (Exception e) {
+						e.printStackTrace();
+						Log.e("MainScreen autoFocus(listener) failed", "autoFocus: " + e.getMessage());
+						return false;
+					}
+					return true;
+				}
+			}
+			}
+			else
+			{
+				if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+				{		
+					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+					try 
+					{
+						CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+					}
+					catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			return false;
+		}
+	}
+
+	public static boolean autoFocus()
+	{
+		synchronized (CameraController.getInstance().syncObject)
+		{
+			if(!MainScreen.isHALv3)
+			{
+				if (CameraController.getCamera() != null)
+				{
+					if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING)
+					{
+						//int fm = thiz.getFocusMode();
+						// Log.e("", "mCaptureState = " + mCaptureState);
+						CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
+						try {
+							CameraController.getCamera().autoFocus(CameraController.getInstance());
+						}catch (Exception e) {
+							e.printStackTrace();
+							Log.e("MainScreen autoFocus() failed", "autoFocus: " + e.getMessage());
+							return false;
+						}					
+						return true;
+					}
+				}
+			}
+			else
+			{
+				if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+				{		
+					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+					try 
+					{
+						CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+					}
+					catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			return false;
+		}
+	}
+
+	public static void cancelAutoFocus()
+	{
+		if (CameraController.getCamera() != null) {
+			CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+			try
+			{
+				camera.cancelAutoFocus();
+			}
+			catch(RuntimeException exp)
+			{
+				Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
+			}
+		}
+	}
+	
+	@Override
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) 
+	{
+		
+		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		
+		PluginManager.getInstance().onPictureTaken(paramArrayOfByte,
+				paramCamera);
+		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
+	}
+
+	@Override
+	public void onAutoFocus(boolean focused, Camera paramCamera)
+	{
+		Log.e("", "onAutoFocus callback");
+		PluginManager.getInstance().onAutoFocus(focused);
+		if (focused)
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
+		else
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FAIL);
+	}
+	
+	
+	public void onAutoFocus(boolean focused)
+	{
+		Log.e("", "onAutoFocus call");
+		
+		PluginManager.getInstance().onAutoFocus(focused);
+		if (focused)
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
+		else
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FAIL);
+	}
+
+	@Override
+	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	{
+		PluginManager.getInstance().onPreviewFrame(data, paramCamera);
+		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+	}
+	//^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 	
 	
 	
@@ -1824,6 +2059,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			Log.d(TAG, "CameraDevice.CaptureListener.onCaptureCompleted");
 			
+			Log.e(TAG, "CaptureResult. Focus state = " + result.get(CaptureResult.CONTROL_AF_STATE));
+			if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED)
+			{
+				resetCaptureListener();
+				CameraController.getInstance().onAutoFocus(true);
+				
+			}
+			else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED)
+			{
+				resetCaptureListener();
+				CameraController.getInstance().onAutoFocus(false);				
+			}
+			
+			
 			// Note: result arriving here is just image metadata, not the image itself
 			// good place to extract sensor gain and other parameters
 
@@ -1832,6 +2081,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //					currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
 			
 			//dumpCaptureResult(result);
+		}
+		
+		private void resetCaptureListener()
+		{
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{
+				int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+				try 
+				{
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

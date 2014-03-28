@@ -21,6 +21,7 @@ package com.almalence.plugins.capture.preshot;
 import java.util.Date;
 
 import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -473,15 +474,15 @@ public class PreshotCapturePlugin extends PluginCapture
     				  focusMode == CameraParameters.AF_MODE_EDOF)
 					 && !MainScreen.getAutoFocusLock())
             	{
-        			if(!MainScreen.autoFocus())
+        			if(!CameraController.autoFocus())
         			{
-        				this.CaptureFrame(camera);
+        				this.CaptureFrame();
     		    		takingAlready = true;
         			}
             	}
             	else if (!takingAlready)
             	{
-		        	this.CaptureFrame(camera);
+		        	this.CaptureFrame();
 		    		takingAlready = true;
             	}
             }
@@ -489,7 +490,7 @@ public class PreshotCapturePlugin extends PluginCapture
             {
             	if (!takingAlready)
             	{
-    	        	this.CaptureFrame(camera);
+    	        	this.CaptureFrame();
     	    		takingAlready = true;
             	}
             }
@@ -578,25 +579,25 @@ public class PreshotCapturePlugin extends PluginCapture
 			{
 				Log.v("", "1");
 				counter=0;
-				if(!MainScreen.autoFocus())
-					CaptureFrame(camera);
+				if(!CameraController.autoFocus())
+					CaptureFrame();
 			}
 			else
 			{
 				Log.v("", "2");
-				CaptureFrame(camera);
+				CaptureFrame();
 			}
 		}
     }
     
-	public void CaptureFrame(Camera paramCamera)
+	public void CaptureFrame()
     {
     	// only requesting exposure change here
 		try
     	{
     		if (isBuffering)
     		{
-    			if(MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+    			if(CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
     				return;
 	    		inCapture = true;
 	    		
@@ -604,26 +605,26 @@ public class PreshotCapturePlugin extends PluginCapture
 	    		MainScreen.thiz.PlayShutter();
 	    		
 	    		//paramCamera.takePicture(null, null, null, MainScreen.thiz);
-	    		MainScreen.takePicture();
+	    		CameraController.captureImage(1, ImageFormat.JPEG);
 	    		counter++;
     		}
     	}    	
     	catch (RuntimeException e)
     	{
     		Log.i("Preshot capture", "takePicture fail in CaptureFrame (called after release?)" + e.getMessage());
-			paramCamera.startPreview();
+			CameraController.startCameraPreview();
     	}
     }
 
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onAutoFocus(boolean paramBoolean)
     {
     	// on motorola xt5 cm7 this function is called twice!
 		// on motorola droid's onAutoFocus seem to be called at every startPreview,
 		// causing additional frame(s) taken after sequence is finished 
     	if (!takingAlready && isSlowMode)
     	{
-        	CaptureFrame(paramCamera);
+        	CaptureFrame();
     		takingAlready = true;
     	}
     }
@@ -641,7 +642,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				try
 				{
 					camera.startPreview();
-					CaptureFrame(camera);
+					CaptureFrame();
 				}
 				catch (RuntimeException e)
 				{

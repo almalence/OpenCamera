@@ -22,6 +22,7 @@ import java.util.Date;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.media.Image;
@@ -192,8 +193,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             frame_num = 0;
 
             int focusMode = CameraController.getInstance().getFocusMode();
-    		if(takingAlready == false && (MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-    				MainScreen.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+    		if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+    				CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
     				&& focusMode != -1
     				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
    	      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
@@ -221,7 +222,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         			MainScreen.guiManager.lockControls = false;
     	    		return;
     	    	}
-    			CaptureFrame(camera);
+    			CaptureFrame();
             	takingAlready = true;
     		}
     		else
@@ -298,10 +299,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		            	{
 		            		takingAlready = false;
 		            		aboutToTakePicture = true;
-		            		camera.autoFocus(MainScreen.thiz);
+		            		camera.autoFocus(CameraController.getInstance());
 		            	}
 		            	else
-		            		CaptureFrame(camera);
+		            		CaptureFrame();
 					}
 					catch (RuntimeException e)
 					{
@@ -364,10 +365,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		    	MainScreen.guiManager.showCaptureIndication();
 		    	MainScreen.thiz.PlayShutter();
 		    	
-		    	try {
-		    		camera.setPreviewCallback(null);
-        			camera.takePicture(null, null, null, MainScreen.thiz);
-				}catch (Exception e) {
+		    	try
+		    	{
+		    		CameraController.captureImage(1, ImageFormat.JPEG);
+				}
+		    	catch (Exception e)
+				{
 					e.printStackTrace();
 					Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
 					takingAlready = false;
@@ -686,7 +689,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //		ad.show();
     }
 	
-	public void CaptureFrame(Camera paramCamera)
+	public void CaptureFrame()
     {		
     	// only requesting exposure change here
     	evRequested = evValues[cur_ev];
@@ -697,7 +700,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		MainScreen.H.sendMessage(msg);
     }
 
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onAutoFocus(boolean paramBoolean)
     {
         if (inCapture) // disregard autofocus success (paramBoolean)
         {
@@ -712,7 +715,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	
         	if(aboutToTakePicture == true)
         	{
-    			CaptureFrame(paramCamera);
+    			CaptureFrame();
     			takingAlready = true;
         	}
         	

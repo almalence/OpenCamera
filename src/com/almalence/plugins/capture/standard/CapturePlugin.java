@@ -223,39 +223,27 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void OnShutterClick()
 	{
-		if(!MainScreen.isHALv3)
+		if(takingAlready == false)
 		{
-			if(takingAlready == false)
-			{
-				Date curDate = new Date();
-				SessionID = curDate.getTime();
-				
-				MainScreen.thiz.MuteShutter(false);
-				
-				int focusMode = CameraController.getInstance().getFocusMode();
-				int fs = MainScreen.getFocusState();
-				if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
-						fs == CameraController.FOCUS_STATE_FOCUSING)
-						&& focusMode != -1
-						&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-			      				  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
-			    				  focusMode == CameraParameters.AF_MODE_INFINITY ||
-			    				  focusMode == CameraParameters.AF_MODE_FIXED ||
-			    				  focusMode == CameraParameters.AF_MODE_EDOF)
-						&& !MainScreen.getAutoFocusLock())			
-						aboutToTakePicture = true;			
-				else if(takingAlready == false)
-				{
-					takePicture();
-				}			
-			}
-		}
-		else
-		{
-			if(ModePreference.compareTo("0") == 0)
-				MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
-			else
-				MainScreen.captureImage(1, ImageFormat.JPEG);
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+			
+			MainScreen.thiz.MuteShutter(false);
+			
+			int focusMode = CameraController.getInstance().getFocusMode();
+			int fs = CameraController.getFocusState();
+			if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
+					fs == CameraController.FOCUS_STATE_FOCUSING)
+					&& focusMode != -1
+					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+		      				  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+		    				  focusMode == CameraParameters.AF_MODE_INFINITY ||
+		    				  focusMode == CameraParameters.AF_MODE_FIXED ||
+		    				  focusMode == CameraParameters.AF_MODE_EDOF)
+					&& !MainScreen.getAutoFocusLock())			
+					aboutToTakePicture = true;			
+			else if(takingAlready == false)
+				takePicture();
 		}
 	}
 	
@@ -278,16 +266,13 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-		if(!MainScreen.isHALv3)
+		if(takingAlready)
 		{
-			if(takingAlready)
-			{
-				aboutToTakePicture = false;
-				return;
-			}
-			
-			takingAlready = true;
+			aboutToTakePicture = false;
+			return;
 		}
+		
+		takingAlready = true;
 		
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
@@ -305,50 +290,27 @@ public class CapturePlugin extends PluginCapture
 			MainScreen.guiManager.showCaptureIndication();
     		MainScreen.thiz.PlayShutter();
     		
-    		if(MainScreen.isHALv3)
-    		{
-			if(ModePreference.compareTo("0") == 0)
-				MainScreen.captureImage(1, ImageFormat.YUV_420_888);			
-			else
-				MainScreen.captureImage(1, ImageFormat.JPEG);
-    		}
-    		else
-    		{
-			
-				Camera camera = CameraController.getInstance().getCamera();
-				if (camera != null)
-				{
-					// play tick sound
-					MainScreen.guiManager.showCaptureIndication();
-	        		MainScreen.thiz.PlayShutter();
-	        		
-	        		try {
-	        			camera.setPreviewCallback(null);
-	        			camera.takePicture(null, null, null, MainScreen.thiz);        			
-					}
-	        		catch (Exception e) 
-					{
-	        			e.printStackTrace();
-	    				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
-	    				takingAlready = false;
-	    				Message msg = new Message();
-	    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-	    				msg.what = PluginManager.MSG_BROADCAST;
-	    				MainScreen.H.sendMessage(msg);
-	    				MainScreen.guiManager.lockControls = false;
-					}
-				}
+			// play tick sound
+			MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
+    		
+    		try {
+    			if(ModePreference.compareTo("0") == 0)
+					CameraController.captureImage(1, ImageFormat.YUV_420_888);			
 				else
-				{
-					takingAlready = false;
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
-					
-					MainScreen.guiManager.lockControls = false;
-				}
-    		}
+					CameraController.captureImage(1, ImageFormat.JPEG);
+			}
+    		catch (Exception e) 
+			{
+    			e.printStackTrace();
+				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+				takingAlready = false;
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+				MainScreen.guiManager.lockControls = false;
+			}				
     		return true;
 		}
 		return false;
@@ -463,14 +425,15 @@ public class CapturePlugin extends PluginCapture
 		message.what = PluginManager.MSG_CAPTURE_FINISHED;
 		MainScreen.H.sendMessage(message);
 
+		takingAlready = false;
 		aboutToTakePicture = false;
 	}
 	
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onAutoFocus(boolean paramBoolean)
 	{
 		if(aboutToTakePicture == true)
-			takePicture();
+				takePicture();
 		
 //		if(aboutToTakePicture == true && paramBoolean == true)
 //			takePicture();

@@ -160,7 +160,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //		MainScreen.thiz.MuteShutter(false);
 //		
 //		String fm = CameraController.getInstance().getFocusMode();
-//		if(takingAlready == false && MainScreen.getFocusState() == CameraController.FOCUS_STATE_IDLE
+//		if(takingAlready == false && CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE
 //				&& fm != null
 //				&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
 //				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
@@ -395,7 +395,7 @@ public class HiresPortraitCapturePlugin// extends PluginCapture
 //	}
 //	
 //	@Override
-//	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+//	public void onAutoFocus(boolean paramBoolean)
 //	{
 //		if(aboutToTakePicture == true)
 //			takePicture();

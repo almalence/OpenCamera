@@ -192,7 +192,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mState = STATE_IDLE;
 		updateFocusUI();
 		
-		MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 	}
 	
     @Override
@@ -202,7 +202,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mState = STATE_INACTIVE;
 		updateFocusUI();
 		
-		MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 		
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
@@ -425,7 +425,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 
     @Override
-    public void onAutoFocus(boolean focused, Camera paramCamera)
+    public void onAutoFocus(boolean focused)
     {
         if (mState == STATE_FOCUSING_SNAP_ON_FINISH)
         {
@@ -435,12 +435,12 @@ public class FocusVFPlugin extends PluginViewfinder
             if (focused)
             {
                 mState = STATE_SUCCESS;                
-                //MainScreen.setFocusState(MainScreen.FOCUS_STATE_FOCUSED);
+                //CameraController.setFocusState(MainScreen.FOCUS_STATE_FOCUSED);
             } 
             else
             {
                 mState = STATE_FAIL;
-                //MainScreen.setFocusState(MainScreen.FOCUS_STATE_FAIL);
+                //CameraController.setFocusState(MainScreen.FOCUS_STATE_FAIL);
                 MainScreen.guiManager.lockControls = false;
             }
             updateFocusUI();            
@@ -470,7 +470,7 @@ public class FocusVFPlugin extends PluginViewfinder
                 String modeID = PluginManager.getInstance().getActiveMode().modeID;
                 if(MainScreen.ShotOnTapPreference && !modeID.equals("video"))
                 	MainScreen.guiManager.onHardwareShutterButtonPressed();
-                //MainScreen.setFocusState(MainScreen.FOCUS_STATE_FOCUSED);
+                //CameraController.setFocusState(MainScreen.FOCUS_STATE_FOCUSED);
             }
             else
             {
@@ -479,7 +479,7 @@ public class FocusVFPlugin extends PluginViewfinder
             			mSoundPlayerFalse.play();
                 mState = STATE_FAIL;
                 
-                //MainScreen.setFocusState(MainScreen.FOCUS_STATE_FAIL);
+                //CameraController.setFocusState(MainScreen.FOCUS_STATE_FAIL);
             }
             updateFocusUI();
             mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
@@ -490,7 +490,7 @@ public class FocusVFPlugin extends PluginViewfinder
         {
             // User has released the focus key before focus completes.
             // Do nothing.
-        	//MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+        	//CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
         }        
     }
     
@@ -637,7 +637,7 @@ public class FocusVFPlugin extends PluginViewfinder
     public void onPreviewStarted()
     {
         mState = STATE_IDLE;
-        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+        CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }
 
     public void onPreviewStopped()
@@ -647,7 +647,7 @@ public class FocusVFPlugin extends PluginViewfinder
         // If auto focus was in progress, it would have been canceled.
         updateFocusUI();
         
-        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+        CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }
 
     public void onCameraReleased()
@@ -663,14 +663,14 @@ public class FocusVFPlugin extends PluginViewfinder
 //        {
 //        	CameraController.getInstance().setCameraFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 //        }
-        if(MainScreen.autoFocus())
+        if(CameraController.autoFocus())
         {
 	        mState = STATE_FOCUSING;
 	        updateFocusUI();
 	        mHandler.removeMessages(RESET_TOUCH_FOCUS);
         }
         
-        //MainScreen.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
+        //CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
     }
 
     private void cancelAutoFocus()
@@ -696,7 +696,7 @@ public class FocusVFPlugin extends PluginViewfinder
     	    				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
     	    				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
     	    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))))
-        		MainScreen.cancelAutoFocus();
+    				CameraController.cancelAutoFocus();
         	}
         	
         	if(fm != preferenceFocusMode)
@@ -710,12 +710,12 @@ public class FocusVFPlugin extends PluginViewfinder
         
         //MainScreen.guiManager.cancelAutoFocus();        
         mState = STATE_IDLE;
-        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+        CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 
         updateFocusUI();
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
         
-//        MainScreen.setFocusState(CameraController.FOCUS_STATE_IDLE);
+//        CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
     }   
  
     public void initializeSoundPlayers(AssetFileDescriptor fd_ok, AssetFileDescriptor fd_false)

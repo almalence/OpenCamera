@@ -112,9 +112,7 @@ import com.almalence.opencam_plus.ui.GUI;
  ***/
 
 public class MainScreen extends Activity implements View.OnClickListener,
-		View.OnTouchListener, SurfaceHolder.Callback, Camera.PictureCallback,
-		Camera.AutoFocusCallback, Handler.Callback, Camera.ErrorCallback,
-		Camera.PreviewCallback, Camera.ShutterCallback
+		View.OnTouchListener, SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 {
 	// >>Description
 	// section with different global parameters available for everyone
@@ -128,9 +126,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = false;
-
-	private Object syncObject = new Object();
+	public static boolean isHALv3 = true;	
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -173,8 +169,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private OrientationEventListener orientListener;
 	private boolean landscapeIsNormal = false;
 	private boolean surfaceJustCreated = false;
-	private boolean surfaceCreated = false;
-	public byte[] pviewBuffer;
+	private boolean surfaceCreated = false;	
 
 	// shared between activities
 	public static int surfaceWidth, surfaceHeight;
@@ -1063,8 +1058,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						return;
 					}
 	
-					CameraController.getCamera().setPreviewCallbackWithBuffer(MainScreen.thiz);
-					CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+					CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().pviewBuffer);
 				}
 
 				PluginManager.getInstance().onCameraSetup();
@@ -1172,11 +1167,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		return lp.height;
 	}
-
-	@Override
-	public void onError(int error, Camera camera) {
-	}
-
 	
 	public ImageReader getImageReaderYUV() {
 		return mImageReaderYUV;
@@ -1306,129 +1296,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// all events translated to PluginManager
 	// Description<<
 
-	public static boolean takePicture() {
-		synchronized (MainScreen.thiz.syncObject) {
-			if (CameraController.getCamera() != null && getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
-			{
-				CameraController.mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-				// Log.e("", "mFocusState = " + getFocusState());
-				CameraController.getCamera().setPreviewCallback(null);
-				CameraController.getCamera().takePicture(null, null, null, MainScreen.thiz);
-				return true;
-			}
-
-			// Log.e("", "takePicture(). FocusState = FOCUS_STATE_FOCUSING ");
-			return false;
-		}
-	}
 	
-	public static void captureImage(int nFrames, int fm)
-	{
-		// stop preview
-//		try {
-//			CameraController.camDevice.stopRepeating();
-//		} catch (CameraAccessException e1) {
-//			Log.e("MainScreen", "Can't stop preview");
-//			e1.printStackTrace();
-//		}
-		
-		// create capture requests for the burst of still images
-		CaptureRequest.Builder stillRequestBuilder = null;
-		try
-		{
-			stillRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
-			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
-			// no re-focus needed, already focused in preview, so keeping the same focusing mode for snapshot
-			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
-			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-			if(fm == ImageFormat.JPEG)
-				stillRequestBuilder.addTarget(mImageReaderJPEG.getSurface());
-			else
-				stillRequestBuilder.addTarget(mImageReaderYUV.getSurface());
-
-			// Google: throw: "Burst capture implemented yet", when to expect implementation?
-			/*
-			List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
-			for (int n=0; n<NUM_FRAMES; ++n)
-				requests.add(stillRequestBuilder.build());
-			
-			camDevice.captureBurst(requests, new captureListener() , null);
-			*/
-			
-			// requests for SZ input frames
-			for (int n=0; n<nFrames; ++n)
-				CameraController.camDevice.capture(stillRequestBuilder.build(), cameraController.new captureListener() , null);
-			
-			// One more capture for comparison with a standard frame
-//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-//			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-//			// set crop area for the scaler to have interpolation applied by camera HW
-//			stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCrop);
-//			camDevice.capture(stillRequestBuilder.build(), new captureListener() , null);
-		}
-		catch (CameraAccessException e)
-		{
-			Log.e("MainScreen", "setting up still image capture request failed");
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-	}
-
-	public static boolean autoFocus(Camera.AutoFocusCallback listener) {
-		synchronized (MainScreen.thiz.syncObject) {
-			if (CameraController.getCamera() != null) {
-				if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING) {
-					setFocusState(CameraController.FOCUS_STATE_FOCUSING);
-					try {
-						CameraController.getCamera().autoFocus(listener);
-					}catch (Exception e) {
-						e.printStackTrace();
-						Log.e("MainScreen autoFocus(listener) failed", "autoFocus: " + e.getMessage());
-						return false;
-					}
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-
-	public static boolean autoFocus() {
-		synchronized (MainScreen.thiz.syncObject) {
-			if (CameraController.getCamera() != null) {
-				if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING) {
-					//int fm = thiz.getFocusMode();
-					// Log.e("", "mCaptureState = " + mCaptureState);
-					setFocusState(CameraController.FOCUS_STATE_FOCUSING);
-					try {
-						CameraController.getCamera().autoFocus(MainScreen.thiz);
-					}catch (Exception e) {
-						e.printStackTrace();
-						Log.e("MainScreen autoFocus() failed", "autoFocus: " + e.getMessage());
-						return false;
-					}					
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-
-	public static void cancelAutoFocus() {
-		if (CameraController.getCamera() != null) {
-			setFocusState(CameraController.FOCUS_STATE_IDLE);
-			try
-			{
-				CameraController.getCamera().cancelAutoFocus();
-			}
-			catch(RuntimeException exp)
-			{
-				Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
-			}
-		}
-	}
 	
 	public static void setAutoFocusLock(boolean locked)
 	{
@@ -1532,33 +1400,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().onShutter();
 	}
 
-	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) 
-	{
-		
-		CameraController.getCamera().setPreviewCallbackWithBuffer(MainScreen.thiz);
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
-		
-		PluginManager.getInstance().onPictureTaken(paramArrayOfByte,
-				paramCamera);
-		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
-	}
-
-	@Override
-	public void onAutoFocus(boolean focused, Camera paramCamera) {
-		Log.e("", "onAutoFocus call");
-		PluginManager.getInstance().onAutoFocus(focused, paramCamera);
-		if (focused)
-			setFocusState(CameraController.FOCUS_STATE_FOCUSED);
-		else
-			setFocusState(CameraController.FOCUS_STATE_FAIL);
-	}
-
-	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera) {
-		PluginManager.getInstance().onPreviewFrame(data, paramCamera);
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
-	}
+	
 
 	// >>Description
 	// message processor
@@ -1689,25 +1531,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public static void setWantLandscapePhoto(boolean setWantLandscapePhoto) {
 		wantLandscapePhoto = setWantLandscapePhoto;
-	}
-
-	public static void setFocusState(int state) {
-		if (state != CameraController.FOCUS_STATE_IDLE
-				&& state != CameraController.FOCUS_STATE_FOCUSED
-				&& state != CameraController.FOCUS_STATE_FAIL)
-			return;
-
-		CameraController.mFocusState = state;
-
-		Message msg = new Message();
-		msg.what = PluginManager.MSG_BROADCAST;
-		msg.arg1 = PluginManager.MSG_FOCUS_STATE_CHANGED;
-		H.sendMessage(msg);
-	}
-
-	public static int getFocusState() {
-		return CameraController.mFocusState;
-	}
+	}	
 	
 	public void setScreenBrightness(boolean setMax)
 	{

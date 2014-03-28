@@ -80,7 +80,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				AlmaShotDRO.Initialize();
 				
 				int inputYUV = 0;
-				boolean isYUV = Boolean.getBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+				boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
 				if(!isYUV)
 				{
 					int compressed_frame[] = new int[1];
@@ -95,7 +95,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 			    			1,
 			    			mImageWidth, mImageHeight);
 					
-					inputYUV = AlmaShotDRO.GetInputFrameNV21(0, mImageWidth, mImageHeight);
+					inputYUV = AlmaShotDRO.GetYUVFrame(0);
 				}
 				else				
 					inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));

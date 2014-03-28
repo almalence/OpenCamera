@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -538,8 +539,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 					if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
 					{
 						Log.e("Almalence", String.format("Emergency preview restart"));
-						camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
-						camera.addCallbackBuffer(MainScreen.thiz.pviewBuffer);
+						camera.setPreviewCallbackWithBuffer(CameraController.getInstance());
+						camera.addCallbackBuffer(CameraController.getInstance().pviewBuffer);
 					}
 					else
 					{
@@ -921,6 +922,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	}
 	
 	@Override
+	public void onAutoFocus(final boolean success)
+	{
+		
+	}
+	
+	@Override
 	public void takePicture()
 	{		
 		synchronized (this.engine)
@@ -950,21 +957,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture implements Aut
 	}
 
 	private void takePictureReal()
-	{
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (camera == null)
-    	{
-    		synchronized (this.engine)
-    		{
-    			this.takingAlready = false;
-    		}
-    		Log.e("Almalence", "takePicture(): camera is null");
-    		return;
-    	}
-    	
+	{    	
     	this.coordsRecorded = false;
-    	camera.setPreviewCallback(null);
-		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
+    	try 
+    	{
+			CameraController.captureImage(1, ImageFormat.JPEG);
+		}
+    	catch (Exception e)
+		{
+			e.printStackTrace();
+			takingAlready = false;
+		}
 	}
 
 	@Override
