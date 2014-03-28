@@ -32,6 +32,7 @@ public class HeapUtil {
    
     static
 	{
+    	System.loadLibrary("utils-image");
 		System.loadLibrary("utils-jni");
 	}
 }
