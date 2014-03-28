@@ -813,8 +813,6 @@
 					android:id="@+id/helpImage"
 					android:layout_height="fill_parent"
 					android:layout_width="fill_parent"
-					android:layout_centerInParent="true"
-					
 					>
 				</ImageView>
 			</LinearLayout>
@@ -822,13 +820,11 @@
 		    <ScrollView 
 		    android:id="@+id/helpScroll"
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:layout_below="@+id/helpImageLayout"
-		    android:layout_marginBottom="10dip"
+		    android:layout_marginBottom="5dip"
+		    android:layout_above="@+id/helpTextLayout"
 		    >
-	            <RelativeLayout
-			        android:layout_width="fill_parent"
-			        android:layout_height="fill_parent" >
 	            <TextView
 					android:id="@+id/helpText"
 					android:textSize="17sp"
@@ -836,18 +832,13 @@
 					android:background="@android:color/transparent"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:layout_alignParentLeft="true"
 					android:layout_margin="5dip"
-					
 					>
 				</TextView>
 
-				
-	            
-	            </RelativeLayout>
    			</ScrollView>
    			
-		    <LinearLayout
+		    <RelativeLayout
 				android:id="@+id/helpTextLayout"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -855,14 +846,13 @@
 				android:orientation="horizontal"       
 				android:layout_centerHorizontal="true"
 				android:layout_alignParentBottom="true"
-				android:paddingBottom="10dip"
-				android:paddingTop="10dip"
+				android:paddingBottom="5dip"
+				android:paddingTop="5dip"
 				>
 		            <Button 
 		                android:id="@+id/buttonOk"
 		                android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
-		                android:layout_alignParentBottom="true"
 		                android:textSize="17sp"
 		                android:text="OK"
 		                android:textColor="#FFFFFF"
@@ -875,13 +865,13 @@
 		                android:id="@+id/buttonDontShow"
 		                android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
-		                android:layout_alignParentBottom="true"
 		                android:textSize="17sp"
 		                android:text="@string/helpTextDontShow"
 		                android:textColor="#FFFFFF"
+		                android:layout_toRightOf="@+id/buttonOk"
 		                >
 		            </Button>
-	            </LinearLayout>
+	            </RelativeLayout>
 			
 	</RelativeLayout>
 	

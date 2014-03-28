@@ -980,8 +980,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		previewWidth = cameraParameters.getPreviewSize().width;
 		previewHeight = cameraParameters.getPreviewSize().height;
 
-		Util.initialize(mainContext);
-		Util.initializeMeteringMatrix();
+		try
+		{
+			Util.initialize(mainContext);
+			Util.initializeMeteringMatrix();
+		}
+		catch(Exception e)
+		{
+			Log.e("Main setup camera", "Util.initialize failed!");
+		}
 		
 		prepareMeteringAreas();
 
@@ -1081,6 +1088,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		List<Camera.Size> cs;
 		int MinMPIX = MIN_MPIX_SUPPORTED;
 		cs = cp.getSupportedPictureSizes();
+		
+		//add 8 Mpix for rear camera for HTC One X
+		if(Build.MODEL.contains("HTC One X"))
+		{
+			if (getCameraMirrored() == false)
+			{
+				Camera.Size additional= null;
+				additional= MainScreen.camera.new Size(3264, 2448);
+				additional.width = 3264;
+				additional.height = 2448;
+				cs.add(additional);
+			}
+		}
 
 		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
 
@@ -1828,6 +1848,20 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			return true;
 		}
 		
+		//check if Headset Hook button has some functions except standard
+		if ( keyCode == KeyEvent.KEYCODE_HEADSETHOOK )
+		{
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
+			if (headsetFunc)
+			{
+				MainScreen.guiManager.onHardwareFocusButtonPressed();
+				MainScreen.guiManager.onHardwareShutterButtonPressed();
+				return true;
+			}
+		}
+		
 		//check if volume button has some functions except Zoom-ing
 		if ( keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP )
 		{
@@ -2300,17 +2334,21 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				bOnSale = false;
 			}
 			
-			titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
-			titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
-			titleUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getPrice();
-			titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
-			titleUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getPrice();
-			
-			summaryUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getDescription();
-			summaryUnlockHDR = inventory.getSkuDetails(SKU_HDR).getDescription();
-			summaryUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getDescription();
-			summaryUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getDescription();
-			summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
+			try{
+				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
+				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
+				titleUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getPrice();
+				titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
+				titleUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getPrice();
+				
+				summaryUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getDescription();
+				summaryUnlockHDR = inventory.getSkuDetails(SKU_HDR).getDescription();
+				summaryUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getDescription();
+				summaryUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getDescription();
+				summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
+			}catch(Exception e)
+			{
+			}
 		}
 	};
 

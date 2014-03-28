@@ -47,7 +47,7 @@ public class Preferences extends PreferenceActivity
 	public void onResume()
 	{
 		super.onResume();
-		
+		thiz=this;
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		
@@ -77,19 +77,25 @@ public class Preferences extends PreferenceActivity
 	
 	static public void setScreenBrightness(boolean setMax)
 	{
-		//ContentResolver cResolver = getContentResolver();
-		Window window = thiz.getWindow();
-		
-		WindowManager.LayoutParams layoutpars = window.getAttributes();
-		
-        //Set the brightness of this window	
-		if(setMax)
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
-		else
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-
-        //Apply attribute changes to this window
-        window.setAttributes(layoutpars);
+		try{
+			//ContentResolver cResolver = getContentResolver();
+			Window window = thiz.getWindow();
+			
+			WindowManager.LayoutParams layoutpars = window.getAttributes();
+			
+	        //Set the brightness of this window	
+			if(setMax)
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+			else
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+	
+	        //Apply attribute changes to this window
+	        window.setAttributes(layoutpars);
+		}
+		catch(Exception e)
+		{
+			
+		}
 	}
 	
 	@TargetApi( Build.VERSION_CODES.KITKAT )

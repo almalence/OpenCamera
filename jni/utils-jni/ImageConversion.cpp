@@ -378,7 +378,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_native
 }
 
 
-extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_Util_getMemoryInfo(JNIEnv* env, jclass)
+extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_HeapUtil_getMemoryInfo(JNIEnv* env, jclass)
 {
 	FILE *f;
 	char dummy[1024];

@@ -175,19 +175,25 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
     
     static public void setScreenBrightness(boolean setMax)
 	{
-		//ContentResolver cResolver = getContentResolver();
-		Window window = thiz.getActivity().getWindow();
-		
-		WindowManager.LayoutParams layoutpars = window.getAttributes();
-		
-        //Set the brightness of this window	
-		if(setMax)
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
-		else
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-
-        //Apply attribute changes to this window
-        window.setAttributes(layoutpars);
+    	try{
+			//ContentResolver cResolver = getContentResolver();
+			Window window = thiz.getActivity().getWindow();
+			
+			WindowManager.LayoutParams layoutpars = window.getAttributes();
+			
+	        //Set the brightness of this window	
+			if(setMax)
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+			else
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+	
+	        //Apply attribute changes to this window
+	        window.setAttributes(layoutpars);
+    	}
+		catch(Exception e)
+		{
+			
+		}
 	}
     
     static public void closePrefs()

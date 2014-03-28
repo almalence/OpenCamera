@@ -462,7 +462,20 @@ public class NightCapturePlugin extends PluginCapture
         	MinMPIX = MIN_MPIX_PREVIEW;
         }
         else
+        {
         	cs = cp.getSupportedPictureSizes();
+        	if(Build.MODEL.contains("HTC One X"))
+    		{
+    			if (MainScreen.getCameraMirrored() == false)
+    			{
+    				Camera.Size additional= null;
+    				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
+    				additional.width = 3264;
+    				additional.height = 2448;
+    				cs.add(additional);
+    			}
+    		}
+        }
 
         int Capture5mIdx = -1;
         long Capture5mMpix = 0;
@@ -791,6 +804,17 @@ public class NightCapturePlugin extends PluginCapture
         else
         {
         	cs = cp.getSupportedPictureSizes();
+        	if(Build.MODEL.contains("HTC One X"))
+    		{
+    			if (MainScreen.getCameraMirrored() == false)
+    			{
+    				Camera.Size additional= null;
+    				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
+    				additional.width = 3264;
+    				additional.height = 2448;
+    				cs.add(additional);
+    			}
+    		}
         }
 
         CharSequence[] RatioStrings = {" ", "4:3", "3:2", "16:9", "1:1"};

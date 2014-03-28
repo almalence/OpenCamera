@@ -31,8 +31,11 @@
     <string name="Pref_Common_DelayedCapture_Summary">Show self-timer control</string>
     <string name="Pref_ShowHelp_Title">Show help</string>
     <string name="Pref_WhowHelp_Summary">Show help when mode started (Panorama, Object removal, Sequence, Groupshot)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Headset shutter</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Use headset buttons as shutter</string>
     
-    <string name="helpTextDontShow">Do not show again</string>
+    
+    <string name="helpTextDontShow">Do not show</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">Please wait, processing...</string>

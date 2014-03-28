@@ -66,7 +66,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			  R.drawable.gui_almalence_mode_bestshot,
 			  "Best Shot images");
 
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override

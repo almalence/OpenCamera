@@ -66,7 +66,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 			  0,
 			  null);
 
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override

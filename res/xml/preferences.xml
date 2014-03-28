@@ -34,6 +34,12 @@
 			android:summary="@string/Pref_Common_ShotOnTap_Summary"
 			android:defaultValue="false" 
 			android:key="shotontapPrefCommon" />
+	
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_HeadsetTap_Title"
+			android:summary="@string/Pref_Common_HeadsetTap_Summary"
+			android:defaultValue="false" 
+			android:key="headsetPrefCommon" />
 	<!-- -+-  -->
 	<PreferenceScreen
 		 android:fragment="com.almalence.opencam.Fragment"

@@ -68,7 +68,7 @@ public class BurstCapturePlugin extends PluginCapture
 			  R.drawable.gui_almalence_mode_burst,
 			  "Burst images");
 
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override

@@ -35,7 +35,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.hardware.Sensor;
@@ -70,11 +69,10 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
-import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
 
-import com.almalence.util.Util;
+import com.almalence.util.HeapUtil;
 
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 
@@ -403,6 +401,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		final Parameters params = MainScreen.thiz.getCameraParameters();
 		final List<Camera.Size> cs = params.getSupportedPictureSizes();
+		if(Build.MODEL.contains("HTC One X"))
+		{
+			if (MainScreen.getCameraMirrored() == false)
+			{
+				Camera.Size additional= null;
+				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
+				additional.width = 3264;
+				additional.height = 2448;
+				cs.add(additional);
+			}
+		}
 		
 		final Size size = cs.get(this.prefResolution);
 		
@@ -443,6 +452,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			return;
 		}
     	final List<Size> picture_sizes = cp.getSupportedPictureSizes();
+    	if(Build.MODEL.contains("HTC One X"))
+		{
+			if (MainScreen.getCameraMirrored() == false)
+			{
+				Camera.Size additional= null;
+				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
+				additional.width = 3264;
+				additional.height = 2448;
+				picture_sizes.add(additional);
+			}
+		}
     	
 		this.pictureWidth = picture_sizes.get(this.prefResolution).width;
 		this.pictureHeight = picture_sizes.get(this.prefResolution).height;
@@ -810,7 +830,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	if (null==camera)
     		return;
 		final Parameters cp = MainScreen.thiz.getCameraParameters();
-		final List<Camera.Size> cs = cp.getSupportedPictureSizes();   
+		final List<Camera.Size> cs = cp.getSupportedPictureSizes();
+		if(Build.MODEL.contains("HTC One X"))
+		{
+			if (MainScreen.getCameraMirrored() == false)
+			{
+				Camera.Size additional= null;
+				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
+				additional.width = 3264;
+				additional.height = 2448;
+				cs.add(additional);
+			}
+		}
         
         int maxIndex = 0;
 
@@ -881,7 +912,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		//Log.i(TAG,"memoryInfo.availMem: "+this.memoryInfo.availMem+"memoryInfo.threshold: "+this.memoryInfo.threshold);
 		//return (long)((this.memoryInfo.availMem - this.memoryInfo.threshold - 2097152) * 0.7f);
 		
-		final int[] mi = Util.getMemoryInfo();
+		final int[] mi = HeapUtil.getMemoryInfo();
 
 		Log.e(TAG, "Memory: used: "+mi[0]+"Mb  free: "+mi[1]+"Mb");
 

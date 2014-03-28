@@ -1387,12 +1387,12 @@ public class AlmalenceGUI extends GUI implements
 			((TextView) paramMode.findViewById(R.id.textView))
 					.setText(value_name);
 			
-			final boolean isFirstMode = mode_number == 0? true : false;
+			//final boolean isFirstMode = mode_number == 0? true : false;
 			paramMode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
+					if(event.getAction() == MotionEvent.ACTION_CANCEL/* && isFirstMode*/)
 					{
 						switch (mode) {
 						case MODE_SCENE:

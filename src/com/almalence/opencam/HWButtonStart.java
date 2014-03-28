@@ -32,15 +32,22 @@ public class HWButtonStart extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) 
     {
-    	abortBroadcast();
+//    	abortBroadcast();
 
-    	Intent startActivity = new Intent();
-        startActivity.setClass(context, MainScreen.class);
-        startActivity.setAction(MainScreen.class.getName());
-        startActivity.setFlags(
-        Intent.FLAG_ACTIVITY_NEW_TASK
-        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        context.startActivity(startActivity);
+//    	Intent startActivity = new Intent();
+//        startActivity.setClass(context, MainScreen.class);
+//        startActivity.setAction(MainScreen.class.getName());
+//        startActivity.setFlags(
+//        Intent.FLAG_ACTIVITY_NEW_TASK
+//        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        //context.startActivity(startActivity);
+        
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.setClass(context, MainScreen.class);
+        i.addCategory(Intent.CATEGORY_LAUNCHER);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);
     }
 }
 	

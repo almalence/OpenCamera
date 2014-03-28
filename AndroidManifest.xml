@@ -5,14 +5,14 @@
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
       android:versionCode="53"
-      android:versionName="3.17">
+      android:versionName="3.18">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
       android:versionCode="57"
-      android:versionName="3.17">
+      android:versionName="3.18">
 <!--  -+- -->
 
     <supports-screens       
@@ -36,6 +36,7 @@
 
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA_SECURE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             
@@ -62,12 +63,6 @@
 				        android:hardwareAccelerated="true"/>
 		<!--  -+- -->
 				
-		<activity android:name="com.almalence.photoeditor.PhotoEditor"
-                android:label="@string/app_name"
-                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-                android:configChanges="keyboardHidden|orientation|screenSize"
-                android:hardwareAccelerated="true">            
-        </activity>
 		
 		<activity android:name="com.almalence.plugins.processing.hdr.ActivityAdjustments"
 		    						android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
@@ -82,7 +77,13 @@
 		    </intent-filter>            
 		</receiver>
 		 -->
-		
+	<!-- 	
+		<receiver android:name=".HWButtonStart">
+            <intent-filter>
+                <action android:name="android.intent.action.CAMERA_BUTTON" />
+            </intent-filter>
+        </receiver>
+-->		
 		<!-- Uncomment for Zmazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
 	    	<intent-filter>

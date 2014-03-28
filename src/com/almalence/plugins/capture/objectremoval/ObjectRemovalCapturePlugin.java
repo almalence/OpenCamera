@@ -65,7 +65,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override
