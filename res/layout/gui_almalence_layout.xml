@@ -849,28 +849,37 @@
 				android:paddingBottom="5dip"
 				android:paddingTop="5dip"
 				>
-		            <Button 
-		                android:id="@+id/buttonOk"
-		                android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-		                android:textSize="17sp"
-		                android:text="OK"
-		                android:textColor="#FFFFFF"
-		                android:paddingRight="35dip"
-		                android:paddingLeft="35dip"
-		                >
-		            </Button>
-		            
-		            <Button 
-		                android:id="@+id/buttonDontShow"
-		                android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-		                android:textSize="17sp"
-		                android:text="@string/helpTextDontShow"
-		                android:textColor="#FFFFFF"
-		                android:layout_toRightOf="@+id/buttonOk"
-		                >
-		            </Button>
+		            <LinearLayout
+					android:id="@+id/helpButtonsLayout"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="2dip"
+					android:orientation="horizontal"       
+					>
+			            <Button 
+			                android:id="@+id/buttonOk"
+			                android:layout_height="wrap_content"
+							android:layout_width="fill_parent"
+			                android:textSize="17sp"
+			                android:text="OK"
+			                android:textColor="#FFFFFF"
+			                android:layout_margin="5dip"
+			                android:layout_weight="1"
+			                >
+			            </Button>
+			            
+			            <Button 
+			                android:id="@+id/buttonDontShow"
+			                android:layout_height="wrap_content"
+							android:layout_width="fill_parent"
+			                android:textSize="17sp"
+			                android:text="@string/helpTextDontShow"
+			                android:textColor="#FFFFFF"
+			                android:layout_margin="5dip"
+			                android:layout_weight="1"
+			                >
+			            </Button>
+			        </LinearLayout>
 	            </RelativeLayout>
 			
 	</RelativeLayout>

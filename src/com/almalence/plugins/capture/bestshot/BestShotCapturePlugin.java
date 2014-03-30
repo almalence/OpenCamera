@@ -53,7 +53,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	private boolean takingAlready=false;
 		
     //defaul val. value should come from config
-	private int imageAmount = 3;
+	private int imageAmount = 5;
 
     private boolean inCapture;
     private int imagesTaken=0;
@@ -83,7 +83,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "3"));
+			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
 		}
 		catch (Exception e)
 		{
@@ -108,7 +108,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "3"));
+        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
         int selected = 0;
         switch (val)
         {

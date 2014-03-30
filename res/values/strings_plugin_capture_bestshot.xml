@@ -8,7 +8,7 @@
     
     <string name="Res_Bestshot_Images_Text"> images</string>
     
-    <string name="Bestshot_Help">Analyzing series of shots, Best Shot chooses the best one, increasing the chances of have a blur free image. Best shot will automatically select the best one and save it.\n\n1. Select number of images to capture.\n2. Hold device still and do not move\n3. Press shutter to start capture\n4. Wait until series of images taken and processed\n5. Less blurred image will be selected and saved</string>
+    <string name="Bestshot_Help">Analyzing series of shots, Best Shot chooses the best one, increasing the chances to have a blur free image. Best shot will automatically select the best one and save it.\n\n1. Select number of images to capture.\n2. Hold device still and do not move\n3. Press shutter to start capture\n4. Wait until series of images taken and processed\n5. Less blurred image will be selected and saved</string>
     
     <string name="Res_Bestshot_3">3 images</string>
     <string name="Res_Bestshot_5">5 images</string>

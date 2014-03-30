@@ -33,6 +33,7 @@ public final class AlmaShotDRO
     
     static 
     {
+    	System.loadLibrary("utils-image");
 		System.loadLibrary("almalib");
         System.loadLibrary("almashot-dro");
     }
