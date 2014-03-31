@@ -1935,8 +1935,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					catch (CameraAccessException e)
 					{
 						e.printStackTrace();
+						return false;
 					}
 				}
+				
+				return true;
 			}
 			return false;
 		}
@@ -1960,7 +1963,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) 
 	{
-		
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 		
@@ -2091,6 +2093,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 				try 
 				{
+					CameraController.camDevice.stopRepeating();
 					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
 				}
 				catch (CameraAccessException e)

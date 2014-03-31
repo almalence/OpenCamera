@@ -4927,54 +4927,52 @@ public class AlmalenceGUI extends GUI implements
 				mSceneMode = CameraController.getInstance().getSupportedSceneModes()[0];
 			}
 
-			if(!MainScreen.isHALv3)
-			{
-				// After change scene mode it may be changed other stuff such as
-				// flash, wb, focus mode.
-				// Need to get this information and update state of current
-				// parameters.
-				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
+			// After change scene mode it may be changed other stuff such as
+			// flash, wb, focus mode.
+			// Need to get this information and update state of current
+			// parameters.
+			//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
 //				String wbNew = params.getWhiteBalance();
 //				String flashNew = params.getFlashMode();
 //				String focusNew = params.getFocusMode();
 //				String isoNew = params.get(CameraParameters.isoParam);
-				
-				int wbNew = CameraController.getInstance().getWBMode();
-				int flashNew = CameraController.getInstance().getFlashMode();
-				int focusNew = CameraController.getInstance().getFocusMode();
-				String isoNew = CameraController.getInstance().getISOMode();
-				
+			
+			int wbNew = CameraController.getInstance().getWBMode();
+			int flashNew = CameraController.getInstance().getFlashMode();
+			int focusNew = CameraController.getInstance().getFocusMode();
+			String isoNew = CameraController.getInstance().getISOMode();
+			
 //				if(isoNew == null)
 //					isoNew = params.get(CameraParameters.isoParam2);
-	
-				// Save new params value
-				if(wbNew != -1 && WBModeButtons.containsKey(wbNew))
-					mWB = wbNew;
-				else if(WBModeButtons.containsKey(CameraParameters.AWB_MODE_AUTO))
-					mWB = CameraParameters.AWB_MODE_AUTO;
-				else if(CameraController.getInstance().isWhiteBalanceSupported())
-					mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
-				else
-					mWB = -1;
-				
-				if(focusNew != -1 && FocusModeButtons.containsKey(focusNew))
-					mFocusMode = focusNew;
-				else if(FocusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
-					mFocusMode = CameraParameters.AF_MODE_AUTO;
-				else if(CameraController.getInstance().isFocusModeSupported())
-					mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
-				else
-					mFocusMode = -1;
-				
-				if(flashNew != -1 && FlashModeButtons.containsKey(flashNew))
-					mFlashMode = flashNew;
-				else if(FocusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
-					mFlashMode = CameraParameters.FLASH_MODE_AUTO;
-				else if(CameraController.getInstance().isFlashModeSupported())
-					mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
-				else
-					mFlashMode = -1;
-				
+
+			// Save new params value
+			if(wbNew != -1 && WBModeButtons.containsKey(wbNew))
+				mWB = wbNew;
+			else if(WBModeButtons.containsKey(CameraParameters.AWB_MODE_AUTO))
+				mWB = CameraParameters.AWB_MODE_AUTO;
+			else if(CameraController.getInstance().isWhiteBalanceSupported())
+				mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
+			else
+				mWB = -1;
+			
+			if(focusNew != -1 && FocusModeButtons.containsKey(focusNew))
+				mFocusMode = focusNew;
+			else if(FocusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
+				mFocusMode = CameraParameters.AF_MODE_AUTO;
+			else if(CameraController.getInstance().isFocusModeSupported())
+				mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
+			else
+				mFocusMode = -1;
+			
+			if(flashNew != -1 && FlashModeButtons.containsKey(flashNew))
+				mFlashMode = flashNew;
+			else if(FocusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
+				mFlashMode = CameraParameters.FLASH_MODE_AUTO;
+			else if(CameraController.getInstance().isFlashModeSupported())
+				mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
+			else
+				mFlashMode = -1;
+			
 //				if(isoNew != null && ISOButtons.containsKey(isoNew))
 //					mISO = isoNew;
 //				else if(ISOButtons.containsKey(isoAuto))
@@ -4983,7 +4981,6 @@ public class AlmalenceGUI extends GUI implements
 //					mISO = CameraController.getInstance().getSupportedISO().get(0);
 //				else
 //					mISO = null;
-			}
 
 			// Set appropriate params buttons pressed
 			setButtonSelected(SceneModeButtons, mSceneMode);
@@ -5076,17 +5073,23 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1)
 		{
-			if(!MainScreen.isHALv3)
-			{
-				if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
-						&& CameraController.getInstance().mSceneModeSupported)
-				{
-					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-				}
-			}
+//			if(!MainScreen.isHALv3)
+//			{
+//				if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
+//						&& CameraController.getInstance().mSceneModeSupported)
+//				{
+//					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+//				}
+//			}
 //				Camera.Parameters params = CameraController.cameraParameters;
 //				params.setWhiteBalance(CameraController.mode_wb.get(newMode));
 //				CameraController.getInstance().setCameraParameters(params);
+			
+			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
+					&& CameraController.getInstance().mSceneModeSupported)
+			{
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+			}
 			
 			CameraController.getInstance().setCameraWhiteBalance(newMode);
 			
@@ -5114,13 +5117,19 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1 )
 		{
-			if(!MainScreen.isHALv3)
+//			if(!MainScreen.isHALv3)
+//			{
+//				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
+//				{
+//					if (CameraController.getInstance().mSceneModeSupported)
+//						setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+//				}
+//			}
+			
+			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
 			{
-				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
-				{
-					if (CameraController.getInstance().mSceneModeSupported)
-						setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-				}
+				if (CameraController.getInstance().mSceneModeSupported)
+					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 			}
 
 			CameraController.getInstance().setCameraFocusMode(newMode);
@@ -5156,12 +5165,16 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1)
 		{
-			if(!MainScreen.isHALv3)
-			{
-				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-						&& CameraController.getInstance().mSceneModeSupported)
-					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-			}
+//			if(!MainScreen.isHALv3)
+//			{
+//				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
+//						&& CameraController.getInstance().mSceneModeSupported)
+//					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+//			}
+			
+			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
+					&& CameraController.getInstance().mSceneModeSupported)
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
 			CameraController.getInstance().setCameraFlashMode(newMode);
 			mFlashMode = newMode;

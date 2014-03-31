@@ -909,6 +909,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
 			sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 	
+			guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
 			// configure camera with all the surfaces to be ever used
 			try {
 				CameraController.camDevice.configureOutputs(sfl);
@@ -953,6 +954,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
+			CameraController.getInstance().pviewBuffer = new byte[sz.width * sz.height
+			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8];
 		}
 
 		if (PluginManager.getInstance().isGLSurfaceNeeded()) {

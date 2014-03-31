@@ -89,9 +89,6 @@ public class GridVFPlugin extends PluginViewfinder
 	@Override
 	public void onGUICreate()
 	{
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return;
 		refreshPreferences();
 		
 		if (grid == null)
@@ -159,12 +156,9 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 		
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return;
-		Size previewSize = CameraController.getInstance().getCameraParameters().getPreviewSize();
+		CameraController.Size previewSize = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
 		
-		float ratio = (float)previewSize.width/previewSize.height;
+		float ratio = (float)previewSize.getWidth()/previewSize.getHeight();
 
 		int ri=1;
 		if (Math.abs(ratio - 4/3.f)  < 0.1f) ri = 1;
