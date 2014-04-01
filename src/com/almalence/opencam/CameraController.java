@@ -1012,6 +1012,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //			return false;
 		return true;
 	}
+	
+	public boolean isLumaAdaptationSupported()
+	{
+		if(!MainScreen.isHALv3)
+		{			
+	    	if (null==camera)
+	    		return false;
+	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+	        
+	        String luma = cp.get("luma-adaptation");
+	        if (luma == null)
+	        	return false;
+	        else
+	        	return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	public boolean isExposureCompensationSupported()
 	{
@@ -1721,6 +1741,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	
+	public void setLumaAdaptation(int iEv)
+	{
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		if(params != null)
+		{
+			params.set("luma-adaptation", iEv);
+			setCameraParameters(params);
+		}
+	}
 
 	public void setCameraExposureCompensation(int iEV)
 	{

@@ -232,23 +232,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_SET_EXPOSURE) 
 		{
-//        	Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
-//            if (UseLumaAdaptation && LumaAdaptationAvailable)
-//            	prm.set("luma-adaptation", evRequested);
-//            else
-//            	prm.setExposureCompensation(evRequested);
-//	    	try
-//	    	{
-//	    		CameraController.getInstance().setCameraParameters(prm);
-//	    	}
-//	    	catch (RuntimeException e)
-//	    	{
-//	    		Log.i("ExpoBracketing", "setExpo fail in MSG_SET_EXPOSURE");
-//	    	}
-	    	
 	    	try
 	    	{
-	    		CameraController.getInstance().setCameraExposureCompensation(evRequested);
+	    		if (UseLumaAdaptation && LumaAdaptationAvailable)
+	    			CameraController.getInstance().setLumaAdaptation(evRequested);
+	            else	            
+	            	CameraController.getInstance().setCameraExposureCompensation(evRequested);
 	    	}
 	    	catch (RuntimeException e)
 	    	{
@@ -340,14 +329,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	// let's try to set the exposure two times, catching possible throws on differing models
 	    	try
 	    	{
-//	        	Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
-//
-//	            if (UseLumaAdaptation && LumaAdaptationAvailable)
-//	            	prm.set("luma-adaptation", evRequested);
-//	            else
-//	            	prm.setExposureCompensation(evRequested);
-//	            CameraController.getInstance().setCameraParameters(prm);
-	    		CameraController.getInstance().setCameraExposureCompensation(evRequested);
+	    		if (UseLumaAdaptation && LumaAdaptationAvailable)
+	    			CameraController.getInstance().setLumaAdaptation(evRequested);
+	            else	            
+	            	CameraController.getInstance().setCameraExposureCompensation(evRequested);
 	    	}
 	    	catch (RuntimeException e)
 	    	{
@@ -641,7 +626,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //        else
 //        	LumaAdaptationAvailable = true;
         
-        LumaAdaptationAvailable = false;
+        LumaAdaptationAvailable = CameraController.getInstance().isLumaAdaptationSupported();
 
         if (UseLumaAdaptation && LumaAdaptationAvailable)
         {
