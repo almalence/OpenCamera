@@ -89,6 +89,7 @@ import android.widget.Toast;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
+import com.almalence.opencam.CameraController.captureListener;
 //<!-- -+-
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
@@ -146,6 +147,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //	cameraAvailableListener availListener = null;
 //	private static CameraDevice camDevice = null;
 //	CaptureRequest.Builder previewRequestBuilder = null;
+	public static ImageReader mImageReaderPreviewYUV;
 	public static ImageReader mImageReaderYUV;
 	public static ImageReader mImageReaderJPEG;
 //	String[] cameraIdList={""};
@@ -620,6 +622,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if(isHALv3)
 		{
 			// IamgeReader should be closed
+			if (mImageReaderPreviewYUV != null)
+			{
+				mImageReaderPreviewYUV.close();
+				mImageReaderPreviewYUV = null;
+			}
 			if (mImageReaderYUV != null)
 			{
 				mImageReaderYUV.close();
@@ -905,9 +912,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			List<Surface> sfl = new ArrayList<Surface>();
 			
-			sfl.add(mCameraSurface);				// surface for viewfinder preview		
+			sfl.add(mCameraSurface);				// surface for viewfinder preview
+			sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
 			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-			sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+			//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+			
+			cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 	
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
 			// configure camera with all the surfaces to be ever used
@@ -932,9 +942,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			{
 				cameraController.previewRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+				cameraController.previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
 				cameraController.previewRequestBuilder.addTarget(mCameraSurface);
+				cameraController.previewRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
 				try {
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				} catch (CameraAccessException e) {
 					e.printStackTrace();
 				}
@@ -1171,6 +1183,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return lp.height;
 	}
 	
+	public ImageReader getImageReaderPreviewYUV() {
+		return mImageReaderPreviewYUV;
+	}
+	
 	public ImageReader getImageReaderYUV() {
 		return mImageReaderYUV;
 	}
@@ -1204,19 +1220,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return guiManager.getISOIcon(isoMode);
 	}	
 
-	public void setCameraFocusAreas(List<Area> focusAreas) {
-		if (CameraController.getCamera() != null) {
-			try {
-				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-				if (params != null) {
-					params.setFocusAreas(focusAreas);
-					cameraController.setCameraParameters(params);
-				}
-			} catch (RuntimeException e) {
-				Log.e("SetFocusArea", e.getMessage());
-			}
-		}
-	}
+	
 	
 	public void setCameraMeteringMode(int mode)
 	{
@@ -1246,47 +1250,28 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //		}
 		
 		if(meteringModeAuto == mode)
-			setCameraMeteringAreas(null);
+			cameraController.setCameraMeteringAreas(null);
 		else if(meteringModeMatrix == mode)
 		{				
 			int maxAreasCount = CameraController.getInstance().getMaxNumMeteringAreas();
 			if(maxAreasCount > 4)
-				setCameraMeteringAreas(mMeteringAreaMatrix5);
+				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix5);
 			else if(maxAreasCount > 3)
-				setCameraMeteringAreas(mMeteringAreaMatrix4);
+				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix4);
 			else if(maxAreasCount > 0)
-				setCameraMeteringAreas(mMeteringAreaMatrix1);
+				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix1);
 			else
-				setCameraMeteringAreas(null);					
+				cameraController.setCameraMeteringAreas(null);					
 		}
 		else if(meteringModeCenter == mode)
-			setCameraMeteringAreas(mMeteringAreaCenter);
+			cameraController.setCameraMeteringAreas(mMeteringAreaCenter);
 		else if(meteringModeSpot == mode)
-			setCameraMeteringAreas(mMeteringAreaSpot);
+			cameraController.setCameraMeteringAreas(mMeteringAreaSpot);
 		
 		currentMeteringMode = mode;
 	}
 
-	public void setCameraMeteringAreas(List<Area> meteringAreas) {
-		if (CameraController.getCamera() != null) {
-			try {
-				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-				if (params != null) {
-//					Rect rect = meteringAreas.get(0).rect;
-//					Log.e("MainScreen", "Metering area: " + rect.left + ", " + rect.top + " - " + rect.right + ", " + rect.bottom);
-					if(meteringAreas != null)
-					{
-						params.setMeteringAreas(null);
-						cameraController.setCameraParameters(params);
-					}
-					params.setMeteringAreas(meteringAreas);
-					cameraController.setCameraParameters(params);
-				}
-			} catch (RuntimeException e) {
-				Log.e("SetMeteringArea", e.getMessage());
-			}
-		}
-	}
+	
 
 	/*
 	 * 

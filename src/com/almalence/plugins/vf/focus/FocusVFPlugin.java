@@ -383,7 +383,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				    focusMode == CameraParameters.AF_MODE_MACRO) &&
         		    mFocusAreaSupported)
             	{
-            		MainScreen.thiz.setCameraFocusAreas(null);
+            		CameraController.getInstance().setCameraFocusAreas(null);
             		//CameraController.getInstance().setCameraMeteringAreas(null);
             	}
                 
@@ -412,14 +412,14 @@ public class FocusVFPlugin extends PluginViewfinder
     public void setFocusParameters()
 	{        
         if (mFocusAreaSupported)
-			MainScreen.thiz.setCameraFocusAreas(getFocusAreas());
+        	CameraController.getInstance().setCameraFocusAreas(getFocusAreas());
 
         if (mMeteringAreaSupported)
         {
             // Use the same area for focus and metering.
         	List<Area> area = getMeteringAreas();
         	if(area != null)
-        		MainScreen.thiz.setCameraMeteringAreas(area);
+        		CameraController.getInstance().setCameraMeteringAreas(area);
         }
     }
 
@@ -851,8 +851,8 @@ public class FocusVFPlugin extends PluginViewfinder
 	    				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
 	    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))))
 			{
-				MainScreen.thiz.setCameraFocusAreas(null);
-    			//CameraController.getInstance().setCameraMeteringAreas(null);
+				CameraController.getInstance().setCameraFocusAreas(null);
+    			CameraController.getInstance().setCameraMeteringAreas(null);
 			}
     	}
         

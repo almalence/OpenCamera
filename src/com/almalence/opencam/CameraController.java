@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.CameraInfo;
+import android.hardware.Camera.Area;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -25,6 +26,7 @@ import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
@@ -319,6 +321,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static int mCaptureState = CAPTURE_STATE_IDLE;
 	
 	
+	private static int iCaptureID = -1;
+	private static Surface mPreviewSurface = null;
+	
+	
 	private Object syncObject = new Object();
 	
 	//Singleton access function
@@ -415,6 +421,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onDestroy()
 	{
 		
+	}
+	
+	public void setPreviewSurface(Surface srf)
+	{
+		mPreviewSurface = srf;
 	}
 	
 	
@@ -527,6 +538,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			MainScreen.previewHeight = 720;
 			
 			// HALv3 code -------------------------------------------------------------------
+			MainScreen.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 2);
+			MainScreen.mImageReaderPreviewYUV.setOnImageAvailableListener(cameraController.new imageAvailableListener(), null);
+			
 			MainScreen.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 2);
 			MainScreen.mImageReaderYUV.setOnImageAvailableListener(cameraController.new imageAvailableListener(), null);
 			
@@ -1125,7 +1139,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1579,7 +1593,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1613,7 +1627,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1647,7 +1661,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1680,7 +1694,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1727,7 +1741,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
 				try 
 				{
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -1736,6 +1750,57 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			
 			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
+		}
+	}
+	
+	public void setCameraFocusAreas(List<Area> focusAreas)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.getCamera() != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+					if (params != null)
+					{
+						params.setFocusAreas(focusAreas);
+						cameraController.setCameraParameters(params);
+					}
+				}
+				catch (RuntimeException e)
+				{
+					Log.e("SetFocusArea", e.getMessage());
+				}
+			}
+		}
+	}
+	
+	public void setCameraMeteringAreas(List<Area> meteringAreas)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.getCamera() != null)
+			{
+				try
+				{
+					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+					if (params != null)
+					{
+						if(meteringAreas != null)
+						{
+							params.setMeteringAreas(null);
+							cameraController.setCameraParameters(params);
+						}
+						params.setMeteringAreas(meteringAreas);
+						cameraController.setCameraParameters(params);
+					}
+				} 
+				catch (RuntimeException e)
+				{
+					Log.e("SetMeteringArea", e.getMessage());
+				}
+			}
 		}
 	}
 	
@@ -1887,7 +1952,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 					try 
 					{
-						CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+						iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 					}
 					catch (CameraAccessException e)
 					{
@@ -1930,7 +1995,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 					try 
 					{
-						CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+						iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 					}
 					catch (CameraAccessException e)
 					{
@@ -2059,9 +2124,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		@Override
 		public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
 		{
-			Log.d(TAG, "CameraDevice.CaptureListener.onCaptureCompleted");
-			
-			Log.e(TAG, "CaptureResult. Focus state = " + result.get(CaptureResult.CONTROL_AF_STATE));
 			if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED)
 			{
 				resetCaptureListener();
@@ -2072,8 +2134,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				resetCaptureListener();
 				CameraController.getInstance().onAutoFocus(false);				
-			}
+			}			
 			
+//			if(result.get(CaptureResult.REQUEST_ID) == iCaptureID)
+//			{
+//				//Log.e(TAG, "Image metadata received. Capture timestamp = " + result.get(CaptureResult.SENSOR_TIMESTAMP));
+//				iPreviewFrameID = result.get(CaptureResult.SENSOR_TIMESTAMP);
+//			}
 			
 			// Note: result arriving here is just image metadata, not the image itself
 			// good place to extract sensor gain and other parameters
@@ -2094,7 +2161,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				try 
 				{
 					CameraController.camDevice.stopRepeating();
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -2109,14 +2176,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		@Override
 		public void onImageAvailable(ImageReader ir)
 		{
-			Log.e(TAG, "ImageReader.OnImageAvailableListener.onImageAvailable");
-			
 			// Contrary to what is written in Aptina presentation acquireLatestImage is not working as described
 			// Google: Also, not working as described in android docs (should work the same as acquireNextImage in our case, but it is not)
 			//Image im = ir.acquireLatestImage();
-			Image im = ir.acquireNextImage();
 			
-			PluginManager.getInstance().onImageAvailable(im);
+			Image im = ir.acquireNextImage();
+			//if(iPreviewFrameID == im.getTimestamp())
+			if(ir.getSurface() == mPreviewSurface)
+				PluginManager.getInstance().onPreviewAvailable(im);
+			else			
+				PluginManager.getInstance().onImageAvailable(im);
 
 			// Image should be closed after we are done with it
 			im.close();

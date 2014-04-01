@@ -383,12 +383,24 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        }
 		}
 		
-    	AlmaShotHDR.HDRConvertFromJpeg(
-    			compressed_frame,
-    			compressed_frame_len,
-    			imagesAmount,
-    			mImageWidth, mImageHeight);
-    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+		if(!isYUV)
+		{
+	    	AlmaShotHDR.HDRConvertFromJpeg(
+	    			compressed_frame,
+	    			compressed_frame_len,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+	    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+		}
+		else
+		{
+			AlmaShotHDR.HDRAddYUVFrames111(
+	    			compressed_frame,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+	    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+		}
     	
     	int nf = HDRProcessingPlugin.getNoise();
     	

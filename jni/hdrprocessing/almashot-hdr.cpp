@@ -116,6 +116,53 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 }
 
 
+extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_AlmaShotHDR_HDRAddYUVFrames111
+(
+	JNIEnv* env,
+	jobject thiz,
+	jintArray in,
+	jint nFrames,
+	jint sx,
+	jint sy
+)
+{
+	int i;
+	unsigned char * *yuvIn;
+	char status[1024];
+
+	Uint8 *inp[4];
+	int x, y;
+	int x0_out, y0_out, w_out, h_out;
+
+	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
+
+	// pre-allocate uncompressed yuv buffers
+	for (i=0; i<nFrames; ++i)
+	{
+		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+
+		if (yuv[i]==NULL)
+		{
+			i--;
+			for (;i>=0;--i)
+			{
+				free(yuv[i]);
+				yuv[i] = NULL;
+			}
+			break;
+		}
+
+		yuv[i] = yuvIn[i];
+	}
+
+	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
+
+	//sprintf (status, "frames total: %d\nsize0: %d\nsize1: %d\nsize2: %d\n", (int)nFrames, jpeg_length[0], jpeg_length[1], jpeg_length[2]);
+	sprintf (status, "frames total: %d\n", (int)nFrames);
+	return env->NewStringUTF(status);
+}
+
+
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_AlmaShotHDR_HDRPreview
 (
 	JNIEnv* env,

@@ -1330,6 +1330,21 @@ public class PluginManager {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
+	
+	void onPreviewAvailable(Image im) {
+		if (isRestarting) {
+			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+					.findViewById(R.id.mainLayout1);
+			pluginsLayout.requestLayout();
+			isRestarting = false;
+		}
+
+		for (int i = 0; i < activeVF.size(); i++)
+			pluginList.get(activeVF.get(i)).onPreviewAvailable(im);
+
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onPreviewAvailable(im);
+	}
 
 	void onPreviewFrame(byte[] data, Camera paramCamera) {
 		// prevents plugin's views to disappear
