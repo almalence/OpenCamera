@@ -37,6 +37,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.plugins.processing.hdr.AlmaShotHDR;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -168,18 +169,37 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     	}
     	else
     	{
-            try
-            {
-        	AlmaShotNight.ConvertFromJpeg(
-        			compressed_frame,
-        			compressed_frame_len,
-        			imagesAmount,
-        			mImageWidth, mImageHeight);
-            }
-            catch(RuntimeException exp)
-            {
-            	Log.e("NIGHT CAMERA DEBUG", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg EXCEPTION = " + exp.getMessage());	
-            }
+//            try
+//            {
+//        	AlmaShotNight.ConvertFromJpeg(
+//        			compressed_frame,
+//        			compressed_frame_len,
+//        			imagesAmount,
+//        			mImageWidth, mImageHeight);
+//            }
+//            catch(RuntimeException exp)
+//            {
+//            	Log.e("NIGHT CAMERA DEBUG", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg EXCEPTION = " + exp.getMessage());	
+//            }
+            
+            boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		if(!isYUV)
+    		{
+    	    	AlmaShotNight.ConvertFromJpeg(
+    	    			compressed_frame,
+    	    			compressed_frame_len,
+    	    			imagesAmount,
+    	    			mImageWidth, mImageHeight);
+    	    	Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+    		}
+    		else
+    		{
+    			AlmaShotNight.NightAddYUVFrames(
+    	    			compressed_frame,
+    	    			imagesAmount,
+    	    			mImageWidth, mImageHeight);
+    	    	Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+    		}
         	
     		
     		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight,

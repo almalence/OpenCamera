@@ -920,6 +920,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 	
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
+			//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
 			// configure camera with all the surfaces to be ever used
 			try {
 				CameraController.camDevice.configureOutputs(sfl);

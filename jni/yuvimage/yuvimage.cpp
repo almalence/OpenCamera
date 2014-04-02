@@ -26,6 +26,8 @@ by Almalence Inc. All Rights Reserved.
 #include "YuvToJpegEncoder.h"
 
 static unsigned char *yuv[50] = {NULL};
+static int SX = 0;
+static int SY = 0;
 
 extern "C" {
 JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
@@ -80,6 +82,51 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_YuvImage_GetFrame
 	return (jint)yuv[index];
 }
 
+extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_GetByteFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	int x, y;
+	jbyteArray jpixels = NULL;
+	Uint8 * pixels;
+
+	jpixels = env->NewByteArray(SX*SY+SX*((SY+1)/2));
+
+	pixels = (Uint8 *)env->GetByteArrayElements(jpixels, NULL);
+
+//	for (y=0; y<SY; ++y)
+//	{
+//		for (x=0; x<SX; ++x)
+//		{
+//			pixels[y+x] = yuv[index][y+x];
+//		}
+//	}
+
+	for (y=0; y<SY; y+=2)
+		{
+			// Y
+			memcpy (&pixels[y*SX],     &yuv[index][y*SX],   SX);
+			memcpy (&pixels[(y+1)*SX], &yuv[index][(y+1)*SX], SX);
+
+			// UV - no direct memcpy as swap may be needed
+			for (x=0; x<SX/2; ++x)
+			{
+				// U
+				pixels[SX*SY+(y/2)*SX+x*2+1] = yuv[index][SX*SY+(y/2)*SX+x*2+1];
+
+				// V
+				pixels[SX*SY+(y/2)*SX+x*2]   = yuv[index][SX*SY+(y/2)*SX+x*2];
+			}
+		}
+
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, JNI_ABORT);
+
+	return (jbyte *)jpixels;
+}
+
 extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 (
 		JNIEnv* env,
@@ -109,6 +156,9 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 
 	if ((Y == NULL) || (U == NULL) || (V == NULL))
 		return -1;
+
+	SX = sx;
+	SY = sy;
 
 	// extract crop as NV21 image
 	yuv[n] = (unsigned char *)malloc (sx*sy+sx*((sy+1)/2));

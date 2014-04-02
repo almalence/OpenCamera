@@ -349,8 +349,9 @@ public abstract class Plugin
 	    }
 	}
 	
+	//Used only in old camera interface (HALv3 don't use it)
 	public void SetCameraPictureSize() {
-		Camera camera = CameraController.getInstance().getCamera();
+		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
     	

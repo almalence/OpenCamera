@@ -18,6 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.night;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,6 +81,7 @@ import com.almalence.util.ImageConversion;
 
 import com.almalence.ui.Switch.Switch;
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /***
 Implements night capture plugin - different capture logics available
@@ -451,21 +453,23 @@ public class NightCapturePlugin extends PluginCapture
     	}
 
         // ----- Find max-resolution capture dimensions
-    	Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return;
-        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-        if(cp == null)
-        	Log.e("NightCapturePlugin", "MainScreen.SelectImageDimension CameraController.getInstance().getCameraParameters == null");
-        List<Camera.Size> cs;
+//    	Camera camera = CameraController.getInstance().getCamera();
+//    	if (null==camera)
+//    		return;
+//        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//        if(cp == null)
+//        	Log.e("NightCapturePlugin", "MainScreen.SelectImageDimension CameraController.getInstance().getCameraParameters == null");
+    	
+        List<CameraController.Size> cs;
     	int MinMPIX = MIN_MPIX_SUPPORTED;
         if (mode == 1)	// super mode
         {
-        	cs = RemoveDuplicateResolutions(cp.getSupportedPreviewSizes());
+        	cs = RemoveDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
         	MinMPIX = MIN_MPIX_PREVIEW;
         }
         else
-        	cs = cp.getSupportedPictureSizes();
+        	cs = CameraController.getInstance().getSupportedPictureSizes();
+        	//cs = cp.getSupportedPictureSizes();
 
         int Capture5mIdx = -1;
         long Capture5mMpix = 0;
@@ -480,8 +484,8 @@ public class NightCapturePlugin extends PluginCapture
 		// figure default resolution
     	for (int ii=0; ii<cs.size(); ++ii)
     	{
-            Size s = cs.get(ii); 
-            long mpix = (long)s.width*s.height;
+            CameraController.Size s = cs.get(ii); 
+            long mpix = (long)s.getWidth()*s.getHeight();
             
     		if ((mpix >= MinMPIX) && (mpix < maxMpix))
     		{
@@ -489,24 +493,24 @@ public class NightCapturePlugin extends PluginCapture
             	{
                     Capture5mIdx = ii;
             		Capture5mMpix = mpix;
-            		Capture5mWidth = s.width;
-            		Capture5mHeight = s.height;
+            		Capture5mWidth = s.getWidth();
+            		Capture5mHeight = s.getHeight();
             	}
     		}
     	}
     	
     	for (int ii=0; ii<cs.size(); ++ii)
     	{
-            Size s = cs.get(ii); 
-            long mpix = (long)s.width*s.height;
+            CameraController.Size s = cs.get(ii); 
+            long mpix = (long)s.getWidth()*s.getHeight();
             
         	if ((ii==prefIdx) && (mpix >= MinMPIX))
         	{
         		prefFound = true;
                 CaptureIdx = ii;
         		CaptureMpix = mpix;
-        		CaptureWidth = s.width;
-        		CaptureHeight = s.height;
+        		CaptureWidth = s.getWidth();
+        		CaptureHeight = s.getHeight();
         		break;
         	}
         	
@@ -514,8 +518,8 @@ public class NightCapturePlugin extends PluginCapture
         	{
                 CaptureIdx = ii;
         		CaptureMpix = mpix;
-        		CaptureWidth = s.width;
-        		CaptureHeight = s.height;
+        		CaptureWidth = s.getWidth();
+        		CaptureHeight = s.getHeight();
         	}
         }
 
@@ -619,7 +623,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void SetCameraPictureSize()
 	{
-		Camera camera = CameraController.getInstance().getCamera();
+		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
@@ -721,7 +725,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	// leave only top-most resolution for each aspect ratio for super mode
-    private static List<Camera.Size> RemoveDuplicateResolutions(List<Camera.Size> cs)
+    private static List<CameraController.Size> RemoveDuplicateResolutions(List<CameraController.Size> cs)
     {
     	List<Long> MPix = new ArrayList<Long>();
     	List<Integer> RatIdx = new ArrayList<Integer>();
@@ -732,10 +736,10 @@ public class NightCapturePlugin extends PluginCapture
     	
     	for (int ii=0; ii<cs.size(); ++ii)
     	{
-            Size s = cs.get(ii); 
+            CameraController.Size s = cs.get(ii); 
     	
-        	Long lmpix = (long)s.width*s.height;
-        	float ratio = (float)s.width/s.height;
+        	Long lmpix = (long)s.getWidth()*s.getHeight();
+        	float ratio = (float)s.getWidth()/s.getHeight();
 
         	int ri = 0;
             if (Math.abs(ratio - 4/3.f)  < 0.1f) ri = 1;
@@ -752,10 +756,10 @@ public class NightCapturePlugin extends PluginCapture
     	// remove lower-than-maximum resolutions
     	for (int ii=0; ii<cs.size();)
     	{
-            Size s = cs.get(ii); 
+            CameraController.Size s = cs.get(ii); 
         	
-        	Long lmpix = (long)s.width*s.height;
-        	float ratio = (float)s.width/s.height;
+        	Long lmpix = (long)s.getWidth()*s.getHeight();
+        	float ratio = (float)s.getWidth()/s.getHeight();
 
         	int ri = 0;
             if (Math.abs(ratio - 4/3.f)  < 0.1f) ri = 1;
@@ -777,40 +781,40 @@ public class NightCapturePlugin extends PluginCapture
     	ResolutionsIdxesList = new ArrayList<String>();
     	ResolutionsNamesList = new ArrayList<String>();
 
-    	Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return;
-    	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();        
+//    	Camera camera = CameraController.getInstance().getCamera();
+//    	if (null==camera)
+//    		return;
+//    	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();        
 
-        List<Camera.Size> cs;
+        List<CameraController.Size> cs;
     	int MinMPIX = MIN_MPIX_SUPPORTED;
         if (mode == 1)	// hi-speed mode
         {
         	// hi-speed mode: leave only single top resolution for each aspect ratio
-        	cs = RemoveDuplicateResolutions(cp.getSupportedPreviewSizes());
+        	cs = RemoveDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
         	MinMPIX = MIN_MPIX_PREVIEW;
         }
         else
         {
-        	cs = cp.getSupportedPictureSizes();
+        	cs = CameraController.getInstance().getSupportedPictureSizes();
         }
 
         CharSequence[] RatioStrings = {" ", "4:3", "3:2", "16:9", "1:1"};
         
     	for (int ii=0; ii<cs.size(); ++ii)
     	{
-            Size s = cs.get(ii); 
+            CameraController.Size s = cs.get(ii); 
 
-            if ((long)s.width*s.height < MinMPIX)
+            if ((long)s.getWidth()*s.getHeight() < MinMPIX)
             	continue;
 
             // superzoom supports 12mpix output at most
-            if ((mode == 1) && ((s.width > 4096/2) || (s.height > 3072/2)))
+            if ((mode == 1) && ((s.getWidth() > 4096/2) || (s.getHeight() > 3072/2)))
             	continue;
 
-        	Long lmpix = (long)s.width*s.height;
+        	Long lmpix = (long)s.getWidth()*s.getHeight();
         	float mpix = (float)lmpix/1000000.f;
-        	float ratio = (float)s.width/s.height;
+        	float ratio = (float)s.getWidth()/s.getHeight();
 
         	// find good location in a list
         	int loc;
@@ -1082,10 +1086,7 @@ public class NightCapturePlugin extends PluginCapture
     		
     		//Log.e("NIGHT CAMERA DEBUG", "startCaptureSequence session = " + PluginManager.getInstance().getSessionID());
             PluginManager.getInstance().addToSharedMem("nightmode"+String.valueOf(SessionID), ModePreference);
-
-            Camera camera = CameraController.getInstance().getCamera();
-        	if (null==camera)
-        		return;
+            
             if (FocusPreference.compareTo("0") == 0)
             {	// if FOCUS_MODE_FIXED
 	        	if (!takingAlready)
@@ -1161,7 +1162,84 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageAvailable(Image im)
 	{
+		int frame = 0;
+		int frame_len = 0;
+		boolean isYUV = false;
 		
+		if(im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			Log.e("CapturePlugin", "YUV Image received");
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+			
+			if (status != 0)
+				Log.e("CapturePlugin", "Error while cropping: "+status);
+			
+			
+			compressed_frame[frame_num] = YuvImage.GetFrame(0);
+			compressed_frame_len[frame_num] = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			isYUV = true;
+		}
+		else if(im.getFormat() == ImageFormat.JPEG)
+		{
+			Log.e("NightCapturePlugin", "JPEG Image received");
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+			
+			frame_len = jpeg.limit();
+			byte[] jpegByteArray = new byte[frame_len];
+			jpeg.get(jpegByteArray, 0, frame_len);
+//			byte[] jpegByteArray = jpeg.array();			
+//			int frame_len = jpegByteArray.length;
+			
+			compressed_frame[frame_num] = SwapHeap.SwapToHeap(jpegByteArray);
+			compressed_frame_len[frame_num] = frame_len;
+			
+			if(frame_num == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+		}
+    	
+    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored"+(frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+		
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
+    	
+    	
+    	String message = MainScreen.thiz.getResources().getString(R.string.capturing);
+		message += " ";
+		message += frame_num+1 + "/";
+		message +=  total_frames;
+		capturingDialog.setText(message);
+		capturingDialog.show();
+		
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 	
 	public void CaptureFrame()
@@ -1182,7 +1260,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		CameraController.captureImage(1, ImageFormat.JPEG);
+        		CameraController.captureImage(1, ImageFormat.YUV_420_888);
 	    	}
 	    	catch (RuntimeException e)
 	    	{
@@ -1283,6 +1361,99 @@ public class NightCapturePlugin extends PluginCapture
 			}
 			
 		}		
+	}
+	
+	
+	@Override
+	public void onPreviewAvailable(Image im)
+	{
+		if (Integer.parseInt(ModePreference) == 1)
+		{
+			if (nVFframesToBuffer != 0)
+			{
+				Log.e("CapturePlugin", "YUV Image received");
+				ByteBuffer Y = im.getPlanes()[0].getBuffer();
+				ByteBuffer U = im.getPlanes()[1].getBuffer();
+				ByteBuffer V = im.getPlanes()[2].getBuffer();
+		
+				if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+				{
+					Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+					return;
+				}
+				
+				int imageWidth = im.getWidth();
+				int imageHeight = im.getHeight();
+				// Note: android documentation guarantee that:
+				// - Y pixel stride is always 1
+				// - U and V strides are the same
+				//   So, passing all these parameters is a bit overkill
+				int status = YuvImage.CreateYUVImage(Y, U, V,
+						im.getPlanes()[0].getPixelStride(),
+						im.getPlanes()[0].getRowStride(),
+						im.getPlanes()[1].getPixelStride(),
+						im.getPlanes()[1].getRowStride(),
+						im.getPlanes()[2].getPixelStride(),
+						im.getPlanes()[2].getRowStride(),
+						imageWidth, imageHeight, 0);
+				
+				if (status != 0)
+					Log.e("CapturePlugin", "Error while cropping: "+status);
+				
+				
+				byte[] data = YuvImage.GetByteFrame(0);
+				
+				if(MainScreen.getCameraMirrored())
+				{
+					byte[] dataRotated = new byte[data.length];
+					ImageConversion.TransformNV21(data, dataRotated, imageWidth, imageHeight, 1, 0, 0);
+					
+					data = dataRotated;					
+				}	
+				System.gc();
+				
+				// swap-out frame data to the heap				
+		    	compressed_frame[HI_SPEED_FRAMES-nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
+		    	compressed_frame_len[HI_SPEED_FRAMES-nVFframesToBuffer] = imageWidth*2*imageHeight*2+2*((imageWidth*2+1)/2)*((imageHeight*2+1)/2);
+		    	
+		    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
+		    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
+		    	
+		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+				
+		    	if(frame_num == 0)
+		    	{
+		    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+		    		MainScreen.setImageWidth(imageWidth);
+		    		MainScreen.setImageHeight(imageHeight);
+		    		MainScreen.setSaveImageWidth(imageWidth*2);
+		    		MainScreen.setSaveImageHeight(imageHeight*2);
+		    	}
+		    	
+		    	++frame_num;
+				--nVFframesToBuffer;
+				
+				// all frames captured - initiate processing
+				if (nVFframesToBuffer == 0)
+				{
+					// play tick sound
+	        		MainScreen.thiz.PlayShutter();
+										
+	        		Message message = new Message();
+	        		message.obj = String.valueOf(SessionID);
+	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+	    			MainScreen.H.sendMessage(message);
+	    			
+					MainScreen.guiManager.stopCaptureIndication();
+					
+					takingAlready = false;
+					inCapture = false;
+					//modeSwitcher.setEnabled(true);
+				}
+			}
+			
+		}
 	}
 	
 /******************************************************************************************************
@@ -1399,54 +1570,50 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = CameraController.getCamera();
-    		if (camera != null)
-    		{
-    			camera.startPreview();
-	            if (++frame_num < total_frames)
-	            {
-	            	// re-open preview (closed once frame is captured)
-					try
-					{
-						//MainScreen.camera.startPreview();
-						// remaining frames
-		            	if (FocusPreference.compareTo("2") == 0 && !MainScreen.getAutoFocusLock())
-		            	{
-		            		takingAlready = false;
-		            		aboutToTakePicture = true;
-		                    camera.autoFocus(CameraController.getInstance());
-		            	}
-		            	else
-		            	{
-		            		CaptureFrame();
-		            	}
-					}
-					catch (RuntimeException e)
-					{
-			    		Log.i("NightCapture plugin", "RuntimeException in MSG_NEXT_FRAME");
-						// motorola's sometimes fail to restart preview after onPictureTaken (fixed),
-						// especially on night scene
-						// just repost our request and try once more (takePicture latency issues?)
-						--frame_num;
-						Message msg = new Message();
-						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-						msg.what = PluginManager.MSG_BROADCAST;
-						MainScreen.H.sendMessage(msg);
-					}
-	            }
-	            else
-	            {
-	            	//modeSwitcher.setEnabled(true);
-	            		            	
-	            	Message message = new Message();
-	            	message.obj = String.valueOf(SessionID);
-	    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-	    			MainScreen.H.sendMessage(message);
-	            	
-	            	takingAlready = false;
-	            	inCapture = false;
-	            }
-    		}
+			CameraController.startCameraPreview();
+            if (++frame_num < total_frames)
+            {
+            	// re-open preview (closed once frame is captured)
+				try
+				{
+					//MainScreen.camera.startPreview();
+					// remaining frames
+	            	if (FocusPreference.compareTo("2") == 0 && !MainScreen.getAutoFocusLock())
+	            	{
+	            		takingAlready = false;
+	            		aboutToTakePicture = true;
+	                    CameraController.autoFocus(CameraController.getInstance());
+	            	}
+	            	else
+	            	{
+	            		CaptureFrame();
+	            	}
+				}
+				catch (RuntimeException e)
+				{
+		    		Log.i("NightCapture plugin", "RuntimeException in MSG_NEXT_FRAME");
+					// motorola's sometimes fail to restart preview after onPictureTaken (fixed),
+					// especially on night scene
+					// just repost our request and try once more (takePicture latency issues?)
+					--frame_num;
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);
+				}
+            }
+            else
+            {
+            	//modeSwitcher.setEnabled(true);
+            		            	
+            	Message message = new Message();
+            	message.obj = String.valueOf(SessionID);
+    			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+    			MainScreen.H.sendMessage(message);
+            	
+            	takingAlready = false;
+            	inCapture = false;
+            }
     		return true;
 		}
 		return false;

@@ -395,7 +395,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		}
 		else
 		{
-			AlmaShotHDR.HDRAddYUVFrames111(
+			AlmaShotHDR.HDRAddYUVFrames(
 	    			compressed_frame,
 	    			imagesAmount,
 	    			mImageWidth, mImageHeight);

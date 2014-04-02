@@ -23,7 +23,7 @@ public final class AlmaShotHDR
     public static synchronized native String Initialize();
     public static synchronized native int Release();
     public static synchronized native String HDRConvertFromJpeg(int frame[], int frame_len[], int nFrames, int sx, int sy);
-    public static synchronized native String HDRAddYUVFrames111(int frame[], int nFrames, int sx, int sy);
+    public static synchronized native String HDRAddYUVFrames(int frame[], int nFrames, int sx, int sy);
     public static synchronized native String HDRPreview(int nFrames, int sx, int sy, int[] pview,
 			int expoPref, int colorPref, int ctrstPref, int microPref, int noSegmPref, int noisePref, boolean mirrored);
     public static synchronized native String HDRPreview2(int sx, int sy, int[] pview, boolean mirrored);

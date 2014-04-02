@@ -533,18 +533,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if(MainScreen.isHALv3)
 		{
 			//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
+			
 			MainScreen.thiz.surfaceHolder.setFixedSize(1280, 720);
 			MainScreen.previewWidth = 1280;
 			MainScreen.previewHeight = 720;
 			
+			//MainScreen.thiz.surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
+//			MainScreen.previewWidth = MainScreen.imageWidth;
+//			MainScreen.previewHeight = MainScreen.imageHeight;
+			
 			// HALv3 code -------------------------------------------------------------------
-			MainScreen.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 2);
+			MainScreen.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 1);
 			MainScreen.mImageReaderPreviewYUV.setOnImageAvailableListener(cameraController.new imageAvailableListener(), null);
 			
-			MainScreen.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 2);
+			MainScreen.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 1);
 			MainScreen.mImageReaderYUV.setOnImageAvailableListener(cameraController.new imageAvailableListener(), null);
 			
-			MainScreen.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 2);
+			MainScreen.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 1);
 			MainScreen.mImageReaderJPEG.setOnImageAvailableListener(cameraController.new imageAvailableListener(), null);
 		}
 		
@@ -862,6 +867,43 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		return;
+	}
+	
+	public List<CameraController.Size> getSupportedPreviewSizes()
+	{
+		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
+		if(!MainScreen.isHALv3)
+		{
+			List<Camera.Size> sizes = cameraParameters.getSupportedPreviewSizes();
+			for(Camera.Size sz : sizes)
+				previewSizes.add(this.new Size(sz.width, sz.height));
+		}
+		else
+		{
+			android.hardware.camera2.Size[] cs = camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+			for(android.hardware.camera2.Size sz : cs)
+				previewSizes.add(this.new Size(sz.getWidth(), sz.getHeight()));
+		}
+		return previewSizes;
+	}
+	
+	
+	public List<CameraController.Size> getSupportedPictureSizes()
+	{
+		List<CameraController.Size> pictureSizes = new ArrayList<CameraController.Size>();
+		if(!MainScreen.isHALv3)
+		{
+			List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
+			for(Camera.Size sz : sizes)
+				pictureSizes.add(this.new Size(sz.width, sz.height));
+		}
+		else
+		{
+			android.hardware.camera2.Size[] cs = camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+			for(android.hardware.camera2.Size sz : cs)
+				pictureSizes.add(this.new Size(sz.getWidth(), sz.getHeight()));
+		}
+		return pictureSizes;
 	}
 	
 	
@@ -2019,6 +2061,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			else
 			{
+				Log.e("CC", "AutoFocus call!");
 				if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
 				{		
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
@@ -2079,7 +2122,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void onAutoFocus(boolean focused)
 	{
-		Log.e("", "onAutoFocus call");
+		Log.e("", "onAutoFocus callback");
 		
 		PluginManager.getInstance().onAutoFocus(focused);
 		if (focused)
@@ -2190,7 +2233,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				try 
 				{
 					CameraController.camDevice.stopRepeating();
-					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
 				}
 				catch (CameraAccessException e)
 				{
