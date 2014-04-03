@@ -75,12 +75,13 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		{
 			int orientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation" + i+Long.toString(sessionID)));
 			String isDRO = PluginManager.getInstance().getFromSharedMem("isdroprocessing"+Long.toString(sessionID));
+			boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+			
 			if(isDRO != null && isDRO.equals("0"))
 			{
 				AlmaShotDRO.Initialize();
 				
-				int inputYUV = 0;
-				boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+				int inputYUV = 0;				
 				if(!isYUV)
 				{
 					int compressed_frame[] = new int[1];
@@ -124,12 +125,11 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				PluginManager.getInstance().addToSharedMem("resultframe"+i+Long.toString(sessionID), String.valueOf(yuv));
 			}
 			else
-			{
-				
+			{				
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
 	    		int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)));
 	    		
-	    		PluginManager.getInstance().addToSharedMem("resultframeformat"+i+Long.toString(sessionID), "jpeg");
+	    		PluginManager.getInstance().addToSharedMem("resultframeformat"+i+Long.toString(sessionID), isYUV? "" : "jpeg");
 				PluginManager.getInstance().addToSharedMem("resultframe"+i+Long.toString(sessionID), String.valueOf(frame));
 		    	PluginManager.getInstance().addToSharedMem("resultframelen"+i+Long.toString(sessionID), String.valueOf(len));
 		    	

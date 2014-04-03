@@ -1955,7 +1955,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
 				// no re-focus needed, already focused in preview, so keeping the same focusing mode for snapshot
-				stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+				//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 				// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
 				//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 				if(format == ImageFormat.JPEG)
