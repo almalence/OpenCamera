@@ -914,8 +914,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			
 			sfl.add(mCameraSurface);				// surface for viewfinder preview
 			sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
-			//sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-			sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+			//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 			
 			cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 	

@@ -344,7 +344,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	
 	    	try
 	    	{
-	    		CameraController.captureImage(1, ImageFormat.YUV_420_888);
+	    		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
+	    			CameraController.captureImage(1, ImageFormat.YUV_420_888);
+	    		else
+	    			CameraController.captureImage(1, ImageFormat.JPEG);
 			}
 	    	catch (Exception e)
 			{

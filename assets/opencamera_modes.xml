@@ -46,7 +46,7 @@
 		
 	</mode>
 	 
-	<mode id="selftimer" name="selftimer_mode_name"  savename="">
+	<!-- <mode id="selftimer" name="selftimer_mode_name"  savename="">
 	
 	    <icon		id="gui_almalence_mode_selftimer"/>
 	    
@@ -67,7 +67,7 @@
 		
 		<howtotext  id=""/>
 		
-	</mode> 
+	</mode> -->
 
 	<mode id="burstmode" name="burst_mode_name"  savename="">
 	    
