@@ -84,7 +84,7 @@
             </intent-filter>
         </receiver>
 -->		
-		<!-- Uncomment for Zmazon market 1st part 
+		<!-- Uncomment for Amazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
 	    	<intent-filter>
 	        	<action
@@ -112,7 +112,7 @@
 	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
 <!--  -+- -->
 
-	<!-- Uncomment for Zmazon market 2nd part 
+	<!-- Uncomment for Amazon market 2nd part 
 	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
 	-->
 
