@@ -166,7 +166,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
     	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
-    	Log.e("PreShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
     	mCameraMirrored = MainScreen.getCameraMirrored();
 		
@@ -245,7 +244,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    	
 //	    	int isPortrait = PreShot.isPortraitReserved(i);
 	    	int iOrientation = PreShot.getOrientationReserved(i);
-	    	Log.e("PreShot","Frame orientation: " + iOrientation);
 	    	if(isSlowMode == true)
 	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((iOrientation)));
 	    	else
@@ -329,7 +327,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		MainScreen.thiz.getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		
-		Log.e("MultishotExportPlugin", "onExportActive");
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
         if (0!=imgCnt)
         	idx = imgCnt-1;
@@ -338,7 +335,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
         idx/=2;
         
         Show(true);
-        Log.e("MultishotExportPlugin", "Show() success");
         
      // if first launch - show layout with hints
  		SharedPreferences prefs = PreferenceManager

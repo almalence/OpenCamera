@@ -1209,8 +1209,6 @@ public class NightCapturePlugin extends PluginCapture
 			frame_len = jpeg.limit();
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
-//			byte[] jpegByteArray = jpeg.array();			
-//			int frame_len = jpegByteArray.length;
 			
 			compressed_frame[frame_num] = SwapHeap.SwapToHeap(jpegByteArray);
 			compressed_frame_len[frame_num] = frame_len;

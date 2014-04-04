@@ -1689,25 +1689,26 @@ public class PluginManager {
 		return true;
 	}
 	
-	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID) {		
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if (params==null)
-			return false;
-		
-		String s1 = null;
-		if(params.getSupportedWhiteBalance() != null)
-			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
-		String s2 = Build.MANUFACTURER;
-		String s3 = Build.MODEL;
-		
-		String s4 = null;
-		if(MainScreen.guiManager.mISOSupported)
-			s4 = CameraController.getInstance().getISOMode();
-		
-		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
-		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
-		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
-		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
+	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID)
+	{		
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//		if (params==null)
+//			return false;
+//		
+//		String s1 = null;
+//		if(params.getSupportedWhiteBalance() != null)
+//			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
+//		String s2 = Build.MANUFACTURER;
+//		String s3 = Build.MODEL;
+//		
+//		String s4 = null;
+//		if(MainScreen.guiManager.mISOSupported)
+//			s4 = CameraController.getInstance().getISOMode();
+//		
+//		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+//		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+//		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+//		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
 		return true;
 	}
 

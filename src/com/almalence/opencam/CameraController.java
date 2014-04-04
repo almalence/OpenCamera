@@ -1895,6 +1895,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return mFocusState;
 	}
+	
+	
+	public int getPreviewFrameRate()
+	{
+		int range[] = {0 , 0};
+		if(!MainScreen.isHALv3)
+		{			
+			cameraParameters.getPreviewFpsRange(range);
+			return range[1]/1000;
+		}
+		else
+		{
+			range = camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+			return range[range.length-1]; 
+		}
+	}
 	//^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
 	
 	

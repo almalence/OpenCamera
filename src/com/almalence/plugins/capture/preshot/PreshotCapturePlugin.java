@@ -18,6 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.preshot;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import android.content.SharedPreferences;
@@ -33,6 +34,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 /* <!-- +++
@@ -213,20 +216,13 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void SetupCameraParameters()
 	{
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (isSlowMode==false)//fast mode
 		{
 			try 
 			{				 
-//				if(MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
 				if (CameraController.isModeAvailable(CameraController.supportedFocusModes,CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 				{
-					cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);			
-					CameraController.getInstance().setCameraParameters(cp);
-					
+					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
 				}				
 			}
@@ -239,13 +235,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try 
 			{
-//				if(MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
 				if (CameraController.isModeAvailable(CameraController.supportedFocusModes,CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 				{
-					cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-					CameraController.getInstance().setCameraParameters(cp);
-					
-					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE).commit();
+					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+					PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE).commit();
 				}				
 			}
 			catch(Exception e)
@@ -267,12 +260,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (modeSwitcher!=null)
 			modeSwitcher.setEnabled(true);
 		if(AutostartPreference)
-		{
-			Camera camera = CameraController.getInstance().getCamera();
-	    	if (null==camera)
-	    		return;
 	    	StartBuffering();
-		}
 	}
 
 	@Override
@@ -300,9 +288,6 @@ public class PreshotCapturePlugin extends PluginCapture
 		}
 		else
 		{
-			Camera camera = CameraController.getInstance().getCamera();
-	    	if (null==camera)
-	    		return;
 	    	if (!AutostartPreference)
 	    		modeSwitcher.setEnabled(false);
 			captureStarted=true;
@@ -315,7 +300,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 	public static int imW = 0;
 	public static int imH = 0;
-	public static int format = 0;
+	//public static int format = 0;
 	
 	// starts buffering to native buffer
 	void StartBuffering() {
@@ -328,15 +313,12 @@ public class PreshotCapturePlugin extends PluginCapture
 		isBuffering = true;
 		if (isSlowMode==false)
 		{
-			Camera camera = CameraController.getInstance().getCamera();
-	    	if (null==camera)
-	    		return;
 			MainScreen.guiManager.startContinuousCaptureIndication();
-			preview_fps = CameraController.getInstance().getCameraParameters().getPreviewFrameRate();
+			preview_fps = CameraController.getInstance().getPreviewFrameRate();
 			
-			imW = CameraController.getInstance().getCameraParameters().getPreviewSize().width;
-			imH = CameraController.getInstance().getCameraParameters().getPreviewSize().height;
-			format = CameraController.getInstance().getCameraParameters().getPreviewFormat();
+			imW = MainScreen.previewWidth;
+			imH = MainScreen.previewHeight;
+			//format = CameraController.getInstance().getCameraParameters().getPreviewFormat();
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
@@ -401,54 +383,68 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] _data, Camera _camera) {
+	public void onPreviewFrame(byte[] _data, Camera _camera)
+	{
 		if (isSlowMode==true || !isBuffering)
 			return;
 		
 		if (0==frmCnt%(preview_fps/Integer.parseInt(FPS)))
 		{
-//			if(MainScreen.getCameraMirrored())
-//			{
-//				Camera.Parameters params = _CameraController.getInstance().getCameraParameters();			
-//				int imageWidth = params.getPreviewSize().width;
-//				int imageHeight = params.getPreviewSize().height;
-//				
-//				byte[] dataRotated = new byte[_data.length];
-//				ImageConversion.TransformNV21(_data, dataRotated, imageWidth, imageHeight, 1, 1, 1);
-//				
-//				_data = dataRotated;			
-				
-	//			/******/
-	//			Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
-	//	        YuvImage img = new YuvImage(_data, ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
-	//	        OutputStream outStream = null;
-	//	        
-	//	        File file = new File(PluginManager.getInstance().GetSaveDir(), "front.jpg");
-	//	        try 
-	//	        {
-	//	            outStream = new FileOutputStream(file);
-	//	            img.compressToJpeg(rect, 100, outStream);
-	//	            outStream.flush();
-	//	            outStream.close();
-	//	        } 
-	//	        catch (FileNotFoundException e) 
-	//	        {
-	//	            e.printStackTrace();
-	//	        }
-	//	        catch (IOException e) 
-	//	        {
-	//	            e.printStackTrace();
-	//	        }
-	//        	/***************/
-//			}	
-			System.gc();
-		
+			System.gc();		
 		
 			if(frmCnt == 0)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
-			//PreShot.InsertToBuffer(_data, MainScreen.getWantLandscapePhoto()?0:1);
 
 			PreShot.InsertToBuffer(_data, MainScreen.guiManager.getDisplayOrientation());
+		}
+		frmCnt++;
+	}
+	
+	@Override
+	public void onPreviewAvailable(Image im)
+	{
+		if (isSlowMode==true || !isBuffering)
+			return;
+		
+		if (0==frmCnt%(preview_fps/Integer.parseInt(FPS)))
+		{
+			System.gc();		
+		
+			if(frmCnt == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+			
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("PreShotCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			int imageWidth = im.getWidth();
+			int imageHeight = im.getHeight();
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					imageWidth, imageHeight, 0);
+			
+			if (status != 0)
+				Log.e("PreShotCapturePlugin", "Error while cropping: "+status);
+			
+			
+			byte[] data = YuvImage.GetByteFrame(0);
+
+			PreShot.InsertToBuffer(data, MainScreen.guiManager.getDisplayOrientation());
 		}
 		frmCnt++;
 	}
@@ -459,10 +455,7 @@ public class PreshotCapturePlugin extends PluginCapture
         {
     		inCapture = true;
     		takingAlready = false;
-
-    		Camera camera = CameraController.getInstance().getCamera();
-        	if (null==camera)
-        		return;
+    		
     		// start series
             try		// some crappy models have autoFocus() = null
             {
@@ -537,7 +530,38 @@ public class PreshotCapturePlugin extends PluginCapture
     @Override
 	public void onImageAvailable(Image im)
 	{
+    	inCapture = false;
+    	
+		ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 		
+		int frame_len = jpeg.limit();
+		byte[] jpegByteArray = new byte[frame_len];
+		jpeg.get(jpegByteArray, 0, frame_len);
+		
+    	if (0 == PreShot.GetImageCount())
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+			
+    	//PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getWantLandscapePhoto()?0:1);
+    	PreShot.InsertToBuffer(jpegByteArray, MainScreen.guiManager.getDisplayOrientation());
+    	
+		takingAlready = false;
+		CameraController.startCameraPreview();
+
+		try
+		{
+			if (isBuffering)
+			{
+				ProcessPauseBetweenShots();
+			}
+		}
+		catch (RuntimeException e)
+		{
+			Log.i("Preshot capture", "StartPreview fail");
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
 	}
     
     
@@ -564,10 +588,7 @@ public class PreshotCapturePlugin extends PluginCapture
     void afterPause()
     {
     	if (isBuffering)
-		{
-    		Camera camera = CameraController.getInstance().getCamera();
-        	if (null==camera)
-        		return;
+		{    		
     		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 			if (RefocusPreference||(counter>=REFOCUS_INTERVAL) &&
 				!(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
@@ -631,45 +652,33 @@ public class PreshotCapturePlugin extends PluginCapture
 	
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
-	{
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    		return false;
+	{		
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-    		if (camera != null)
-    		{
-				try
-				{
-					camera.startPreview();
-					CaptureFrame();
-				}
-				catch (RuntimeException e)
-				{
-		    		Log.i("CameraTest", "RuntimeException in MSG_NEXT_FRAME");
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
-				}
-    		}
+			try
+			{
+				CameraController.startCameraPreview();
+				CaptureFrame();
+			}
+			catch (RuntimeException e)
+			{
+	    		Log.i("CameraTest", "RuntimeException in MSG_NEXT_FRAME");
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
     		return true;
 		}
 		else if (arg1 == PluginManager.MSG_STOP_CAPTURE)
 		{
-    		if (camera != null)
-    		{
-				StopBuffering();
-    		}
+			StopBuffering();
     		return true;
 		}
 		else if (arg1 == PluginManager.MSG_START_CAPTURE)
 		{
-    		if (camera != null)
-    		{
     			if (PluginManager.getInstance().getProcessingCounter()==0)
     				StartBuffering();
-    		}
     		return true;
 		}
 		return false;
