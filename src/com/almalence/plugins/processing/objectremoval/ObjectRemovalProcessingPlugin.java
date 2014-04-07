@@ -326,9 +326,11 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		
     		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
         	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+        	
+        	boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
      		
      		//frames!!! should be taken from heap
-     		mAlmaCLRShot.addInputFrame(compressed_frame, input);
+     		mAlmaCLRShot.addInputFrame(compressed_frame, input, isYUV);
 
      		mAlmaCLRShot.initialize(preview,
      				mAngle,
@@ -444,14 +446,15 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	public void getDisplaySize(byte[] data) 
 	{
 		Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Config.ARGB_8888;
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeByteArray(data, 0, data.length, options);
+//		BitmapFactory.Options options = new BitmapFactory.Options();
+//		options.inPreferredConfig = Config.ARGB_8888;
+//		options.inJustDecodeBounds = true;
+//		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		Point dis = new Point();
 		display.getSize(dis);
 
-		float imageRatio = (float)options.outWidth / (float)options.outHeight;
+		//float imageRatio = (float)options.outWidth / (float)options.outHeight;
+		float imageRatio = (float)MainScreen.getImageWidth() / (float)MainScreen.getImageHeight();
 		float displayRatio = (float)dis.y / (float)dis.x;
 		
 		if (imageRatio > displayRatio) {

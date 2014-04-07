@@ -1494,6 +1494,7 @@ public class PluginManager {
 			break;
 
 		case MSG_CAPTURE_FINISHED:
+			Log.e("PluginManager", "capture finished");
 			shutterRelease = true;
 			
 			for (int i = 0; i < activeVF.size(); i++)

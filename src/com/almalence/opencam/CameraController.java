@@ -1964,6 +1964,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//		}
 			
 			// create capture requests for the burst of still images
+			//Log.e("CameraController", "captureImage 1");
 			CaptureRequest.Builder stillRequestBuilder = null;
 			try
 			{
@@ -1974,10 +1975,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 				// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
 				//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+//				Log.e("CameraController", "captureImage 2");
 				if(format == ImageFormat.JPEG)
+				{
 					stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
+//					Log.e("CameraController", "captureImage 3.1");
+				}
 				else
+				{
 					stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
+//					Log.e("CameraController", "captureImage 3.2");
+				}
 	
 				// Google: throw: "Burst capture implemented yet", when to expect implementation?
 				/*
@@ -1991,7 +1999,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				// requests for SZ input frames
 				for (int n=0; n<nFrames; ++n)
 					CameraController.camDevice.capture(stillRequestBuilder.build(), cameraController.new captureListener() , null);
-				
+//				Log.e("CameraController", "captureImage 4");				
 				// One more capture for comparison with a standard frame
 	//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 	//			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
@@ -2039,7 +2047,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 					try 
 					{
-						iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+						iCaptureID = CameraController.camDevice.capture(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 					}
 					catch (CameraAccessException e)
 					{
@@ -2083,7 +2091,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 					try 
 					{
-						iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+						iCaptureID = CameraController.camDevice.capture(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
 					}
 					catch (CameraAccessException e)
 					{
@@ -2100,15 +2108,34 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void cancelAutoFocus()
 	{
-		if (CameraController.getCamera() != null) {
-			CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
-			try
-			{
-				camera.cancelAutoFocus();
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.getCamera() != null) {
+				CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+				try
+				{
+					camera.cancelAutoFocus();
+				}
+				catch(RuntimeException exp)
+				{
+					Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
+				}
 			}
-			catch(RuntimeException exp)
-			{
-				Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
+		}
+		else
+		{
+			Log.e("CC", "AutoFocus call!");
+			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
+			{		
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+				try 
+				{
+					iCaptureID = CameraController.camDevice.capture(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -2246,10 +2273,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 				try 
 				{
-					CameraController.camDevice.stopRepeating();
-					iCaptureID = CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), null, null);
+					//CameraController.camDevice.stopRepeating();
+					iCaptureID = CameraController.camDevice.capture(cameraController.previewRequestBuilder.build(), null, null);
 				}
 				catch (CameraAccessException e)
 				{

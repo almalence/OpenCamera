@@ -18,6 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.objectremoval;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import android.content.SharedPreferences;
@@ -32,6 +33,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
@@ -123,9 +125,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	    				  focusMode == CameraParameters.AF_MODE_FIXED ||
 	    				  focusMode == CameraParameters.AF_MODE_EDOF)
         				&& !MainScreen.getAutoFocusLock())
-				takingAlready = true;			
+				takingAlready = true;
 			else if(takingAlready == false)
 			{
+				takingAlready = true;
 				takePicture();
 			}
         }
@@ -133,41 +136,33 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		inCapture = true;
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    	{
-    		Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+		if(inCapture == false)
+		{
+			Log.e("ObjectRemoval", "takePicture call!");
+			inCapture = true;
 			
-			MainScreen.guiManager.lockControls = false;
-			inCapture = false;
-			takingAlready = false;
-    		return;
-    	}
-		refreshPreferences();
-		takingAlready = true;
-		if (imagesTaken==0 || pauseBetweenShots==0)
-		{
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
-		}
-		else
-		{
-			new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
-			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
-			     {
-			    	Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
-			     }
-			  }.start();
+			refreshPreferences();
+			
+			if (imagesTaken==0 || pauseBetweenShots==0)
+			{
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			else
+			{
+				new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
+				     public void onTick(long millisUntilFinished) {}
+				     public void onFinish() 
+				     {
+				    	Message msg = new Message();
+						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+						msg.what = PluginManager.MSG_BROADCAST;
+						MainScreen.H.sendMessage(msg);
+				     }
+				  }.start();
+			}
 		}
 	}
 
@@ -200,6 +195,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
     	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(false));
     	
     	if(imagesTaken == 1)
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
@@ -249,14 +246,127 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	@Override
 	public void onImageAvailable(Image im)
 	{
+		imagesTaken++;
 		
+		Log.e("CapturePlugin", "YUV Image received. Image N " + imagesTaken);
+		ByteBuffer Y = im.getPlanes()[0].getBuffer();
+		ByteBuffer U = im.getPlanes()[1].getBuffer();
+		ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+		{
+			Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+			return;
+		}
+		
+		
+		// Note: android documentation guarantee that:
+		// - Y pixel stride is always 1
+		// - U and V strides are the same
+		//   So, passing all these parameters is a bit overkill
+		int status = YuvImage.CreateYUVImage(Y, U, V,
+				im.getPlanes()[0].getPixelStride(),
+				im.getPlanes()[0].getRowStride(),
+				im.getPlanes()[1].getPixelStride(),
+				im.getPlanes()[1].getRowStride(),
+				im.getPlanes()[2].getPixelStride(),
+				im.getPlanes()[2].getRowStride(),
+				MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+		
+		if (status != 0)
+			Log.e("CapturePlugin", "Error while cropping: "+status);
+		
+		
+		int frame = YuvImage.GetFrame(0);
+		int frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+		
+//		int frame_len = paramArrayOfByte.length;
+//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+    	
+    	if (frame == 0)
+    	{
+    		Log.e("Object Removal", "Load to heap failed");
+    		
+    		Message message = new Message();
+    		message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+    		//NotEnoughMemory();
+    	}
+    	String frameName = "frame" + imagesTaken;
+    	String frameLengthName = "framelen" + imagesTaken;
+    	
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
+    	
+//    	if(imagesTaken == 1)
+//    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+		
+		try
+		{
+			CameraController.startCameraPreview();
+		}
+		catch (RuntimeException e)
+		{
+			Log.e("Object Removal", "StartPreview fail");
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+		}
+		if (imagesTaken < imageAmount)
+		{
+			inCapture = false;
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		}
+		else
+		{
+			Log.e("Object Removal", "imagesTaken " + imagesTaken + " > imageAmount " + imageAmount);
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			inCapture = false;
+//			new CountDownTimer(5000, 5000) {
+//			     public void onTick(long millisUntilFinished) {}
+//			     public void onFinish() 
+//			     {
+//			    	 inCapture = false;
+//			     }
+//			  }.start();
+		}
+		
+		takingAlready = false;
 	}
 	
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
+		Log.e("ObjectRemoval", "onAutoFocus");
 		if(takingAlready == true)
+		{
+			Log.e("ObjectRemoval", "onAutoFocus ---> takePicture");
 			takePicture();
+		}
 	}
 
 	@Override
@@ -264,15 +374,17 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
+			//Log.e("ObjectRemoval", "MSG_NEXT_FRAME received!");
 			// play tick sound
 			MainScreen.guiManager.showCaptureIndication();
 			MainScreen.thiz.PlayShutter();
 			
 			try {
-				CameraController.captureImage(1, ImageFormat.JPEG);
+				Log.e("ObjectRemoval", "MSG_NEXT_FRAME. CaptureImage");
+				CameraController.captureImage(1, ImageFormat.YUV_420_888);
 			}catch (Exception e) {
 				e.printStackTrace();
-				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+				Log.e("ObjectRemoval", "CameraController.captureImage failed: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
 				Message msg = new Message();

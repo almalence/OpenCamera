@@ -117,7 +117,7 @@ public class AlmaCLRShot
 		void onProcessingComplete(ObjectInfo[] objInfoList);
 	}
 	
-	public void addInputFrame(List<byte[]> inputFrame, Size size)  throws Exception {
+	public void addInputFrame(List<byte[]> inputFrame, Size size, boolean isYUV)  throws Exception {
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 		
@@ -142,20 +142,24 @@ public class AlmaCLRShot
 		Initialize();
 		
 		synchronized (syncObject) {
-    		int[] PointOfJpegData = new int[mNumOfFrame];
-    		int[] LengthOfJpegData = new int[mNumOfFrame];
+    		int[] PointOfData = new int[mNumOfFrame];
+    		int[] LengthOfData = new int[mNumOfFrame];
     		
     		long start = System.currentTimeMillis();
     		for (int i = 0;i < mNumOfFrame;i++) {
-    			PointOfJpegData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
-    			LengthOfJpegData[i] = inputFrame.get(i).length;
-    	    	if (PointOfJpegData[i] == 0) {
+    			PointOfData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
+    			LengthOfData[i] = inputFrame.get(i).length;
+    	    	if (PointOfData[i] == 0) {
     	    		Log.d(TAG, "Out of Memory in Native");
     	    		throw new Exception("Out of Memory in Native");
     	    	}
     		}
     		
-    	    int error = ConvertFromJpeg(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(), size.getHeight());
+    		int error = -1;
+    		if(!isYUV)
+    			error = ConvertFromJpeg(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
+    		else
+    			error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
     	    Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
     	    if (error < 0) {
     	    	Log.d(TAG, "Out Of Memory");
@@ -1068,6 +1072,7 @@ public class AlmaCLRShot
     private static native String Initialize();
     private static native int Release(int nFrames);
     private static native int ConvertFromJpeg(int frame[], int frame_len[], int nFrames, int sx, int sy);
+    private static native int AddYUVInputFrame(int frame[], int frame_len[], int nFrames, int sx, int sy);
     private static native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
     private static native int getInputFrame(int index);
     private static native int MovObjProcess(int nFrames, Size size,	int sensitivity, int minSize, int[] base_area, int[] crop, byte[] layout, int ghosting, int ratio);
