@@ -138,7 +138,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		if(inCapture == false)
 		{
-			Log.e("ObjectRemoval", "takePicture call!");
 			inCapture = true;
 			
 			refreshPreferences();
@@ -248,7 +247,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		imagesTaken++;
 		
-		Log.e("CapturePlugin", "YUV Image received. Image N " + imagesTaken);
 		ByteBuffer Y = im.getPlanes()[0].getBuffer();
 		ByteBuffer U = im.getPlanes()[1].getBuffer();
 		ByteBuffer V = im.getPlanes()[2].getBuffer();
@@ -336,7 +334,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		}
 		else
 		{
-			Log.e("Object Removal", "imagesTaken " + imagesTaken + " > imageAmount " + imageAmount);
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
 			
 			Message message = new Message();
@@ -361,10 +358,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		Log.e("ObjectRemoval", "onAutoFocus");
 		if(takingAlready == true)
 		{
-			Log.e("ObjectRemoval", "onAutoFocus ---> takePicture");
 			takePicture();
 		}
 	}
@@ -380,7 +375,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.thiz.PlayShutter();
 			
 			try {
-				Log.e("ObjectRemoval", "MSG_NEXT_FRAME. CaptureImage");
 				CameraController.captureImage(1, ImageFormat.YUV_420_888);
 			}catch (Exception e) {
 				e.printStackTrace();

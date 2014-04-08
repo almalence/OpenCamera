@@ -18,6 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.groupshot;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import android.content.SharedPreferences;
@@ -46,6 +47,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 //-+- -->
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /***
 Implements group shot capture plugin - captures predefined number of images
@@ -133,41 +135,32 @@ public class GroupShotCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		refreshPreferences();
-		inCapture = true;
-		takingAlready = true;
-		Camera camera = CameraController.getInstance().getCamera();
-    	if (null==camera)
-    	{
-    		takingAlready = false;
-    		Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+		if(inCapture == false)
+		{
+			refreshPreferences();
+			inCapture = true;
+			takingAlready = true;
 			
-			MainScreen.guiManager.lockControls = false;
-			inCapture = false;
-    		return;
-    	}
-		if (imagesTaken==0 || pauseBetweenShots==0)
-		{
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);		
-		}
-		else
-		{
-			new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
-			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
-			     {
-			    	 Message msg = new Message();
-			    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			    	 msg.what = PluginManager.MSG_BROADCAST;
-			    	 MainScreen.H.sendMessage(msg);
-			     }
-			  }.start();
+			if (imagesTaken==0 || pauseBetweenShots==0)
+			{
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);		
+			}
+			else
+			{
+				new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
+				     public void onTick(long millisUntilFinished) {}
+				     public void onFinish() 
+				     {
+				    	 Message msg = new Message();
+				    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				    	 msg.what = PluginManager.MSG_BROADCAST;
+				    	 MainScreen.H.sendMessage(msg);
+				     }
+				  }.start();
+			}
 		}
 	}
 
@@ -248,7 +241,113 @@ public class GroupShotCapturePlugin extends PluginCapture
 	@Override
 	public void onImageAvailable(Image im)
 	{
+		imagesTaken++;
 		
+		ByteBuffer Y = im.getPlanes()[0].getBuffer();
+		ByteBuffer U = im.getPlanes()[1].getBuffer();
+		ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+		{
+			Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+			return;
+		}
+		
+		
+		// Note: android documentation guarantee that:
+		// - Y pixel stride is always 1
+		// - U and V strides are the same
+		//   So, passing all these parameters is a bit overkill
+		int status = YuvImage.CreateYUVImage(Y, U, V,
+				im.getPlanes()[0].getPixelStride(),
+				im.getPlanes()[0].getRowStride(),
+				im.getPlanes()[1].getPixelStride(),
+				im.getPlanes()[1].getRowStride(),
+				im.getPlanes()[2].getPixelStride(),
+				im.getPlanes()[2].getRowStride(),
+				MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+		
+		if (status != 0)
+			Log.e("CapturePlugin", "Error while cropping: "+status);
+		
+		
+		byte byte_frame[] = YuvImage.GetByteFrame(0);
+		int frame_len = byte_frame.length;//MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+		int frame = SwapHeap.SwapToHeap(byte_frame);
+		
+//		int frame_len = paramArrayOfByte.length;
+//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+    	
+    	if (frame == 0)
+    	{
+    		Log.i("Group Shot", "Load to heap failed");
+    		
+    		Message message = new Message();
+    		message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+    	}
+    	String frameName = "frame" + imagesTaken;
+    	String frameLengthName = "framelen" + imagesTaken;
+    	
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
+    	
+//    	if(imagesTaken == 1)
+//    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+		
+		try
+		{
+			CameraController.startCameraPreview();
+		}
+		catch (RuntimeException e)
+		{
+			Log.i("Group Shot", "StartPreview fail");
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			MainScreen.thiz.MuteShutter(false);
+			inCapture = false;
+			return;
+		}
+		if (imagesTaken < imageAmount)
+		{
+			inCapture = false;
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		}
+		else
+		{
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			
+			inCapture = false;
+			//call timer to reset inCapture 
+//			new CountDownTimer(5000, 5000) {
+//			     public void onTick(long millisUntilFinished) {}
+//			     public void onFinish() 
+//			     {
+//			    	 inCapture = false;
+//			     }
+//			  }.start();
+		}
+		takingAlready = false;	
 	}
 	
 	@Override
@@ -276,7 +375,7 @@ public class GroupShotCapturePlugin extends PluginCapture
     		MainScreen.thiz.PlayShutter();
     		try
     		{
-    			CameraController.captureImage(1, ImageFormat.JPEG);
+    			CameraController.captureImage(1, ImageFormat.YUV_420_888);
     		}
     		catch(RuntimeException exp)
     		{

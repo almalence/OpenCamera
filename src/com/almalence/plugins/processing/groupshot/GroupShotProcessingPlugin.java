@@ -18,6 +18,7 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.groupshot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -32,10 +33,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
@@ -155,6 +158,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     public static int compressed_frame[] = new int[MAX_GS_FRAMES];
     public static int compressed_frame_len[] = new int[MAX_GS_FRAMES];
     public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
+    public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
     public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
     ArrayList<ArrayList <Rect>> mFaceList;
     
@@ -216,6 +220,9 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     	
     	int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
+		int iImageWidth = MainScreen.getImageWidth();
+		int iImageHeight = MainScreen.getImageHeight();
         
         if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
         {
@@ -235,18 +242,39 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     			imagesAmount=1;
     		
     		nFrames = imagesAmount;
+    		boolean isYUV = false;
     		
     		for (int i=1; i<=imagesAmount; i++)
-    		{
-    			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
-    	        		);
-    			
-    			mJpegBufferList.add(i-1, in);
+    		{    		
+    			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    			if(isYUV)
+    			{
+    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+    				mYUVBufferList.add(i-1, yuv);
+    				ByteArrayOutputStream out = new ByteArrayOutputStream();
+    				
+    				com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, 0x00000011, iImageWidth, iImageHeight, null);
+    		    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, out);
+    		    	
+    				byte[] imageBytes = out.toByteArray();
+    				mJpegBufferList.add(i-1, imageBytes);
+    			}
+    			else
+    			{
+    				byte[] in = SwapHeap.CopyFromHeap(
+        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
+        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+        	        		);
+    				mJpegBufferList.add(i-1, in);
+    			}
     		}
     		
+    		
     		PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+//    		if(!isYUV)
+//    			PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+//    		else
+//    			PreviewBmp = decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(), MainScreen.getImageHeight());
     		if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
     		{
 	    		Matrix matrix = new Matrix();
@@ -364,11 +392,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    
         for(int index = 0; index < mJpegBufferList.size(); index++)
         {
-			Size srcSize;
-			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-	        	srcSize = new Size(MainScreen.getImageHeight(), MainScreen.getImageWidth());
-	        else
-	        	srcSize = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+//			Size srcSize = null;
+//			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
+//	        	srcSize = new Size(MainScreen.getImageHeight(), MainScreen.getImageWidth());
+//	        else
+//	        	srcSize = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 			
 			//Log.e("Seamless", "fd size: "+dstSize.getWidth()+"x"+dstSize.getHeight());
 			
@@ -618,6 +646,22 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 
 			if(bitmap != tempBitmap)
 				tempBitmap.recycle();
+			return bitmap;
+		}
+		
+		public Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
+		{
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+//			YuvImage yuvImage = new YuvImage(data, ImageFormat.YUV_420_888, width, height, null);
+//			yuvImage.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+			
+			com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, 0x00000011, width, height, null);
+        	//to avoid problems with SKIA
+        	int cropHeight = image.getHeight()-image.getHeight()%16;
+	    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, out);
+	    	
+			byte[] imageBytes = out.toByteArray();
+			Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 			return bitmap;
 		}
 		

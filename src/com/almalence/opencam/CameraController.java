@@ -2085,7 +2085,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			else
 			{
-				Log.e("CC", "AutoFocus call!");
 				if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
 				{		
 					cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
@@ -2124,7 +2123,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 		{
-			Log.e("CC", "AutoFocus call!");
 			if(cameraController.previewRequestBuilder != null && CameraController.camDevice != null)
 			{		
 				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
@@ -2154,7 +2152,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onAutoFocus(boolean focused, Camera paramCamera)
 	{
-		Log.e("", "onAutoFocus callback");
 		PluginManager.getInstance().onAutoFocus(focused);
 		if (focused)
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
@@ -2165,8 +2162,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void onAutoFocus(boolean focused)
 	{
-		Log.e("", "onAutoFocus callback");
-		
 		PluginManager.getInstance().onAutoFocus(focused);
 		if (focused)
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
