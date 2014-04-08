@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<string name="pref_plugin_capture_panoramaaugmented_preference_title">Panorama - focení</string>
+	<string name="pref_plugin_capture_panoramaaugmented_preference_summary">Snímání Panoramy</string>	
+	
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_title">Velikost Panoramy na výšku</string>
+	<string name="pref_plugin_capture_panoramaaugmented_imageheight_warning">Můžete vyfotit %d snímků s tímto rozlišením</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_title">Použít gyroskop v zařízení</string>
+    <string name="pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary">Je vyžadován hardwarový gyroskop. Pokud není zaškrtnuto, použije se softwarový gyroskop</string>
+	<string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_title">Žádný gyroskop</string>
+    <string name="pref_plugin_capture_panoramaaugmented_nogyro_dialog_text">Vaše zařízení bohužel nemá gyroskop. Při snímání se použije softwarový gyroskop</string>
+    
+    <string name="plugin_capture_panoramaaugmented_badframe">Při snímání držte zařízení pevně</string>
+    
+    <string name="plugin_capture_panoramaaugmented_outofmemory">Tohle je bohužel maximální počet snímků, které zpracuje paměť zařízení.</string>
+    <string name="plugin_capture_panoramaaugmented_stopcapture">Máte 360° panorama! Zpracovávám...</string>
+    
+    <string name="Panorama_Help">Důležité: Nepohybujte rukama, ale pouze zařízením!\n\n1. Držte zařízení v horizontální rovině\n2. Zmáčkněte spoušť pro začátek snímání panoramy\n3. Pohybujte zařízením směrem k červené oblasti a zastavte, jakmile zezelená.\n4. Několikrát opakujte.\n5. Opětovným stisknutím spouště dokončíte panoramu</string>
+    
+</resources>

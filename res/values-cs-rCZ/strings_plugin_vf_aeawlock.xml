@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_VF_AEAWLock_Preference_Title">Zámek automatické expozice\\vyvážení bílé</string>
+	
+	<string name="Pref_VF_ShowAEAWLock_Title">Ukázat zámek automatické expozice a vyvážení bílé</string>
+	<string name="Pref_VF_ShowAEAFLock_Summary">Nemusí fungovat na některých typech zařízení</string>
+	
+</resources>

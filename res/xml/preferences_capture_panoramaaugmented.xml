@@ -7,6 +7,17 @@
 			android:defaultValue="2"
 			android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
 			android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"/>
+    	<ListPreference
+			android:title="@string/pref_plugin_capture_panoramaaugmented_frameoverlap_title"
+			android:key="pref_plugin_capture_panoramaaugmented_frameoverlap"
+			android:defaultValue="2"
+			android:entries="@array/plugin_capture_panoramaaugmented_frameoverlapArray"
+			android:entryValues="@array/plugin_capture_panoramaaugmented_frameoverlapValues"/>
+    	<CheckBoxPreference
+			android:title="@string/pref_plugin_capture_panoramaaugmented_memory_title"
+			android:defaultValue="false"
+			android:summary="@string/pref_plugin_capture_panoramaaugmented_memory_summary"
+			android:key="pref_plugin_capture_panoramaaugmented_memory"/>
     	<CheckBoxPreference
 			android:title="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_title"
 			android:defaultValue="false"

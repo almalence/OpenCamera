@@ -95,6 +95,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private int prefResolution;
 	private boolean prefHardwareGyroscope;
 	
+	private boolean prefMemoryRelax = false;
+	
 	//private String preferenceFocusMode;
 	
 	private float viewAngleX = 54.8f;
@@ -123,6 +125,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private volatile boolean coordsRecorded;
 	private volatile boolean previewRestartFlag;
+
+	private boolean showGyroWarnOnce = false;
 	
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -316,6 +320,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
 		MainScreen.H.sendMessage(msg);
 		
+		showGyroWarnOnce = false;
+		
 //		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 //		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
 //				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
@@ -323,6 +329,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
 
 		//initSensors();
+		
+		this.getPrefs();
 	}
 	
 	@Override
@@ -694,6 +702,33 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			this.prefResolution = 0;
 		}
         this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
+        
+        this.prefMemoryRelax = prefs.getBoolean("pref_plugin_capture_panoramaaugmented_memory", false);
+        
+         int overlap = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_frameoverlap", "2"));
+         switch(overlap)
+         {
+         case 0:
+        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.65f;
+        	 break;
+         case 1:
+        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.50f;
+        	 break;
+         case 2:
+        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.30f;
+        	 break;
+         case 3:
+        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.25f;
+        	 break;
+         case 4:
+        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.15f;
+        	 break;
+         }
+         
+         if (MainScreen.guiManager.mEVLockSupported)
+         {
+        	 
+         }
     }
 	
 	private void createPrefs(final ListPreference lp, final Preference ud_pref)
@@ -779,6 +814,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				@Override
 				public boolean onPreferenceChange(final Preference preference, final Object newValue)
 				{
+					getPrefs();
 					if (!PanoramaAugmentedCapturePlugin.this.prefHardwareGyroscope && !((Boolean)newValue))
 					{					
 						final AlertDialog ad = new AlertDialog.Builder(MainScreen.thiz)
@@ -793,7 +829,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		    				}
 		    			})
 		    			.create();
-						
+				
+						if (showGyroWarnOnce == true)
+							return false;
+						showGyroWarnOnce = true;
 						ad.show();
 						
 						return false;
@@ -953,7 +992,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 
 		final int frames_fit_count = 
 				(int)(getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(this.pictureWidth, this.pictureHeight));
-		this.engine.setMaxFrames(frames_fit_count);
+		this.engine.setMaxFrames(prefMemoryRelax?frames_fit_count*2:frames_fit_count);
 		
 		this.engine.ViewportCreationTime();
 		

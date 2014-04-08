@@ -1834,15 +1834,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (!mApplicationStarted)
 			return true;
 
+		//menu button processing
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
 			menuButtonPressed();
 			return true;
 		}
+		//shutter/camera button processing
 		if (keyCode == KeyEvent.KEYCODE_CAMERA
 				|| keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
 			MainScreen.guiManager.onHardwareShutterButtonPressed();
 			return true;
 		}
+		//focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS) {
 			MainScreen.guiManager.onHardwareFocusButtonPressed();
 			return true;
@@ -2990,6 +2993,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (false == isSaving)
 		{			
 			prefsEditor.putBoolean("useFrontCamera", false);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putInt("EvCompensationValue", 0);
 			prefsEditor.commit();
 		}
 	}

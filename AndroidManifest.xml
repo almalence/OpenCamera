@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="61"
+      android:versionCode="62"
       android:versionName="3.19">
 <!--  -+- -->
 

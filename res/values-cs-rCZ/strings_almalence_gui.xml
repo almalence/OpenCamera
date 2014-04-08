@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Common_Header_Title">Základní nastavení</string>
+    <string name="Pref_Common_Header_Summary">Fotoaparát a ostatní</string>
+    <string name="Pref_Common_Preference_Title">Nastavení fotoaparátu</string>
+    <string name="Pref_Common_Preference_Summary">Fotoaparát a ostatní</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Přední fotoaparát</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Použít přední fotoaparát</string>
+    <string name="Pref_Common_ImageSize_Title">Velikost fotografie</string>
+    <string name="Pref_Common_ImageSize_Summary">\nPoznámka: některé režimy mají vlastní nastavení pro velikost fotografie</string>
+    <string name="Pref_Common_Shutter_Title">Tichý mód</string>
+    <string name="Pref_Common_Shutter_Summary">Není zaručována funkčnost na všech typech zařízení</string>
+    <string name="Pref_Common_ShotOnTap_Title">Kliknutím vyfotit</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Zaostří a vyfotí kliknutím kdekoli na displej</string>
+    <string name="Pref_Common_MediaRescan_Title">Přeskenování galerie</string>
+    <string name="Pref_Common_MediaRescan_Summary">Pomůže, pokud se fotky neobjeví ve fotogalerii.</string>
+    <string name="Pref_Common_JPEGQuality_Title">Kvalita JPG</string>
+    <string name="Pref_Common_VolumeButton_Title">Tlačítka hlasitosti</string>
+    <string name="Pref_SaveConfiguration_Title">Uložit konfiguraci</string>
+    <string name="Pref_SaveConfiguration_Summary">Vyberte, která nastavení se uloží do příštího startu aplikace</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Režim snímání</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Velikost fotky</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Režim scény</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Režim ostření</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Režim vyvážení bílé</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">Režim ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Režim blesku</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Vybraný fotoaparát</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Samospoušť</string>
+    <string name="Pref_Common_DelayedCapture_Title">Samospoušť</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Ukázat tlačítko pro nastavení samospouště</string>
+    <string name="Pref_ShowHelp_Title">Ukázat nápovědu</string>
+    <string name="Pref_WhowHelp_Summary">Ukázat nápovědu při zapnutí režimu (Panorama, Odstranění objektu, Sekvenční a Skupinový snímek)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Tlačítka Headsetu</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Použít tlačítka od náhlavní soupravy pro focení.</string>
+    
+    
+    <string name="helpTextDontShow">Neukazovat</string>
+    
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Čekejte prosím...</string>
+    <string name="almalence_gui_selected">vybráno</string>
+        
+    <string name="settings_mode_scene">Režim scény</string>
+    <string name="settings_mode_wb">Vyvážení bílé</string>
+    <string name="settings_mode_focus">Režim ostření</string>
+    <string name="settings_mode_flash">Režim blesku</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Režim expozimetru</string>
+    <string name="settings_mode_rear">Zadní fotoaparát</string>
+    <string name="settings_mode_front">Přední fotoaparát</string>
+    <string name="settings_mode_exposure">Expozice</string>
+    <string name="settings_mode_moresettings">Více nastavení</string>
+    <string name="settings_mode_aeaflock">AE\\AF zamknuto</string>
+    <string name="settings_mode_aeafunlock">AE\\AF odemknuto</string>
+    
+    <string name="settings_not_available">Není dostupné v současném režimu</string>
+    <string name="processing_not_finished">Fotografie ještě nebyla zpracována. Čekejte prosím.</string>
+        
+    <string name="Pref_General_Preference_Title">Obecné nastavení</string>
+	<string name="Pref_General_Preference_Summary">Fotoaparát a focení</string>
+	<string name="Pref_VF_Preference_Title">Nastavení zobrazení</string>
+	<string name="Pref_VF_Preference_Summary">Co se zobrazí na displeji</string>
+	<string name="Pref_Modes_Preference_Title">Nastavení režimů</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Noční režim, Panorama...</string>
+	<string name="Pref_Saving_Preference_Title">Ukládání a sdílení</string>
+	<string name="Pref_Saving_Preference_Summary">Názvy souborů, formát, poloha a další doplňující parametry</string>
+	<string name="Pref_Advanced_Preference_Title">Pokročilé</string>
+	<string name="Pref_Advanced_Preference_Summary">Nastavení pro pokročilé uživatele</string>
+	<string name="Pref_Unlock_Preference_Title">Odemknout</string>
+	<string name="Pref_Unlock_Preference_Summary">Odemknout prémiové doplňky</string>
+	
+	<string name="layout_hint_bottom">Vyberte režim snímání</string>
+	<string name="layout_hint_center">Pro zobrazení informací přejeďte po displeji</string>
+	<string name="layout_hint_top_left">Krátkým podržením\nnastavíte ikony</string>
+	<string name="layout_hint_top_center">Vytáhněte pro více možností</string>
+
+	<string name="Dro_Help">Naše nová technologie umožňuje vyfotit scénu tak, jak ji skutečně vidíte. DRO (Optimalizace dynamického rozsahu) používá techniku podobnou mapování tónů, automaticky vylepší snímek a může dokonce nahradit režim HDR ve většině případů.\n\n1. Zmáčkněte spoušť pro vyfocení\n2. Čekejte pár sekund na zpracování snímku!</string>	
+</resources>

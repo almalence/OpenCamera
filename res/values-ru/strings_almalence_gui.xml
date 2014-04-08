@@ -32,6 +32,7 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">Вспышка</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Передняя/задняя камера</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Таймер съемки</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Компенсация экспозиции</string>
     <string name="Pref_Common_DelayedCapture_Title">Съемка по таймеру</string>
     <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру на главном экране</string>
     <string name="Pref_ShowHelp_Title">Показывать помощь</string>

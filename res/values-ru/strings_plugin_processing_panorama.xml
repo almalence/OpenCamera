@@ -19,4 +19,10 @@
 	<string name="plugin_capture_panoramaaugmented_stopcapture">Круговая панорама снята! Обработка...</string>
 	
 	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Сохранять исходные кадры</string>
+	
+	<string name="pref_plugin_capture_panoramaaugmented_frameoverlap_title">Пересечение кадров</string>
+    
+    <string name="pref_plugin_capture_panoramaaugmented_memory_title">Ослабить ограничение по памяти</string>
+    <string name="pref_plugin_capture_panoramaaugmented_memory_summary">Снятие ограничения позволит снять больше кадров, но может вызвать остановку приложения из-за нехватки памяти в системе.</string>
+	
 </resources>
