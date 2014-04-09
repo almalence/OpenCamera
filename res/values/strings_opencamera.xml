@@ -46,4 +46,9 @@
     <string name="device_name_ss3_12">SCH-I939</string>
     <string name="device_name_ss3_13">GT-I9305</string>
 
+    <string name="volumeBtnTakePic">Take picture</string>
+    <string name="volumeBtnZoom">Zoom</string>
+    <string name="volumeBtnExpoCorrection">Exposure correction</string>
+    <string name="volumeBtnNone">None</string>
+    
 </resources>

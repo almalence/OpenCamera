@@ -12,6 +12,7 @@
     <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
+    <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
     <string name="Pref_Common_JPEGQuality_Title">Качество jpeg</string>
