@@ -191,6 +191,122 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 }
 
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_DetectFacesFromYUVs
+(
+	JNIEnv* env,
+	jobject thiz,
+	jintArray in,
+	jintArray in_len,
+	jint nFrames,
+	jint sx,
+	jint sy,
+	jint fd_sx,
+	jint fd_sy,
+	jboolean needRotation,
+	jboolean cameraMirrored,
+	jint rotationDegree
+)
+{
+	int i;
+	int *yuv_length;
+	unsigned char * *yuv;
+	char status[1024];
+	int isFoundinInput = 255;
+
+	int x, y;
+	int x0_out, y0_out, w_out, h_out;
+
+	yuv = (unsigned char**)env->GetIntArrayElements(in, NULL);
+	yuv_length = (int*)env->GetIntArrayElements(in_len, NULL);
+
+	// pre-allocate uncompressed yuv buffers
+	for (i=0; i<nFrames; ++i)
+	{
+		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+
+		if (inputFrame[i]==NULL)
+		{
+			isFoundinInput = i;
+			i--;
+			for (;i>=0;--i)
+			{
+				free(inputFrame[i]);
+				inputFrame[i] = NULL;
+			}
+			break;
+		}
+
+		memcpy(inputFrame[i], yuv[i], yuv_length[i]);
+	}
+	//isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0);
+
+
+
+
+	// prepare down-scaled gray frames for face detection analisys and detect faces
+	#pragma omp parallel for
+	for (i=0; i<nFrames; ++i)
+	{
+//		//Rotate yuv if needed
+//		Uint8* dst;
+//
+//		if (needRotation || cameraMirrored)
+//		//if(rotationDegree != 0 || cameraMirrored)
+//			dst = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+//		else
+//			dst = inputFrame[i];
+
+		if (needRotation || cameraMirrored)
+			{
+				int nRotate = 0;
+				int flipUD = 0;
+				if(rotationDegree == 180 || rotationDegree == 270)
+				{
+					cameraMirrored = !cameraMirrored; //used to support 4-side rotation
+					flipUD = 1; //used to support 4-side rotation
+				}
+				if(rotationDegree == 90 || rotationDegree == 270)
+					nRotate = 1; //used to support 4-side rotation
+
+				// ToDo: not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
+				TransformNV21(yuv[i], inputFrame[i], sx, sy, NULL, cameraMirrored, flipUD, nRotate);
+//				free(dst);
+			}
+
+
+
+		unsigned char * grayFrame = (unsigned char *)malloc(fd_sx*fd_sy);
+		if (grayFrame == NULL)
+			isFoundinInput = i;
+		else
+		{
+			void *inst;
+
+			if(rotationDegree == 0 || rotationDegree == 180)
+				NV21_to_Gray_scaled(inputFrame[i], sx, sy, 0, 0, sx, sy, fd_sx, fd_sy, grayFrame);
+			else
+				NV21_to_Gray_scaled(inputFrame[i], sy, sx, 0, 0, sy, sx, fd_sx, fd_sy, grayFrame);
+
+			FaceDetector_initialize(&inst, fd_sx, fd_sy, MAX_FACE_DETECTED);
+			fd_nFaces[i] = FaceDetector_detect(inst, grayFrame);
+			if (fd_nFaces[i] > MAX_FACE_DETECTED)
+				fd_nFaces[i] = MAX_FACE_DETECTED;
+			for (int f=0; f<fd_nFaces[i]; ++f)
+				FaceDetector_get_face(inst, &fd_confid[i][f], &fd_midx[i][f], &fd_midy[i][f], &fd_eyedist[i][f]);
+			FaceDetector_destroy(inst);
+
+			free(grayFrame);
+		}
+	}
+
+	env->ReleaseIntArrayElements(in, (jint*)yuv, JNI_ABORT);
+	env->ReleaseIntArrayElements(in_len, (jint*)yuv_length, JNI_ABORT);
+
+	LOGD("frames total: %d\n", (int)nFrames);
+	return isFoundinInput;
+}
+
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_GetFaces
 (
 	JNIEnv* env,

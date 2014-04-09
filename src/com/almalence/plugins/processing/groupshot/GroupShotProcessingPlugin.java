@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.groupshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,6 +163,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
     ArrayList<ArrayList <Rect>> mFaceList;
     
+    public static int mFrameCount = 0;
+    
     public static final int MAX_FACE_DETECTED = 20;
     public static final float FACE_CONFIDENCE_LEVEL = 0.4f;
 	
@@ -175,6 +178,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     //indicates that no more user interaction needed
   	private boolean finishing = false;
   	private boolean changingFace = false;
+  	
+  	public static boolean isYUV = false;
   	
 	public GroupShotProcessingPlugin()
 	{
@@ -242,22 +247,23 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     			imagesAmount=1;
     		
     		nFrames = imagesAmount;
-    		boolean isYUV = false;
+    		
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     		
     		for (int i=1; i<=imagesAmount; i++)
-    		{    		
-    			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		{
     			if(isYUV)
     			{
     				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
-    				mYUVBufferList.add(i-1, yuv);
-    				ByteArrayOutputStream out = new ByteArrayOutputStream();
+    				mYUVBufferList.add(i-1, yuv);    				 
     				
-    				com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, 0x00000011, iImageWidth, iImageHeight, null);
-    		    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, out);
-    		    	
-    				byte[] imageBytes = out.toByteArray();
-    				mJpegBufferList.add(i-1, imageBytes);
+//    				ByteArrayOutputStream out = new ByteArrayOutputStream();
+//    				
+//    				com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, 0x00000011, iImageWidth, iImageHeight, null);
+//    		    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, out);
+//    		    	
+//    				byte[] imageBytes = out.toByteArray();
+//    				mJpegBufferList.add(i-1, imageBytes);
     			}
     			else
     			{
@@ -270,11 +276,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		}
     		
     		
-    		PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
-//    		if(!isYUV)
-//    			PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
-//    		else
-//    			PreviewBmp = decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(), MainScreen.getImageHeight());
+    		//PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+    		if(!isYUV)
+    		{
+    			mFrameCount = mJpegBufferList.size();
+    			PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+    		}
+    		else
+    		{
+    			mFrameCount = mYUVBufferList.size();
+    			PreviewBmp = decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
+    		}
+    		
     		if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
     		{
 	    		Matrix matrix = new Matrix();
@@ -316,8 +329,16 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            
     		            if (os != null)
     		            {
-    		            	// ToDo: not enough memory error reporting
-    			            os.write(mJpegBufferList.get(i));
+    		            	if(!isYUV)
+    		            	{
+	    		            	// ToDo: not enough memory error reporting
+	    			            os.write(mJpegBufferList.get(i));
+    		            	}
+    		            	else
+    		            	{
+    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, os);
+    		            	}
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -384,13 +405,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	private void getFaceRects()
 	{
-    	mFaceList = new ArrayList<ArrayList <Rect>>(mJpegBufferList.size());
+    	mFaceList = new ArrayList<ArrayList <Rect>>(mFrameCount);
     	
 	    Face[] mFaces = new Face[MAX_FACE_DETECTED];
 		for (int i=0; i<MAX_FACE_DETECTED; ++i)
 			mFaces[i] = new Face();	
 	    
-        for(int index = 0; index < mJpegBufferList.size(); index++)
+        for(int index = 0; index < mFrameCount; index++)
         {
 //			Size srcSize = null;
 //			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
@@ -441,7 +462,10 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;//mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270 || mDisplayOrientationOnStartProcessing == 180;
 	    		//boolean mirrored = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? false: mCameraMirrored;
 		        // Note: DecodeJpegs doing free() to jpeg data!
-	        	mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
+	    		if(!isYUV)
+	    			mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
+	    		else
+	    			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
 	    		//mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, false, mCameraMirrored, 0);
 	        	getFaceRects();	
 		        
@@ -457,8 +481,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    
 	    private void sortFaceList()
 	    {    	
-	    	ArrayList<ArrayList <Rect>> newFaceList = new ArrayList<ArrayList <Rect>>(mJpegBufferList.size());
-	    	for(int i = 0; i < mJpegBufferList.size(); i++)
+	    	ArrayList<ArrayList <Rect>> newFaceList = new ArrayList<ArrayList <Rect>>(mFrameCount);
+	    	for(int i = 0; i < mFrameCount; i++)
 	        {
 	    		newFaceList.add(new ArrayList<Rect>());
 	        }   	
@@ -503,8 +527,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    	float bestMaxDistance = -1;
 	    	
 	    	int candidateIndex, currIndex;
-	    	ArrayList<Integer> candidateList = new ArrayList<Integer>(mJpegBufferList.size());
-	    	ArrayList<Integer> bestCandidateList = new ArrayList<Integer>(mJpegBufferList.size()); 
+	    	ArrayList<Integer> candidateList = new ArrayList<Integer>(mFrameCount);
+	    	ArrayList<Integer> bestCandidateList = new ArrayList<Integer>(mFrameCount); 
 	    	
 	    	int i = 0;
 	    	for(ArrayList<Rect> faceFrame : mFaceList)
@@ -651,17 +675,88 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		
 		public Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
 		{
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-//			YuvImage yuvImage = new YuvImage(data, ImageFormat.YUV_420_888, width, height, null);
-//			yuvImage.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+//			ByteArrayOutputStream out = new ByteArrayOutputStream();
+//			
+//			com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, ImageFormat.NV21, width, height, null);
+//        	//to avoid problems with SKIA
+//	    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, out);
+//	    	
+//	    	byte[] data = out.toByteArray();
+//			//Bitmap bitmap = BitmapFactory.decodeByteArray(out.toByteArray(), 0, out.toByteArray().length);
+//			
+//	    	BitmapFactory.Options options = new BitmapFactory.Options();
+//			options.inPreferredConfig = Config.ARGB_8888;
+//			options.inJustDecodeBounds = true;
+//			BitmapFactory.decodeByteArray(data, 0, data.length, options);
+//
+//			float widthScale = (float)options.outWidth / (float)mDisplayWidth;
+//			float heightScale = (float)options.outHeight / (float)mDisplayHeight;
+//			float scale = widthScale > heightScale ? widthScale : heightScale;
+//			float imageRatio = (float)options.outWidth / (float)options.outHeight;
+//			float displayRatio = (float)mDisplayWidth / (float)mDisplayHeight;
+//			
+//			Bitmap bitmap = null;
+//
+//			if (scale >= 8) {
+//				options.inSampleSize = 8;
+//			} else if (scale >= 4) {
+//				options.inSampleSize = 4;
+//			} else if (scale >= 2) {
+//				options.inSampleSize = 2;
+//			} else {
+//				options.inSampleSize = 1;
+//			}
+//
+//			options.inJustDecodeBounds = false;
+//			
+//			Bitmap tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+//			
+//			if (imageRatio > displayRatio) {
+//				bitmap = Bitmap.createScaledBitmap(tempBitmap, mDisplayWidth, (int)(mDisplayWidth / displayRatio), true);
+//			} else {
+//				bitmap = Bitmap.createScaledBitmap(tempBitmap, (int)(mDisplayHeight * imageRatio), mDisplayHeight, true);
+//			}
+//
+//			if(bitmap != tempBitmap)
+//				tempBitmap.recycle();
+//			return bitmap;
 			
-			com.almalence.YuvImage image = new com.almalence.YuvImage(yuv, 0x00000011, width, height, null);
-        	//to avoid problems with SKIA
-        	int cropHeight = image.getHeight()-image.getHeight()%16;
-	    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, out);
-	    	
-			byte[] imageBytes = out.toByteArray();
-			Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+			Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			Size mInputFrameSize = new Size(width, height);
+
+			Rect rect = new Rect(0, 0, width, height);
+			int ARGBBuffer[] = AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize);
+			bitmap.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
+			
+			
+			File saveDir = PluginManager.getInstance().GetSaveDir();
+			Calendar d = Calendar.getInstance();
+
+            File file = new File(
+            		saveDir, 
+            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",
+            		d.get(Calendar.YEAR),
+            		d.get(Calendar.MONTH)+1,
+            		d.get(Calendar.DAY_OF_MONTH),
+            		d.get(Calendar.HOUR_OF_DAY),
+            		d.get(Calendar.MINUTE),
+            		d.get(Calendar.SECOND)));
+            
+            FileOutputStream os;
+			try 
+			{
+				os = new FileOutputStream(file);
+				if (os != null)
+	            {
+				    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
+	        	}
+	            os.close();
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}            
+			
 			return bitmap;
 		}
 		
@@ -683,7 +778,10 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 			
 			mImgView = ((ImageView)postProcessingView.findViewById(R.id.groupshotImageHolder));
-	        PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+			if(!isYUV)
+				PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+			else
+				PreviewBmp = decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(), MainScreen.getImageHeight());
 	        if (PreviewBmp != null)  
 	        {
 	        	Matrix matrix = new Matrix();
@@ -725,8 +823,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	        
 		}
 				
-	    private void setupImageSelector() {
-			mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
+	    private void setupImageSelector()
+	    {
+	    	if(!isYUV)
+	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
+	    	else
+	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mYUVBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored, true);
 	        mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 	        mGallery.setAdapter(mImageAdapter);
 	        mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1103,6 +1205,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		if(mSeamless != null)
 	    			mSeamless.release();
 	    		mJpegBufferList.clear();
+	    		mYUVBufferList.clear();
 	    		
 	    		Message msg2 = new Message();
 	    		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;

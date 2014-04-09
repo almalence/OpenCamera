@@ -21,6 +21,7 @@ package com.almalence;
 public final class SwapHeap
 {
     public static native int SwapToHeap(byte[] data);
+    public static native int SwapYuvToHeap(int ptr, int length);
     public static native byte[] SwapFromHeap(int ptr, int length);
     public static native byte[] CopyFromHeap(int ptr, int length);
     public static native boolean FreeFromHeap(int ptr);

@@ -59,6 +59,29 @@ public final class AlmaShotSeamless
     	int rotationDegree
     );
     
+    /**
+     * Prepare YUV buffer in native for Seamless engine
+     * @param frame array of YUV frame buffers
+     * @param frame_len array of length of YUV frame buffers 
+     * @param nFrames number of frames
+     * @param sx width of input frame
+     * @param sy height of input frame
+     * @return status string such as "frames total: "
+     */
+    public static synchronized native int DetectFacesFromYUVs
+    (
+    	int[] frame,
+    	int[] frame_len,
+    	int nFrames,
+    	int sx,
+    	int sy,
+    	int fd_sx,
+    	int fd_sy,
+    	boolean needRotation,
+    	boolean cameraMirrored,
+    	int rotationDegree
+    );
+    
     public static synchronized native int GetFaces(int index, Face[] faces);
 
     public static synchronized native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);

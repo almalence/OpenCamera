@@ -81,7 +81,7 @@ public class Seamless
     	  }
     }
     
-	public void addInputFrames(List<byte[]> inputFrame, Size size, Size fd_size, boolean needRotation, boolean cameraMirrored, int rotationDegree)  throws Exception {
+	public void addJPEGInputFrames(List<byte[]> inputFrame, Size size, Size fd_size, boolean needRotation, boolean cameraMirrored, int rotationDegree)  throws Exception {
 		mNumOfFrame = inputFrame.size();
 		if(rotationDegree != 0 && rotationDegree != 180)
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
@@ -109,8 +109,52 @@ public class Seamless
 		}
 		
 		long start = System.currentTimeMillis();
-	    int error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
+		int error = 0;
+		error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
 	    Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
+	    if (error < 0) {
+	    	Log.d(TAG, "Out Of Memory");
+	    	throw new Exception("Out Of Memory");
+		} else if (error < MAX_INPUT_FRAME) {
+			Log.d(TAG, "JPEG buffer is wrong in " + error + " frame");
+			throw new Exception("Out Of Memory");
+		}
+	    
+		return;
+	}
+	
+	public void addYUVInputFrames(List<Integer> inputFrame, Size size, Size fd_size, boolean needRotation, boolean cameraMirrored, int rotationDegree)  throws Exception {
+		mNumOfFrame = inputFrame.size();
+		if(rotationDegree != 0 && rotationDegree != 180)
+			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
+        else
+        	mInputFrameSize = size;
+		//mInputFrameSize = size;
+		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		
+		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
+			throw new Exception("Number of input frame is wrong");
+		}
+		
+		AlmaShotSeamless.Initialize();
+		
+		int[] PointOfYUVData = new int[mNumOfFrame];
+		int[] LengthOfYUVData = new int[mNumOfFrame];
+		
+		int data_lenght = mInputFrameSize.getWidth()*mInputFrameSize.getHeight()+2*((mInputFrameSize.getWidth()+1)/2)*((mInputFrameSize.getHeight()+1)/2);
+		for (int i = 0;i < mNumOfFrame;i++) {
+			PointOfYUVData[i] = SwapHeap.SwapYuvToHeap(inputFrame.get(i), data_lenght);
+			LengthOfYUVData[i] = data_lenght;
+	    	if (PointOfYUVData[i] == 0) {
+	    		Log.d(TAG, "Out of Memory in Native");
+	    		throw new Exception("Out of Memory in Native");
+	    	}
+		}
+		
+		long start = System.currentTimeMillis();
+		int error = 0;
+		error = AlmaShotSeamless.DetectFacesFromYUVs(PointOfYUVData, LengthOfYUVData, mNumOfFrame, size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
+	    Log.d(TAG, "DetectFracesFromYUVs() elapsed time = " + (System.currentTimeMillis() - start));
 	    if (error < 0) {
 	    	Log.d(TAG, "Out Of Memory");
 	    	throw new Exception("Out Of Memory");

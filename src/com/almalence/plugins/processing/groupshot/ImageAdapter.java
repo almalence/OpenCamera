@@ -31,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -38,6 +39,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 
 
+import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.R;
 +++ --> */
@@ -45,6 +47,7 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam.R;
 //-+- -->
 import com.almalence.util.MemoryImageCache;
+import com.almalence.util.Size;
 
 public class ImageAdapter extends BaseAdapter {
 	final static int THUMBNAIL_WIDTH = 150;
@@ -53,15 +56,17 @@ public class ImageAdapter extends BaseAdapter {
 	int mGalleryItemBackground;
 	private Context mContext = null;
 	private String[] imagePath = null;
-	private List<byte[]> mList;
+	private List<byte[]> mJpegList;
+	private List<Integer> mYUVList;
 	private boolean mCameraMirrored;
 	private boolean mIsLandscape;
 	private MemoryImageCache cache = null;
 	private int mSelectedItem;
+	private boolean isYUV = false;
 
 	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored) {
 		mContext = context;
-		mList = list;
+		mJpegList = list;
 		mCameraMirrored = isMirrored;
 		mIsLandscape = isLandscape;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
@@ -69,15 +74,41 @@ public class ImageAdapter extends BaseAdapter {
 				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
 		
-		cache = new MemoryImageCache(mList.size());
+		cache = new MemoryImageCache(mJpegList.size());
 		
-		for (int i = 0; i < mList.size(); i++) {
+		for (int i = 0; i < mJpegList.size(); i++) {
 	    	final int id = i;
 		    new Thread(new Runnable() {
 		        @Override
 		        public void run() {
 		        	final String Key = String.valueOf(id);
 		        	cache.addBitmap(Key, decodeJPEGfromData(id));
+		        }
+		    }).start();
+		}
+	}
+	
+	public ImageAdapter(Context context, List<Integer> list, boolean isLandscape, boolean isMirrored, boolean isyuv)
+	{
+		isYUV = isyuv;
+		mContext = context;
+		mYUVList = list;
+		mCameraMirrored = isMirrored;
+		mIsLandscape = isLandscape;
+		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
+		mGalleryItemBackground = a.getResourceId(
+				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
+		a.recycle();
+		
+		cache = new MemoryImageCache(mYUVList.size());
+		
+		for (int i = 0; i < mYUVList.size(); i++) {
+	    	final int id = i;
+		    new Thread(new Runnable() {
+		        @Override
+		        public void run() {
+		        	final String Key = String.valueOf(id);
+		        	cache.addBitmap(Key, decodeYUVfromData(id));
 		        }
 		    }).start();
 		}
@@ -101,10 +132,10 @@ public class ImageAdapter extends BaseAdapter {
 		options.inPreferredConfig = Config.RGB_565;
 		options.inJustDecodeBounds = true;
 		
-		if (mList == null) {
+		if (mJpegList == null) {
 			BitmapFactory.decodeFile(imagePath[position], options);
 		} else {
-			BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
+			BitmapFactory.decodeByteArray(mJpegList.get(position), 0, mJpegList.get(position).length, options);
 		}
 
 		float widthScale = (float)options.outWidth / (float)THUMBNAIL_WIDTH;
@@ -130,12 +161,43 @@ public class ImageAdapter extends BaseAdapter {
 		Bitmap bm = null;
 		Bitmap bitmap = null;
 		
-		if (mList == null) {
+		if (mJpegList == null) {
 			bm = BitmapFactory.decodeFile(imagePath[position], options);		
 		} else {
-			bm = BitmapFactory.decodeByteArray(mList.get(position), 0, mList.get(position).length, options);
+			bm = BitmapFactory.decodeByteArray(mJpegList.get(position), 0, mJpegList.get(position).length, options);
 		}
 		
+		if (imageRatio > displayRatio) {
+			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int)(THUMBNAIL_WIDTH / displayRatio), true);
+		} else {
+			bitmap = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+		}
+
+		if(bitmap != bm)
+			bm.recycle();
+		
+		Matrix matrix = new Matrix();
+		matrix.postRotate(mCameraMirrored? (mIsLandscape ? (-90+180)%360 : -90) : 90);
+		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	}
+	
+	
+	private Bitmap decodeYUVfromData(int position)
+	{
+		int width = MainScreen.getImageWidth();
+		int height = MainScreen.getImageHeight();
+		
+		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Size mInputFrameSize = new Size(width, height);
+
+		Rect rect = new Rect(0, 0, width, height);
+		int ARGBBuffer[] = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
+		bm.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
+		
+		float imageRatio = (float)width / (float)height;
+		float displayRatio = (float)THUMBNAIL_WIDTH / (float)THUMBNAIL_HEIGHT;
+		
+		Bitmap bitmap = null;
 		if (imageRatio > displayRatio) {
 			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int)(THUMBNAIL_WIDTH / displayRatio), true);
 		} else {
@@ -185,9 +247,12 @@ public class ImageAdapter extends BaseAdapter {
 	public int getCount() {
 		if (imagePath != null) {
 			return imagePath.length;
+		} else if(!isYUV){
+			return mJpegList.size();
 		} else {
-			return mList.size();
+			return mYUVList.size();
 		}
+		
 	}
 	
 	public void setCurrentSeleted(int position) {
@@ -219,8 +284,10 @@ public class ImageAdapter extends BaseAdapter {
     	
     	if (b != null) {
     		imageView.setImageBitmap(b);
-    	} else {
+    	} else if(!isYUV){
     		imageView.setImageBitmap(decodeJPEGfromData(position));
+    	} else {
+    		imageView.setImageBitmap(decodeYUVfromData(position));
     	}
 
     	if (position == mSelectedItem) {
