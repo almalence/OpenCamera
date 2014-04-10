@@ -3737,18 +3737,17 @@ public class AlmalenceGUI extends GUI implements
 		settingsAdapter.Elements = settingsViews;
 
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
+		MainScreen.thiz.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeight = (int) (width / 3 - 5 * metrics.density);
 
 		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
 				LayoutParams.WRAP_CONTENT, modeHeight);
 
-		for (int i = 0; i < settingsViews.size(); i++) {
-			View setting = settingsViews.get(i);
-			setting.setLayoutParams(params);
-		}
+//		for (int i = 0; i < settingsViews.size(); i++) {
+//			View setting = settingsViews.get(i);
+//			setting.setLayoutParams(params);
+//		}
 
 		final int degree = AlmalenceGUI.mDeviceOrientation >= 0 ? AlmalenceGUI.mDeviceOrientation % 360
 				: AlmalenceGUI.mDeviceOrientation % 360 + 360;
