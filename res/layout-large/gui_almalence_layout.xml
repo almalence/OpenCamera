@@ -293,24 +293,21 @@
 	<RelativeLayout android:id="@+id/qcLayout"
         		android:background="@drawable/layout_border_qc"
         		android:orientation="vertical"
-        		android:layout_width="fill_parent"
-        		android:layout_height="wrap_content"        		
-	    		android:layout_below="@+id/paramsLayout"				
-				android:layout_gravity="top"											
+        		android:layout_width="match_parent"
+        		android:layout_height="wrap_content"	    		
+	    		android:gravity="top"
+	    		android:layout_below="@+id/paramsLayout"			
 				android:visibility="gone">
-					<GridView  
+					<GridView
 					    android:id="@+id/qcGrid"
-					    android:layout_width="fill_parent" 
+					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
-					    android:numColumns="3" 
-					    android:verticalSpacing="10dp"
-					    android:horizontalSpacing="10dp"
+					    android:numColumns="5"
+					    android:horizontalSpacing="0dp"
+					    android:verticalSpacing="7dp"					    
 					    android:stretchMode="columnWidth"
-					    android:gravity="center"					    
-					    android:visibility="gone"
-					    
-					/>					
-	</RelativeLayout>
+					    android:gravity="top"/>					
+	</RelativeLayout>	
 	 
 	<com.almalence.ui.RotateImageView 
 	    android:id="@+id/Unlock"
@@ -330,7 +327,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"	 
 		android:layout_marginTop="@dimen/buttonsLayoutMarginTop"
-		android:layout_below="@+id/paramsLayout">
+		android:layout_below="@+id/topPanel">
 			<LinearLayout
 		 	 	android:id="@+id/evLayout"
 		 	 	android:background="@drawable/ev_background"		 	 	    	 	 	    
@@ -557,6 +554,8 @@
 					    android:numColumns="3"
 					    android:horizontalSpacing="0dp"
 					    android:verticalSpacing="@dimen/gridModeVerticalSpacing"
+					    android:paddingTop="20dp"
+					    android:paddingBottom="5dp"
 					    android:adjustViewBounds="true"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    

@@ -778,6 +778,9 @@ public class AlmalenceGUI extends GUI implements
 
 	// indicates if it's first launch - to show hint layer.
 	private boolean isFirstLaunch = true;
+	
+	
+	public static int iScreenType = MainScreen.thiz.getResources().getInteger(R.integer.screen_type);
 
 	public AlmalenceGUI() {
 		
@@ -3305,19 +3308,19 @@ public class AlmalenceGUI extends GUI implements
 		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(
 				PluginType.Export));
 
-		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
-		int width = metrics.widthPixels;
-		int modeHeight = (int) (width / 3 - 5 * metrics.density);
-
-		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
-				LayoutParams.WRAP_CONTENT, modeHeight);
-
-		for (int i = 0; i < quickControlChangeres.size(); i++) {
-			View setting = quickControlChangeres.get(i);
-			setting.setLayoutParams(params);
-		}
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+//				.getMetrics(metrics);
+//		int width = metrics.widthPixels;
+//		int modeHeight = (int) (width / 3 - 5 * metrics.density);
+//
+//		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
+//				LayoutParams.WRAP_CONTENT, modeHeight);
+//
+//		for (int i = 0; i < quickControlChangeres.size(); i++) {
+//			View setting = quickControlChangeres.get(i);
+//			setting.setLayoutParams(params);
+//		}
 
 		quickControlAdapter.Elements = quickControlChangeres;
 		quickControlAdapter.notifyDataSetChanged();
@@ -3584,7 +3587,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((RelativeLayout) guiView.findViewById(R.id.qcLayout))
 				.setVisibility(View.VISIBLE);
-		(guiView.findViewById(R.id.qcGrid)).setVisibility(View.VISIBLE);
+		//(guiView.findViewById(R.id.qcGrid)).setVisibility(View.VISIBLE);
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
@@ -3619,7 +3622,7 @@ public class AlmalenceGUI extends GUI implements
 		RelativeLayout gridview = (RelativeLayout) guiView
 				.findViewById(R.id.qcLayout);
 		gridview.setVisibility(View.INVISIBLE);
-		(guiView.findViewById(R.id.qcGrid)).setVisibility(View.INVISIBLE);
+		//(guiView.findViewById(R.id.qcGrid)).setVisibility(View.INVISIBLE);
 		quickControlsChangeVisible = false;
 
 		currentQuickView.setBackgroundDrawable(MainScreen.mainContext
@@ -3771,15 +3774,24 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				List<String> supported_scene = MainScreen.thiz
-						.getSupportedSceneModes();
+				List<String> supported_scene = MainScreen.thiz.getSupportedSceneModes();
 				if (supported_scene == null)
 					return;
-				if (supported_scene.size() > 0) {
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_SCENE);
-				} else {
+				if (supported_scene.size() > 0)
+				{
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.scenemodeLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_SCENE);
+					}
+					else
+						hideSecondaryMenus();
+				}
+				else
+				{
 					String newSceneMode;
 					ListIterator<String> it = supported_scene
 							.listIterator(supported_scene.indexOf(mSceneMode));
@@ -3816,11 +3828,21 @@ public class AlmalenceGUI extends GUI implements
 						.getSupportedWhiteBalance();
 				if (supported_wb == null)
 					return;
-				if (supported_wb.size() > 0) {
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_WB);
-				} else {
+				if (supported_wb.size() > 0)
+				{
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.wbLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_WB);
+					}
+					else
+						hideSecondaryMenus();
+				}
+				else
+				{
 					String newWBMode;
 					ListIterator<String> it = supported_wb
 							.listIterator(supported_wb.indexOf(mWB));
@@ -3855,11 +3877,21 @@ public class AlmalenceGUI extends GUI implements
 						.getSupportedFocusModes();
 				if (supported_focus == null)
 					return;
-				if (supported_focus.size() > 0) {
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_FOCUS);
-				} else {
+				if (supported_focus.size() > 0)
+				{
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.focusmodeLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_FOCUS);
+					}
+					else
+						hideSecondaryMenus();
+				}
+				else
+				{
 					String newFocusMode;
 					ListIterator<String> it = supported_focus
 							.listIterator(supported_focus.indexOf(mFocusMode));
@@ -3901,11 +3933,21 @@ public class AlmalenceGUI extends GUI implements
 						.getSupportedFlashModes();
 				if (supported_flash == null)
 					return;
-				if (supported_flash.size() > 0) {
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_FLASH);
-				} else {
+				if (supported_flash.size() > 0)
+				{
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.flashmodeLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_FLASH);
+					}
+					else
+						hideSecondaryMenus();
+				}
+				else
+				{
 					String newFlashMode;
 					ListIterator<String> it = supported_flash
 							.listIterator(supported_flash.indexOf(mFlashMode));
@@ -3942,9 +3984,16 @@ public class AlmalenceGUI extends GUI implements
 				if ((supported_iso != null && supported_iso.size() > 0) ||
 				    MainScreen.thiz.isISOSupported())
 				{					
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_ISO);
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.isoLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_ISO);
+					}
+					else
+						hideSecondaryMenus();
 				}
 				else
 				{
@@ -3983,9 +4032,16 @@ public class AlmalenceGUI extends GUI implements
 				int iMeteringAreasSupported = MainScreen.thiz.getMaxNumMeteringAreas();
 				if (iMeteringAreasSupported > 0)
 				{					
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(
-							false, false);
-					showParams(MODE_MET);
+					if(iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+					
+					if(guiView.findViewById(R.id.meteringLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();					
+						showParams(MODE_MET);
+					}
+					else
+						hideSecondaryMenus();
 				}
 			}
 		});
@@ -4024,9 +4080,16 @@ public class AlmalenceGUI extends GUI implements
 							false);
 					return;
 				}
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
-						false);
-				showParams(MODE_EV);
+				if(iScreenType == 0)
+					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+				
+				if(guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
+				{
+					hideSecondaryMenus();					
+					showParams(MODE_EV);
+				}
+				else
+					hideSecondaryMenus();
 			}
 		});
 	}
