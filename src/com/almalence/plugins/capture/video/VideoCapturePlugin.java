@@ -179,6 +179,8 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
+		this.clearViews();
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 				
 		//change shutter icon
@@ -574,6 +576,14 @@ public class VideoCapturePlugin extends PluginCapture
 	    swChecked = false;
 	    interval = 0;
 		measurementVal = 0;
+		
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
+		{
+	        final Message msg = new Message();
+			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+			MainScreen.H.sendMessage(msg);
+			
+		}
 	}
 	
 	@Override

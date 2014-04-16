@@ -25,8 +25,12 @@ package com.almalence.opencam.ui;
 //-+- -->
 
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
+
+
 
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
@@ -36,10 +40,13 @@ import com.almalence.opencam.PluginManager;
 //-+- -->
 
 
+import com.almalence.plugins.capture.video.FramebufferEncoder;
+
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 
@@ -65,10 +72,36 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	
 	private void init()
 	{
-		this.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+		{
+			this.setEGLConfigChooser(new EGLConfigChooser()
+			{
+				@Override
+				public EGLConfig chooseConfig(final EGL10 egl, final EGLDisplay display)
+				{
+					
+		            EGLConfig[] configs = new EGLConfig[1];
+		            int[] numConfigs = new int[1];
+		            egl.eglChooseConfig(display, FramebufferEncoder.EGL_ATTRIB_LIST, configs, configs.length, numConfigs);
+		            
+		            return configs[0];
+				}
+			});
+		}
+		else
+		{
+			this.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+		}
+		
 		this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 		
 		this.setRenderer(this);
+	}
+	
+	@Override
+	public void onResume()
+	{
+		this.setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
 
 	/**

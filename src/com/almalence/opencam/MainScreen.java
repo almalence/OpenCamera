@@ -53,6 +53,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -81,6 +82,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
@@ -583,6 +585,30 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
+	public void glSetRenderingMode(final int renderMode)
+	{
+		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
+				&& renderMode != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+		{
+			throw new IllegalArgumentException();
+		}
+
+		final GLSurfaceView surfaceView = glView;
+		if (surfaceView != null)
+		{
+			surfaceView.setRenderMode(renderMode);
+		}
+	}
+
+	public void glRequestRender()
+	{
+		final GLSurfaceView surfaceView = glView;
+		if (surfaceView != null)
+		{
+			surfaceView.requestRender();;
+		}
+	}	
+	
 	public void queueGLEvent(final Runnable runnable)
 	{
 		final GLSurfaceView surfaceView = glView;
