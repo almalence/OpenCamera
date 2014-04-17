@@ -2167,7 +2167,7 @@ public class AlmalenceGUI extends GUI implements
 				
 				wbmodeAdapter.Elements = activeWB;
 				GridView gridview = (GridView) guiView.findViewById(R.id.wbGrid);
-				gridview.setNumColumns(activeWB.size() > 9 ? 4 : 3);
+//				gridview.setNumColumns(activeWB.size() > 9 ? 4 : 3);
 				gridview.setAdapter(wbmodeAdapter);
 	
 				String initValue = preferences
@@ -2318,7 +2318,7 @@ public class AlmalenceGUI extends GUI implements
 				focusmodeAdapter.Elements = activeFocus;
 				GridView gridview = (GridView) guiView
 						.findViewById(R.id.focusmodeGrid);
-				gridview.setNumColumns(activeFocus.size() > 9 ? 4 : 3);
+				//gridview.setNumColumns(activeFocus.size() > 9 ? 4 : 3);
 				gridview.setAdapter(focusmodeAdapter);
 	
 				String initValue = preferences.getString(MainScreen
@@ -2415,7 +2415,7 @@ public class AlmalenceGUI extends GUI implements
 				flashmodeAdapter.Elements = activeFlash;
 				GridView gridview = (GridView) guiView
 						.findViewById(R.id.flashmodeGrid);
-				gridview.setNumColumns(activeFlash.size() > 9 ? 4 : 3);
+				//gridview.setNumColumns(activeFlash.size() > 9 ? 4 : 3);
 				gridview.setAdapter(flashmodeAdapter);
 	
 				String initValue = preferences.getString(sFlashModePref,
@@ -2494,7 +2494,7 @@ public class AlmalenceGUI extends GUI implements
 
 				isoAdapter.Elements = activeISO;
 				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
-				gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
+				//gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
 				gridview.setAdapter(isoAdapter);
 	
 				String initValue = preferences.getString(sISOPref, sDefaultValue);
@@ -2566,7 +2566,7 @@ public class AlmalenceGUI extends GUI implements
 				meteringmodeAdapter.Elements = activeMetering;
 				GridView gridview = (GridView) guiView
 						.findViewById(R.id.meteringmodeGrid);
-				gridview.setNumColumns(activeMetering.size() > 9 ? 4 : 3);
+				//gridview.setNumColumns(activeMetering.size() > 9 ? 4 : 3);
 				gridview.setAdapter(meteringmodeAdapter);
 	
 				String initValue = preferences.getString(sMeteringModePref,
