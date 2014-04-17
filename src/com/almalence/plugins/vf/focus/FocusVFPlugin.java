@@ -668,7 +668,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
     private void cancelAutoFocus()
     {
-        Log.e(TAG, "Cancel autofocus.");
+//        Log.e(TAG, "Cancel autofocus.");
 
         Camera camera = MainScreen.thiz.getCamera();
         // Note: MainScreen.thiz.getFocusMode(); will return 'FOCUS_MODE_AUTO' if actual
