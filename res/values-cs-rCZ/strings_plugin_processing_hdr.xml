@@ -7,7 +7,7 @@
     
 	<string name="Pref_HDR_ColorViv_Title">Živost barev</string>
 	
-	<string name="Pref_HDR_LocalContrast_Title">Lokální kontrast</string>
+	<string name="Pref_HDR_LocalContrast_Title">Kontrast</string>
 	<string name="Pref_HDR_LocalContrast_Summary">Nastavení kontrastu HDR výstupu</string>
 	
 	<string name="Pref_HDR_Microcontrast_Title">Mikro konstrast</string>

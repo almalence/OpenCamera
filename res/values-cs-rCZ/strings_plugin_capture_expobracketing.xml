@@ -11,7 +11,7 @@
     <string name="Pref_ExpoBracketing_Luma_Title">Odlišná změna expozice</string>
     <string name="Pref_ExpoBracketing_Luma_Summary">Zvolte, pokud se expozice nemění</string>
     <string name="Pref_ExpoBracketing_Refocus_Title">Zaostřit u každého snímku</string>
-    <string name="Pref_ExpoBracketing_Refocus_Summary">Některá zařízení zapomenou místo ostření po vyfocení. Zaškrtněte pokud fotky nejsou zaostřené</string>
+    <string name="Pref_ExpoBracketing_Refocus_Summary">Některá zařízení zapomenou místo ostření po vyfocení. Zaškrtněte, pokud fotky nejsou zaostřené</string>
     
     <string name="Pref_ExpoBracketing_Expo">Maximální možný</string>
     <string name="Pref_ExpoBracketing_None">Žádný</string>

@@ -12,7 +12,8 @@
    <dimen name="gridModeTextLayoutSize">60dp</dimen>
    <dimen name="gridModeTextSize">18sp</dimen>
    <dimen name="gridModeImageSize">70dp</dimen>
-   <dimen name="gridModeVerticalSpacing">7dp</dimen>
+   <dimen name="gridModeImageSize2x">115dp</dimen>
+   <dimen name="gridModeVerticalSpacing">20dp</dimen>
    
    <dimen name="modeLayoutWidth">450dp</dimen>
    

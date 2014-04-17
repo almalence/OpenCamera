@@ -2859,8 +2859,8 @@ public class AlmalenceGUI extends GUI implements
 					.get(qcID);
 			LinearLayout paramsLayout = (LinearLayout) MainScreen.thiz
 					.findViewById(R.id.paramsLayout);
-			int reqWidth = paramsLayout.getWidth() / 4;
-			int reqHeight = paramsLayout.getHeight();
+//			int reqWidth = paramsLayout.getWidth() / 4;
+//			int reqHeight = paramsLayout.getHeight();
 
 			view.setImageResource(plugin.getQuickControlIconID());
 			return view;
@@ -3361,8 +3361,8 @@ public class AlmalenceGUI extends GUI implements
 							.get(plugin.getID());
 					LinearLayout paramsLayout = (LinearLayout) MainScreen.thiz
 							.findViewById(R.id.paramsLayout);
-					int reqWidth = paramsLayout.getWidth() / 4;
-					int reqHeight = paramsLayout.getHeight();
+//					int reqWidth = paramsLayout.getWidth() / 4;
+//					int reqHeight = paramsLayout.getHeight();
 
 					pluginButton.setImageResource(plugin
 							.getQuickControlIconID());
@@ -6051,8 +6051,9 @@ public class AlmalenceGUI extends GUI implements
 			buttonModeViewAssoc.put(mode, tmp.modeID);
 			modeViews.add(mode);
 
+			//select active mode in grid with frame
 			if (PluginManager.getInstance().getActiveModeID() == tmp.modeID) {
-				mode.findViewById(R.id.modeImage).setBackgroundResource(
+				mode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(
 						R.drawable.thumbnail_background_selected_inner);
 			}
 			
@@ -7317,8 +7318,10 @@ public class AlmalenceGUI extends GUI implements
 											bitmap,
 											(int) (MainScreen.mainContext
 													.getResources()
-													.getDimension(R.dimen.mainButtonHeight)),
-											(int) ((15.0f)));
+													.getDimension(R.dimen.mainButtonHeight)*1.2),
+													(int) (MainScreen.mainContext
+															.getResources()
+															.getDimension(R.dimen.mainButtonHeight)/1.1));
 
 							thumbnailView.setImageBitmap(bm);
 						} catch (Exception e) {
@@ -7333,8 +7336,10 @@ public class AlmalenceGUI extends GUI implements
 					canvas.drawColor(Color.BLACK);
 					Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
 							(int) (MainScreen.mainContext.getResources()
-									.getDimension(R.dimen.mainButtonHeight)),
-							(int) ((15.0f)));
+									.getDimension(R.dimen.mainButtonHeight)*1.2),
+									(int) (MainScreen.mainContext
+											.getResources()
+											.getDimension(R.dimen.mainButtonHeight)/1.1));
 					thumbnailView.setImageBitmap(bm);
 				} catch (Exception e) {
 					Log.v("AlmalenceGUI", "Can't set thumbnail");
