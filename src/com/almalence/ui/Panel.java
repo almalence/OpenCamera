@@ -254,21 +254,21 @@ public class Panel extends LinearLayout
 		removeView(mHandle);
 		removeView(mContent);
 		if (mPosition == TOP || mPosition == LEFT)
-			{
-				addView(mContent);
-				addView(mHandle);
-			}
+		{
+			addView(mContent);
+			addView(mHandle);
+		}
 		else
-			{
-				addView(mHandle);
-				addView(mContent);
-			}
+		{
+			addView(mHandle);
+			addView(mContent);
+		}
 
 		if (mClosedHandle != null)
-			{
-				mHandle.setBackgroundDrawable(mClosedHandle);
-				mOpened = false;
-			}
+		{
+			mHandle.setBackgroundDrawable(mClosedHandle);
+			mOpened = false;
+		}
 		mContent.setVisibility(GONE);
 	}
 

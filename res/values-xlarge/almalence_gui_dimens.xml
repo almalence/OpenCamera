@@ -9,6 +9,7 @@
    <dimen name="gridModeTextLayoutSize">70dp</dimen>
    <dimen name="gridModeTextSize">22sp</dimen>
    <dimen name="gridModeImageSize">100dp</dimen>
+   <dimen name="gridModeImageSize2x">115dp</dimen>
    <dimen name="gridModeVerticalSpacing">40dp</dimen>
    
    <dimen name="mainButtonHeight">70dp</dimen>

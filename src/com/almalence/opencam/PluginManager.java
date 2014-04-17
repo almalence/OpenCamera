@@ -174,7 +174,9 @@ public class PluginManager {
 	public static final int MSG_POSTPROCESSING_FINISHED = 6;
 	public static final int MSG_FILTER_FINISHED = 7;
 	public static final int MSG_EXPORT_FINISHED = 8;
-	public static final int MSG_START_FX = 9;
+	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 888;
+	
+    public static final int MSG_START_FX = 9;
 	public static final int MSG_FX_FINISHED = 10;
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
@@ -1574,6 +1576,34 @@ public class PluginManager {
 		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
 		    	}
 	        }
+			break;
+		
+		case MSG_EXPORT_FINISHED_IOEXCEPTION:
+			// event from plugin that saving finished and memory can be freed
+			if (cntProcessing > 0)
+				cntProcessing--;
+			// free memory in processing
+			if (null != pluginList.get(activeProcessing))
+				pluginList.get(activeProcessing).FreeMemory();
+
+			// notify GUI about saved images
+			MainScreen.guiManager.onExportFinished();
+
+			// notify capture plugins that saving finished
+			if (null != pluginList.get(activeCapture))
+				pluginList.get(activeCapture).onExportFinished();
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
+			
+//			if (MainScreen.thiz.getIntent().getAction() != null)
+//	        {
+//		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+//		    			&& MainScreen.ForceFilename == null)
+//		    	{
+//		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+//		    	}
+//	        }
+			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
 			break;
 
 		case MSG_DELAYED_CAPTURE: 

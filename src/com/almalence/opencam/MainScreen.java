@@ -59,6 +59,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -82,6 +83,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -697,8 +699,22 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		
+		long Free = getAvailableInternalMemory();
+		//Log.e("vdsfs", "Memory: free: "+Free+"Mb");
+		if (Free<30)
+			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 
+	private long getAvailableInternalMemory()
+	{
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		long availableBlocks = stat.getAvailableBlocks();
+		return availableBlocks * blockSize / 1048576;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();

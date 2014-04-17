@@ -4,5 +4,6 @@
 					android:background="@android:color/transparent"
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
-					android:layout_weight="1"					
+					android:layout_weight="1"
+					android:layout_margin="7dip"					
 			   		android:layout_gravity="center"/>

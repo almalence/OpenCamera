@@ -4,7 +4,7 @@
 	<string name="Pref_Inactive_Preference_Summary">Ostatní předvolby</string>	
 	
 	<string name="Pref_Inactive_Title">Neaktivní nastavení</string>
-    <string name="Pref_Inactive_Summary">Ostatní režimy nastavení</string>
+    <string name="Pref_Inactive_Summary">Nastavení u jiných režimů</string>
     
     <string name="Pref_Shooting_Inactive_Title">Neaktivní režimy snímání</string>
     <string name="Pref_Shooting_Inactive_Summary">Ostatní režimy nastavení</string>

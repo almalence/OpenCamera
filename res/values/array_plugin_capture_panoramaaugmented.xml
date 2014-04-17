@@ -25,5 +25,16 @@
    <item>4</item>
 </string-array>
 
+<string-array name="plugin_capture_panoramaaugmented_aelockArray">
+   <item>@string/aelockNo</item>
+   <item>@string/aelockHorizontal</item>
+   <item>@string/aelockAlways</item>
+</string-array>
+ 
+<string-array name="plugin_capture_panoramaaugmented_aelockValues">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+</string-array>
 
 </resources>

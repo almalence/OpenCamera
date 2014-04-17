@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.groupshot;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -335,6 +336,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     			            ei.saveAttributes();    		            
 		            	}
     	            }
+    	        }
+    			catch(IOException e) {
+    	            e.printStackTrace();
+    	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+    	            return;
     	        }
     	        catch (Exception e)
     	        {

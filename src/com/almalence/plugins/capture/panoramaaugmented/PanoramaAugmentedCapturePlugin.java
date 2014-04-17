@@ -128,6 +128,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 
 	private boolean showGyroWarnOnce = false;
 	
+	private int aewblock = 1;
+	private boolean aewbLockedByPanorama = false;
+	
 	public PanoramaAugmentedCapturePlugin()
 	{
 		super("com.almalence.plugins.panoramacapture_augmented",
@@ -329,7 +332,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
 
 		//initSensors();
-		
+		aewbLockedByPanorama = false;
 		this.getPrefs();
 	}
 	
@@ -725,10 +728,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
         	 break;
          }
          
-         if (MainScreen.guiManager.mEVLockSupported)
-         {
-        	 
-         }
+         aewblock = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_aelock", "1"));
     }
 	
 	private void createPrefs(final ListPreference lp, final Preference ud_pref)
@@ -987,6 +987,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void startCapture()
 	{
+		lockAEWB();
+		
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
@@ -1088,12 +1090,72 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 //			e.printStackTrace();
 //		}
 		
-
 		takingAlready = true;
 		
 		takePictureReal();
 	}
 
+	private void lockAEWB()
+	{
+		boolean lock = false;
+		switch(aewblock)
+		{
+			case 0:
+				lock = false;
+				break;
+			case 1:
+				if(MainScreen.guiManager.getDisplayOrientation() == 90 || MainScreen.guiManager.getDisplayOrientation() == 180 )
+					lock = true;
+				break;
+			case 2:
+				lock = true;
+				break;
+		}
+		
+		if (lock)
+		{
+			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			if (params != null)
+			{
+				if(MainScreen.thiz.isWhiteBalanceLockSupported() && !params.getAutoWhiteBalanceLock())
+				{
+					params.setAutoWhiteBalanceLock(true);
+					MainScreen.thiz.setCameraParameters(params);
+					aewbLockedByPanorama = true;
+				}
+				if(MainScreen.thiz.isExposureLockSupported() && !params.getAutoExposureLock())
+				{
+					params.setAutoExposureLock(true);
+					MainScreen.thiz.setCameraParameters(params);
+					aewbLockedByPanorama = true;
+				}
+			}
+		}
+		lock = false;
+	}
+	
+	private void unlockAEWB()
+	{
+		if (aewbLockedByPanorama)
+		{
+			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			if (params != null)
+			{
+				if(MainScreen.thiz.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+				{
+					params.setAutoWhiteBalanceLock(false);
+					MainScreen.thiz.setCameraParameters(params);
+				}
+				if(MainScreen.thiz.isExposureLockSupported() && params.getAutoExposureLock())
+				{
+					params.setAutoExposureLock(false);
+					MainScreen.thiz.setCameraParameters(params);
+				}
+			}
+			aewbLockedByPanorama = false;
+		}
+	}
+	
 	@Override
 	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
 	{
@@ -1213,6 +1275,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private void stopCapture()
 	{		
 		this.capturing = false;
+		
+		unlockAEWB();
 		
 		final LinkedList<AugmentedFrameTaken> frames = this.engine.retrieveFrames();
 		

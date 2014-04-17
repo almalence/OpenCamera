@@ -3,8 +3,8 @@
 <!-- This is the main color -->
 <item>
       <shape>
-          	<corners android:radius="0dip"/>
-            <solid android:color="#D0000000" />
+          	<corners android:radius="2dip"/>
+            <solid android:color="#40000000" />
       </shape>
 </item>
 <!-- This is the line -->
