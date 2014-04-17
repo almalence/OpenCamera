@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/quickLayout"
     android:layout_width="@dimen/gridElementSize"
-    android:layout_height="@dimen/gridElementSize"        
+    android:layout_height="@dimen/gridElementSize"
     android:padding="0dp"    
     android:background="@drawable/almalence_gui_grid_elem_background">
      
