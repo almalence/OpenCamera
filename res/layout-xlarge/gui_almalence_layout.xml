@@ -291,7 +291,7 @@
 	</LinearLayout>
 	
 	<RelativeLayout android:id="@+id/qcLayout"
-        		android:background="@drawable/layout_border_qc"
+        		android:background="@drawable/blacktansperentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="match_parent"
         		android:layout_height="wrap_content"	    		
@@ -538,7 +538,7 @@
 
 	 	
 		<RelativeLayout android:id="@+id/modeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -590,7 +590,7 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/layout_border"
+			android:background="@drawable/blacktansperentlayerpulldownmenu"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
     		android:layout_gravity="center">

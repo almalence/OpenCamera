@@ -315,10 +315,7 @@
 					    android:verticalSpacing="10dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
-					    android:gravity="center"					    
-					    android:visibility="gone"
-					    
-					/>					
+					    android:gravity="center"/>					
 	</RelativeLayout>
 	 
 	<com.almalence.ui.RotateImageView 

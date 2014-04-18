@@ -2,6 +2,7 @@
 <resources>
    <dimen name="gridElementSize">150dp</dimen>
    <dimen name="gridImageSize">80dp</dimen>
+   <dimen name="gridImageSize2x">100dp</dimen>
    <dimen name="gridTextLayoutHeight">62dp</dimen>
    <dimen name="gridTextLayoutWidth">170dp</dimen>
    <dimen name="gridTextSize">16sp</dimen>
