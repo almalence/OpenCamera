@@ -305,7 +305,9 @@
         		android:layout_height="wrap_content"        		
 	    		android:layout_below="@+id/paramsLayout"				
 				android:layout_gravity="top"
-				android:padding="5dp"											
+				android:padding="5dp"
+				android:paddingLeft="10dp"
+	    		android:paddingRight="10dp"											
 				android:visibility="gone">
 					<GridView  
 					    android:id="@+id/qcGrid"
@@ -425,7 +427,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -446,7 +448,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -467,7 +469,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -488,7 +490,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -509,7 +511,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -530,7 +532,7 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:horizontalSpacing="10dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
@@ -556,21 +558,23 @@
         		android:layout_height="wrap_content"        		
 	    		android:layout_gravity="top"
 	    		android:padding="5dp"
+	    		android:paddingLeft="10dp"
+	    		android:paddingRight="10dp"
 				android:visibility="gone">
 					<GridView
 					    android:id="@+id/modeGrid"
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:horizontalSpacing="@dimen/gridModeVerticalSpacing"
-					    android:verticalSpacing="@dimen/gridModeVerticalSpacing"
+					    android:horizontalSpacing="10dp"
+					    android:verticalSpacing="5dp"
 					    android:adjustViewBounds="true"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					    android:visibility="gone"
 					/>
 	</RelativeLayout>
-	
+
 <!-- -+-  -->
 	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
