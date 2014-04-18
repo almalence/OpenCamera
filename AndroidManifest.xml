@@ -112,7 +112,7 @@
 	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
 <!--  -+- -->
 
-	<!-- Uncomment for Amazon market 2nd part 
+	<!-- Uncomment for Samsung market 
 	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
 	-->
 
