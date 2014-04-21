@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
    <dimen name="gridElementSize">90dp</dimen>
-   <dimen name="gridImageSize">70dp</dimen>
-   <dimen name="gridTextLayoutHeight">60dp</dimen>
+   <dimen name="gridImageSize">60dp</dimen>
+   <dimen name="gridImageSize2x">110dp</dimen>
+   <dimen name="gridTextLayoutHeight">40dp</dimen>
    <dimen name="gridTextLayoutWidth">140dp</dimen>
-   <dimen name="gridTextSize">18sp</dimen>
+   <dimen name="gridTextSize">16sp</dimen>
+   
+   <dimen name="gridSettingsTopMargin">190dp</dimen>
    
    <dimen name="gridModeElementSize">90dp</dimen>
    <dimen name="gridModeTextLayoutSize">60dp</dimen>
-   <dimen name="gridModeTextSize">18sp</dimen>
+   <dimen name="gridModeTextSize">16sp</dimen>
    <dimen name="gridModeImageSize">70dp</dimen>
-   <dimen name="gridModeVerticalSpacing">7dp</dimen>
+   <dimen name="gridModeImageSize2x">115dp</dimen>
+   <dimen name="gridModeVerticalSpacing">10dp</dimen>
    
-   <dimen name="modeLayoutWidth">450dp</dimen>
+   <dimen name="settingsModeLayoutWidth">400dp</dimen>
+   <dimen name="modeLayoutWidth">420dp</dimen>
    
    <dimen name="mainButtonHeight">65dp</dimen>
    <dimen name="mainButtonHeightSelect">65dp</dimen>
@@ -26,7 +31,7 @@
    
    <dimen name="paramsLayoutHeight">75dp</dimen>
    
-   <dimen name="buttonsLayoutMarginTop">25dp</dimen>
+   <dimen name="buttonsLayoutMarginTop">0dp</dimen>
    
    <dimen name="exposureButtonSize">50dp</dimen>
    <dimen name="exposureSeekBarWidth">330dp</dimen>

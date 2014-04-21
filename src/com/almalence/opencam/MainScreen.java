@@ -59,6 +59,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -82,6 +83,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -697,8 +699,22 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		
+		long Free = getAvailableInternalMemory();
+		//Log.e("vdsfs", "Memory: free: "+Free+"Mb");
+		if (Free<30)
+			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 
+	private long getAvailableInternalMemory()
+	{
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		long availableBlocks = stat.getAvailableBlocks();
+		return availableBlocks * blockSize / 1048576;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -2161,6 +2177,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
         OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
         OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
         
+        
+        //Samsung store
+        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
+        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
+        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
+        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+        
+        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
+        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
 //
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_TSTORE, "tstore_sku_gas");

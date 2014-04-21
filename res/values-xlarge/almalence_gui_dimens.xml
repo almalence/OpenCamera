@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-   <dimen name="gridElementSize">180dp</dimen>
-   <dimen name="gridImageSize">100dp</dimen>
+   <dimen name="gridElementSize">150dp</dimen>
+   <dimen name="gridImageSize">80dp</dimen>
+   <dimen name="gridImageSize2x">100dp</dimen>
    <dimen name="gridTextLayoutHeight">62dp</dimen>
    <dimen name="gridTextLayoutWidth">170dp</dimen>
-   <dimen name="gridTextSize">24sp</dimen>
+   <dimen name="gridTextSize">16sp</dimen>
    
-   <dimen name="gridModeElementSize">170dp</dimen>
+   <dimen name="gridModeElementSize">150dp</dimen>
    <dimen name="gridModeTextLayoutSize">70dp</dimen>
-   <dimen name="gridModeTextSize">22sp</dimen>
    <dimen name="gridModeImageSize">100dp</dimen>
+   <dimen name="gridModeImageSize2x">115dp</dimen>
+   <dimen name="gridModeTextSize">16sp</dimen>
    <dimen name="gridModeVerticalSpacing">14dp</dimen>
    
    <dimen name="gridLayoutWidth">450dp</dimen>

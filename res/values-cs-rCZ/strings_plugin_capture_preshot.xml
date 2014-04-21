@@ -14,14 +14,14 @@
 	<string name="Pref_PreShot_preshot_Title">Zobrazit snímky poslední(ch)...</string>
 	<string name="Pref_PreShot_preshot_Summary">Zobrazí snímky pouze několik sekund před ukončením snímání.</string>
 	
-	<string name="Pref_PreShot_fps_Title">Snímky za sekundu (rychlost)</string>
+	<string name="Pref_PreShot_fps_Title">Snímky za sekundu (u HiSpeed)</string>
 	<string name="Pref_PreShot_fps_Summary">Počet fotek snímaných za jednu sekundu</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">Pauza mezi snímky (kvalita)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pauza mezi snímky (u HiRes)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pauza po každém snímku - za účelem ostření.</string>
 	
-	<string name="Pref_PreShot_Low">Menší rozlišení (rychlost)</string>
-	<string name="Pref_PreShot_High">Větší rozlišení (kvalita)</string>
+	<string name="Pref_PreShot_Low">HiSpeed - Rychlejší</string>
+	<string name="Pref_PreShot_High">HiRes - Kvalitnější</string>
 	
 	<string name="Pref_PreShot_None">Žádné</string>
 	

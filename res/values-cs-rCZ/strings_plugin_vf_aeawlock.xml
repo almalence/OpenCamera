@@ -3,7 +3,7 @@
 	
 	<string name="Pref_VF_AEAWLock_Preference_Title">Zámek automatické expozice\\vyvážení bílé</string>
 	
-	<string name="Pref_VF_ShowAEAWLock_Title">Ukázat zámek automatické expozice a vyvážení bílé</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Nemusí fungovat na některých typech zařízení</string>
+	<string name="Pref_VF_ShowAEAWLock_Title">Ukázat zámek expozice</string>
+	<string name="Pref_VF_ShowAEAFLock_Summary">Zámek automatické expozice a vyvážení bílé. Nemusí fungovat na některých typech zařízení</string>
 	
 </resources>

@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.hdr;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -388,6 +389,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	                
 	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);	                
 	            }
+	        }
+			catch(IOException e) {
+	            e.printStackTrace();
+	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+	            return;
 	        }
 	        catch (Exception e)
 	        {

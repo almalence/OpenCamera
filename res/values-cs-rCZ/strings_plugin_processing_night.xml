@@ -13,6 +13,6 @@
 	<string name="Pref_Night_ColorsSaturated_Title">Saturované barvy</string>
     <string name="Pref_Night_ColorsSaturated_Summary">Ponechat saturované barvy</string>
 	<string name="Pref_Night_None">Žádné</string>
-	<string name="Pref_Night_Minor">Trochu</string>
-	<string name="Pref_Night_Hard">Hodně</string>
+	<string name="Pref_Night_Minor">Nižší</string>
+	<string name="Pref_Night_Hard">Vyšší</string>
 </resources>

@@ -174,7 +174,6 @@ public class PluginManager {
 	public static final int MSG_FILTER_FINISHED = 7;
 	public static final int MSG_EXPORT_FINISHED = 8;
 	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 888;
-
     public static final int MSG_START_FX = 9;
 	public static final int MSG_FX_FINISHED = 10;
 	public static final int MSG_DELAYED_CAPTURE = 11;	
@@ -1580,7 +1579,7 @@ public class PluginManager {
 		    	}
 	        }
 			break;
-
+		
 		case MSG_EXPORT_FINISHED_IOEXCEPTION:
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)

@@ -20,6 +20,7 @@ package com.almalence.plugins.export.standard;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -340,7 +341,11 @@ public class ExportPlugin extends PluginExport
 			            	com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
 			            	//to avoid problems with SKIA
 			            	int cropHeight = image.getHeight()-image.getHeight()%16;
-					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+					    	if (false == image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
+					    	{
+					    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+					            return;
+					    	}
 					    	SwapHeap.FreeFromHeap(ptr);
 			            }
 			            else
@@ -350,7 +355,11 @@ public class ExportPlugin extends PluginExport
 		    	    		out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
 			    	    	if (null == PluginManager.getInstance().getFromSharedMem("resultcrop0"+Long.toString(sessionID)))
 			    	    	{
-			    	    		out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os);
+			    	    		if (false == out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
+						    	{
+						    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						            return;
+						    	}
 			    	    	}
 			    	    	else
 		    	    		{
@@ -359,7 +368,12 @@ public class ExportPlugin extends PluginExport
 					    		int crop2 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop2"+Long.toString(sessionID)));
 					    		int crop3 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
 					    		Rect r = new Rect(crop0, crop1, crop0+crop2, crop1+crop3);
-					    		out.compressToJpeg(r, 95, os);
+					    		
+					    		if (false == out.compressToJpeg(r, 95, os))
+						    	{
+						    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						            return;
+						    	}
 		    	    		} 	    	
 
 					    	SwapHeap.FreeFromHeap(yuv);
@@ -539,6 +553,11 @@ public class ExportPlugin extends PluginExport
             //MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
             
             MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+        }
+		catch(IOException e) {
+            e.printStackTrace();
+            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+            return;
         }
         catch (Exception e)
         {

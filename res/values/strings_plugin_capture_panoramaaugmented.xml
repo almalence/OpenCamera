@@ -23,5 +23,9 @@
     
     <string name="pref_plugin_capture_panoramaaugmented_memory_title">Relax memory constraints</string>
     <string name="pref_plugin_capture_panoramaaugmented_memory_summary">Allow more frames but may cause a crash due to out of memory</string>    
+    <string name="pref_plugin_capture_panoramaaugmented_aelock_title">Panorama ae/wb lock</string>
     
+    <string name="aelockNo">no AE/WB lock</string>
+    <string name="aelockHorizontal">AE/WB lock only for horizontal panorama</string>
+    <string name="aelockAlways">always lock AE/WB</string>
 </resources>
