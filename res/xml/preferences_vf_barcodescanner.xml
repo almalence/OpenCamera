@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--    <PreferenceCategory android:title="@string/Pref_BarcodescannerVF_Preference_Title"> -->
+        				
+        <ListPreference
+	                        android:title="@string/Pref_ShowBarcodescannerVF"
+	                        android:key="PrefBarcodescannerVF"
+	                        android:defaultValue="0"
+	                        android:entries="@array/typeArrayBarcodescanner"
+	                        android:entryValues="@array/typeValuesBarcodescanner" />
+
+<!-- </PreferenceCategory> -->
+</PreferenceScreen>

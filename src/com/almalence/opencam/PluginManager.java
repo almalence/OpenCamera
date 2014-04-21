@@ -73,16 +73,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.asynctaskmanager.Task;
-
-import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
-import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
-import com.almalence.util.exifreader.metadata.Directory;
-import com.almalence.util.exifreader.metadata.Metadata;
-import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
-import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
-
-import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
+import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
 import com.almalence.plugins.capture.night.NightCapturePlugin;
@@ -93,6 +85,7 @@ import com.almalence.plugins.capture.sequence.SequenceCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
+import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
@@ -101,13 +94,19 @@ import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
 import com.almalence.plugins.processing.preshot.PreshotProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
-import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
+import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
+import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
+import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
+import com.almalence.util.exifreader.metadata.Directory;
+import com.almalence.util.exifreader.metadata.Metadata;
+import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
+import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 /***
  * Plugins managing class.
@@ -262,6 +261,10 @@ public class PluginManager {
 		HistogramVFPlugin histgramVFPlugin = new HistogramVFPlugin();
 		pluginList.put(histgramVFPlugin.getID(), histgramVFPlugin);
 		listVF.add(histgramVFPlugin);
+		
+		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
+		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
+		listVF.add(barcodeScannerVFPlugin);
 
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
