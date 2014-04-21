@@ -3,10 +3,6 @@
 	
 	<string name="Pref_BarcodescannerVF_Preference_Title">Barcode scanner</string>
 	<string name="Pref_ShowBarcodescannerVF">Show barcode scanner</string>
-	
-	<string name="Pref_BarcodescannerVF_On">On</string>
-	<string name="Pref_BarcodescannerVF_Off">Off</string>
-	
 	<string name="Empty_Barcodes_List">List is empty</string>
 	<string name="Delete_Barcode">Delete</string>
 	

@@ -5,14 +5,18 @@
     android:orientation="vertical" >
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/barcodesHistoryList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@android:id/empty"
-        android:layout_width="wrap_content"
+        android:id="@+id/barcodesHistoryEmpty"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_horizontal"
         android:text="@string/Empty_Barcodes_List" />
 
 </LinearLayout>
