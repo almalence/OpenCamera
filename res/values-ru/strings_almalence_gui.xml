@@ -10,6 +10,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
     <string name="Pref_Common_Shutter_Title">Отключить звуки</string>
     <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
+    <string name="Pref_Common_HWShutter_Title">Запуск приложения по кнопке камеры</string>
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
     <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>

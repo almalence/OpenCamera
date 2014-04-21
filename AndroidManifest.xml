@@ -74,14 +74,14 @@
 		        android:label="Barcodes"/>
 		<activity android:name="com.almalence.plugins.vf.barcodescanner.BarcodeViewActivity"
 		        android:label="Barcode"/>
-		<!-- 
+
 		<receiver android:name=".HWButtonStart" >
 		    <intent-filter android:priority="1000">         
 		        <action android:name="android.intent.action.CAMERA_BUTTON" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
-		 -->
+		
 	<!-- 	
 		<receiver android:name=".HWButtonStart">
             <intent-filter>
