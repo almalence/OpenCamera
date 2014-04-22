@@ -70,6 +70,7 @@ import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
 
+import com.almalence.util.ImageConversion;
 import com.almalence.util.MLocation;
 import com.almalence.util.Size;
 
@@ -105,6 +106,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 
 	//indicates that no more user interaction needed
 	private boolean finishing = false;
+	
+	public static boolean isYUV = false;
 		
 	public SequenceProcessingPlugin()
 	{
@@ -164,7 +167,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
      	try {
      		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
             int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-            ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
+           // ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
      		int minSize = 1000;
      		if (mMinSize == 0) {
      			minSize = 0;
@@ -174,26 +177,64 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		
     		if (imagesAmount==0)
     			imagesAmount=1;
+    		
+    		int iImageWidth = MainScreen.getImageWidth();
+    		int iImageHeight = MainScreen.getImageHeight();
+    		
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     
     		thumbnails.clear();
     		for (int i=1; i<=imagesAmount; i++)
     		{
-    			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
-    	        		);
-    			
-    			compressed_frame.add(i-1, in);
-    			
-    			BitmapFactory.Options opts = new BitmapFactory.Options();
-    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
-    	    			(int)(opts.outHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
-    	    			false));
+    			if(isYUV)
+    			{
+    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+    				mYUVBufferList.add(i-1, yuv);
+    				
+    				thumbnails.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(i-1), iImageWidth, iImageHeight),
+	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(iImageHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
+	    	    			false));
+    			}
+    			else
+    			{
+	    			byte[] in = SwapHeap.CopyFromHeap(
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+	    	        		);
+	    			
+	    			mJpegBufferList.add(i-1, in);
+	    			
+	    			
+	    			BitmapFactory.Options opts = new BitmapFactory.Options();
+	    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
+	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(opts.outHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
+	    	    			false));
+    			}
     		}
     		
-    		mJpegBufferList = compressed_frame;
-    		getDisplaySize(mJpegBufferList.get(0));
+    		//mJpegBufferList = compressed_frame;
+    		if(!isYUV)
+    			getDisplaySize(mJpegBufferList.get(0));
+    		else
+    		{
+    			Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();    			
+    			Point dis = new Point();
+    			display.getSize(dis);
+    			
+    			float imageRatio = (float)iImageWidth / (float)iImageHeight;
+    			float displayRatio = (float)dis.y / (float)dis.x;
+    			
+    			if (imageRatio > displayRatio) {
+    				mDisplayWidth = dis.y;
+    				mDisplayHeight = (int)((float)dis.y / (float)imageRatio);
+    			} else {
+    				mDisplayWidth = (int)((float)dis.x * (float)imageRatio);
+    				mDisplayHeight = dis.x;
+    			}
+    		}
+    		
     		Size preview = new Size(mDisplayWidth, mDisplayHeight);
     		
     		if (SaveInputPreference)
@@ -255,7 +296,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		            if (os != null)
     		            {
     		            	// ToDo: not enough memory error reporting
-    			            os.write(compressed_frame.get(i));
+    			            os.write(mJpegBufferList.get(i));
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -340,7 +381,10 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             }
             
      		//frames!!! should be taken from heap
-     		mAlmaCLRShot.addInputFrame(compressed_frame, input);
+            if(!isYUV)
+            	mAlmaCLRShot.addJPEGInputFrame(mJpegBufferList, input);
+            else
+            	mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
 
      		mAlmaCLRShot.initialize(preview,
      				mAngle,
@@ -364,7 +408,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
  					 */
  					Integer.parseInt(mGhosting),
  					indexes);
-     		compressed_frame.clear();
+     		
+     		//compressed_frame.clear();
  		} 
      	catch (Exception e) 
  		{
@@ -398,7 +443,9 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private Bitmap PreviewBmp = null;
 	public static int mDisplayWidth;
 	public static int mDisplayHeight;
-	public static ArrayList<byte[]> mJpegBufferList;
+	public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
+	public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
+	public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
 	Paint paint=null;
 	
 	private boolean postProcessingRun = false;

@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
 import com.almalence.util.Size;
 
 public class AlmaCLRShot
@@ -64,7 +65,7 @@ public class AlmaCLRShot
     }
     
 	
-	public void addInputFrame(List<byte[]> inputFrame, Size size)  throws Exception
+	public void addJPEGInputFrame(List<byte[]> inputFrame, Size size)  throws Exception
 	{
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
@@ -114,6 +115,46 @@ public class AlmaCLRShot
 		}
 		return;
 	}
+	
+	
+	public void addYUVInputFrame(List<Integer> inputFrame, Size size)  throws Exception {
+		mNumOfFrame = inputFrame.size();
+		mInputFrameSize = size;
+		
+		//mInputFrameSize = size;
+		Log.e(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		
+		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
+			throw new Exception("Number of input frame is wrong");
+		}
+		
+		Initialize();
+		
+		int[] PointOfYUVData = new int[mNumOfFrame];
+		int[] LengthOfYUVData = new int[mNumOfFrame];
+		
+		int data_lenght = mInputFrameSize.getWidth()*mInputFrameSize.getHeight()+2*((mInputFrameSize.getWidth()+1)/2)*((mInputFrameSize.getHeight()+1)/2);
+		for (int i = 0;i < mNumOfFrame;i++) {
+			PointOfYUVData[i] = inputFrame.get(i);//SwapHeap.SwapYuvToHeap(inputFrame.get(i), data_lenght);
+			LengthOfYUVData[i] = data_lenght;
+	    	if (PointOfYUVData[i] == 0) {
+	    		Log.d(TAG, "Out of Memory in Native");
+	    		throw new Exception("Out of Memory in Native");
+	    	}
+		}
+		
+		int error = addYUVFrames(PointOfYUVData, LengthOfYUVData, mNumOfFrame, size.getWidth(), size.getHeight());
+	    if (error < 0) {
+	    	Log.d(TAG, "Out Of Memory");
+	    	throw new Exception("Out Of Memory");
+		} else if (error < MAX_INPUT_FRAME) {
+			Log.d(TAG, "YUV data is wrong in " + error + " frame");
+			throw new Exception("Out Of Memory");
+		}
+	    
+		return;
+	}
+	
 
 	public boolean initialize(Size previewSize, int angle, int sensitivity, int minSize, int ghosting, int[] sports_order) throws Exception
 	{
@@ -256,6 +297,7 @@ public class AlmaCLRShot
     private static native String Initialize();
     private static native int Release(int nFrames);
     private static native int ConvertFromJpeg(int frame[], int frame_len[], int nFrames, int sx, int sy);
+    private static native int addYUVFrames(int frame[], int frame_len[], int nFrames, int sx, int sy);
     private static native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
     private static native int MovObjProcess(int nFrames, Size size,	int sensitivity, int minSize, int[] crop, int ghosting, int ratio, int[] sports_order);
     
