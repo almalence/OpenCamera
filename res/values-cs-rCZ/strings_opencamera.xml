@@ -30,7 +30,7 @@
     
     <string name="dimensions_none">Žádné</string>
     
-    <string name="already_unlocked">Již odemčeno</string>
+    <string name="already_unlocked">odemčeno</string>
     
     <string name="volumeBtnTakePic">Vyfotit</string>
     <string name="volumeBtnZoom">Zoom</string>

@@ -186,6 +186,7 @@ public class AlmalenceGUI extends GUI implements
 	//store grid adapter
 	private ElementAdapter storeAdapter;
 	private List<View> storeViews;
+	private Hashtable<View, Integer> buttonStoreViewAssoc;
 	
 	// private SharePopup mSharePopup;
 	private Thumbnail mThumbnail;
@@ -832,6 +833,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		storeAdapter = new ElementAdapter();
 		storeViews = new ArrayList<View>();
+		buttonStoreViewAssoc = new Hashtable<View, Integer>();
 		
 		mMeteringMatrix = new Matrix();
 	}
@@ -1073,6 +1075,8 @@ public class AlmalenceGUI extends GUI implements
 			hideModeList();
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,true);
+		if (((RelativeLayout) guiView.findViewById(R.id.storeLayout)).getVisibility() == View.VISIBLE)
+			hideStore();
 	}
 
 	
@@ -1082,6 +1086,17 @@ public class AlmalenceGUI extends GUI implements
 	{
 //		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 //		boolean bOnSale = prefs.getBoolean("bOnSale", false);
+		
+		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
+		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
+		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
+		
+		Message msg2 = new Message();
+		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
+		msg2.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg2);
+		
+		MainScreen.guiManager.lockControls = true;
 		
 		initStoreList();
 		GridView gridview = (GridView) guiView.findViewById(R.id.storeGrid);
@@ -1096,24 +1111,40 @@ public class AlmalenceGUI extends GUI implements
 		});
 		
 		
-		final RelativeLayout unlock = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
-		unlock.setVisibility(View.VISIBLE);
-		unlock.bringToFront();
+		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
+		store.setVisibility(View.VISIBLE);
+		store.bringToFront();
 		
 		Button closeStore = ((Button) guiView.findViewById(R.id.buttonCloseStore));
 		closeStore.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				unlock.setVisibility(View.GONE);
+				store.setVisibility(View.GONE);
 			}
 		});
 
 		
 	}
 	
+	private void hideStore()
+	{
+		((RelativeLayout) guiView.findViewById(R.id.storeLayout)).setVisibility(View.GONE);
+		
+		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
+		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
+		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
+		
+		Message msg2 = new Message();
+		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+		msg2.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg2);
+		
+		MainScreen.guiManager.lockControls = false;
+	}
+	
 	private void initStoreList() {
 		storeViews.clear();
-//		buttonModeViewAssoc.clear();
-
+		buttonStoreViewAssoc.clear();
+		
 		int mode_number = 0;
 		for (int i =0; i<5; i++) {
 
@@ -1121,215 +1152,120 @@ public class AlmalenceGUI extends GUI implements
 			View item = inflator.inflate(
 					R.layout.gui_almalence_store_grid_element, null,
 					false);
-			// set some mode icon
-			((ImageView) item.findViewById(R.id.storeImage)).setImageResource(R.drawable.hdricon);
-			((TextView) item.findViewById(R.id.storeText)).setText("Some text " + i);
-//			int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
-//					"string", MainScreen.thiz.getPackageName());
-//			String modename = MainScreen.thiz.getResources().getString(id);
-//
-//			final boolean isFirstMode = mode_number == 0? true : false;
-//			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
-//			mode.setOnTouchListener(new OnTouchListener(){
-//
-//				@Override
-//				public boolean onTouch(View v, MotionEvent event) {
-//					//Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
-//					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
-//					{
-//						hideModeList();
-//
-//						// get mode associated with pressed button
-//						String key = buttonModeViewAssoc.get(v);
-//						Mode mode = ConfigParser.getInstance().getMode(key);
-//						// if selected the same mode - do not reinitialize camera
-//						// and other objects.
-//						if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
-//							return false;
-//
-//						tmpActiveMode = mode;
-//
-//						if (mode.modeID.equals("video"))
-//						{
-//							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//							if (prefs.getBoolean("videoStartStandardPref", false))
-//							{
-//								PluginManager.getInstance().onPause(true);
-//								Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-//							    //MainScreen.thiz.startActivityForResult(intent, 111);
-//								MainScreen.thiz.startActivity(intent);
-//							    return true;
-//							}
-//						}
-//						
-//						// <!-- -+-
-//						if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
-//							return false;
-//						//-+- -->
-//						
-//						new CountDownTimer(100, 100) {
-//							public void onTick(long millisUntilFinished) {
-//							}
-//
-//							public void onFinish() {
-//								PluginManager.getInstance().switchMode(
-//										tmpActiveMode);
-//							}
-//						}.start();
-//
-//						// set modes icon inside mode selection icon
-//						Bitmap bm = null;
-//						Bitmap iconBase = BitmapFactory.decodeResource(
-//								MainScreen.mainContext.getResources(),
-//								R.drawable.gui_almalence_select_mode);
-//						int id = MainScreen.thiz.getResources().getIdentifier(
-//								mode.icon, "drawable",
-//								MainScreen.thiz.getPackageName());
-//						Bitmap iconOverlay = BitmapFactory.decodeResource(
-//								MainScreen.mainContext.getResources(),
-//								MainScreen.thiz.getResources().getIdentifier(
-//										mode.icon, "drawable",
-//										MainScreen.thiz.getPackageName()));
-//						iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-//								(int) (iconBase.getWidth() / 1.8),
-//								(int) (iconBase.getWidth() / 1.8), false);
-//
-//						bm = mergeImage(iconBase, iconOverlay);
-//						bm = Bitmap
-//								.createScaledBitmap(
-//										bm,
-//										(int) (MainScreen.mainContext
-//												.getResources()
-//												.getDimension(R.dimen.mainButtonHeightSelect)),
-//										(int) (MainScreen.mainContext
-//												.getResources()
-//												.getDimension(R.dimen.mainButtonHeightSelect)),
-//										false);
-//						((RotateImageView) guiView
-//								.findViewById(R.id.buttonSelectMode))
-//								.setImageBitmap(bm);
-//
-//						int rid = MainScreen.thiz.getResources().getIdentifier(
-//								tmpActiveMode.howtoText, "string",
-//								MainScreen.thiz.getPackageName());
-//						String howto = "";
-//						if (rid != 0)
-//							howto = MainScreen.thiz.getResources().getString(rid);
-//						// show toast on mode changed
-//						showToast(
-//								v,
-//								Toast.LENGTH_SHORT,
-//								Gravity.CENTER,
-//								((TextView) v.findViewById(R.id.modeText))
-//										.getText()
-//										+ " "
-//										+ MainScreen.thiz.getResources().getString(
-//												R.string.almalence_gui_selected)
-//										+ (tmpActiveMode.howtoText.isEmpty() ? ""
-//												: "\n") + howto, false, true);
-//						//return true;
-//					}
-//					//else
-//						return false;
-//				}
-//				
-//			});
-//			mode.setOnClickListener(new OnClickListener() {
-//				public void onClick(View v) {
-//					//Log.e("AlmalenceGUI", "Mode onClick!");
-//					hideModeList();
-//
-//					// get mode associated with pressed button
-//					String key = buttonModeViewAssoc.get(v);
-//					Mode mode = ConfigParser.getInstance().getMode(key);
-//					// if selected the same mode - do not reinitialize camera
-//					// and other objects.
-//					if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
-//						return;
-//
-//					tmpActiveMode = mode;
-//
-//					if (mode.modeID.equals("video"))
-//					{
-//						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//						if (prefs.getBoolean("videoStartStandardPref", false))
-//						{
-//							PluginManager.getInstance().onPause(true);
-//							Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-//						    //MainScreen.thiz.startActivityForResult(intent, 111);
-//						    MainScreen.thiz.startActivity(intent);
-//						    return;
-//						}
-//					}
-//					
-//					// <!-- -+-
-//					if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
-//						return;
-//					//-+- -->
-//					
-//					new CountDownTimer(100, 100) {
-//						public void onTick(long millisUntilFinished) {
-//						}
-//
-//						public void onFinish() {
-//							PluginManager.getInstance().switchMode(
-//									tmpActiveMode);
-//						}
-//					}.start();
-//
-//					// set modes icon inside mode selection icon
-//					Bitmap bm = null;
-//					Bitmap iconBase = BitmapFactory.decodeResource(
-//							MainScreen.mainContext.getResources(),
-//							R.drawable.gui_almalence_select_mode);
-//					int id = MainScreen.thiz.getResources().getIdentifier(
-//							mode.icon, "drawable",
-//							MainScreen.thiz.getPackageName());
-//					Bitmap iconOverlay = BitmapFactory.decodeResource(
-//							MainScreen.mainContext.getResources(),
-//							MainScreen.thiz.getResources().getIdentifier(
-//									mode.icon, "drawable",
-//									MainScreen.thiz.getPackageName()));
-//					iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-//							(int) (iconBase.getWidth() / 1.8),
-//							(int) (iconBase.getWidth() / 1.8), false);
-//
-//					bm = mergeImage(iconBase, iconOverlay);
-//					bm = Bitmap
-//							.createScaledBitmap(
-//									bm,
-//									(int) (MainScreen.mainContext
-//											.getResources()
-//											.getDimension(R.dimen.mainButtonHeightSelect)),
-//									(int) (MainScreen.mainContext
-//											.getResources()
-//											.getDimension(R.dimen.mainButtonHeightSelect)),
-//									false);
-//					((RotateImageView) guiView
-//							.findViewById(R.id.buttonSelectMode))
-//							.setImageBitmap(bm);
-//
-//					int rid = MainScreen.thiz.getResources().getIdentifier(
-//							tmpActiveMode.howtoText, "string",
-//							MainScreen.thiz.getPackageName());
-//					String howto = "";
-//					if (rid != 0)
-//						howto = MainScreen.thiz.getResources().getString(rid);
-//					// show toast on mode changed
-//					showToast(
-//							v,
-//							Toast.LENGTH_SHORT,
-//							Gravity.CENTER,
-//							((TextView) v.findViewById(R.id.modeText))
-//									.getText()
-//									+ " "
-//									+ MainScreen.thiz.getResources().getString(
-//											R.string.almalence_gui_selected)
-//									+ (tmpActiveMode.howtoText.isEmpty() ? ""
-//											: "\n") + howto, false, true);
-//				}
-//			});
-//			buttonModeViewAssoc.put(mode, tmp.modeID);
+			ImageView icon = (ImageView) item.findViewById(R.id.storeImage);
+			TextView description = (TextView) item.findViewById(R.id.storeText);
+			TextView price = (TextView) item.findViewById(R.id.storePriceText);
+			switch (i)
+			{
+				case 0:
+					// unlock all
+					icon.setImageResource(R.drawable.store_all);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_All_Preference_Title));
+					
+					if(MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText(MainScreen.thiz.titleUnlockAll);
+					break;
+				case 1:
+					// HDR
+					icon.setImageResource(R.drawable.store_hdr);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title));
+					if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText(MainScreen.thiz.titleUnlockHDR);
+					break;
+				case 2:
+					// Panorama
+					icon.setImageResource(R.drawable.store_panorama);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
+					if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText(MainScreen.thiz.titleUnlockPano);
+					break;
+				case 3:
+					// Moving
+					icon.setImageResource(R.drawable.store_moving);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title));
+					if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText(MainScreen.thiz.titleUnlockMoving);
+					break;
+				case 4:
+					// Groupshot
+					icon.setImageResource(R.drawable.store_groupshot);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
+					if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText(MainScreen.thiz.titleUnlockGroup);
+					break;
+			}
+
+			item.setOnTouchListener(new OnTouchListener()
+			{
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if(event.getAction() == MotionEvent.ACTION_CANCEL)
+					{
+						// get inapp associated with pressed button
+						Integer id = buttonStoreViewAssoc.get(v);
+						String payload = "";
+						switch (id)
+						{
+						case 0:// unlock all
+							MainScreen.thiz.purchaseAll();
+							break;
+						case 1:// HDR
+							MainScreen.thiz.purchaseHDR();
+							break;
+						case 2:// Panorama
+							MainScreen.thiz.purchasePanorama();
+							break;
+						case 3:// Moving
+							MainScreen.thiz.purchaseMoving();
+							break;
+						case 4:// Groupshot
+							MainScreen.thiz.purchaseGroupshot();
+							break;
+						}
+					}
+					return false;
+				}
+				
+			});
+			
+			item.setOnClickListener(new OnClickListener() 
+			{
+				public void onClick(View v) {
+					// get inapp associated with pressed button
+					Integer id = buttonStoreViewAssoc.get(v);
+					String payload = "";
+					switch (id)
+					{
+					case 0:// unlock all
+						MainScreen.thiz.purchaseAll();
+						break;
+					case 1:// HDR
+						MainScreen.thiz.purchaseHDR();
+						break;
+					case 2:// Panorama
+						MainScreen.thiz.purchasePanorama();
+						break;
+					case 3:// Moving
+						MainScreen.thiz.purchaseMoving();
+						break;
+					case 4:// Groupshot
+						MainScreen.thiz.purchaseGroupshot();
+						break;
+					}
+				}
+			});
+			
+			buttonStoreViewAssoc.put(item, i);
 			storeViews.add(item);
 		}
 
@@ -5015,6 +4951,8 @@ public class AlmalenceGUI extends GUI implements
 		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
 			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
 		
+		hideStore();
+		
 		int id = button.getId();
 		if (lockControls && ((R.id.buttonShutter != id)))
 			return;
@@ -7343,6 +7281,11 @@ public class AlmalenceGUI extends GUI implements
 				res++;
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
+			}
+			if (((RelativeLayout) guiView.findViewById(R.id.storeLayout)).getVisibility() == View.VISIBLE)
+			{
+				hideStore();
+				res++;
 			}
 		}
 

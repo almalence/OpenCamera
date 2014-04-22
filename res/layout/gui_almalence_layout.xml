@@ -334,22 +334,18 @@
 
 	
 	<RelativeLayout android:id="@+id/storeLayout"
-        		android:background="@color/Gray"
+        		android:background="@drawable/store_background"
         		android:layout_width="fill_parent"
         		android:layout_height="fill_parent"        		
-	    		android:layout_gravity="top"
-	    		android:padding="5dp"
-	    		android:paddingLeft="10dp"
-	    		android:paddingRight="10dp"
 				android:visibility="gone">
 					<ImageView
 						android:id="@+id/storeHeader"
-						android:src="@drawable/gui_almalence_hint_arrowpull"
+						android:src="@drawable/store_header"
 						android:background="@android:color/transparent"
 						android:layout_height="wrap_content"
-						android:layout_width="fill_parent"
-						android:layout_centerHorizontal="true"
+						android:layout_width="wrap_content"
 						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
 				   		>
 					</ImageView>
 					<GridView
@@ -357,11 +353,13 @@
 					    android:layout_width="fill_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:horizontalSpacing="10dp"
-					    android:verticalSpacing="10dp"
+					    android:horizontalSpacing="8dp"
+					    android:verticalSpacing="8dp"
 					    android:adjustViewBounds="true"
 					    android:stretchMode="columnWidth"
 					    android:layout_below="@+id/storeHeader"
+					    android:paddingLeft="8dp"
+	    				android:paddingRight="8dp"
 					    android:gravity="center"					    
 					    android:visibility="visible"
 					/>
@@ -376,7 +374,7 @@
 			                android:textColor="#FFFFFF"
 			                android:layout_margin="5dip"
 				                >
-			            </Button>
+		            </Button>
 	</RelativeLayout>
 	 
 	<RelativeLayout

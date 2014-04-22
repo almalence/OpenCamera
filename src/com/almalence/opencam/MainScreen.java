@@ -2605,6 +2605,137 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
+	public boolean isPurchasedAll()
+	{
+		return unlockAllPurchased;
+	}
+	
+	public boolean isPurchasedHDR()
+	{
+		return hdrPurchased;
+	}
+	
+	public boolean isPurchasedPanorama()
+	{
+		return panoramaPurchased;
+	}
+	
+	public boolean isPurchasedMoving()
+	{
+		return objectRemovalBurstPurchased;
+	}
+	
+	public boolean isPurchasedGroupshot()
+	{
+		return groupShotPurchased;
+	}
+	
+	public void purchaseAll()
+	{
+		if(MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_UNLOCK_ALL, ALL_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseHDR()
+	{
+		if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_HDR, HDR_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchasePanorama()
+	{
+		if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_PANORAMA,
+					PANORAMA_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseMoving()
+	{
+		if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_MOVING_SEQ,
+					OBJECTREM_BURST_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseGroupshot()
+	{
+		if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_GROUPSHOT,
+					GROUPSHOT_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	public boolean showUnlock = false;
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {

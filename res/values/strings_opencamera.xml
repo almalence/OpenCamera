@@ -30,7 +30,7 @@
     
     <string name="dimensions_none">None</string>
     
-    <string name="already_unlocked">Already unlocked</string>
+    <string name="already_unlocked">unlocked</string>
     
     <string name="device_name_ss3_01">GT-I9300</string>
     <string name="device_name_ss3_02">SHV-E210</string>

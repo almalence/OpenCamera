@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout 
     android:id="@+id/storeLayout"
-    android:layout_height="@dimen/gridStoreImageSize2x"
-	android:layout_width="@dimen/gridModeImageSize2x"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@android:color/white"    
+    android:background="@drawable/store_element"    
     >
+    <RelativeLayout android:id="@+id/storeLayout2"
+        			android:layout_height="@dimen/gridStoreImageSize2x"
+	        		android:layout_width="@dimen/gridModeImageSize2x"
+	        		android:layout_alignParentTop="true"
+	        		android:layout_centerHorizontal="true"
+        			>
      
 	    <ImageView
 	        android:id="@+id/storeImage"
-	        android:layout_height="wrap_content"
+	        android:layout_height="@dimen/gridStoreImageSize"
 	        android:layout_width="wrap_content"
-	        android:padding="12dp"
+	        android:padding="5dp"
 	        android:layout_alignParentTop="true"
 	        android:layout_centerHorizontal="true"
 	        android:background="@android:color/transparent"        
@@ -31,9 +37,22 @@
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
 	        android:textColor="@android:color/black"        
-	        android:textSize="17sp">
+	        android:textSize="15sp">
 	    </TextView>
 	    
 	    </RelativeLayout>
 	    
+	</RelativeLayout>
+	<TextView
+	        android:id="@+id/storePriceText"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentRight="true"
+	        android:gravity="center"
+	        android:padding="10dip"
+	        android:textColor="#57a25c"        
+	        android:textSize="13sp">
+	    </TextView>
+     
 </RelativeLayout>
