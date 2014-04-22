@@ -82,6 +82,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
@@ -2788,8 +2790,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			Log.v("Main billing", "onActivityResult handled by IABUtil.");
 		}
 	}
-
-	// next methods used to store number of free launches.
+	
+		// next methods used to store number of free launches.
 	// using files to store this info
 
 	// returns number of launches left
