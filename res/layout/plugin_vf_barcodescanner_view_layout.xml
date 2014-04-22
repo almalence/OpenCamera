@@ -7,21 +7,69 @@
     <TextView
         android:id="@+id/dataTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" 
+        android:textSize="18sp"/>
 
-    <TextView
-        android:id="@+id/formatTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+		<TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Format: "
+		          android:textStyle="bold" />
+
+		<TextView
+		    android:id="@+id/formatTextView"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="14sp" />
+     </LinearLayout>
+     
+    <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+		<TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Type: "
+		          android:textStyle="bold" />
+
+		<TextView
+		        android:id="@+id/typeTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+	        	android:textSize="14sp" />
+     </LinearLayout>
+     
+    <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+		<TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="Date: "
+		          android:textStyle="bold" />
+
+		<TextView
+		        android:id="@+id/timeTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textSize="14sp" />
+     </LinearLayout>
     
-    <TextView
-        android:id="@+id/typeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    
-    <TextView
-        android:id="@+id/timeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/dialogButtonOK"
+        android:layout_width="100px"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text=" Ok "
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_below="@+id/image"
+       />
     
 </LinearLayout>

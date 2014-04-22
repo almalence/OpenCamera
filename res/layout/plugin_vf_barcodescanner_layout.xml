@@ -9,7 +9,7 @@
 	    android:visibility="gone">
 				<com.almalence.ui.RotateImageView
 				android:id="@+id/buttonBarcodesList"
-				android:src="@drawable/gui_almalence_aelock_off"				
+				android:src="@drawable/gui_almalence_settings_scene_barcode"				
 				android:background="@android:color/transparent"			
 				android:layout_height="@dimen/aeawlock_size"
 				android:layout_width="@dimen/aeawlock_size"								
