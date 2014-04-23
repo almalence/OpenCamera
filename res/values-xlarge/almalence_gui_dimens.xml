@@ -17,6 +17,10 @@
    <dimen name="gridLayoutWidth">450dp</dimen>
    <dimen name="modeLayoutWidth">620dp</dimen>
    
+   <dimen name="gridStoreImageSize">90dp</dimen>
+   <dimen name="gridStoreImageSize2x">190dp</dimen>
+   <dimen name="headerStoreImageSize">210dp</dimen>
+   
    <dimen name="mainButtonHeight">70dp</dimen>
    <dimen name="mainButtonHeightSelect">75dp</dimen>
    <dimen name="shutterHeight">125dp</dimen>

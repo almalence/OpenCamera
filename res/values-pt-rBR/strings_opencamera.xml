@@ -22,7 +22,7 @@
     
     <string name="dimensions_none">Vazio</string>
     
-    <string name="already_unlocked">Já desbloqueado</string>
+    <string name="already_unlocked">desbloqueado</string>
 
     <string name="Pref_Common_VolumeButton_Title">Botão de volume</string>
 

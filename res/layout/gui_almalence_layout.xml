@@ -342,8 +342,8 @@
 						android:id="@+id/storeHeader"
 						android:src="@drawable/store_header"
 						android:background="@android:color/transparent"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
+						android:layout_height="@dimen/headerStoreImageSize"
+						android:layout_width="fill_parent"
 						android:layout_alignParentTop="true"
 						android:layout_centerHorizontal="true"
 				   		>
@@ -360,8 +360,6 @@
 					    android:layout_below="@+id/storeHeader"
 					    android:paddingLeft="8dp"
 	    				android:paddingRight="8dp"
-					    android:gravity="center"					    
-					    android:visibility="visible"
 					/>
 					<Button 
 			                android:id="@+id/buttonCloseStore"

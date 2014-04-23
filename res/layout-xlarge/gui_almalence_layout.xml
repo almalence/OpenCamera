@@ -329,6 +329,47 @@
    		android:layout_gravity="top|left"
    		android:visibility="gone"/>	
 
+	<RelativeLayout android:id="@+id/storeLayout"
+        		android:background="@drawable/store_background"
+        		android:layout_width="fill_parent"
+        		android:layout_height="fill_parent"        		
+				android:visibility="gone">
+					<ImageView
+						android:id="@+id/storeHeader"
+						android:src="@drawable/store_header"
+						android:background="@android:color/transparent"
+						android:layout_height="@dimen/headerStoreImageSize"
+						android:layout_width="fill_parent"
+						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
+				   		>
+					</ImageView>
+					<GridView
+					    android:id="@+id/storeGrid"
+					    android:layout_width="fill_parent" 
+					    android:layout_height="wrap_content"
+					    android:numColumns="3"
+					    android:horizontalSpacing="8dp"
+					    android:verticalSpacing="8dp"
+					    android:adjustViewBounds="true"
+					    android:stretchMode="columnWidth"
+					    android:layout_below="@+id/storeHeader"
+					    android:paddingLeft="8dp"
+	    				android:paddingRight="8dp"
+					/>
+					<Button 
+			                android:id="@+id/buttonCloseStore"
+			                android:layout_height="wrap_content"
+							android:layout_width="150dip"
+			                android:textSize="17sp"
+			                android:text="OK"
+			                android:layout_alignParentBottom="true"
+			                android:layout_centerHorizontal="true"
+			                android:textColor="#FFFFFF"
+			                android:layout_margin="5dip"
+				                >
+		            </Button>
+	</RelativeLayout>
 	 
 	<RelativeLayout
 		android:id="@+id/buttonsLayout"
