@@ -22,7 +22,7 @@
     
     <string name="dimensions_none">None</string>
     
-    <string name="already_unlocked">Уже активировано</string>
+    <string name="already_unlocked">активировано</string>
     
     <string name="volumeBtnTakePic">Снять</string>
     <string name="volumeBtnZoom">Zoom</string>

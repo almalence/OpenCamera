@@ -85,7 +85,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		super("com.almalence.plugins.barcodescannervf",
 			  R.xml.preferences_vf_barcodescanner,
 			  0,
-			  R.drawable.gui_almalence_histogram_rgb,
+			  R.drawable.gui_almalence_settings_scene_barcode_on,
 			  "Barcode scanner");
 	}
 
@@ -109,9 +109,9 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		mBarcodeScannerState = prefs.getBoolean("PrefBarcodescannerVF", false);
 		
 		if (mBarcodeScannerState == ON) {
-			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
+			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
 		} else {
-			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
+			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
 		}
 		
         showGUI();
@@ -125,10 +125,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		Editor editor = prefs.edit();
 		
 		if (mBarcodeScannerState == ON) {
-			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
+			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
         	editor.putBoolean("PrefBarcodescannerVF", false);
 		} else {
-			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
+			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
         	editor.putBoolean("PrefBarcodescannerVF", true);
 		}
         editor.commit();

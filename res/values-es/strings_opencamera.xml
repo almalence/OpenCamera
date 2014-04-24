@@ -22,6 +22,6 @@
     
     <string name="dimensions_none">Ninguna</string>
     
-    <string name="already_unlocked">Ya está desbloqueado</string>
+    <string name="already_unlocked">desbloqueado</string>
     
 </resources>

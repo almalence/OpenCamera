@@ -258,9 +258,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 		params.setMargins(-zoomPanelWidth/2, 300, 0, 0);
-		params.height = mainLayoutHeight/2;
-		
-//		params.addRule(RelativeLayout.CENTER_VERTICAL);
+		params.height = (int)(mainLayoutHeight/2.2);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.zoomPanel, params);
