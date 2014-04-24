@@ -358,6 +358,7 @@
 					    android:adjustViewBounds="true"
 					    android:stretchMode="columnWidth"
 					    android:layout_below="@+id/storeHeader"
+					    android:paddingTop="5dp"
 					    android:paddingLeft="8dp"
 	    				android:paddingRight="8dp"
 					/>
@@ -634,8 +635,8 @@
 		<ImageButton
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:background="@android:color/transparent" 
+			android:layout_height="10dip"
+			android:background="@drawable/blacktansperentlayerpulldownmenu" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"
 			android:paddingBottom="5dip"

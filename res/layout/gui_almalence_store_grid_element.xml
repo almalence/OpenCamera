@@ -60,11 +60,11 @@
 	        android:id="@+id/storeSaleImage"
 	        android:layout_height="25dip"
 	        android:layout_width="wrap_content"
-	        android:paddingRight="1dp"
-	        android:layout_alignParentRight="true"
+	        android:paddingLeft="40dip"
 	        android:layout_alignParentTop="true"	        
 	        android:src="@drawable/store_sale"
-	        android:background="@android:color/transparent"        
+	        android:background="@android:color/transparent"    
+	        android:visibility="gone"    
 	        >
 	 </ImageView>
      

@@ -20,7 +20,7 @@
    <dimen name="modeLayoutWidth">420dp</dimen>
    
    <dimen name="gridStoreImageSize">120dp</dimen>
-   <dimen name="gridStoreImageSize2x">210dp</dimen>
+   <dimen name="gridStoreImageSize2x">250dp</dimen>
    <dimen name="headerStoreImageSize">210dp</dimen>
    
    <dimen name="mainButtonHeight">65dp</dimen>

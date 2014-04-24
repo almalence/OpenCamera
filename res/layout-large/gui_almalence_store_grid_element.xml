@@ -38,7 +38,7 @@
 	        android:layout_centerHorizontal="true"
 	        android:gravity="center"
 	        android:textColor="@android:color/black"        
-	        android:textSize="15sp">
+	        android:textSize="17sp">
 	    </TextView>
 	    
 	    </RelativeLayout>
@@ -51,20 +51,20 @@
 	        android:layout_alignParentBottom="true"
 	        android:layout_alignParentRight="true"
 	        android:gravity="center"
-	        android:padding="10dip"
+	        android:padding="15dip"
 	        android:textColor="#57a25c"        
-	        android:textSize="13sp">
+	        android:textSize="15sp">
 	 </TextView>
 	    
 	 <ImageView
 	        android:id="@+id/storeSaleImage"
-	        android:layout_height="25dip"
+	        android:layout_height="45dip"
 	        android:layout_width="wrap_content"
-	        android:paddingRight="1dp"
-	        android:layout_alignParentRight="true"
+	        android:paddingLeft="60dip"
 	        android:layout_alignParentTop="true"	        
 	        android:src="@drawable/store_sale"
-	        android:background="@android:color/transparent"        
+	        android:background="@android:color/transparent"    
+	        android:visibility="gone"    
 	        >
 	 </ImageView>
      

@@ -2,24 +2,24 @@
 <resources>
    <dimen name="gridElementSize">150dp</dimen>
    <dimen name="gridImageSize">80dp</dimen>
-   <dimen name="gridImageSize2x">100dp</dimen>
+   <dimen name="gridImageSize2x">120dp</dimen>
    <dimen name="gridTextLayoutHeight">62dp</dimen>
    <dimen name="gridTextLayoutWidth">170dp</dimen>
    <dimen name="gridTextSize">16sp</dimen>
    
    <dimen name="gridModeElementSize">150dp</dimen>
    <dimen name="gridModeTextLayoutSize">70dp</dimen>
-   <dimen name="gridModeImageSize">100dp</dimen>
-   <dimen name="gridModeImageSize2x">115dp</dimen>
+   <dimen name="gridModeImageSize">80dp</dimen>
+   <dimen name="gridModeImageSize2x">130dp</dimen>
    <dimen name="gridModeTextSize">16sp</dimen>
    <dimen name="gridModeVerticalSpacing">14dp</dimen>
    
    <dimen name="gridLayoutWidth">450dp</dimen>
    <dimen name="modeLayoutWidth">620dp</dimen>
    
-   <dimen name="gridStoreImageSize">90dp</dimen>
-   <dimen name="gridStoreImageSize2x">190dp</dimen>
-   <dimen name="headerStoreImageSize">210dp</dimen>
+   <dimen name="gridStoreImageSize">120dp</dimen>
+   <dimen name="gridStoreImageSize2x">280dp</dimen>
+   <dimen name="headerStoreImageSize">280dp</dimen>
    
    <dimen name="mainButtonHeight">70dp</dimen>
    <dimen name="mainButtonHeightSelect">75dp</dimen>

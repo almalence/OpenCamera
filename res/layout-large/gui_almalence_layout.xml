@@ -324,7 +324,7 @@
 		android:layout_height="40dip"
 		android:layout_width="40dip"
 		
-		android:layout_marginTop="110dip"
+		android:layout_marginTop="180dip"
 		android:layout_weight="1"
    		android:layout_gravity="top|left"
    		android:visibility="gone"/>	
@@ -448,7 +448,7 @@
 				    	/>
 	    	</LinearLayout>
 	    	<RelativeLayout android:id="@+id/scenemodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"
@@ -469,7 +469,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/wbLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -490,7 +490,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/focusmodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -510,7 +510,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/flashmodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -531,7 +531,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/isoLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -552,7 +552,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/meteringLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -627,7 +627,7 @@
 		<ImageButton
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="10dip"
 			android:background="@android:color/transparent" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"

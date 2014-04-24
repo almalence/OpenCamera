@@ -1043,7 +1043,7 @@ public class AlmalenceGUI extends GUI implements
 				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 					return;
 				
-				MainScreen.thiz.showUnlock = true;
+//				MainScreen.thiz.showUnlock = true;
 				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 				{
 					Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
@@ -1081,12 +1081,9 @@ public class AlmalenceGUI extends GUI implements
 
 	
 	//<!-- -+-
-	
-	private void showStore()
+	@Override
+	public void showStore()
 	{
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//		boolean bOnSale = prefs.getBoolean("bOnSale", false);
-		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
@@ -1118,14 +1115,15 @@ public class AlmalenceGUI extends GUI implements
 		Button closeStore = ((Button) guiView.findViewById(R.id.buttonCloseStore));
 		closeStore.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				store.setVisibility(View.GONE);
+				hideStore();
 			}
 		});
 
 		
 	}
 	
-	private void hideStore()
+	@Override
+	public void hideStore()
 	{
 		((RelativeLayout) guiView.findViewById(R.id.storeLayout)).setVisibility(View.GONE);
 		
@@ -1145,7 +1143,6 @@ public class AlmalenceGUI extends GUI implements
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
 		
-		int mode_number = 0;
 		for (int i =0; i<5; i++) {
 
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
@@ -1165,7 +1162,13 @@ public class AlmalenceGUI extends GUI implements
 					if(MainScreen.thiz.isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
+					{
 						price.setText(MainScreen.thiz.titleUnlockAll);
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+						boolean bOnSale = prefs.getBoolean("bOnSale", false);
+						if (bOnSale)
+							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
+					}
 					break;
 				case 1:
 					// HDR
