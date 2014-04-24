@@ -623,24 +623,24 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void SetCameraPictureSize()
 	{
-		Camera camera = CameraController.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		if (Integer.parseInt(ModePreference) != 1)
-		{
-			cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-			cp.setJpegQuality(100);
-		}
-        
-		try
-        {
-			CameraController.getInstance().setCameraParameters(cp);
-		}
-		catch(RuntimeException e)
-	    {
-	    	Log.e("NightCapturePlugin", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
-	    }
+//		Camera camera = CameraController.getCamera();
+//    	if (null==camera)
+//    		return;
+//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//		if (Integer.parseInt(ModePreference) != 1)
+//		{
+//			cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+//			cp.setJpegQuality(100);
+//		}
+//        
+//		try
+//        {
+//			CameraController.getInstance().setCameraParameters(cp);
+//		}
+//		catch(RuntimeException e)
+//	    {
+//	    	Log.e("NightCapturePlugin", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
+//	    }
 		
 		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 		if(sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT))
@@ -655,7 +655,6 @@ public class NightCapturePlugin extends PluginCapture
         
         try
         { 
-        	//TODO: Re-factor for HALv3
 //	        if (FocusPreference.compareTo("0") == 0)
 //	        {
 //	        	if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_FIXED))
@@ -683,6 +682,32 @@ public class NightCapturePlugin extends PluginCapture
 //			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, sUserFocusMode).commit();
 //			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString("SceneModeValue", cp.getSceneMode()).commit();
 	    	
+        	byte[] focusModes = CameraController.getInstance().getSupportedFocusModes();
+			if(focusModes != null)
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		    	SharedPreferences.Editor editor = prefs.edit(); 
+		    	
+				if (FocusPreference.compareTo("0") == 0)
+		        {
+		        	if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
+		        	{
+		        		CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED);	// should set to hyperfocal distance as per android doc
+		        		editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
+		        	}
+			        else if(CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
+			        {
+			        	CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+			        	editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+			        }
+		        }
+		        else if(CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
+		        {
+		        	CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+		        	editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+		        }
+			}
+			
 	    	Log.i("NightCapturePlugin", "MainScreen.setupCamera setFocusMode success");
 	    }
 	    catch(RuntimeException e)
@@ -692,24 +717,35 @@ public class NightCapturePlugin extends PluginCapture
         
         try
         {
-			if (cp.getSupportedFlashModes() != null)
-	        {				
-				//On some models, as Nexus 4, flash mode can't be controlled by user in scene mode NIGHT
-				//Device automatically set flash mode to 'auto'
-				//For such cases we change scene mode to AUTO and set flash mode to FLASH_MODE_OFF in free version				
-				cp = CameraController.getInstance().getCameraParameters();
-				String sSystemFlashMode = cp.getFlashMode();
+//			if (cp.getSupportedFlashModes() != null)
+//	        {				
+//				//On some models, as Nexus 4, flash mode can't be controlled by user in scene mode NIGHT
+//				//Device automatically set flash mode to 'auto'
+//				//For such cases we change scene mode to AUTO and set flash mode to FLASH_MODE_OFF in free version				
+//				cp = CameraController.getInstance().getCameraParameters();
+//				String sSystemFlashMode = cp.getFlashMode();
+//				
+//				
+//				if(Camera.Parameters.FLASH_MODE_OFF.compareTo(sSystemFlashMode) != 0)
+//				{
+//					cp.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+//					cp.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+//					CameraController.getInstance().setCameraParameters(cp);
+//				}
+//				
+//				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString("FlashModeValue", Camera.Parameters.FLASH_MODE_OFF).commit();
+//	        }
+			
+			byte[] flashModes = CameraController.getInstance().getSupportedFlashModes();
+			if(flashModes != null)
+			{
+				CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 				
-				
-				if(Camera.Parameters.FLASH_MODE_OFF.compareTo(sSystemFlashMode) != 0)
-				{
-					cp.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
-					cp.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-					CameraController.getInstance().setCameraParameters(cp);
-				}
-				
-				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString("FlashModeValue", Camera.Parameters.FLASH_MODE_OFF).commit();
-	        }
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		    	SharedPreferences.Editor editor = prefs.edit();        	
+		    	editor.putInt("FlashModeValue", CameraParameters.FLASH_MODE_OFF);
+		    	editor.commit();
+			}
         }
         catch(RuntimeException e)
         {

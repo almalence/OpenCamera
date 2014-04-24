@@ -72,6 +72,16 @@ JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
 	return result;
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_YuvImage_RemoveFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	free((void*)yuv[index]);
+}
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_YuvImage_GetFrame
 (
 	JNIEnv* env,

@@ -239,6 +239,7 @@ public class YuvImage {
     // Return: pointer to the frame data in heap converted to int
     public static synchronized native int GetFrame(int frame);
     public static synchronized native byte[] GetByteFrame(int frame);
+    public static synchronized native void RemoveFrame(int frame);
 
     // Return: error status (0 = all ok)
     public static synchronized native int CreateYUVImage(

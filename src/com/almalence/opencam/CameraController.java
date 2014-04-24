@@ -2175,6 +2175,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		PluginManager.getInstance().onPreviewFrame(data, paramCamera);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 	}
+	
+	
+	public static void setPreviewCallbackWithBuffer()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+			CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().pviewBuffer);
+		}
+	}
 	//^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 	
 	
