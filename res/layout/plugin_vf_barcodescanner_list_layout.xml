@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="400dp"
+    android:orientation="vertical" 
+    android:padding="10dp">
 
+    
+    <LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:gravity="right">    
+	    
+			<Button
+			    android:id="@+id/clearBarcodesButton"
+			    android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content"
+	            android:text="@string/Clear_Barcodes_List"
+	            android:onClick="onClick" />
+    </LinearLayout>
+    
+    <View android:id="@+id/separator" 
+			android:background="#ffffff" 
+			android:layout_width = "match_parent"
+			android:layout_height="1dip"
+			android:layout_centerVertical ="true"
+			android:layout_alignParentTop="true"/>
+    
     <ListView
         android:id="@+id/barcodesHistoryList"
         android:layout_width="match_parent"

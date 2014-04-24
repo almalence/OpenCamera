@@ -1,6 +1,7 @@
 package com.almalence.plugins.vf.barcodescanner;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,8 +68,28 @@ public class BarcodeStorageHelper {
 		
 		if (position >= 0) {
 			barcodesList.remove(position);
+			if (barcode.getmFile() != null) {
+				File file = new File(barcode.getmFile());
+				if (file.exists()) {
+					file.delete();
+				}
+			}
 			saveBarcodesToFile();
 		}
+	}
+	
+	public static void removeAll() {
+		for (Barcode barcode : barcodesList) {
+			if (barcode.getmFile() != null) {
+				File file = new File(barcode.getmFile());
+				if (file.exists()) {
+					file.delete();
+				}
+			}	
+		}
+		
+		barcodesList.clear();
+		saveBarcodesToFile();
 	}
 	
 	public static ArrayList<Barcode> getBarcodesList() {

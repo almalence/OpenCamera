@@ -257,10 +257,10 @@ public class ZoomVFPlugin extends PluginViewfinder
 		zoomPanelWidth = MainScreen.thiz.getResources().getDrawable(R.drawable.scrubber_control_pressed_holo).getMinimumWidth();
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
-		params.setMargins(-zoomPanelWidth/2, 0, 0, 0);
+		params.setMargins(-zoomPanelWidth/2, 300, 0, 0);
 		params.height = mainLayoutHeight/2;
 		
-		params.addRule(RelativeLayout.CENTER_VERTICAL);
+//		params.addRule(RelativeLayout.CENTER_VERTICAL);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.zoomPanel, params);
@@ -447,7 +447,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					zoomPanel.clearAnimation();
 					return;
 				}
-				params.setMargins(-zoomPanelWidth/2, 0, 0, 0);
+				params.setMargins(-zoomPanelWidth/2, 300, 0, 0);
 				zoomPanel.setLayoutParams(params);				
 				zoomPanel.clearAnimation();
 				
@@ -486,7 +486,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)zoomPanel.getLayoutParams();
-				params.setMargins(0, 0, 0, 0);
+				params.setMargins(0, 300, 0, 0);
 				zoomPanel.setLayoutParams(params);
 			
 				zoomPanel.clearAnimation();

@@ -11,6 +11,7 @@ public class Barcode implements Serializable {
 	private String mFormat;
 	private String mType;
 	private Date mDate;
+	private String mFile;
 	
 	public Barcode(String data, String format, String type, Date date) {
 		this.mData = data;
@@ -24,6 +25,14 @@ public class Barcode implements Serializable {
 		this.mFormat = barcode.getBarcodeFormat().toString();
 		this.mType = ResultParser.parseResult(barcode).getType().toString();
 		this.mDate = new Date(barcode.getTimestamp());
+	}
+	
+	public Barcode (Result barcode, String file) {
+		this.mData = barcode.toString();
+		this.mFormat = barcode.getBarcodeFormat().toString();
+		this.mType = ResultParser.parseResult(barcode).getType().toString();
+		this.mDate = new Date(barcode.getTimestamp());
+		this.mFile = file;
 	}
 	
 	public String getData() {
@@ -49,5 +58,13 @@ public class Barcode implements Serializable {
 	}
 	public void setDate(Date date) {
 		this.mDate = date;
+	}
+
+	public String getmFile() {
+		return mFile;
+	}
+
+	public void setmFile(String mFile) {
+		this.mFile = mFile;
 	}	
 }

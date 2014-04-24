@@ -2,18 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="10dp" >
 
+    <ImageView
+        android:id="@+id/barcodeImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_weight="4" />
+    
     <TextView
         android:id="@+id/dataTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_weight="4"
+        android:autoLink="web"
+        android:textIsSelectable="true"/>
 
     <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_weight="1">
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
@@ -30,7 +43,8 @@
     <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_weight="1">
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
@@ -47,7 +61,8 @@
     <LinearLayout
           android:orientation="horizontal"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_weight="1">
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
@@ -61,15 +76,25 @@
 		        android:textSize="14sp" />
      </LinearLayout>
     
-    <Button
-        android:id="@+id/dialogButtonOK"
-        android:layout_width="100px"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text=" Ok "
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/image"
-       />
+    <LinearLayout android:id="@+id/result_button_view"
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="center"
+                  android:layout_weight="2">
+
+      <Button style="@style/ResultButton"
+              android:visibility="gone"/>
+
+      <Button style="@style/ResultButton"
+              android:visibility="gone"/>
+
+      <Button style="@style/ResultButton"
+              android:visibility="gone"/>
+
+      <Button style="@style/ResultButton"
+              android:visibility="gone"/>
+
+    </LinearLayout>
     
 </LinearLayout>
