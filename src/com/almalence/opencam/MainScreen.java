@@ -2182,15 +2182,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
         
         
         //Samsung store
-        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
-        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
-        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
-        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
-        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
+//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
+//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
+//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+//        
+//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
+//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
+
         
-        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
-        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
-//
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_TSTORE, "tstore_sku_gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_SAMSUNG, "100000100696/000001003744");
@@ -2638,7 +2639,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String payload = "";
 		try 
 		{
-			guiManager.hideStore();
+			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
 					SKU_UNLOCK_ALL, ALL_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
@@ -2659,7 +2660,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String payload = "";
 		try 
 		{
-			guiManager.hideStore();
+			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
 					SKU_HDR, HDR_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
@@ -2680,7 +2681,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String payload = "";
 		try 
 		{
-			guiManager.hideStore();
+			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
 					SKU_PANORAMA,
 					PANORAMA_REQUEST,
@@ -2703,7 +2704,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String payload = "";
 		try 
 		{
-			guiManager.hideStore();
+			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
 					SKU_MOVING_SEQ,
 					OBJECTREM_BURST_REQUEST,
@@ -2726,7 +2727,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		String payload = "";
 		try 
 		{
-			guiManager.hideStore();
+			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
 					SKU_GROUPSHOT,
 					GROUPSHOT_REQUEST,

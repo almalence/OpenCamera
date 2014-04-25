@@ -4,15 +4,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
-      android:versionCode="55"
-      android:versionName="3.19">
+      android:versionCode="56"
+      android:versionName="3.20">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="62"
-      android:versionName="3.19">
+      android:versionCode="63"
+      android:versionName="3.20">
 <!--  -+- -->
 
     <supports-screens       
@@ -81,14 +81,7 @@
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
-		
-	<!-- 	
-		<receiver android:name=".HWButtonStart">
-            <intent-filter>
-                <action android:name="android.intent.action.CAMERA_BUTTON" />
-            </intent-filter>
-        </receiver>
--->		
+
 		<!-- Uncomment for Amazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
 	    	<intent-filter>
