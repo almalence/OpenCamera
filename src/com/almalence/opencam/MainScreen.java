@@ -127,7 +127,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = true;	
+	public static boolean isHALv3 = false;	
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -620,23 +620,27 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		MainScreen.cameraController.onStop();
 		
 		if(isHALv3)
+			stopImageReaders();
+	}
+	
+	@TargetApi(19)
+	private void stopImageReaders()
+	{
+		// IamgeReader should be closed
+		if (mImageReaderPreviewYUV != null)
 		{
-			// IamgeReader should be closed
-			if (mImageReaderPreviewYUV != null)
-			{
-				mImageReaderPreviewYUV.close();
-				mImageReaderPreviewYUV = null;
-			}
-			if (mImageReaderYUV != null)
-			{
-				mImageReaderYUV.close();
-				mImageReaderYUV = null;
-			}
-			if (mImageReaderJPEG != null)
-			{
-				mImageReaderJPEG.close();
-				mImageReaderJPEG = null;
-			}
+			mImageReaderPreviewYUV.close();
+			mImageReaderPreviewYUV = null;
+		}
+		if (mImageReaderYUV != null)
+		{
+			mImageReaderYUV.close();
+			mImageReaderYUV = null;
+		}
+		if (mImageReaderJPEG != null)
+		{
+			mImageReaderJPEG.close();
+			mImageReaderJPEG = null;
 		}
 	}
 
@@ -717,7 +721,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}
 
-		if (glView != null && CameraController.camDevice != null)
+		if (glView != null && CameraController.HALv3.camDevice != null)
 			glView.onResume();
 		
 		PluginManager.getInstance().onGUICreate();
@@ -909,56 +913,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		Log.e("MainScreen", "configureCamera()");
 		// prepare list of surfaces to be used in capture requests
 		if(isHALv3)
-		{
-			List<Surface> sfl = new ArrayList<Surface>();
-			
-			sfl.add(mCameraSurface);				// surface for viewfinder preview
-			sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
-			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-			//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
-			
-			cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
-	
-			guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
-			//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
-			// configure camera with all the surfaces to be ever used
-			try {
-				CameraController.camDevice.configureOutputs(sfl);
-			} catch (CameraAccessException e)	{
-				Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
-				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) 
-			{
-				Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
-				e.printStackTrace();
-			}
-			catch (IllegalStateException e) 
-			{
-				Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
-				e.printStackTrace();
-			}
-			
-			try
-			{
-				cameraController.previewRequestBuilder = CameraController.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-				cameraController.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-				cameraController.previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
-				cameraController.previewRequestBuilder.addTarget(mCameraSurface);
-				cameraController.previewRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
-				try {
-					CameraController.camDevice.setRepeatingRequest(cameraController.previewRequestBuilder.build(), cameraController.new captureListener(), null);
-				} catch (CameraAccessException e) {
-					e.printStackTrace();
-				}
-			}
-			catch (CameraAccessException e)
-			{
-				Log.d("MainScreen", "setting up preview failed");
-				e.printStackTrace();
-			}
-			// ^^ HALv3 code -------------------------------------------------------------------
-		}
+			configureHALv3Camera();
 		else
 		{
 			// ----- Select preview dimensions with ratio correspondent to full-size
@@ -1089,6 +1044,60 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}.start();		
 	}
+	
+	
+	@TargetApi(19)
+	private void configureHALv3Camera()
+	{
+		List<Surface> sfl = new ArrayList<Surface>();
+		
+		sfl.add(mCameraSurface);				// surface for viewfinder preview
+		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
+		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+		//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+		
+		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+
+		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
+		//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
+		// configure camera with all the surfaces to be ever used
+		try {
+			CameraController.HALv3.camDevice.configureOutputs(sfl);
+		} catch (CameraAccessException e)	{
+			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
+			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e) 
+		{
+			Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
+			e.printStackTrace();
+		}
+		catch (IllegalStateException e) 
+		{
+			Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
+			e.printStackTrace();
+		}
+		
+		try
+		{
+			CameraController.HALv3.previewRequestBuilder = CameraController.HALv3.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+			CameraController.HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+			CameraController.HALv3.previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
+			CameraController.HALv3.previewRequestBuilder.addTarget(mCameraSurface);
+			CameraController.HALv3.previewRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
+			try {
+				CameraController.HALv3.camDevice.setRepeatingRequest(CameraController.HALv3.previewRequestBuilder.build(), cameraController.new captureListener(), null);
+			} catch (CameraAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		catch (CameraAccessException e)
+		{
+			Log.d("MainScreen", "setting up preview failed");
+			e.printStackTrace();
+		}
+		// ^^ HALv3 code -------------------------------------------------------------------		
+	}
 		
 	
 	private void prepareMeteringAreas()
@@ -1159,12 +1168,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			return false;
 	}
 
-	public Size getPreviewSize() {
+	public CameraController.Size getPreviewSize() {
 		LayoutParams lp = preview.getLayoutParams();
 		if (lp == null)
 			return null;
 
-		return new Size(lp.width, lp.height);		
+		return cameraController.new Size(lp.width, lp.height);		
 	}
 
 	public int getPreviewWidth() {
@@ -1413,7 +1422,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 					// if both surface is created and camera device is opened
 					// - ready to set up preview and other things
-					if (surfaceCreated && (CameraController.camDevice != null))
+					if (surfaceCreated && (CameraController.HALv3.camDevice != null))
 					{
 						configureCamera();
 						PluginManager.getInstance().onGUICreate();

@@ -438,8 +438,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 //			this.viewAngleY = cp.getVerticalViewAngle();
 			
 			//TODO: Temporary default values. HALv3 not supported view angles yet.
-			this.viewAngleX = 55.4f;
-			this.viewAngleY = 42.7f;
+			this.viewAngleX = 59.63f;
+			this.viewAngleY = 46.66f;
 			
 			// some devices report incorrect FOV values, use typical view angles then
 			if (this.viewAngleX >= 150)
@@ -1055,7 +1055,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	try 
     	{
-			CameraController.captureImage(1, ImageFormat.YUV_420_888);
+			CameraController.captureImage(1, ImageFormat.JPEG);
 		}
     	catch (Exception e)
 		{

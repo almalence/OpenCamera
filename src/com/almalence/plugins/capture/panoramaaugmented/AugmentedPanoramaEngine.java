@@ -18,6 +18,10 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -38,6 +42,7 @@ import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -1422,6 +1427,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			    						AugmentedPanoramaEngine.this.textureHeight,
 			    						MainScreen.getCameraMirrored());
 				    			else
+				    			{
 				    				ImageConversion.convertNV21toGL(
 				    						data,
 				    						AugmentedFrameTaken.this.rgba_buffer.array(),
@@ -1429,6 +1435,23 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    						AugmentedPanoramaEngine.this.height,
 				    						AugmentedPanoramaEngine.this.textureWidth,
 				    						AugmentedPanoramaEngine.this.textureHeight);
+				    				
+				    				File saveDir = PluginManager.getInstance().GetSaveDir();
+				    				File yourFile = new File(
+						            		saveDir, 
+						            		"PANORAMA_ARGB.jpg");
+				    				BufferedOutputStream bos;
+									try {
+										bos = new BufferedOutputStream(new FileOutputStream(yourFile));
+										bos.write(AugmentedFrameTaken.this.rgba_buffer.array());
+					    				bos.flush();
+					    				bos.close();
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+				    				
+				    			}
 			    				
 			    				MainScreen.thiz.queueGLEvent(new Runnable()
 			    				{
