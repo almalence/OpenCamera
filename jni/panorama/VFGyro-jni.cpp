@@ -418,13 +418,18 @@ JNIEXPORT jlong JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfG
 		for (i=0; i<3; ++i)
 		{
 			bin = (int)( (gyro_data[i]+MAX_DRIFT_RADS)*HIST_SCALE + 0.5f );
-			drift_hist[i][bin] += 1.0f;
+			if ((bin>=0) && (bin<DRIFT_PRECISION)) drift_hist[i][bin] += 1.0f;
 
 			// dampen histogram to allow newly arriving values to influence
 			// dampen coefficient is selected to dampen histogram about twice after 250 runs
 			// assuming typical 50fps from gyro - this amounts to 5sec
 			for (j=0; j<DRIFT_PRECISION; ++j)
+			{
 				drift_hist[i][j] *= 1-0.002f;
+				// ensure there are no denormalized values
+				if (drift_hist[i][j]<0.1f)
+					drift_hist[i][j] = 0;
+			}
 
 			// find histogram peak
 			peak_idx = 0;
@@ -446,7 +451,7 @@ JNIEXPORT jlong JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfG
 				// combine data from neighboring bins to increase precision
 				sum = 0;
 				prec_peak = 0;
-				for (j=max(0,peak_idx-2); j<min(DRIFT_PRECISION,peak_idx+2); ++j)
+				for (j=max(0,peak_idx-2); j<min(DRIFT_PRECISION,peak_idx+3); ++j)
 				{
 					sum += drift_hist[i][j];
 					prec_peak += j*drift_hist[i][j];
