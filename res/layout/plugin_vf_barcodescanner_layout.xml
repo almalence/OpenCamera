@@ -11,14 +11,9 @@
 				android:id="@+id/buttonBarcodesList"
 				android:src="@drawable/gui_almalence_settings_scene_barcode"				
 				android:background="@android:color/transparent"			
-				android:layout_height="@dimen/aeawlock_size"
-				android:layout_width="@dimen/aeawlock_size"								
-				android:scaleType="fitCenter"
-				android:paddingLeft="0dp"
-				android:paddingRight="0dp"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-				android:layout_marginRight="@dimen/aeawlock_margin"				
+				android:layout_height="35dp"
+				android:layout_width="35dp"								
+				android:scaleType="fitCenter"			
 		   		android:layout_gravity="center"		   		
 		   		android:onClick="onButtonClick">
 		 	</com.almalence.ui.RotateImageView>
