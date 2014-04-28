@@ -29,6 +29,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -916,9 +917,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 	}
 	
+	@TargetApi(19)
 	@Override
 	public void onPreviewAvailable(Image im)
-	{		
+	{
 		this.previewRestartFlag = false;
 		
 		if (!this.prefHardwareGyroscope)
@@ -1145,7 +1147,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 	}
 	
-	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{

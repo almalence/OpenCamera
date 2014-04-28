@@ -5,6 +5,7 @@ public final class CameraParameters
 	private CameraParameters(){}
 	
 	//SCENE
+	public final static int SCENE_MODE_UNSUPPORTED = 0;
 	public final static int SCENE_MODE_AUTO = 1;
 	public final static int SCENE_MODE_ACTION = 2;
 	public final static int SCENE_MODE_PORTRAIT = 3;
@@ -48,6 +49,15 @@ public final class CameraParameters
 	public final static int FLASH_MODE_TORCH = 2;
 	public final static int FLASH_MODE_AUTO = 3;
 	public final static int FLASH_MODE_REDEYE = 4;
+	
+	//ISO
+	public final static int ISO_50 = 0;
+	public final static int ISO_100 = 1;
+	public final static int ISO_200 = 2;
+	public final static int ISO_400 = 3;
+	public final static int ISO_800 = 4;
+	public final static int ISO_1600 = 5;
+	public final static int ISO_3200 = 6;
 	
 	//Possible names of iso in Camera.Parameters variable
 	public final static String isoParam = "iso";

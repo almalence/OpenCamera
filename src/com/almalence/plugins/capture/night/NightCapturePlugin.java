@@ -28,6 +28,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -1195,6 +1196,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{
@@ -1398,6 +1400,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	
+	@TargetApi(19)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{

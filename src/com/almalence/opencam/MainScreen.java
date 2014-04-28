@@ -45,14 +45,6 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.Size;
 import android.media.AudioManager;
 import android.media.ImageReader;
 import android.media.MediaPlayer;
@@ -89,7 +81,6 @@ import android.widget.Toast;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
-import com.almalence.opencam.CameraController.captureListener;
 //<!-- -+-
 import com.almalence.opencam.billing.IabHelper;
 import com.almalence.opencam.billing.IabResult;
@@ -367,7 +358,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		AppWidgetNotifier.app_launched(this);
 		
 		
+		try{
 		cameraController = CameraController.getInstance();
+		}
+		catch(VerifyError exp)
+		{
+			Log.e("MainScreen", exp.getMessage());
+		}
 		cameraController.onCreate();	
 		
 		
@@ -721,7 +718,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 		}
 
-		if (glView != null && CameraController.HALv3.camDevice != null)
+		if (glView != null)
 			glView.onResume();
 		
 		PluginManager.getInstance().onGUICreate();
@@ -965,7 +962,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		CameraController.supportedFlashModes = cameraController.getSupportedFlashModes();
 		CameraController.supportedISOModes = cameraController.getSupportedISO();
 		
-		CameraController.maxRegionsSupported = cameraController.getMaxNumMeteringAreas();
+		CameraController.maxRegionsSupported = cameraController.getMaxNumFocusAreas();
 
 		PluginManager.getInstance().SetCameraPictureSize();
 		PluginManager.getInstance().SetupCameraParameters();
@@ -1062,36 +1059,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
 		// configure camera with all the surfaces to be ever used
 		try {
-			CameraController.HALv3.camDevice.configureOutputs(sfl);
-		} catch (CameraAccessException e)	{
+			HALv3.getInstance().camDevice.configureOutputs(sfl);
+		} catch (Exception e)	{
 			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
 			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e) 
-		{
-			Log.e("MainScreen", "configureOutputs failed. IllegalArgumentException");
-			e.printStackTrace();
-		}
-		catch (IllegalStateException e) 
-		{
-			Log.e("MainScreen", "configureOutputs failed. IllegalStateException");
-			e.printStackTrace();
-		}
+		}		
 		
 		try
 		{
-			CameraController.HALv3.previewRequestBuilder = CameraController.HALv3.camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-			CameraController.HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-			CameraController.HALv3.previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
-			CameraController.HALv3.previewRequestBuilder.addTarget(mCameraSurface);
-			CameraController.HALv3.previewRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
-			try {
-				CameraController.HALv3.camDevice.setRepeatingRequest(CameraController.HALv3.previewRequestBuilder.build(), cameraController.new captureListener(), null);
-			} catch (CameraAccessException e) {
-				e.printStackTrace();
-			}
+			HALv3.getInstance().configurePreviewRequest();
+			
 		}
-		catch (CameraAccessException e)
+		catch (Exception e)
 		{
 			Log.d("MainScreen", "setting up preview failed");
 			e.printStackTrace();
@@ -1159,6 +1138,21 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		surfaceCreated = false;
 		surfaceJustCreated = false;
 	}
+	
+	
+	//SURFACES (preview, image readers)
+	public Surface getCameraSurface()
+	{
+		return mCameraSurface;
+	}
+	
+	@TargetApi(19)
+	public Surface getPreviewYUVSurface()
+	{
+		return mImageReaderPreviewYUV.getSurface();
+	}
+	
+	
 
 	@TargetApi(14)
 	public boolean isFaceDetectionAvailable(Camera.Parameters params) {
@@ -1422,7 +1416,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 					// if both surface is created and camera device is opened
 					// - ready to set up preview and other things
-					if (surfaceCreated && (CameraController.HALv3.camDevice != null))
+					if (surfaceCreated && (HALv3.getInstance().camDevice != null))
 					{
 						configureCamera();
 						PluginManager.getInstance().onGUICreate();

@@ -21,6 +21,7 @@ package com.almalence.plugins.capture.objectremoval;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -219,7 +220,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			return;
 		}
 		if (imagesTaken < imageAmount)
+		{
+			inCapture = false;
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		}
 		else
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
@@ -242,6 +246,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	}
 	
 	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{
