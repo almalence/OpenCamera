@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
-import android.graphics.Point;
 
 import com.almalence.opencam.MainScreen;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class BarcodeStorageHelper {
 	
@@ -29,6 +31,8 @@ public class BarcodeStorageHelper {
 		saveBarcodesToFile();
 	}
 	
+	// Search for barcode.
+	// Return pos, or -1 if not found.
 	private static int searchForBarcode(Barcode barcode) {
 		if (barcodesList == null) {
 			readBarcodesFromFile();
@@ -49,15 +53,32 @@ public class BarcodeStorageHelper {
 	}
 	
 	private static void saveBarcodesToFile() {
-		Gson gson = new Gson();
-		String json = gson.toJson(barcodesList);
-		writeToFile(json);
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < barcodesList.size(); i++) {
+			jsonArray.put(barcodesList.get(i).getJSONObject());
+		}
+		writeToFile(jsonArray.toString());
 	}
 	
 	private static void readBarcodesFromFile() {
-		Gson gson = new Gson();
 		String json = readFromFile();
-		barcodesList = gson.fromJson(json, new TypeToken<ArrayList<Barcode>>(){}.getType());
+		try {
+			barcodesList = new ArrayList<Barcode>();
+			JSONArray array = new JSONArray(json);
+			for (int i = 0; i < array.length(); i++) {
+				JSONObject item = array.getJSONObject(i);
+				Barcode barcode = new Barcode(
+						item.getString("data"),
+						item.getString("format"),
+						item.getString("type"),
+						new Date(item.getLong("date")),
+						item.getString("file")
+					);
+				barcodesList.add(barcode);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		if (barcodesList == null) {
 			barcodesList = new ArrayList<Barcode>();
 		}
@@ -68,8 +89,8 @@ public class BarcodeStorageHelper {
 		
 		if (position >= 0) {
 			barcodesList.remove(position);
-			if (barcode.getmFile() != null) {
-				File file = new File(barcode.getmFile());
+			if (barcode.getFile() != null) {
+				File file = new File(barcode.getFile());
 				if (file.exists()) {
 					file.delete();
 				}
@@ -80,8 +101,8 @@ public class BarcodeStorageHelper {
 	
 	public static void removeAll() {
 		for (Barcode barcode : barcodesList) {
-			if (barcode.getmFile() != null) {
-				File file = new File(barcode.getmFile());
+			if (barcode.getFile() != null) {
+				File file = new File(barcode.getFile());
 				if (file.exists()) {
 					file.delete();
 				}
@@ -98,10 +119,6 @@ public class BarcodeStorageHelper {
 		}
 		
 		return barcodesList;
-	}
-	
-	public static void getBarcodeInfo() {
-		
 	}
 	
 	private static void writeToFile(String data) {
@@ -144,5 +161,4 @@ public class BarcodeStorageHelper {
 	    
 	    return readString;
 	}
-
 }

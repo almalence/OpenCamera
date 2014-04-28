@@ -525,6 +525,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			// Some bugged camera drivers pop ridiculous exception here 
 		}
 
+		// Some cameras (eg Htc One) report incorrect vertical view angle,
+		// probably computed from assumption of 4:3 aspect ratio
+		// If aspect ratio from FOV is 10% below from aspect ratio from W/H
+		// - re-compute vertical view angle
+		if ((float)this.pictureWidth / (float)this.pictureHeight > 1.1f * this.viewAngleX/this.viewAngleY)
+			this.viewAngleY = this.viewAngleX*this.pictureHeight/this.pictureWidth;
+		
     	MainScreen.thiz.setCameraParameters(cp);
     	
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);

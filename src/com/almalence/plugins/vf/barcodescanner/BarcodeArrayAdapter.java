@@ -40,7 +40,13 @@ public class BarcodeArrayAdapter extends ArrayAdapter<Barcode> {
             holder = (ViewHolder) rowView.getTag();
         }
         
-        holder.textView.setText(values.get(position).getData());
+        String text = values.get(position).getData();
+        int length = values.get(position).getData().length();
+        if (length > 25) {
+        	length = 25;
+        	text = text.substring(0, length-1) + "...";
+        }
+        holder.textView.setText(text);
         return rowView;
     }
 }

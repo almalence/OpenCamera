@@ -9,41 +9,30 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
@@ -51,12 +40,8 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
-import com.almalence.plugins.vf.barcodescanner.result.ResultButtonListener;
-import com.almalence.plugins.vf.barcodescanner.result.ResultHandler;
-import com.almalence.plugins.vf.barcodescanner.result.ResultHandlerFactory;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.ImageConversion;
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
@@ -67,18 +52,18 @@ import com.google.zxing.common.HybridBinarizer;
 public class BarcodeScannerVFPlugin extends PluginViewfinder {
     
 	private static final double BOUNDS_FRACTION = 0.6;
-	BoundingView mBound = null;
 	private final static Boolean ON = true;
 	private final static Boolean OFF = false;
+	  
 	private final MultiFormatReader mMultiFormatReader = new MultiFormatReader();
 	private SoundPlayer mSoundPlayer = null;
-	BarcodeArrayAdapter mAdapter = null;
 	public static Boolean mBarcodeScannerState = OFF;
 	private int mFrameCounter = 0;
-	
+	private BoundingView mBound = null;
 	private RotateImageView mBarcodesListButton;
 	private View mButtonsLayout;
-	
+	private BarcodeHistoryListDialog barcodeHistoryDialog;
+	private BarcodeViewDialog barcodeViewDialog;
 	
 	public BarcodeScannerVFPlugin()
 	{
@@ -88,21 +73,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			  R.drawable.gui_almalence_settings_scene_barcode_on,
 			  "Barcode scanner");
 	}
-
-	@Override
-	public void onCreate() {
-		mBound = new BoundingView(MainScreen.mainContext);
-		
-		clearViews();
-		addView(mBound, ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
-	}
 	
 	@Override
 	public void onResume() {
-		UpdatePreferences();
+		updatePreferences();
 	}
 	
-	void UpdatePreferences()
+	void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -116,6 +93,21 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
         showGUI();
 	}
+	
+	@Override
+    public void onOrientationChanged(int orientation) {
+		if (mBarcodesListButton != null) {
+			mBarcodesListButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+			mBarcodesListButton.invalidate();
+			mBarcodesListButton.requestLayout();    			
+		}
+		if (barcodeHistoryDialog != null) {
+			barcodeHistoryDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+		}
+		if (barcodeViewDialog != null) {
+			barcodeViewDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+		}
+    }
 	
 	@Override
 	public void onQuickControlClick()
@@ -133,16 +125,23 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		}
         editor.commit();
         
-        UpdatePreferences();
+        updatePreferences();
 	}
 	
+	/**
+     * Show or hide GUI elements of plugin. Depends on plugin state and history.
+     */
 	public void showGUI () {
 		if (mBarcodeScannerState == ON) {
 			if (mBound != null) {
 				mBound.setVisibility(View.VISIBLE);
 			}
 			if (mBarcodesListButton != null) {
-				mBarcodesListButton.setVisibility(View.VISIBLE);
+				if (BarcodeStorageHelper.getBarcodesList() != null && BarcodeStorageHelper.getBarcodesList().size() > 0) {
+					mBarcodesListButton.setVisibility(View.VISIBLE);
+				} else {
+					mBarcodesListButton.setVisibility(View.GONE);
+				}
 			}
 		} else {
 			if (mBound != null) {
@@ -154,7 +153,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		}
 	}
 	
-	public void initializeSoundPlayers() {
+	public void initializeSoundPlayer() {
         mSoundPlayer = new SoundPlayer(MainScreen.mainContext, MainScreen.mainContext.getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok));
     }
 	
@@ -167,7 +166,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	@Override
 	public void onCameraParametersSetup() {
-		initializeSoundPlayers();
+		initializeSoundPlayer();
 	}
 	
 	@Override
@@ -178,11 +177,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	@Override
 	public void onGUICreate() {
 		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
+    	if (null==camera) {
     		return;
+    	}
 		
-		if (mBound == null)
+		if (mBound == null) {
 			mBound = new BoundingView(MainScreen.mainContext);
+		}
 
 		clearViews();
 		addView(mBound, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
@@ -190,6 +191,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		showGUI();
 	}
 	
+	
+	/**
+	 *  Create history button.
+	 */
 	public void createScreenButton()
 	{
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
@@ -199,7 +204,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		mBarcodesListButton = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonBarcodesList);
 	
 		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
 		for(int i = 0; i < specialLayout.getChildCount(); i++)
 			specialView.add(specialLayout.getChildAt(i));
 
@@ -227,18 +232,16 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			
 		});
 		
-		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.topMargin = 200;
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mButtonsLayout, params);
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout, params);
 		
 		mButtonsLayout.setLayoutParams(params);
 		mButtonsLayout.requestLayout();
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
 		
 		mBarcodesListButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		mBarcodesListButton.invalidate();
@@ -246,32 +249,25 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	}
 	
 	protected void showBarcodesHistoryDialog() {
-		final Dialog dialog = new BarcodeHistoryListDialog(MainScreen.thiz);
+		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.thiz);
 
-		ListView barcodesHistoryListView = (ListView) dialog.findViewById(R.id.barcodesHistoryList);
-		mAdapter = new BarcodeArrayAdapter(MainScreen.thiz, BarcodeStorageHelper.getBarcodesList());
-		barcodesHistoryListView.setAdapter(mAdapter);
-		
-		TextView barcodesHistoryEmpty = (TextView) dialog.findViewById(R.id.barcodesHistoryEmpty);
-		if (mAdapter.getCount() > 0) {
-			barcodesHistoryEmpty.setVisibility(View.GONE);
-		}
-		
-		barcodesHistoryListView.setOnItemClickListener(new OnItemClickListener() {
+		barcodeHistoryDialog.list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Barcode barcode = mAdapter.getItem(position);
+				Barcode barcode = (Barcode) barcodeHistoryDialog.list.getAdapter().getItem(position);
 				showBarcodeViewDialog(barcode);
 			}
 		});
-		dialog.setOnDismissListener(new OnDismissListener() {
+		
+		barcodeHistoryDialog.setOnDismissListener(new OnDismissListener() {
 			public void onDismiss(DialogInterface dialog) {
 				mBarcodeScannerState = ON;
+				showGUI();
 			}
 		});
 		mBarcodeScannerState = OFF;
 
-		dialog.show();
+		barcodeHistoryDialog.show();
 	}
 
 	@Override
@@ -296,10 +292,14 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	}
 	
     public synchronized PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, Rect boundingRect) {
-        return new PlanarYUVLuminanceSource(data, width, height, boundingRect.left, boundingRect.top,
+    	return new PlanarYUVLuminanceSource(data, width, height, boundingRect.left, boundingRect.top,
                 boundingRect.width(), boundingRect.height(), false);
     }
 	
+    /**
+     *  Handle success decoded barcode.
+     * @param barcode
+     */
 	public void onDecoded(Barcode barcode) {
         BarcodeStorageHelper.addBarcode(barcode);
         
@@ -311,74 +311,18 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     }
 	
 	protected void showBarcodeViewDialog(Barcode barcode) {
-    	final Dialog dialog = new Dialog(MainScreen.thiz);
-    	dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
     	
-    	Rect displayRectangle = new Rect();
-    	Window window = MainScreen.thiz.getWindow();
-    	window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-
-    	// inflate and adjust layout
-    	LayoutInflater inflater = (LayoutInflater)MainScreen.thiz.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    	View layout = inflater.inflate(R.layout.plugin_vf_barcodescanner_view_layout, null);
-    	layout.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
-    	layout.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
-		dialog.setContentView(layout);
-		
-		Result result = new Result(barcode.getData(), null, null, BarcodeFormat.valueOf(barcode.getFormat()), barcode.getDate().getTime());
-		ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(MainScreen.thiz, result);
-
-		// set the custom dialog components - text, image and button
-		ImageView barcodeImageView = (ImageView) dialog.findViewById(R.id.barcodeImageView);
-		TextView dataTextView = (TextView) dialog.findViewById(R.id.dataTextView);
-		TextView formatTextView = (TextView) dialog.findViewById(R.id.formatTextView);
-		TextView typeTextView = (TextView) dialog.findViewById(R.id.typeTextView);
-		TextView timeTextView = (TextView) dialog.findViewById(R.id.timeTextView);
-		
-		File imgFile = null;
-		if (barcode.getmFile() != null) {
-			imgFile = new  File(barcode.getmFile());
-		}
-		if(imgFile != null && imgFile.exists()){
-		    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-		    barcodeImageView.setImageBitmap(myBitmap);
-		} else {
-			barcodeImageView.setImageResource(R.drawable.barcode_icon);;
-		}
-		dataTextView.setText(barcode.getData());
-		formatTextView.setText(barcode.getFormat());
-		typeTextView.setText(barcode.getType());
-		timeTextView.setText(barcode.getDate().toString());
-
-		int buttonCount = resultHandler.getButtonCount();
-	    ViewGroup buttonView = (ViewGroup) dialog.findViewById(R.id.result_button_view);
-	    buttonView.requestFocus();
-	    for (int x = 0; x < ResultHandler.MAX_BUTTON_COUNT; x++) {
-			TextView button = (TextView) buttonView.getChildAt(x);
-			if (x < buttonCount) {
-				button.setVisibility(View.VISIBLE);
-				button.setText(resultHandler.getButtonText(x));
-				button.setOnClickListener(new ResultButtonListener(resultHandler, x));
-			} else {
-				button.setVisibility(View.GONE);
-			}
-	    }
-//		Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
-//		dialogButton.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				dialog.dismiss();
-//			}
-//		});
-		
-		dialog.setOnDismissListener(new OnDismissListener() {
+    	showGUI();
+    	
+    	barcodeViewDialog.setOnDismissListener(new OnDismissListener() {
 			public void onDismiss(DialogInterface dialog) {
 				mBarcodeScannerState = ON;
 			}
 		});
 		
 		mBarcodeScannerState = OFF;
-		dialog.show();
+		barcodeViewDialog.show();
     }
 	
 	/**
@@ -466,7 +410,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 				datas[0] = dataRotated;
 				
 				
-				/******/
 				Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
 		        YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
 		        OutputStream outStream = null;
@@ -543,61 +486,20 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
         @Override
         protected void onDraw(Canvas canvas) {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setARGB(110, 110, 110, 50);
+            paint.setARGB(110, 128, 128, 128);
+            
+            int width = canvas.getWidth();
+            int height = canvas.getHeight();
             Rect boundingRect = getBoundingRectUi(canvas.getWidth(), canvas.getHeight());
-            canvas.drawRect(boundingRect, paint);
+            
+            
+            canvas.drawRect(0, 0, width, boundingRect.top, paint);
+            canvas.drawRect(0, boundingRect.top, boundingRect.left, boundingRect.bottom + 1, paint);
+            canvas.drawRect(boundingRect.right + 1, boundingRect.top, width, boundingRect.bottom + 1, paint);
+            canvas.drawRect(0, boundingRect.bottom + 1, width, height, paint);
             super.onDraw(canvas);
         }
     }
     
-    public class BarcodeHistoryListDialog extends Dialog implements android.view.View.OnClickListener {
-    	Context mainContext;
-    	ListView list;
-    	public BarcodeHistoryListDialog(Context context) {
-		    super(context);
-		    requestWindowFeature(Window.FEATURE_NO_TITLE);
-		    setContentView(R.layout.plugin_vf_barcodescanner_list_layout);
-		    mainContext = context;
-		    list = (ListView) findViewById(R.id.barcodesHistoryList);
-		    Button clearBarcodesButton = (Button) findViewById(R.id.clearBarcodesButton);
-		    clearBarcodesButton.setOnClickListener(this);
-		    registerForContextMenu(list);
-		}
-		
-		@Override
-		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-			super.onCreateContextMenu(menu, v, menuInfo);
-	        MenuInflater inflater = ((Activity) mainContext).getMenuInflater();
-	        inflater.inflate(R.menu.context_menu_plugin_vf_barcodescanner, menu);
-	        
-	        
-	        menu.getItem(0).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-	            public boolean onMenuItemClick(MenuItem item) {
-	            	AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-	                Barcode barcode = mAdapter.getItem(info.position);
-	                BarcodeStorageHelper.removeBarcode(barcode);
-	                mAdapter.notifyDataSetChanged();
-	                
-	                TextView barcodesHistoryEmpty = (TextView) findViewById(R.id.barcodesHistoryEmpty);
-	        		if (mAdapter.getCount() == 0) {
-	        			barcodesHistoryEmpty.setVisibility(View.VISIBLE);
-	        		}
-	                return true;
-	            }
-	        });
-		}
-
-		@Override
-		public void onClick(View v) {
-			if (v.getId() == R.id.clearBarcodesButton) {
-				BarcodeStorageHelper.removeAll();
-				mAdapter.notifyDataSetChanged();
-				
-				TextView barcodesHistoryEmpty = (TextView) findViewById(R.id.barcodesHistoryEmpty);
-        		if (mAdapter.getCount() == 0) {
-        			barcodesHistoryEmpty.setVisibility(View.VISIBLE);
-        		}
-			}
-		}
-    }
+    
 }
