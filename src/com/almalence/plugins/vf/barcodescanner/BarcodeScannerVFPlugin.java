@@ -176,19 +176,33 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	@Override
 	public void onGUICreate() {
+		clearViews();
+		createBoundView();
+		createScreenButton();
+		showGUI();
+	}
+	
+	/**
+	 * Create bound view.
+	 */
+	public void createBoundView() {
+		if (mBound != null) {
+			return;
+		}
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera) {
     		return;
     	}
 		
-		if (mBound == null) {
-			mBound = new BoundingView(MainScreen.mainContext);
-		}
-
-		clearViews();
-		addView(mBound, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
-		createScreenButton();
-		showGUI();
+		mBound = new BoundingView(MainScreen.mainContext);
+		mBound.setVisibility(View.VISIBLE);
+		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mBound, params);
+		
+		mBound.setLayoutParams(params);
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 	
 	
@@ -275,7 +289,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		if (mBarcodeScannerState == OFF)
 			return;
 		mFrameCounter++;
-		if (mFrameCounter != 20) {
+		if (mFrameCounter != 10) {
 			return;
 		}
 
@@ -301,6 +315,9 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
      * @param barcode
      */
 	public void onDecoded(Barcode barcode) {
+		if (mBarcodeScannerState == OFF) {
+			return;
+		}
         BarcodeStorageHelper.addBarcode(barcode);
         
         showBarcodeViewDialog(barcode);
@@ -401,60 +418,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	        }
 	        
 			if(rawResult != null) {
-				Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
-				int imageWidth = params.getPreviewSize().width;
-				int imageHeight = params.getPreviewSize().height;
-				
-				byte[] dataRotated = new byte[datas[0].length];
-				ImageConversion.TransformNV21(datas[0], dataRotated, imageWidth, imageHeight, 0, 0, 1);
-				datas[0] = dataRotated;
-				
-				
-				Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
-		        YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
-		        OutputStream outStream = null;
-		        
-		        Calendar d = Calendar.getInstance();
-		        String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-	            		d.get(Calendar.YEAR),
-	            		d.get(Calendar.MONTH)+1,
-	            		d.get(Calendar.DAY_OF_MONTH),
-	            		d.get(Calendar.HOUR_OF_DAY),
-	            		d.get(Calendar.MINUTE),
-	            		d.get(Calendar.SECOND));
-		        
-		        File saveDir = PluginManager.getInstance().GetSaveDir(false);
-		        file = new File(saveDir, fileFormat+".jpg");
-	            FileOutputStream os = null;
-	            try {
-	            	os = new FileOutputStream(file);
-		    	}
-		    	catch (Exception e) {
-		    		//save always if not working saving to sdcard
-		        	e.printStackTrace();
-		        	saveDir = PluginManager.getInstance().GetSaveDir(true);
-		        	file = new File(saveDir, fileFormat+".jpg");
-		        	try {
-						os = new FileOutputStream(file);
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					}
-		        }
-		        
-	            if (os != null) {
-	            	try {
-			            outStream = new FileOutputStream(file);
-			            img.compressToJpeg(rect, 100, outStream);
-			            outStream.flush();
-			            outStream.close();
-			        } 
-			        catch (FileNotFoundException e) {
-			            e.printStackTrace();
-			        }
-			        catch (IOException e) {
-			            e.printStackTrace();
-			        }	
-	            }
+				file = saveDecodedImageToFile(datas);
 			}
 	        
 			Barcode barcode = null;
@@ -473,6 +437,66 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
                 onDecoded(barcode);
             }
         }
+	}
+	
+	private synchronized File saveDecodedImageToFile(byte[]... datas) {
+		File file = null;
+		Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
+		int imageWidth = params.getPreviewSize().width;
+		int imageHeight = params.getPreviewSize().height;
+		
+		byte[] dataRotated = new byte[datas[0].length];
+		ImageConversion.TransformNV21(datas[0], dataRotated, imageWidth, imageHeight, 0, 0, 1);
+		datas[0] = dataRotated;
+		
+		
+		Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
+        YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
+        OutputStream outStream = null;
+        
+        Calendar d = Calendar.getInstance();
+        String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
+        		d.get(Calendar.YEAR),
+        		d.get(Calendar.MONTH)+1,
+        		d.get(Calendar.DAY_OF_MONTH),
+        		d.get(Calendar.HOUR_OF_DAY),
+        		d.get(Calendar.MINUTE),
+        		d.get(Calendar.SECOND));
+        
+        File saveDir = PluginManager.getInstance().GetSaveDir(false);
+        file = new File(saveDir, fileFormat+".jpg");
+        FileOutputStream os = null;
+        try {
+        	os = new FileOutputStream(file);
+    	}
+    	catch (Exception e) {
+    		//save always if not working saving to sdcard
+        	e.printStackTrace();
+        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+        	file = new File(saveDir, fileFormat+".jpg");
+        	try {
+				os = new FileOutputStream(file);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+        }
+        
+        if (os != null) {
+        	try {
+	            outStream = new FileOutputStream(file);
+	            img.compressToJpeg(rect, 100, outStream);
+	            outStream.flush();
+	            outStream.close();
+	        } 
+	        catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }	
+        }
+        
+        return file;
 	}
     
     /**
