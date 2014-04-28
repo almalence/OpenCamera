@@ -58,7 +58,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private static final int TIP_FRAMES_COUNT = 2;
 	
-	public static float FRAME_INTERSECTION_PART = 0.40f;	// how much panorama frames should intersect
 	public static final float FRAME_MISS_DISTANCE = 0.1f;	// maximum allowed miss from ideal frame position 
 	
 	public static final long FRAME_WHITE_FADE_IN = 500;
@@ -71,7 +70,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private static final ByteBuffer FRAME_LINE_INDICES_BUFFER;
 	private static final FloatBuffer FRAME_TEXTURE_UV;
 	private static final FloatBuffer FRAME_NORMALS;	
-	
+
+	private static float FrameIntersectionPart = 0.50f;	// how much panorama frames should intersect
+
 	
 	static
 	{	
@@ -235,6 +236,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private GL10 gl10 = null;
 	private volatile int framesMax;
 	
+	public static void setFrameIntersection(float Intersection)
+	{
+		FrameIntersectionPart = Intersection;
+	}
+	
 	public void reset(final int width, final int height, float verticalViewAngleR)
 	{
 		this.width = width;
@@ -261,11 +267,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		this.radiusGL = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
 
-		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FRAME_INTERSECTION_PART / 2) * this.width, this.radius);
+		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width, this.radius);
 
 		// this is the radius to the intersection of neighbor frames
-		this.radiusEdge = (float)(this.radius / Math.cos(HalfTileShiftAngle));
-		//this.radiusEdge = (float)(this.halfWidth / Math.sin(Math.toRadians(verticalViewAngle / 2.0f)));
+		// somehow setting it to the same value as radius to the center gives a more precise results
+		this.radiusEdge = this.radius;
+		//this.radiusEdge = (float)(this.radius / Math.cos(HalfTileShiftAngle));
 		
 		final int circle_frames = (int)Math.ceil(2.0f * Math.PI / (2.0f*HalfTileShiftAngle));
 		this.angleShift = (float)(2.0f * Math.PI / circle_frames);

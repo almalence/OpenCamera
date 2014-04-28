@@ -10,7 +10,7 @@
     	<ListPreference
 			android:title="@string/pref_plugin_capture_panoramaaugmented_frameoverlap_title"
 			android:key="pref_plugin_capture_panoramaaugmented_frameoverlap"
-			android:defaultValue="2"
+			android:defaultValue="1"
 			android:entries="@array/plugin_capture_panoramaaugmented_frameoverlapArray"
 			android:entryValues="@array/plugin_capture_panoramaaugmented_frameoverlapValues"/>
     	<ListPreference
