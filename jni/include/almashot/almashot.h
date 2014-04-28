@@ -231,13 +231,13 @@ void AlmaShot_ConvertNV12toNV16
 	int    sx,
 	int    sy
 );
-
-void AlmaShot_ConvertNV21toNV16
+    
+void AlmaShot_ConvertNV21toUYVY
 (
-	Uint8 *restrict in,
-	Uint8 *restrict out,
-	int    sx,
-	int    sy
+    Uint8 *restrict in,
+    Uint8 *restrict out,
+    int sx,
+    int sy
 );
 
 void AlmaShot_PauseProcessing(void);
