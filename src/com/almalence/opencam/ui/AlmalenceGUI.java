@@ -1111,21 +1111,12 @@ public class AlmalenceGUI extends GUI implements
 		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
 		store.setVisibility(View.VISIBLE);
 		store.bringToFront();
-		
-		Button closeStore = ((Button) guiView.findViewById(R.id.buttonCloseStore));
-		closeStore.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				hideStore();
-			}
-		});
-
-		
 	}
 	
 	@Override
 	public void hideStore()
 	{
-		((RelativeLayout) guiView.findViewById(R.id.storeLayout)).setVisibility(View.GONE);
+		((RelativeLayout) guiView.findViewById(R.id.storeLayout)).setVisibility(View.INVISIBLE);
 		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
@@ -3800,7 +3791,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.topmenu_background_qc));
+						.getDrawable(R.drawable.blacktansperentlayertop));
 
 		Set<Integer> topmenu_keys = topMenuButtons.keySet();
 		Iterator<Integer> it = topmenu_keys.iterator();
@@ -3840,7 +3831,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.topmenu_background));
+						.getDrawable(R.drawable.blacktansperentlayertop));
 
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_EV), isEVEnabled);

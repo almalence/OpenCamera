@@ -465,25 +465,25 @@ class HistogramRGBView extends View
 		super(context);
 
 		histPaintR = new Paint();
-		histPaintR.setColor(Color.RED);
+		histPaintR.setColor(16741779);
 		histPaintR.setStyle(Paint.Style.FILL);
 		histPaintR.setStrokeWidth(1);
 		histPaintR.setAntiAlias(true);
-		histPaintR.setAlpha(150);
+		histPaintR.setAlpha(180);
 
 		histPaintG = new Paint();
-		histPaintG.setColor(Color.GREEN);
+		histPaintG.setColor(7733176);
 		histPaintG.setStyle(Paint.Style.FILL);
 		histPaintG.setStrokeWidth(1);
 		histPaintG.setAntiAlias(true);
-		histPaintG.setAlpha(150);
+		histPaintG.setAlpha(180);
 
 		histPaintB = new Paint();
-		histPaintB.setColor(Color.BLUE);
+		histPaintB.setColor(8943103);
 		histPaintB.setStyle(Paint.Style.FILL);
 		histPaintB.setStrokeWidth(1);
 		histPaintB.setAntiAlias(true);
-		histPaintB.setAlpha(150);
+		histPaintB.setAlpha(180);
 	}
 
 	@Override
