@@ -48,4 +48,9 @@ public abstract class PluginCapture extends Plugin
 	
 	@Override
 	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);
+	
+	public boolean shouldPreviewToGPU()
+	{
+		return false;
+	}
 }

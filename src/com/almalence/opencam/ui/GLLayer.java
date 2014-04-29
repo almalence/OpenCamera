@@ -32,6 +32,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
 +++ --> */
@@ -40,10 +41,12 @@ import com.almalence.opencam.PluginManager;
 //-+- -->
 
 
-import com.almalence.plugins.capture.video.FramebufferEncoder;
+import com.almalence.plugins.capture.video.EglEncoder;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
@@ -58,6 +61,8 @@ import android.view.SurfaceHolder;
  */
 public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Renderer
 {
+	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
+	
 	public GLLayer(Context c)
 	{
 		super(c);
@@ -78,11 +83,10 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 			{
 				@Override
 				public EGLConfig chooseConfig(final EGL10 egl, final EGLDisplay display)
-				{
-					
+				{	
 		            EGLConfig[] configs = new EGLConfig[1];
 		            int[] numConfigs = new int[1];
-		            egl.eglChooseConfig(display, FramebufferEncoder.EGL_ATTRIB_LIST, configs, configs.length, numConfigs);
+		            egl.eglChooseConfig(display, EglEncoder.EGL_ATTRIB_LIST, configs, configs.length, numConfigs);
 		            
 		            return configs[0];
 				}
@@ -109,7 +113,27 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	 */
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
-	{		
+	{
+		final int[] tex = new int[1];
+		GLES20.glGenTextures(1, tex, 0);
+		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, tex[0]);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_S,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_T,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MIN_FILTER,
+				GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MAG_FILTER,
+				GLES20.GL_LINEAR);
+		
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 	}
 	

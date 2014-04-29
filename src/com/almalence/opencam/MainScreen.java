@@ -666,6 +666,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	protected void onResume()
 	{		
 		super.onResume();
+
+		if (glView != null)
+			glView.onResume();
 		
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
@@ -704,9 +707,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
 								.setVisibility(View.VISIBLE);
 						setupCamera(surfaceHolder);
-
-						if (glView != null && camera != null)
-							glView.onResume();
 
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.guiManager.onGUICreate();
@@ -923,16 +923,23 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().SelectDefaults();
 
 		// screen rotation
-		try {
-			camera.setDisplayOrientation(90);
-		} catch (RuntimeException e) {
-			e.printStackTrace();
+		if (PluginManager.getInstance().shouldPreviewToGPU())
+		{
+			
 		}
+		else
+		{
+			try {
+				camera.setDisplayOrientation(90);
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
 
-		try {
-			camera.setPreviewDisplay(holder);
-		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				camera.setPreviewDisplay(holder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (MainScreen.camera == null)

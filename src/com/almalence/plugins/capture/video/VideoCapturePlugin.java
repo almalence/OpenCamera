@@ -577,7 +577,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    interval = 0;
 		measurementVal = 0;
 		
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
 		{
 	        final Message msg = new Message();
 			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;

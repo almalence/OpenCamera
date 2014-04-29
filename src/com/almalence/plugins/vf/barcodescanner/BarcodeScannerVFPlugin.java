@@ -313,9 +313,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	}
 	
     public synchronized PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, Rect boundingRect) {
-    	if (boundingRect == null || data == null) {
-    		return null;
-    	}
     	return new PlanarYUVLuminanceSource(data, width, height, boundingRect.left, boundingRect.top,
                 boundingRect.width(), boundingRect.height(), false);
     }
@@ -474,7 +471,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
         		d.get(Calendar.SECOND));
         
         File saveDir = PluginManager.getInstance().GetSaveDir(false);
-        file = new File(saveDir, "QR_" + fileFormat + ".jpg");
+        file = new File(saveDir, fileFormat+".jpg");
         FileOutputStream os = null;
         try {
         	os = new FileOutputStream(file);

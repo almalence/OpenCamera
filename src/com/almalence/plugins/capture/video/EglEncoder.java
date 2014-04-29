@@ -25,7 +25,7 @@ import java.nio.FloatBuffer;
 
 
 @SuppressLint("NewApi")
-public class FramebufferEncoder extends AndroidTestCase
+public class EglEncoder extends AndroidTestCase
 {
 	private static final String TAG = "Almalence";
 	private static final boolean VERBOSE = false; // lots of logging
@@ -137,7 +137,7 @@ public class FramebufferEncoder extends AndroidTestCase
 	private final FloatBuffer UV_BUFFER;
 	
 	
-	public FramebufferEncoder(final String outputPath, final int width, final int height, 
+	public EglEncoder(final String outputPath, final int width, final int height, 
 			final int fps, final int bitrate, int orientation)
 	{
 		this.outputPath = outputPath;

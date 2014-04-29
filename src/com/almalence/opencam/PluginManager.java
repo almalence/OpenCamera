@@ -1754,6 +1754,20 @@ public class PluginManager {
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/
+	public boolean shouldPreviewToGPU()
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		
+		if (plugin != null && (plugin instanceof PluginCapture))
+		{
+			return ((PluginCapture)plugin).shouldPreviewToGPU();
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public boolean isGLSurfaceNeeded() {
 		boolean ret = false;
 		if (null != pluginList.get(activeCapture))

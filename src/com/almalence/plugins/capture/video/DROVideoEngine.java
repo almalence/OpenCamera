@@ -1,35 +1,28 @@
 package com.almalence.plugins.capture.video;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Calendar;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
 
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.media.MediaScannerConnection;
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.OrientationEventListener;
 
 public class DROVideoEngine implements OnFrameAvailableListener
 {
-private static final String TAG = "Almalence";
+	private static final String TAG = "Almalence";
+	
+	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
     
 	private static final String SHADER_VERTEX =
 			"attribute vec2 vPosition;\n"
@@ -147,7 +140,7 @@ private static final String TAG = "Almalence";
 	private volatile boolean forceUpdate = false;
 	private volatile int pullYUV = 0;
 	
-	private FramebufferEncoder encoder = null;
+	private EglEncoder encoder = null;
 	
 	private FpsMeasurer fps = new FpsMeasurer(10);
 	
@@ -209,7 +202,7 @@ private static final String TAG = "Almalence";
 						@Override
 						public void run()
 						{							
-							DROVideoEngine.this.encoder = new FramebufferEncoder(
+							DROVideoEngine.this.encoder = new EglEncoder(
 									path,
 									DROVideoEngine.this.previewWidth,
 									DROVideoEngine.this.previewHeight,
@@ -406,39 +399,39 @@ private static final String TAG = "Almalence";
 			this.texture_in = tex[0];
 			this.texture_out = tex[1];
 			
-			GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, this.texture_in);
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_in);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_WRAP_S,
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_WRAP_T,
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_MIN_FILTER,
 					GLES20.GL_LINEAR);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_MAG_FILTER,
 					GLES20.GL_LINEAR);
 			
-			GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, this.texture_out);
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_WRAP_S,
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_WRAP_T,
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_MIN_FILTER,
 					GLES20.GL_LINEAR);
 			GLES20.glTexParameteri(
-					GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+					GL_TEXTURE_EXTERNAL_OES,
 					GLES20.GL_TEXTURE_MAG_FILTER,
 					GLES20.GL_LINEAR);
 			
@@ -610,7 +603,7 @@ private static final String TAG = "Almalence";
 			final int th = GLES20.glGetUniformLocation(this.hProgram, "sTexture");
 
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-			GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, this.texture_out);
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
 			GLES20.glUniform1i(th, 0);
 
 			GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, VERTEX_BUFFER);
