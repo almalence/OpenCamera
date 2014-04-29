@@ -668,7 +668,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		super.onResume();
 
 		if (glView != null)
+		{
 			glView.onResume();
+		}
 		
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
