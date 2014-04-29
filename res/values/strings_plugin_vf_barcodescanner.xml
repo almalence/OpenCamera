@@ -5,7 +5,7 @@
 	<string name="Pref_ShowBarcodescannerVF">Show barcode scanner</string>
 	<string name="Empty_Barcodes_List">List is empty</string>
 	<string name="Delete_Barcode">Delete</string>
-	<string name="Clear_Barcodes_List">Clear list</string>
+	<string name="Clear_Barcodes_List">Clear</string>
 	
 	<string name="Button_Add_Calendar">Add to calendar</string>
 	<string name="Button_Add_Contact">Add contact</string>
