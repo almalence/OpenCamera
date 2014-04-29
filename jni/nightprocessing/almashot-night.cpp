@@ -128,7 +128,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
-		deghTable[DeGhostPref],
+		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
@@ -210,7 +210,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	//SuperZoom_Preview(&instance, yuv, pview_yuv, sx, sy, sxo, syo, -1, -1, nFrames,
 	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
 		0, // 256*nTable[sensorGainPref],
-		deghTable[DeGhostPref],
+		deghTable[DeGhostPref], 1,
 		-1, 9+saturated*9*16+1,	// hack to get brightening (pass enh. level in kelvin2 parameter)
 		1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);
 

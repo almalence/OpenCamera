@@ -58,12 +58,20 @@ extern "C"
 //         sx,sy    - frame dimensions
 //         hist     - array to hold global histogram
 //         hist_loc - arrays to hold local histograms, pass NULL to not compute local histograms
+//         mix_factor - used in local histograms computation.
+//                    Defines the level of inter-dependence of image areas. Range: [0..1]. Default: 1.0
 // Output:
 //         hist     - Global histogram
 //         hist_loc - Local histograms
-// Return:
-//         Pointer to hist.
-void Dro_GetHistogramNV21(Uint8 *in, Uint32 hist[256], Uint32 hist_loc[3][3][256], int sx, int sy);
+void Dro_GetHistogramNV21
+(
+	Uint8 *in,
+	Uint32 hist[256],
+	Uint32 hist_loc[3][3][256],
+	int sx,
+	int sy,
+	float mix_factor
+);
 
 
 // ComputeToneTable - compute tone modification table lookup_table[256].
@@ -73,16 +81,32 @@ void Dro_GetHistogramNV21(Uint8 *in, Uint32 hist[256], Uint32 hist_loc[3][3][256
 //         lookup_table[256] - filled with tone-table multipliers (in q5.10 fixed-point format)
 //
 // Parameters:
-//         crt       - Defines the method (0=old method, 1=new method), recommended value: 1
-//         gamma     - Defines how 'bright' the output image will be. Lower values cause brighter output.
-//                     Default: 0.5
-//         min_limit - Minimum limit on contrast reduction. Range: [0..0.9]. Default: 0.5
-//         max_limit - Maximum limit on contrast enhancement. Range: [1..10]. Default:
-//                     4 - for hdr-like effects, 3 for more balanced results
+//         crt          - Defines the method (0=old method, 1=new method), recommended value: 1
+//         gamma        - Defines how 'bright' the output image will be. Lower values cause brighter output.
+//                        Default: 0.5
+//         max_black_level - threshold for black level correction. Default: 16
+//         black_level_atten - how much to attenuate black level. Default: 0.5
+//         min_limit[3] - Minimum limit on contrast reduction. Range: [0..0.9]. Default: 0.5
+//                        [0] - for shadows, [1] - for midtones, [2] - for highlights.
+//         max_limit[3] - Maximum limit on contrast enhancement. Range: [1..10].
+//                        [0] - for shadows, default: 4 - for hdr-like effects, 3 for more balanced results
+//                        [1] - for midtones, default: 2
+//                        [2] - for highlights, default: 2
 //         global_limit - Maximum limit on total brightness amplification. Recommended: 4
 // Return:
 //         pointer to lookup_table.
-Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float gamma, float min_limit, float max_limit, float global_limit);
+Int32 *Dro_ComputeToneTable
+(
+	Uint32 *hist,
+	Int32 *lookup_table,
+	int   crt,
+	float gamma,
+	float max_black_level,
+	float black_level_atten,
+	float min_limit[3],
+	float max_limit[3],
+	float global_limit
+);
 
 
 // ApplyToneTableNV21 - apply lookup_table[256] to YUV.
@@ -90,21 +114,56 @@ Int32 *Dro_ComputeToneTable(Uint32 *hist, Int32 *lookup_table, int crt, float ga
 // Input:
 //         in - Input image in NV12 or NV21 format.
 //         lookup_table[256] - Tone table returned by ComputeToneTable.
-//         pull_uv - how much to enhance U and V 0..9 0=no saturation, 9(default)=enhance to the same level as Y
+//         uv_desat - how much to reduce U and V 0..9 0=no saturation, 9(default)=enhance to the same level as Y
+//         dark_uv_desat - de-saturate U and V if log2(Y) is below this level.
+//                  Valid range is: [0..7], default=5
 //         sx, sy - Image width and height.
 // Output:
 //         out - Processed image.
 // Return:
 //         0 = all Ok
 //         1 = Not enough memory
-int Dro_ApplyToneTableNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int pull_uv, int sx, int sy);
+int Dro_ApplyToneTableNV21
+(
+	Uint8 *in,
+	Uint8 *out,
+	Int32 lookup_table[256],
+	Int32 lookup_local[3][3][256],
+	int uv_desat,
+	int dark_uv_desat,
+	int sx,
+	int sy
+);
 
 // ApplyToneTableFilteredNV21 - same as ApplyToneTableNV21 but with noise reduction
 //
 // Input:
+//         in - Input image in NV12 or NV21 format.
+//         lookup_table[256] - Tone table returned by ComputeToneTable.
 //         filter - amount of filtering to apply
 //         strong_filter - whether to apply soft-filter (==0, recommended), or strong-filter (==1, use only for extreme low-light)
-int Dro_ApplyToneTableFilteredNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256], Int32 lookup_local[3][3][256], int filter, int strong_filter, int pull_uv, int sx, int sy);
+//         uv_desat - how much to reduce U and V 0..9 0=no saturation, 9(default)=enhance to the same level as Y
+//         dark_uv_desat - de-saturate U and V if log2(Y) is below this level.
+//                  Valid range is: [0..7], default=5
+//         sx, sy - Image width and height.
+// Output:
+//         out - Processed image.
+// Return:
+//         0 = all Ok
+//         1 = Not enough memory
+int Dro_ApplyToneTableFilteredNV21
+(
+	Uint8 *in,
+	Uint8 *out,
+	Int32 lookup_table[256],
+	Int32 lookup_local[3][3][256],
+	int filter,
+	int strong_filter,
+	int uv_desat,
+	int dark_uv_desat,
+	int sx,
+	int sy
+);
 
 // Description:
 //    Detects if a new histogram is sufficiently different from the base one.
@@ -122,7 +181,11 @@ int Dro_ApplyToneTableFilteredNV21(Uint8 *in, Uint8 *out, Int32 lookup_table[256
 // 2 = tone update is needed, scene change (switch to the new table immediately)
 //     hist_base updated with the new hist
 //
-int Dro_CheckToneUpdateNeeded(Uint32 *hist, Uint32 *hist_base);
+int Dro_CheckToneUpdateNeeded
+(
+	Uint32 *hist,
+	Uint32 *hist_base
+);
 
 
 //
@@ -133,11 +196,58 @@ int Dro_CheckToneUpdateNeeded(Uint32 *hist, Uint32 *hist_base);
 //     Uint32 hist[256];
 //     Int32 lookup_table[256];
 //
-//     GetHistogramNV21(in, hist, sx, sy);
-//     ComputeToneTable(hist, lookup_table, 1, 0.5, 4, 0.5);
-//     ApplyToneTableNV21(in, out, lookup_table, sx, sy);
+//     GetHistogramNV21(in, hist, NULL, sx, sy);
+//     ComputeToneTable(hist, lookup_table, 1, 0.5, 0.5, 3, 4);
+//     ApplyToneTableFilteredNV21(in, out, lookup_table, NULL, 0, 0, 9, sx, sy);
 // }
 //
+
+
+// --------------------------------------------------------------------------
+// Video-stream processing functions
+
+
+// Return: Error code:
+//         ALMA_GL_CONTEXT_ERROR - Open GL Error
+//         ALMA_NOT_ENOUGH_MEMORY - note enough memory
+//         ALMA_ALL_OK - initialization completed successfully
+int Dro_StreamingInitialize
+(
+	void **instance,
+	int output_width,
+	int output_height
+);
+
+
+// Return: Error code (currently just ALMA_ALL_OK)
+int Dro_StreamingRelease
+(
+	void *instance
+);
+
+
+void Dro_StreamingRender
+(
+	void *instance,
+	unsigned int texture_in,
+	float *mtx,
+	int sx,
+	int sy,
+	int filter,
+	float max_amplify,
+	int local_mapping,
+	int force_update,
+	int uv_desat,
+	int dark_uv_desat,
+	float mix_factor,
+	int   crt,					// default = 1
+	float gamma,				// default = 0.5
+	float max_black_level,		// default = 16
+	float black_level_atten,	// default = 0.5
+	float min_limit[3],			// default = 0.5 0.5 0.5
+	float max_limit[3],			// default = 3 2 2
+	unsigned int texture_out
+);
 
 
 #if defined __cplusplus
