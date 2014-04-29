@@ -14,7 +14,6 @@ import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.test.AndroidTestCase;
 import android.util.Log;
 import android.view.Surface;
 
@@ -25,7 +24,7 @@ import java.nio.FloatBuffer;
 
 
 @SuppressLint("NewApi")
-public class EglEncoder extends AndroidTestCase
+public class EglEncoder
 {
 	private static final String TAG = "Almalence";
 	private static final boolean VERBOSE = false; // lots of logging
@@ -323,7 +322,7 @@ public class EglEncoder extends AndroidTestCase
                 return colorFormat;
             }
         }
-        fail("couldn't find a good color format for " + codecInfo.getName() + " / " + mimeType);
+        Log.e(TAG, "couldn't find a good color format for " + codecInfo.getName() + " / " + mimeType);
         return 0;   // not reached
     }
 
