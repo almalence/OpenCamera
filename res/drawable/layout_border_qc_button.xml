@@ -14,14 +14,11 @@
         </shape>
    </item> -->
    
-   <item android:bottom="-3dp"> 
+   <item > 
    		<shape
 	   		android:dither="true"> 
-			<corners android:radius="0dip"/> 
-			<solid android:color="#D0000000"/>
-			<stroke android:width="2dp"
-	     	android:color="#FFFFFF"
-	     	/>
+			<corners android:radius="2dip"/> 
+			<solid android:color="#60FFFFFF"/>
 		</shape>
 	</item>
 

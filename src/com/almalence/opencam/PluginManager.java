@@ -73,14 +73,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.asynctaskmanager.Task;
-
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
-
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -103,6 +101,7 @@ import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
+import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
@@ -174,7 +173,8 @@ public class PluginManager {
 	public static final int MSG_POSTPROCESSING_FINISHED = 6;
 	public static final int MSG_FILTER_FINISHED = 7;
 	public static final int MSG_EXPORT_FINISHED = 8;
-	public static final int MSG_START_FX = 9;
+	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 888;
+    public static final int MSG_START_FX = 9;
 	public static final int MSG_FX_FINISHED = 10;
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
@@ -182,7 +182,7 @@ public class PluginManager {
 
 	public static final int MSG_SET_EXPOSURE = 22;
 	public static final int MSG_NEXT_FRAME = 23;
-	
+
 	public static final int MSG_BAD_FRAME = 24;
 	public static final int MSG_OUT_OF_MEMORY = 25;
 
@@ -208,7 +208,7 @@ public class PluginManager {
 	public static final int MSG_FOCUS_CHANGED = 63;
 	public static final int MSG_FLASH_CHANGED = 64;
 	public static final int MSG_ISO_CHANGED = 65;
-	
+
 	// OpenGL layer messages
 	public static final int MSG_OPENGL_LAYER_SHOW = 70;
 	public static final int MSG_OPENGL_LAYER_HIDE = 71;
@@ -216,13 +216,13 @@ public class PluginManager {
 	//events to pause/resume capture. for example to stop capturing in preshot when popup share opened
 	public static final int MSG_STOP_CAPTURE = 80;
 	public static final int MSG_START_CAPTURE = 81;
-	
+
 	// broadcast will be resent to every active plugin
 	public static final int MSG_BROADCAST = 9999;
 
 	// Support flag to avoid plugin's view disappearance issue
 	static boolean isRestarting = false;
-	
+
 	private static boolean isDefaultsSelected = false;
 
 	public static PluginManager getInstance() {
@@ -258,11 +258,15 @@ public class PluginManager {
 		AeAwLockVFPlugin aeawlockVFPlugin = new AeAwLockVFPlugin();
 		pluginList.put(aeawlockVFPlugin.getID(), aeawlockVFPlugin);
 		listVF.add(aeawlockVFPlugin);
-		
+
 		HistogramVFPlugin histgramVFPlugin = new HistogramVFPlugin();
 		pluginList.put(histgramVFPlugin.getID(), histgramVFPlugin);
 		listVF.add(histgramVFPlugin);
 
+		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
+		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
+		listVF.add(barcodeScannerVFPlugin);
+		
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
 		listVF.add(zoomVFPlugin);
@@ -274,7 +278,7 @@ public class PluginManager {
 		FocusVFPlugin focusVFPlugin = new FocusVFPlugin();
 		pluginList.put(focusVFPlugin.getID(), focusVFPlugin);
 		listVF.add(focusVFPlugin);
-		
+
 		InfosetVFPlugin infosetVFPlugin = new InfosetVFPlugin();
 		pluginList.put(infosetVFPlugin.getID(), infosetVFPlugin);
 		listVF.add(infosetVFPlugin);
@@ -300,19 +304,19 @@ public class PluginManager {
 		BurstCapturePlugin burstCapturePlugin = new BurstCapturePlugin();
 		pluginList.put(burstCapturePlugin.getID(), burstCapturePlugin);
 		listCapture.add(burstCapturePlugin);
-		
+
 		BestShotCapturePlugin bestShotCapturePlugin = new BestShotCapturePlugin();
 		pluginList.put(bestShotCapturePlugin.getID(), bestShotCapturePlugin);
 		listCapture.add(bestShotCapturePlugin);
-		
+
 		ObjectRemovalCapturePlugin objectRemovalCapturePlugin = new ObjectRemovalCapturePlugin();
 		pluginList.put(objectRemovalCapturePlugin.getID(), objectRemovalCapturePlugin);
 		listCapture.add(objectRemovalCapturePlugin);
-		
+
 		SequenceCapturePlugin sequenceCapturePlugin = new SequenceCapturePlugin();
 		pluginList.put(sequenceCapturePlugin.getID(), sequenceCapturePlugin);
 		listCapture.add(sequenceCapturePlugin);
-		
+
 		GroupShotCapturePlugin groupShotCapturePlugin = new GroupShotCapturePlugin();
 		pluginList.put(groupShotCapturePlugin.getID(), groupShotCapturePlugin);
 		listCapture.add(groupShotCapturePlugin);
@@ -324,7 +328,7 @@ public class PluginManager {
 		PreshotCapturePlugin backInTimeCapturePlugin = new PreshotCapturePlugin();
 		pluginList.put(backInTimeCapturePlugin.getID(), backInTimeCapturePlugin);
 		listCapture.add(backInTimeCapturePlugin);
-		
+
 		PanoramaAugmentedCapturePlugin panoramaAugmentedCapturePlugin = new PanoramaAugmentedCapturePlugin();
 		pluginList.put(panoramaAugmentedCapturePlugin.getID(), panoramaAugmentedCapturePlugin);
 		listCapture.add(panoramaAugmentedCapturePlugin);
@@ -333,14 +337,14 @@ public class PluginManager {
 		pluginList.put(backInTimeProcessingPlugin.getID(),
 				backInTimeProcessingPlugin);
 		listCapture.add(backInTimeProcessingPlugin);
-		
+
 //		HiresPortraitCapturePlugin hiresPortraitCapturePlugin = new HiresPortraitCapturePlugin();
 //		pluginList.put(hiresPortraitCapturePlugin.getID(),hiresPortraitCapturePlugin);
 //		listCapture.add(hiresPortraitCapturePlugin);
 
 		// Processing
 		// or move this to onCreate from processing??!??!!??!
-		
+
 		SimpleProcessingPlugin simpleProcessingPlugin = new SimpleProcessingPlugin();
 		pluginList.put(simpleProcessingPlugin.getID(), simpleProcessingPlugin);
 		listProcessing.add(simpleProcessingPlugin);
@@ -352,27 +356,27 @@ public class PluginManager {
 		HDRProcessingPlugin hdrProcessingPlugin = new HDRProcessingPlugin();
 		pluginList.put(hdrProcessingPlugin.getID(), hdrProcessingPlugin);
 		listProcessing.add(hdrProcessingPlugin);
-		
+
 		ObjectRemovalProcessingPlugin movingObjectsProcessingPlugin = new ObjectRemovalProcessingPlugin();
 		pluginList.put(movingObjectsProcessingPlugin.getID(), movingObjectsProcessingPlugin);
 		listProcessing.add(movingObjectsProcessingPlugin);
-		
+
 		SequenceProcessingPlugin sequenceProcessingPlugin = new SequenceProcessingPlugin();
 		pluginList.put(sequenceProcessingPlugin.getID(), sequenceProcessingPlugin);
 		listProcessing.add(sequenceProcessingPlugin);
-		
+
 		GroupShotProcessingPlugin groupShotProcessingPlugin = new GroupShotProcessingPlugin();
 		pluginList.put(groupShotProcessingPlugin.getID(), groupShotProcessingPlugin);
 		listProcessing.add(groupShotProcessingPlugin);
-		
+
 		PanoramaProcessingPlugin panoramaProcessingPlugin = new PanoramaProcessingPlugin();
 		pluginList.put(panoramaProcessingPlugin.getID(), panoramaProcessingPlugin);
 		listProcessing.add(panoramaProcessingPlugin);
-		
+
 		BestshotProcessingPlugin bestshotProcessingPlugin = new BestshotProcessingPlugin();
 		pluginList.put(bestshotProcessingPlugin.getID(), bestshotProcessingPlugin);
 		listProcessing.add(bestshotProcessingPlugin);
-		
+
 //		HiresPortraitProcessingPlugin hiresPortraitProcessingPlugin = new HiresPortraitProcessingPlugin();
 //		pluginList.put(hiresPortraitProcessingPlugin.getID(), hiresPortraitProcessingPlugin);
 //		listProcessing.add(hiresPortraitProcessingPlugin);
@@ -410,7 +414,7 @@ public class PluginManager {
 			prefsEditor.putString("defaultModeName", mode.modeID);
 			prefsEditor.commit();
 		}
-		
+
 		//when old mode removed for example
 		if (mode == null)
 		{
@@ -468,7 +472,7 @@ public class PluginManager {
 	public void onCreate()
 	{
 		isDefaultsSelected = false;
-		
+
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onCreate();
 		if (null != pluginList.get(activeCapture))
@@ -479,10 +483,10 @@ public class PluginManager {
 			pluginList.get(i).onCreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
-		
+
 		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.thiz, R.anim.plugin_capture_selftimer_countdown);
 		countdownAnimation.setFillAfter(true);
-		
+
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
 		countdownLayout = (RelativeLayout)inflator.inflate(R.layout.plugin_capture_selftimer_layout, null, false);
 		countdownView = (TextView)countdownLayout.findViewById(R.id.countdown_text);
@@ -606,7 +610,7 @@ public class PluginManager {
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onStop();
 	}
-	
+
 	// base onDestroy stage
 	public void onDestroy() {
 		for (int i = 0; i < activeVF.size(); i++)
@@ -641,7 +645,7 @@ public class PluginManager {
 
 	// base onPause stage
 	public void onPause(boolean isFromMain) {
-		
+
 		//stops delayed interval timer if it's working
 		if (delayedCaptureFlashPrefCommon || delayedCaptureSoundPrefCommon)
 		{
@@ -655,7 +659,7 @@ public class PluginManager {
 			timer.cancel();
 			timer=null;
 		}
-		
+
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onPause();
 		if (null != pluginList.get(activeCapture))
@@ -702,7 +706,7 @@ public class PluginManager {
 			pluginList.get(activeExport).onGUICreate();
 
 		isRestarting = true;
-		
+
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
 		for(int i = 0; i < specialLayout.getChildCount(); i++)
@@ -717,17 +721,17 @@ public class PluginManager {
 			{
 				if(view.getParent() != null)
 					((ViewGroup)view.getParent()).removeView(view);
-				
+
 				specialLayout.removeView(view);
 			}
 		}
-		
+
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);		
-		
+
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);		
-		
+
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.countdownLayout, params);
-		
+
 		this.countdownLayout.setLayoutParams(params);
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
@@ -764,7 +768,7 @@ public class PluginManager {
 			delayedCapture(delayInterval);	
 		}
 	}
-	
+
 	public void OnFocusButtonClick() 
 	{
 		//<!-- -+-
@@ -819,7 +823,7 @@ public class PluginManager {
 			}
 		}
 	}
-	
+
 	public void loadHeaderContent(String settings, PreferenceFragment pf) {
 		List<Plugin> activePlugins = new ArrayList<Plugin>();
 		List<Plugin> inactivePlugins = new ArrayList<Plugin>();
@@ -833,7 +837,7 @@ public class PluginManager {
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
-			
+
 			for (int i = 0; i < listVF.size(); i++) 
 			{				
 				Plugin pg = listVF.get(i);
@@ -1104,23 +1108,24 @@ public class PluginManager {
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, true);
-		} else if ("plugins_settings".equals(settings)) 
-		{
-			//<!-- -+-
-			if (MainScreen.thiz.isUnlockedAll())
-			{
-				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
-//				return;
-			}
-			
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			if (false == prefs.getBoolean("unlock_all_forever", false))
-			{
-				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
-				MainScreen.thiz.onBillingPreferenceCreate(pf);
-			}
-			//-+- -->
-		}
+		} 
+//		else if ("plugins_settings".equals(settings)) 
+//		{
+//			//<!-- -+-
+//			if (MainScreen.thiz.isUnlockedAll())
+//			{
+//				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
+////				return;
+//			}
+//
+//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//			if (false == prefs.getBoolean("unlock_all_forever", false))
+//			{
+//				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
+//				MainScreen.thiz.onBillingPreferenceCreate(pf);
+//			}
+//			//-+- -->
+//		}
 
 		loadStandardSettingsAfter(pf, settings);
 	}
@@ -1259,12 +1264,12 @@ public class PluginManager {
 	public void SelectDefaults()
 	{
 //		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
-		
+
 		if(!isDefaultsSelected)
 			for (final Entry<String, Plugin> entry : this.pluginList.entrySet())
 			{
 				final Plugin plugin = entry.getValue();
-				
+
 //				final String plugin_key = PREFERENCE_KEY_DEFAULTS_SELECTED + plugin.ID;
 //				
 //				if (!prefs.getBoolean(plugin_key, false))
@@ -1273,12 +1278,12 @@ public class PluginManager {
 //				
 //					prefs.edit().putBoolean(plugin_key, true).commit();
 //				}
-				
+
 				plugin.onDefaultsSelect();
 			}
 		isDefaultsSelected = true;	
 	}
-	
+
 	public void SelectImageDimension() {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).SelectImageDimension();
@@ -1335,7 +1340,7 @@ public class PluginManager {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
 	}
-	
+
 	public void SetupCameraParameters() {
 		MainScreen.thiz.updateCameraFeatures();
 		for (int i = 0; i < activeVF.size(); i++)
@@ -1469,7 +1474,7 @@ public class PluginManager {
 
 		case MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
-			
+
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -1488,13 +1493,13 @@ public class PluginManager {
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
-			
+
 //			Date curDate = new Date();
 //			SessionID = curDate.getTime();
 //			Log.e("NIGHT CAMERA DEBUG", "New created session = " + SessionID);
 
 			MainScreen.thiz.MuteShutter(false);
-			
+
 			// <!-- -+-
 			//if mode free
 			Mode mode = getActiveMode();
@@ -1502,14 +1507,14 @@ public class PluginManager {
 	    		if (!mode.SKU.isEmpty())
 	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
 	    	//-+- -->
-	    	
+
 	    	MainScreen.guiManager.lockControls = false;
 			Message message = new Message();
 			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message.what = PluginManager.MSG_BROADCAST;
 			MainScreen.H.sendMessage(message);
 			break;
-			
+
 		case MSG_START_POSTPROCESSING:
 			if (null != pluginList.get(activeProcessing))
 			{
@@ -1518,7 +1523,7 @@ public class PluginManager {
 				message2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 				message2.what = PluginManager.MSG_BROADCAST;
 				MainScreen.H.sendMessage(message2);
-				
+
 				pluginList.get(activeProcessing).onStartPostProcessing();
 				MainScreen.guiManager.onPostProcessingStarted();
 			}
@@ -1533,20 +1538,20 @@ public class PluginManager {
 			String sSessionID = PluginManager.getInstance().getFromSharedMem("sessionID");
 			if(sSessionID != null)
 				sessionID = Long.parseLong(PluginManager.getInstance().getFromSharedMem("sessionID"));
-			
+
 			// notify GUI about saved images			
 			MainScreen.guiManager.lockControls = false;
 			Message message3 = new Message();
 			message3.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message3.what = PluginManager.MSG_BROADCAST;
 			MainScreen.H.sendMessage(message3);
-			
+
 			MainScreen.guiManager.onPostProcessingFinished();
 			if (null != pluginList.get(activeExport) && 0 != sessionID)
 				pluginList.get(activeExport).onExportActive(sessionID);
 			else
 				MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-			
+
 			clearSharedMemory(sessionID);
 			break;
 		case MSG_EXPORT_FINISHED:
@@ -1565,7 +1570,7 @@ public class PluginManager {
 				pluginList.get(activeCapture).onExportFinished();
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
-			
+
 			if (MainScreen.thiz.getIntent().getAction() != null)
 	        {
 		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -1575,6 +1580,34 @@ public class PluginManager {
 		    	}
 	        }
 			break;
+		
+		case MSG_EXPORT_FINISHED_IOEXCEPTION:
+			// event from plugin that saving finished and memory can be freed
+			if (cntProcessing > 0)
+				cntProcessing--;
+			// free memory in processing
+			if (null != pluginList.get(activeProcessing))
+				pluginList.get(activeProcessing).FreeMemory();
+
+			// notify GUI about saved images
+			MainScreen.guiManager.onExportFinished();
+
+			// notify capture plugins that saving finished
+			if (null != pluginList.get(activeCapture))
+				pluginList.get(activeCapture).onExportFinished();
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
+
+//			if (MainScreen.thiz.getIntent().getAction() != null)
+//	        {
+//		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+//		    			&& MainScreen.ForceFilename == null)
+//		    	{
+//		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+//		    	}
+//	        }
+			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+			break;
 
 		case MSG_DELAYED_CAPTURE: 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1582,7 +1615,7 @@ public class PluginManager {
 			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).OnShutterClick();
 			break;
-			
+
 		case MSG_RETURN_CAPTURED:
 			MainScreen.thiz.setResult(Activity.RESULT_OK);
 			MainScreen.thiz.finish();
@@ -1603,7 +1636,7 @@ public class PluginManager {
 		case MSG_OPENGL_LAYER_HIDE:
 			MainScreen.thiz.hideOpenGLLayer();
 			break;
-			
+
 		case MSG_PROCESSING_BLOCK_UI:
 			MainScreen.guiManager.processingBlockUI();
 			break;
@@ -1624,7 +1657,7 @@ public class PluginManager {
 
 		return true;
 	}
-	
+
 	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID) {		
 		try
     	{
@@ -1643,7 +1676,7 @@ public class PluginManager {
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
-			
+
 			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);
 			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
 			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
@@ -1654,7 +1687,7 @@ public class PluginManager {
 			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
-			
+
 		} catch (JpegProcessingException e1)
 		{
 			e1.printStackTrace();
@@ -1662,22 +1695,22 @@ public class PluginManager {
 		}
 		return true;
 	}
-	
+
 	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID) {		
 		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		if (params==null)
 			return false;
-		
+
 		String s1 = null;
 		if(params.getSupportedWhiteBalance() != null)
 			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;
-		
+
 		String s4 = null;
 		if(MainScreen.guiManager.mISOSupported)
 			s4 = MainScreen.thiz.getISOMode();
-		
+
 		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
 		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
 		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
@@ -1704,7 +1737,7 @@ public class PluginManager {
 				sharedMemory.remove(i);
 		}
 	}
-	
+
 	public int sizeOfSharedMemory() {
 		return sharedMemory.size();
 	}
@@ -1717,7 +1750,7 @@ public class PluginManager {
 				sharedMemory.remove(i);
 		}
 	}
-	
+
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/
@@ -1730,7 +1763,7 @@ public class PluginManager {
 		}
 		return ret;
 	}
-	
+
 	public void onGLSurfaceCreated(GL10 gl, EGLConfig config) {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onGLSurfaceCreated(gl, config);
@@ -1754,7 +1787,7 @@ public class PluginManager {
 
 		Plugin processing=null;
 		Plugin export = null;
-		
+
 		public ProcessingTask(Context context) {
 		}
 
@@ -1780,8 +1813,8 @@ public class PluginManager {
 					addToSharedMem("wantLandscapePhoto"+SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
 					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(MainScreen.getCameraMirrored()));
 				}
-			
-			
+
+
 			if (null != processing)
 			{
 				processing.onStartProcessing(SessionID);
@@ -1791,7 +1824,7 @@ public class PluginManager {
 					return null;
 				}
 			}
-			
+
 			if (null != export)
 				export.onExportActive(SessionID);
 			else
@@ -1818,7 +1851,7 @@ public class PluginManager {
 //	public long getSessionID() {
 //		return SessionID;
 //	}
-	
+
 	//get file saving directory
 	//toInternalMemory - should be true only if force save to internal 
 	public File GetSaveDir(boolean forceSaveToInternalMemory)
@@ -1839,9 +1872,9 @@ public class PluginManager {
 //        		Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
         	
 			dcimDir = Environment.getExternalStorageDirectory();
-			
+
 			// there are variations in sd-card directory namings
-			
+
 			memcardDir = new File("/storage", "sdcard1");		// Jelly Bean fix
             if (memcardDir.exists())
             {
@@ -1942,19 +1975,19 @@ public class PluginManager {
         }
         return saveDir;
     }
-	
+
 	//delayed capture feature
-	
+
 	private SoundPlayer countdownPlayer = null;
     private SoundPlayer finalcountdownPlayer = null;
 
     private CountDownTimer timer=null;
     
     public String flashModeBackUp = "";
-	
+
 	final Handler countdownHandler = new Handler();
 	final Handler finalcountdownHandler = new Handler();
-	
+
 	private RelativeLayout countdownLayout = null;
     private TextView countdownView = null;
     
@@ -1962,7 +1995,7 @@ public class PluginManager {
     
 	private boolean delayedCaptureFlashPrefCommon = false; 
 	private boolean delayedCaptureSoundPrefCommon = false;
-			
+
 	private boolean shutterRelease = true;
 	private void delayedCapture(int delayInterval)
 	{
@@ -1970,7 +2003,7 @@ public class PluginManager {
 		MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
 		countdownHandler.removeCallbacks(FlashOff);	 
 		finalcountdownHandler.removeCallbacks(FlashBlink);		
-		
+
 		timer = new CountDownTimer(delayInterval*1000+500, 1000) 
 		{			 
 			 public void onTick(long millisUntilFinished) 
@@ -1980,16 +2013,16 @@ public class PluginManager {
 		         countdownView.clearAnimation();
 		         countdownLayout.setVisibility(View.VISIBLE);
 		         countdownView.startAnimation(countdownAnimation);
-	    		 
+
 		         if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
 		    		 return;
-		    	 
+
 	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
-	    		 
+
 		         Camera camera = MainScreen.thiz.getCamera();
 		     	 if (null==camera)
 		     		return;
-		         
+
 		         if(delayedCaptureFlashPrefCommon)
 		         {
 			         if(millisUntilFinished > 1000)// || (imagesTaken != 0 && isFirstTick))
@@ -2012,16 +2045,16 @@ public class PluginManager {
 		     {
 		    	 countdownView.clearAnimation();
 		         countdownLayout.setVisibility(View.GONE);
-		         
+
 		    	 countdownHandler.removeCallbacks(FlashOff);	 
 		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
-		         
+
 		 	    Camera camera = MainScreen.thiz.getCamera();
 		    	if (camera != null)		// paranoia
 				{
 					if(MainScreen.thiz.getSupportedFlashModes() != null)
 		    			MainScreen.thiz.setCameraFlashMode(flashModeBackUp);
-					
+
 					Message msg = new Message();
 					msg.what = PluginManager.MSG_DELAYED_CAPTURE;
 					MainScreen.H.sendMessage(msg);
@@ -2031,7 +2064,7 @@ public class PluginManager {
 		  };
 		  timer.start();
 	}
-	
+
 	public void TickEverySecond(boolean isLastSecond)
 	{
 		if (MainScreen.ShutterPreference)
@@ -2050,7 +2083,7 @@ public class PluginManager {
 			}
 		}
  	}
-	
+
 	public void initializeSoundPlayers(AssetFileDescriptor fd_countdown, AssetFileDescriptor fd_finalcountdown) {
 		countdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_countdown);
 		finalcountdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_finalcountdown);

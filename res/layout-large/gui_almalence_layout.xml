@@ -69,7 +69,7 @@
 	    android:orientation="horizontal"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:background="@android:color/transparent"
+	    android:background="@drawable/blacktansperentlayerbottom"
 	    android:gravity="bottom"	    
 	    android:layout_alignParentBottom="true">
 
@@ -229,69 +229,77 @@
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
 		android:layout_height="@dimen/paramsLayoutHeight"
-		android:background="@drawable/topmenu_background"	    
+		android:background="@drawable/blacktansperentlayertop"	    
 		android:layout_gravity="top"		
 		android:layout_alignParentTop="true">
 		 	<com.almalence.ui.RotateImageView android:id="@+id/evButton"
-					android:background="@drawable/transparent_background"
+					android:background="@android:color/transparent"
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 		 	<com.almalence.ui.RotateImageView android:id="@+id/sceneButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>		 	
 			<com.almalence.ui.RotateImageView android:id="@+id/wbButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/focusButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/flashButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/isoButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/meteringButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>			
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>									
 	</LinearLayout>
 	
 	<RelativeLayout android:id="@+id/qcLayout"
-        		android:background="@drawable/layout_border_qc"
+        		android:background="@drawable/blacktansperentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="match_parent"
         		android:layout_height="wrap_content"	    		
@@ -304,27 +312,56 @@
 					    android:layout_height="wrap_content"
 					    android:numColumns="5"
 					    android:horizontalSpacing="0dp"
-					    android:verticalSpacing="7dp"					    
+					    android:verticalSpacing="10dp"					    
 					    android:stretchMode="columnWidth"
 					    android:gravity="top"/>					
 	</RelativeLayout>	
 	 
 	<com.almalence.ui.RotateImageView 
 	    android:id="@+id/Unlock"
-		android:background="@drawable/transparent_background"
+		android:background="@android:color/transparent"
 		android:src="@drawable/unlock"					
 		android:layout_height="40dip"
 		android:layout_width="40dip"
 		
-		android:layout_marginTop="110dip"
+		android:layout_marginTop="180dip"
 		android:layout_weight="1"
    		android:layout_gravity="top|left"
    		android:visibility="gone"/>	
 
+	<RelativeLayout android:id="@+id/storeLayout"
+        		android:background="@drawable/store_background"
+        		android:layout_width="fill_parent"
+        		android:layout_height="fill_parent"        		
+				android:visibility="gone">
+					<ImageView
+						android:id="@+id/storeHeader"
+						android:src="@drawable/store_header"
+						android:background="@android:color/transparent"
+						android:layout_height="@dimen/headerStoreImageSize"
+						android:layout_width="fill_parent"
+						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
+				   		>
+					</ImageView>
+					<GridView
+					    android:id="@+id/storeGrid"
+					    android:layout_width="fill_parent" 
+					    android:layout_height="wrap_content"
+					    android:numColumns="3"
+					    android:horizontalSpacing="8dp"
+					    android:verticalSpacing="8dp"
+					    android:adjustViewBounds="true"
+					    android:stretchMode="columnWidth"
+					    android:layout_below="@+id/storeHeader"
+					    android:paddingLeft="8dp"
+	    				android:paddingRight="8dp"
+					/>
+	</RelativeLayout>
 	 
 	<RelativeLayout
 		android:id="@+id/buttonsLayout"
-		android:layout_width="fill_parent"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"	 
 		android:layout_marginTop="@dimen/buttonsLayoutMarginTop"
 		android:layout_below="@+id/topPanel">
@@ -399,7 +436,7 @@
 				    	/>
 	    	</LinearLayout>
 	    	<RelativeLayout android:id="@+id/scenemodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"
@@ -420,7 +457,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/wbLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -441,28 +478,27 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/focusmodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
-        		android:layout_marginRight="5dip"
-				android:layout_marginBottom="3dip"
+        		android:layout_marginRight="5dip"				
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
 					    android:id="@+id/focusmodeGrid"
-					    android:layout_width="fill_parent" 
+					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="3"
-					    android:verticalSpacing="7dp"
 					    android:horizontalSpacing="0dp"
+					    android:verticalSpacing="10dp"					    
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/flashmodeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -483,7 +519,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/isoLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -504,7 +540,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/meteringLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -538,7 +574,7 @@
 
 	 	
 		<RelativeLayout android:id="@+id/modeLayout"
-        		android:background="@drawable/layout_border"
+        		android:background="@drawable/blacktansperentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -555,8 +591,7 @@
 					    android:horizontalSpacing="0dp"
 					    android:verticalSpacing="@dimen/gridModeVerticalSpacing"
 					    android:paddingTop="20dp"
-					    android:paddingBottom="5dp"
-					    android:adjustViewBounds="true"
+					    android:paddingBottom="5dp"					    
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					    android:visibility="gone"
@@ -580,7 +615,7 @@
 		<ImageButton
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="10dip"
 			android:background="@android:color/transparent" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"
@@ -590,7 +625,7 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/layout_border"
+			android:background="@drawable/blacktansperentlayerpulldownmenu"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
     		android:layout_gravity="center">

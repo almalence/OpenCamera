@@ -68,6 +68,11 @@
 			android:defaultValue="false" 
 			android:key="shutterPrefCommon" />
 	
+	<CheckBoxPreference
+			android:title="@string/Pref_Common_HWShutter_Title"
+			android:defaultValue="false" 
+			android:key="useHWShutterButtonLauncher" />
+	
     <Preference android:key="about" 
        	android:title="@string/Pref_About_Title" 
        	android:summary="@string/Pref_About_Summary"

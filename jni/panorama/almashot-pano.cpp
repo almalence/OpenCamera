@@ -154,6 +154,45 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "input w x h:  %d x %d",
 	//		width, height);
 
+#if 0 // debug dump
+		FILE *f = fopen("/sdcard/pano/pano_dims_LR.txt", "wb");
+		fprintf(f, "float pano_offs[%d][3][3] =\n{\t// Fov = %d\n", nframesCount, cameraFOV);
+		for (int i=0; i<nframesCount; ++i)
+		{
+			fprintf(f, "\t{ ");
+			for (int j=0; j<3; ++j)
+			{
+				fprintf(f, "{");
+				for (int k=0; k<3; ++k)
+				{
+					fprintf(f, " %3.4f", trs[i][j][k]);
+					if (k<2)
+						fprintf(f, ",");
+				}
+				fprintf(f, " }");
+				if (j<2)
+					fprintf(f, ",");
+			}
+			if (i<nframesCount-1)
+				fprintf(f, " },\n");
+			else
+				fprintf(f, " }\n");
+		}
+		fprintf(f, "};\n");
+		fclose(f);
+#endif
+#if 0 // debug dump
+		for (int i=0; i<nframesCount; ++i)
+		{
+			char str[1024];
+
+			sprintf (str, "/sdcard/pano/pi%d.yuv", i);
+			FILE *fi = fopen(str, "wb");
+			fwrite((Uint8*)nframes[i], width*height*3/2, 1, fi);
+			fclose(fi);
+		}
+#endif
+
 	Pano_PrepareFrames((Uint8**)nframes, width, height, nframesCount, framesSelected,
 			trs, framesRelevant, fx0, fy0, fsx, fsy, &nFramesSelected, &out_width, &out_height,
 			&crop[0], &crop[1], &crop[2], &crop[3], cameraFOV, 1, 1,

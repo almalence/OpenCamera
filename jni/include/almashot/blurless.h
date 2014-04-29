@@ -58,6 +58,7 @@ extern "C"
 // Preview - sx/4 x sy/4 preview image in interleaved RGB888 format
 // SensorGain is the sensor gain during capture, in u8.8 fixed-point format
 // DeGhostGain is used to adjust amount of de-ghosting, set to 256
+// DeGhostFrame - number of frames to be used to get moving objects data, recommended: 1
 // Mode:
 //   0 - four input frames, with exposure adjustment, BE processing method 1
 //   1 - six input frames with the same exposure, BE processing method 2
@@ -80,6 +81,7 @@ int BlurLess_Preview
 	Uint8 *restrict debug2,
 	int   SensorGain,
 	int   DeGhostGain,
+	int   DeGhostFrames,
 	int   Mode,
 	int   nFrames,
 	int   sx,

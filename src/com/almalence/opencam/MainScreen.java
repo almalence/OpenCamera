@@ -60,6 +60,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -83,7 +84,9 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -504,14 +507,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// <!-- -+-
 		if(goShopping)
 		{
-			MainScreen.thiz.showUnlock = true;
+//			MainScreen.thiz.showUnlock = true;
 			if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 			{
 				Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
 				return;
 			}
-			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
-			MainScreen.thiz.startActivity(shopintent);
+//			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
+//			MainScreen.thiz.startActivity(shopintent);
+			guiManager.showStore();
 		}
 		//-+- -->
 	}
@@ -723,8 +727,22 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		
+		long Free = getAvailableInternalMemory();
+		//Log.e("vdsfs", "Memory: free: "+Free+"Mb");
+		if (Free<30)
+			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 
+	private long getAvailableInternalMemory()
+	{
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		long availableBlocks = stat.getAvailableBlocks();
+		return availableBlocks * blockSize / 1048576;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -2187,7 +2205,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
         OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
         OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
         
-//
+        
+        //Samsung store
+//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
+//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
+//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
+//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+//        
+//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
+//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
+
+        
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_TSTORE, "tstore_sku_gas");
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_SAMSUNG, "100000100696/000001003744");
@@ -2386,242 +2415,379 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private int ALL_REQUEST = 102;
 	private int OBJECTREM_BURST_REQUEST = 103;
 	private int GROUPSHOT_REQUEST = 104;
-	Preference hdrPref, panoramaPref, allPref, objectremovalPref,
-			groupshotPref;
+//	Preference hdrPref, panoramaPref, allPref, objectremovalPref,
+//			groupshotPref;
 
-	public void onBillingPreferenceCreate(final PreferenceFragment prefActivity) {
-		allPref = prefActivity.findPreference("purchaseAll");
-		
-		if (titleUnlockAll!=null && titleUnlockAll != "")
+//	public void onBillingPreferenceCreate(final PreferenceFragment prefActivity) {
+//		allPref = prefActivity.findPreference("purchaseAll");
+//		
+//		if (titleUnlockAll!=null && titleUnlockAll != "")
+//		{
+//			String title = getResources().getString(R.string.Pref_Upgrde_All_Preference_Title) + ": " + titleUnlockAll;
+//			allPref.setTitle(title);
+//		}
+//		if (summaryUnlockAll!=null && summaryUnlockAll != "")
+//		{
+//			String summary = summaryUnlockAll + " " + getResources().getString(R.string.Pref_Upgrde_All_Preference_Summary);
+//			allPref.setSummary(summary);
+//		}
+//		
+//		allPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//			public boolean onPreferenceClick(Preference preference) {
+//				// generate payload to identify user....????
+//				String payload = "";
+//				try {
+//					mHelper.launchPurchaseFlow(MainScreen.thiz,
+//							SKU_UNLOCK_ALL, ALL_REQUEST,
+//							mPreferencePurchaseFinishedListener, payload);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					Log.e("Main billing", "Purchase result " + e.getMessage());
+//					Toast.makeText(MainScreen.thiz,
+//							"Error during purchase " + e.getMessage(),
+//							Toast.LENGTH_LONG).show();
+//				}
+//
+//				prefActivity.getActivity().finish();
+//				Preferences.closePrefs();
+//				return true;
+//			}
+//		});
+//		if (unlockAllPurchased) {
+//			allPref.setEnabled(false);
+//			allPref.setSummary(R.string.already_unlocked);
+//
+//			hdrPurchased = true;
+//			panoramaPurchased = true;
+//			objectRemovalBurstPurchased = true;
+//			groupShotPurchased = true;
+//		}
+//
+//		hdrPref = prefActivity.findPreference("hdrPurchase");
+//		
+//		if (titleUnlockHDR!=null && titleUnlockHDR != "")
+//		{
+//			String title = getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title) + ": " + titleUnlockHDR;
+//			hdrPref.setTitle(title);
+//		}
+//		if (summaryUnlockHDR!=null && summaryUnlockHDR != "")
+//		{
+//			String summary = summaryUnlockHDR + " " + getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Summary);
+//			hdrPref.setSummary(summary);
+//		}
+//		
+//		hdrPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//			public boolean onPreferenceClick(Preference preference) {
+//				// generate payload to identify user....????
+//				String payload = "";
+//				try {
+//					mHelper.launchPurchaseFlow(MainScreen.thiz,
+//							SKU_HDR, HDR_REQUEST,
+//							mPreferencePurchaseFinishedListener, payload);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					Log.e("Main billing", "Purchase result " + e.getMessage());
+//					Toast.makeText(MainScreen.thiz,
+//							"Error during purchase " + e.getMessage(),
+//							Toast.LENGTH_LONG).show();
+//				}
+//
+//				prefActivity.getActivity().finish();
+//				Preferences.closePrefs();
+//				return true;
+//			}
+//		});
+//
+//		if (hdrPurchased) {
+//			hdrPref.setEnabled(false);
+//			hdrPref.setSummary(R.string.already_unlocked);
+//		}
+//
+//		panoramaPref = prefActivity.findPreference("panoramaPurchase");
+//		
+//		if (titleUnlockPano!=null && titleUnlockPano != "")
+//		{
+//			String title = getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title) + ": " + titleUnlockPano;
+//			panoramaPref.setTitle(title);
+//		}
+//		if (summaryUnlockPano!=null && summaryUnlockPano != "")
+//		{
+//			String summary = summaryUnlockPano + " " + getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Summary) ;
+//			panoramaPref.setSummary(summary);
+//		}
+//		
+//		panoramaPref
+//				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//					public boolean onPreferenceClick(Preference preference) {
+//						// generate payload to identify user....????
+//						String payload = "";
+//						try {
+//							mHelper.launchPurchaseFlow(MainScreen.thiz,
+//									SKU_PANORAMA,
+//									PANORAMA_REQUEST,
+//									mPreferencePurchaseFinishedListener,
+//									payload);
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//							Log.e("Main billing",
+//									"Purchase result " + e.getMessage());
+//							Toast.makeText(MainScreen.thiz,
+//									"Error during purchase " + e.getMessage(),
+//									Toast.LENGTH_LONG).show();
+//						}
+//
+//						prefActivity.getActivity().finish();
+//						Preferences.closePrefs();
+//						return true;
+//					}
+//				});
+//		if (panoramaPurchased) {
+//			panoramaPref.setEnabled(false);
+//			panoramaPref.setSummary(R.string.already_unlocked);
+//		}
+//
+//		objectremovalPref = prefActivity.findPreference("movingPurchase");
+//		
+//		if (titleUnlockMoving!=null && titleUnlockMoving != "")
+//		{
+//			String title = getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title) + ": " + titleUnlockMoving;
+//			objectremovalPref.setTitle(title);
+//		}
+//		if (summaryUnlockMoving!=null && summaryUnlockMoving != "")
+//		{
+//			String summary = summaryUnlockMoving + " " + getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Summary);
+//			objectremovalPref.setSummary(summary);
+//		}
+//		
+//		objectremovalPref
+//				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//					public boolean onPreferenceClick(Preference preference) {
+//						// generate payload to identify user....????
+//						String payload = "";
+//						try {
+//							mHelper.launchPurchaseFlow(MainScreen.thiz,
+//									SKU_MOVING_SEQ,
+//									OBJECTREM_BURST_REQUEST,
+//									mPreferencePurchaseFinishedListener,
+//									payload);
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//							Log.e("Main billing",
+//									"Purchase result " + e.getMessage());
+//							Toast.makeText(MainScreen.thiz,
+//									"Error during purchase " + e.getMessage(),
+//									Toast.LENGTH_LONG).show();
+//						}
+//
+//						prefActivity.getActivity().finish();
+//						Preferences.closePrefs();
+//						return true;
+//					}
+//				});
+//		if (objectRemovalBurstPurchased) {
+//			objectremovalPref.setEnabled(false);
+//			objectremovalPref.setSummary(R.string.already_unlocked);
+//		}
+//
+//		groupshotPref = prefActivity.findPreference("groupPurchase");
+//		
+//		if (titleUnlockGroup!=null && titleUnlockGroup != "")
+//		{
+//			String title = getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title) + ": " + titleUnlockGroup;
+//			groupshotPref.setTitle(title);
+//		}
+//		if (summaryUnlockGroup!=null && summaryUnlockGroup != "")
+//		{
+//			String summary = summaryUnlockGroup + " " + getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Summary);
+//			groupshotPref.setSummary(summary);
+//		}
+//		
+//		groupshotPref
+//				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//					public boolean onPreferenceClick(Preference preference) {
+//						String payload = "";
+//						try {
+//							mHelper.launchPurchaseFlow(MainScreen.thiz,
+//									SKU_GROUPSHOT,
+//									GROUPSHOT_REQUEST,
+//									mPreferencePurchaseFinishedListener,
+//									payload);
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//							Log.e("Main billing",
+//									"Purchase result " + e.getMessage());
+//							Toast.makeText(MainScreen.thiz,
+//									"Error during purchase " + e.getMessage(),
+//									Toast.LENGTH_LONG).show();
+//						}
+//
+//						prefActivity.getActivity().finish();
+//						Preferences.closePrefs();
+//						return true;
+//					}
+//				});
+//		if (groupShotPurchased) {
+//			groupshotPref.setEnabled(false);
+//			groupshotPref.setSummary(R.string.already_unlocked);
+//		}
+//	}
+
+	public boolean isPurchasedAll()
+	{
+		return unlockAllPurchased;
+	}
+	
+	public boolean isPurchasedHDR()
+	{
+		return hdrPurchased;
+	}
+	
+	public boolean isPurchasedPanorama()
+	{
+		return panoramaPurchased;
+	}
+	
+	public boolean isPurchasedMoving()
+	{
+		return objectRemovalBurstPurchased;
+	}
+	
+	public boolean isPurchasedGroupshot()
+	{
+		return groupShotPurchased;
+	}
+	
+	public void purchaseAll()
+	{
+		if(MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
 		{
-			String title = getResources().getString(R.string.Pref_Upgrde_All_Preference_Title) + ": " + titleUnlockAll;
-			allPref.setTitle(title);
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_UNLOCK_ALL, ALL_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
 		}
-		if (summaryUnlockAll!=null && summaryUnlockAll != "")
-		{
-			String summary = summaryUnlockAll + " " + getResources().getString(R.string.Pref_Upgrde_All_Preference_Summary);
-			allPref.setSummary(summary);
-		}
-		
-		allPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			public boolean onPreferenceClick(Preference preference) {
-				// generate payload to identify user....????
-				String payload = "";
-				try {
-					mHelper.launchPurchaseFlow(MainScreen.thiz,
-							SKU_UNLOCK_ALL, ALL_REQUEST,
-							mPreferencePurchaseFinishedListener, payload);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e("Main billing", "Purchase result " + e.getMessage());
-					Toast.makeText(MainScreen.thiz,
-							"Error during purchase " + e.getMessage(),
-							Toast.LENGTH_LONG).show();
-				}
-
-				prefActivity.getActivity().finish();
-				Preferences.closePrefs();
-				return true;
-			}
-		});
-		if (unlockAllPurchased) {
-			allPref.setEnabled(false);
-			allPref.setSummary(R.string.already_unlocked);
-
-			hdrPurchased = true;
-			panoramaPurchased = true;
-			objectRemovalBurstPurchased = true;
-			groupShotPurchased = true;
-		}
-
-		hdrPref = prefActivity.findPreference("hdrPurchase");
-		
-		if (titleUnlockHDR!=null && titleUnlockHDR != "")
-		{
-			String title = getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title) + ": " + titleUnlockHDR;
-			hdrPref.setTitle(title);
-		}
-		if (summaryUnlockHDR!=null && summaryUnlockHDR != "")
-		{
-			String summary = summaryUnlockHDR + " " + getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Summary);
-			hdrPref.setSummary(summary);
-		}
-		
-		hdrPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			public boolean onPreferenceClick(Preference preference) {
-				// generate payload to identify user....????
-				String payload = "";
-				try {
-					mHelper.launchPurchaseFlow(MainScreen.thiz,
-							SKU_HDR, HDR_REQUEST,
-							mPreferencePurchaseFinishedListener, payload);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e("Main billing", "Purchase result " + e.getMessage());
-					Toast.makeText(MainScreen.thiz,
-							"Error during purchase " + e.getMessage(),
-							Toast.LENGTH_LONG).show();
-				}
-
-				prefActivity.getActivity().finish();
-				Preferences.closePrefs();
-				return true;
-			}
-		});
-
-		if (hdrPurchased) {
-			hdrPref.setEnabled(false);
-			hdrPref.setSummary(R.string.already_unlocked);
-		}
-
-		panoramaPref = prefActivity.findPreference("panoramaPurchase");
-		
-		if (titleUnlockPano!=null && titleUnlockPano != "")
-		{
-			String title = getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title) + ": " + titleUnlockPano;
-			panoramaPref.setTitle(title);
-		}
-		if (summaryUnlockPano!=null && summaryUnlockPano != "")
-		{
-			String summary = summaryUnlockPano + " " + getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Summary) ;
-			panoramaPref.setSummary(summary);
-		}
-		
-		panoramaPref
-				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-					public boolean onPreferenceClick(Preference preference) {
-						// generate payload to identify user....????
-						String payload = "";
-						try {
-							mHelper.launchPurchaseFlow(MainScreen.thiz,
-									SKU_PANORAMA,
-									PANORAMA_REQUEST,
-									mPreferencePurchaseFinishedListener,
-									payload);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.e("Main billing",
-									"Purchase result " + e.getMessage());
-							Toast.makeText(MainScreen.thiz,
-									"Error during purchase " + e.getMessage(),
-									Toast.LENGTH_LONG).show();
-						}
-
-						prefActivity.getActivity().finish();
-						Preferences.closePrefs();
-						return true;
-					}
-				});
-		if (panoramaPurchased) {
-			panoramaPref.setEnabled(false);
-			panoramaPref.setSummary(R.string.already_unlocked);
-		}
-
-		objectremovalPref = prefActivity.findPreference("movingPurchase");
-		
-		if (titleUnlockMoving!=null && titleUnlockMoving != "")
-		{
-			String title = getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title) + ": " + titleUnlockMoving;
-			objectremovalPref.setTitle(title);
-		}
-		if (summaryUnlockMoving!=null && summaryUnlockMoving != "")
-		{
-			String summary = summaryUnlockMoving + " " + getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Summary);
-			objectremovalPref.setSummary(summary);
-		}
-		
-		objectremovalPref
-				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-					public boolean onPreferenceClick(Preference preference) {
-						// generate payload to identify user....????
-						String payload = "";
-						try {
-							mHelper.launchPurchaseFlow(MainScreen.thiz,
-									SKU_MOVING_SEQ,
-									OBJECTREM_BURST_REQUEST,
-									mPreferencePurchaseFinishedListener,
-									payload);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.e("Main billing",
-									"Purchase result " + e.getMessage());
-							Toast.makeText(MainScreen.thiz,
-									"Error during purchase " + e.getMessage(),
-									Toast.LENGTH_LONG).show();
-						}
-
-						prefActivity.getActivity().finish();
-						Preferences.closePrefs();
-						return true;
-					}
-				});
-		if (objectRemovalBurstPurchased) {
-			objectremovalPref.setEnabled(false);
-			objectremovalPref.setSummary(R.string.already_unlocked);
-		}
-
-		groupshotPref = prefActivity.findPreference("groupPurchase");
-		
-		if (titleUnlockGroup!=null && titleUnlockGroup != "")
-		{
-			String title = getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title) + ": " + titleUnlockGroup;
-			groupshotPref.setTitle(title);
-		}
-		if (summaryUnlockGroup!=null && summaryUnlockGroup != "")
-		{
-			String summary = summaryUnlockGroup + " " + getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Summary);
-			groupshotPref.setSummary(summary);
-		}
-		
-		groupshotPref
-				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-					public boolean onPreferenceClick(Preference preference) {
-						String payload = "";
-						try {
-							mHelper.launchPurchaseFlow(MainScreen.thiz,
-									SKU_GROUPSHOT,
-									GROUPSHOT_REQUEST,
-									mPreferencePurchaseFinishedListener,
-									payload);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.e("Main billing",
-									"Purchase result " + e.getMessage());
-							Toast.makeText(MainScreen.thiz,
-									"Error during purchase " + e.getMessage(),
-									Toast.LENGTH_LONG).show();
-						}
-
-						prefActivity.getActivity().finish();
-						Preferences.closePrefs();
-						return true;
-					}
-				});
-		if (groupShotPurchased) {
-			groupshotPref.setEnabled(false);
-			groupshotPref.setSummary(R.string.already_unlocked);
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
 		}
 	}
-
-	public boolean showUnlock = false;
+	
+	public void purchaseHDR()
+	{
+		if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_HDR, HDR_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchasePanorama()
+	{
+		if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_PANORAMA,
+					PANORAMA_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseMoving()
+	{
+		if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_MOVING_SEQ,
+					OBJECTREM_BURST_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseGroupshot()
+	{
+		if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_GROUPSHOT,
+					GROUPSHOT_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+//	public boolean showUnlock = false;
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+			guiManager.showStore();
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {
 				Log.v("Main billing", "Error purchasing: " + result);
-				new CountDownTimer(100, 100) {
-					public void onTick(long millisUntilFinished) {
-					}
-
-					public void onFinish() {
-						showUnlock = true;
-						Intent intent = new Intent(MainScreen.thiz,
-								Preferences.class);
-						startActivity(intent);
-					}
-				}.start();
+//				new CountDownTimer(100, 100) {
+//					public void onTick(long millisUntilFinished) {
+//					}
+//
+//					public void onFinish() {
+//						showUnlock = true;
+//						Intent intent = new Intent(MainScreen.thiz,
+//								Preferences.class);
+//						startActivity(intent);
+//					}
+//				}.start();
 				return;
 			}
 
@@ -2634,8 +2800,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase HDR.");
 
 				hdrPurchased = true;
-				hdrPref.setEnabled(false);
-				hdrPref.setSummary(R.string.already_unlocked);
+//				hdrPref.setEnabled(false);
+//				hdrPref.setSummary(R.string.already_unlocked);
 				
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_hdr", true);
@@ -2645,8 +2811,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase Panorama.");
 
 				panoramaPurchased = true;
-				panoramaPref.setEnabled(false);
-				panoramaPref.setSummary(R.string.already_unlocked);
+//				panoramaPref.setEnabled(false);
+//				panoramaPref.setSummary(R.string.already_unlocked);
 				
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_panorama", true);
@@ -2656,20 +2822,20 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase all.");
 
 				unlockAllPurchased = true;
-				allPref.setEnabled(false);
-				allPref.setSummary(R.string.already_unlocked);
-
-				groupshotPref.setEnabled(false);
-				groupshotPref.setSummary(R.string.already_unlocked);
-
-				objectremovalPref.setEnabled(false);
-				objectremovalPref.setSummary(R.string.already_unlocked);
-
-				panoramaPref.setEnabled(false);
-				panoramaPref.setSummary(R.string.already_unlocked);
-
-				hdrPref.setEnabled(false);
-				hdrPref.setSummary(R.string.already_unlocked);
+//				allPref.setEnabled(false);
+//				allPref.setSummary(R.string.already_unlocked);
+//
+//				groupshotPref.setEnabled(false);
+//				groupshotPref.setSummary(R.string.already_unlocked);
+//
+//				objectremovalPref.setEnabled(false);
+//				objectremovalPref.setSummary(R.string.already_unlocked);
+//
+//				panoramaPref.setEnabled(false);
+//				panoramaPref.setSummary(R.string.already_unlocked);
+//
+//				hdrPref.setEnabled(false);
+//				hdrPref.setSummary(R.string.already_unlocked);
 				
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("unlock_all_forever", true);
@@ -2679,8 +2845,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase object removal.");
 
 				objectRemovalBurstPurchased = true;
-				objectremovalPref.setEnabled(false);
-				objectremovalPref.setSummary(R.string.already_unlocked);
+//				objectremovalPref.setEnabled(false);
+//				objectremovalPref.setSummary(R.string.already_unlocked);
 				
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
@@ -2690,8 +2856,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase groupshot.");
 
 				groupShotPurchased = true;
-				groupshotPref.setEnabled(false);
-				groupshotPref.setSummary(R.string.already_unlocked);
+//				groupshotPref.setEnabled(false);
+//				groupshotPref.setSummary(R.string.already_unlocked);
 				
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
@@ -2715,6 +2881,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+			
+			guiManager.showStore();
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {
@@ -2767,9 +2935,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.commit();
 			}
 
-			showUnlock = true;
-			Intent intent = new Intent(MainScreen.thiz, Preferences.class);
-			startActivity(intent);
+			
 		}
 	};
 
@@ -2788,8 +2954,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			Log.v("Main billing", "onActivityResult handled by IABUtil.");
 		}
 	}
-
-	// next methods used to store number of free launches.
+	
+		// next methods used to store number of free launches.
 	// using files to store this info
 
 	// returns number of launches left

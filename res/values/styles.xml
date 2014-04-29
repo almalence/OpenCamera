@@ -34,6 +34,5 @@
     <style name="OpenCameraStyle" parent="@android:style/Theme.NoTitleBar.Fullscreen">        
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:typeface">monospace</item>
-        <item name="android:background">@drawable/thumbnail_background</item>
     </style>
 </resources>

@@ -99,8 +99,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	//private String preferenceFocusMode;
 	
-	private float viewAngleX = 54.8f;
-	private float viewAngleY = 42.5f;
+	private float viewAngleX = 55.4f;
+	private float viewAngleY = 42.7f;
 
 	private SensorManager sensorManager;
 	private Sensor sensorGravity;
@@ -127,6 +127,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private volatile boolean previewRestartFlag;
 
 	private boolean showGyroWarnOnce = false;
+	
+	private int aewblock = 1;
+	private boolean aewbLockedByPanorama = false;
 	
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -329,7 +332,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
 
 		//initSensors();
-		
+		aewbLockedByPanorama = false;
 		this.getPrefs();
 	}
 	
@@ -505,22 +508,37 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		{
 			this.viewAngleX = cp.getHorizontalViewAngle();
 			this.viewAngleY = cp.getVerticalViewAngle();
-			
-			// some devices report incorrect FOV values, use typical view angles then
-			if (this.viewAngleX >= 150)
-			{
-				this.viewAngleX = 55.4f;
-				this.viewAngleY = 42.7f;
-			}
-
-			// Some devices report incorrect value for vertical view angle
-			if (this.viewAngleY == this.viewAngleX)
-				this.viewAngleY = this.viewAngleX*3/4;
 		}
 		catch (final Throwable e)
 		{
-			// Some bugged camera drivers pop ridiculous exception here 
+			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
+			this.viewAngleX = 55.4f;
+			this.viewAngleY = 42.7f;
 		}
+
+		// some devices report incorrect FOV values, use typical view angles then
+		if (this.viewAngleX >= 150)
+		{
+			this.viewAngleX = 55.4f;
+			this.viewAngleY = 42.7f;
+		}
+
+		// Some cameras report incorrect view angles
+		// Usually vertical view angle is incorrect, but eg Htc One report incorrect horizontal view angle
+		// If aspect ratio from FOV differs by more than 10% from aspect ratio from W/H
+		// - re-compute view angle
+		float HorizontalViewFromAspect = 2*180*(float)Math.atan((float)this.pictureWidth/(float)this.pictureHeight*
+				(float)Math.tan((float)Math.PI*this.viewAngleY/(2*180))) / (float)Math.PI; 
+		float VerticalViewFromAspect = 2*180*(float)Math.atan((float)this.pictureHeight/(float)this.pictureWidth*
+				(float)Math.tan((float)Math.PI*this.viewAngleX/(2*180))) / (float)Math.PI;
+		// not expecting very narrow field of view
+		if ((VerticalViewFromAspect > 40.f) && (VerticalViewFromAspect < 0.9f*this.viewAngleY))
+				this.viewAngleY = VerticalViewFromAspect;
+		else if ((HorizontalViewFromAspect < 0.9f*this.viewAngleX) || (HorizontalViewFromAspect > 1.1f*this.viewAngleX))
+			this.viewAngleX = HorizontalViewFromAspect;
+
+		//Log.i(TAG,"viewAngleX: "+this.viewAngleX);
+		//Log.i(TAG,"viewAngleY: "+this.viewAngleY);
 
     	MainScreen.thiz.setCameraParameters(cp);
     	
@@ -705,30 +723,28 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
         
         this.prefMemoryRelax = prefs.getBoolean("pref_plugin_capture_panoramaaugmented_memory", false);
         
-         int overlap = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_frameoverlap", "2"));
+         int overlap = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_frameoverlap", "1"));
          switch(overlap)
          {
          case 0:
-        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.65f;
+        	 AugmentedPanoramaEngine.setFrameIntersection(0.70f);
         	 break;
          case 1:
-        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.50f;
+        	 AugmentedPanoramaEngine.setFrameIntersection(0.50f);
         	 break;
          case 2:
-        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.30f;
+        	 AugmentedPanoramaEngine.setFrameIntersection(0.30f);
         	 break;
-         case 3:
-        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.25f;
+/*       case 3:
+        	 AugmentedPanoramaEngine.setFrameIntersection(0.25f);
         	 break;
          case 4:
-        	 AugmentedPanoramaEngine.FRAME_INTERSECTION_PART = 0.15f;
+        	 AugmentedPanoramaEngine.setFrameIntersection(0.15f);
         	 break;
+*/
          }
          
-         if (MainScreen.guiManager.mEVLockSupported)
-         {
-        	 
-         }
+         aewblock = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_aelock", "1"));
     }
 	
 	private void createPrefs(final ListPreference lp, final Preference ud_pref)
@@ -987,6 +1003,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void startCapture()
 	{
+		lockAEWB();
+		
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
@@ -1088,12 +1106,72 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 //			e.printStackTrace();
 //		}
 		
-
 		takingAlready = true;
 		
 		takePictureReal();
 	}
 
+	private void lockAEWB()
+	{
+		boolean lock = false;
+		switch(aewblock)
+		{
+			case 0:
+				lock = false;
+				break;
+			case 1:
+				if(MainScreen.guiManager.getDisplayOrientation() == 90 || MainScreen.guiManager.getDisplayOrientation() == 180 )
+					lock = true;
+				break;
+			case 2:
+				lock = true;
+				break;
+		}
+		
+		if (lock)
+		{
+			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			if (params != null)
+			{
+				if(MainScreen.thiz.isWhiteBalanceLockSupported() && !params.getAutoWhiteBalanceLock())
+				{
+					params.setAutoWhiteBalanceLock(true);
+					MainScreen.thiz.setCameraParameters(params);
+					aewbLockedByPanorama = true;
+				}
+				if(MainScreen.thiz.isExposureLockSupported() && !params.getAutoExposureLock())
+				{
+					params.setAutoExposureLock(true);
+					MainScreen.thiz.setCameraParameters(params);
+					aewbLockedByPanorama = true;
+				}
+			}
+		}
+		lock = false;
+	}
+	
+	private void unlockAEWB()
+	{
+		if (aewbLockedByPanorama)
+		{
+			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			if (params != null)
+			{
+				if(MainScreen.thiz.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+				{
+					params.setAutoWhiteBalanceLock(false);
+					MainScreen.thiz.setCameraParameters(params);
+				}
+				if(MainScreen.thiz.isExposureLockSupported() && params.getAutoExposureLock())
+				{
+					params.setAutoExposureLock(false);
+					MainScreen.thiz.setCameraParameters(params);
+				}
+			}
+			aewbLockedByPanorama = false;
+		}
+	}
+	
 	@Override
 	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
 	{
@@ -1213,6 +1291,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private void stopCapture()
 	{		
 		this.capturing = false;
+		
+		unlockAEWB();
 		
 		final LinkedList<AugmentedFrameTaken> frames = this.engine.retrieveFrames();
 		

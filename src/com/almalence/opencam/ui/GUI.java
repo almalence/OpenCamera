@@ -284,4 +284,7 @@ public abstract class GUI
 	
 	//mode help procedure
 	abstract public void showHelp(String modeName, String text, int imageID, String Prefs);
+	
+	abstract public void showStore();
+	abstract public void hideStore();	
 }

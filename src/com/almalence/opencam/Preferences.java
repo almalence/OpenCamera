@@ -61,13 +61,13 @@ public class Preferences extends PreferenceActivity
 		thiz=this;
 		loadHeadersFromResource(R.xml.preferences_headers, target);
 
-		// <!-- -+-
-		if (MainScreen.thiz.showUnlock)
-		{
-			MainScreen.thiz.showUnlock=false;
-			startWithFragment("com.almalence.opencam.FragmentUpgrade", null, null, 0);
-		}
-		//-+- -->
+//		// <!-- -+-
+//		if (MainScreen.thiz.showUnlock)
+//		{
+//			MainScreen.thiz.showUnlock=false;
+//			startWithFragment("com.almalence.opencam.FragmentUpgrade", null, null, 0);
+//		}
+//		//-+- -->
 	}
 	
 	static public void closePrefs()
