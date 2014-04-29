@@ -133,6 +133,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
      */
 	public void showGUI () {
 		if (mBarcodeScannerState == ON) {
+			if (mBound == null) {
+				createBoundView();
+			}
+			if (mBarcodesListButton == null) {
+				createScreenButton();
+			}
+			
 			if (mBound != null) {
 				mBound.setVisibility(View.VISIBLE);
 			}
