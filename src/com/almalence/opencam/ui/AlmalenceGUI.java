@@ -1050,7 +1050,7 @@ public class AlmalenceGUI extends GUI implements
 					return;
 				}
 				//start store
-				showStore();
+				showStore(false);
 				
 //				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
 //				MainScreen.thiz.startActivity(intent);
@@ -1082,7 +1082,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	//<!-- -+-
 	@Override
-	public void showStore()
+	public void showStore(boolean isCouponSale)
 	{
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
@@ -1095,7 +1095,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		MainScreen.guiManager.lockControls = true;
 		
-		initStoreList();
+		initStoreList(isCouponSale);
 		GridView gridview = (GridView) guiView.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
 		
@@ -1130,9 +1130,12 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.guiManager.lockControls = false;
 	}
 	
-	private void initStoreList() {
+	private void initStoreList(boolean isCouponSale) {
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		
 		for (int i =0; i<5; i++) {
 
@@ -1154,11 +1157,17 @@ public class AlmalenceGUI extends GUI implements
 						price.setText(R.string.already_unlocked);
 					else
 					{
-						price.setText(MainScreen.thiz.titleUnlockAll);
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-						boolean bOnSale = prefs.getBoolean("bOnSale", false);
-						if (bOnSale)
+						if (isCouponSale)
+						{
+							price.setText(MainScreen.thiz.titleUnlockAllCoupon);
 							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
+						}
+						else
+						{
+							price.setText(MainScreen.thiz.titleUnlockAll);
+							if (bOnSale)
+								((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
+						}
 					}
 					break;
 				case 1:

@@ -325,6 +325,14 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		if (mBarcodeScannerState == OFF) {
 			return;
 		}
+		
+		//sale hook
+		if (barcode.getData().equals("almalence.com") && !MainScreen.thiz.isUnlockedAll())
+		{
+			MainScreen.guiManager.showStore(true);
+			return;
+		}
+		
         BarcodeStorageHelper.addBarcode(barcode);
         
         showBarcodeViewDialog(barcode);

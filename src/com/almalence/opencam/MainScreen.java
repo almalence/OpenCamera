@@ -514,7 +514,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 //			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
 //			MainScreen.thiz.startActivity(shopintent);
-			guiManager.showStore();
+			guiManager.showStore(false);
 		}
 		//-+- -->
 	}
@@ -2153,6 +2153,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	static final String SKU_HDR = "plugin_almalence_hdr";
 	static final String SKU_PANORAMA = "plugin_almalence_panorama";
 	static final String SKU_UNLOCK_ALL = "unlock_all_forever";
+	static final String SKU_UNLOCK_ALL_COUPON = "unlock_all_forever_coupon";
 	static final String SKU_MOVING_SEQ = "plugin_almalence_moving_burst";
 	static final String SKU_GROUPSHOT = "plugin_almalence_groupshot";
 	
@@ -2164,6 +2165,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
         OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
         OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
         OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
         OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
         OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
         
@@ -2174,6 +2176,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
         OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
         OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_AMAZON, "plugin_almalence_panorama_amazon");
         OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_amazon");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
         OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
         OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
         
@@ -2185,6 +2188,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
 //        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
 //        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
 //        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
 //        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
 //        
@@ -2289,6 +2293,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public String titleUnlockAll = "$6.95";
+	public String titleUnlockAllCoupon = "$3.95";
 	public String titleUnlockHDR = "$2.99";
 	public String titleUnlockPano = "$2.99";
 	public String titleUnlockMoving = "$2.99";
@@ -2325,6 +2330,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.commit();
 			}
 			if (inventory.hasPurchase(SKU_UNLOCK_ALL)) {
+				unlockAllPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_UNLOCK_ALL_COUPON)) {
 				unlockAllPurchased = true;
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("unlock_all_forever", true);
@@ -2369,6 +2380,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			
 			try{
 				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
+				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
 				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
 				titleUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getPrice();
 				titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
@@ -2747,7 +2759,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-			guiManager.showStore();
+			guiManager.showStore(false);
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {
@@ -2816,6 +2828,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.putBoolean("unlock_all_forever", true);
 				prefsEditor.commit();
 			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
+				Log.v("Main billing", "Purchase all coupon.");
+
+				unlockAllPurchased = true;
+			}
 			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
 				Log.v("Main billing", "Purchase object removal.");
 
@@ -2857,7 +2874,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
 			
-			guiManager.showStore();
+			guiManager.showStore(false);
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {
@@ -2887,6 +2904,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 			if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
 				Log.v("Main billing", "Purchase unlock_all_forever.");
+				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
+				Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
 				unlockAllPurchased = true;
 				
 				Editor prefsEditor = prefs.edit();

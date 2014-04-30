@@ -13,11 +13,11 @@
    <dimen name="gridModeTextLayoutSize">60dp</dimen>
    <dimen name="gridModeTextSize">16sp</dimen>
    <dimen name="gridModeImageSize">70dp</dimen>
-   <dimen name="gridModeImageSize2x">115dp</dimen>
-   <dimen name="gridModeVerticalSpacing">10dp</dimen>
+   <dimen name="gridModeImageSize2x">110dp</dimen>
+   <dimen name="gridModeVerticalSpacing">5dp</dimen>
    
    <dimen name="settingsModeLayoutWidth">400dp</dimen>
-   <dimen name="modeLayoutWidth">420dp</dimen>
+   <dimen name="modeLayoutWidth">400dp</dimen>
    
    <dimen name="gridStoreImageSize">120dp</dimen>
    <dimen name="gridStoreImageSize2x">250dp</dimen>

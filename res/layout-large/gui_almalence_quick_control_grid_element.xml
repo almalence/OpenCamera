@@ -9,7 +9,8 @@
         			android:layout_height="@dimen/gridImageSize2x"
 	        		android:layout_width="@dimen/gridImageSize2x"
         			android:background="@drawable/underlayer"
-        			android:layout_margin="2dp"
+        			android:layout_marginLeft="5dp"
+        			android:layout_marginRight="5dp"
         			android:layout_centerInParent="true">
         			
 	    <ImageView
