@@ -517,7 +517,7 @@ public class HALv3
 			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
 			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 	//					Log.e("CameraController", "captureImage 2");
-			if(format == ImageFormat.JPEG)
+			if(format == CameraController.JPEG)
 			{
 				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
 	//						Log.e("CameraController", "captureImage 3.1");

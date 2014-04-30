@@ -573,75 +573,72 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 	
-//	@Override
-//	public void SetCameraPreviewSize(Camera.Parameters cp)
-//	{		
-//		// for super mode
-//        nVFframesToBuffer = 0;
-//        
-//		int mode = Integer.parseInt(ModePreference);
-//		
-//		Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-//    	if(cp == null)
-//        	Log.e("NightCapturePlugin", "MainScreen.setupCamera CameraController.getInstance().getCameraParameters returned null!");
-//    	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
-//    	
-//    	if (mode == 1)		// hi-speed mode - set exact preview size as selected by user
-//    	{    		
-//    		Size s = camera.new Size(-1, -1);
-//    		s.width = MainScreen.getImageWidth();
-//    		s.height = MainScreen.getImageHeight();
-//    		if(cs.contains(s))
-//    			cp.setPreviewSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-//    		else
-//    		{
-//    			Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-//    	    	cp.setPreviewSize(os.width, os.height);
-//    		}
-//    	}
-//    	else
-//    	{
-//	    	Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-//	    	cp.setPreviewSize(os.width, os.height);
-//    	}
-//    	
-//    	if(FocusPreference.compareTo("0") == 0 && !MainScreen.thiz.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_FIXED))
-//        {
-//        	FocusPreference = "1";
-//        	
-//        	// Get the xml/preferences.xml preferences
-//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//        	SharedPreferences.Editor editor = prefs.edit();        	
-//        	editor.putString("focusPref", "1");
-//        	editor.commit();
-//        }
-//    	
-//    	CameraController.getInstance().setCameraParameters(cp);
-//	}
+	@Override
+	public void SetCameraPreviewSize(Camera.Parameters cp)
+	{		
+		// for super mode
+        nVFframesToBuffer = 0;
+        
+		int mode = Integer.parseInt(ModePreference);
+		
+    	List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
+    	
+    	if (mode == 1)		// hi-speed mode - set exact preview size as selected by user
+    	{    		
+    		CameraController.Size s = CameraController.getInstance().new Size(-1, -1);
+    		s.setWidth(MainScreen.getImageWidth());
+    		s.setHeight(MainScreen.getImageHeight());
+    		if(cs.contains(s))
+    			cp.setPreviewSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+    		else
+    		{
+    			CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+    	    	cp.setPreviewSize(os.getWidth(), os.getHeight());
+    		}
+    	}
+    	else
+    	{
+	    	CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+	    	cp.setPreviewSize(os.getWidth(), os.getHeight());
+    	}
+    	
+    	
+    	if(FocusPreference.compareTo("0") == 0 && !CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_FIXED))
+        {
+        	FocusPreference = "1";
+        	
+        	// Get the xml/preferences.xml preferences
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        	SharedPreferences.Editor editor = prefs.edit();        	
+        	editor.putString("focusPref", "1");
+        	editor.commit();
+        }
+    	
+    	CameraController.getInstance().setCameraParameters(cp);
+	}
     
 	@Override
 	public void SetCameraPictureSize()
 	{
-//		Camera camera = CameraController.getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		if (Integer.parseInt(ModePreference) != 1)
-//		{
-//			cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-//			cp.setJpegQuality(100);
-//		}
-//        
-//		try
-//        {
-//			CameraController.getInstance().setCameraParameters(cp);
-//		}
-//		catch(RuntimeException e)
-//	    {
-//	    	Log.e("NightCapturePlugin", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
-//	    }
+		Camera camera = CameraController.getCamera();
+    	if (null==camera)
+    		return;
+    	
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		if (Integer.parseInt(ModePreference) != 1)
+		{
+			cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			cp.setJpegQuality(100);
+		}
+        
+		try
+        {
+			CameraController.getInstance().setCameraParameters(cp);
+		}
+		catch(RuntimeException e)
+	    {
+	    	Log.e("NightCapturePlugin", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
+	    }
 		
 		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 		if(sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT))
@@ -665,10 +662,10 @@ public class NightCapturePlugin extends PluginCapture
 //	        }
 //	        else if(cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_AUTO))
 //	        	cp.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);	        
-	        
+//	        
 //	        String sUserFocusMode = cp.getFocusMode();
 //			//CameraController.getInstance().setCameraParameters(cp);
-//	        CameraController.getInstance().setCameraFocusMode(sUserFocusMode);
+//	        CameraController.getInstance().setCameraFocusMode(CameraController.key_focus.get(sUserFocusMode));
 //			cp = CameraController.getInstance().getCameraParameters();			
 //			String sSystemFocusMode = cp.getFocusMode();			
 //			
@@ -676,12 +673,12 @@ public class NightCapturePlugin extends PluginCapture
 //			{
 //		    	Log.i("NightCapturePlugin", "setFocusMode didn't worked in Night Scene, reverting to Auto Scene");
 //		    	if(cp.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_AUTO))
-//		    		CameraController.getInstance().setCameraSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
-//				CameraController.getInstance().setCameraFocusMode(sUserFocusMode);
+//		    		CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
+//				CameraController.getInstance().setCameraFocusMode(CameraController.key_focus.get(sUserFocusMode));
 //			}
-//			
-//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, sUserFocusMode).commit();
-//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString("SceneModeValue", cp.getSceneMode()).commit();
+			
+//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraController.key_focus.get(sUserFocusMode)).commit();
+//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("SceneModeValue", CameraController.key_scene.get(cp.getSceneMode())).commit();
 	    	
         	byte[] focusModes = CameraController.getInstance().getSupportedFocusModes();
 			if(focusModes != null)
@@ -707,6 +704,8 @@ public class NightCapturePlugin extends PluginCapture
 		        	CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 		        	editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 		        }
+				
+				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("SceneModeValue", CameraController.key_scene.get(cp.getSceneMode())).commit();
 			}
 			
 	    	Log.i("NightCapturePlugin", "MainScreen.setupCamera setFocusMode success");
@@ -734,12 +733,13 @@ public class NightCapturePlugin extends PluginCapture
 //					CameraController.getInstance().setCameraParameters(cp);
 //				}
 //				
-//				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putString("FlashModeValue", Camera.Parameters.FLASH_MODE_OFF).commit();
+//				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("FlashModeValue", CameraParameters.FLASH_MODE_OFF).commit();
 //	        }
 			
 			byte[] flashModes = CameraController.getInstance().getSupportedFlashModes();
 			if(flashModes != null)
 			{
+				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 				
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -959,19 +959,19 @@ public class NightCapturePlugin extends PluginCapture
 	          
 	            	//TODO: Re-factor to use HALv3
 //	            	if ((new_value == 0) && MainScreen.supportedFocusModes != null && !MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_FIXED))
-////            		if ((new_value == 0) && MainScreen.supportedFocusModes != null && !CameraController.isModeAvailable(MainScreen.supportedFocusModes, CameraParameters.AF_MODE_FIXED))
-//	            	{
-//	            		new AlertDialog.Builder(mPref)
-//	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
-//	        			.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
-//	        			.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
-//	        			.setPositiveButton(android.R.string.ok, null)
-//	        			.create().show();
-//	
-//		                ((ListPreference)preference).setValue("1");
-//		                
-//		                return false;
-//	            	}
+            		if ((new_value == 0) && CameraController.supportedFocusModes != null && !CameraController.isModeAvailable(CameraController.supportedFocusModes, CameraParameters.AF_MODE_FIXED))
+	            	{
+	            		new AlertDialog.Builder(mPref)
+	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
+	        			.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
+	        			.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
+	        			.setPositiveButton(android.R.string.ok, null)
+	        			.create().show();
+	
+		                ((ListPreference)preference).setValue("1");
+		                
+		                return false;
+	            	}
 	
 	                return true;
 	            }
@@ -1052,19 +1052,19 @@ public class NightCapturePlugin extends PluginCapture
 	          
 	            	//TODO: Re-factor to use HALv3
 //	            	if ((new_value == 0) && MainScreen.supportedFocusModes != null && !MainScreen.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_FIXED))
-//        			if ((new_value == 0) && MainScreen.supportedFocusModes != null && !CameraController.isModeAvailable(MainScreen.supportedFocusModes, CameraParameters.AF_MODE_FIXED))	            		
-//	            	{
-//	            		new AlertDialog.Builder(mPref.getActivity())
-//	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
-//	        			.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
-//	        			.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
-//	        			.setPositiveButton(android.R.string.ok, null)
-//	        			.create().show();
-//	
-//		                ((ListPreference)preference).setValue("1");
-//		                
-//		                return false;
-//	            	}
+        			if ((new_value == 0) && CameraController.supportedFocusModes != null && !CameraController.isModeAvailable(CameraController.supportedFocusModes, CameraParameters.AF_MODE_FIXED))	            		
+	            	{
+	            		new AlertDialog.Builder(mPref.getActivity())
+	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
+	        			.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
+	        			.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
+	        			.setPositiveButton(android.R.string.ok, null)
+	        			.create().show();
+	
+		                ((ListPreference)preference).setValue("1");
+		                
+		                return false;
+	            	}
 	
 	                return true;
 	            }
@@ -1296,7 +1296,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		CameraController.captureImage(1, ImageFormat.YUV_420_888);
+        		CameraController.captureImage(1, CameraController.YUV);
 	    	}
 	    	catch (RuntimeException e)
 	    	{
@@ -1328,7 +1328,9 @@ public class NightCapturePlugin extends PluginCapture
 				int imageWidth = params.getPreviewSize().width;
 				int imageHeight = params.getPreviewSize().height;
 				
+				//Log.e("NIGHT", "ImageConversion.sumByteArraysNV21 start");
 				ImageConversion.sumByteArraysNV21(data1,data2,dataS,imageWidth,imageHeight);
+				//Log.e("NIGHT", "ImageConversion.sumByteArraysNV21 finish");
 				if(MainScreen.getCameraMirrored())
 				{
 					dataRotated = new byte[dataS.length];

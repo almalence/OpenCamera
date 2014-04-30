@@ -191,113 +191,14 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_util_ImageConversion_JpegCo
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_convertNV21toGL(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
 {
-	unsigned char *cImageIn = (unsigned char*)env->GetByteArrayElements(ain, 0);
-	unsigned char *cImageOut = (unsigned char*)env->GetByteArrayElements(aout, 0);
+	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);
+	jbyte *cImageOut = env->GetByteArrayElements(aout, 0);
 
-	NV21_to_RGB_scaled_rotated(cImageIn, width, height, 0, 0, width, height, outWidth, outHeight, 5, cImageOut);
+	NV21_to_RGB_scaled_rotated((unsigned char*)cImageIn, width, height, 0, 0, width, height, outWidth, outHeight, 5, (unsigned char*)cImageOut);
 
-	// make nice corners and edges,
-		// apply softbox-like effect
-		int edge = (outWidth < outHeight ? outWidth:outHeight)/60;
-		int corner = (outWidth < outHeight ? outWidth:outHeight)/60;
-		for (int j = 0; j < outWidth; j++)
-		{
-			int thr = 2*(outHeight/3) - (outHeight/3) * (j+outWidth-(outWidth-j)*(outWidth-j)/outWidth) / (outWidth*2);
-
-			for (int i = 0; i < outHeight; i++)
-			{
-				if ((j>corner) && (j<outWidth-1-corner) && (i>edge+1) && (i<outHeight-1-edge))
-					continue;
-				if ((j>edge+1) && (j<outWidth-2-edge) && (i>corner) && (i<outHeight-1-corner))
-					continue;
-
-				int offset = (j+i*outWidth)*4;
-
-				// soft-box-like effect
-				int eclr  = 228 + ( i>thr ? (outHeight-i)*(200-228)/(outHeight-thr) : i*(255-228)/thr );
-				int sbclr = 128 + ( i>thr ? (outHeight-i)*(0-128)/(outHeight-thr) : i*(255-128)/thr );
-
-				float r = 0;
-				float e = 0;
-				int ecorner = 0;
-
-				if ((i<corner) && (j<corner))
-					r = (float)(corner-j)*(corner-j)+(float)(corner-i)*(corner-i);
-				if ((i<corner) && (j>outWidth-1-corner))
-					r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(corner-i)*(corner-i);
-				if ((i>outHeight-1-corner) && (j>outWidth-1-corner))
-					r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
-				if ((i>outHeight-1-corner) && (j<corner))
-					r = (float)(corner-j)*(corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
-
-				if (r>(corner-edge)*(corner-edge))
-				{
-					if (r<corner*corner)
-					{
-						e = edge-(corner-sqrtf(r));
-						ecorner = 1;
-					}
-					else
-					{
-						cImageOut[offset+0] = 0;
-						cImageOut[offset+1] = 0;
-						cImageOut[offset+2] = 0;
-						cImageOut[offset+3] = 0;
-						continue;
-					}
-				}
-				else if (i<edge)
-					e = edge-i;
-				else if (j<edge)
-					e = edge-j;
-				else if (j>outWidth-1-edge)
-					e = j-outWidth+1+edge;
-				else if (i>outHeight-1-edge)
-					e = i-outHeight+1+edge;
-
-				if (e>0)	// edges
-				{
-					if ((e<=1) && (r>0))	// anti-aliasing inner corners
-					{
-						cImageOut[offset+0] = ((int)cImageOut[offset+0]+eclr)/2;
-						cImageOut[offset+1] = ((int)cImageOut[offset+1]+eclr)/2;
-						cImageOut[offset+2] = ((int)cImageOut[offset+2]+eclr)/2;
-					}
-					else if (e>edge-2)	// anti-aliasing outer edge of a frame
-					{
-						int clr;
-
-						if (ecorner)
-							clr = max(0, 255-(int)((e-(edge-2))*255));
-						else
-							clr = 0;
-						cImageOut[offset+0] = (eclr*clr)>>8;
-						cImageOut[offset+1] = (eclr*clr)>>8;
-						cImageOut[offset+2] = (eclr*clr)>>8;
-						cImageOut[offset+3] = clr;
-					}
-					else
-					{
-						cImageOut[offset+0] = eclr;
-						cImageOut[offset+1] = eclr;
-						cImageOut[offset+2] = eclr;
-						cImageOut[offset+3] = 255;
-					}
-
-					continue;
-				}
-
-				// inner part of the image - soft-box effect
-				cImageOut[offset+0] = ((int)cImageOut[offset+0]*7+sbclr)/8;
-				cImageOut[offset+1] = ((int)cImageOut[offset+1]*7+sbclr)/8;
-				cImageOut[offset+2] = ((int)cImageOut[offset+2]*7+sbclr)/8;
-			}
-		}
-
-	env->ReleaseByteArrayElements(ain, (jbyte*)cImageIn, 0);
-	env->ReleaseByteArrayElements(aout, (jbyte*)cImageOut, 0);
+	env->ReleaseByteArrayElements(ain, cImageIn, 0);
+	env->ReleaseByteArrayElements(aout, cImageOut, 0);
 }
-
 
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_nativeresizeJpeg2RGBA(
 		JNIEnv *env, jclass clazz,

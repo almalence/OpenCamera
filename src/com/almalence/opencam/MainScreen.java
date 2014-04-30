@@ -918,6 +918,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			PluginManager.getInstance().SetCameraPreviewSize(CameraController.getInstance().getCameraParameters());
 	
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
+			
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
 			CameraController.getInstance().pviewBuffer = new byte[sz.width * sz.height
 			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8];

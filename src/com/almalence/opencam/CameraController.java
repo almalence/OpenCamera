@@ -26,7 +26,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 {
 	private final String TAG = "CameraController";
 	
-	
+	public static final int YUV = 0;
+	public static final int JPEG = 0;
 	// Android camera parameters constants
 	private final static String sceneAuto = MainScreen.thiz.getResources()
 			.getString(R.string.sceneAutoSystem);
@@ -1851,23 +1852,33 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public class Size
 	{
-		private int width;
-		private int height;
+		private int mWidth;
+		private int mHeight;
 		
 		public Size(int w, int h)
 		{
-			width = w;
-			height = h;
+			mWidth = w;
+			mHeight = h;
 		}
 		
 		public int getWidth()
 		{
-			return width;
+			return mWidth;
 		}
 		
 		public int getHeight()
 		{
-			return height;
+			return mHeight;
+		}
+		
+		public void setWidth(int width)
+		{
+			mWidth = width;
+		}
+		
+		public void setHeight(int height)
+		{
+			mHeight = height;
 		}
 	}
 }
