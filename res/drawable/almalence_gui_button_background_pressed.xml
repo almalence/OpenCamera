@@ -21,10 +21,10 @@
    <item android:left="-3dp" android:right="-3dp" android:top="-3dp" android:bottom="-3dp"> 
       <shape
 		    android:dither="true"> 
-					<corners android:radius="0dip"/> 
+					<corners android:radius="5dip"/> 
 					<solid android:color="@android:color/transparent"/>
 					<stroke android:width="6dp"
-		      	    android:color="#2D9FC9" />
+		      	    android:color="#D3D3D3" />
 		</shape>
    </item>
 </layer-list>

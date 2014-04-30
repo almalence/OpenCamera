@@ -21,11 +21,24 @@
 			    android:orientation="horizontal"
 			    android:gravity="right">    
 			    
+			    <TextView
+			        android:id="@+id/barcodesHistoryTitle"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textColor="#FFFFFF"
+			        android:layout_marginLeft="10dp"
+			        android:layout_marginRight="10dp"
+			        android:textSize="30sp"
+			        android:layout_weight="1"
+			        android:layout_gravity="center_vertical"
+			        android:text="@string/History" />
+			    
 					<Button
 					    android:id="@+id/clearBarcodesButton"
-					    android:layout_width="wrap_content"
+					    android:layout_width="120dp"
 			        	android:layout_height="wrap_content"
 			            android:text="@string/Clear_Barcodes_List"
+			            android:layout_weight="0"
 			            android:onClick="onClick" />
 		    </LinearLayout>
 		    

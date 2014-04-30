@@ -233,7 +233,7 @@
 		android:layout_gravity="top"		
 		android:layout_alignParentTop="true">
 		 	<com.almalence.ui.RotateImageView android:id="@+id/evButton"
-					android:background="@drawable/transparent_background"
+					android:background="@android:color/transparent"
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -241,7 +241,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 		 	<com.almalence.ui.RotateImageView android:id="@+id/sceneButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -249,7 +249,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>		 	
 			<com.almalence.ui.RotateImageView android:id="@+id/wbButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -257,7 +257,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/focusButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -265,7 +265,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/flashButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -273,7 +273,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/isoButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -281,7 +281,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
 			<com.almalence.ui.RotateImageView android:id="@+id/meteringButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -289,7 +289,7 @@
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>			
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
-					android:background="@drawable/transparent_background"					
+					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
 					android:layout_weight="1"
@@ -319,7 +319,7 @@
 	 
 	<com.almalence.ui.RotateImageView 
 	    android:id="@+id/Unlock"
-		android:background="@drawable/transparent_background"
+		android:background="@android:color/transparent"
 		android:src="@drawable/unlock"					
 		android:layout_height="40dip"
 		android:layout_width="40dip"
@@ -357,18 +357,6 @@
 					    android:paddingLeft="8dp"
 	    				android:paddingRight="8dp"
 					/>
-					<Button 
-			                android:id="@+id/buttonCloseStore"
-			                android:layout_height="wrap_content"
-							android:layout_width="150dip"
-			                android:textSize="17sp"
-			                android:text="OK"
-			                android:layout_alignParentBottom="true"
-			                android:layout_centerHorizontal="true"
-			                android:textColor="#FFFFFF"
-			                android:layout_margin="5dip"
-				                >
-		            </Button>
 	</RelativeLayout>
 	 
 	<RelativeLayout

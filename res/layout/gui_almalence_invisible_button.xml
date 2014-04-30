@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImageButton 	xmlns:android="http://schemas.android.com/apk/res/android"
     			android:id="@+id/invisButton"
-				android:background="@drawable/transparent_background"
+				android:background="@android:color/transparent"
 				android:src="@drawable/invis_qc"
 				android:layout_height="fill_parent"
 				android:layout_width="0dip"
