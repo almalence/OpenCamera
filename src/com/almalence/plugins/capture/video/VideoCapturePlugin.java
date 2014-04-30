@@ -1215,7 +1215,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	     	    		useProf = true;
 	    	     	    	}
 	    	     	    	else
-	    	     	    		sz = camera.new Size(4096,2160);	
+	    	     	    		sz = camera.new Size(4096,2160);
 	    	     	    }
 	    	     	    	break;
 	    	    		}
