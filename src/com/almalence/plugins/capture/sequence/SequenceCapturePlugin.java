@@ -368,7 +368,7 @@ public class SequenceCapturePlugin extends PluginCapture
     		MainScreen.thiz.PlayShutter();
     		
     		try {
-    			CameraController.captureImage(1, ImageFormat.YUV_420_888);
+    			CameraController.captureImage(1, CameraController.YUV);
 			}catch (Exception e) {
 				e.printStackTrace();
 				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());

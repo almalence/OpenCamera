@@ -102,8 +102,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private int preferenceFocusMode;
 	
-	private float viewAngleX = 54.8f;
-	private float viewAngleY = 42.5f;
+	private float viewAngleX = 55.4f;
+	private float viewAngleY = 42.7f;
 
 	private SensorManager sensorManager;
 	private Sensor sensorAccelerometer;
@@ -374,41 +374,41 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	MainScreen.setImageHeight(this.pictureHeight);
     }
 	
-//	@Override
-//	public void SetCameraPreviewSize(Camera.Parameters params)
-//	{
-//		final Camera camera = CameraController.getInstance().getCamera();
-//    	if (camera == null)
-//    		return;
-//		
-//		
-//		final Size previewSize = this.getOptimalPreviewSize(
-//				params.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
-//
-//		this.previewWidth = previewSize.width;
-//		this.previewHeight = previewSize.height;
-//		
-//		params.setPreviewSize(previewSize.width, previewSize.height);
-//		
-//    	CameraController.getInstance().setCameraParameters(params);
-//	}
+	@Override
+	public void SetCameraPreviewSize(Camera.Parameters params)
+	{
+		final Camera camera = CameraController.getInstance().getCamera();
+    	if (camera == null)
+    		return;
+		
+		
+		final CameraController.Size previewSize = this.getOptimalPreviewSize(
+				CameraController.getInstance().getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
+
+		this.previewWidth = previewSize.getWidth();
+		this.previewHeight = previewSize.getHeight();
+		
+		params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
+		
+    	CameraController.getInstance().setCameraParameters(params);
+	}
 	
 	@Override
 	public void SetCameraPictureSize()
 	{
-//		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		if (cp == null)
-//		{
-//			return;
-//		}
-//    	final List<Size> picture_sizes = cp.getSupportedPictureSizes();
-//		
-//    	
-//		this.pictureWidth = picture_sizes.get(this.prefResolution).width;
-//		this.pictureHeight = picture_sizes.get(this.prefResolution).height;
+		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		if (cp == null)
+		{
+			return;
+		}
+    	final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
+		
     	
-//		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
-//		cp.setJpegQuality(100);
+		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
+		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
+    	
+		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
+		cp.setJpegQuality(100);
     	
 
 		int sUserFocusMode = -1;
@@ -719,6 +719,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				@Override
 				public boolean onPreferenceChange(final Preference preference, final Object newValue)
 				{
+					getPrefs();
 					if (!PanoramaAugmentedCapturePlugin.this.prefHardwareGyroscope && !((Boolean)newValue))
 					{					
 						final AlertDialog ad = new AlertDialog.Builder(MainScreen.thiz)
@@ -1057,7 +1058,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	try 
     	{
-			CameraController.captureImage(1, ImageFormat.JPEG);
+			CameraController.captureImage(1, CameraController.JPEG);
 		}
     	catch (Exception e)
 		{

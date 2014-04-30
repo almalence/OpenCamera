@@ -21,6 +21,7 @@ package com.almalence.plugins.capture.expobracketing;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
@@ -345,9 +346,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	try
 	    	{
 	    		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-	    			CameraController.captureImage(1, ImageFormat.YUV_420_888);
+	    			CameraController.captureImage(1, CameraController.YUV);
 	    		else
-	    			CameraController.captureImage(1, ImageFormat.JPEG);
+	    			CameraController.captureImage(1, CameraController.JPEG);
 			}
 	    	catch (Exception e)
 			{
@@ -463,6 +464,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 	
 	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{

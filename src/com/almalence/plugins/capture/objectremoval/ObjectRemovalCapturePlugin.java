@@ -380,7 +380,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.thiz.PlayShutter();
 			
 			try {
-				CameraController.captureImage(1, ImageFormat.YUV_420_888);
+				CameraController.captureImage(1, CameraController.YUV);
 			}catch (Exception e) {
 				e.printStackTrace();
 				Log.e("ObjectRemoval", "CameraController.captureImage failed: " + e.getMessage());

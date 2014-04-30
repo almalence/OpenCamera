@@ -380,7 +380,7 @@ public class GroupShotCapturePlugin extends PluginCapture
     		MainScreen.thiz.PlayShutter();
     		try
     		{
-    			CameraController.captureImage(1, ImageFormat.YUV_420_888);
+    			CameraController.captureImage(1, CameraController.YUV);
     		}
     		catch(RuntimeException exp)
     		{

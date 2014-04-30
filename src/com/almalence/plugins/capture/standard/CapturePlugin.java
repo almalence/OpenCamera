@@ -296,9 +296,9 @@ public class CapturePlugin extends PluginCapture
     		
     		try {
     			if(ModePreference.compareTo("0") == 0)
-					CameraController.captureImage(1, ImageFormat.YUV_420_888);			
+					CameraController.captureImage(1, CameraController.YUV);			
 				else
-					CameraController.captureImage(1, ImageFormat.JPEG);
+					CameraController.captureImage(1, CameraController.JPEG);
 			}
     		catch (Exception e) 
 			{

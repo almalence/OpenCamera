@@ -626,7 +626,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	    		MainScreen.thiz.PlayShutter();
 	    		
 	    		//paramCamera.takePicture(null, null, null, MainScreen.thiz);
-	    		CameraController.captureImage(1, ImageFormat.JPEG);
+	    		CameraController.captureImage(1, CameraController.JPEG);
 	    		counter++;
     		}
     	}    	

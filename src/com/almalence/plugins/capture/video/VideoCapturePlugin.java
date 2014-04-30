@@ -1488,7 +1488,7 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = true;		
 
     	try {
-    		CameraController.captureImage(1, ImageFormat.JPEG);;
+    		CameraController.captureImage(1, CameraController.JPEG);;
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e("Video capture still image", "takePicture exception: " + e.getMessage());
