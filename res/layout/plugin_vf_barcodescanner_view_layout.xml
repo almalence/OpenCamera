@@ -19,6 +19,8 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:layout_weight="4"
+        android:maxLines="4"
+        android:scrollbars="vertical"
         android:autoLink="web"
         android:textIsSelectable="true"/>
 
