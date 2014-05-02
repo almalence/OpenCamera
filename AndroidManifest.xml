@@ -99,6 +99,6 @@
 	<uses-permission android:name="com.android.vending.BILLING"/>
 <!--  -+- -->
 
-	<uses-sdk 	android:minSdkVersion="18"
+	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="19"/>
 </manifest> 
