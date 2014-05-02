@@ -330,7 +330,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		}
 		
 		//sale hook
-		if (barcode.getData().equals("almalence.com") && !MainScreen.thiz.isUnlockedAll())
+		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.thiz.isUnlockedAll())
 		{
 			MainScreen.guiManager.showStore(true);
 			return;
