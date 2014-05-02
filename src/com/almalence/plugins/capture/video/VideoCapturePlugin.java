@@ -219,7 +219,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	break;	    	
 	    }
 	    
@@ -448,7 +448,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "5");
 	    	break;	    	
 	    }
@@ -760,7 +760,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	break;	    	
 	    }
 	    
