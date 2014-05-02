@@ -60,6 +60,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -1672,32 +1673,43 @@ public class VideoCapturePlugin extends PluginCapture
 			{
 				if (false == sw.isChecked())
 		        {
-		        	np2.setEnabled(false);
-		        	np.setEnabled(false);
 		        	swChecked = false;
 		        }
 				else
 				{
-					np2.setEnabled(true);
-		        	np.setEnabled(true);
 		        	swChecked = true;
 		        	bSet.setEnabled(true);
 				}
 			}
 		});
         
+        np2.setOnScrollListener(new NumberPicker.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChange(NumberPicker numberPicker, int scrollState) 
+            {
+            	bSet.setEnabled(true);
+            	sw.setChecked(true);
+            }    
+            });
+        np.setOnScrollListener(new NumberPicker.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChange(NumberPicker numberPicker, int scrollState) 
+            {
+            	bSet.setEnabled(true);
+            	sw.setChecked(true);
+            }    
+            });
+        
         //disable control in dialog by default
         if (false == swChecked)
         {
         	sw.setChecked(false);
-        	np2.setEnabled(false);
-        	np.setEnabled(false);
         	bSet.setEnabled(false);
         }
         else
         {
-        	np2.setEnabled(true);
-        	np.setEnabled(true);
         	bSet.setEnabled(true);
         	sw.setChecked(true);
         }

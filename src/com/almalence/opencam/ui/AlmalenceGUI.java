@@ -7245,10 +7245,10 @@ public class AlmalenceGUI extends GUI implements
 					.setImageResource(R.drawable.button_shutter);
 		else if (id == ShutterButton.RECORDER_START)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.button_shutter);
+					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
 		else if (id == ShutterButton.RECORDER_STOP)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.gui_almalence_shutter_pressed);
+					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
 		else if (id == ShutterButton.RECORDER_RECORDING)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 					.setImageResource(R.drawable.gui_almalence_shutter_pressed_video);

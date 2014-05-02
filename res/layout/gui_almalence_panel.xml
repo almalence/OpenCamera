@@ -8,17 +8,19 @@
        		android:layout_height="wrap_content"        		
     		android:layout_gravity="top"
     		android:layout_alignParentTop="true"
+    		android:padding="5dp"
+			android:paddingLeft="10dp"
+    		android:paddingRight="10dp"
   			>
 				<GridView
 				    android:id="@+id/settingsGrid"
 				    android:layout_width="fill_parent" 
 				    android:layout_height="wrap_content"
 				    android:numColumns="3"
-				    android:verticalSpacing="7dp"
-				    android:horizontalSpacing="0dp"
 				    android:stretchMode="columnWidth"
-				    android:paddingTop="10dp"
-				    android:paddingBottom="10dp"
+				    android:verticalSpacing="10dp"
+				    android:horizontalSpacing="10dp"
+				    android:padding="6dp"
 				    android:gravity="center"					    
 				/>
 </RelativeLayout>

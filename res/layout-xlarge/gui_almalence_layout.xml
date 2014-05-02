@@ -821,7 +821,7 @@
 		
 	<RelativeLayout android:id="@+id/mode_help"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
+			android:layout_height="600dip"
 			android:layout_margin="20dip"
 			android:background="#FAFAFA"
 			android:visibility="gone"
