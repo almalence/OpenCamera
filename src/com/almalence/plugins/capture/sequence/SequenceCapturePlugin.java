@@ -136,34 +136,37 @@ public class SequenceCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		refreshPreferences();
-		takingAlready = true;
-		inCapture = true;
-		if (imagesTaken==0 || pauseBetweenShots==0)
+		if(inCapture == false)
 		{
-			new CountDownTimer(50, 50) {
-			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
-			     {
-			    	Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
-			     }
-			  }.start();
-		}
-		else
-		{
-			new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
-			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
-			     {
-			    	 Message msg = new Message();
-			    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			    	 msg.what = PluginManager.MSG_BROADCAST;
-			    	 MainScreen.H.sendMessage(msg);
-			     }
-			  }.start();
+			refreshPreferences();
+			takingAlready = true;
+			inCapture = true;
+			if (imagesTaken==0 || pauseBetweenShots==0)
+			{
+				new CountDownTimer(50, 50) {
+				     public void onTick(long millisUntilFinished) {}
+				     public void onFinish() 
+				     {
+				    	Message msg = new Message();
+						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+						msg.what = PluginManager.MSG_BROADCAST;
+						MainScreen.H.sendMessage(msg);
+				     }
+				  }.start();
+			}
+			else
+			{
+				new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
+				     public void onTick(long millisUntilFinished) {}
+				     public void onFinish() 
+				     {
+				    	 Message msg = new Message();
+				    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				    	 msg.what = PluginManager.MSG_BROADCAST;
+				    	 MainScreen.H.sendMessage(msg);
+				     }
+				  }.start();
+			}
 		}
 	}
 

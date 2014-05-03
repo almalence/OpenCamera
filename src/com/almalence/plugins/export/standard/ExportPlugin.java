@@ -181,7 +181,7 @@ public class ExportPlugin extends PluginExport
 		// save fused result
 		try
         {
-            File saveDir = PluginManager.getInstance().GetSaveDir();
+            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
 	    	Calendar d = Calendar.getInstance();
 		    	

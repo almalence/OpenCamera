@@ -179,7 +179,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@SuppressLint("DefaultLocale")
 	private void saveFrames(final int[] images, final int offset, final int count, final int input_width, final int input_height)
 	{
-		final File saveDir = PluginManager.getInstance().GetSaveDir();
+		final File saveDir = PluginManager.getInstance().GetSaveDir(false);
 		
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));

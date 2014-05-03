@@ -519,11 +519,13 @@ public class HALv3
 	//					Log.e("CameraController", "captureImage 2");
 			if(format == CameraController.JPEG)
 			{
+				Log.e("HALv3", "Capture JPEG");
 				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
 	//						Log.e("CameraController", "captureImage 3.1");
 			}
 			else
 			{
+				Log.e("HALv3", "Capture YUV");
 				stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
 	//						Log.e("CameraController", "captureImage 3.2");
 			}

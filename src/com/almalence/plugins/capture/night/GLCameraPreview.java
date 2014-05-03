@@ -197,6 +197,7 @@ public class GLCameraPreview {
 		else if (out.length < out_len)
 			out = new byte[out_len];
 			
+		Log.e("GL Night loadGLTexture", "previewWidth = " + previewWidth + " | previewHeight = " + previewHeight);
 		ImageConversion.convertNV21toGL(yuv_data, out, previewWidth, previewHeight, previewHalfWidth, previewHalfHeight);
 		
 		//...and bind it to our array

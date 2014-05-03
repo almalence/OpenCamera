@@ -37,6 +37,7 @@ import com.almalence.opencam.PluginProcessing;
 //-+- -->
 import com.almalence.SwapHeap;
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
+import com.almalence.plugins.processing.hdr.AlmaShotHDR;
 import com.almalence.util.ImageConversion;
 
 /***
@@ -84,14 +85,28 @@ public class BestshotProcessingPlugin extends PluginProcessing
 			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
+        
+        boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+        
+        if(!isYUV)
+		{
+        	AlmaShotBestShot.ConvertFromJpeg(
+        			compressed_frame,
+        			compressed_frame_len,
+        			imagesAmount,
+        			mImageWidth, mImageHeight);
+		}
+		else
+		{
+			AlmaShotBestShot.AddYUVFrames(
+	    			compressed_frame,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+		}
 
-		AlmaShotBestShot.ConvertFromJpeg(
-    			compressed_frame,
-    			compressed_frame_len,
-    			imagesAmount,
-    			mImageWidth, mImageHeight);
-	        
-		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight, compressed_frame);				
+		
+        Log.e("BESTSHOT", "START PROCESS");
+		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight);				
 		Log.e("BESTSHOT", "best is " + idxResult);
 		AlmaShotBestShot.Release();
 

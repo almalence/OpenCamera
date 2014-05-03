@@ -18,8 +18,10 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.bestshot;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
@@ -47,6 +49,7 @@ import com.almalence.opencam.R;
 //-+- -->
 
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /***
 Implements burst capture plugin - captures predefined number of images
@@ -57,7 +60,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	private boolean takingAlready=false;
 		
     //defaul val. value should come from config
-	private int imageAmount = 3;
+	private int imageAmount = 5;
 
     private boolean inCapture;
     private int imagesTaken=0;
@@ -70,7 +73,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			  R.drawable.gui_almalence_mode_bestshot,
 			  "Best Shot images");
 
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override
@@ -87,7 +90,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("bestshotImagesAmount", "3"));
+			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
 		}
 		catch (Exception e)
 		{
@@ -112,7 +115,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("bestshotImagesAmount", "1"));
+        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
         int selected = 0;
         switch (val)
         {
@@ -133,20 +136,26 @@ public class BestShotCapturePlugin extends PluginCapture
         {
         case 0:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-        	editor.putString("bestshotImagesAmount", "3");
+        	editor.putString("BestshotImagesAmount", "3");
         	break;
         case 1:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-        	editor.putString("bestshotImagesAmount", "5");
+        	editor.putString("BestshotImagesAmount", "5");
         	break;
         case 2:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-        	editor.putString("bestshotImagesAmount", "10");
+        	editor.putString("BestshotImagesAmount", "10");
         	break;
         }
     	editor.commit();
 	}
 
+	@Override
+	public void onGUICreate()
+	{
+		//MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
+	}
+	
 	public boolean delayedCaptureSupported(){return true;}
 	
 	@Override
@@ -180,19 +189,22 @@ public class BestShotCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		refreshPreferences();
-		inCapture = true;
-		takingAlready = true;
-		new CountDownTimer(50, 50) {
-		     public void onTick(long millisUntilFinished) {}
-		     public void onFinish() 
-		     {
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);					
-		     }
-		  }.start();
+		if(inCapture == false)
+		{
+			refreshPreferences();
+			inCapture = true;
+			takingAlready = true;
+			new CountDownTimer(50, 50) {
+			     public void onTick(long millisUntilFinished) {}
+			     public void onFinish() 
+			     {
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);					
+			     }
+			  }.start();
+		}
 	}
 
 
@@ -258,13 +270,96 @@ public class BestShotCapturePlugin extends PluginCapture
 			imagesTaken=0;
 			inCapture = false;
 		}
+		inCapture = false;
 		takingAlready = false;
 	}
 	
+	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{
+		imagesTaken++;
+		int frame = 0;
+		int frame_len = 0;
+		boolean isYUV = false;
 		
+		if(im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("BestShotCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+			
+			if (status != 0)
+				Log.e("BestShotCapturePlugin", "Error while cropping: "+status);
+			
+			
+			frame = YuvImage.GetFrame(0);
+			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			isYUV = true;
+		}
+		else if(im.getFormat() == ImageFormat.JPEG)
+		{
+			Log.e("BestShotCapturePlugin", "JPEG Image received");
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+			
+			frame_len = jpeg.limit();
+			byte[] jpegByteArray = new byte[frame_len];
+			jpeg.get(jpegByteArray, 0, frame_len);
+			
+			frame = SwapHeap.SwapToHeap(jpegByteArray);
+			
+//			if(frame_num == 0)
+//	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+		}
+    	
+		String frameName = "frame" + imagesTaken;
+    	String frameLengthName = "framelen" + imagesTaken;
+    	
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
+    	
+    	
+    	if (imagesTaken < imageAmount)
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		else
+		{
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			inCapture = false;
+		}
+    	inCapture = false;
+		takingAlready = false;	
 	}
 	
 	@Override
@@ -285,7 +380,7 @@ public class BestShotCapturePlugin extends PluginCapture
     		
     		try 
     		{
-    			CameraController.captureImage(1, CameraController.JPEG);
+    			CameraController.captureImage(1, CameraController.YUV);
 			}
     		catch (Exception e)
 			{
@@ -296,9 +391,9 @@ public class BestShotCapturePlugin extends PluginCapture
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);	    			
+    			MainScreen.H.sendMessage(msg);
     			MainScreen.guiManager.lockControls = false;
-			}				
+			}
     		return true;
 		}
 		return false;

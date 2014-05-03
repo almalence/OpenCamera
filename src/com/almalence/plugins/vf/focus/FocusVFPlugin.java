@@ -181,8 +181,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		mPreferences = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		mDefaultFocusMode = CameraParameters.AF_MODE_AUTO;
 
-		clearViews();
-		addView(focusLayout, ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
+		//clearViews();
+		//addView(focusLayout, ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 	}
     
 	
@@ -788,7 +788,7 @@ public class FocusVFPlugin extends PluginViewfinder
 //        int len = Math.min(mPreviewFrame.getWidth(), mPreviewFrame.getHeight()) / 10;
 //        ViewGroup.LayoutParams layout = mFocusIndicator.getLayoutParams();
 //        layout.width = len * 4;
-//        layout.height = len * 3;        
+//        layout.height = len * 3;
 
         if (mState == STATE_IDLE || mState == STATE_INACTIVE)
         {
@@ -852,16 +852,16 @@ public class FocusVFPlugin extends PluginViewfinder
 	    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))))
 			{
 				CameraController.getInstance().setCameraFocusAreas(null);
-    			CameraController.getInstance().setCameraMeteringAreas(null);
+    			//CameraController.getInstance().setCameraMeteringAreas(null);
 			}
     	}
         
-        if((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-   		  	preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO) &&
-   		  	preferenceFocusMode != CameraController.getInstance().getFocusMode())
-         	{
-             	CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-         	}
+//        if((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+//   		  	preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO) &&
+//   		  	preferenceFocusMode != CameraController.getInstance().getFocusMode())
+//         	{
+//             	CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+//         	}
     }
 
     public void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple,

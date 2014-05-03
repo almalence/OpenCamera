@@ -36,6 +36,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.ImageFormat;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
@@ -242,12 +243,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
+		
+		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
         
 		if (HDRProcessingPlugin.SaveInputPreference != 0)
 		{
 			try
 	        {
-	            File saveDir = PluginManager.getInstance().GetSaveDir();
+	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 	
 	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -309,10 +312,24 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		            
 		            if (os != null)
 		            {
-		            	// ToDo: not enough memory error reporting
-			            os.write(SwapHeap.CopyFromHeap(
-			            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
-			            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));
+		            	if(!isYUV)
+		            	{
+			            	// ToDo: not enough memory error reporting
+				            os.write(SwapHeap.CopyFromHeap(
+				            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+				            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));
+		            	}
+		            	else
+		            	{
+		            		com.almalence.YuvImage image = new com.almalence.YuvImage(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+		            																  ImageFormat.NV21,
+		            																  mImageWidth,
+		            																  mImageHeight,
+		            																  null);
+		            		//to avoid problems with SKIA
+		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+		            	}
 			            os.close();
 			        
 			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -383,7 +400,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        }
 		}
 		
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+		
 		if(!isYUV)
 		{
 	    	AlmaShotHDR.HDRConvertFromJpeg(

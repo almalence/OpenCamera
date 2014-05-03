@@ -32,9 +32,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.DashPathEffect;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Handler;
@@ -241,7 +243,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		{
     			try
     	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir();
+    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
     	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -295,8 +297,18 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		            
     		            if (os != null)
     		            {
-    		            	// ToDo: not enough memory error reporting
-    			            os.write(mJpegBufferList.get(i));
+    		            	if(!isYUV)
+    		            	{
+	    		            	// ToDo: not enough memory error reporting
+	    			            os.write(mJpegBufferList.get(i));
+    		            	}
+    		            	else
+    		            	{
+    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
+    		            		//to avoid problems with SKIA
+    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+    		            	}
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());

@@ -50,6 +50,7 @@ import com.almalence.util.Util;
 
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
+import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.media.Image;
 import android.opengl.GLES10;
@@ -795,6 +796,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	}
 	
 	
+	@TargetApi(19)
 	public boolean onImageAvailable(Image im)
 	{		
 		final boolean goodPlace;
@@ -1436,7 +1438,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    						AugmentedPanoramaEngine.this.textureWidth,
 				    						AugmentedPanoramaEngine.this.textureHeight);
 				    				
-				    				File saveDir = PluginManager.getInstance().GetSaveDir();
+				    				File saveDir = PluginManager.getInstance().GetSaveDir(false);
 				    				File yourFile = new File(
 						            		saveDir, 
 						            		"PANORAMA_ARGB.jpg");

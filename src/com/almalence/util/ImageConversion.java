@@ -125,7 +125,7 @@ public class ImageConversion
 		bitmap.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
 		
 		
-		File saveDir = PluginManager.getInstance().GetSaveDir();
+		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 		Calendar d = Calendar.getInstance();
 
         File file = new File(

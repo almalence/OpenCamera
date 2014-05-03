@@ -640,16 +640,16 @@ public class NightCapturePlugin extends PluginCapture
 	    	Log.e("NightCapturePlugin", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
 	    }
 		
-		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
-		if(sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT))
-		{
-			CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
-			
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-	    	SharedPreferences.Editor editor = prefs.edit();        	
-	    	editor.putInt("SceneModeValue", CameraParameters.SCENE_MODE_NIGHT);
-	    	editor.commit();
-		}
+//		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+//		if(sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT))
+//		{
+//			CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
+//			
+//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//	    	SharedPreferences.Editor editor = prefs.edit();        	
+//	    	editor.putInt("SceneModeValue", CameraParameters.SCENE_MODE_NIGHT);
+//	    	editor.commit();
+//		}
         
         try
         { 
@@ -1328,9 +1328,7 @@ public class NightCapturePlugin extends PluginCapture
 				int imageWidth = params.getPreviewSize().width;
 				int imageHeight = params.getPreviewSize().height;
 				
-				//Log.e("NIGHT", "ImageConversion.sumByteArraysNV21 start");
 				ImageConversion.sumByteArraysNV21(data1,data2,dataS,imageWidth,imageHeight);
-				//Log.e("NIGHT", "ImageConversion.sumByteArraysNV21 finish");
 				if(MainScreen.getCameraMirrored())
 				{
 					dataRotated = new byte[dataS.length];
@@ -1514,6 +1512,8 @@ public class NightCapturePlugin extends PluginCapture
 		
 		//Really Nice Perspective Calculations
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		
+		Log.e("GL Night", "GLSurfaceCreated");
 	}
 	
 	@Override
@@ -1525,6 +1525,8 @@ public class NightCapturePlugin extends PluginCapture
 		
 		currHalfWidth = width/2;
 		currHalfHeight = height/2;
+		
+		Log.e("GL Night", "halfwidth = " + currHalfWidth + " | halfHeight = " + currHalfHeight);
 
 		cameraDist = (float)(currHalfHeight / Math.tan(Math.toRadians(45.0f / 2.0f)));
 
@@ -1538,7 +1540,7 @@ public class NightCapturePlugin extends PluginCapture
 		gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
 		gl.glLoadIdentity(); 					//Reset The Modelview Matrix
 		
-		Camera camera = CameraController.getInstance().getCamera();
+		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
 		Camera.Parameters params = CameraController.getInstance().getCameraParameters();

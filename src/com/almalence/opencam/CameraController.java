@@ -26,7 +26,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 {
 	private final String TAG = "CameraController";
 	
-	public static final int YUV = 0;
+	public static final int YUV = 1;
 	public static final int JPEG = 0;
 	// Android camera parameters constants
 	private final static String sceneAuto = MainScreen.thiz.getResources()
@@ -1107,8 +1107,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();
 				byte wb[] = new byte[wbModes.size()];
 				for(int i = 0; i < wbModes.size(); i++)
-					wb[i] = CameraController.key_wb.get(wbModes.get(i)).byteValue();
-				
+				{
+					String mode = wbModes.get(i);
+					if(CameraController.key_wb.containsKey(mode))
+						wb[i] = CameraController.key_wb.get(mode).byteValue();
+				}
 				return wb;
 			}
 	
@@ -1148,7 +1151,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();
 				byte focus[] = new byte[focusModes.size()];
 				for(int i = 0; i < focusModes.size(); i++)
-					focus[i] = CameraController.key_focus.get(focusModes.get(i)).byteValue();
+				{
+					String mode = focusModes.get(i);
+					if(CameraController.key_focus.containsKey(mode))
+						focus[i] = CameraController.key_focus.get(mode).byteValue();
+				}
 				
 				return focus;
 			}
@@ -1207,7 +1214,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
 				byte flash[] = new byte[flashModes.size()];
 				for(int i = 0; i < flashModes.size(); i++)
-					flash[i] = CameraController.key_flash.get(flashModes.get(i)).byteValue();
+				{
+					String mode = flashModes.get(i);
+					if(CameraController.key_flash.containsKey(mode))
+						flash[i] = CameraController.key_flash.get(flashModes.get(i)).byteValue();
+				}
 				
 				return flash;
 			}

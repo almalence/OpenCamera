@@ -118,7 +118,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = false;	
+	public static boolean isHALv3 = true;	
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -194,11 +194,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	private boolean keepScreenOn = false;
 	
 	public static String SaveToPath;
-	public static boolean SaveInputPreference;
 	public static String SaveToPreference;
 	public static boolean SortByDataPreference;
 	
-	public static boolean MaxScreenBrightnessPreference;	
+	public static boolean MaxScreenBrightnessPreference;
 	
 	public static boolean mAFLocked = false;
 
@@ -313,7 +312,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
@@ -690,8 +689,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 		SaveToPath = prefs.getString(SavePathPref, Environment
 				.getExternalStorageDirectory().getAbsolutePath());
-		SaveInputPreference = prefs.getBoolean("saveInputPref",
-				false);
 		SaveToPreference = prefs.getString("saveToPref", "0");
 		SortByDataPreference = prefs.getBoolean("sortByDataPref",
 				false);
@@ -719,7 +716,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 
 		if (glView != null)
+		{
 			glView.onResume();
+			Log.e("GL", "glView onResume");
+		}
 		
 		PluginManager.getInstance().onGUICreate();
 		MainScreen.guiManager.onGUICreate();
@@ -931,6 +931,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
 						glView, 1);
+				Log.e("GL", "glView added");
 				glView.setZOrderMediaOverlay(true);
 				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 			}
@@ -1168,7 +1169,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (lp == null)
 			return null;
 
-		return cameraController.new Size(lp.width, lp.height);		
+		return cameraController.new Size(lp.width, lp.height);
 	}
 
 	public int getPreviewWidth() {
@@ -1444,6 +1445,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (glView != null && glView.getVisibility() == View.GONE) {
 			glView.setVisibility(View.VISIBLE);
 			glView.onResume();
+			Log.e("GL", "glView show");
 		}
 	}
 
@@ -1451,6 +1453,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (glView != null && glView.getVisibility() == View.VISIBLE) {
 			glView.setVisibility(View.GONE);
 			glView.onPause();
+			Log.e("GL", "glView hide");
 		}
 	}
 
@@ -1524,7 +1527,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	public static void setWantLandscapePhoto(boolean setWantLandscapePhoto) {
 		wantLandscapePhoto = setWantLandscapePhoto;
-	}	
+	}
 	
 	public void setScreenBrightness(boolean setMax)
 	{

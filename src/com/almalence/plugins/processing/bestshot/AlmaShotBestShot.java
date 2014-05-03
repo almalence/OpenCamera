@@ -25,8 +25,9 @@ public final class AlmaShotBestShot
     
     public static synchronized native String ConvertFromJpeg(
     		int frame[], int frame_len[], int nFrames, int sx, int sy);
+    public static synchronized native String AddYUVFrames(int frame[], int nFrames, int sx, int sy);
 
-    public static synchronized native int BestShotProcess(int nFrames, int sx, int sy, int frame[]);
+    public static synchronized native int BestShotProcess(int nFrames, int sx, int sy);
     
     static 
     {

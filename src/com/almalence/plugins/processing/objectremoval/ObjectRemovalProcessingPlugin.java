@@ -35,6 +35,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -158,6 +159,9 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
         	imgWidthOR = MainScreen.getImageWidth();
         	imgHeightOR = MainScreen.getImageHeight();
         }
+        
+        boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+        mYUVBufferList.clear();
 		
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 		
@@ -185,6 +189,12 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     	        		);
     			
     			compressed_frame.add(i-1, in);
+    			
+    			if(isYUV)
+    			{
+    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+    				mYUVBufferList.add(i-1, yuv);
+    			}
     		}
     		
     		mJpegBufferList = compressed_frame;
@@ -195,7 +205,7 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		{
     			try
     	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir();
+    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
     	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
@@ -249,8 +259,18 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		            
     		            if (os != null)
     		            {
-    		            	// ToDo: not enough memory error reporting
-    			            os.write(compressed_frame.get(i));
+    		            	if(!isYUV)
+    		            	{
+	    		            	// ToDo: not enough memory error reporting
+	    			            os.write(mJpegBufferList.get(i));
+    		            	}
+    		            	else
+    		            	{
+    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, imgWidthOR, imgHeightOR, null);
+    		            		//to avoid problems with SKIA
+    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+    		            	}
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -325,10 +345,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
     		
     		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));   	
         	
-        	boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
-     		
      		//frames!!! should be taken from heap
      		mAlmaCLRShot.addInputFrame(compressed_frame, input, isYUV);
 
@@ -398,6 +416,7 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	public static int mDisplayWidth;
 	public static int mDisplayHeight;
 	public static ArrayList<byte[]> mJpegBufferList;
+	public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
 	Paint paint=null;
 	
 	private boolean postProcessingRun = false;

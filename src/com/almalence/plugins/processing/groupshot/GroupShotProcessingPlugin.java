@@ -22,10 +22,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -40,10 +43,13 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -76,9 +82,11 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
+import com.almalence.util.MLocation;
 import com.almalence.util.Size;
 
 
@@ -184,7 +192,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
   	
 	public GroupShotProcessingPlugin()
 	{
-		super("com.almalence.plugins.groupshotprocessing", 0, 0, 0, null);
+		super("com.almalence.plugins.groupshotprocessing", 
+			  R.xml.preferences_processing_groupshot,
+			  0,
+			  0,
+			  null);
 	}
 
 	@Override
@@ -251,6 +263,9 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		
     		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     		
+    		mYUVBufferList.clear();
+    		mJpegBufferList.clear();
+    		
     		for (int i=1; i<=imagesAmount; i++)
     		{
     			if(isYUV)
@@ -310,23 +325,57 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		{
     			try
     	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir();
-    	
+    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
+
+    	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
+    	        	Calendar d = Calendar.getInstance();
+    	        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
+    	            		d.get(Calendar.YEAR),
+    	            		d.get(Calendar.MONTH)+1,
+    	            		d.get(Calendar.DAY_OF_MONTH),
+    	            		d.get(Calendar.HOUR_OF_DAY),
+    	            		d.get(Calendar.MINUTE),
+    	            		d.get(Calendar.SECOND));
+    	        	switch (saveOption)
+    	        	{
+    	        	case 1://YEARMMDD_HHMMSS
+    	        		break;
+    	        		
+    	        	case 2://YEARMMDD_HHMMSS_MODE
+    	        		fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
+    	        		break;
+    	        		
+    	        	case 3://IMG_YEARMMDD_HHMMSS
+    	        		fileFormat = "IMG_" + fileFormat;
+    	        		break;
+    	        		
+    	        	case 4://IMG_YEARMMDD_HHMMSS_MODE
+    	        		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
+    	        		break;
+    	        	}
+    	        	
+    	        	ContentValues values=null;
+    	        	
     	            for (int i = 0; i<imagesAmount; ++i)
     	            {
-    			    	Calendar d = Calendar.getInstance();
-
+    	            	
+    	            	String index = String.format("_%02d", i);
     		            File file = new File(
-    		            		saveDir, 
-    		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM.jpg",
-    		            		d.get(Calendar.YEAR),
-    		            		d.get(Calendar.MONTH)+1,
-    		            		d.get(Calendar.DAY_OF_MONTH),
-    		            		d.get(Calendar.HOUR_OF_DAY),
-    		            		d.get(Calendar.MINUTE),
-    		            		d.get(Calendar.SECOND)));
-    	                
+    		            		saveDir, fileFormat+index+".jpg"); 
     		            FileOutputStream os = new FileOutputStream(file);
+    		            
+    		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
+    		            Boolean orientationLandscape = false;
+    		            if (resultOrientation == null)
+    			            orientationLandscape = true;
+    		            else
+    		            	orientationLandscape = Boolean.parseBoolean(resultOrientation);
+    		            
+    		            String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(sessionID));
+    		            Boolean cameraMirrored = false;
+    		            if (resultMirrored != null)
+    		            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
     		            
     		            if (os != null)
     		            {
@@ -338,7 +387,9 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            	else
     		            	{
     		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
-    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), image.getHeight()), 100, os);
+    		            		//to avoid problems with SKIA
+    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
     		            	}
     			            os.close();
     			        
@@ -351,22 +402,62 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
     		            		break;
     		            	case 90:
-    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
     		            		break;
     		            	case 180:
     		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
     		            		break;
     		            	case 270:
-    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
     		            		break;
     		            	}
     		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-    			            ei.saveAttributes();    		            
-		            	}
+    			            ei.saveAttributes();
+    		            }
+    		            
+    		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
+    		            values = new ContentValues(9);
+    	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+    	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
+    	                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+    	                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+    	                values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
+    	                values.put(ImageColumns.DATA, file.getAbsolutePath());
+    	                
+    	                if (prefs.getBoolean("useGeoTaggingPrefExport", false))
+    		            {
+    		            	Location l = MLocation.getLocation(MainScreen.mainContext);
+    			            
+    			            if (l != null)
+    			            {	     
+//    			            	Exiv2.writeGeoDataIntoImage(
+//    			            		file.getAbsolutePath(), 
+//    			            		true,
+//    			            		l.getLatitude(), 
+//    			            		l.getLongitude(), 
+//    			            		dateString, 
+//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
+//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
+
+    			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+    			            	ei.saveAttributes();
+    			            	
+    				            values.put(ImageColumns.LATITUDE, l.getLatitude());
+    				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
+    		            	}
+    		            }
+    	                
+    	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
     	            }
     	        }
     	        catch (Exception e)
     	        {
+    	        	Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}

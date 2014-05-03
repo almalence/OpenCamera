@@ -21,6 +21,7 @@ package com.almalence.plugins.capture.preshot;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -78,7 +79,6 @@ public class PreshotCapturePlugin extends PluginCapture
     public static String PreShotInterval;
 	public static String FPS;
 	public static boolean IsRecordSound;
-	public static boolean SaveInputPreference;
 	public static boolean RefocusPreference;
 	public static boolean AutostartPreference;
 	public static String PauseBetweenShots;
@@ -187,7 +187,6 @@ public class PreshotCapturePlugin extends PluginCapture
     {
 		// Get the xml/preferences.xml preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        SaveInputPreference = prefs.getBoolean("saveInputPrefPreShot", false);
 		RefocusPreference = prefs.getBoolean("refocusPrefPreShot", false);
 		AutostartPreference = prefs.getBoolean("autostartPrefPreShot", false);
 		PauseBetweenShots = prefs.getString("pauseBetweenShotsPrefPreShot", "500");
@@ -400,6 +399,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		frmCnt++;
 	}
 	
+	@TargetApi(19)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{
@@ -527,6 +527,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
     
     
+    @TargetApi(19)
     @Override
 	public void onImageAvailable(Image im)
 	{

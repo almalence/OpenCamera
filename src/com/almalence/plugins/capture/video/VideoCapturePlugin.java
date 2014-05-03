@@ -476,7 +476,7 @@ public class VideoCapturePlugin extends PluginCapture
     }
 	
 	private static File getOutputMediaFile(){
-		File saveDir = PluginManager.getInstance().GetSaveDir();
+		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
     	Calendar d = Calendar.getInstance();
     	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
