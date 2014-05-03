@@ -60,6 +60,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -289,7 +290,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	break;	    	
 	    }
 	    
@@ -530,7 +531,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "5");
 	    	break;	    	
 	    }
@@ -872,7 +873,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	break;
 	    case 5:
 	    	quality = QUALITY_4K;
-	    	quickControlIconID = R.drawable.gui_almalence_video_480;
+	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	break;	    	
 	    }
 	    
@@ -1802,32 +1803,43 @@ public class VideoCapturePlugin extends PluginCapture
 			{
 				if (false == sw.isChecked())
 		        {
-		        	np2.setEnabled(false);
-		        	np.setEnabled(false);
 		        	swChecked = false;
 		        }
 				else
 				{
-					np2.setEnabled(true);
-		        	np.setEnabled(true);
 		        	swChecked = true;
 		        	bSet.setEnabled(true);
 				}
 			}
 		});
         
+        np2.setOnScrollListener(new NumberPicker.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChange(NumberPicker numberPicker, int scrollState) 
+            {
+            	bSet.setEnabled(true);
+            	sw.setChecked(true);
+            }    
+            });
+        np.setOnScrollListener(new NumberPicker.OnScrollListener()
+        {
+            @Override
+            public void onScrollStateChange(NumberPicker numberPicker, int scrollState) 
+            {
+            	bSet.setEnabled(true);
+            	sw.setChecked(true);
+            }    
+            });
+        
         //disable control in dialog by default
         if (false == swChecked)
         {
         	sw.setChecked(false);
-        	np2.setEnabled(false);
-        	np.setEnabled(false);
         	bSet.setEnabled(false);
         }
         else
         {
-        	np2.setEnabled(true);
-        	np.setEnabled(true);
         	bSet.setEnabled(true);
         	sw.setChecked(true);
         }
