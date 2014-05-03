@@ -53,4 +53,9 @@ public abstract class PluginCapture extends Plugin
 	{
 		return false;
 	}
+	
+	public void onPreviewTextureUpdated(final int texture, final float[] mtx)
+	{
+		
+	}
 }

@@ -61,12 +61,12 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.Switch.Switch;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -149,6 +149,9 @@ public class VideoCapturePlugin extends PluginCapture
     private boolean quality1080Supported = false;
     private boolean quality4KSupported = false;
     
+	public static String ModePreference;	// 0=DRO On 1=DRO Off
+	private Switch modeSwitcher;
+    
 	public VideoCapturePlugin()
 	{
 		super("com.almalence.plugins.videocapture",
@@ -172,6 +175,71 @@ public class VideoCapturePlugin extends PluginCapture
 		
 //		clearViews();
 //		addView(mRecordingTimeView, ViewfinderZone.VIEWFINDER_ZONE_TOP_LEFT);
+		
+		this.createModeSwitcher();
+	}
+	
+	private void createModeSwitcher()
+	{
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        ModePreference = prefs.getString("modeVideoDROPref", "1");
+        modeSwitcher.setTextOn("DRO On");
+        modeSwitcher.setTextOff("DRO Off");
+        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
+		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+				int currEv = prefs.getInt(GUI.sEvPref, 0);
+				int newEv = currEv;
+				int minValue = MainScreen.thiz.getMinExposureCompensation();
+				float expStep = MainScreen.thiz.getExposureCompensationStep();
+				if (isChecked)
+				{
+					int diff = (int)Math.round(0.5/expStep);
+					if(diff < 1)
+						diff = 1;
+					newEv -= diff;
+					ModePreference = "0";
+				}
+				else
+				{
+					ModePreference = "1";
+				}
+				
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				if (params != null && newEv >= minValue)
+				{
+					params.setExposureCompensation(newEv);
+					MainScreen.thiz.setCameraParameters(params);
+				}
+				
+				SharedPreferences.Editor editor = prefs.edit();		        	
+	        	editor.putString("modeVideoDROPref", ModePreference);
+	        	editor.commit();
+	        	
+	        	if (ModePreference.compareTo("0") == 0)
+	    			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
+			
+	        	final Camera camera = MainScreen.thiz.getCamera();
+	        	if (camera == null)
+	        	{
+	        		return;
+	        	}
+	        	
+	        	camera.stopPreview();
+	        	MainScreen.thiz.setPreviewOutput();
+	        	camera.startPreview();
+			}
+		});
+		
+		if(PluginManager.getInstance().getProcessingCounter() == 0)
+			modeSwitcher.setEnabled(true);
 	}
 	
 	@Override
@@ -264,14 +332,26 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			View view = specialView.get(j);
 			int view_id = view.getId();
-			int zoom_id = this.mRecordingTimeView.getId();
-			if(view_id == zoom_id)
+			if(view_id == this.mRecordingTimeView.getId() || view_id == this.modeSwitcher.getId())
 			{
 				if(view.getParent() != null)
 					((ViewGroup)view.getParent()).removeView(view);
 				
 				specialLayout.removeView(view);
 			}
+		}
+		
+		{
+			final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
+			params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			
+			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+			
+			this.modeSwitcher.setLayoutParams(params);
+			this.modeSwitcher.requestLayout();
 		}
 		
 //    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
@@ -689,6 +769,28 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 	
 	@Override
+	public void onStop()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
+	
+	@Override
 	public void onCameraParametersSetup()
 	{
 		Camera camera = MainScreen.thiz.getCamera();
@@ -792,6 +894,16 @@ public class VideoCapturePlugin extends PluginCapture
 	    editor.commit();
 	    
 		cp.setRecordingHint(true);
+		
+		int currEv = prefs.getInt(GUI.sEvPref, 0);
+		int newEv = currEv;
+		int minValue = MainScreen.thiz.getMinExposureCompensation();
+		newEv -= 1;
+		if (newEv >= minValue)
+		{
+			cp.setExposureCompensation(newEv);
+		}
+		
 		MainScreen.thiz.setCameraParameters(cp);
 	}
 	
@@ -1467,6 +1579,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private void getPrefs()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        
+        ModePreference = prefs.getString("modeStandardPref", "1");
 
         CameraIDPreference = 0;
         
@@ -1474,6 +1588,12 @@ public class VideoCapturePlugin extends PluginCapture
        
         readVideoPreferences(prefs);
     }
+	
+	@Override
+	public boolean shouldPreviewToGPU()
+	{
+		return (ModePreference.compareTo("0") == 0);
+	}
 	
 	private void showRecordingUI(boolean recording) {
         if (recording) {

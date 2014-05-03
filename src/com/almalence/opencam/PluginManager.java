@@ -1340,6 +1340,16 @@ public class PluginManager {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
 	}
+	
+	public void onPreviewTextureUpdated(final int texture, final float[] mtx)
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		
+		if (plugin != null && plugin instanceof PluginCapture)
+		{
+			((PluginCapture)plugin).onPreviewTextureUpdated(texture, mtx);
+		}
+	}
 
 	public void SetupCameraParameters() {
 		MainScreen.thiz.updateCameraFeatures();

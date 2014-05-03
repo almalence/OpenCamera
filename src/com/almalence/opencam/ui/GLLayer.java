@@ -33,6 +33,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
+import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
 +++ --> */
@@ -45,7 +47,6 @@ import com.almalence.plugins.capture.video.EglEncoder;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
@@ -62,6 +63,8 @@ import android.view.SurfaceHolder;
 public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Renderer
 {
 	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
+	
+	private int texture_preview;
 	
 	public GLLayer(Context c)
 	{
@@ -102,9 +105,16 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		this.setRenderer(this);
 	}
 	
+	public int getPreviewTexture()
+	{
+		return this.texture_preview;
+	}
+	
 	@Override
 	public void onResume()
 	{
+		super.onResume();
+		
 		this.setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
 
@@ -114,25 +124,33 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		final int[] tex = new int[1];
-		GLES20.glGenTextures(1, tex, 0);
-		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, tex[0]);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_S,
-				GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_T,
-				GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MIN_FILTER,
-				GLES20.GL_LINEAR);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MAG_FILTER,
-				GLES20.GL_LINEAR);
+		if (PluginManager.getInstance().shouldPreviewToGPU())
+		{
+			final int[] tex = new int[1];
+			GLES20.glGenTextures(1, tex, 0);
+			this.texture_preview = tex[0];
+			
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_preview);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_WRAP_S,
+					GLES20.GL_CLAMP_TO_EDGE);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_WRAP_T,
+					GLES20.GL_CLAMP_TO_EDGE);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_MIN_FILTER,
+					GLES20.GL_LINEAR);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_MAG_FILTER,
+					GLES20.GL_LINEAR);
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+			
+			MainScreen.H.sendEmptyMessage(MainScreen.MSG_START_CAMERA);
+		}
 		
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 	}
