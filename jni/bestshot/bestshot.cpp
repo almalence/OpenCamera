@@ -31,6 +31,9 @@ static unsigned char *yuv[MAX_BEST_FRAMES] = {NULL};
 static void *instance = NULL;
 static int almashot_inited = 0;
 
+#define LOG_TAG "Best shot"
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
+
 
 // This triggers openmp constructors and destructors to be called upon library load/unload
 void __attribute__((constructor)) initialize_openmp() {}
@@ -147,7 +150,23 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bests
 			break;
 		}
 
-		yuv[i] = yuvIn[i];
+//		yuv[i] = yuvIn[i];
+		for (y=0; y<sy; y+=2)
+		{
+			// Y
+			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
+			memcpy (&yuv[i][(y+1)*sx], &yuv[i][(y+1)*sx], sx);
+
+			// UV - no direct memcpy as swap may be needed
+			for (x=0; x<sx/2; ++x)
+			{
+				// U
+				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
+
+				// V
+				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
+			}
+		}
 	}
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
@@ -175,7 +194,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 //	unsigned char * *jpeg;
 //	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
+	LOGE("BestShot_Select start");
 	BestShot_Select(yuv, sx, sy, nFrames, fullScanMode, BestFrames, FramesScores, nFramesToSelect);
+	LOGE("BestShot_Select finish");
 
 	for (int i=0; i<nFrames; ++i)
 	{

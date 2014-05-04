@@ -316,6 +316,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			
 			frame = YuvImage.GetFrame(0);
 			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			
 			isYUV = true;
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)

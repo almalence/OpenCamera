@@ -35,10 +35,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 //-+- -->
-import com.almalence.SwapHeap;
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
-import com.almalence.plugins.processing.hdr.AlmaShotHDR;
-import com.almalence.util.ImageConversion;
 
 /***
 Implements simple processing plugin - just translate shared memory values 
@@ -105,9 +102,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		}
 
 		
-        Log.e("BESTSHOT", "START PROCESS");
 		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight);				
-		Log.e("BESTSHOT", "best is " + idxResult);
 		AlmaShotBestShot.Release();
 
 		if(orientation == 90 || orientation == 270)
@@ -159,12 +154,12 @@ public class BestshotProcessingPlugin extends PluginProcessing
 //			}
 //			
 //		}
-		
 		/**/
 		int frame = compressed_frame[idxResult];
 		int len = compressed_frame_len[idxResult];
 		
-		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
+		if(!isYUV)
+			PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(len));
 		
