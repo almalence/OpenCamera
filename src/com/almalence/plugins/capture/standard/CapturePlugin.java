@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -296,9 +298,9 @@ public class CapturePlugin extends PluginCapture
     		
     		try {
     			if(ModePreference.compareTo("0") == 0)
-					CameraController.captureImage(1, CameraController.YUV);			
+					requestID = CameraController.captureImage(1, CameraController.YUV);			
 				else
-					CameraController.captureImage(1, CameraController.JPEG);
+					requestID = CameraController.captureImage(1, CameraController.JPEG);
 			}
     		catch (Exception e) 
 			{
@@ -354,6 +356,7 @@ public class CapturePlugin extends PluginCapture
 		aboutToTakePicture = false;
 	}
 	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{
@@ -407,7 +410,9 @@ public class CapturePlugin extends PluginCapture
 //			byte[] jpegByteArray = jpeg.array();			
 //			int frame_len = jpegByteArray.length;
 			
-			frame = SwapHeap.SwapToHeap(jpegByteArray);			
+			frame = SwapHeap.SwapToHeap(jpegByteArray);
+			
+			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
     	
     	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
@@ -427,6 +432,16 @@ public class CapturePlugin extends PluginCapture
 
 		takingAlready = false;
 		aboutToTakePicture = false;
+	}
+	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
 	}
 	
 	@Override

@@ -21,11 +21,13 @@ package com.almalence.plugins.capture.burst;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -302,6 +304,7 @@ public class BurstCapturePlugin extends PluginCapture
 	}
 	
 	
+	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
 	{
@@ -408,6 +411,17 @@ public class BurstCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
+	}
+	
 	
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
@@ -435,7 +449,7 @@ public class BurstCapturePlugin extends PluginCapture
     		
     		try
     		{
-    			CameraController.captureImage(1, CameraController.JPEG);
+    			requestID = CameraController.captureImage(1, CameraController.JPEG);
 			}catch (Exception e)
 			{
 				e.printStackTrace();

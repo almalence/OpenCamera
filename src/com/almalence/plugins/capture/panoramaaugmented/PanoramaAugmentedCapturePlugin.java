@@ -1058,7 +1058,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	try 
     	{
-			CameraController.captureImage(1, CameraController.JPEG);
+			requestID = CameraController.captureImage(1, CameraController.JPEG);
 		}
     	catch (Exception e)
 		{

@@ -27,6 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -63,7 +64,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	private int imageAmount = 5;
 
     private boolean inCapture;
-    private int imagesTaken=0;
+    private int imagesTaken=0;    
 	
 	public BestShotCapturePlugin()
 	{
@@ -318,6 +319,9 @@ public class BestShotCapturePlugin extends PluginCapture
 			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
 			
 			isYUV = true;
+			
+//			if(imagesTaken == 1)
+//	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
 		{
@@ -330,8 +334,8 @@ public class BestShotCapturePlugin extends PluginCapture
 			
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 			
-//			if(frame_num == 0)
-//	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
     	
 		String frameName = "frame" + imagesTaken;
@@ -363,6 +367,17 @@ public class BestShotCapturePlugin extends PluginCapture
 		takingAlready = false;	
 	}
 	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
+	}
+	
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
@@ -381,7 +396,7 @@ public class BestShotCapturePlugin extends PluginCapture
     		
     		try 
     		{
-    			CameraController.captureImage(1, CameraController.YUV);
+    			requestID = CameraController.captureImage(1, CameraController.YUV);
 			}
     		catch (Exception e)
 			{

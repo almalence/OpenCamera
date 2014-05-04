@@ -41,6 +41,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +50,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -1337,6 +1339,12 @@ public class PluginManager {
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
 	
+	@TargetApi(19)
+	void onCaptureCompleted(CaptureResult result) {
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onCaptureCompleted(result);
+	}
+	
 	void onPreviewAvailable(Image im) {
 		if (isRestarting) {
 			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
@@ -1692,6 +1700,26 @@ public class PluginManager {
 			e1.printStackTrace();
 			return false;
 		}
+		return true;
+	}
+	
+	@TargetApi(19)
+	public boolean addToSharedMem_ExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
+	{
+		String exposure_time = String.valueOf(result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
+		String sensitivity = String.valueOf(result.get(CaptureResult.SENSOR_SENSITIVITY));
+		String aperture = String.valueOf(result.get(CaptureResult.LENS_APERTURE));
+		String focal_lenght = String.valueOf(result.get(CaptureResult.LENS_FOCAL_LENGTH));
+		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
+		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
+		
+		if(exposure_time != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
+		if(sensitivity != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
+		if(aperture != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
+		if(focal_lenght != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
+		if(flash_mode != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
+		if(awb_mode != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
+		
 		return true;
 	}
 

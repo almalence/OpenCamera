@@ -1694,7 +1694,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		}
 //	}
 	
-	public static boolean captureImage(int nFrames, int format)
+	public static int captureImage(int nFrames, int format)
 	{
 		//In old camera interface we can capture only JPEG images, so image format parameter will be ignored.
 		if(!MainScreen.isHALv3)
@@ -1707,16 +1707,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					// Log.e("", "mFocusState = " + getFocusState());
 					camera.setPreviewCallback(null);
 					camera.takePicture(null, null, null, CameraController.getInstance());
-					return true;
+					return 0;
 				}
 
-				return false;
+				return -1;
 			}
 		}
 		else
-			HALv3.captureImageHALv3(nFrames, format);
-		
-		return false;
+			return HALv3.captureImageHALv3(nFrames, format);
 	}
 	
 	

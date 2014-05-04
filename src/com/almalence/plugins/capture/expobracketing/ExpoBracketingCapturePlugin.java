@@ -27,6 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -346,9 +347,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	try
 	    	{
 	    		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-	    			CameraController.captureImage(1, CameraController.YUV);
+	    			requestID = CameraController.captureImage(1, CameraController.YUV);
 	    		else
-	    			CameraController.captureImage(1, CameraController.JPEG);
+	    			requestID = CameraController.captureImage(1, CameraController.JPEG);
 			}
 	    	catch (Exception e)
 			{
@@ -526,7 +527,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			
 			
 	    	compressed_frame[n] = SwapHeap.SwapToHeap(jpegByteArray);
-	    	compressed_frame_len[n] = frame_len;	
+	    	compressed_frame_len[n] = frame_len;
+	    	
+	    	if(n == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
     	
     	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
@@ -594,6 +598,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			}
 		};
 		cdt.start();
+	}
+	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(evIdx[frame_num] == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
 	}
 	
 	

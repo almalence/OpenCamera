@@ -494,7 +494,7 @@ public class HALv3
 	
 	
 	
-	public static void captureImageHALv3(int nFrames, int format)
+	public static int captureImageHALv3(int nFrames, int format)
 	{
 	// stop preview
 	//		try {
@@ -506,6 +506,7 @@ public class HALv3
 			
 		// create capture requests for the burst of still images
 		//Log.e("CameraController", "captureImage 1");
+		int requestID = -1;
 		CaptureRequest.Builder stillRequestBuilder = null;
 		try
 		{
@@ -541,7 +542,7 @@ public class HALv3
 			
 			// requests for SZ input frames
 			for (int n=0; n<nFrames; ++n)
-				HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);
+				requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);
 	//					Log.e("CameraController", "captureImage 4");				
 			// One more capture for comparison with a standard frame
 	//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
@@ -556,6 +557,8 @@ public class HALv3
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
+		
+		return requestID;
 	}
 	
 	
@@ -667,6 +670,7 @@ public class HALv3
 			@Override
 			public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
 			{
+				PluginManager.getInstance().onCaptureCompleted(result);
 				if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED)
 				{
 					resetCaptureListener();

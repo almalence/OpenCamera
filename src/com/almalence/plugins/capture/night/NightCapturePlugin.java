@@ -36,6 +36,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLU;
@@ -1278,6 +1279,17 @@ public class NightCapturePlugin extends PluginCapture
 		MainScreen.H.sendMessage(msg);
 	}
 	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(frame_num == 0)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
+	}
+	
 	public void CaptureFrame()
     {
 		if (Integer.parseInt(ModePreference) == 1)	// hi-speed mode
@@ -1296,7 +1308,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		CameraController.captureImage(1, CameraController.YUV);
+        		requestID = CameraController.captureImage(1, CameraController.YUV);
 	    	}
 	    	catch (RuntimeException e)
 	    	{

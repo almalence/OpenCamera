@@ -38,6 +38,7 @@ import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.Size;
 import android.media.Image;
 import android.preference.EditTextPreference;
@@ -81,6 +82,8 @@ public abstract class Plugin
 	protected static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
 
 	protected long SessionID=0;
+	
+	protected int requestID = -1;
 	
 	public enum ViewfinderZone {
 		
@@ -197,6 +200,9 @@ public abstract class Plugin
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera){}
 	
 	public void onImageAvailable(Image im){}
+	
+	@TargetApi(19)
+	public void onCaptureCompleted(CaptureResult result){}
 	
 	public void onPreviewAvailable(Image im){}
 

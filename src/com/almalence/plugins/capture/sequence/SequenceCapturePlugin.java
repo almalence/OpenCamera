@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -354,6 +355,18 @@ public class SequenceCapturePlugin extends PluginCapture
 		takingAlready = false;			
 	}
 	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
+	}
+	
+	
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
@@ -371,7 +384,7 @@ public class SequenceCapturePlugin extends PluginCapture
     		MainScreen.thiz.PlayShutter();
     		
     		try {
-    			CameraController.captureImage(1, CameraController.YUV);
+    			requestID = CameraController.captureImage(1, CameraController.YUV);
 			}catch (Exception e) {
 				e.printStackTrace();
 				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
