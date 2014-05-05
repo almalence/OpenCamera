@@ -48,7 +48,7 @@ public class BarcodeViewDialog extends RotateDialog {
 		ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(MainScreen.thiz, result);
 
 		// set the custom dialog components - text, image and button
-		TextView dataTextView = (TextView) findViewById(R.id.dataTextView);
+		TextView dataTextView = (TextView) findViewById(R.id.decodedDataTextView);
 		dataTextView.setText(barcode.getData());
 
 		TextView formatTextView = (TextView) findViewById(R.id.formatTextView);
@@ -60,7 +60,7 @@ public class BarcodeViewDialog extends RotateDialog {
 		TextView timeTextView = (TextView) findViewById(R.id.timeTextView);
 		timeTextView.setText(barcode.getDate().toString());
 		
-		ImageView barcodeImageView = (ImageView) findViewById(R.id.barcodeImageView);
+		ImageView barcodeImageView = (ImageView) findViewById(R.id.barcodePhotoImageView);
 		File imgFile = null;
 		if (barcode.getFile() != null) {
 			imgFile = new  File(barcode.getFile());

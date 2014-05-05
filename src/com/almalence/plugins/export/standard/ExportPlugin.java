@@ -33,17 +33,15 @@ import android.graphics.Rect;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginExport;
@@ -55,8 +53,12 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginExport;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.plugins.export.standard.ExifDriver.ExifDriver;
+import com.almalence.plugins.export.standard.ExifDriver.ExifManager;
+import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
+import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
+import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 //-+- -->
-
 import com.almalence.util.MLocation;
 
 /***
@@ -280,8 +282,6 @@ public class ExportPlugin extends PluginExport
 		        	os = new FileOutputStream(file);
 		        }	            
 	            
-	            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-	            
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
 	            if(imagesAmount == 1 && imageIndex != 0)
@@ -411,6 +411,12 @@ public class ExportPlugin extends PluginExport
                 
                 filesSavedNames[nFilesSaved++] = file.toString();
                 
+                ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
+		    	ExifManager exifManager = null;
+		    	if (exifDriver != null) {
+	            	exifManager = new ExifManager(exifDriver, MainScreen.thiz);
+		    	}
+                
 		    	if (useGeoTaggingPrefExport)
 	            {
 	            	Location l = MLocation.getLocation(MainScreen.mainContext);
@@ -422,27 +428,12 @@ public class ExportPlugin extends PluginExport
 		                boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
 
 		                if (hasLatLon) {
-				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+			            	exifManager.setGPSLocation(l.getLatitude(), l.getLongitude(), l.getAltitude());
 				            
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
 
 				            //ei.setAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD, l.getProvider().toUpperCase());
-		                    if (l.hasAltitude()) {
-		                        l.getAltitude();
-		                        int alt = (int)l.getAltitude()*1000;
-		                        ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Integer.toString(alt) +"/1000");
-		                        if (alt>=0)
-		                        	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
-		                        else
-		                        	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(1));
-		                    } else {
-		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, Long.toString(0));
-		                    	ei.setAttribute(ExifInterface.TAG_GPS_ALTITUDE_REF, Long.toString(0));
-		                    }
 //		                    if (l.getTime() != 0) {
 //			                    SimpleDateFormat formatterTime = new SimpleDateFormat("HH/1,mm/1,ss/1");
 //			                    Date currentTime = new Date(l.getTime());
@@ -476,50 +467,84 @@ public class ExportPlugin extends PluginExport
 	            String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
-	            	            
-	            if(tag_exposure_time != null)
-	            	ei.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, tag_exposure_time);
-	            if(tag_aperture != null)
-	            	ei.setAttribute(ExifInterface.TAG_APERTURE, tag_aperture);
-	            if(tag_flash != null)
-	            	ei.setAttribute(ExifInterface.TAG_FLASH, tag_flash);
-	            if(tag_focal_length != null)
-	            	ei.setAttribute(ExifInterface.TAG_FOCAL_LENGTH, tag_focal_length);
-	            if(tag_iso != null)
-	            {
-	            	ei.setAttribute(ExifInterface.TAG_ISO, tag_iso);
-	            	ei.setAttribute("ISOSpeedRatings", tag_iso);
-	            }
-	            if(tag_white_balance != null)
-	            	ei.setAttribute(ExifInterface.TAG_WHITE_BALANCE, tag_white_balance);
-	            if(tag_make != null)
-	            	ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-	            if(tag_model != null)
-	            	ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-	            if(tag_spectral_sensitivity != null)
-	            	ei.setAttribute("SpectralSensitivity", tag_spectral_sensitivity);
+	            	   
 	            
-	            String xStr = String.valueOf(x);
-	            if (xStr != null)
-	            	ei.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, xStr);
-	            String yStr = String.valueOf(y);
-	            if (yStr != null)
-	            	ei.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, yStr);	            
+	            if(tag_exposure_time != null) {
+	            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
+	            	if (ratValue != null) {
+	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+	            		value.setRationals(ratValue);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
+	            	}
+	            }
+	            if(tag_aperture != null) {
+	            	int[][] ratValue = ExifManager.stringToRational(tag_aperture);
+	            	if (ratValue != null) {
+	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+	            		value.setRationals(ratValue);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
+	            	}
+	            }
+	            if(tag_flash != null) {
+            		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_flash));
+            		exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
+	            }
+	            if(tag_focal_length != null) {
+	            	int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
+	            	if (ratValue != null) {
+	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+	            		value.setRationals(ratValue);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
+	            	}
+	            }
+	            if(tag_iso != null) {
+	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
+            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+	            }
+	            if(tag_white_balance != null) {
+	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_white_balance));
+            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
+            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
+	            }
+	            if(tag_make != null) {
+	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+	        		value.setBytes(tag_make.getBytes());
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
+	            }
+//	            if(tag_model != null) {
+//	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+//	        		value.setBytes(tag_model.getBytes());
+//	        		exifDriver.getIfd0().put(ExifDriver.TAG_MODEL, value);
+//	            }
+	            if(tag_spectral_sensitivity != null) {
+	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+	        		value.setBytes(tag_spectral_sensitivity.getBytes());
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
+	            }
+	            
+            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
+        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
+
+        		ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
+        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
 	            
 	            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-	            if (dateString != null)
-	            {
-	            	ei.setAttribute(ExifInterface.TAG_DATETIME, dateString);
-	            	ei.setAttribute("DateTimeOriginal", dateString);
+	            if (dateString != null) {
+	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+	        		value.setBytes(dateString.getBytes());
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
+	        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
+	        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
 	            }
 
 	            //extract mode name
 	            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
 	            if (tag_modename == null)
 	            	tag_modename = "";
-	            ei.setAttribute("Software", MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename);
-	            if(tag_version != null)
-	            	ei.setAttribute("ExifVersion", tag_version);
+	            String softwareString = MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename;
+	            ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+	            softwareValue.setBytes(softwareString.getBytes());
+        		exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
 	            
 	            if(writeOrientationTag)			            	
 	            {
@@ -540,17 +565,22 @@ public class ExportPlugin extends PluginExport
 	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
 	            		break;
 	            	}
-	            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));	            
+	        		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 	            }
-	            else
-	            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
+	            else {
+	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, ExifInterface.ORIENTATION_NORMAL);
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+	            }
 	            
-	            ei.saveAttributes();
+	            		            	
+            	File modifiedFile = new File(saveDir, fileFormat + ".tmp");
+            	exifDriver.save(modifiedFile.getAbsolutePath());
+            	file.delete();
+            	modifiedFile.renameTo(file);
 		    	
 		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 			}
-			//MainScreen.FramesShot = true;
-            //MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
             
             MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
         }
