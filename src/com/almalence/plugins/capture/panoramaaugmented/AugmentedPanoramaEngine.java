@@ -1405,7 +1405,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 		
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final byte[] data, final int yuv_address, final boolean isYUV)
+				final Vector3d topVec, final float[] rotation, final byte[] img_data, final int yuv_address, final boolean isYUV)
 		{	
 			this.angleShift = angleShift;
 			
@@ -1431,10 +1431,26 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    			
 				    			AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
 			    						AugmentedPanoramaEngine.this.textureWidth * AugmentedPanoramaEngine.this.textureHeight * 4);
+				    			
+//				    			File saveDir = PluginManager.getInstance().GetSaveDir(false);
+//			    				File yourFile = new File(
+//					            		saveDir, 
+//					            		"PANORAMA_JPEG.jpg");
+//			    				BufferedOutputStream bos;
+//								try {
+//									bos = new BufferedOutputStream(new FileOutputStream(yourFile));
+//									bos.write(img_data);
+//				    				bos.flush();
+//				    				bos.close();
+//								} catch (Exception e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
 			    				
+				    			Log.e("PANO", "resizeJpeg2RGB or convertNV21toGL. isYUV = " + isYUV);
 				    			if(!isYUV)
 			    				ImageConversion.resizeJpeg2RGBA(
-			    						data,
+			    						img_data,
 			    						AugmentedFrameTaken.this.rgba_buffer.array(),
 			    						AugmentedPanoramaEngine.this.width,
 			    						AugmentedPanoramaEngine.this.height,
@@ -1444,7 +1460,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    			else
 				    			{
 				    				ImageConversion.convertNV21toGL(
-				    						data,
+				    						img_data,
 				    						AugmentedFrameTaken.this.rgba_buffer.array(),
 				    						AugmentedPanoramaEngine.this.width,
 				    						AugmentedPanoramaEngine.this.height,
@@ -1467,6 +1483,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 //									}
 				    				
 				    			}
+				    			Log.e("PANO", "resizeJpeg2RGB or convertNV21toGL finished");
 			    				
 			    				MainScreen.thiz.queueGLEvent(new Runnable()
 			    				{
@@ -1480,7 +1497,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		    		    	
 		            		if(!isYUV)
 		    				AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(
-		    						data,
+		    						img_data,
 		    						AugmentedPanoramaEngine.this.height,
 		    						AugmentedPanoramaEngine.this.width,
 		    						true, MainScreen.getCameraMirrored(),

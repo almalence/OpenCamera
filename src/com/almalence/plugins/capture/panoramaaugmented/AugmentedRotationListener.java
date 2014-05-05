@@ -25,6 +25,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.FloatMath;
+import android.util.Log;
 
 @SuppressLint("FloatMath")
 public class AugmentedRotationListener implements SensorEventListener
@@ -63,6 +64,11 @@ public class AugmentedRotationListener implements SensorEventListener
 	
 	private final boolean[] dataSynchObject = new boolean[2];
     
+    //private final float[] gyro_drift = new float[3];
+    //private final float[] drift_correction = new float[3];
+    
+	private boolean accelerometerValueIsFresh = true;//false;
+	
 	private int magneticDataValid = 0;
 	private long timestamp_magnetic;
     private long timestamp_gyro;
@@ -74,23 +80,35 @@ public class AugmentedRotationListener implements SensorEventListener
     private float[] gyroMatrix = null;
     
     private final boolean remap;
+    private final boolean softGyro;
 	
-	public AugmentedRotationListener(final boolean remap)
+	public AugmentedRotationListener(final boolean remap, final boolean softGyro)
 	{
 		this.remap = remap;
+		this.softGyro = softGyro;
 		this.filt_magnetic[0] = this.filt_magnetic[1] = this.filt_magnetic[2] = 0;
+		//this.gyro_drift[0] = this.gyro_drift[1] = this.gyro_drift[2] = 0;
+		//this.drift_correction[0] = this.drift_correction[1] = this.drift_correction[2] = 0;
 	}
 	
 	@Override
 	public void onAccuracyChanged(final Sensor sensor, final int accuracy)
 	{
-
+		//if (sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+		//	Log.i("CameraTest", "Sensor.TYPE_ACCELEROMETER accuracy "+accuracy);
+		//else
+		//	Log.i("CameraTest", "sensor:" + sensor.getType() + "accuracy "+accuracy);
 	}
 	
 	@Override
 	public void onSensorChanged(final SensorEvent event)
 	{
 		final AugmentedRotationReceiver receiver;
+		
+		//if (event.sensor.getType() == Sensor.TYPE_GRAVITY) Log.i("CameraTest", "GRAVITY: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
+		//else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) Log.i("CameraTest", "ACCELEROMETER: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
+		//else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) Log.i("CameraTest", "GYROSCOPE: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
+		//else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) Log.i("CameraTest", "MAGNETIC_FIELD: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
 		
 		synchronized (this.receiverSynchObject)
 		{
@@ -110,22 +128,78 @@ public class AugmentedRotationListener implements SensorEventListener
 			{
 				if (event.sensor == null)	// null means VfGyro
 				{
-			        this.magnetoFixLarge(event);
-					this.gyroFunction(event);
+					if (softGyro)
+					{
+				        this.magnetoFixLarge(event);
+						this.gyroFunction(event);
+					}
+					/*else
+					{
+						// use as a hw gyro drift stabilizer
+						// i.e. if camera is stable - include readings from gyroscope
+						// into drift compensator
+						// we assuming here that rate of readout from hw gyro is
+						// somewhat higher than fps from camera
+						if (event.values[0] > 0)
+						{
+							//Log.i("CameraTest", "camera stable");
+							
+							// discard correction if amplitude is well above possible drift range
+							// +- 0.2 rad/s
+							boolean drift2high = false;
+					    	for (int i=0; i<3; ++i)
+					    	{
+					    		if (Math.abs(drift_correction[i]) > 0.2f)
+					    		{
+					    			drift2high = true;
+					    			break;
+					    		}
+					    	}
+					    	
+					    	if (!drift2high)
+					    	{
+						    	for (int i=0; i<3; ++i)
+						    	{
+						    		gyro_drift[i] = (gyro_drift[i]*15+drift_correction[i])/16; 
+						    	}
+					    	}
+						}
+						//else
+						//	Log.i("CameraTest", "camera unstable");
+					}*/
 				}
 				else
 				{
 					switch(event.sensor.getType()) 
 					{
-				    //case Sensor.TYPE_GRAVITY:
+				    case Sensor.TYPE_GRAVITY:
 				    case Sensor.TYPE_ACCELEROMETER:
 				        System.arraycopy(event.values, 0, this.data_acceleration, 0, 3);
 				        this.calculateAccMagOrientation();
+				        accelerometerValueIsFresh = true;
 				        break;
 				 
 				    case Sensor.TYPE_GYROSCOPE:
+				    	VfGyroSensor.FixDrift(event.values);
+				    	/*
+				    	// drift prevention
+				    	for (int i=0; i<3; ++i)
+				    	{
+				    		event.values[i] -= gyro_drift[i];
+					    	drift_correction[i] = event.values[i];
+				    		//float magnitude = Math.abs(event.values[i]); 
+				    		//if ( magnitude<0.1f )
+					    	//{
+				    		//	magnitude = (magnitude-0.05f)*2;
+				    		//	if (magnitude<0) magnitude=0;
+				    		//	event.values[i] = magnitude * Math.signum(event.values[i]);
+					    	//}
+				    	}
+				    	*/
+				    	
 					    //Log.i("CameraTest", "Gyro: "+event.values[0]+" "+event.values[1]+" "+event.values[2]+" "+this.rate_magnetic[0]+" "+this.rate_magnetic[1]+" "+this.rate_magnetic[2]);
 				        this.gyroFunction(event);
+				        accelerometerValueIsFresh = false;
 				        break;
 
 				    case Sensor.TYPE_MAGNETIC_FIELD:
@@ -152,7 +226,6 @@ public class AugmentedRotationListener implements SensorEventListener
 		acc_filter[acc_filt_idx][0] = accel[0];
 		acc_filter[acc_filt_idx][1] = accel[1];
 		acc_filter[acc_filt_idx][2] = accel[2];
-		acc_filt_idx = (acc_filt_idx+1)&(ACC_FILT_LEN-1);
 		
 		float wsum;
 		
@@ -160,26 +233,34 @@ public class AugmentedRotationListener implements SensorEventListener
 		gravity[1] = 0;
 		gravity[2] = 0;
 		wsum = 0;
+		int idx = acc_filt_idx;
 		for (int i=0; i<ACC_FILT_LEN; ++i)
 		{
-			float g = acc_filter[i][0]*acc_filter[i][0]+
-					  acc_filter[i][1]*acc_filter[i][1]+
-					  acc_filter[i][2]*acc_filter[i][2];
+			float g = FloatMath.sqrt(acc_filter[idx][0]*acc_filter[idx][0]+
+					  				 acc_filter[idx][1]*acc_filter[idx][1]+
+					  				 acc_filter[idx][2]*acc_filter[idx][2]);
 			
 			// the farther the measured g from 9.81 the less the weight in a filter
 			float w = 1.f/(Math.abs(g-SensorManager.STANDARD_GRAVITY)+GRAVITY_FILTER_CF);
-			
+		
+			// the older the value from accelerometer - the lower the weight
+			w *= ACC_FILT_LEN - i;
+					
 			wsum += w;
 			
 			gravity[0] += w*acc_filter[i][0];
 			gravity[1] += w*acc_filter[i][1];
 			gravity[2] += w*acc_filter[i][2];
+
+			idx = (idx+ACC_FILT_LEN-1)&(ACC_FILT_LEN-1);
 		}
 		
 		// normalize filtered result
 		gravity[0] /= wsum;
 		gravity[1] /= wsum;
 		gravity[2] /= wsum;
+		
+		acc_filt_idx = (acc_filt_idx+1)&(ACC_FILT_LEN-1);
 	}
 
 	
@@ -366,7 +447,7 @@ public class AugmentedRotationListener implements SensorEventListener
 		
 		//if (System.currentTimeMillis() - this.lastFusion >= 30)
 		{
-			this.calculateFusion();
+			this.calculateFusion(accelerometerValueIsFresh);
 			
 			//this.lastFusion = System.currentTimeMillis();
 		}
@@ -415,12 +496,15 @@ public class AugmentedRotationListener implements SensorEventListener
 		return nice;
 	}
 	
-	private void calculateFusion()
+	private void calculateFusion(boolean accelerometerValueIsFresh)
 	{
 
 		for (int i=0; i<3; ++i)
 		{
-			this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, GYRO_FUSION_CF);
+			if (accelerometerValueIsFresh)
+				this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, GYRO_FUSION_CF);
+			else
+				this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, 0);
 		
 			// magnetometer adds too much breathing
 			// possibly could still be applied if compensation in direction

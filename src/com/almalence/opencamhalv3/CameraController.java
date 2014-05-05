@@ -22,7 +22,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback, Camera.PreviewCallback
+public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback, Camera.PreviewCallback, Camera.ShutterCallback
 {
 	private final String TAG = "CameraController";
 	
@@ -1706,7 +1706,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 					// Log.e("", "mFocusState = " + getFocusState());
 					camera.setPreviewCallback(null);
-					camera.takePicture(null, null, null, CameraController.getInstance());
+					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
 					return 0;
 				}
 
@@ -1889,5 +1889,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			mHeight = height;
 		}
+	}
+
+
+
+
+
+
+	@Override
+	public void onShutter() {
+		// TODO Auto-generated method stub
+		
 	}
 }

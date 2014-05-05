@@ -67,6 +67,8 @@ public class VfGyroSensor implements Closeable, Handler.Callback
     
     SensorEventListener m_listener;
     
+    private boolean m_justStability;
+    
     private byte[] datacopy;
     private long timestamp;
     private long timestamp_initial;
@@ -86,7 +88,8 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 		Initialize();
 		
 		m_listener = listener;
-
+	    m_justStability = false;
+	    
 		sensorValuesPrev[0] = sensorValuesPrev[1] = sensorValuesPrev[2] = 0;
 		nBlankRuns = 0;
 		
@@ -134,6 +137,12 @@ public class VfGyroSensor implements Closeable, Handler.Callback
     public void SetListener(SensorEventListener listener)
 	{
 		m_listener = listener;
+	}
+    
+
+    public void SetStabilityOnly(boolean justStability)
+	{
+		m_justStability = justStability;
 	}
     
     
@@ -207,7 +216,7 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 			{
 		    	synchronized(mThiz)
 		    	{
-		    		Update(datacopy, sensorEvent.timestamp);
+		    		Update(datacopy, sensorEvent.timestamp, m_justStability);
 			
 					Get(sensorEvent.values);
 					//sensorEvent.values[0] = 0.01f;
@@ -275,7 +284,7 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 						if (m_listener != null)
 						{
 							m_listener.onSensorChanged(sensorEvent);
-							if (SMOOTH_MOTION)
+							if (SMOOTH_MOTION && (!m_justStability))
 								H.sendEmptyMessageDelayed(MSG_SMOOTHER_GYRO, getMinDelay()/1000);
 						}
 
@@ -289,8 +298,9 @@ public class VfGyroSensor implements Closeable, Handler.Callback
     public native void Initialize();
     public native void Release();
     public native void SetFrameParameters(int w, int h, float HorizontalFOV, float VerticalFOV);
-    public native void Update(byte[] data, long timestamp);
+    public native void Update(byte[] data, long timestamp, boolean justStability);
     public native long Get(float[] values);		// return value is timestamp
+    public static native void FixDrift(float[] values);
 
     static
     {
