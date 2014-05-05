@@ -930,8 +930,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		PluginManager.getInstance().SelectDefaults();
 
-		this.setPreviewOutput();
-
 		if (MainScreen.camera == null)
 			return;
 		//Camera.Parameters cp = MainScreen.cameraParameters;
@@ -1029,8 +1027,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				try // exceptions sometimes happen here when resuming after
 					// processing
 				{
+					setPreviewOutput();
 					camera.startPreview();
 				} catch (RuntimeException e) {
+					e.printStackTrace();
 					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
 					return;
 				}

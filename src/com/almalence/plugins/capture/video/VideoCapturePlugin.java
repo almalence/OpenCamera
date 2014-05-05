@@ -150,7 +150,7 @@ public class VideoCapturePlugin extends PluginCapture
     private boolean quality1080Supported = false;
     private boolean quality4KSupported = false;
     
-	public static String ModePreference;	// 0=DRO On 1=DRO Off
+	private volatile String ModePreference;	// 0=DRO On 1=DRO Off
 	private Switch modeSwitcher;
     
 	public VideoCapturePlugin()
@@ -1581,7 +1581,7 @@ public class VideoCapturePlugin extends PluginCapture
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         
-        ModePreference = prefs.getString("modeStandardPref", "1");
+        ModePreference = prefs.getString("modeVideoDROPref", "1");
 
         CameraIDPreference = 0;
         

@@ -124,31 +124,31 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
+		final int[] tex = new int[1];
+		GLES20.glGenTextures(1, tex, 0);
+		this.texture_preview = tex[0];
+		
+		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_preview);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_S,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_T,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MIN_FILTER,
+				GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MAG_FILTER,
+				GLES20.GL_LINEAR);
+		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+		
 		if (PluginManager.getInstance().shouldPreviewToGPU())
-		{
-			final int[] tex = new int[1];
-			GLES20.glGenTextures(1, tex, 0);
-			this.texture_preview = tex[0];
-			
-			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_preview);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_S,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_T,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_LINEAR);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_LINEAR);
-			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
-			
+		{	
 			MainScreen.H.sendEmptyMessage(MainScreen.MSG_START_CAMERA);
 		}
 		

@@ -1766,6 +1766,7 @@ public class PluginManager {
 	 ******************************************************************************************************/
 	public boolean shouldPreviewToGPU()
 	{
+		
 		final Plugin plugin = pluginList.get(activeCapture);
 		
 		if (plugin != null && (plugin instanceof PluginCapture))
