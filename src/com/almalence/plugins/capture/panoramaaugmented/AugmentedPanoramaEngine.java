@@ -41,8 +41,8 @@ import com.almalence.YuvImage;
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginManager;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -67,8 +67,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private static final int TIP_FRAMES_COUNT = 2;
 	
-	public static final float FRAME_INTERSECTION_PART = 0.30f; // 0.37f;
-
+	public static final float FRAME_MISS_DISTANCE = 0.1f;	// maximum allowed miss from ideal frame position 
+	
 	public static final long FRAME_WHITE_FADE_IN = 500;
 	public static final long FRAME_WHITE_FADE_OUT = 400;
 	
@@ -79,7 +79,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private static final ByteBuffer FRAME_LINE_INDICES_BUFFER;
 	private static final FloatBuffer FRAME_TEXTURE_UV;
 	private static final FloatBuffer FRAME_NORMALS;	
-	
+
+	private static float FrameIntersectionPart = 0.50f;	// how much panorama frames should intersect
+
 	
 	static
 	{	
@@ -226,7 +228,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private int currentlyTargetedTarget = 0;
 	
 	private float verticalViewAngle = 45.0f;
-	private float radius, radiusEdge;
+	private float radius, radiusGL, radiusEdge;
 	
 	private float angleShift = 0.0f;	
 	private volatile float angleTotal;
@@ -242,6 +244,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private boolean bCreateViewportNow = false;
 	private GL10 gl10 = null;
 	private volatile int framesMax;
+	
+	public static void setFrameIntersection(float Intersection)
+	{
+		FrameIntersectionPart = Intersection;
+	}
 	
 	public void reset(final int width, final int height, float verticalViewAngleR)
 	{
@@ -259,19 +266,25 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		
 		this.verticalViewAngle = verticalViewAngleR;
 		
+		// using halfWidth here since we are operating on portrait-oriented frames
+		// and halfWidth correspond to a camera verticalViewAngle
 		// this is the radius to the center of a frame
-		this.radius = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
+		this.radius = (float)(this.halfWidth / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 		
-		// this is the radius to the edge of a frame
-		this.radiusEdge = (float)(this.halfHeight / Math.sin(Math.toRadians(verticalViewAngle / 2.0f)));
-		
-		// it appear that radius to edge is usually a bit too high (because frame intersection is happening at 1/3rd ?)
-		// so use the adjusted value somewhere in-between
-		this.radiusEdge = (this.radiusEdge + this.radius)/2;
+		// but for GL we need radius to be calculated like that to properly fit the frame on screen
+		// ToDo: check why
+		this.radiusGL = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
-		final double tShift = 2.0d * Math.atan2((0.5d - FRAME_INTERSECTION_PART / 2) * this.width, this.radius);
-		final int circle_frames = (int)Math.ceil(2.0d * Math.PI / tShift);
-		this.angleShift = (float)(2.0d * Math.PI / circle_frames);
+
+		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width, this.radius);
+
+		// this is the radius to the intersection of neighbor frames
+		// somehow setting it to the same value as radius to the center gives a more precise results
+		this.radiusEdge = this.radius;
+		//this.radiusEdge = (float)(this.radius / Math.cos(HalfTileShiftAngle));
+		
+		final int circle_frames = (int)Math.ceil(2.0f * Math.PI / (2.0f*HalfTileShiftAngle));
+		this.angleShift = (float)(2.0f * Math.PI / circle_frames);
 		
 		this.angleTotal = 0.0f;
 		
@@ -385,7 +398,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.currentVector.y = -this.transform[6];
 				this.currentVector.z = -this.transform[10];
 				this.currentVector.normalize();
-				this.currentVector.multiply(this.radius);
+				this.currentVector.multiply(this.radiusGL);
 				
 				int target = -1;
 				
@@ -759,7 +772,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			goodPlace = (framesCount == 0)
 					|| (this.state == STATE_TAKINGPICTURE
-						&& targetFrame.distance() < 0.2f);
+						&& targetFrame.distance() < FRAME_MISS_DISTANCE);
 		}
 
 		if (goodPlace)
@@ -954,7 +967,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			gl10.glViewport(0, 0, iSurfaceWidth, iSurfaceHeight);
 			gl10.glMatrixMode(GL10.GL_PROJECTION);		
 			
-			GLU.gluPerspective(gl10, this.verticalViewAngle, (float)iSurfaceWidth / (float)iSurfaceHeight, radius / 10.0f, radius * 10.0f);
+			GLU.gluPerspective(gl10, this.verticalViewAngle, (float)iSurfaceWidth / (float)iSurfaceHeight, radiusGL / 10.0f, radiusGL * 10.0f);
 			
 			gl10.glMatrixMode(GL10.GL_MODELVIEW);
 			gl10.glLoadIdentity();
@@ -1438,20 +1451,20 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    						AugmentedPanoramaEngine.this.textureWidth,
 				    						AugmentedPanoramaEngine.this.textureHeight);
 				    				
-				    				File saveDir = PluginManager.getInstance().GetSaveDir(false);
-				    				File yourFile = new File(
-						            		saveDir, 
-						            		"PANORAMA_ARGB.jpg");
-				    				BufferedOutputStream bos;
-									try {
-										bos = new BufferedOutputStream(new FileOutputStream(yourFile));
-										bos.write(AugmentedFrameTaken.this.rgba_buffer.array());
-					    				bos.flush();
-					    				bos.close();
-									} catch (Exception e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+//				    				File saveDir = PluginManager.getInstance().GetSaveDir(false);
+//				    				File yourFile = new File(
+//						            		saveDir, 
+//						            		"PANORAMA_ARGB.jpg");
+//				    				BufferedOutputStream bos;
+//									try {
+//										bos = new BufferedOutputStream(new FileOutputStream(yourFile));
+//										bos.write(AugmentedFrameTaken.this.rgba_buffer.array());
+//					    				bos.flush();
+//					    				bos.close();
+//									} catch (Exception e) {
+//										// TODO Auto-generated catch block
+//										e.printStackTrace();
+//									}
 				    				
 				    			}
 			    				
@@ -1473,7 +1486,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		    						true, MainScreen.getCameraMirrored(),
 		    						90);
 		            		else
+		            		{
+		            			ImageConversion.TransformNV21N(yuv_address, yuv_address,
+		            										   AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
+		            										   0, 0, 1);
 		            			AugmentedFrameTaken.this.nv21address = yuv_address;
+		            		}
 	            		}
 		            }
 				}).start();

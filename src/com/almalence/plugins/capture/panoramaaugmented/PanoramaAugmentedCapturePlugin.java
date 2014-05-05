@@ -58,8 +58,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.almalence.YuvImage;
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -69,12 +67,14 @@ import com.almalence.opencam_plus.ui.GUI;
 import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.GUI.CameraParameter;
+import com.almalence.opencamhalv3.CameraController;
+import com.almalence.opencamhalv3.CameraParameters;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginCapture;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.R;
+import com.almalence.opencamhalv3.ui.GUI;
+import com.almalence.opencamhalv3.ui.GUI.CameraParameter;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -407,8 +407,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
     	
-		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
-		cp.setJpegQuality(100);
+//		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
+//		cp.setJpegQuality(100);
     	
 
 		int sUserFocusMode = -1;
@@ -889,6 +889,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.engine.ViewportCreationTime();
 		
+		Log.e(TAG, "MSG_TAKE_PICTURE startCapture");
 		MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 	}
 	
@@ -949,15 +950,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 					im.getPlanes()[1].getRowStride(),
 					im.getPlanes()[2].getPixelStride(),
 					im.getPlanes()[2].getRowStride(),
-					imageWidth, imageHeight, 0);
+					imageWidth, imageHeight, 1);
 			
 			if (status != 0)
 				Log.e("CapturePlugin", "Error while cropping: "+status);
 			
 			
-			byte[] data = YuvImage.GetByteFrame(0);
+			byte[] data = YuvImage.GetByteFrame(1);
 			this.sensorSoftGyroscope.NewData(data);
-			YuvImage.RemoveFrame(0);
+			YuvImage.RemoveFrame(1);
 			System.gc();
 		}
 		
@@ -969,8 +970,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 				
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
-				{
+				{					
 					this.takingAlready = true;
+					Log.e(TAG, "MSG_TAKE_PICTURE onPreviewAvailable");
 					MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 				}
 			}
@@ -1058,7 +1060,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	try 
     	{
-			requestID = CameraController.captureImage(1, CameraController.JPEG);
+    		Log.e(TAG, "Perform CAPTURE Panorama");
+			requestID = CameraController.captureImage(1, CameraController.YUV);
 		}
     	catch (Exception e)
 		{

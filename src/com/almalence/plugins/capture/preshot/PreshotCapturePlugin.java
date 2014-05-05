@@ -37,8 +37,6 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -47,10 +45,12 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
+import com.almalence.opencamhalv3.CameraController;
+import com.almalence.opencamhalv3.CameraParameters;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginCapture;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.R;
 //-+- -->
 
 import com.almalence.ui.Switch.Switch;

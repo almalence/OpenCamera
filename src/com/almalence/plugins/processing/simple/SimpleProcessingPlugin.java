@@ -27,9 +27,9 @@ import com.almalence.opencam_plus.PluginProcessing;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.PluginProcessing;
 //-+- -->
 import com.almalence.util.ImageConversion;
 

@@ -60,8 +60,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -71,12 +69,14 @@ import com.almalence.opencam_plus.ui.GUI;
 import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.GUI.CameraParameter;
+import com.almalence.opencamhalv3.CameraController;
+import com.almalence.opencamhalv3.CameraParameters;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginCapture;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.R;
+import com.almalence.opencamhalv3.ui.GUI;
+import com.almalence.opencamhalv3.ui.GUI.CameraParameter;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -1486,6 +1486,7 @@ public class NightCapturePlugin extends PluginCapture
 				// all frames captured - initiate processing
 				if (nVFframesToBuffer == 0)
 				{
+					PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
 					// play tick sound
 	        		MainScreen.thiz.PlayShutter();
 										

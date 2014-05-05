@@ -140,7 +140,23 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 			break;
 		}
 
-		yuv[i] = yuvIn[i];
+		//		yuv[i] = yuvIn[i];
+		for (y=0; y<sy; y+=2)
+		{
+			// Y
+			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
+			memcpy (&yuv[i][(y+1)*sx], &yuv[i][(y+1)*sx], sx);
+
+			// UV - no direct memcpy as swap may be needed
+			for (x=0; x<sx/2; ++x)
+			{
+				// U
+				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
+
+				// V
+				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
+			}
+		}
 	}
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
@@ -170,14 +186,14 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
-	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
+	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
-		deghTable[DeGhostPref],
+		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
-	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
+	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
 
 	return env->NewStringUTF("ok");
 }
@@ -256,8 +272,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	//SuperZoom_Preview(&instance, yuv, pview_yuv, sx, sy, sxo, syo, -1, -1, nFrames,
 	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
 		0, // 256*nTable[sensorGainPref],
-		deghTable[DeGhostPref],
-		-1, 8+saturated*8*16+1, 1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);	// hack to get brightening (pass enh. level in kelvin2 parameter)
+		deghTable[DeGhostPref], 1,
+		-1, 9+saturated*9*16+1,	// hack to get brightening (pass enh. level in kelvin2 parameter)
+		1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);
 
 	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Preview completed");
 

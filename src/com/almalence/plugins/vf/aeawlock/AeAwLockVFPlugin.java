@@ -37,16 +37,16 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
 
-import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
+import com.almalence.opencamhalv3.CameraController;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginViewfinder;
+import com.almalence.opencamhalv3.R;
 //-+- -->
 
 import com.almalence.ui.RotateImageView;

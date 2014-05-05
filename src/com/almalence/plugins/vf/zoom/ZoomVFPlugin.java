@@ -46,7 +46,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.almalence.opencam.CameraController;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -54,10 +53,11 @@ import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
+import com.almalence.opencamhalv3.CameraController;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.PluginViewfinder;
+import com.almalence.opencamhalv3.R;
 //-+- -->
 import com.almalence.ui.VerticalSeekBar;
 

@@ -31,9 +31,9 @@ import java.io.IOException;
 
 import android.util.Log;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencamhalv3.PluginProcessing;
 //-+- -->
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
 

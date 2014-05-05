@@ -29,8 +29,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencamhalv3.R;
 
 public class AppRater
 {
@@ -134,7 +134,7 @@ public class AppRater
 		{
 			public void onClick(View v)
 			{
-				MainScreen.CallStoreFree(mContext);
+//				MainScreen.CallStoreFree(mContext);
 				
 				if (prefs != null)
 				{

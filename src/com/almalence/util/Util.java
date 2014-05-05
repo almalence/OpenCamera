@@ -62,8 +62,7 @@ import android.view.animation.Animation;
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-//-+- -->
+import com.almalence.opencamhalv3.MainScreen;
 
 /**
  * Collection of utility functions used in this package.
