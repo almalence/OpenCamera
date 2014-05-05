@@ -69,7 +69,7 @@ public class BarcodeViewDialog extends RotateDialog {
 		    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		    barcodeImageView.setImageBitmap(myBitmap);
 		} else {
-			barcodeImageView.setImageResource(R.drawable.barcode_icon);;
+			barcodeImageView.setImageResource(R.drawable.gui_almalence_settings_scene_barcode_on);;
 		}
 
 		int buttonCount = resultHandler.getButtonCount();

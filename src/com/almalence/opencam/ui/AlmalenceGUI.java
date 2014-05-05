@@ -1050,7 +1050,7 @@ public class AlmalenceGUI extends GUI implements
 					return;
 				}
 				//start store
-				showStore();
+				showStore(false);
 				
 //				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
 //				MainScreen.thiz.startActivity(intent);
@@ -1082,7 +1082,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	//<!-- -+-
 	@Override
-	public void showStore()
+	public void showStore(boolean isCouponSale)
 	{
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
@@ -1095,7 +1095,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		MainScreen.guiManager.lockControls = true;
 		
-		initStoreList();
+		initStoreList(isCouponSale);
 		GridView gridview = (GridView) guiView.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
 		
@@ -1130,9 +1130,12 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.guiManager.lockControls = false;
 	}
 	
-	private void initStoreList() {
+	private void initStoreList(boolean isCouponSale) {
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		
 		for (int i =0; i<5; i++) {
 
@@ -1154,11 +1157,17 @@ public class AlmalenceGUI extends GUI implements
 						price.setText(R.string.already_unlocked);
 					else
 					{
-						price.setText(MainScreen.thiz.titleUnlockAll);
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-						boolean bOnSale = prefs.getBoolean("bOnSale", false);
-						if (bOnSale)
+						if (isCouponSale)
+						{
+							price.setText(MainScreen.thiz.titleUnlockAllCoupon);
 							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
+						}
+						else
+						{
+							price.setText(MainScreen.thiz.titleUnlockAll);
+							if (bOnSale)
+								((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
+						}
 					}
 					break;
 				case 1:
@@ -3167,7 +3176,7 @@ public class AlmalenceGUI extends GUI implements
 			// // two angles
 			endDegree = diff > 180 ? endDegree - 360 : diff < -180
 					&& endDegree == 0 ? 360 : endDegree;
-
+			
 			if (modeSelectorVisible)
 				rotateViews(modeViews, startDegree, endDegree, duration);
 
@@ -6031,7 +6040,7 @@ public class AlmalenceGUI extends GUI implements
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
-		int mode_number = 0;
+		//int mode_number = 0;
 		while (it.hasNext()) {
 			Mode tmp = it.next();
 
@@ -6049,14 +6058,14 @@ public class AlmalenceGUI extends GUI implements
 					"string", MainScreen.thiz.getPackageName());
 			String modename = MainScreen.thiz.getResources().getString(id);
 
-			final boolean isFirstMode = mode_number == 0? true : false;
+			//final boolean isFirstMode = mode_number == 0? true : false;
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			mode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					//Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
-					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
+					if(event.getAction() == MotionEvent.ACTION_CANCEL)// && isFirstMode)
 					{
 						hideModeList();
 
@@ -6259,7 +6268,7 @@ public class AlmalenceGUI extends GUI implements
 						R.drawable.thumbnail_background_selected_inner);
 			}
 			
-			mode_number++;
+//			mode_number++;
 		}
 
 		modeAdapter.Elements = modeViews;
@@ -7236,10 +7245,10 @@ public class AlmalenceGUI extends GUI implements
 					.setImageResource(R.drawable.button_shutter);
 		else if (id == ShutterButton.RECORDER_START)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.button_shutter);
+					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
 		else if (id == ShutterButton.RECORDER_STOP)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.gui_almalence_shutter_pressed);
+					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
 		else if (id == ShutterButton.RECORDER_RECORDING)
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 					.setImageResource(R.drawable.gui_almalence_shutter_pressed_video);

@@ -69,11 +69,6 @@
 		
 		<activity android:name=".FolderPicker"
 		        android:label="@string/choose_folder"/>
-		
-		<activity android:name="com.almalence.plugins.vf.barcodescanner.BarcodeListActivity"
-		        android:label="Barcodes"/>
-		<activity android:name="com.almalence.plugins.vf.barcodescanner.BarcodeViewActivity"
-		        android:label="Barcode"/>
 
 		<receiver android:name=".HWButtonStart" >
 		    <intent-filter android:priority="1000">         
