@@ -40,6 +40,7 @@ import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLU;
+import android.os.Build;
 import android.os.Debug;
 import android.os.Message;
 import android.preference.ListPreference;
@@ -470,8 +471,21 @@ public class NightCapturePlugin extends PluginCapture
         	MinMPIX = MIN_MPIX_PREVIEW;
         }
         else
+        {
         	cs = CameraController.getInstance().getSupportedPictureSizes();
         	//cs = cp.getSupportedPictureSizes();
+        	if(Build.MODEL.contains("HTC One X"))
+    		{
+    			if (MainScreen.getCameraMirrored() == false)
+    			{
+    				CameraController.Size additional= null;
+    				additional= CameraController.getInstance().new Size(3264, 2448);
+    				additional.setWidth(3264);
+    				additional.setHeight(2448);
+    				cs.add(additional);
+    			}
+    		}
+        }
 
         int Capture5mIdx = -1;
         long Capture5mMpix = 0;
@@ -1525,8 +1539,6 @@ public class NightCapturePlugin extends PluginCapture
 		
 		//Really Nice Perspective Calculations
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		
-		Log.e("GL Night", "GLSurfaceCreated");
 	}
 	
 	@Override
@@ -1538,8 +1550,6 @@ public class NightCapturePlugin extends PluginCapture
 		
 		currHalfWidth = width/2;
 		currHalfHeight = height/2;
-		
-		Log.e("GL Night", "halfwidth = " + currHalfWidth + " | halfHeight = " + currHalfHeight);
 
 		cameraDist = (float)(currHalfHeight / Math.tan(Math.toRadians(45.0f / 2.0f)));
 
