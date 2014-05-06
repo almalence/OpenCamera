@@ -92,6 +92,8 @@ Implements basic functionality of Video capture.
 
 public class VideoCapturePlugin extends PluginCapture
 {
+	public static final String TAG = "Almalence";
+	
 	private boolean takingAlready=false;
 	
     private boolean isRecording;
@@ -671,7 +673,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    interval = 0;
 		measurementVal = 0;
 		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+		if (this.shouldPreviewToGPU())
 		{
 	        final Message msg = new Message();
 			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
@@ -1916,4 +1918,38 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
 	
+	@Override
+	public void onPreviewTextureUpdated(final int texture, final float[] transform)
+	{
+		Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, logMatrix(transform, 4, 4).replace('\n', ' ')));
+	}
+	
+	public static String logMatrix(final float[] transform,
+			final int width, final int height)
+	{
+		if (width * height < transform.length)
+		{
+			throw new ArrayIndexOutOfBoundsException(
+					String.format("width(%d) * height(%d) > transform(%d)",
+							width, height, transform));
+		}
+		
+		String format = "";
+		final Object[] args = new Object[width * height];
+		int cursor = 0;
+		
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				format += "% #6.2f  ";
+				args[cursor] = transform[cursor];
+				cursor++;
+			}
+			
+			format += "\n";
+		}
+		
+		return String.format(format, args);
+	}
 }

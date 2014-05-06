@@ -34,6 +34,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
+
 import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
@@ -44,7 +46,6 @@ import com.almalence.opencam.PluginManager;
 
 
 import com.almalence.plugins.capture.video.EglEncoder;
-
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLES20;
@@ -64,7 +65,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 {
 	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
 	
-	private int texture_preview;
+	private volatile int texture_preview;
 	
 	public GLLayer(Context c)
 	{
@@ -124,6 +125,8 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
+		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
+		
 		final int[] tex = new int[1];
 		GLES20.glGenTextures(1, tex, 0);
 		this.texture_preview = tex[0];
@@ -151,8 +154,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		{	
 			MainScreen.H.sendEmptyMessage(MainScreen.MSG_START_CAMERA);
 		}
-		
-		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 	}
 	
 	/**
