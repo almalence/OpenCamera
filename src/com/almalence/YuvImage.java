@@ -247,6 +247,9 @@ public class YuvImage {
     		int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
     		int sx, int sy, int nFrame);
     
+    // Return pointer to heap with size for one yuv image
+    public static synchronized native int AllocateMemoryForYUV(int sx, int sy);
+    
     static {
         System.loadLibrary("yuvimage");
     }

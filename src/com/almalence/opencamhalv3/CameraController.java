@@ -1671,6 +1671,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	
+	public void setPictureSize(int width, int height)
+	{
+		final Camera.Parameters cp = getCameraParameters();
+		if (cp == null)
+		{
+			return;
+		}
+		
+		cp.setPictureSize(width, height);
+	}
+	
+	public void setJpegQuality(int quality)
+	{
+		final Camera.Parameters cp = getCameraParameters();
+		if (cp == null)
+		{
+			return;
+		}
+		
+		cp.setJpegQuality(quality);
+	}
+	
+	
 	//^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
 	
 	

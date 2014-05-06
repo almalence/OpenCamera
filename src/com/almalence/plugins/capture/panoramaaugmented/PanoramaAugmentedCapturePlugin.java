@@ -40,6 +40,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -465,11 +466,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void SetCameraPictureSize()
 	{
-		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		if (cp == null)
-		{
-			return;
-		}
+//		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//		if (cp == null)
+//		{
+//			return;
+//		}
     	final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
 		
     	if(Build.MODEL.contains("HTC One X"))
@@ -487,8 +488,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
     	
-//		cp.setPictureSize(this.pictureWidth, this.pictureHeight);
-//		cp.setJpegQuality(100);
+		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
+		CameraController.getInstance().setJpegQuality(100);
     	
 
 //		String sUserFocusMode = null;
@@ -1425,6 +1426,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
 			msg.what = PluginManager.MSG_BROADCAST;
 			MainScreen.H.sendMessage(msg);
+		}
+	}
+	
+	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if (this.isFirstFrame)
+			{
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+	    		this.isFirstFrame = false;
+			}
 		}
 	}
 	

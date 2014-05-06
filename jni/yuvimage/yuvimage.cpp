@@ -200,3 +200,15 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 
 	return 0;
 }
+
+extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_AllocateMemoryForYUV
+(
+		JNIEnv* env,
+		jobject thiz,
+		jint sx,
+		jint sy
+)
+{
+	unsigned char* yuv_mem = (unsigned char *)malloc (sx*sy+sx*((sy+1)/2));
+	return (jint)yuv_mem;
+}

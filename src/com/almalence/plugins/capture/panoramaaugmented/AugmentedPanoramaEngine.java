@@ -22,9 +22,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -52,6 +54,7 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener
 
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
@@ -846,7 +849,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			if(im.getFormat() == ImageFormat.YUV_420_888)
 			{
-				Log.e("Panorama", "YUV Image received");
 				ByteBuffer Y = im.getPlanes()[0].getBuffer();
 				ByteBuffer U = im.getPlanes()[1].getBuffer();
 				ByteBuffer V = im.getPlanes()[2].getBuffer();
@@ -887,7 +889,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 			else if(im.getFormat() == ImageFormat.JPEG)
 			{
-				Log.e("Panorama", "JPEG Image received");
 				ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 				
 				int frame_len = jpeg.limit();
@@ -1431,23 +1432,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    			
 				    			AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
 			    						AugmentedPanoramaEngine.this.textureWidth * AugmentedPanoramaEngine.this.textureHeight * 4);
-				    			
-//				    			File saveDir = PluginManager.getInstance().GetSaveDir(false);
-//			    				File yourFile = new File(
-//					            		saveDir, 
-//					            		"PANORAMA_JPEG.jpg");
-//			    				BufferedOutputStream bos;
-//								try {
-//									bos = new BufferedOutputStream(new FileOutputStream(yourFile));
-//									bos.write(img_data);
-//				    				bos.flush();
-//				    				bos.close();
-//								} catch (Exception e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}
 			    				
-				    			Log.e("PANO", "resizeJpeg2RGB or convertNV21toGL. isYUV = " + isYUV);
 				    			if(!isYUV)
 			    				ImageConversion.resizeJpeg2RGBA(
 			    						img_data,
@@ -1466,24 +1451,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    						AugmentedPanoramaEngine.this.height,
 				    						AugmentedPanoramaEngine.this.textureWidth,
 				    						AugmentedPanoramaEngine.this.textureHeight);
-				    				
-//				    				File saveDir = PluginManager.getInstance().GetSaveDir(false);
-//				    				File yourFile = new File(
-//						            		saveDir, 
-//						            		"PANORAMA_ARGB.jpg");
-//				    				BufferedOutputStream bos;
-//									try {
-//										bos = new BufferedOutputStream(new FileOutputStream(yourFile));
-//										bos.write(AugmentedFrameTaken.this.rgba_buffer.array());
-//					    				bos.flush();
-//					    				bos.close();
-//									} catch (Exception e) {
-//										// TODO Auto-generated catch block
-//										e.printStackTrace();
-//									}
-				    				
 				    			}
-				    			Log.e("PANO", "resizeJpeg2RGB or convertNV21toGL finished");
 			    				
 			    				MainScreen.thiz.queueGLEvent(new Runnable()
 			    				{
@@ -1496,18 +1464,62 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 							}
 		    		    	
 		            		if(!isYUV)
-		    				AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(
-		    						img_data,
-		    						AugmentedPanoramaEngine.this.height,
-		    						AugmentedPanoramaEngine.this.width,
-		    						true, MainScreen.getCameraMirrored(),
-		    						90);
+		            		{
+			    				AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(
+			    						img_data,
+			    						AugmentedPanoramaEngine.this.height,
+			    						AugmentedPanoramaEngine.this.width,
+			    						true, MainScreen.getCameraMirrored(),
+			    						90);
+		            		}
 		            		else
 		            		{
-		            			ImageConversion.TransformNV21N(yuv_address, yuv_address,
-		            										   AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
+		            			int yuv_rotated = YuvImage.AllocateMemoryForYUV(AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width);
+		            			ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
+		            										   AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width,
 		            										   0, 0, 1);
-		            			AugmentedFrameTaken.this.nv21address = yuv_address;
+		            			AugmentedFrameTaken.this.nv21address = yuv_rotated;
+		            			
+//		            			FileOutputStream os = null;
+//		                        try
+//		                        {
+//		                        	File saveDir = PluginManager.getInstance().GetSaveDir(false);
+//		                        	final Calendar d = Calendar.getInstance();
+//		                        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
+//		                            		d.get(Calendar.YEAR),
+//		                            		d.get(Calendar.MONTH)+1,
+//		                            		d.get(Calendar.DAY_OF_MONTH),
+//		                            		d.get(Calendar.HOUR_OF_DAY),
+//		                            		d.get(Calendar.MINUTE),
+//		                            		d.get(Calendar.SECOND));
+//				    				File yourFile = new File(
+//						            		saveDir, 
+//						            		fileFormat+"_PANO_INPUT.jpg");
+//		                        	os = new FileOutputStream(yourFile);
+//		                            final YuvImage out = new com.almalence.YuvImage(
+//		                            		AugmentedFrameTaken.this.nv21address, ImageFormat.NV21, AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height, null);
+//		                            
+//		                            out.compressToJpeg(new Rect(0, 0, AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height), 100, os);
+//		                        }
+//		                        catch (final IOException e)
+//		                        {
+//		                        	e.printStackTrace();
+//		                        	throw new RuntimeException();
+//		                        }
+//		                        finally
+//		                        {
+//		                            try
+//		            				{
+//		                            	if (os != null)
+//		                            	{
+//		                            		os.close();
+//		                            	}
+//		            				} 
+//		                            catch (final IOException e)
+//		            				{
+//		                            	e.printStackTrace();
+//		            				}
+//		                        }
 		            		}
 	            		}
 		            }
