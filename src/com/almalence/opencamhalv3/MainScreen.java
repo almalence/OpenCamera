@@ -118,7 +118,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = false;
+	public static boolean isHALv3 = true;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -675,6 +675,63 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public void onResumeMain(boolean isHALv3)
 	{
+//		new CountDownTimer(50, 50)
+//		{
+//			@Override
+//			public void onTick(long millisUntilFinished) {}
+//			
+//			@Override
+//			public void onFinish()
+//			{
+//				SharedPreferences prefs = PreferenceManager
+//						.getDefaultSharedPreferences(MainScreen.mainContext);
+//				CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+//						: 1;
+//				ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+//						false);
+//				ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+//						false);
+//				ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+//						"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+//				Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
+//				// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+//				SaveToPath = prefs.getString(SavePathPref, Environment
+//						.getExternalStorageDirectory().getAbsolutePath());
+//				SaveToPreference = prefs.getString("saveToPref", "0");
+//				SortByDataPreference = prefs.getBoolean("sortByDataPref",
+//						false);
+//				
+//				MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+//				setScreenBrightness(MaxScreenBrightnessPreference);
+//		
+//				MainScreen.guiManager.onResume();
+//				PluginManager.getInstance().onResume();
+//				MainScreen.thiz.mPausing = false;
+//				
+//				if(MainScreen.isHALv3)
+//				{
+//					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//					cameraController.setupCamera(null);
+//				}
+//				else if (surfaceCreated && (!CameraController.isCameraCreated()))
+//				{
+//					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//					cameraController.setupCamera(surfaceHolder);
+//				}
+//		
+//				if (glView != null)
+//				{
+//					glView.onResume();
+//					Log.e("GL", "glView onResume");
+//				}
+//				
+//				PluginManager.getInstance().onGUICreate();
+//				MainScreen.guiManager.onGUICreate();
+//			}
+//
+//			
+//		}.start();
+		
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
@@ -700,19 +757,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().onResume();
 		MainScreen.thiz.mPausing = false;
 		
-		MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-		
-		if(isHALv3)
+		if(MainScreen.isHALv3)
 		{
+			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 			cameraController.setupCamera(null);
 		}
-		else
+		else if (surfaceCreated && (!CameraController.isCameraCreated()))
 		{
-			if (surfaceCreated && (!CameraController.isCameraCreated())) {
-				MainScreen.thiz.findViewById(R.id.mainLayout2)
-						.setVisibility(View.VISIBLE);
-				cameraController.setupCamera(surfaceHolder);
-			}
+			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+			cameraController.setupCamera(surfaceHolder);
 		}
 
 		if (glView != null)
@@ -735,6 +788,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			ScreenTimer.start();
 			isScreenTimerRunning = true;
 		}
+		
 
 	}
 
@@ -811,17 +865,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			if(!isHALv3)
 			{
-				onSurfaceChangedMain(holder, width, height);
-//			new CountDownTimer(50, 50) 
-//			{
-//				public void onTick(long millisUntilFinished)
-//				{
-//				}
-//				public void onFinish()
-//				{
-//					onSurfaceChangedMain(holder, width, height);
-//				}
-//			}.start();
+				new CountDownTimer(50, 50) 
+				{
+					public void onTick(long millisUntilFinished)
+					{
+					}
+					public void onFinish()
+					{
+						onSurfaceChangedMain(holder, width, height);
+					}
+				}.start();
 			}
 			else
 			{
