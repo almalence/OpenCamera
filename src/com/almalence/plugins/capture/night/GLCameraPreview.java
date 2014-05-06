@@ -148,7 +148,7 @@ public class GLCameraPreview {
 	    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 	    //gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
 
-	    Camera camera = CameraController.getInstance().getCamera();
+	    Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
 		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
@@ -197,7 +197,6 @@ public class GLCameraPreview {
 		else if (out.length < out_len)
 			out = new byte[out_len];
 			
-		Log.e("GL Night loadGLTexture", "previewWidth = " + previewWidth + " | previewHeight = " + previewHeight);
 		ImageConversion.convertNV21toGL(yuv_data, out, previewWidth, previewHeight, previewHalfWidth, previewHalfHeight);
 		
 		//...and bind it to our array

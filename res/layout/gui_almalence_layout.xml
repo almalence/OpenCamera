@@ -333,7 +333,7 @@
 		android:layout_below="@+id/paramsLayout">
 			<LinearLayout
 		 	 	android:id="@+id/evLayout"
-		 	 	android:background="@drawable/ev_background"		 	 	    	 	 	    
+		 	 	android:background="@drawable/ev_background"
 		 	 	android:orientation="horizontal"
 		 	 	android:layout_width="wrap_content"
 	    		android:layout_height="wrap_content"

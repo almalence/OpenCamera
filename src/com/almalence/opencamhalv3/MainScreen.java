@@ -118,7 +118,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = true;
+	public static boolean isHALv3 = false;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
