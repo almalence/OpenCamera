@@ -5,7 +5,7 @@
    	android:duration="300"
     android:repeatCount="0"/>
     <translate 
-        android:toXDelta="2000"
-		android:duration="500"
+        android:toXDelta="2500"
+		android:duration="700"
         />
  </set>
