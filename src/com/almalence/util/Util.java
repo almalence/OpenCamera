@@ -739,4 +739,16 @@ public final class Util {
         return rect;
     }
     
+    public static String toString(final Object[] objects, final char separator)
+    {
+    	final StringBuilder stringBuilder = new StringBuilder();
+    	
+    	for (final Object object : objects)
+    	{
+    		stringBuilder.append(object.toString());
+    		stringBuilder.append(separator);
+    	}
+    	
+    	return stringBuilder.toString();
+    }
 }

@@ -382,14 +382,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		surfaceHolder = preview.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-		glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
-		glView.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-				glView, 1);
-		glView.setZOrderMediaOverlay(true);
-		//glView.onPause();
 		
 		orientListener = new OrientationEventListener(this) {
 			@Override
@@ -671,11 +663,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	protected void onResume()
 	{		
 		super.onResume();
-
-		if (glView != null)
-		{
-			glView.onResume();
-		}
 		
 		if (!isCreating)
 		{
@@ -738,9 +725,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		if (glView != null) {
-			glView.onPause();
-		}
+		glView.onPause();
 
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
@@ -796,8 +781,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
-			final int width, final int height) {
-
+			final int width, final int height)
+	{
+		Log.e("Almalence", "surfaceChanged()");
+		
 		if (!isCreating)
 		{
 			surfaceWidth = width;
@@ -827,48 +814,45 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 	
-	public final void setPreviewOutput()
+	public final void setPreviewOutput() throws IOException
 	{		
 		if (PluginManager.getInstance().shouldPreviewToGPU())
 		{
 			final int texture_preview = glView.getPreviewTexture();
 			final SurfaceTexture surfaceTexture = new SurfaceTexture(texture_preview);
+			
+			camera.setPreviewTexture(surfaceTexture);
+			
 			surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
 			{
 				final float[] mtx = new float[16];
+				final Runnable runnable = new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							surfaceTexture.updateTexImage();
+							surfaceTexture.getTransformMatrix(mtx);
+							PluginManager.getInstance().onPreviewTextureUpdated(glView.getPreviewTexture(), mtx);
+						}
+						catch (final IllegalStateException e)
+						{
+							// This just means surface is not yet created
+							// or already destroyed.
+						}
+					}
+				};
 				
 				@Override
 				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
-				{		
-					MainScreen.thiz.queueGLEvent(new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							try
-							{
-								surfaceTexture.updateTexImage();
-								surfaceTexture.getTransformMatrix(mtx);
-								PluginManager.getInstance().onPreviewTextureUpdated(glView.getPreviewTexture(), mtx);
-							}
-							catch (final IllegalStateException e)
-							{
-								// This just means surface is not yet created
-								// or already destroyed.
-							}
-						}
-					});
+				{
+					Log.e("Almalence", "onFrameAvailable()");
+					
+					MainScreen.thiz.queueGLEvent(this.runnable);
 				}
 			});
-			
-			try
-			{
-				camera.setPreviewTexture(surfaceTexture);
-			}
-			catch (final IOException e)
-			{
-				e.printStackTrace();
-			}
 		}
 		else
 		{
@@ -878,11 +862,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				e.printStackTrace();
 			}
 
-			try {
-				camera.setPreviewDisplay(this.surfaceHolder);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			camera.setPreviewDisplay(this.surfaceHolder);
 		}
 	}
 
@@ -947,15 +927,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		Size previewSize = cameraParameters.getPreviewSize();
 
-		if (PluginManager.getInstance().isGLSurfaceNeeded())
-		{
-			glView.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			glView.setVisibility(View.GONE);
-		}
-
 		pviewBuffer = new byte[previewSize.width
 				* previewSize.height
 				* ImageFormat.getBitsPerPixel(cameraParameters
@@ -1014,31 +985,37 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
 		guiManager.onPluginsInitialized();
+		
+		try // exceptions sometimes happen here when resuming after
+			// processing
+		{
+			Log.e("Almalence", "setPreviewOutput()");
+			this.setPreviewOutput();
 
+			camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
+			camera.addCallbackBuffer(pviewBuffer);
+			
+			camera.startPreview();
+		}
+		catch (final Exception e)
+		{
+			Log.e("Almalence", e.getMessage());
+			e.printStackTrace();
+			Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		PluginManager.getInstance().onCameraSetup();
+		guiManager.onCameraSetup();
+		MainScreen.mApplicationStarted = true;
+		
 		// ----- Start preview and setup frame buffer if needed
 
 		// ToDo: call camera release sequence from onPause somewhere ???
 		new CountDownTimer(10, 10) {
 			@Override
-			public void onFinish() {
-				try // exceptions sometimes happen here when resuming after
-					// processing
-				{
-					Log.e("Almalence", "setPreviewOutput()");
-					setPreviewOutput();
-					camera.startPreview();
-				} catch (RuntimeException e) {
-					e.printStackTrace();
-					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
-				camera.addCallbackBuffer(pviewBuffer);
-
-				PluginManager.getInstance().onCameraSetup();
-				guiManager.onCameraSetup();
-				MainScreen.mApplicationStarted = true;
+			public void onFinish()
+			{
 			}
 
 			@Override
@@ -1221,6 +1198,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// ----- Find 'normal' orientation of the device
+		Log.e("Almalence", "surfaceCreated()");
 
 		Display display = ((WindowManager) this
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -1984,8 +1962,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera) {
-		PluginManager.getInstance().onPreviewFrame(data, paramCamera);
-		camera.addCallbackBuffer(pviewBuffer);
+		//PluginManager.getInstance().onPreviewFrame(data, paramCamera);
+		//camera.addCallbackBuffer(pviewBuffer);
 	}
 
 	// >>Description
@@ -2009,7 +1987,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			this.finish();
 			return true;
 			
-		case MSG_ON_RESUME:	
+		case MSG_ON_RESUME:
+			Log.e("Almalence", "MSG_ON_RESUME");	
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 			SaveToPath = prefs.getString(SavePathPref, Environment
 					.getExternalStorageDirectory().getAbsolutePath());
@@ -2025,11 +2004,35 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			MainScreen.guiManager.onResume();
 			PluginManager.getInstance().onResume();
 			MainScreen.thiz.mPausing = false;
+
+			if (glView == null)
+			{
+				glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
+				glView.setLayoutParams(new LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
+						glView, 1);
+				glView.setZOrderMediaOverlay(true);
+			}
+			else
+			{	
+				glView.onResume();
+			}
+
+			if (PluginManager.getInstance().isGLSurfaceNeeded())
+			{
+				glView.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				glView.setVisibility(View.GONE);
+			}
 			
 			if (PluginManager.getInstance().shouldPreviewToGPU())
 				return true;
 			
 		case MSG_START_CAMERA:
+			Log.e("Almalence", "MSG_START_CAMERA");
 			CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
 					: 1;
 			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
@@ -2040,8 +2043,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 			Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
 
-			if (!MainScreen.thiz.mPausing && surfaceCreated
+			if (!MainScreen.thiz.mPausing
+					&& (surfaceCreated	|| PluginManager.getInstance().shouldPreviewToGPU())
 					&& (camera == null)) {
+				Log.e("Almalence", "MSG_START_CAMERA setupCamera()");
 				MainScreen.thiz.findViewById(R.id.mainLayout2)
 						.setVisibility(View.VISIBLE);
 				setupCamera(surfaceHolder);
@@ -2069,16 +2074,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void showOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.GONE) {
+		if (glView != null && glView.getVisibility() != View.VISIBLE) {
 			glView.setVisibility(View.VISIBLE);
-			glView.onResume();
 		}
 	}
 
 	public void hideOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.VISIBLE) {
+		if (glView != null && glView.getVisibility() != View.GONE) {
 			glView.setVisibility(View.GONE);
-			glView.onPause();
 		}
 	}
 

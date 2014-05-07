@@ -235,9 +235,16 @@ public class VideoCapturePlugin extends PluginCapture
 	        		return;
 	        	}
 	        	
-	        	camera.stopPreview();
-	        	MainScreen.thiz.setPreviewOutput();
-	        	camera.startPreview();
+	        	try
+	        	{
+		        	camera.stopPreview();
+		        	MainScreen.thiz.setPreviewOutput();
+		        	camera.startPreview();
+	        	}
+	        	catch (final Exception e)
+	        	{
+	        		e.printStackTrace();
+	        	}
 			}
 		});
 		
