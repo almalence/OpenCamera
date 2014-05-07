@@ -179,13 +179,18 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	@Override
 	public void onPause() {
 		releaseSoundPlayer();
+		mBound.setVisibility(View.GONE);
+		mBarcodesListButton.setVisibility(View.GONE);
+		clearViews();
+		mBound = null;
+		mBarcodesListButton = null;
 	}
 	
 	@Override
 	public void onGUICreate() {
-		clearViews();
-		createBoundView();
-		createScreenButton();
+		//clearViews();
+		//createBoundView();
+		//createScreenButton();
 		showGUI();
 	}
 	
@@ -348,6 +353,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     }
 	
 	protected void showBarcodeViewDialog(Barcode barcode) {
+		try{		
     	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
     	
     	showGUI();
@@ -360,6 +366,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		mBarcodeScannerState = OFF;
 		barcodeViewDialog.show();
+		}catch(Exception e)
+		{}
     }
 	
 	/**
