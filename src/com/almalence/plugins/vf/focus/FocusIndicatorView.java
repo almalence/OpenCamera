@@ -20,7 +20,7 @@ package com.almalence.plugins.vf.focus;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.R;
+import com.almalence.opencam.R;
 //-+- -->
 
 import android.content.Context;

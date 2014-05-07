@@ -78,10 +78,10 @@ import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.MainScreen;
-import com.almalence.opencamhalv3.PluginManager;
-import com.almalence.opencamhalv3.PluginProcessing;
-import com.almalence.opencamhalv3.R;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.R;
 import com.almalence.plugins.export.standard.GPSTagsConverter;
 //-+- -->
 

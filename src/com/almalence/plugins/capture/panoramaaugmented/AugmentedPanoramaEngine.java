@@ -43,8 +43,8 @@ import com.almalence.YuvImage;
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.MainScreen;
-import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

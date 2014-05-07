@@ -30,8 +30,8 @@ import android.graphics.Bitmap.Config;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.almalence.opencamhalv3.MainScreen;
-import com.almalence.opencamhalv3.PluginManager;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
 
 public class ImageConversion 

@@ -34,8 +34,8 @@ import android.util.Log;
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.CameraController;
-import com.almalence.opencamhalv3.MainScreen;
+import com.almalence.opencam.CameraController;
+import com.almalence.opencam.MainScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

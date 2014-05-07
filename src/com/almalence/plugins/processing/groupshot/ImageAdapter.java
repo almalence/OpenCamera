@@ -43,8 +43,8 @@ import android.widget.ImageView;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.MainScreen;
-import com.almalence.opencamhalv3.R;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.R;
 //-+- -->
 import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;

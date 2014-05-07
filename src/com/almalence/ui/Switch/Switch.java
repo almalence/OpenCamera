@@ -25,7 +25,7 @@ import com.almalence.ui.Switch.TransformationMethodCompat2;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencamhalv3.R;
+import com.almalence.opencam.R;
 //-+- -->
 
 import android.content.Context;
