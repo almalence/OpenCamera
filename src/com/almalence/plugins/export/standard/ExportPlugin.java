@@ -19,8 +19,12 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.export.standard;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,7 +40,6 @@ import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -412,11 +415,16 @@ public class ExportPlugin extends PluginExport
                 filesSavedNames[nFilesSaved++] = file.toString();
                 
                 ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
+                if (exifDriver == null) {
+                	// If ExifDriver can't open the file, we use ExifInterface to generate minimal valid Exif header.
+                	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+                    ei.saveAttributes();	
+                }
 		    	ExifManager exifManager = null;
 		    	if (exifDriver != null) {
 	            	exifManager = new ExifManager(exifDriver, MainScreen.thiz);
 		    	}
-                
+	
 		    	if (useGeoTaggingPrefExport)
 	            {
 	            	Location l = MLocation.getLocation(MainScreen.mainContext);
@@ -432,23 +440,7 @@ public class ExportPlugin extends PluginExport
 				            
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-
-				            //ei.setAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD, l.getProvider().toUpperCase());
-//		                    if (l.getTime() != 0) {
-//			                    SimpleDateFormat formatterTime = new SimpleDateFormat("HH/1,mm/1,ss/1");
-//			                    Date currentTime = new Date(l.getTime());
-//			                    String asGMTStringTime = currentTime.toGMTString();
-//			                    String asStringTime = formatterTime.format(currentTime);
-//			                    //ei.setAttribute(ExifInterface.TAG_GPS_TIMESTAMP, asStringTime);
-//			                    
-//			                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd");
-//			                    Date currentDate = new Date(l.getTime());
-//			                    String asString = formatter.format(currentDate);
-//			                    ei.setAttribute(ExifInterface.TAG_GPS_DATESTAMP, asString);
-//			                }
 		                }
-			                
-		            	//ei.saveAttributes();
 	            	}
 	            	else
 	            	{
@@ -468,117 +460,121 @@ public class ExportPlugin extends PluginExport
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            	   
-	            
-	            if(tag_exposure_time != null) {
-	            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
-	            	if (ratValue != null) {
-	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-	            		value.setRationals(ratValue);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
-	            	}
-	            }
-	            if(tag_aperture != null) {
-	            	int[][] ratValue = ExifManager.stringToRational(tag_aperture);
-	            	if (ratValue != null) {
-	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-	            		value.setRationals(ratValue);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
-	            	}
-	            }
-	            if(tag_flash != null) {
-            		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_flash));
-            		exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
-	            }
-	            if(tag_focal_length != null) {
-	            	int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
-	            	if (ratValue != null) {
-	            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-	            		value.setRationals(ratValue);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
-	            	}
-	            }
-	            if(tag_iso != null) {
-	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
-	            }
-	            if(tag_white_balance != null) {
-	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_white_balance));
-            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
-            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
-	            }
-	            if(tag_make != null) {
-	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-	        		value.setBytes(tag_make.getBytes());
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
-	            }
-//	            if(tag_model != null) {
-//	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-//	        		value.setBytes(tag_model.getBytes());
-//	        		exifDriver.getIfd0().put(ExifDriver.TAG_MODEL, value);
-//	            }
-	            if(tag_spectral_sensitivity != null) {
-	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-	        		value.setBytes(tag_spectral_sensitivity.getBytes());
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
-	            }
-	            
-            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
-        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
+	            if (exifDriver != null) {
+	            	if(tag_exposure_time != null) {
+		            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
+		            	if (ratValue != null) {
+		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+		            		value.setRationals(ratValue);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
+		            	}
+		            }
+		            if(tag_aperture != null) {
+		            	int[][] ratValue = ExifManager.stringToRational(tag_aperture);
+		            	if (ratValue != null) {
+		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+		            		value.setRationals(ratValue);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
+		            	}
+		            }
+		            if(tag_flash != null) {
+	            		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_flash));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
+		            }
+		            if(tag_focal_length != null) {
+		            	int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
+		            	if (ratValue != null) {
+		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+		            		value.setRationals(ratValue);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
+		            	}
+		            }
+		            if(tag_iso != null) {
+		            	if (tag_iso.indexOf("ISO") > 0) {
+		            		tag_iso = tag_iso.substring(0, 2);
+		            	}
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            }
+		            if(tag_white_balance != null) {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_white_balance));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
+		            }
+		            if(tag_make != null) {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		        		value.setBytes(tag_make.getBytes());
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
+		            }
+//		            if(tag_model != null) {
+//		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+//		        		value.setBytes(tag_model.getBytes());
+//		        		exifDriver.getIfd0().put(ExifDriver.TAG_MODEL, value);
+//		            }
+		            if(tag_spectral_sensitivity != null) {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		        		value.setBytes(tag_spectral_sensitivity.getBytes());
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
+		            }
+		            
+	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
+	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
 
-        		ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
-        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
-	            
-	            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-	            if (dateString != null) {
-	            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-	        		value.setBytes(dateString.getBytes());
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
-	        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
-	        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
-	            }
+	        		ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
+	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
+		            
+		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
+		            if (dateString != null) {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		        		value.setBytes(dateString.getBytes());
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
+		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
+		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
+		            }
 
-	            //extract mode name
-	            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
-	            if (tag_modename == null)
-	            	tag_modename = "";
-	            String softwareString = MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename;
-	            ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-	            softwareValue.setBytes(softwareString.getBytes());
-        		exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
-	            
-	            if(writeOrientationTag)			            	
-	            {
-	            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-	            	switch(orientation)
-	            	{
-	            	default:
-	            	case 0:
-	            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-	            		break;
-	            	case 90:
-	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-	            		break;
-	            	case 180:
-	            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-	            		break;
-	            	case 270:
-	            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-	            		break;
-	            	}
-	        		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+		            //extract mode name
+		            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
+		            if (tag_modename == null)
+		            	tag_modename = "";
+		            String softwareString = MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename;
+		            ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		            softwareValue.setBytes(softwareString.getBytes());
+	        		exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
+		            
+		            if(writeOrientationTag)			            	
+		            {
+		            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+		            	switch(orientation)
+		            	{
+		            	default:
+		            	case 0:
+		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+		            		break;
+		            	case 90:
+		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+		            		break;
+		            	case 180:
+		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+		            		break;
+		            	case 270:
+		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+		            		break;
+		            	}
+		        		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+		            }
+		            else {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, ExifInterface.ORIENTATION_NORMAL);
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+		            }
+		            
+		            // Save exif info to new file, and replace old file with new one.
+	            	File modifiedFile = new File(saveDir, fileFormat + ".tmp");
+	            	exifDriver.save(modifiedFile.getAbsolutePath());
+	            	file.delete();
+	            	modifiedFile.renameTo(file);
 	            }
-	            else {
-	            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, ExifInterface.ORIENTATION_NORMAL);
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-	            }
 	            
-	            		            	
-            	File modifiedFile = new File(saveDir, fileFormat + ".tmp");
-            	exifDriver.save(modifiedFile.getAbsolutePath());
-            	file.delete();
-            	modifiedFile.renameTo(file);
-		    	
 		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 			}
             
