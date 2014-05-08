@@ -419,6 +419,7 @@ public class ExportPlugin extends PluginExport
                 	// If ExifDriver can't open the file, we use ExifInterface to generate minimal valid Exif header.
                 	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
                     ei.saveAttributes();	
+                    exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
                 }
 		    	ExifManager exifManager = null;
 		    	if (exifDriver != null) {
