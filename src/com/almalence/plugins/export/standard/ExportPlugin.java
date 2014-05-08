@@ -19,12 +19,8 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.export.standard;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,12 +30,15 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -414,13 +413,17 @@ public class ExportPlugin extends PluginExport
                 
                 filesSavedNames[nFilesSaved++] = file.toString();
                 
+                // Set tag_model using ExifInterface. 
+                // If we try set tag_model using ExifDriver, then standard gallery of android (Nexus 4) will crash on this file.
+                // Can't figure out why, other Exif tools work fine. 
+                ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+                String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+                if(tag_model != null) {
+	        		ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+	            }
+                ei.saveAttributes();
+                
                 ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
-                if (exifDriver == null) {
-                	// If ExifDriver can't open the file, we use ExifInterface to generate minimal valid Exif header.
-                	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-                    ei.saveAttributes();	
-                    exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
-                }
 		    	ExifManager exifManager = null;
 		    	if (exifDriver != null) {
 	            	exifManager = new ExifManager(exifDriver, MainScreen.thiz);
@@ -456,8 +459,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_focal_length = PluginManager.getInstance().getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
 	            String tag_iso = PluginManager.getInstance().getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
 	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
-	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
-	            String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));	            
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            	   
@@ -498,20 +500,59 @@ public class ExportPlugin extends PluginExport
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
 		            }
 		            if(tag_white_balance != null) {
+		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
+		            	
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_white_balance));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
+		            } else {
+		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
+		            	
+		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		            	String whiteBalance = params.getWhiteBalance();
+		            	int whiteBalanceVal;
+		            	int lightSourceVal;
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_AUTO)) {
+		            		whiteBalanceVal = 0;
+		            		lightSourceVal = 0;
+		            	} else {
+		            		whiteBalanceVal = 1;
+		            		lightSourceVal = 0;
+		            	}
+
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_DAYLIGHT)) {
+		            		lightSourceVal = 1;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_FLUORESCENT)) {
+		            		lightSourceVal = 2;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_WARM_FLUORESCENT)) {
+		            		lightSourceVal = 2;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_INCANDESCENT)) {
+		            		lightSourceVal = 3;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_TWILIGHT)) {
+		            		lightSourceVal = 3;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT)) {
+		            		lightSourceVal = 10;
+		            	}
+		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_SHADE)) {
+		            		lightSourceVal = 11;
+		            	}
+		            	
+		            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
+	            		
+	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            }
 		            if(tag_make != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_make.getBytes());
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
 		            }
-//		            if(tag_model != null) {
-//		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-//		        		value.setBytes(tag_model.getBytes());
-//		        		exifDriver.getIfd0().put(ExifDriver.TAG_MODEL, value);
-//		            }
 		            if(tag_spectral_sensitivity != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());

@@ -612,9 +612,6 @@ public class ExifDriver {
 		Arrays.sort(oKeys);
 		for (int i = 0; i < oKeys.length; i++) {
 			Integer key = (Integer) oKeys[i];
-			if (key.equals(37378)) {
-				Log.e("", "");
-			}
 			writeNumber(_data, itemOffset, key, 2);
 			valuesOffset = _ifd.get(key).writeToData(_data, itemOffset, valuesOffset);
 			itemOffset += 12;
