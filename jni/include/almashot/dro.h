@@ -81,7 +81,6 @@ void Dro_GetHistogramNV21
 //         lookup_table[256] - filled with tone-table multipliers (in q5.10 fixed-point format)
 //
 // Parameters:
-//         crt          - Defines the method (0=old method, 1=new method), recommended value: 1
 //         gamma        - Defines how 'bright' the output image will be. Lower values cause brighter output.
 //                        Default: 0.5
 //         max_black_level - threshold for black level correction. Default: 16
@@ -99,7 +98,6 @@ Int32 *Dro_ComputeToneTable
 (
 	Uint32 *hist,
 	Int32 *lookup_table,
-	int   crt,
 	float gamma,
 	float max_black_level,
 	float black_level_atten,
@@ -240,7 +238,6 @@ void Dro_StreamingRender
 	int uv_desat,
 	int dark_uv_desat,
 	float mix_factor,
-	int   crt,					// default = 1
 	float gamma,				// default = 0.5
 	float max_black_level,		// default = 16
 	float black_level_atten,	// default = 0.5
