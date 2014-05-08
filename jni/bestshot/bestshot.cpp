@@ -122,8 +122,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 )
 {
 	int     fullScanMode = 1;
-	int    	BestFrames[MAX_BEST_FRAMES] = {NULL};
-	float 	FramesScores[MAX_BEST_FRAMES] = {NULL};
+	int    	BestFrames[MAX_BEST_FRAMES] = {0};
+	float 	FramesScores[MAX_BEST_FRAMES] = {0};
 	int 	nFramesToSelect = 1;
 
 	unsigned char * *jpeg;
