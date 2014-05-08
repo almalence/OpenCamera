@@ -3801,7 +3801,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.blacktansperentlayertop));
+						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		Set<Integer> topmenu_keys = topMenuButtons.keySet();
 		Iterator<Integer> it = topmenu_keys.iterator();
@@ -3841,7 +3841,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.blacktansperentlayertop));
+						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_EV), isEVEnabled);

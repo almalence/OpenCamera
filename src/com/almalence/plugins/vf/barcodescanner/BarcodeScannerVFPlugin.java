@@ -179,8 +179,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	@Override
 	public void onPause() {
 		releaseSoundPlayer();
-		mBound.setVisibility(View.GONE);
-		mBarcodesListButton.setVisibility(View.GONE);
+		if (mBound != null)
+			mBound.setVisibility(View.GONE);
+		if (mBarcodesListButton != null)
+			mBarcodesListButton.setVisibility(View.GONE);
 		clearViews();
 		mBound = null;
 		mBarcodesListButton = null;
