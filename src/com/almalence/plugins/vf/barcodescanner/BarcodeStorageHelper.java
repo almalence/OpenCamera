@@ -24,9 +24,19 @@ public class BarcodeStorageHelper {
 	private static ArrayList<Barcode> barcodesList;
 	
 	public static void addBarcode(Barcode barcode) {
-		if (searchForBarcode(barcode) >= 0) {
-			return;
+		int position = searchForBarcode(barcode);
+		
+		if (position >= 0) {
+			String oldFile = barcodesList.get(position).getFile();
+			if (oldFile != null) {
+				File file = new File(oldFile);
+				if (file.exists()) {
+					file.delete();
+				}
+			}
+			barcodesList.remove(position);
 		}
+		
 		barcodesList.add(barcode);
 		saveBarcodesToFile();
 	}
