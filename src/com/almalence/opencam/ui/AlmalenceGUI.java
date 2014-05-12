@@ -3176,7 +3176,7 @@ public class AlmalenceGUI extends GUI implements
 			// // two angles
 			endDegree = diff > 180 ? endDegree - 360 : diff < -180
 					&& endDegree == 0 ? 360 : endDegree;
-
+			
 			if (modeSelectorVisible)
 				rotateViews(modeViews, startDegree, endDegree, duration);
 
@@ -6040,7 +6040,7 @@ public class AlmalenceGUI extends GUI implements
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
-		int mode_number = 0;
+		//int mode_number = 0;
 		while (it.hasNext()) {
 			Mode tmp = it.next();
 
@@ -6058,14 +6058,14 @@ public class AlmalenceGUI extends GUI implements
 					"string", MainScreen.thiz.getPackageName());
 			String modename = MainScreen.thiz.getResources().getString(id);
 
-			final boolean isFirstMode = mode_number == 0? true : false;
+			//final boolean isFirstMode = mode_number == 0? true : false;
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			mode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					//Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
-					if(event.getAction() == MotionEvent.ACTION_CANCEL && isFirstMode)
+					if(event.getAction() == MotionEvent.ACTION_CANCEL)// && isFirstMode)
 					{
 						hideModeList();
 
@@ -6268,7 +6268,7 @@ public class AlmalenceGUI extends GUI implements
 						R.drawable.thumbnail_background_selected_inner);
 			}
 			
-			mode_number++;
+//			mode_number++;
 		}
 
 		modeAdapter.Elements = modeViews;

@@ -10,14 +10,16 @@
   			>
 				<GridView 
 				    android:id="@+id/settingsGrid"
-				    android:layout_width="fill_parent" 
+				    android:layout_width="match_parent" 
 				    android:layout_height="wrap_content"
 				    android:numColumns="5"
 				    android:horizontalSpacing="0dp"
-				    android:verticalSpacing="25dp"
+				    android:verticalSpacing="30dp"
 				    android:adjustViewBounds="true"
 				    android:stretchMode="columnWidth"
-				    android:paddingTop="10dp"
-				    android:paddingBottom="10dp"
+				    android:paddingLeft="15dp"
+				    android:paddingRight="15dp"
+				    android:paddingTop="30dp"
+				    android:paddingBottom="30dp"
 				    android:gravity="center"/>
 </RelativeLayout>
