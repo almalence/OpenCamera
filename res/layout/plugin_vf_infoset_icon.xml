@@ -4,4 +4,5 @@
     	android:visibility="visible"
     	android:padding="2dip"
     	android:scaleType="fitCenter"
+    	android:background="@drawable/infounderlayer"
 		style="@style/OpenCameraStyle"/>

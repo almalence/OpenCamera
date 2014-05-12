@@ -1,10 +1,10 @@
 package com.almalence.plugins.vf.barcodescanner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,28 +14,28 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
@@ -59,6 +59,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	private SoundPlayer mSoundPlayer = null;
 	public static Boolean mBarcodeScannerState = OFF;
 	private int mFrameCounter = 0;
+	private int mOrientation = 0;
 	private BoundingView mBound = null;
 	private RotateImageView mBarcodesListButton;
 	private View mButtonsLayout;
@@ -96,6 +97,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	@Override
     public void onOrientationChanged(int orientation) {
+		mOrientation = orientation;
 		if (mBarcodesListButton != null) {
 			mBarcodesListButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 			mBarcodesListButton.invalidate();
@@ -179,13 +181,20 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	@Override
 	public void onPause() {
 		releaseSoundPlayer();
+		if (mBound != null)
+			mBound.setVisibility(View.GONE);
+		if (mBarcodesListButton != null)
+			mBarcodesListButton.setVisibility(View.GONE);
+		clearViews();
+		mBound = null;
+		mBarcodesListButton = null;
 	}
 	
 	@Override
 	public void onGUICreate() {
-		clearViews();
-		createBoundView();
-		createScreenButton();
+		//clearViews();
+		//createBoundView();
+		//createScreenButton();
 		showGUI();
 	}
 	
@@ -326,12 +335,14 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			return;
 		}
 		
+		// <!-- -+-
 		//sale hook
 		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.thiz.isUnlockedAll())
 		{
 			MainScreen.guiManager.showStore(true);
 			return;
 		}
+		//-+- -->
 		
         BarcodeStorageHelper.addBarcode(barcode);
         
@@ -343,6 +354,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     }
 	
 	protected void showBarcodeViewDialog(Barcode barcode) {
+		try{		
     	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
     	
     	showGUI();
@@ -355,6 +367,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		mBarcodeScannerState = OFF;
 		barcodeViewDialog.show();
+		}catch(Exception e)
+		{}
     }
 	
 	/**
@@ -438,7 +452,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	        
 			Barcode barcode = null;
 			if (file != null) {
-				barcode = new Barcode(rawResult, file.getPath());
+				barcode = new Barcode(rawResult, file.getAbsolutePath());
 			} else {
 				barcode = new Barcode(rawResult);
 			}
@@ -467,7 +481,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
         YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
-        OutputStream outStream = null;
         
         Calendar d = Calendar.getInstance();
         String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
@@ -496,12 +509,29 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			}
         }
         
+        
         if (os != null) {
         	try {
-	            outStream = new FileOutputStream(file);
-	            img.compressToJpeg(rect, 100, outStream);
-	            outStream.flush();
-	            outStream.close();
+        		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        	    byte[] rawImage = null;
+	            img.compressToJpeg(rect, 100, baos);
+	            rawImage = baos.toByteArray();
+
+	            // This is the same image as the preview but in JPEG and not rotated
+	            Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length);
+
+	            // Rotate the Bitmap
+	            Matrix matrix = new Matrix();
+	            matrix.postRotate(mOrientation - 90);
+
+	            // We rotate the same Bitmap
+	            bitmap = Bitmap.createBitmap(bitmap, 0, 0, imageHeight, imageWidth, matrix, false);
+
+	            // We dump the rotated Bitmap to the stream 
+	            bitmap.compress(CompressFormat.JPEG, 100, os);
+
+	            os.flush();
+	            os.close();
 	        } 
 	        catch (FileNotFoundException e) {
 	            e.printStackTrace();

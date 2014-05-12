@@ -1600,40 +1600,40 @@ public class AlmalenceGUI extends GUI implements
 					.setText(value_name);
 			
 			//final boolean isFirstMode = mode_number == 0? true : false;
-			paramMode.setOnTouchListener(new OnTouchListener(){
-
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					if(event.getAction() == MotionEvent.ACTION_CANCEL/* && isFirstMode*/)
-					{
-						switch (mode) {
-						case MODE_SCENE:
-							setSceneMode(system_name);
-							break;
-						case MODE_WB:
-							setWhiteBalance(system_name);
-							break;
-						case MODE_FOCUS:
-							setFocusMode(system_name);
-							break;
-						case MODE_FLASH:
-							setFlashMode(system_name);
-							break;
-						case MODE_ISO:
-							setISO(system_name);
-							break;
-						case MODE_MET:
-							setMeteringMode(system_name);
-							break;
+			if (system_name.contains("auto") || system_name.contains("Auto"))
+				paramMode.setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_CANCEL/* && isFirstMode*/)
+						{
+							switch (mode) {
+							case MODE_SCENE:
+								setSceneMode(system_name);
+								break;
+							case MODE_WB:
+								setWhiteBalance(system_name);
+								break;
+							case MODE_FOCUS:
+								setFocusMode(system_name);
+								break;
+							case MODE_FLASH:
+								setFlashMode(system_name);
+								break;
+							case MODE_ISO:
+								setISO(system_name);
+								break;
+							case MODE_MET:
+								setMeteringMode(system_name);
+								break;
+							}
+							guiView.findViewById(R.id.topPanel).setVisibility(
+									View.VISIBLE);
+							quickControlsVisible = false;	
 						}
-						guiView.findViewById(R.id.topPanel).setVisibility(
-								View.VISIBLE);
-						quickControlsVisible = false;	
+						return false;
 					}
-					return false;
-				}
-				
-			});
+					
+				});
 
 			paramMode.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
@@ -1664,7 +1664,7 @@ public class AlmalenceGUI extends GUI implements
 			});
 
 			paramMap.put(system_name, paramMode);
-			mode_number++;
+			//mode_number++;
 		}
 
 		return paramMap;
@@ -3218,6 +3218,7 @@ public class AlmalenceGUI extends GUI implements
 			float end = endDegree;
 			final View view = views.get(i);
 
+			duration=0;
 			if (duration == 0) {
 				view.clearAnimation();
 				view.setRotation(endDegree);
@@ -3800,7 +3801,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.blacktansperentlayertop));
+						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		Set<Integer> topmenu_keys = topMenuButtons.keySet();
 		Iterator<Integer> it = topmenu_keys.iterator();
@@ -3840,7 +3841,7 @@ public class AlmalenceGUI extends GUI implements
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
 				.setBackgroundDrawable(MainScreen.mainContext.getResources()
-						.getDrawable(R.drawable.blacktansperentlayertop));
+						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		correctTopMenuButtonBackground(
 				MainScreen.thiz.findViewById(MODE_EV), isEVEnabled);
@@ -6040,7 +6041,7 @@ public class AlmalenceGUI extends GUI implements
 		List<Mode> hash = ConfigParser.getInstance().getList();
 		Iterator<Mode> it = hash.iterator();
 
-		//int mode_number = 0;
+		int mode_number = 0;
 		while (it.hasNext()) {
 			Mode tmp = it.next();
 
@@ -6060,6 +6061,7 @@ public class AlmalenceGUI extends GUI implements
 
 			//final boolean isFirstMode = mode_number == 0? true : false;
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
+			if (mode_number==0)
 			mode.setOnTouchListener(new OnTouchListener(){
 
 				@Override
@@ -6268,7 +6270,7 @@ public class AlmalenceGUI extends GUI implements
 						R.drawable.thumbnail_background_selected_inner);
 			}
 			
-//			mode_number++;
+			mode_number++;
 		}
 
 		modeAdapter.Elements = modeViews;

@@ -2044,6 +2044,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.guiManager.onGUICreate();
+				
+				if (showStore)
+				{
+					guiManager.showStore(false);
+					showStore = false;
+				}
 			}
 			orientListener.enable();
 			
@@ -2189,7 +2195,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	OpenIabHelper mHelper;
 	
 	private boolean bOnSale = false;
-
+	private boolean showStore = false;
+	
 	private boolean unlockAllPurchased = false;
 	private boolean hdrPurchased = false;
 	private boolean panoramaPurchased = false;
@@ -2806,7 +2813,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-			guiManager.showStore(false);
+			showStore = true;
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {
@@ -2903,6 +2910,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				prefsEditor.commit();
 			}
 		}
+		
 	};
 
 	public void launchPurchase(String SKU, int requestID) {

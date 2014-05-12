@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import android.util.Log;
+
 import com.almalence.plugins.export.standard.ExifDriver.Values.ExifValue;
 import com.almalence.plugins.export.standard.ExifDriver.Values.UndefinedValueAccessException;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
@@ -625,6 +627,17 @@ public class ExifDriver {
 	 *          name of the new file
 	 */
 	public void save(String _name) {
+		// Write empty directory referencies to calculate size of dirs
+		ValueNumber val = new ValueNumber(FORMAT_UNSIGNED_LONG, 0);
+		ifd0.put(TAG_EXIF_POINTER, val);
+		val = new ValueNumber(FORMAT_UNSIGNED_LONG, 0);
+		ifd0.put(TAG_GPS_POINTER, val);
+		val = new ValueNumber(FORMAT_UNSIGNED_LONG, 0);
+		ifdExif.put(TAG_INTEROPERABILITY_POINTER, val);
+		// Adjust referencies to image data
+		val = new ValueNumber(FORMAT_UNSIGNED_LONG, 0);
+		ifd1.put(TAG_JPEG_INTERCHANGE_FORMAT, val);
+
 		int startOfIfd0 = TIFFHeader.length;
 		int startOfIfdExif = startOfIfd0 + requiredSpace(ifd0);
 		int startOfIfdIOper = startOfIfdExif + requiredSpace(ifdExif);
@@ -632,8 +645,13 @@ public class ExifDriver {
 		int startOfIfd1 = startOfIfdGps + requiredSpace(ifdGps);
 		int startOfThumbnail = startOfIfd1 + requiredSpace(ifd1);
 		int reqSize = startOfThumbnail + origThumbnailLength;
+		
+		if (origThumbnailOffset == -1) {
+			reqSize = startOfIfd1;
+		}
+		
 		// Write directory referencies
-		ValueNumber val = new ValueNumber(FORMAT_UNSIGNED_LONG, startOfIfdExif);
+		val = new ValueNumber(FORMAT_UNSIGNED_LONG, startOfIfdExif);
 		ifd0.put(TAG_EXIF_POINTER, val);
 		val = new ValueNumber(FORMAT_UNSIGNED_LONG, startOfIfdGps);
 		ifd0.put(TAG_GPS_POINTER, val);
@@ -653,13 +671,17 @@ public class ExifDriver {
 		byte[] tiffHeader = new byte[] { 0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00,
 		    0x00 };
 		System.arraycopy(tiffHeader, 0, resultExif, 0, tiffHeader.length);
-		writeIfd(resultExif, ifd0, startOfIfd0, startOfIfd1);
+		writeIfd(resultExif, ifd0, startOfIfd0, origThumbnailOffset == -1 ? 0 : startOfIfd1);
 		writeIfd(resultExif, ifdExif, startOfIfdExif, 0);
 		writeIfd(resultExif, ifdIOper, startOfIfdIOper, 0);
 		writeIfd(resultExif, ifdGps, startOfIfdGps, 0);
-		writeIfd(resultExif, ifd1, startOfIfd1, 0);
-		System.arraycopy(origEXIFdata, origThumbnailOffset, resultExif,
-		    startOfThumbnail, origThumbnailLength);
+
+		if (origThumbnailOffset != -1) {
+			writeIfd(resultExif, ifd1, startOfIfd1, 0);
+			System.arraycopy(origEXIFdata, origThumbnailOffset, resultExif,
+					startOfThumbnail, origThumbnailLength);
+		}
+		
 		FileOutputStream fos = null;
 		FileInputStream fis = null;
 		try {

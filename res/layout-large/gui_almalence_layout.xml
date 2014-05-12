@@ -69,7 +69,7 @@
 	    android:orientation="horizontal"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:background="@drawable/blacktansperentlayerbottom"
+	    android:background="@drawable/blacktransparentlayerbottom"
 	    android:gravity="bottom"	    
 	    android:layout_alignParentBottom="true">
 
@@ -229,7 +229,7 @@
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
 		android:layout_height="@dimen/paramsLayoutHeight"
-		android:background="@drawable/blacktansperentlayertop"	    
+		android:background="@drawable/blacktransparentlayertop"	    
 		android:layout_gravity="top"		
 		android:layout_alignParentTop="true">
 		 	<com.almalence.ui.RotateImageView android:id="@+id/evButton"
@@ -299,7 +299,7 @@
 	</LinearLayout>
 	
 	<RelativeLayout android:id="@+id/qcLayout"
-        		android:background="@drawable/blacktansperentlayerpulldownmenu"
+        		android:background="@drawable/blacktransparentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="match_parent"
         		android:layout_height="wrap_content"	    		
@@ -437,7 +437,7 @@
 				    	/>
 	    	</LinearLayout>
 	    	<RelativeLayout android:id="@+id/scenemodeLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"
@@ -459,7 +459,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/wbLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -481,7 +481,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/focusmodeLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -503,7 +503,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/flashmodeLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -525,7 +525,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/isoLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -547,7 +547,7 @@
 					/>
 			</RelativeLayout>
 			<RelativeLayout android:id="@+id/meteringLayout"
-        		android:background="@drawable/blacktansperentlayersettings"
+        		android:background="@drawable/blacktransparentlayersettings"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -582,7 +582,7 @@
 
 	 	
 		<RelativeLayout android:id="@+id/modeLayout"
-        		android:background="@drawable/blacktansperentlayerpulldownmenu"
+        		android:background="@drawable/blacktransparentlayerpulldownmenu"
         		android:orientation="vertical"
         		android:layout_width="@dimen/modeLayoutWidth"
         		android:layout_height="wrap_content"        		
@@ -631,7 +631,7 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/blacktansperentlayerpulldownmenu"
+			android:background="@drawable/blacktransparentlayerpulldownmenu"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
     		android:layout_gravity="center">

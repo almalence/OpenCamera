@@ -57,8 +57,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
@@ -122,7 +130,7 @@ public class VideoCapturePlugin extends PluginCapture
     private RotateImageView timeLapseButton;
     private RotateImageView takePictureButton;
 
-    public boolean showRecording = false;
+    private boolean showRecording = false;
     
     private View buttonsLayout;    
 
@@ -130,8 +138,11 @@ public class VideoCapturePlugin extends PluginCapture
     
     private boolean videoStabilization = false;
     
-    public static final int QUALITY_4K = 4096;
+    private static final int QUALITY_4K = 4096;
     
+    ImageView rotateToLandscapeNotifier;
+    boolean showRotateToLandscapeNotifier = false;
+    private View rotatorLayout;
     
     private static Hashtable<Integer, Boolean> previewSizes = new Hashtable<Integer, Boolean>()
 	{
@@ -498,6 +509,49 @@ public class VideoCapturePlugin extends PluginCapture
 			builder.setMessage("You selected to start standard camera. Start camera?").setPositiveButton("Yes", dialogClickListener)
 			    .setNegativeButton("No", dialogClickListener).show();
 		}
+		
+		//if(showRotateToLandscapeNotifier)
+		{
+			rotatorLayout = inflator.inflate(R.layout.plugin_capture_video_lanscaperotate_layout, null, false);
+			rotatorLayout.setVisibility(View.VISIBLE);
+			
+			rotateToLandscapeNotifier = (ImageView)rotatorLayout.findViewById(R.id.rotatorImageView);
+			
+	//    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
+	//    	int orientation = MainScreen.guiManager.getLayoutOrientation();
+	//    	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
+			
+			List<View> specialViewRotator = new ArrayList<View>();
+			RelativeLayout specialLayoutRotator = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
+			for(int i = 0; i < specialLayoutRotator.getChildCount(); i++)
+				specialViewRotator.add(specialLayoutRotator.getChildAt(i));
+	
+			for(int j = 0; j < specialViewRotator.size(); j++)
+			{
+				View view = specialViewRotator.get(j);
+				int view_id = view.getId();
+				int layout_id = this.rotatorLayout.getId();
+				if(view_id == layout_id)
+				{
+					if(view.getParent() != null)
+						((ViewGroup)view.getParent()).removeView(view);
+					
+					specialLayoutRotator.removeView(view);
+				}
+			}
+			
+			RelativeLayout.LayoutParams paramsRotator = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			paramsRotator.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
+			
+			paramsRotator.addRule(RelativeLayout.CENTER_IN_PARENT);		
+			
+			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.rotatorLayout, paramsRotator);
+			
+			rotatorLayout.setLayoutParams(paramsRotator);
+			rotatorLayout.requestLayout();
+			
+			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
+		}
 	}
 	
 	@Override
@@ -600,7 +654,58 @@ public class VideoCapturePlugin extends PluginCapture
 			timeLapseButton.invalidate();
 			timeLapseButton.requestLayout();
 		}
+		
+		if (!isRecording && ( orientation == 90 || orientation == 270) )
+		{
+			showRotateToLandscapeNotifier = true;
+			startrotateAnimation();
+			rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			showRotateToLandscapeNotifier = false;
+			rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
+			if (rotateToLandscapeNotifier != null) {
+				rotateToLandscapeNotifier.clearAnimation();
+			}
+		}
     }
+	
+	public void startrotateAnimation() 
+	{
+		try
+		{
+			if(rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
+				return;
+	
+			AnimationSet rotationSet = new AnimationSet(true);
+			rotationSet.setInterpolator(new DecelerateInterpolator());
+	
+			int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
+			Animation rotation = new RotateAnimation(0, 90, height/2, height/2);
+			rotation.setDuration(1500);
+			rotation.setRepeatCount(1000);
+	
+			rotationSet.addAnimation(rotation);
+			rotationSet.setRepeatCount(1000);
+	
+			rotationSet.setAnimationListener(new AnimationListener() {
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					rotateToLandscapeNotifier.clearAnimation();
+					rotateToLandscapeNotifier.setVisibility(View.GONE);
+				}
+				@Override
+				public void onAnimationRepeat(Animation animation) {}
+				@Override
+				public void onAnimationStart(Animation animation) {}
+			});
+	
+			//Log.e("AlmalenceGUI", "processing animation started");
+			rotateToLandscapeNotifier.startAnimation(rotation);
+		}catch(Exception e){}
+	}
+	
 	
 	private static File getOutputMediaFile(){
 		File saveDir = null;
@@ -776,6 +881,28 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", false).commit();
+		
+		if(this.rotatorLayout != null)
+		{
+			List<View> specialView = new ArrayList<View>();
+			RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
+			for(int i = 0; i < specialLayout.getChildCount(); i++)
+				specialView.add(specialLayout.getChildAt(i));
+	
+			for(int j = 0; j < specialView.size(); j++)
+			{
+				View view = specialView.get(j);
+				int view_id = view.getId();
+				int layout_id = this.rotatorLayout.getId();
+				if(view_id == layout_id)
+				{
+					if(view.getParent() != null)
+						((ViewGroup)view.getParent()).removeView(view);
+					
+					specialLayout.removeView(view);
+				}
+			}
+		}
 	}
 	
 	@Override

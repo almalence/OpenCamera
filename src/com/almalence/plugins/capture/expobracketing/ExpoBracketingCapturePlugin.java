@@ -19,6 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.expobracketing;
 
 import java.util.Date;
+import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -80,6 +81,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     // preferences
 	public static boolean RefocusPreference;
 	public static boolean UseLumaAdaptation;
+	private String preferenceSceneMode;
 
 	//set exposure based on onpreviewframe
 	public boolean previewMode = true;
@@ -117,6 +119,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         preferenceEVCompensationValue = prefs.getInt("EvCompensationValue", 0);
+        preferenceSceneMode = prefs.getString("SceneModeValue", Camera.Parameters.SCENE_MODE_AUTO);
+        
         
         if (true == prefs.contains("expo_previewMode")) 
         {
@@ -134,6 +138,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
+        prefs.edit().putString("SceneModeValue", preferenceSceneMode).commit();
 	}
 	
 	@Override
@@ -158,6 +163,49 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 
 	public boolean delayedCaptureSupported(){return true;}
+	
+	@Override
+	public void SetCameraPictureSize()
+	{
+		Camera camera = MainScreen.thiz.getCamera();
+    	if (null==camera)
+    		return;
+    	
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+    	
+		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		cp.setJpegQuality(jpegQuality);
+		try
+        {
+			MainScreen.thiz.setCameraParameters(cp);
+		}
+		catch(RuntimeException e)
+	    {
+	    	Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
+	    }
+		
+		try
+        {
+			cp = MainScreen.thiz.getCameraParameters();
+			cp = MainScreen.thiz.getCameraParameters();
+			List<String> sceneModes = cp.getSupportedSceneModes();
+			if(sceneModes != null && sceneModes.contains(Camera.Parameters.SCENE_MODE_AUTO))
+			{
+				cp.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+				MainScreen.thiz.setCameraSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+				
+		    	SharedPreferences.Editor editor = prefs.edit();        	
+		    	editor.putString("SceneModeValue", Camera.Parameters.SCENE_MODE_AUTO);
+		    	editor.commit();
+			}
+        }
+        catch(RuntimeException e)
+        {
+        	Log.e("ExpoBracketing", "MainScreen.setupCamera unable to setSceneMode");	
+        }
+	}
 	
 	public void OnShutterClick()
 	{
