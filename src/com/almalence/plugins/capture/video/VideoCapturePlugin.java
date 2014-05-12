@@ -1605,6 +1605,12 @@ public class VideoCapturePlugin extends PluginCapture
 		return (ModePreference.compareTo("0") == 0);
 	}
 	
+	@Override
+	public boolean isGLSurfaceNeeded()
+	{
+		return (ModePreference.compareTo("0") == 0);
+	}
+	
 	private void showRecordingUI(boolean recording) {
         if (recording) {
     		mRecordingTimeView.setRotation(MainScreen.guiManager.getDisplayRotation()); 

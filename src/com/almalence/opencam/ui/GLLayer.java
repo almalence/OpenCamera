@@ -48,7 +48,6 @@ import com.almalence.opencam.PluginManager;
 
 
 import com.almalence.plugins.capture.video.EglEncoder;
-import com.almalence.util.Util;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -57,7 +56,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 /**
@@ -122,18 +120,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		super.onResume();
 		
 		this.setRenderMode(RENDERMODE_CONTINUOUSLY);
-		
-		Log.e("Almalence", "GLSurfaceView.onResume()");
-		Log.i("Almalence", Util.toString(Thread.currentThread().getStackTrace(), '\n'));
-	}
-	
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-		
-		Log.e("Almalence", "GLSurfaceView.onPause()");
-		Log.i("Almalence", Util.toString(Thread.currentThread().getStackTrace(), '\n'));
 	}
 
 	/**
@@ -142,7 +128,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		Log.e("Almalence", "GLSurfaceView.onSurfaceCreated()");
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 		
 		final int[] tex = new int[1];
@@ -180,7 +165,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height)
 	{
-		Log.e("Almalence", "GLSurfaceView.onSurfaceChanged()");
 		PluginManager.getInstance().onGLSurfaceChanged(gl, width, height);	
 	}
 
