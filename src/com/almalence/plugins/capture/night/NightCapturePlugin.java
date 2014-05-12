@@ -1430,6 +1430,70 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewAvailable(Image im)
 	{
+		if(OpenGLPreference)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			int imageWidth = im.getWidth();
+			int imageHeight = im.getHeight();
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					imageWidth, imageHeight, 0);
+			
+			if (status != 0)
+				Log.e("CapturePlugin", "Error while cropping: "+status);
+			
+			
+			byte[] data = YuvImage.GetByteFrame(0);
+			
+			if(data1 == null)		
+				data1 = data;
+			else if(data2 == null)
+			{			
+				data2 = data;
+				
+				if (dataS == null)
+					dataS = new byte[data2.length];
+				else if (dataS.length<data2.length)
+					dataS = new byte[data2.length];
+				
+				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
+				int previewWidth = 1280;
+				int previewHeight = 720;
+				
+				ImageConversion.sumByteArraysNV21(data1,data2,dataS,previewWidth,previewHeight);
+				if(MainScreen.getCameraMirrored())
+				{
+					dataRotated = new byte[dataS.length];
+					ImageConversion.TransformNV21(dataS, dataRotated, previewWidth, previewHeight, 1, 0, 0);
+					
+					yuv_data = dataRotated;
+				}
+				else
+				 yuv_data = dataS;
+				
+				data1 = data2;
+				data2 = null;
+			}
+		}
+		
 		if (Integer.parseInt(ModePreference) == 1)
 		{
 			if (nVFframesToBuffer != 0)

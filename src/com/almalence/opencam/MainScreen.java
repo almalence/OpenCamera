@@ -119,7 +119,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = false;
+	public static boolean isHALv3 = true;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -667,8 +667,71 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	@Override
 	protected void onResume()
-	{		
+	{	
+		Log.e("", "ON RESUME!");
 		super.onResume();
+		
+//		if (!isCreating)
+//			new CountDownTimer(50, 50) {
+//				public void onTick(long millisUntilFinished) {
+//				}
+//
+//				public void onFinish() {
+//					SharedPreferences prefs = PreferenceManager
+//							.getDefaultSharedPreferences(MainScreen.mainContext);
+//					CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+//							: 1;
+//					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+//							false);
+//					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+//							false);
+//					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+//							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+//					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
+//					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+//					SaveToPath = prefs.getString(SavePathPref, Environment
+//							.getExternalStorageDirectory().getAbsolutePath());
+//					SaveToPreference = prefs.getString("saveToPref", "0");
+//					SortByDataPreference = prefs.getBoolean("sortByDataPref",
+//							false);
+//					
+//					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+//					setScreenBrightness(MaxScreenBrightnessPreference);
+//
+//					MainScreen.guiManager.onResume();
+//					PluginManager.getInstance().onResume();
+//					MainScreen.thiz.mPausing = false;
+//
+//					if (surfaceCreated && !CameraController.isCameraCreated()) {
+//						MainScreen.thiz.findViewById(R.id.mainLayout2)
+//								.setVisibility(View.VISIBLE);
+//						cameraController.setupCamera(surfaceHolder);
+//
+//						if (glView != null && CameraController.isCameraCreated())
+//						{
+//							Log.e("", "OpenGL onResume");
+//							glView.onResume();
+//						}
+//
+//						PluginManager.getInstance().onGUICreate();
+//						MainScreen.guiManager.onGUICreate();
+//					}
+//					orientListener.enable();
+//				}
+//			}.start();
+//
+//		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources()
+//				.openRawResourceFd(R.raw.plugin_capture_tick));
+//
+//		if (ScreenTimer != null) {
+//			if (isScreenTimerRunning)
+//				ScreenTimer.cancel();
+//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//			ScreenTimer.start();
+//			isScreenTimerRunning = true;
+//		}
+//
+//		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
 		
 		if (!isCreating)
 			onResumeMain(isHALv3);
@@ -743,7 +806,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				false);
 		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
 				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-		Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
+		Log.e("MainScreen", "ImageSizeIdxPreference 222 = " + ImageSizeIdxPreference);
 		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 		SaveToPath = prefs.getString(SavePathPref, Environment
 				.getExternalStorageDirectory().getAbsolutePath());
@@ -862,6 +925,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
 			final int width, final int height) {
 
+		Log.e("", "surfaceChanged");
 //		if (!isCreating)
 //		{
 //			if(!isHALv3)
@@ -933,6 +997,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				}
 
 				public void onFinish() {
+					Log.e("", "surfaceCreated countDownTimer elapsed");
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
 					CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
@@ -947,6 +1012,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
 							&& (!CameraController.isCameraCreated())) {
+						Log.e("", "surfaceCreated TimeDownTimer elapsed. surfaceCreated and camera == null");
 						surfaceWidth = width;
 						surfaceHeight = height;
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
@@ -1060,7 +1126,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 ////						* ImageFormat.getBitsPerPixel(cameraParameters
 ////								.getPreviewFormat()) / 8];
 //
-////				camera.setErrorCallback(MainScreen.thiz);
+		if(!isHALv3)
+			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
 		CameraController.supportedSceneModes = cameraController.getSupportedSceneModes();
 		CameraController.supportedWBModes = cameraController.getSupportedWhiteBalance();
@@ -1223,6 +1290,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void surfaceCreated(SurfaceHolder holder) {
 		// ----- Find 'normal' orientation of the device
 
+		Log.e("", "surfaceCreated");
 		Display display = ((WindowManager) this
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		int rotation = display.getRotation();
@@ -1241,6 +1309,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.e("", "surfaceDestroyed");
 		surfaceCreated = false;
 		surfaceJustCreated = false;
 	}
