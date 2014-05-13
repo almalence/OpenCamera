@@ -521,6 +521,23 @@ public class ExportPlugin extends PluginExport
 		            if(tag_scene != null) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
+		            } else {
+		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		            	String sceneMode = params.getSceneMode();
+		            	
+		            	int sceneModeVal = 0;
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_LANDSCAPE)) {
+		            		sceneModeVal = 1;
+		            	}
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_PORTRAIT)) {
+		            		sceneModeVal = 2;
+		            	}
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_NIGHT)) {
+		            		sceneModeVal = 3;
+		            	}
+		            	
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            }
 		            if(tag_white_balance != null) {
 		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
