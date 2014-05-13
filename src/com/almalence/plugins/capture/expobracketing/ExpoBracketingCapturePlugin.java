@@ -453,8 +453,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
-    	if(n == 0)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+//    	if(n == 0)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEGForExpoBracketing(paramArrayOfByte, n + 1, SessionID);
     	
     	if (compressed_frame[n] == 0)
     	{

@@ -1672,12 +1672,52 @@ public class PluginManager {
 			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
 
 			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);
+			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+			if(s5 != null) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+			if(s6 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+			if(s7 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
+			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
+			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+
+		} catch (JpegProcessingException e1)
+		{
+			e1.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean addToSharedMem_ExifTagsFromJPEGForExpoBracketing(final byte[] paramArrayOfByte, int num, final long SessionID) {		
+		try
+    	{
+    		InputStream is = new ByteArrayInputStream(paramArrayOfByte);
+			Metadata metadata = JpegMetadataReader.readMetadata(is);
+			Directory exifDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);		
+			String s1 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME); //ExifInterface.TAG_EXPOSURE_TIME (String)
+			String s2 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER); //ExifInterface.TAG_APERTURE (String)
+			String s3 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FLASH); //ExifInterface.TAG_FLASH (int)
+			String s4 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH); //ExifInterface.TAG_FOCAL_LENGTH (rational)
+			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT); //ExifInterface.TAG_ISO (String)			
+			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
+			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
+			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+
+			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
+			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
+			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
+
+			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
 			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
 			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
 			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
