@@ -5,7 +5,7 @@
 	<string name="Pref_ShowBarcodescannerVF">Показать сканнер</string>
 	<string name="Empty_Barcodes_List">Список пуст</string>
 	<string name="Delete_Barcode">Удалить</string>
-	<string name="Clear_Barcodes_List">Отчистить</string>
+	<string name="Clear_Barcodes_List">Очистить</string>
 	<string name="History">История</string>
 	
 	<string name="Button_Add_Calendar">Добавить в календарь</string>

@@ -450,7 +450,7 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 			
 			RelativeLayout.LayoutParams paramsRotator = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			paramsRotator.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
+			paramsRotator.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.gui_element_2size);
 			
 			paramsRotator.addRule(RelativeLayout.CENTER_IN_PARENT);		
 			
@@ -564,18 +564,23 @@ public class VideoCapturePlugin extends PluginCapture
 			timeLapseButton.requestLayout();
 		}
 		
-		if (!isRecording && ( orientation == 90 || orientation == 270) )
+		if (rotatorLayout!=null)
 		{
-			showRotateToLandscapeNotifier = true;
-			startrotateAnimation();
-			rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			showRotateToLandscapeNotifier = false;
-			rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
-			if (rotateToLandscapeNotifier != null) {
-				rotateToLandscapeNotifier.clearAnimation();
+			if (!isRecording && ( orientation == 90 || orientation == 270) )
+			{
+				showRotateToLandscapeNotifier = true;
+				startrotateAnimation();
+				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
+				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				showRotateToLandscapeNotifier = false;
+				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
+				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
+				if (rotateToLandscapeNotifier != null) {
+					rotateToLandscapeNotifier.clearAnimation();
+				}
 			}
 		}
     }
@@ -590,9 +595,9 @@ public class VideoCapturePlugin extends PluginCapture
 			AnimationSet rotationSet = new AnimationSet(true);
 			rotationSet.setInterpolator(new DecelerateInterpolator());
 	
-			int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
-			Animation rotation = new RotateAnimation(0, 90, height/2, height/2);
-			rotation.setDuration(1500);
+			int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.gui_element_2size);
+			Animation rotation = new RotateAnimation(0, -180, height/2, height/2);
+			rotation.setDuration(2000);
 			rotation.setRepeatCount(1000);
 	
 			rotationSet.addAnimation(rotation);
@@ -601,8 +606,8 @@ public class VideoCapturePlugin extends PluginCapture
 			rotationSet.setAnimationListener(new AnimationListener() {
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					rotateToLandscapeNotifier.clearAnimation();
-					rotateToLandscapeNotifier.setVisibility(View.GONE);
+//					rotateToLandscapeNotifier.clearAnimation();
+//					rotateToLandscapeNotifier.setVisibility(View.GONE);
 				}
 				@Override
 				public void onAnimationRepeat(Animation animation) {}
