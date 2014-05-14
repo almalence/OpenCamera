@@ -445,6 +445,13 @@ public class ExportPlugin extends PluginExport
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
 		                }
+		                
+			            String GPSDateString = new SimpleDateFormat("yyyy:MM:dd").format(new Date(l.getTime()));
+			            if (GPSDateString != null) {
+			            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+			        		value.setBytes(GPSDateString.getBytes());
+			        		exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
+			            }
 	            	}
 	            	else
 	            	{
@@ -462,6 +469,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));	            
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
+	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
 	            	   
 	            if (exifDriver != null) {
 	            	if(tag_exposure_time != null) {
@@ -472,6 +480,17 @@ public class ExportPlugin extends PluginExport
 		            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
 		            	}
 		            }
+	            	else { // hack for expo bracketing
+	            		tag_exposure_time = PluginManager.getInstance().getFromSharedMem("exiftag_exposure_time"+Integer.toString(i)+Long.toString(sessionID));
+	            		if(tag_exposure_time != null) {
+			            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
+			            	if (ratValue != null) {
+			            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+			            		value.setRationals(ratValue);
+			            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
+			            	}
+			            }
+	            	}
 		            if(tag_aperture != null) {
 		            	int[][] ratValue = ExifManager.stringToRational(tag_aperture);
 		            	if (ratValue != null) {
@@ -498,6 +517,27 @@ public class ExportPlugin extends PluginExport
 		            	}
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            }
+		            if(tag_scene != null) {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
+		            } else {
+		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+		            	String sceneMode = params.getSceneMode();
+		            	
+		            	int sceneModeVal = 0;
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_LANDSCAPE)) {
+		            		sceneModeVal = 1;
+		            	}
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_PORTRAIT)) {
+		            		sceneModeVal = 2;
+		            	}
+		            	if (sceneMode.equals(Parameters.SCENE_MODE_NIGHT)) {
+		            		sceneModeVal = 3;
+		            	}
+		            	
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            }
 		            if(tag_white_balance != null) {
 		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
