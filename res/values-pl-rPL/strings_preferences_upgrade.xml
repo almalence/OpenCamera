@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">Odblokuj wszystko na zawsze</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">Aktywuj wszystkie funkcje i tryby, nawet przyszłe wersje dodatków</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Twórz piękne, dynamiczne i wysokiej rozdzielczości zdjęcia</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">Panoramy w wysokiej rozdzielczości</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">Twórz wspaniałem panoramy z pomocą rozszerzonej rzeczywistości</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">Poruszające się obiekty</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Usuwanie niepożądanych obiektów lub łączenie ruchów w jedno zdjęcie</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Zdjęcie grupowe</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Wybierz najlepsze twarze na zdjęciu</string>
+	
+</resources>

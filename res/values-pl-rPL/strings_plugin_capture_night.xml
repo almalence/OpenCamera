@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="textOn">WŁ</string>
+	<string name="textOff">WYŁ</string>
+	
+	<string name="hold_still">Wciąż trzymaj!</string>
+	<string name="capturing">Przechwytywanie</string>
+	
+	<string name="Pref_NightCapture_Preference_Title">Nocne przechwytywanie</string>
+	<string name="Pref_NightCapture_Preference_Summary">Przechwytywanie przy słabym oświetleniu</string>	
+	
+	<string name="Pref_NightCapture_ImageSize_Title">Rozmiar obrazu (hi-speed mode)</string>
+	
+	<string name="Pref_NightCapture_FocusMode_Title">Tryb ostrości</string>
+    <string name="Pref_NightCapture_FocusMode_Summary">Wybierz odpowiedni tryb ostrości</string>
+	
+	<string name="Pref_NightCapture_FocusModeAlert_Title">Wymuszono tryb \'Automatyczne ustawienie ostrości\'</string>
+    <string name="Pref_NightCapture_FocusModeAlert_Msg">Urządzenie aparatu nie obsługuje trybu ostrości \'Fixed Hyperfocal\', użyje trybu \'Automatycznego ustawiania ostrości\'</string>
+    
+    <string name="Pref_NightCapture_NightVision_Title">Noktowizyjny wizjer</string>
+    <string name="Pref_NightCapture_NightVision_Summary">Odznacz to, aby zobaczyć oryginalny wizjer.</string>	
+    
+    <string name="Pref_NightCapture_None">None</string>
+    <string name="Pref_NightCapture_Fixed">Fixed hyperfocal</string>
+    <string name="Pref_NightCapture_Auto">Automatyczne ustawienie ostrości</string>
+    <string name="Pref_NightCapture_Refocus">Ponowne ustawienie ostrości przy każdym zdjęciu</string>
+	
+</resources>

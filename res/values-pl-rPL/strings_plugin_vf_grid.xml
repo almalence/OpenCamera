@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Grid_Preference_Title">Siatka</string>
+	<string name="Pref_Grid_Types_Title">Typ siatki</string>
+	
+	<string name="Pref_Grid_Golden">Złoty współczynnik</string>
+	<string name="Pref_Grid_Thirds">Trzecie</string>
+	<string name="Pref_Grid_Bisection">Przepołowienie</string>
+	<string name="Pref_Grid_None">None</string>
+	
+</resources>

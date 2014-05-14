@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Billing_Left">W trybie %1$s zostało: %2$d zdjęć</string>
+    <!-- -+-  -->
+    <string name="app_name">A Better Camera</string>
+    <string name="Pref_About">A Better Camera  v3.20\n(©) by Almalence Inc\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.20\n(©) by Almalence Inc\n</string>
+    +++ -->
+    <string name="cannot_create_jpeg">Błąd: Nie można zapisać obrazu!</string>
+    <string name="choose_folder_pick">Użyj tego folderu</string>
+    <string name="choose_folder_newfolder">Nowy folder</string>
+    <string name="choose_folder_alert_0">Oops</string>
+    <string name="choose_folder_alert_1">Przepraszamy, nie możemy umieścić tutaj Twojego zdjęcia :(</string>
+    <string name="choose_folder_alert_2">OK</string>
+    <string name="choose_folder_alert_0_2">Nazwa nowego folderu</string>
+    <string name="choose_folder_alert_1_2">Przepraszamy, nie możemy utworzyć tutaj folderu :(</string>
+    <string name="choose_folder_alert_2_1">Utwórz</string>
+    <string name="choose_folder_alert_2_2">Anuluj</string>
+    <string name="pref_advanced_saving_saveToPref_title">Zapisz do...</string>
+    <string name="pref_advanced_saving_saveToPref_summary">Wybierz lokalizację do przechowywania zdjęć</string>
+    <string name="choose_folder">Wybierz folder</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat nie pozwala na zapisywanie kartę pamięci.</string>
+    
+    <string name="save_to_phone">Telefon</string>
+    <string name="save_to_memorycard">Karta pamięci</string>
+    <string name="save_to_custom">Własny folder</string>
+    
+    <string name="dimensions_none">None</string>
+    
+    <string name="already_unlocked">odblokowano</string>
+    
+    <string name="device_name_ss3_01">GT-I9300</string>
+    <string name="device_name_ss3_02">SHV-E210</string>
+    <string name="device_name_ss3_03">SGH-T999</string>
+    <string name="device_name_ss3_04">SGH-I747</string>
+    <string name="device_name_ss3_05">SGH-N064</string>
+    <string name="device_name_ss3_06">SGH-N035</string>
+    <string name="device_name_ss3_07">SCH-J021</string>
+    <string name="device_name_ss3_08">SCH-R530</string>
+    <string name="device_name_ss3_09">SCH-I535</string>
+    <string name="device_name_ss3_10">SPH-L710</string>
+    <string name="device_name_ss3_11">GT-I9308</string>
+    <string name="device_name_ss3_12">SCH-I939</string>
+    <string name="device_name_ss3_13">GT-I9305</string>
+
+    <string name="volumeBtnTakePic">Zrób zdjęcie</string>
+    <string name="volumeBtnZoom">Przybliż</string>
+    <string name="volumeBtnExpoCorrection">Korekcja ekspozycji</string>
+    <string name="volumeBtnNone">None</string>
+    
+</resources>
