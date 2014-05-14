@@ -124,6 +124,15 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
+//	for (int i=0; i<nFrames; ++i)
+//	{
+//		char str[256];
+//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+//		FILE *f = fopen (str, "wb");
+//		fwrite(yuvIn[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//		fclose(f);
+//	}
+
 	// pre-allocate uncompressed yuv buffers
 	for (i=0; i<nFrames; ++i)
 	{
@@ -181,19 +190,32 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 )
 {
 	int i;
-	Uint8 *pview_yuv;
+	Uint8 *pview_rgb;
 	Uint32 *pview;
 	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
+	pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
+
 	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
 
-	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
+//	FILE * pFile;
+//	pFile = fopen ("/sdcard/DCIM/blurlessparams.txt","wb");
+//    fprintf (pFile, "Blurless_Preview params:\ndeghTable[DeGhostPref] %d\nnImages %d\nSX %d\nSY %d\n64*nTable[sensorGainPref] %d\nlumaEnh %d\nchromaEnh %d",deghTable[DeGhostPref],nImages,sx,sy,64*nTable[sensorGainPref],lumaEnh,chromaEnh);
+//    fclose (pFile);
+
+	BlurLess_Preview(&instance, yuv, pview_rgb, NULL, NULL,
 		0, // 256*3,
 		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
 	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
+
+//	char s[1024];
+//	sprintf(s, "/sdcard/DCIM/blurless_preview.bin");
+//	FILE *f=fopen(s, "wb");
+//	fwrite (pview_rgb, (sx/4)*(sy/4)*3, 1, f);
+//	fclose(f);
 
 	return env->NewStringUTF("ok");
 }
@@ -230,6 +252,13 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		free(OutPic);
 		OutPic = OutNV21;
 	}
+
+//	char s[1024];
+//
+//	sprintf(s, "/sdcard/DCIM/night_result.bin");
+//	FILE *f=fopen(s, "wb");
+//	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//	fclose(f);
 
 	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
 
