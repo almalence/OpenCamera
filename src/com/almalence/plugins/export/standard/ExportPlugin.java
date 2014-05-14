@@ -60,6 +60,7 @@ import com.almalence.plugins.export.standard.ExifDriver.ExifManager;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
+import com.almalence.ui.RotateImageView;
 //-+- -->
 import com.almalence.util.MLocation;
 
@@ -76,7 +77,7 @@ public class ExportPlugin extends PluginExport
 	static public int nFilesSaved;
 
 	boolean should_save= false;
-	private ImageView gpsInfoImage;
+	private RotateImageView gpsInfoImage;
 
 	boolean isResultFromProcessingPlugin = false;
 	
@@ -130,7 +131,7 @@ public class ExportPlugin extends PluginExport
 		if (useGeoTaggingPrefExport)
         {
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_export_gps, null);
-			gpsInfoImage = (ImageView)v.findViewById(R.id.gpsInfoImage);
+			gpsInfoImage = (RotateImageView)v.findViewById(R.id.gpsInfoImage);
 			gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
 			
 			addInfoView(gpsInfoImage);
@@ -148,7 +149,7 @@ public class ExportPlugin extends PluginExport
 		else
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_export_gps, null);
-			gpsInfoImage = (ImageView)v.findViewById(R.id.gpsInfoImage);
+			gpsInfoImage = (RotateImageView)v.findViewById(R.id.gpsInfoImage);
 			gpsInfoImage.setVisibility(View.INVISIBLE);
 		}
 	}
