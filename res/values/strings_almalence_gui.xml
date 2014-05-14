@@ -252,5 +252,12 @@
 	<string name="layout_hint_top_left">Long-press\nto configure</string>
 	<string name="layout_hint_top_center">Pull for more options</string>
 
-	<string name="Dro_Help">Almalence’s new technology makes cameras see like human eye! DRO (Dynamic Range Optimization) uses a technique similar to tone mapping, automatically improves the images in 100% cases and can substitute HDR in most of cases.\n\n1. Press shutter to take picture\n2. Wait until processed in a second!</string>	
+	<string name="Dro_Help">Almalence’s new technology makes cameras see like human eye! DRO (Dynamic Range Optimization) uses a technique similar to tone mapping, automatically improves the images in 100% cases and can substitute HDR in most of cases.\n\n1. Press shutter to take picture\n2. Wait until processed in a second!</string>
+	
+	<string name="setTimerText">Set</string>
+	<string name="soundTimerText">Sound at countdown</string>
+	<string name="flashTimerText">Flash at countdown</string>	
+
+	<string name="secondsText">seconds</string>	
+	<string name="okText">Ok</string>
 </resources>

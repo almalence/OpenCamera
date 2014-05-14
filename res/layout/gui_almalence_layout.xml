@@ -916,7 +916,7 @@
 			                android:layout_height="wrap_content"
 							android:layout_width="fill_parent"
 			                android:textSize="17sp"
-			                android:text="OK"
+			                android:text="@string/okText"
 			                android:textColor="#FFFFFF"
 			                android:layout_margin="5dip"
 			                android:layout_weight="1"
