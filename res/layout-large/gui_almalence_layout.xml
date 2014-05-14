@@ -90,7 +90,7 @@
 					android:background="@android:color/transparent"				
 					android:layout_height="@dimen/paramsLayoutHeight"
 					android:layout_width="@dimen/paramsLayoutHeight"	
-					android:scaleType="fitCenter"
+					android:scaleType="fitXY"
 			   		android:onClick="onButtonClick">
 				</com.almalence.ui.RotateImageView>
 				</LinearLayout>
@@ -337,7 +337,7 @@
 				android:visibility="gone">
 					<ImageView
 						android:id="@+id/storeHeader"
-						android:src="@drawable/store_header"
+						android:src="@drawable/store_header_large"
 						android:background="@android:color/transparent"
 						android:layout_height="@dimen/headerStoreImageSize"
 						android:layout_width="fill_parent"
