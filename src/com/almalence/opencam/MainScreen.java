@@ -2193,15 +2193,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
         
         
         //Samsung store
-//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
-//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
+//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018387");
+//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018389");
 //        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
-//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
-//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
-//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
+//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018391");
+//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018384");
 //        
-//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
-//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
+//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018393");
+//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018394");
 
         
 //        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
