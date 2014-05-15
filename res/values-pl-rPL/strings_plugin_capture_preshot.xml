@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_PreShot_Preference_Title">Przechwytywanie wczesnych zdjęć</string>
+	
+	<string name="Pref_PreShot_ImageSize_Title">Rozmiar obrazu</string>
+	
+	<string name="Pref_PreShot_RefocusOnEachShot_Title">Ponowne ust. ostrości przy każdym zdjęciu</string>
+	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Niektóre urządzenia resetują ostrość po zrobieniu zdjęcia.</string>
+	
+	<string name="Pref_PreShot_Mode_Title">Tryb</string>
+	<string name="Pref_PreShot_Mode_Summary">Tryb przechwytywania obrazu</string>
+	
+	<string name="Pref_PreShot_preshot_Title">Sekundy przed zawijaniem...</string>
+	<string name="Pref_PreShot_preshot_Summary">Zachowaj wykonane klatki w określonym okresie przed zawijaniem</string>
+	
+	<string name="Pref_PreShot_fps_Title">Zdjęć na sekundę (duża prędkość​​)</string>
+	<string name="Pref_PreShot_fps_Summary">Ilość zdjęć na sekundę</string>
+	
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pauza między zdjęciami (wysoka rozdzielczość)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pauza po zrobieniu zdjęcia - w celu ponownego ust. ostrości.</string>
+	
+	<string name="Pref_PreShot_Low">Niska rozdzielczość (szybciej)</string>
+	<string name="Pref_PreShot_High">Wysoka rozdzielczość (wolniej)</string>
+	
+	<string name="Pref_PreShot_None">None</string>
+	
+	<string name="Pref_PreShot_1shot">1 zdjęcie na sekundę</string>
+	<string name="Pref_PreShot_2shot">2 zdjęcia na sekundę</string>
+	<string name="Pref_PreShot_3shot">3 zdjęcia na sekundę</string>
+	<string name="Pref_PreShot_4shot">4 zdjęcia na sekundę</string>
+	<string name="Pref_PreShot_5shot">5 zdjęć na sekundę</string>
+	<string name="Pref_PreShot_10shot">10 zdjęć na sekundę</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">Autostart</string>
+	<string name="Pref_PreShot_Autostart_Summary">Rozpocznij przechwytywanie po uruchomienie aparatu</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="Pref_Mode_Preference_Title">Preferencje trybów</string>
+
+	<string name="Pref_Single_Title">Pojedyncze</string>
+	<string name="Pref_SelfTimer_Title">Samowyzwalacz</string>
+	<string name="Pref_Burst_Title">Zdjęcia seryjne</string>
+	<string name="Pref_Expobracketing_Title">Bracketing ekspozycji</string>
+	<string name="Pref_HDR_Title">HDR</string>
+	<string name="Pref_Night_Title">Noc</string>
+	<string name="Pref_Video_Title">Wideo</string>
+	<string name="Pref_Preshot_Title">Wstępne zdjęcie</string>
+	<string name="Pref_ObjectRemoval_Title">Usunięcie obiektu</string>
+	<string name="Pref_Groupshot_Title">Zdjęcie grupowe</string>
+	<string name="Pref_PanoramaAugmented_Title">Panorama</string>
+	<string name="Pref_Sequence_Title">Sekwencja zdjęć</string>
+	<string name="Pref_BestShot_Title">Najlepsze zdjęcie</string>
+	
+</resources>

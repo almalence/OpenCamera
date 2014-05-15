@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="Pref_Night_Category_Title">Nocne przetwarzanie</string>
+	<string name="Pref_Night_Preference_Title">Przetwarzanie</string>
+	<string name="Pref_Night_Preference_Summary">Noc</string>
+	
+	<string name="Pref_Night_NoiseReduction_Title">Redukcja szumów</string>
+	
+	<string name="Pref_Night_DeGhosting_Title">Usuwanie duchów</string>
+
+	<string name="Res_Night_DecodingProgress_Text">Dekodowanie&#8230;</string>
+	
+	<string name="Pref_Night_ColorsSaturated_Title">Zachowaj nasycone kolory</string>
+    <string name="Pref_Night_ColorsSaturated_Summary">Zachowuje nasycone kolory</string>
+	<string name="Pref_Night_None">None</string>
+	<string name="Pref_Night_Minor">Drobne</string>
+	<string name="Pref_Night_Hard">Intensywne</string>
+</resources>

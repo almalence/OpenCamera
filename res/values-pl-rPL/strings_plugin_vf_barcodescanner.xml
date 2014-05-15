@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_BarcodescannerVF_Preference_Title">Skaner kodów kreskowych</string>
+	<string name="Pref_ShowBarcodescannerVF">Pokaż skaner kodów kreskowych</string>
+	<string name="Empty_Barcodes_List">Lista jest pusta</string>
+	<string name="Delete_Barcode">Usuń</string>
+	<string name="History">Historia</string>
+	<string name="Clear_Barcodes_List">Wyczyść</string>
+	
+	<string name="Button_Add_Calendar">Dodaj do kalendarza</string>
+	<string name="Button_Add_Contact">Dodaj kontakt</string>
+	<string name="Button_Cancel">Anuluj</string>
+	<string name="Button_Dial">Wybierz numer</string>
+	<string name="Button_Email">Wyślij email</string>
+	<string name="Button_Get_Directions">Pobierz katalogi</string>
+	<string name="Button_Mms">Wyślij MMS</string>
+	<string name="Button_Ok">OK</string>
+	<string name="Button_Open_Browser">Otwórz przeglądarkę</string>
+	<string name="Button_Product_Search">Wyszukiwanie produktu</string>
+	<string name="Button_Search_Book_Contents">Szukaj zawartość</string>
+	<string name="Button_Share_By_Email">Udostępnij przez email</string>
+  	<string name="Button_Share_By_Sms">Udostępnij przez SMS</string>
+	<string name="Button_Show_Map">Pokaż mapę</string>
+	<string name="Button_Sms">Wyślij SMS</string>
+	<string name="Button_Web_Search">Szukaj w sieci</string>
+	<string name="Msg_Default_Mms_Subject">Cześć</string>
+	<string name="Msg_Intent_Failed">Niestety, zgłoszenie nie może zostać uruchomione. Zawartość kodu kreskowego może być nieprawidłowa.</string>
+	<string name="Result_Calendar">Znaleziono zdarzenie w kalendarzu</string>
+	<string name="Result_Email_Address">Znaleziono adres email</string>
+	<string name="Result_Geo">Znaleziono współrzędne geograficzne</string>
+	<string name="Result_Product">Znaleziono produkt</string>
+	<string name="Result_Sms">Znaleziono adres SMS</string>
+	<string name="Result_Tel">Znaleziono numer telefonu</string>
+	<string name="Result_Text">Znaleziono czysty tekst</string>
+	<string name="Result_Uri">Znaleziono URL</string>
+  
+	
+	<item type="id" name="decoded"/>
+    <item type="id" name="decode_failed"/>
+</resources>

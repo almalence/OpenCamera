@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_Export_Preference_Title">Eksportuj ustawienia</string>
+	<string name="Pref_Export_Preference_Summary">Nazwa eksportu</string>
+	
+	<string name="Pref_Export_ExportName_Title">Wzór nazwy zdjęcia</string>
+	
+	<string name="Pref_Export_ExportFormat_Title">Format nazwy eksportu</string>
+	
+	<string name="Res_Export_SaveJPEG_Text">Zapisz w formacie JPEG</string>
+	<string name="Res_Export_SavePNG_Text">Zapisz w formacie PNG</string>
+	
+	<string name="Res_Export_SaveAs_Text">Zapisz jako</string>
+	
+	<string name="Pref_Export_SaveTo_Title">Wybierz lokalizację do przechowywania zdjęć</string>
+	
+	<string name="Pref_Export_UseGeoTagging_Title">Geotagowanie</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">Dodaj tagi lokalizacji. Włącz w ustawieniach systemu "lokalizację GPS", aby uzyskać precyzyjne geotagowanie</string>
+	
+	<string name="Pref_Export_SortByData_Title">Użyj folderów z datą</string>
+	<string name="Pref_Export_SortByData_Summary">Zapisz obrazy do folderu z bieżącą datą</string>
+
+</resources>

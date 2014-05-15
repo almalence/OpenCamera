@@ -29,6 +29,8 @@
    <dimen name="scanerWidth">3dp</dimen>
    <dimen name="scanerHeight">60dp</dimen>
    
+   <dimen name="gui_element_size">60dp</dimen>
+   <dimen name="gui_element_2size">120dp</dimen>
    
    <dimen name="infoLayoutWidth">50dp</dimen>
    <dimen name="viewfinderViewsMarginTop">17dp</dimen>

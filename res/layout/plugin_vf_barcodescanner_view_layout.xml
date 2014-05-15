@@ -32,7 +32,7 @@
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
-		          android:text="Format: "
+		          android:text="@string/Barcode_Format"
 		          android:textStyle="bold" />
 
 		<TextView
@@ -50,7 +50,7 @@
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
-		          android:text="Type: "
+		          android:text="@string/Barcode_Type"
 		          android:textStyle="bold" />
 
 		<TextView
@@ -68,7 +68,7 @@
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
-		          android:text="Date: "
+		          android:text="@string/Barcode_Date"
 		          android:textStyle="bold" />
 
 		<TextView
