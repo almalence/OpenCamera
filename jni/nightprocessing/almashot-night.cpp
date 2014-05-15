@@ -154,7 +154,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 		{
 			// Y
 			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
-			memcpy (&yuv[i][(y+1)*sx], &yuv[i][(y+1)*sx], sx);
+			memcpy (&yuv[i][(y+1)*sx], &yuvIn[i][(y+1)*sx], sx);
 
 			// UV - no direct memcpy as swap may be needed
 			for (x=0; x<sx/2; ++x)
@@ -204,14 +204,14 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 //    fprintf (pFile, "Blurless_Preview params:\ndeghTable[DeGhostPref] %d\nnImages %d\nSX %d\nSY %d\n64*nTable[sensorGainPref] %d\nlumaEnh %d\nchromaEnh %d",deghTable[DeGhostPref],nImages,sx,sy,64*nTable[sensorGainPref],lumaEnh,chromaEnh);
 //    fclose (pFile);
 
-	for (int i=0; i<nImages; ++i)
-	{
-		char str[256];
-		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
-		FILE *f = fopen (str, "wb");
-		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-		fclose(f);
-	}
+//	for (int i=0; i<nImages; ++i)
+//	{
+//		char str[256];
+//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+//		FILE *f = fopen (str, "wb");
+//		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//		fclose(f);
+//	}
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,

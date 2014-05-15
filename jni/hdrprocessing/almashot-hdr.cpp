@@ -201,23 +201,21 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 
 	pview = (Uint32 *)env->GetIntArrayElements(jpview, NULL);
 
-	/* debug
-	for (i=0; i<nFrames; ++i)
-	{
-		char s[1024];
+/*Debug logs
+	FILE * pFile;
+	pFile = fopen ("/sdcard/DCIM/hdrparams.txt","wb");
+	fprintf (pFile, "Hdr_Preview params:\nExpo pref %d\nColor pref %d\nContrast pref %d\nMicro contrast pref %d\nSX %d\nSY %d\nnFrames %d\nnoSegmPref %d",expoPref,colorPref,ctrstPref,microPref,sx,sy,nFrames,noSegmPref);
+	fclose (pFile);
 
-		sprintf(s, "/mnt/sdcard/HdrCameraInput/%d.bin", i);
-		FILE *f=fopen(s, "wb");
-		fwrite (yuv[i], sx*sy*2, 1, f);
+	for (int i=0; i<nFrames; ++i)
+	{
+		char str[256];
+		sprintf(str, "/sdcard/DCIM/hdrin%02d.yuv", i);
+		FILE *f = fopen (str, "wb");
+		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
 		fclose(f);
 	}
-	*/
-//	FILE * pFile;
-//
-//	   pFile = fopen ("/sdcard/DCIM/hdrparams.txt","wb");
-//	   fprintf (pFile, "Hdr_Preview params:\nExpo pref %d\nColor pref %d\nContrast pref %d\nMicro contrast pref %d\nSX %d\nSY %d\nnFrames %d\nnoSegmPref %d",expoPref,colorPref,ctrstPref,microPref,sx,sy,nFrames,noSegmPref);
-//	   fclose (pFile);
-
+ */
 
 	pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
 
