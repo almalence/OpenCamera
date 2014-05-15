@@ -91,7 +91,6 @@
 					android:background="@android:color/transparent"				
 					android:layout_height="@dimen/paramsLayoutHeight"
 					android:layout_width="@dimen/paramsLayoutHeight"
-					android:layout_centerInParent="true"	
 					android:scaleType="fitCenter"
 			   		android:onClick="onButtonClick">
 				</com.almalence.ui.RotateImageView>
@@ -101,18 +100,17 @@
 		 	 	    android:orientation="vertical"
 		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
-				<com.almalence.ui.RotateImageView
+				<ImageView
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
-					android:scaleType="center"
+					android:scaleType="fitXY"
 					android:background="@android:color/transparent"
 					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
 			   		android:onClick="onButtonClick"
-			   		android:layout_centerInParent="true"
 			   		android:visibility="gone">
-				</com.almalence.ui.RotateImageView>
+				</ImageView>
 				</LinearLayout>
 			</RelativeLayout>
 		

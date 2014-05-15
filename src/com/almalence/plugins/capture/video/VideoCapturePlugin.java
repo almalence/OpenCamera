@@ -592,31 +592,12 @@ public class VideoCapturePlugin extends PluginCapture
 			if(rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
 				return;
 	
-//			AnimationSet rotationSet = new AnimationSet(true);
-//			rotationSet.setInterpolator(new DecelerateInterpolator());
-	
 			int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.gui_element_2size);
 			Animation rotation = new RotateAnimation(0, -180, height/2, height/2);
 			rotation.setDuration(2000);
 			rotation.setRepeatCount(1000);
 			rotation.setInterpolator(new DecelerateInterpolator());
 	
-//			rotationSet.addAnimation(rotation);
-//			rotationSet.setRepeatCount(1000);
-//	
-//			rotationSet.setAnimationListener(new AnimationListener() {
-//				@Override
-//				public void onAnimationEnd(Animation animation) {
-////					rotateToLandscapeNotifier.clearAnimation();
-////					rotateToLandscapeNotifier.setVisibility(View.GONE);
-//				}
-//				@Override
-//				public void onAnimationRepeat(Animation animation) {}
-//				@Override
-//				public void onAnimationStart(Animation animation) {}
-//			});
-	
-			//Log.e("AlmalenceGUI", "processing animation started");
 			rotateToLandscapeNotifier.startAnimation(rotation);
 		}catch(Exception e){}
 	}

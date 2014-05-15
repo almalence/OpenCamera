@@ -7608,18 +7608,15 @@ public class AlmalenceGUI extends GUI implements
 //		}
 //	}
 
-	private RotateImageView processingAnim;
+	private ImageView processingAnim;
 
 	public void startProcessingAnimation() {
 		if(processingAnim != null && processingAnim.getVisibility() == View.VISIBLE)
 			return;
 
-		processingAnim = ((RotateImageView) guiView
+		processingAnim = ((ImageView) guiView
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
-				
-//		AnimationSet rotationSet = new AnimationSet(true);
-//		rotationSet.setInterpolator(new LinearInterpolator());
 
 		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerHeight);
 		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerWidth);
@@ -7628,70 +7625,8 @@ public class AlmalenceGUI extends GUI implements
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());
 		rotation.setRepeatCount(100);
-		//rotation.
 
-//		rotationSet.addAnimation(rotation);
-//		rotationSet.setRepeatCount(1000);
-
-//		rotation.setAnimationListener(new AnimationListener() {
-//			@Override
-//			public void onAnimationEnd(Animation animation) {
-////				processingAnim.clearAnimation();
-////				rotateToLandscapeNotifier.setVisibility(View.GONE);
-//			}
-//			@Override
-//			public void onAnimationRepeat(Animation animation) {}
-//			@Override
-//			public void onAnimationStart(Animation animation) {}
-//		});
-
-		//Log.e("AlmalenceGUI", "processing animation started");
 		processingAnim.startAnimation(rotation);
-		
-//		processingAnim = ((RotateImageView) guiView
-//				.findViewById(R.id.buttonGallery2));
-//		processingAnim.setVisibility(View.VISIBLE);
-//
-//		AnimationSet lrinvisible = new AnimationSet(true);
-//		lrinvisible.setInterpolator(new DecelerateInterpolator());
-//
-//		int duration_invisible = 600;
-//
-//		Animation invisible_alpha = new AlphaAnimation(1, 0);
-//		invisible_alpha.setDuration(duration_invisible);
-//		invisible_alpha.setRepeatCount(800);
-//
-//		int wid = thumbnailView.getWidth();
-//
-//		Animation lrinvisible_translate = new TranslateAnimation(
-//				(int) (-thumbnailView.getHeight() / 3.2),
-//				(int) (thumbnailView.getHeight() / 2.2), 0, 0);
-//		lrinvisible_translate.setDuration(duration_invisible);
-//		lrinvisible_translate.setRepeatCount(1000);
-//
-//		lrinvisible.addAnimation(invisible_alpha);
-//		lrinvisible.addAnimation(lrinvisible_translate);
-//		lrinvisible.setRepeatCount(1000);
-//
-//		lrinvisible.setAnimationListener(new AnimationListener() {
-//			@Override
-//			public void onAnimationEnd(Animation animation) {
-//				processingAnim.clearAnimation();
-//				processingAnim.setVisibility(View.GONE);
-//				//Log.e("AlmalenceGUI", "processing animation ended");
-//			}
-//
-//			@Override
-//			public void onAnimationRepeat(Animation animation) {
-//			}
-//
-//			@Override
-//			public void onAnimationStart(Animation animation) {
-//			}
-//		});
-//
-//		//Log.e("AlmalenceGUI", "processing animation started");
-//		processingAnim.startAnimation(lrinvisible);
 	}
 
 	public void processingBlockUI() {
