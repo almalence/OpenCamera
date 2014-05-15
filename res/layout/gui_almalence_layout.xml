@@ -82,6 +82,7 @@
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"			    
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
+		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
 	            <com.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery"								
@@ -89,7 +90,8 @@
 					android:src="@drawable/gui_almalence_gallery"									
 					android:background="@android:color/transparent"				
 					android:layout_height="@dimen/paramsLayoutHeight"
-					android:layout_width="@dimen/paramsLayoutHeight"	
+					android:layout_width="@dimen/paramsLayoutHeight"
+					android:layout_centerInParent="true"	
 					android:scaleType="fitCenter"
 			   		android:onClick="onButtonClick">
 				</com.almalence.ui.RotateImageView>
@@ -97,6 +99,7 @@
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
+		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
 				<com.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery2"
@@ -107,6 +110,7 @@
 					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
 			   		android:onClick="onButtonClick"
+			   		android:layout_centerInParent="true"
 			   		android:visibility="gone">
 				</com.almalence.ui.RotateImageView>
 				</LinearLayout>
