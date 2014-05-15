@@ -1050,7 +1050,7 @@ public class AlmalenceGUI extends GUI implements
 					return;
 				}
 				//start store
-				showStore(false);
+				showStore();
 				
 //				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
 //				MainScreen.thiz.startActivity(intent);
@@ -1082,7 +1082,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	//<!-- -+-
 	@Override
-	public void showStore(boolean isCouponSale)
+	public void showStore()
 	{
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
@@ -1095,7 +1095,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		MainScreen.guiManager.lockControls = true;
 		
-		initStoreList(isCouponSale);
+		initStoreList();
 		GridView gridview = (GridView) guiView.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
 		
@@ -1130,7 +1130,7 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.guiManager.lockControls = false;
 	}
 	
-	private void initStoreList(boolean isCouponSale) {
+	private void initStoreList() {
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
 
@@ -1157,7 +1157,7 @@ public class AlmalenceGUI extends GUI implements
 						price.setText(R.string.already_unlocked);
 					else
 					{
-						if (isCouponSale)
+						if (MainScreen.thiz.isCouponSale())
 						{
 							price.setText(MainScreen.thiz.titleUnlockAllCoupon);
 							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
@@ -7608,56 +7608,25 @@ public class AlmalenceGUI extends GUI implements
 //		}
 //	}
 
-	private RotateImageView processingAnim;
+	private ImageView processingAnim;
 
 	public void startProcessingAnimation() {
 		if(processingAnim != null && processingAnim.getVisibility() == View.VISIBLE)
 			return;
 
-		processingAnim = ((RotateImageView) guiView
+		processingAnim = ((ImageView) guiView
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
 
-		AnimationSet lrinvisible = new AnimationSet(true);
-		lrinvisible.setInterpolator(new DecelerateInterpolator());
+		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerHeight);
+		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerWidth);
+		Log.e("!!!!!!!!!!!", "Wid and height "+ width + " " + height);
+		Animation rotation = new RotateAnimation(0, 360, width/2, height/2);
+		rotation.setDuration(800);
+		rotation.setInterpolator(new LinearInterpolator());
+		rotation.setRepeatCount(100);
 
-		int duration_invisible = 600;
-
-		Animation invisible_alpha = new AlphaAnimation(1, 0);
-		invisible_alpha.setDuration(duration_invisible);
-		invisible_alpha.setRepeatCount(800);
-
-		int wid = thumbnailView.getWidth();
-
-		Animation lrinvisible_translate = new TranslateAnimation(
-				(int) (-thumbnailView.getHeight() / 3.2),
-				(int) (thumbnailView.getHeight() / 2.2), 0, 0);
-		lrinvisible_translate.setDuration(duration_invisible);
-		lrinvisible_translate.setRepeatCount(1000);
-
-		lrinvisible.addAnimation(invisible_alpha);
-		lrinvisible.addAnimation(lrinvisible_translate);
-		lrinvisible.setRepeatCount(1000);
-
-		lrinvisible.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				processingAnim.clearAnimation();
-				processingAnim.setVisibility(View.GONE);
-				//Log.e("AlmalenceGUI", "processing animation ended");
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-		});
-
-		//Log.e("AlmalenceGUI", "processing animation started");
-		processingAnim.startAnimation(lrinvisible);
+		processingAnim.startAnimation(rotation);
 	}
 
 	public void processingBlockUI() {

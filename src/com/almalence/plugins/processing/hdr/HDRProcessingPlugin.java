@@ -393,7 +393,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			catch(IOException e) {
 	            e.printStackTrace();
 	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-	            return;
+	            //return;
 	        }
 	        catch (Exception e)
 	        {

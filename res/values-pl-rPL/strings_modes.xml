@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="single_mode_name">Pojedyncze zdjecie</string>
+    <string name="single_mode_howto"></string>
+    
+    <string name="selftimer_mode_name">Samowyzwalacz</string>
+    <string name="selftimer_mode_howto"></string>
+    
+    <string name="burst_mode_name">Seryjne</string>
+    <string name="burst_mode_howto"></string>
+    
+    <string name="expobracketing_mode_name">Bracketing ekspozycji</string>
+    <string name="expobracketing_mode_howto"></string>
+    
+    <string name="hdr_mode_name">HDR</string>
+    <string name="hdr_mode_howto"></string>
+    
+    <string name="night_mode_name">Noc</string>
+    <string name="night_mode_howto"></string>
+    
+    <string name="video_mode_name">Wideo</string>
+    <string name="video_mode_howto"></string>
+    
+    <string name="preshot_mode_name">Wstępne zdjęcie</string>
+    <string name="preshot_mode_howto">Dotknij migawki, aby rozpocząć / zatrzymać przechwytywanie</string>
+    
+    <string name="objectremoval_mode_name">Usuwanie obiektu</string>
+    <string name="objectremoval_mode_howto"></string>
+    
+    <string name="groupshot_mode_name">Zdjęcie grupowe</string>
+    <string name="groupshot_mode_howto"></string>
+    
+    <string name="sequence_mode_name">Sekwencja zdjęć</string>
+    <string name="sequence_mode_howto"></string>
+    
+    <string name="panorama_mode_name">Panorama</string>
+    <string name="panorama_mode_howto"></string>
+    
+	<string name="hiresportrait_mode_name">Portret w wysokiej rozdzielczości</string>
+	<string name="hiresportrait_mode_howto"></string>
+    
+	<string name="bestshot_mode_name">Najlepsze zdjęcie</string>
+	<string name="bestshot_mode_howto"></string>
+	
+</resources>

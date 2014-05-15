@@ -118,5 +118,10 @@
 	<string name="layout_hint_top_center">Выдвинуть доп. опции</string>
 
 	<string name="Dro_Help">Технология позволяющая увидеть больше деталей на снимке. Вытягивает затемненные и засвеченные области, делая сцену более естественной. Dro - может быть использован в большинстве случаев вместо HDR.\n\n1. Снимите фотографию\n2. Дождитесь конца обработки!</string>
-		
+
+	<string name="setTimerText">Установить</string>
+	<string name="soundTimerText">Звук при отсчете</string>
+	<string name="flashTimerText">Вспышка при отсчете</string>
+	<string name="secondsText">секунд</string>
+				
 </resources>

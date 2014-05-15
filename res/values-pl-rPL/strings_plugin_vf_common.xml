@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="Pref_VFCommon_Preference_Title">Ustawienia wspólne VF</string>
+	
+	<string name="Pref_KeepScreenOn">Zachowaj ekran włączony</string>
+	<string name="Pref_KeepScreenOn_Summary">Unikaj trybu uśpienia, gdy aktywny</string>
+	
+	<string name="Pref_MaxScreenBrightness">Maksymalna jasność ekranu</string>
+	<string name="Pref_MaxScreenBrightness_Summary">Zmuś do maksymalnej jasności ekranu</string>
+	
+</resources>

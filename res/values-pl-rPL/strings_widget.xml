@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="widgetLoadingText">Wczytywanie…</string>
+	<string name="widgetConfigureDoneText">Gotowe</string>
+	<string name="widgetBgColorTitle">Kolor tła widżetu</string>
+	<string name="widgetBgColorTitleFirst">Przeświecający</string>
+	<string name="widgetBgColorTitleSecond">Kolor czarny</string>
+	<string name="widgetBgColorTitleThird">Przezroczysty</string>
+	<string name="widgetConfigTitle">Struktura widżetu</string>
+	<string name="widgetHideItem">Ukryj</string>
+	<string name="widgetTorchItem">Pochodnia</string>
+	<string name="widgetSettingsItem">Ustawienia</string>
+	<string name="widgetHideSettingsText">Ukrycie wszystkich przycisków ustawień uniemożliwi konfigurację bieżącego widżetu!</string>
+	<string name="widgetAlert">Ostrzeżenie!</string>	
+	<string name="widgetShopText">Aby aktywować widżet musisz jakąś funkcję premium</string>
+	<string name="widgetGoShopText">Sklep</string>
+	<string name="widgetActivation">Aktywacja widżetu</string>
+</resources>

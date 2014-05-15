@@ -82,6 +82,7 @@
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"			    
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
+		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
 	            <com.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery"								
@@ -90,15 +91,16 @@
 					android:background="@android:color/transparent"				
 					android:layout_height="@dimen/paramsLayoutHeight"
 					android:layout_width="@dimen/paramsLayoutHeight"	
-					android:scaleType="fitCenter"
+					android:scaleType="fitXY"
 			   		android:onClick="onButtonClick">
 				</com.almalence.ui.RotateImageView>
 				</LinearLayout>
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 		 	 	    android:layout_width="match_parent"
 		 	 	    android:orientation="vertical"
+		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
-				<com.almalence.ui.RotateImageView
+				<ImageView
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
@@ -108,7 +110,7 @@
 					android:layout_width="@dimen/scanerWidth"
 			   		android:onClick="onButtonClick"
 			   		android:visibility="gone">
-				</com.almalence.ui.RotateImageView>
+				</ImageView>
 				</LinearLayout>
 			</RelativeLayout>
 		
@@ -340,7 +342,7 @@
 				android:visibility="gone">
 					<ImageView
 						android:id="@+id/storeHeader"
-						android:src="@drawable/store_header"
+						android:src="@drawable/store_header_large"
 						android:background="@android:color/transparent"
 						android:layout_height="@dimen/headerStoreImageSize"
 						android:layout_width="fill_parent"
@@ -884,7 +886,7 @@
 			                android:layout_height="wrap_content"
 							android:layout_width="fill_parent"
 			                android:textSize="17sp"
-			                android:text="OK"
+			                android:text="@string/okText"
 			                android:textColor="#FFFFFF"
 			                android:layout_margin="5dip"
 			                android:layout_weight="1"
