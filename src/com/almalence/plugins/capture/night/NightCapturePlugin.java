@@ -75,7 +75,6 @@ import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
 //-+- -->

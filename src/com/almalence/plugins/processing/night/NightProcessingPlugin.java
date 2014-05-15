@@ -37,7 +37,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.plugins.processing.hdr.AlmaShotHDR;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

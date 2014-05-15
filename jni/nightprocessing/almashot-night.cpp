@@ -195,7 +195,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
-	pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
+	//pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
 
 	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
 
@@ -204,7 +204,16 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 //    fprintf (pFile, "Blurless_Preview params:\ndeghTable[DeGhostPref] %d\nnImages %d\nSX %d\nSY %d\n64*nTable[sensorGainPref] %d\nlumaEnh %d\nchromaEnh %d",deghTable[DeGhostPref],nImages,sx,sy,64*nTable[sensorGainPref],lumaEnh,chromaEnh);
 //    fclose (pFile);
 
-	BlurLess_Preview(&instance, yuv, pview_rgb, NULL, NULL,
+	for (int i=0; i<nImages; ++i)
+	{
+		char str[256];
+		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+		FILE *f = fopen (str, "wb");
+		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+		fclose(f);
+	}
+
+	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
 		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
@@ -240,6 +249,13 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	crop[0]=crop[1]=crop[2]=crop[3]=-1;
 	BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
 
+	char s[1024];
+
+	sprintf(s, "/sdcard/DCIM/night_result.bin");
+	FILE *f=fopen(s, "wb");
+	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+	fclose(f);
+
 
 	OutNV21 = OutPic;
 	if (jrot)
@@ -252,13 +268,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		free(OutPic);
 		OutPic = OutNV21;
 	}
-
-//	char s[1024];
-//
-//	sprintf(s, "/sdcard/DCIM/night_result.bin");
-//	FILE *f=fopen(s, "wb");
-//	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-//	fclose(f);
 
 	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
 
