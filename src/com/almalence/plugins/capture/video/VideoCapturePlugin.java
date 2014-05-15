@@ -165,6 +165,8 @@ public class VideoCapturePlugin extends PluginCapture
     
 	private volatile String ModePreference;	// 0=DRO On 1=DRO Off
 	private Switch modeSwitcher;
+	
+	private DROVideoEngine droEngine = new DROVideoEngine();
     
 	public VideoCapturePlugin()
 	{
@@ -804,52 +806,59 @@ public class VideoCapturePlugin extends PluginCapture
     	if (null==camera)
     		return;
     	
-		if (isRecording) {
-            // stop recording and release camera
-            mMediaRecorder.stop();  // stop the recording
-            releaseMediaRecorder(); // release the MediaRecorder object
-            camera.lock();         // take camera access back from MediaRecorder
-
-            MainScreen.guiManager.lockControls = false;
-            
-            Message msg = new Message();
-	  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-	  		msg.what = PluginManager.MSG_BROADCAST;
-	  		MainScreen.H.sendMessage(msg);
-		  		
-            // inform the user that recording has stopped
-            isRecording = false;
-            showRecordingUI(isRecording);
-            prefs.edit().putBoolean("videorecording", false).commit();
-        
-            Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-            if (cp!=null)
-            {
-            	SetCameraPreviewSize(cp);
-            	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
-       	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-       	    		MainScreen.thiz.setVideoStabilization(false);
-            }
-            
-            //change shutter icon
-            MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
-            
-            ContentValues values=null;
-            values = new ContentValues(7);
-            values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-            values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-            values.put(ImageColumns.MIME_TYPE, "video/mp4");
-            values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-            
-            String[] filesSavedNames= new String[1];
-            filesSavedNames[0] = fileSaved.toString();
-               
-    		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-            MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-        }
-		else
-			releaseMediaRecorder();
+    	if (!this.shouldPreviewToGPU())
+    	{
+			if (isRecording) {
+	            // stop recording and release camera
+	            mMediaRecorder.stop();  // stop the recording
+	            releaseMediaRecorder(); // release the MediaRecorder object
+	            camera.lock();         // take camera access back from MediaRecorder
+	
+	            MainScreen.guiManager.lockControls = false;
+	            
+	            Message msg = new Message();
+		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+		  		msg.what = PluginManager.MSG_BROADCAST;
+		  		MainScreen.H.sendMessage(msg);
+			  		
+	            // inform the user that recording has stopped
+	            isRecording = false;
+	            showRecordingUI(isRecording);
+	            prefs.edit().putBoolean("videorecording", false).commit();
+	        
+	            Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+	            if (cp!=null)
+	            {
+	            	SetCameraPreviewSize(cp);
+	            	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
+	       	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
+	       	    		MainScreen.thiz.setVideoStabilization(false);
+	            }
+	            
+	            //change shutter icon
+	            MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
+	            
+	            ContentValues values=null;
+	            values = new ContentValues(7);
+	            values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+	            values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+	            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+	            values.put(ImageColumns.MIME_TYPE, "video/mp4");
+	            values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+	            
+	            String[] filesSavedNames= new String[1];
+	            filesSavedNames[0] = fileSaved.toString();
+	               
+	    		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	            MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
+	        }
+			else
+				releaseMediaRecorder();
+    	}
+    	else
+    	{
+    		
+    	}
 		
 		if(camera != null)
 		{
@@ -1936,7 +1945,7 @@ public class VideoCapturePlugin extends PluginCapture
         np2.setDisplayedValues(stringMeasurement);
         np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         
-        final Switch sw = (Switch) d.findViewById(R.id.timelapse_switcher);
+        final android.widget.Switch sw = (android.widget.Switch)d.findViewById(R.id.timelapse_switcher);
         
         //disable/enable controls in dialog
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2062,6 +2071,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onPreviewTextureUpdated(final int texture, final float[] transform)
 	{
 		Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, logMatrix(transform, 4, 4).replace('\n', ' ')));
+		this.droEngine.onPreviewTextureUpdated(texture, transform);
 	}
 	
 	public static String logMatrix(final float[] transform,

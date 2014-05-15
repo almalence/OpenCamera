@@ -10,15 +10,12 @@ import javax.microedition.khronos.opengles.GL10;
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
 
-import android.graphics.SurfaceTexture;
-import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
-import android.view.OrientationEventListener;
 
-public class DROVideoEngine implements OnFrameAvailableListener
+public class DROVideoEngine
 {
 	private static final String TAG = "Almalence";
 	
@@ -91,6 +88,7 @@ public class DROVideoEngine implements OnFrameAvailableListener
 		return program;
 	}
 
+	/*
     public static int roundOrientation(int orientation, final int orientationHistory) 
     {    	
         final int ORIENTATION_HYSTERESIS = 5;
@@ -113,39 +111,35 @@ public class DROVideoEngine implements OnFrameAvailableListener
         
         return orientationHistory;
     }
-	
-	
-	public interface OnTextureReadyListener
-	{
-		public void onTextureReady(SurfaceTexture texture);
-	}
-	
+    */
 	
 	private RendererExtended renderer;
 	
-	private OnTextureReadyListener onTextureReadyListener = null;
-	
-	private SurfaceTexture surfaceTexture = null;
-	
 	private final Object stateSync = new Object();
-	//private boolean surface_created = false;
-	private boolean preview_started = false;
 	private int instance = 0;
-	private int previewWidth = 0;
-	private int previewHeight = 0;
+	private int previewWidth = -1;
+	private int previewHeight = -1;
 	
 	private volatile boolean filtering = false;
 	private volatile boolean local = false;
 	private volatile boolean  night = false;
 	private volatile boolean forceUpdate = false;
 	private volatile int pullYUV = 0;
+	private volatile int uv_desat = 9;
+	private volatile int dark_uv_desat = 5;
+	private volatile float mix_factor = 0.1f;
+	private volatile float gamma = 0.5f;
+	private volatile float max_black_level = 64.f;
+	private volatile float black_level_atten = 0.5f;
+	private volatile float max_amplify = 2.0f;
+	private volatile float[] min_limit = new float[]{0.5f,0.5f,0.5f};
+	private volatile float[] max_limit = new float[]{3.0f,2.0f,1.2f};
 	
 	private EglEncoder encoder = null;
 	
 	private FpsMeasurer fps = new FpsMeasurer(10);
 	
 	private volatile int orientation = 0;
-	private OrientationEventListener orientationListener;
 	
 	public DROVideoEngine()
 	{
@@ -155,12 +149,6 @@ public class DROVideoEngine implements OnFrameAvailableListener
 	private void init()
 	{
 		
-	}
-	
-	public void setCameraPreviewSize(final int width, final int height)
-	{
-		this.previewWidth = width;
-		this.previewHeight = height;
 	}
 	
 	public void setFilteringEnabled(final boolean enabled)
@@ -282,32 +270,13 @@ public class DROVideoEngine implements OnFrameAvailableListener
 		}
 	}
 	
-	public void startPreview(final int width, final int height)
-	{
-		Log.i(TAG, "GLSurfaceView.startPreview()");
-		
-		synchronized (this.stateSync)
-		{
-			this.stopPreview();
-
-			this.previewWidth = width;
-			this.previewHeight = height;
-			
-			this.preview_started = true;
-			
-			this.stateSync.notify();
-		}
-	}
-	
 	private void stopPreview()
 	{
-		Log.i(TAG, "GLSurfaceView.stopPreview()");
+		Log.i(TAG, "DROVideoEngine.stopPreview()");
 		
 		synchronized (this.stateSync)
 		{
-			this.stopRecording();;
-			
-			this.preview_started = false;
+			this.stopRecording();
 		
 			if (this.instance != 0)
 			{					
@@ -323,7 +292,6 @@ public class DROVideoEngine implements OnFrameAvailableListener
 						{
 							RealtimeDRO.release(DROVideoEngine.this.instance);
 							DROVideoEngine.this.instance = 0;
-							DROVideoEngine.this.surfaceTexture = null;
 							
 							synchronized (sync)
 							{
@@ -346,38 +314,70 @@ public class DROVideoEngine implements OnFrameAvailableListener
 	}
 	
 	public void onResume()
-	{		
-		this.orientationListener.enable();
+	{
 		
 	}
 	
 	public void onPause()
-	{
-		synchronized (this.stateSync)
-		{
-			this.stateSync.notify();
-		}
-		
-		this.orientationListener.disable();
-		
+	{		
 		this.stopPreview();
 	}
-	
-	public SurfaceTexture getTexture()
-	{
-		return this.surfaceTexture;
-	}
-	
-	public void setOnTextureReadyListener(final OnTextureReadyListener listener)
-	{
-		this.onTextureReadyListener = listener;
-	}
 
-	@Override
-	public void onFrameAvailable(final SurfaceTexture surfaceTexture)
-	{
-		this.renderer.texture_filled = true;
-		MainScreen.thiz.glRequestRender();
+	public void onPreviewTextureUpdated(final int texture, final float[] transform)
+	{		
+		synchronized (this.stateSync)
+		{
+			if (this.instance != 0)
+			{
+				if (MainScreen.previewWidth != this.previewWidth
+						|| MainScreen.previewHeight != this.previewHeight)
+				{
+					RealtimeDRO.release(this.instance);
+					this.instance = 0;
+				}
+			}
+			
+			if (this.instance == 0)
+			{
+				this.instance = RealtimeDRO.initialize(
+						this.previewWidth,
+						this.previewHeight);
+			}
+			
+			if (this.instance == 0)
+			{
+				RealtimeDRO.render(
+						this.instance,
+						texture,
+						transform,
+						this.previewWidth,
+						this.previewHeight,
+						this.filtering,
+						this.local,
+						this.max_amplify,
+						this.forceUpdate,
+						this.uv_desat,
+						this.dark_uv_desat,
+						this.mix_factor,
+						this.gamma,
+						this.max_black_level,
+						this.black_level_atten,
+						this.min_limit,
+						this.max_limit,
+						this.renderer.texture_out);
+				
+				this.forceUpdate = false;
+				
+				if (this.encoder != null)
+				{
+					this.encoder.encode(this.renderer.texture_out);
+				}
+			}
+			else
+			{
+				throw new RuntimeException("Unable to create DRO instance.");
+			}
+		}
 	}
 	
 	private class RendererExtended implements Renderer
@@ -387,35 +387,13 @@ public class DROVideoEngine implements OnFrameAvailableListener
 		private int surfaceWidth;
 		private int surfaceHeight;
 
-		private final float[] mtx = new float[16];
-		private volatile boolean texture_filled;
-		private int texture_in;
 		private int texture_out;
 		
 		private void initGL()
 		{
-			final int[] tex = new int[2];
-			GLES20.glGenTextures(2, tex, 0);
-			this.texture_in = tex[0];
+			final int[] tex = new int[1];
+			GLES20.glGenTextures(1, tex, 0);
 			this.texture_out = tex[1];
-			
-			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_in);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_S,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_T,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_LINEAR);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_LINEAR);
 			
 			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
 			GLES20.glTexParameteri(
@@ -445,97 +423,6 @@ public class DROVideoEngine implements OnFrameAvailableListener
 			
 			this.initGL();
 			
-			this.texture_filled = false;
-			DROVideoEngine.this.surfaceTexture = new SurfaceTexture(this.texture_in);
-			DROVideoEngine.this.surfaceTexture.setOnFrameAvailableListener(DROVideoEngine.this);
-			
-			final OnTextureReadyListener listener = DROVideoEngine.this.onTextureReadyListener;
-			
-			if (listener != null)
-			{
-				listener.onTextureReady(DROVideoEngine.this.surfaceTexture);
-			}
-			
-			final Object sync = new Object();
-			
-			synchronized (sync)
-			{
-				new Thread()
-				{
-					@Override
-					public void run()
-					{
-						synchronized (DROVideoEngine.this.stateSync)
-						{
-							synchronized (sync)
-							{
-								sync.notify();
-							}
-							
-							if (!DROVideoEngine.this.preview_started)
-							{
-								try
-								{
-									DROVideoEngine.this.stateSync.wait();
-								} 
-								catch (final InterruptedException e)
-								{
-									Thread.currentThread().interrupt();
-								}
-							}
-							
-							if (!DROVideoEngine.this.preview_started)
-							{
-								return;
-							}
-							
-							synchronized (sync)
-							{
-								MainScreen.thiz.queueGLEvent(new Runnable()
-								{
-									@Override
-									public void run()
-									{
-										DROVideoEngine.this.instance = RealtimeDRO.initialize(
-												DROVideoEngine.this.previewWidth,
-												DROVideoEngine.this.previewHeight);
-										
-										synchronized (sync)
-										{
-											sync.notify();
-										}
-										
-									}
-								});
-
-								try
-								{
-									// This anonymous thread will only release
-									// lock on the stateSync object when the
-									// queued GL runnable is done.
-									sync.wait();
-								}
-								catch (final InterruptedException e)
-								{
-									Thread.currentThread().interrupt();
-								}
-							}
-						}
-					}
-				}.start();
-				
-				try
-				{
-					// Make sure the popped thread take lock over syncState
-					// before proceeding.
-					sync.wait();
-				}
-				catch (final InterruptedException e)
-				{
-					Thread.currentThread().interrupt();
-				}
-			}
-			
 			DROVideoEngine.this.fps.flush();
 		}
 
@@ -552,40 +439,8 @@ public class DROVideoEngine implements OnFrameAvailableListener
 		public void onDrawFrame(final GL10 gl)
 		{
 			DROVideoEngine.this.fps.measure();
-			
-			synchronized (DROVideoEngine.this.stateSync)
-			{
-				if (DROVideoEngine.this.instance != 0)
-				{					
-					if (this.texture_filled)
-					{
-						DROVideoEngine.this.surfaceTexture.updateTexImage();
-						DROVideoEngine.this.surfaceTexture.getTransformMatrix(this.mtx);
-	
-						RealtimeDRO.render(
-								DROVideoEngine.this.instance,
-								this.texture_in,
-								this.mtx,
-								DROVideoEngine.this.previewWidth,
-								DROVideoEngine.this.previewHeight,
-								DROVideoEngine.this.filtering,
-								DROVideoEngine.this.local,
-								DROVideoEngine.this.night,
-								DROVideoEngine.this.forceUpdate,
-								DROVideoEngine.this.pullYUV,
-								this.texture_out);
-						
-						DROVideoEngine.this.forceUpdate = false;
-						
-						if (DROVideoEngine.this.encoder != null)
-						{
-							DROVideoEngine.this.encoder.encode(this.texture_out);
-						}
-						
-						this.drawOutputTexture();	
-					}
-				}
-			}
+					
+			this.drawOutputTexture();
 		}
 		
 		private void drawOutputTexture()
@@ -620,3 +475,5 @@ public class DROVideoEngine implements OnFrameAvailableListener
 		}
 	}
 }
+		
+		
