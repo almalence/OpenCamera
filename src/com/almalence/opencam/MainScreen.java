@@ -514,7 +514,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 //			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
 //			MainScreen.thiz.startActivity(shopintent);
-			guiManager.showStore(false);
+			guiManager.showStore();
 		}
 		//-+- -->
 	}
@@ -688,7 +688,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						
 						if (showStore)
 						{
-							guiManager.showStore(false);
+							guiManager.showStore();
 							showStore = false;
 						}
 					}
@@ -2149,6 +2149,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	private boolean bOnSale = false;
 	private boolean showStore = false;
+	private boolean couponSale = false;
 	
 	private boolean unlockAllPurchased = false;
 	private boolean hdrPurchased = false;
@@ -2192,24 +2193,27 @@ public class MainScreen extends Activity implements View.OnClickListener,
         
         
         //Samsung store
-//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_hdr");
-//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_panorama");
+//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018387");
+//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018389");
 //        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
-//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
-//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_moving_burst");
-//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "plugin_almalence_groupshot");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
+//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018391");
+//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018384");
 //        
-//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller1");
-//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "abc_sale_controller2");
-
-        
-//        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_AMAZON, "org.onepf.trivialdrive.amazon.gas");
-//        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_TSTORE, "tstore_sku_gas");
-//        OpenIabHelper.mapSku(SKU_GAS, OpenIabHelper.NAME_SAMSUNG, "100000100696/000001003744");
-//        OpenIabHelper.mapSku(SKU_GAS, "com.yandex.store", "org.onepf.trivialdrive.gas");
-//        OpenIabHelper.mapSku(SKU_GAS, "Appland", "org.onepf.trivialdrive.gas");
+//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018393");
+//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018394");
     }
     
+	public void activateCouponSale()
+	{
+		couponSale = true;
+	}
+	
+	public boolean isCouponSale()
+	{
+		return couponSale;
+	}
+	
 	public boolean isUnlockedAll()
 	{
 		return unlockAllPurchased;
@@ -2263,6 +2267,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						additionalSkuList.add(SKU_HDR);
 						additionalSkuList.add(SKU_PANORAMA);
 						additionalSkuList.add(SKU_UNLOCK_ALL);
+						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
 						
@@ -2386,6 +2391,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 			
 			try{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Getting data for store");
 				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
 				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
 				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
@@ -2400,6 +2406,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
 			}catch(Exception e)
 			{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Error Getting data for store!!!!!!!!");
 			}
 		}
 	};
@@ -2660,7 +2667,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			//guiManager.hideStore();
 			mHelper.launchPurchaseFlow(MainScreen.thiz,
-					SKU_UNLOCK_ALL, ALL_REQUEST,
+					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
 		}
 		catch (Exception e) {
@@ -2839,6 +2846,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				Log.v("Main billing", "Purchase all coupon.");
 
 				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
 			}
 			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
 				Log.v("Main billing", "Purchase object removal.");
@@ -2882,7 +2893,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
 			
-			guiManager.showStore(false);
+			guiManager.showStore();
 			Log.v("Main billing", "Purchase finished: " + result
 					+ ", purchase: " + purchase);
 			if (result.isFailure()) {

@@ -48,7 +48,7 @@
 	    	android:layout_marginTop="5dp"
 	    	android:layout_marginBottom="5dp"
 	    	android:layout_centerHorizontal="true"
-	        android:text="Set" />
+	        android:text="@string/setVideoText" />
     
 
 </RelativeLayout>

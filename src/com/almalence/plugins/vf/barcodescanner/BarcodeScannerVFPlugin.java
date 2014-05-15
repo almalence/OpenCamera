@@ -342,7 +342,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		//sale hook
 		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.thiz.isUnlockedAll())
 		{
-			MainScreen.guiManager.showStore(true);
+			MainScreen.thiz.activateCouponSale();
+			MainScreen.guiManager.showStore();
 			return;
 		}
 		//-+- -->
@@ -440,7 +441,9 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	                rawResult = mMultiFormatReader.decodeWithState(bitmap);
 	            } catch (ReaderException re) {
 	                // nothing to do here
-	            } finally {
+	            } catch (Exception e) {
+		            e.printStackTrace();
+		        }	finally {
 	                mMultiFormatReader.reset();
 	            }
 	        }

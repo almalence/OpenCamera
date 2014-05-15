@@ -7,6 +7,9 @@
 	<string name="Delete_Barcode">Delete</string>
 	<string name="History">History</string>
 	<string name="Clear_Barcodes_List">Clear</string>
+	<string name="Barcode_Type">Type: </string>
+	<string name="Barcode_Format">Format: </string>
+	<string name="Barcode_Date">Date: </string>
 	
 	<string name="Button_Add_Calendar">Add to calendar</string>
 	<string name="Button_Add_Contact">Add contact</string>
