@@ -360,7 +360,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	protected void showBarcodeViewDialog(Barcode barcode) {
 		try{		
     	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
-    	
+    	barcodeViewDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
     	showGUI();
     	
     	barcodeViewDialog.setOnDismissListener(new OnDismissListener() {
