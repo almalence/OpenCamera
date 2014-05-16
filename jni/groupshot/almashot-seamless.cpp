@@ -153,7 +153,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, needRotation, cameraMirrored, rotationDegree);
+	isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, needRotation, cameraMirrored, rotationDegree, true);
 
 	// prepare down-scaled gray frames for face detection analisys and detect faces
 	#pragma omp parallel for

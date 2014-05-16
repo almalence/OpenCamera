@@ -246,7 +246,8 @@ int DecodeAndRotateMultipleJpegs
 	int nFrames,
 	int needRotation,
 	int cameraMirrored,
-	int rotationDegree
+	int rotationDegree,
+	bool needFreeMem//true by default
 )
 {
 	int i;
@@ -284,76 +285,14 @@ int DecodeAndRotateMultipleJpegs
 		}
 
 		// release compressed memory
-		free (jpeg[i]);
+		if (needFreeMem)
+			free (jpeg[i]);
 	}
 
 	LOGD("ConvertFromJpeg - end");
 
 	return isFoundinInput;
 }
-
-
-// returns:
-// -1 - not enough memory
-// 0<X<nFrames - X = frame index where error is happened during decoding
-// 255 - all ok
-int DecodeAndRotateMultipleJpegsNoRelease
-(
-	unsigned char **yuvFrame,
-	unsigned char **jpeg,
-	int *jpeg_length,
-	int sx,
-	int sy,
-	int nFrames,
-	int needRotation,
-	int cameraMirrored,
-	int rotationDegree
-)
-{
-	int i;
-	int isFoundinInput = 255; // if error is found during decoding - the frame index will be here
-
-	LOGD("ConvertFromJpeg - start");
-
-	// pre-allocate uncompressed yuv buffers
-	for (i=0; i<nFrames; ++i)
-	{
-		yuvFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-
-		if (yuvFrame[i]==NULL)
-		{
-			LOGE("ConvertFromJpeg - not enough memory");
-
-			i--;
-			for (;i>=0;--i)
-			{
-				free(yuvFrame[i]);
-				yuvFrame[i] = NULL;
-			}
-			return -1;
-		}
-	}
-
-	#pragma omp parallel for num_threads(10)
-	for (i=0; i<nFrames; ++i)
-	{
-		// decode from jpeg
-		if(JPEG2NV21(yuvFrame[i], jpeg[i], jpeg_length[i], sx, sy, needRotation, cameraMirrored, rotationDegree) == 0)
-		{
-			isFoundinInput = i;
-			LOGE("Error Found in %d - jpeg frame\n", (int)i);
-		}
-
-		// release compressed memory
-		//no release changes
-		//free (jpeg[i]);
-	}
-
-	LOGD("ConvertFromJpeg - end");
-
-	return isFoundinInput;
-}
-
 
 void TransformPlane8bit
 (
