@@ -21,8 +21,8 @@
    <dimen name="mainButtonHeight">48dp</dimen>
    <dimen name="mainButtonHeightSelect">55dp</dimen>
    <dimen name="shutterHeight">90dp</dimen>
-   <dimen name="scanerWidth">6dp</dimen>
-   <dimen name="scanerHeight">43dp</dimen>
+   <dimen name="scanerWidth">5dp</dimen>
+   <dimen name="scanerHeight">50dp</dimen>
    
    <dimen name="gui_element_size">40dp</dimen>
    <dimen name="gui_element_2size">80dp</dimen>

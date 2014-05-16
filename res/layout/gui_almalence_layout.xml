@@ -104,7 +104,7 @@
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
-					android:scaleType="fitXY"
+					android:scaleType="centerCrop"
 					android:background="@android:color/transparent"
 					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
