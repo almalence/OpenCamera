@@ -280,6 +280,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	protected void showBarcodesHistoryDialog() {
 		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.thiz);
+		barcodeHistoryDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
 
 		barcodeHistoryDialog.list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
