@@ -104,6 +104,7 @@ import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
+import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
@@ -266,6 +267,10 @@ public class PluginManager {
 		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
 		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
 		listVF.add(barcodeScannerVFPlugin);
+		
+		GyroVFPlugin gyroVFPlugin = new GyroVFPlugin();
+		pluginList.put(gyroVFPlugin.getID(), gyroVFPlugin);
+		listVF.add(gyroVFPlugin);
 		
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);

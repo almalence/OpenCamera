@@ -27,6 +27,7 @@
 
 	    <vf 		id="com.almalence.plugins.histogramvf"/> 
 	    <vf 		id="com.almalence.plugins.barcodescannervf"/>   
+	    <vf 		id="com.almalence.plugins.gyrovf"/>  
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
