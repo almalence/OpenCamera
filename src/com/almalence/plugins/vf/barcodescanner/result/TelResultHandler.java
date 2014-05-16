@@ -19,7 +19,12 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 import android.telephony.PhoneNumberUtils;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.TelParsedResult;
 

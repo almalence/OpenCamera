@@ -104,7 +104,7 @@
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
-					android:scaleType="center"
+					android:scaleType="centerCrop"
 					android:background="@android:color/transparent"
 					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
@@ -329,9 +329,7 @@
 		android:src="@drawable/unlock"					
 		android:layout_height="40dip"
 		android:layout_width="40dip"
-		
-		android:layout_marginTop="210dip"
-		android:layout_weight="1"
+		android:layout_marginTop="230dip"
    		android:layout_gravity="top|left"
    		android:visibility="gone"/>	
 
@@ -640,7 +638,7 @@
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:background="@android:color/transparent" 
+			android:background="@drawable/blacktransparentlayerpulldownmenu" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"
 			android:paddingBottom="5dip"
@@ -649,9 +647,10 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/layout_border"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:background="@drawable/blacktransparentlayerpulldownmenu"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+    		android:layout_gravity="center">
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>

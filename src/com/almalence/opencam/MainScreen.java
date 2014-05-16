@@ -2144,11 +2144,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	/*******************************************************/
 	/************************ Billing ************************/
+
+	private boolean showStore = false;
 // <!-- -+-
 	OpenIabHelper mHelper;
 	
 	private boolean bOnSale = false;
-	private boolean showStore = false;
 	private boolean couponSale = false;
 	
 	private boolean unlockAllPurchased = false;

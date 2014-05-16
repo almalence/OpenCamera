@@ -1,7 +1,6 @@
 package com.almalence.plugins.export.standard.ExifDriver;
 
 import java.io.EOFException;
-//import android.util.Log;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,13 +11,12 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import android.util.Log;
-
 import com.almalence.plugins.export.standard.ExifDriver.Values.ExifValue;
 import com.almalence.plugins.export.standard.ExifDriver.Values.UndefinedValueAccessException;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
+//import android.util.Log;
 
 /**
  * Driver for reading/writting EXIF meta data to JPEG images. It tries to

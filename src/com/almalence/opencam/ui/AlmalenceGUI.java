@@ -7620,7 +7620,6 @@ public class AlmalenceGUI extends GUI implements
 
 		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerHeight);
 		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerWidth);
-		Log.e("!!!!!!!!!!!", "Wid and height "+ width + " " + height);
 		Animation rotation = new RotateAnimation(0, 360, width/2, height/2);
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());
