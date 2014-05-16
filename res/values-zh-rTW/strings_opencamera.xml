@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="app_name">一個更好的相機</string>
+    <string name="app_name">更好相機</string>
     <string name="Pref_Billing_Left">%1$s 模式剩餘拍攝次數: %2$d</string>
     <string name="cannot_create_jpeg">出錯: 無法儲存圖像!</string>
     <string name="choose_folder_pick">使用此資料夾</string>

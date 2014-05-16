@@ -638,7 +638,7 @@
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:background="@android:color/transparent" 
+			android:background="@drawable/blacktransparentlayerpulldownmenu" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"
 			android:paddingBottom="5dip"
@@ -647,9 +647,10 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/layout_border"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:background="@drawable/blacktransparentlayerpulldownmenu"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+    		android:layout_gravity="center">
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
