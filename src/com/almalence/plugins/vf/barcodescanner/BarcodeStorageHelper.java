@@ -16,7 +16,12 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
+//-+- -->
 
 public class BarcodeStorageHelper {
 	

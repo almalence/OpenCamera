@@ -2,7 +2,6 @@ package com.almalence.plugins.vf.barcodescanner;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 
 public abstract class RotateDialog extends Dialog {

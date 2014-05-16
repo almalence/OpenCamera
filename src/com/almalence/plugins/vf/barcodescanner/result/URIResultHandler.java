@@ -20,7 +20,12 @@ import java.util.Locale;
 
 import android.app.Activity;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.URIParsedResult;
 

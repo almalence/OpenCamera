@@ -24,7 +24,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.util.Log;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.google.zxing.client.result.CalendarParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 
