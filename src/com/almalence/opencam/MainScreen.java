@@ -2392,7 +2392,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 			
 			try{
-				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Getting data for store");
 				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
 				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
 				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
