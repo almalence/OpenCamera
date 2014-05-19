@@ -55,13 +55,14 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginExport;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+//-+- -->
 import com.almalence.plugins.export.standard.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.standard.ExifDriver.ExifManager;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 import com.almalence.ui.RotateImageView;
-//-+- -->
+
 import com.almalence.util.MLocation;
 
 /***

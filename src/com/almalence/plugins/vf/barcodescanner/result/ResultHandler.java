@@ -1,7 +1,6 @@
 package com.almalence.plugins.vf.barcodescanner.result;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+
 import java.util.Locale;
 
 import android.app.Activity;
@@ -12,11 +11,16 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
-import com.google.zxing.client.result.ResultParser;
+
 
 /**
  * A base class for the Android-specific barcode handlers. These allow the app to polymorphically
