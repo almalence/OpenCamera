@@ -1114,23 +1114,35 @@ public class PluginManager {
 			}
 			addHeadersContent(pf, inactivePlugins, true);
 		} 
-//		else if ("plugins_settings".equals(settings)) 
-//		{
-//			//<!-- -+-
+		else if ("plugins_settings".equals(settings)) 
+		{
+			//<!-- -+-
 //			if (MainScreen.thiz.isUnlockedAll())
 //			{
 //				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
 ////				return;
 //			}
-//
+
 //			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 //			if (false == prefs.getBoolean("unlock_all_forever", false))
 //			{
 //				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
 //				MainScreen.thiz.onBillingPreferenceCreate(pf);
 //			}
-//			//-+- -->
-//		}
+			pf.getActivity().finish();
+			Preferences.closePrefs();
+
+			new CountDownTimer(200, 200) {
+				public void onTick(long millisUntilFinished) {
+				}
+	
+				public void onFinish() {
+					MainScreen.guiManager.showStore();
+				}
+			}.start();
+			
+			//-+- -->
+		}
 
 		loadStandardSettingsAfter(pf, settings);
 	}

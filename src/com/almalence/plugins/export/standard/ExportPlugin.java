@@ -526,20 +526,22 @@ public class ExportPlugin extends PluginExport
 		            } else {
 		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		            	String sceneMode = params.getSceneMode();
-		            	
-		            	int sceneModeVal = 0;
-		            	if (sceneMode.equals(Parameters.SCENE_MODE_LANDSCAPE)) {
-		            		sceneModeVal = 1;
+		            	if (null != sceneMode)
+		            	{
+			            	int sceneModeVal = 0;
+			            	if (sceneMode.equals(Parameters.SCENE_MODE_LANDSCAPE)) {
+			            		sceneModeVal = 1;
+			            	}
+			            	if (sceneMode.equals(Parameters.SCENE_MODE_PORTRAIT)) {
+			            		sceneModeVal = 2;
+			            	}
+			            	if (sceneMode.equals(Parameters.SCENE_MODE_NIGHT)) {
+			            		sceneModeVal = 3;
+			            	}
+			            	
+			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            	}
-		            	if (sceneMode.equals(Parameters.SCENE_MODE_PORTRAIT)) {
-		            		sceneModeVal = 2;
-		            	}
-		            	if (sceneMode.equals(Parameters.SCENE_MODE_NIGHT)) {
-		            		sceneModeVal = 3;
-		            	}
-		            	
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            }
 		            if(tag_white_balance != null) {
 		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
@@ -552,43 +554,46 @@ public class ExportPlugin extends PluginExport
 		            	
 		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
 		            	String whiteBalance = params.getWhiteBalance();
-		            	int whiteBalanceVal;
-		            	int lightSourceVal;
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_AUTO)) {
-		            		whiteBalanceVal = 0;
-		            		lightSourceVal = 0;
-		            	} else {
-		            		whiteBalanceVal = 1;
-		            		lightSourceVal = 0;
+		            	if (null != whiteBalance)
+		            	{
+			            	int whiteBalanceVal;
+			            	int lightSourceVal;
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_AUTO)) {
+			            		whiteBalanceVal = 0;
+			            		lightSourceVal = 0;
+			            	} else {
+			            		whiteBalanceVal = 1;
+			            		lightSourceVal = 0;
+			            	}
+	
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_DAYLIGHT)) {
+			            		lightSourceVal = 1;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_FLUORESCENT)) {
+			            		lightSourceVal = 2;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_WARM_FLUORESCENT)) {
+			            		lightSourceVal = 2;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_INCANDESCENT)) {
+			            		lightSourceVal = 3;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_TWILIGHT)) {
+			            		lightSourceVal = 3;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT)) {
+			            		lightSourceVal = 10;
+			            	}
+			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_SHADE)) {
+			            		lightSourceVal = 11;
+			            	}
+			            	
+			            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
+		            		
+		            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            	}
-
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_DAYLIGHT)) {
-		            		lightSourceVal = 1;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_FLUORESCENT)) {
-		            		lightSourceVal = 2;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_WARM_FLUORESCENT)) {
-		            		lightSourceVal = 2;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_INCANDESCENT)) {
-		            		lightSourceVal = 3;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_TWILIGHT)) {
-		            		lightSourceVal = 3;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT)) {
-		            		lightSourceVal = 10;
-		            	}
-		            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_SHADE)) {
-		            		lightSourceVal = 11;
-		            	}
-		            	
-		            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
-	            		
-	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            }
 		            if(tag_make != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
