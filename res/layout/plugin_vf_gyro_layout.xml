@@ -12,17 +12,23 @@
         android:layout_centerInParent="true"
         android:background="@drawable/horizon_indicator_aim" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/horizon_indicator_mark_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center" >
 
         <com.almalence.ui.RotateImageView
-            android:id="@+id/horizon_indicator_mark"
+            android:id="@+id/horizon_indicator_mark_horizontal"
             android:layout_width="192dp"
             android:layout_height="192dp"
             android:src="@drawable/horizon_indicator_mark" />
-    </LinearLayout>
+        
+        <com.almalence.ui.RotateImageView
+            android:id="@+id/horizon_indicator_mark_vertical"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:src="@drawable/horizon_indicator_mark" />
+    </RelativeLayout>
 
 </RelativeLayout>

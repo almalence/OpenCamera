@@ -95,7 +95,7 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 		
 	}
 	
-	public float getHorizonErrorAngle()
+	public float getVerticalHorizonErrorAngle()
 	{
 		final Vector3d top;
 		final Vector3d dir;
@@ -118,7 +118,7 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 		final float plane_top_y = topProjection.z;
 		
 		float angle;
-		if (Math.abs(plane_top_x) > 0.05f && Math.abs(plane_top_y) > 0.05f)
+		if (Math.abs(plane_top_x) > 0.03f && Math.abs(plane_top_y) > 0.03f)
 		{
 			angle = (float)Math.asin(plane_top_x / Math.sqrt(plane_top_x * plane_top_x + plane_top_y * plane_top_y));
 			
@@ -134,6 +134,46 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 		
 		return angle;
 	}	
+	
+	public float getHorizontalHorizonErrorAngle()
+	{
+		final Vector3d top;
+		final Vector3d dir;
+		
+		synchronized (this.sideVector) 
+		{
+			top = new Vector3d(this.sideVector);
+		}
+		synchronized (this.currentVector)
+		{
+			dir = new Vector3d(this.currentVector);
+		}
+		
+		final float t = (dir.x * top.y - dir.y * top.x) / (dir.x * dir.x + dir.y * dir.y);
+		
+		final Vector3d topProjection = new Vector3d(top.x + dir.y * t, top.y - dir.x * t, top.z);
+
+		final float plane_top_x_signum = Math.signum(topProjection.x) == Math.signum(dir.x) ? 1.0f : -1.0f;
+		final float plane_top_x = plane_top_x_signum * (float)Math.sqrt(topProjection.x * topProjection.x + topProjection.y * topProjection.y);
+		final float plane_top_y = topProjection.z;
+		
+		float angle;
+		if (Math.abs(plane_top_x) > 0.03f && Math.abs(plane_top_y) > 0.03f)
+		{
+			angle = (float)Math.asin(plane_top_x / Math.sqrt(plane_top_x * plane_top_x + plane_top_y * plane_top_y));
+			
+			if (plane_top_y < 0.0f)		
+			{
+				angle += Math.signum(angle) * (float)Math.PI / 2.0f;
+			}
+		}
+		else
+		{
+			angle = 0.0f;
+		}
+		
+		return angle;
+	}
 	
 	public float getHorizonSideErrorAngle()
 	{
@@ -157,7 +197,7 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 		final float plane_top_x = plane_top_x_signum * (float)Math.sqrt(topProjection.x * topProjection.x + topProjection.y * topProjection.y);
 		final float plane_top_y = topProjection.z;
 
-		if (Math.abs(plane_top_x) > 0.05f && Math.abs(plane_top_y) > 0.05f)
+		if (Math.abs(plane_top_x) > 0.01f && Math.abs(plane_top_y) > 0.01f)
 		{
 			float angle = (float)Math.asin(plane_top_x / Math.sqrt(plane_top_x * plane_top_x + plane_top_y * plane_top_y));
 			
@@ -175,6 +215,6 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 	}
 
 	public void onDrawFrame() {
-		gyro.updateHorizonIndicator(getHorizonErrorAngle(), getHorizonSideErrorAngle());
+		gyro.updateHorizonIndicator(getVerticalHorizonErrorAngle(), getHorizontalHorizonErrorAngle(), getHorizonSideErrorAngle());
 	}
 }
