@@ -81,7 +81,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Object removal help", MainScreen.thiz.getResources().getString(R.string.ObjectRemoval_Help), R.drawable.plugin_help_object, "objectRemovalShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.ObjectRemoval_Help_Header), MainScreen.thiz.getResources().getString(R.string.ObjectRemoval_Help), R.drawable.plugin_help_object, "objectRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()

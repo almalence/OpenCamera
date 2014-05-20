@@ -146,7 +146,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Bestshot_Help_Header), MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}

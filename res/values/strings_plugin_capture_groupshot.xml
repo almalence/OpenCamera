@@ -8,6 +8,7 @@
     
     <string name="Pref_GroupShot_Capture_PauseBetweenShots_Title"> Pause between shots</string>
     
+    <string name="GroupShot_Help_Header">Groupshot help</string>
     <string name="GroupShot_Help">1. Hold device still and do not move\n2. Press shutter to start groupshot\n3. Wait until series of images taken and processed\n4. Select base image in thumbnails (touch image anywhere to see all thumbnails)\n5. Select best faces</string>
     
     <string name="Res_GroupShot_Capture_5">5 images</string>
