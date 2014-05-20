@@ -25,10 +25,16 @@ package com.almalence.opencam.ui;
 //-+- -->
 
 
+import java.io.IOException;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
+
+
+
+
 
 
 
@@ -52,6 +58,9 @@ import com.almalence.plugins.capture.video.EglEncoder;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.graphics.SurfaceTexture;
+import android.graphics.SurfaceTexture.OnFrameAvailableListener;
+import android.hardware.Camera;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
@@ -72,21 +81,21 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	
 	private volatile int texture_preview;
 	
-	public GLLayer(Context c)
+	public GLLayer(Context c, int version)
 	{
 		super(c);
-        this.init();       
+        this.init(version);       
 	}
 	
 	public GLLayer(Context c, AttributeSet attrs)
 	{
 		super(c, attrs);
-		this.init();
+		this.init(1);
 	}
 	
-	private void init()
+	private void init(final int version)
 	{
-		this.setEGLContextClientVersion(2);
+		this.setEGLContextClientVersion(version);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			this.setEGLConfigChooser(new EGLConfigChooser()
@@ -112,11 +121,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		this.setRenderer(this);
 	}
 	
-	public int getPreviewTexture()
-	{
-		return this.texture_preview;
-	}
-	
 	@Override
 	public void onResume()
 	{
@@ -134,34 +138,79 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	{
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 		
-		final int[] tex = new int[1];
-		GLES20.glGenTextures(1, tex, 0);
-		this.texture_preview = tex[0];
-		
-		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_preview);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_S,
-				GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_T,
-				GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MIN_FILTER,
-				GLES20.GL_LINEAR);
-		GLES20.glTexParameteri(
-				GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MAG_FILTER,
-				GLES20.GL_LINEAR);
-		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
-		Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): texture created");
-		
 		if (PluginManager.getInstance().shouldPreviewToGPU())
-		{	
-			Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): MSG_START_CAMERA");
-			MainScreen.H.sendEmptyMessage(MainScreen.MSG_START_CAMERA);
+		{
+			final int[] tex = new int[1];
+			GLES20.glGenTextures(1, tex, 0);
+			this.texture_preview = tex[0];
+			
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_preview);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_WRAP_S,
+					GLES20.GL_CLAMP_TO_EDGE);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_WRAP_T,
+					GLES20.GL_CLAMP_TO_EDGE);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_MIN_FILTER,
+					GLES20.GL_LINEAR);
+			GLES20.glTexParameteri(
+					GL_TEXTURE_EXTERNAL_OES,
+					GLES20.GL_TEXTURE_MAG_FILTER,
+					GLES20.GL_LINEAR);
+			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+			Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): texture created");
+	
+			
+			final SurfaceTexture surfaceTexture = new SurfaceTexture(this.texture_preview);
+			surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
+			{
+				final float[] mtx = new float[16];
+				final Runnable runnable = new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							surfaceTexture.updateTexImage();
+							surfaceTexture.getTransformMatrix(mtx);
+							PluginManager.getInstance().onPreviewTextureUpdated(texture_preview, mtx);
+						}
+						catch (final IllegalStateException e)
+						{
+							// This just means surface is not yet created
+							// or already destroyed.
+						}
+					}
+				};
+	
+				@Override
+				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
+				{					
+					MainScreen.thiz.queueGLEvent(this.runnable);
+				}
+			});
+			
+			final Camera camera = MainScreen.thiz.getCamera();
+			if (camera == null)
+			{
+				return;
+			}
+	
+			try
+			{
+				camera.setPreviewTexture(surfaceTexture);
+			}
+			catch (final IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+			camera.startPreview();
 		}
 	}
 	

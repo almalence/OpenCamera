@@ -213,6 +213,7 @@ public class PluginManager {
 	// OpenGL layer messages
 	public static final int MSG_OPENGL_LAYER_SHOW = 70;
 	public static final int MSG_OPENGL_LAYER_HIDE = 71;
+	public static final int MSG_OPENGL_LAYER_SHOW_V2 = 72;
 
 	//events to pause/resume capture. for example to stop capturing in preshot when popup share opened
 	public static final int MSG_STOP_CAPTURE = 80;
@@ -1657,7 +1658,11 @@ public class PluginManager {
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW:
-			MainScreen.thiz.showOpenGLLayer();
+			MainScreen.thiz.showOpenGLLayer(1);
+			break;
+
+		case MSG_OPENGL_LAYER_SHOW_V2:
+			MainScreen.thiz.showOpenGLLayer(2);
 			break;
 
 		case MSG_OPENGL_LAYER_HIDE:

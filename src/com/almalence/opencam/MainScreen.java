@@ -46,8 +46,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
-import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Size;
@@ -65,6 +63,7 @@ import android.os.StatFs;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -84,7 +83,9 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -130,8 +131,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	private Object syncObject = new Object();
 
-	private static final int MSG_ON_RESUME = -3;
-	public static final int MSG_START_CAMERA = -2;
 	private static final int MSG_RETURN_CAPTURED = -1;
 
 	// public static boolean FramesShot = false;
@@ -329,6 +328,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		mApplicationStarted = false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// ensure landscape orientation
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
@@ -383,7 +384,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		surfaceHolder = preview.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		
+
 		orientListener = new OrientationEventListener(this) {
 			@Override
 			public void onOrientationChanged(int orientation) {
@@ -586,31 +587,30 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				
 		}
 	}
-
-	public void glSetRenderingMode(final int renderMode)
-	{
-		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
-				&& renderMode != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
-		{
-			throw new IllegalArgumentException();
-		}
-
-		final GLSurfaceView surfaceView = glView;
-		if (surfaceView != null)
-		{
-			surfaceView.setRenderMode(renderMode);
-		}
-	}
-
-	public void glRequestRender()
-	{
-		final GLSurfaceView surfaceView = glView;
-		if (surfaceView != null)
-		{
-			surfaceView.requestRender();;
-		}
-	}	
 	
+	public void glSetRenderingMode(final int renderMode)
+ 	{
+ 		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
+ 				&& renderMode != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+ 		{
+ 			throw new IllegalArgumentException();
+ 		}
+ 
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.setRenderMode(renderMode);
+ 		}
+ 	}
+ 
+ 	public void glRequestRender()
+ 	{
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.requestRender();;
+ 		}
+ 	}
 	public void queueGLEvent(final Runnable runnable)
 	{
 		final GLSurfaceView surfaceView = glView;
@@ -664,13 +664,60 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	protected void onResume()
 	{		
 		super.onResume();
-		Log.e("Almalence", "onResume()");
 		
 		if (!isCreating)
-		{
-			Log.e("Almalence", "onResume(): MSG_ON_RESUME");
-			H.sendEmptyMessageDelayed(MSG_ON_RESUME, 50);
-		}
+			new CountDownTimer(50, 50) {
+				public void onTick(long millisUntilFinished) {
+				}
+
+				public void onFinish() {
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.mainContext);
+					CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+							: 1;
+					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+							false);
+					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+							false);
+					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
+							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
+					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+					SaveToPath = prefs.getString(SavePathPref, Environment
+							.getExternalStorageDirectory().getAbsolutePath());
+					SaveInputPreference = prefs.getBoolean("saveInputPref",
+							false);
+					SaveToPreference = prefs.getString("saveToPref", "0");
+					SortByDataPreference = prefs.getBoolean("sortByDataPref",
+							false);
+					
+					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+					setScreenBrightness(MaxScreenBrightnessPreference);
+
+					MainScreen.guiManager.onResume();
+					PluginManager.getInstance().onResume();
+					MainScreen.thiz.mPausing = false;
+
+					if (surfaceCreated && (camera == null)) {
+						MainScreen.thiz.findViewById(R.id.mainLayout2)
+								.setVisibility(View.VISIBLE);
+						setupCamera(surfaceHolder);
+
+						if (glView != null && camera != null)
+							glView.onResume();
+
+						PluginManager.getInstance().onGUICreate();
+						MainScreen.guiManager.onGUICreate();
+						
+						if (showStore)
+						{
+							guiManager.showStore();
+							showStore = false;
+						}
+					}
+					orientListener.enable();
+				}
+			}.start();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources()
 				.openRawResourceFd(R.raw.plugin_capture_tick));
@@ -728,8 +775,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		if (glView != null)
-		{
+		if (glView != null) {
 			glView.onPause();
 		}
 
@@ -787,18 +833,39 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
-			final int width, final int height)
-	{		
+			final int width, final int height) {
+
 		if (!isCreating)
-		{
-			surfaceWidth = width;
-			surfaceHeight = height;
-			
-			if (!PluginManager.getInstance().shouldPreviewToGPU())
-			{
-				H.sendEmptyMessageDelayed(MSG_START_CAMERA, 50);
-			}
-		}
+			new CountDownTimer(50, 50) {
+				public void onTick(long millisUntilFinished) {
+
+				}
+
+				public void onFinish() {
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.mainContext);
+					CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+							: 1;
+					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+							false);
+					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+							false);
+					ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
+							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+
+					if (!MainScreen.thiz.mPausing && surfaceCreated
+							&& (camera == null)) {
+						surfaceWidth = width;
+						surfaceHeight = height;
+						MainScreen.thiz.findViewById(R.id.mainLayout2)
+								.setVisibility(View.VISIBLE);
+						setupCamera(holder);
+						PluginManager.getInstance().onGUICreate();
+						MainScreen.guiManager.onGUICreate();
+					}
+				}
+			}.start();
 		else {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -815,58 +882,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				surfaceWidth = width;
 				surfaceHeight = height;
 			}
-		}
-	}
-	
-	public final void setPreviewOutput() throws IOException
-	{		
-		if (PluginManager.getInstance().shouldPreviewToGPU())
-		{
-			final int texture_preview = glView.getPreviewTexture();
-			final SurfaceTexture surfaceTexture = new SurfaceTexture(texture_preview);
-			
-			surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
-			{
-				final float[] mtx = new float[16];
-				final Runnable runnable = new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							surfaceTexture.updateTexImage();
-							surfaceTexture.getTransformMatrix(mtx);
-							PluginManager.getInstance().onPreviewTextureUpdated(texture_preview, mtx);
-						}
-						catch (final IllegalStateException e)
-						{
-							Log.e("Almalence", Util.toString(e.getStackTrace(), '\n'));
-							// This just means surface is not yet created
-							// or already destroyed.
-						}
-					}
-				};
-				
-				@Override
-				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
-				{
-					Log.e("Almalence", "onFrameAvailable()");
-					MainScreen.thiz.queueGLEvent(this.runnable);
-				}
-			});
-			
-			camera.setPreviewTexture(surfaceTexture);
-		}
-		else
-		{
-			try {
-				camera.setDisplayOrientation(90);
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-			}
-
-			camera.setPreviewDisplay(this.surfaceHolder);
 		}
 	}
 
@@ -886,7 +901,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			CameraMirrored = false;
 	}
 
-	private void setupCamera(SurfaceHolder holder) {
+	public void setupCamera(SurfaceHolder holder) {
 		if (camera == null) {
 			try {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -910,6 +925,22 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	    	mVideoStabilizationSupported = isVideoStabilizationSupported();
 
 		PluginManager.getInstance().SelectDefaults();
+
+		// screen rotation
+		if (!PluginManager.getInstance().shouldPreviewToGPU())
+		{
+			try {
+				camera.setDisplayOrientation(90);
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+	
+			try {
+				camera.setPreviewDisplay(holder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		if (MainScreen.camera == null)
 			return;
@@ -989,29 +1020,27 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
 		guiManager.onPluginsInitialized();
-		
+
 		// ----- Start preview and setup frame buffer if needed
 
 		// ToDo: call camera release sequence from onPause somewhere ???
 		new CountDownTimer(10, 10) {
 			@Override
-			public void onFinish()
-			{
-				
-				try // exceptions sometimes happen here when resuming after
-					// processing
+			public void onFinish() {
+				if (!PluginManager.getInstance().shouldPreviewToGPU())
 				{
-					camera.startPreview();
-					setPreviewOutput();
+					try // exceptions sometimes happen here when resuming after
+						// processing
+					{
+						camera.startPreview();
+					} catch (RuntimeException e) {
+						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						return;
+					}
+				}
 
-					camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
-					camera.addCallbackBuffer(pviewBuffer);
-				}
-				catch (final Exception e)
-				{
-					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-					return;
-				}
+				camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
+				camera.addCallbackBuffer(pviewBuffer);
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
@@ -1974,103 +2003,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	//
 	// Description<<
 	@Override
-	public boolean handleMessage(Message msg)
-	{
-		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
-		
-		switch (msg.what)
-		{
-		case MSG_RETURN_CAPTURED:
+	public boolean handleMessage(Message msg) {
+
+		if (msg.what == MSG_RETURN_CAPTURED) {
 			this.setResult(RESULT_OK);
 			this.finish();
 			return true;
-			
-		case MSG_ON_RESUME:
-			Log.e("Almalence", "MSG_ON_RESUME");
-			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-			SaveToPath = prefs.getString(SavePathPref, Environment
-					.getExternalStorageDirectory().getAbsolutePath());
-			SaveInputPreference = prefs.getBoolean("saveInputPref",
-					false);
-			SaveToPreference = prefs.getString("saveToPref", "0");
-			SortByDataPreference = prefs.getBoolean("sortByDataPref",
-					false);
-			
-			MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-			setScreenBrightness(MaxScreenBrightnessPreference);
-
-			MainScreen.guiManager.onResume();
-			PluginManager.getInstance().onResume();
-			MainScreen.thiz.mPausing = false;
-
-			if (glView == null)
-			{
-				glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
-				glView.setLayoutParams(new LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-						glView, 1);
-				glView.setZOrderMediaOverlay(true);
-			}
-			//else
-			{
-				glView.onResume();
-			}
-
-			if (PluginManager.getInstance().isGLSurfaceNeeded())
-			{
-				Log.e("Almalence", "MSG_ON_RESUME: isGLSurfaceNeeded(): true");
-				glView.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				Log.e("Almalence", "MSG_ON_RESUME: isGLSurfaceNeeded(): false");
-				glView.setVisibility(View.INVISIBLE);
-			}
-			
-			if (PluginManager.getInstance().shouldPreviewToGPU())
-			{
-				Log.e("Almalence", "MSG_ON_RESUME: shouldPreviewToGPU(): true");
-				return true;
-			}
-			Log.e("Almalence", "MSG_ON_RESUME: shouldPreviewToGPU(): false");
-			
-		case MSG_START_CAMERA:
-			Log.e("Almalence", "MSG_START_CAMERA");
-			CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-					: 1;
-			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-					false);
-			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-					false);
-			ImageSizeIdxPreference = prefs.getString(CameraIndex == 0 ?
-					"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-			Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
-
-			if (!MainScreen.thiz.mPausing
-					&& (surfaceCreated	|| PluginManager.getInstance().shouldPreviewToGPU())
-					&& (camera == null))
-			{
-				Log.e("Almalence", "MSG_START_CAMERA: to setup");
-				MainScreen.thiz.findViewById(R.id.mainLayout2)
-						.setVisibility(View.VISIBLE);
-				setupCamera(surfaceHolder);
-				
-				PluginManager.getInstance().onGUICreate();
-				MainScreen.guiManager.onGUICreate();
-				
-				if (showStore)
-				{
-					guiManager.showStore();
-					showStore = false;
-				}
-			}
-			orientListener.enable();
-			
-			return true;
 		}
-
 		PluginManager.getInstance().handleMessage(msg);
 
 		return true;
@@ -2085,15 +2024,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
 	}
 
-	public void showOpenGLLayer() {
-		if (glView != null && glView.getVisibility() != View.VISIBLE) {
-			glView.setVisibility(View.VISIBLE);
+	public void showOpenGLLayer(final int version)
+	{
+		if (glView == null)
+		{
+			glView = new GLLayer(MainScreen.mainContext, version);// (GLLayer)findViewById(R.id.SurfaceView02);
+			glView.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
+			glView.setZOrderMediaOverlay(true);
+			glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 		}
 	}
 
-	public void hideOpenGLLayer() {
-		if (glView != null && glView.getVisibility() != View.INVISIBLE) {
-			glView.setVisibility(View.INVISIBLE);
+	public void hideOpenGLLayer()
+	{
+		if (glView != null)
+		{
+			glView.onPause();
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).removeView(glView);
+			glView = null;
 		}
 	}
 

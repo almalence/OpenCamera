@@ -19,6 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.video;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -254,8 +255,34 @@ public class VideoCapturePlugin extends PluginCapture
 	        	try
 	        	{
 		        	camera.stopPreview();
-		        	MainScreen.thiz.setPreviewOutput();
-		        	camera.startPreview();
+			        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+			        if (cp!=null)
+			        {
+			        	SetCameraPreviewSize(cp);
+			        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
+			        }
+		        	//*
+		        	if (VideoCapturePlugin.this.shouldPreviewToGPU())
+		        	{
+		        		MainScreen.thiz.showOpenGLLayer(2);
+		        	}
+		        	else
+		        	{
+		        		MainScreen.thiz.hideOpenGLLayer();
+		    			try {
+		    				camera.setDisplayOrientation(90);
+		    			} catch (RuntimeException e) {
+		    				e.printStackTrace();
+		    			}
+		    	
+		    			try {
+		    				camera.setPreviewDisplay(MainScreen.thiz.surfaceHolder);
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+			        	camera.startPreview();
+		        	}
+		        	//*/
 	        	}
 	        	catch (final Exception e)
 	        	{
@@ -780,7 +807,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (this.shouldPreviewToGPU())
 		{
 	        final Message msg = new Message();
-			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW_V2;
 			MainScreen.H.sendMessage(msg);
 			
 		}
