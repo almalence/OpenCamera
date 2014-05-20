@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -2059,6 +2062,24 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, logMatrix(transform, 4, 4).replace('\n', ' ')));
 		this.droEngine.onPreviewTextureUpdated(texture, transform);
+	}
+	
+	@Override
+	public void onGLSurfaceCreated(final GL10 gl, final EGLConfig config)
+	{		
+		this.droEngine.onSurfaceCreated(gl, config);
+	}
+
+	@Override
+	public void onGLSurfaceChanged(final GL10 gl, final int width, final int height)
+	{
+		this.droEngine.onSurfaceChanged(gl, width, height);
+	}
+
+	@Override
+	public void onGLDrawFrame(final GL10 gl)
+	{
+		this.droEngine.onDrawFrame(gl);
 	}
 	
 	public static String logMatrix(final float[] transform,

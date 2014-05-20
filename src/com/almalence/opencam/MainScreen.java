@@ -329,8 +329,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		mApplicationStarted = false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// ensure landscape orientation
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
@@ -666,9 +664,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	protected void onResume()
 	{		
 		super.onResume();
+		Log.e("Almalence", "onResume()");
 		
 		if (!isCreating)
 		{
+			Log.e("Almalence", "onResume(): MSG_ON_RESUME");
 			H.sendEmptyMessageDelayed(MSG_ON_RESUME, 50);
 		}
 
@@ -728,7 +728,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		glView.onPause();
+		if (glView != null)
+		{
+			glView.onPause();
+		}
 
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
@@ -822,8 +825,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			final int texture_preview = glView.getPreviewTexture();
 			final SurfaceTexture surfaceTexture = new SurfaceTexture(texture_preview);
 			
-			camera.setPreviewTexture(surfaceTexture);
-			
 			surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
 			{
 				final float[] mtx = new float[16];
@@ -836,10 +837,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						{
 							surfaceTexture.updateTexImage();
 							surfaceTexture.getTransformMatrix(mtx);
-							PluginManager.getInstance().onPreviewTextureUpdated(glView.getPreviewTexture(), mtx);
+							PluginManager.getInstance().onPreviewTextureUpdated(texture_preview, mtx);
 						}
 						catch (final IllegalStateException e)
 						{
+							Log.e("Almalence", Util.toString(e.getStackTrace(), '\n'));
 							// This just means surface is not yet created
 							// or already destroyed.
 						}
@@ -848,10 +850,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				
 				@Override
 				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
-				{					
+				{
+					Log.e("Almalence", "onFrameAvailable()");
 					MainScreen.thiz.queueGLEvent(this.runnable);
 				}
 			});
+			
+			camera.setPreviewTexture(surfaceTexture);
 		}
 		else
 		{
@@ -997,7 +1002,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					// processing
 				{
 					camera.startPreview();
-					
 					setPreviewOutput();
 
 					camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
@@ -1982,7 +1986,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			this.finish();
 			return true;
 			
-		case MSG_ON_RESUME:	
+		case MSG_ON_RESUME:
+			Log.e("Almalence", "MSG_ON_RESUME");
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 			SaveToPath = prefs.getString(SavePathPref, Environment
 					.getExternalStorageDirectory().getAbsolutePath());
@@ -2008,26 +2013,31 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						glView, 1);
 				glView.setZOrderMediaOverlay(true);
 			}
-			else
+			//else
 			{
 				glView.onResume();
 			}
 
 			if (PluginManager.getInstance().isGLSurfaceNeeded())
 			{
+				Log.e("Almalence", "MSG_ON_RESUME: isGLSurfaceNeeded(): true");
 				glView.setVisibility(View.VISIBLE);
 			}
 			else
 			{
+				Log.e("Almalence", "MSG_ON_RESUME: isGLSurfaceNeeded(): false");
 				glView.setVisibility(View.INVISIBLE);
 			}
 			
 			if (PluginManager.getInstance().shouldPreviewToGPU())
 			{
+				Log.e("Almalence", "MSG_ON_RESUME: shouldPreviewToGPU(): true");
 				return true;
 			}
+			Log.e("Almalence", "MSG_ON_RESUME: shouldPreviewToGPU(): false");
 			
 		case MSG_START_CAMERA:
+			Log.e("Almalence", "MSG_START_CAMERA");
 			CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
 					: 1;
 			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
@@ -2040,7 +2050,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 			if (!MainScreen.thiz.mPausing
 					&& (surfaceCreated	|| PluginManager.getInstance().shouldPreviewToGPU())
-					&& (camera == null)) {
+					&& (camera == null))
+			{
+				Log.e("Almalence", "MSG_START_CAMERA: to setup");
 				MainScreen.thiz.findViewById(R.id.mainLayout2)
 						.setVisibility(View.VISIBLE);
 				setupCamera(surfaceHolder);

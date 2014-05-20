@@ -38,6 +38,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
 import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
@@ -56,6 +57,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 /**
@@ -84,6 +86,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	
 	private void init()
 	{
+		this.setEGLContextClientVersion(2);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			this.setEGLConfigChooser(new EGLConfigChooser()
@@ -118,6 +121,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	public void onResume()
 	{
 		super.onResume();
+		Log.e("Almalence", "GLSurfaceView.onResume()");
 		
 		this.setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
@@ -152,9 +156,11 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 				GLES20.GL_TEXTURE_MAG_FILTER,
 				GLES20.GL_LINEAR);
 		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+		Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): texture created");
 		
 		if (PluginManager.getInstance().shouldPreviewToGPU())
 		{	
+			Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): MSG_START_CAMERA");
 			MainScreen.H.sendEmptyMessage(MainScreen.MSG_START_CAMERA);
 		}
 	}

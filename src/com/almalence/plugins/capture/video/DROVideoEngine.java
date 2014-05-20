@@ -12,7 +12,6 @@ import com.almalence.util.FpsMeasurer;
 
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 public class DROVideoEngine
@@ -112,8 +111,6 @@ public class DROVideoEngine
         return orientationHistory;
     }
     */
-	
-	private RendererExtended renderer;
 	
 	private final Object stateSync = new Object();
 	private int instance = 0;
@@ -337,6 +334,9 @@ public class DROVideoEngine
 				}
 			}
 			
+			this.previewWidth = MainScreen.previewWidth;
+			this.previewHeight = MainScreen.previewHeight;
+			
 			if (this.instance == 0)
 			{
 				this.instance = RealtimeDRO.initialize(
@@ -344,7 +344,7 @@ public class DROVideoEngine
 						this.previewHeight);
 			}
 			
-			if (this.instance == 0)
+			if (this.instance != 0)
 			{
 				RealtimeDRO.render(
 						this.instance,
@@ -364,13 +364,13 @@ public class DROVideoEngine
 						this.black_level_atten,
 						this.min_limit,
 						this.max_limit,
-						this.renderer.texture_out);
+						this.texture_out);
 				
 				this.forceUpdate = false;
 				
 				if (this.encoder != null)
 				{
-					this.encoder.encode(this.renderer.texture_out);
+					this.encoder.encode(this.texture_out);
 				}
 			}
 			else
@@ -380,99 +380,95 @@ public class DROVideoEngine
 		}
 	}
 	
-	private class RendererExtended implements Renderer
-	{	
-		private int hProgram;
+	
+	
+	private int hProgram;
 		
-		private int surfaceWidth;
-		private int surfaceHeight;
+	private int surfaceWidth;
+	private int surfaceHeight;
 
-		private int texture_out;
+	private int texture_out;
+	
+	private void initGL()
+	{
+		final int[] tex = new int[1];
+		GLES20.glGenTextures(1, tex, 0);
+		this.texture_out = tex[0];
 		
-		private void initGL()
-		{
-			final int[] tex = new int[1];
-			GLES20.glGenTextures(1, tex, 0);
-			this.texture_out = tex[1];
-			
-			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_S,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_WRAP_T,
-					GLES20.GL_CLAMP_TO_EDGE);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_LINEAR);
-			GLES20.glTexParameteri(
-					GL_TEXTURE_EXTERNAL_OES,
-					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_LINEAR);
-			
-			this.hProgram = loadShader(SHADER_VERTEX, SHADER_FRAGMENT);
-		}
+		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_S,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_T,
+				GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MIN_FILTER,
+				GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(
+				GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MAG_FILTER,
+				GLES20.GL_LINEAR);
 		
-		@Override
-		public void onSurfaceCreated(final GL10 gl, final EGLConfig config)
-		{
-			Log.i("Almalence", "Renderer.onSurfaceCreated()");
-			
-			this.initGL();
-			
-			DROVideoEngine.this.fps.flush();
-		}
-
-		@Override
-		public void onSurfaceChanged(final GL10 gl, final int width, final int height)
-		{						
-			Log.i(TAG, String.format("Renderer.onSurfaceChanged(%dx%d)", width, height));
-			
-			this.surfaceWidth = width;
-			this.surfaceHeight = height;
-		}
-
-		@Override
-		public void onDrawFrame(final GL10 gl)
-		{
-			DROVideoEngine.this.fps.measure();
-					
-			this.drawOutputTexture();
-		}
+		this.hProgram = loadShader(SHADER_VERTEX, SHADER_FRAGMENT);
+	}
+	
+	public void onSurfaceCreated(final GL10 gl, final EGLConfig config)
+	{
+		Log.i("Almalence", "Renderer.onSurfaceCreated()");
 		
-		private void drawOutputTexture()
-		{
-			GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-			
-			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+		this.initGL();
+		
+		DROVideoEngine.this.fps.flush();
+	}
 
-			GLES20.glViewport(0, 0, this.surfaceWidth, this.surfaceHeight);
-			
-			GLES20.glUseProgram(this.hProgram);
+	public void onSurfaceChanged(final GL10 gl, final int width, final int height)
+	{						
+		Log.i(TAG, String.format("Renderer.onSurfaceChanged(%dx%d)", width, height));
+		
+		this.surfaceWidth = width;
+		this.surfaceHeight = height;
+	}
 
-			final int ph = GLES20.glGetAttribLocation(this.hProgram, "vPosition");
-			final int tch = GLES20.glGetAttribLocation(this.hProgram, "vTexCoord");
-			final int th = GLES20.glGetUniformLocation(this.hProgram, "sTexture");
+	public void onDrawFrame(final GL10 gl)
+	{
+		DROVideoEngine.this.fps.measure();
+				
+		this.drawOutputTexture();
+	}
+	
+	private void drawOutputTexture()
+	{
+		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+		
+		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
-			GLES20.glUniform1i(th, 0);
+		GLES20.glViewport(0, 0, this.surfaceWidth, this.surfaceHeight);
+		
+		GLES20.glUseProgram(this.hProgram);
 
-			GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, VERTEX_BUFFER);
-			GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2,	UV_BUFFER);
-			GLES20.glEnableVertexAttribArray(ph);
-			GLES20.glEnableVertexAttribArray(tch);
+		final int ph = GLES20.glGetAttribLocation(this.hProgram, "vPosition");
+		final int tch = GLES20.glGetAttribLocation(this.hProgram, "vTexCoord");
+		final int th = GLES20.glGetUniformLocation(this.hProgram, "sTexture");
 
-			GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-			//GLES20.glFlush();
-			//GLES20.glFinish();
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
+		GLES20.glUniform1i(th, 0);
 
-			GLES20.glDisableVertexAttribArray(ph);
-			GLES20.glDisableVertexAttribArray(tch);
-		}
+		GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, VERTEX_BUFFER);
+		GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2,	UV_BUFFER);
+		GLES20.glEnableVertexAttribArray(ph);
+		GLES20.glEnableVertexAttribArray(tch);
+
+		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+		//GLES20.glFlush();
+		//GLES20.glFinish();
+
+		GLES20.glDisableVertexAttribArray(ph);
+		GLES20.glDisableVertexAttribArray(tch);
 	}
 }
 		
