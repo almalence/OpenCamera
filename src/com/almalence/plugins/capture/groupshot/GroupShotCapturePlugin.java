@@ -81,7 +81,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Groupshot help", MainScreen.thiz.getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.GroupShot_Help_Header), MainScreen.thiz.getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()

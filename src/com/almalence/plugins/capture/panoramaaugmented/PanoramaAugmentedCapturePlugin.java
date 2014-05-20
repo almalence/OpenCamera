@@ -395,7 +395,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.clearViews();
 		
-		MainScreen.guiManager.showHelp("Panorama help",
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Panorama_Help_Header),
 				MainScreen.thiz.getResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
