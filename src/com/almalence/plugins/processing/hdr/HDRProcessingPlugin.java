@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.hdr;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -170,6 +171,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		Log.e("HDR", "start processing");
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
     	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
@@ -216,7 +219,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			
 			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
-    	
     	
     		AlmaShotHDR.HDRFreeInstance();
 		    AlmaShotHDR.Release();
@@ -294,9 +296,20 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			    		ev_mark -= 2.0;
 			    	
 			    	String evmark = String.format("_%+3.1fEv", ev_mark);
-		            File file = new File(
-		            		saveDir, fileFormat+evmark+".jpg"); 
-		            FileOutputStream os = new FileOutputStream(file);
+		            File file = new File(saveDir, fileFormat+evmark+".jpg"); 
+		            FileOutputStream os = null;
+		            try
+			    	{
+		            	os = new FileOutputStream(file);
+			    	}
+			    	catch (Exception e)
+			        {
+			    		//save always if not working saving to sdcard
+			        	e.printStackTrace();
+			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+			        	file = new File(saveDir, fileFormat+evmark+".jpg");
+			        	os = new FileOutputStream(file);
+			        }
 		            
 		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
 		            Boolean orientationLandscape = false;
@@ -332,7 +345,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		            	}
 			            os.close();
 			        
-			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+//			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 		            	switch(mDisplayOrientationOnStartProcessing)
 		            	{
@@ -350,8 +363,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
 		            		break;
 		            	}
-		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-			            ei.saveAttributes();
+//		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+//			            ei.saveAttributes();
 		            }
 		            
 		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
@@ -378,13 +391,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 //			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
 //			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
 			            		
-			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-
-			            	ei.saveAttributes();
+//			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+//				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+//				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+//				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+//				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
+//
+//			            	ei.saveAttributes();
 			            	
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
@@ -393,6 +406,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	                
 	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);	                
 	            }
+	        }
+			catch(IOException e) {
+	            e.printStackTrace();
+	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+	            //return;
 	        }
 	        catch (Exception e)
 	        {

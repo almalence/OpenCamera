@@ -43,10 +43,8 @@ import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
-import com.almalence.opencam.R;
 
 
 /***
@@ -270,4 +268,7 @@ public abstract class GUI
 	
 	//mode help procedure
 	abstract public void showHelp(String modeName, String text, int imageID, String Prefs);
+	
+	public void showStore(){}
+	public void hideStore(){}	
 }

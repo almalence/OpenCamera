@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -459,7 +458,7 @@ public class BurstCapturePlugin extends PluginCapture
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);	    			
+    			MainScreen.H.sendMessage(msg);
     			MainScreen.guiManager.lockControls = false;
 			}
 				

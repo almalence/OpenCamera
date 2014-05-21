@@ -24,14 +24,14 @@ public final class CameraParameters
 	public final static int SCENE_MODE_BARCODE = 16;
 	
 	//WHITE BALANCE
-	public final static int AWB_MODE_AUTO = 1;
-	public final static int AWB_MODE_INCANDESCENT = 2;
-	public final static int AWB_MODE_FLUORESCENT = 3;
-	public final static int AWB_MODE_WARM_FLUORESCENT = 4;
-	public final static int AWB_MODE_DAYLIGHT = 5;
-	public final static int AWB_MODE_CLOUDY_DAYLIGHT = 6;
-	public final static int AWB_MODE_TWILIGHT = 7;
-	public final static int AWB_MODE_SHADE = 8;
+	public final static int WB_MODE_AUTO = 1;
+	public final static int WB_MODE_INCANDESCENT = 2;
+	public final static int WB_MODE_FLUORESCENT = 3;
+	public final static int WB_MODE_WARM_FLUORESCENT = 4;
+	public final static int WB_MODE_DAYLIGHT = 5;
+	public final static int WB_MODE_CLOUDY_DAYLIGHT = 6;
+	public final static int WB_MODE_TWILIGHT = 7;
+	public final static int WB_MODE_SHADE = 8;
 	
 	//FOCUS
 	public final static int AF_MODE_AUTO = 1;
@@ -45,19 +45,20 @@ public final class CameraParameters
 	
 	//FLASH
 	public final static int FLASH_MODE_OFF = 0;
-	public final static int FLASH_MODE_SINGLE = 1;
-	public final static int FLASH_MODE_TORCH = 2;
-	public final static int FLASH_MODE_AUTO = 3;
-	public final static int FLASH_MODE_REDEYE = 4;
+	public final static int FLASH_MODE_AUTO = 1;
+	public final static int FLASH_MODE_SINGLE = 2;
+	public final static int FLASH_MODE_REDEYE = 3;
+	public final static int FLASH_MODE_TORCH = 4;
 	
-	//ISO
+	//ISO	
 	public final static int ISO_50 = 0;
-	public final static int ISO_100 = 1;
-	public final static int ISO_200 = 2;
-	public final static int ISO_400 = 3;
-	public final static int ISO_800 = 4;
-	public final static int ISO_1600 = 5;
-	public final static int ISO_3200 = 6;
+	public final static int ISO_AUTO = 1;
+	public final static int ISO_100 = 2;
+	public final static int ISO_200 = 3;
+	public final static int ISO_400 = 4;
+	public final static int ISO_800 = 5;
+	public final static int ISO_1600 = 6;
+	public final static int ISO_3200 = 7;
 	
 	//Possible names of iso in Camera.Parameters variable
 	public final static String isoParam = "iso";

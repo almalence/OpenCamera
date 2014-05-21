@@ -60,6 +60,12 @@
 			 android:title="@string/Pref_PanoramaAugmented_Title">
 			 <extra android:name="type" android:value="panorama_augmented"/>
 		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_BestShot_Title">
+			 <extra android:name="type" android:value="bestshotmode"/>
+		</PreferenceScreen>
 </PreferenceScreen>
 <!--  -+- -->
 <!-- +++
@@ -123,6 +129,12 @@
 			 android:fragment="com.almalence.opencam_plus.Fragment"
 			 android:title="@string/Pref_PanoramaAugmented_Title">
 			 <extra android:name="type" android:value="panorama_augmented"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_BestShot_Title">
+			 <extra android:name="type" android:value="bestshotmode"/>
 		</PreferenceScreen>
 </PreferenceScreen>
 +++ -->

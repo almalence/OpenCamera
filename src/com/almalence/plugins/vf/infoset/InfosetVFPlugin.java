@@ -280,7 +280,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			sceneInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-//			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon("auto")));
 			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(CameraParameters.SCENE_MODE_AUTO)));
 			sceneInfoImage.setRotation(mDeviceOrientation);
 			
@@ -291,8 +290,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			wbInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-//			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon("auto")));
-			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(CameraParameters.AWB_MODE_AUTO)));
+			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(CameraParameters.WB_MODE_AUTO)));
 			wbInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(wbInfoImage);
@@ -302,7 +300,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			focusInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-//			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon("auto")));
 			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(CameraParameters.AF_MODE_AUTO)));
 			focusInfoImage.setRotation(mDeviceOrientation);
 			
@@ -313,7 +310,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			flashInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-//			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon("auto")));
 			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(CameraParameters.FLASH_MODE_SINGLE)));
 			flashInfoImage.setRotation(mDeviceOrientation);
 			

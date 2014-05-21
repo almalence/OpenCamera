@@ -36,7 +36,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="10dp"
-	        android:text="seconds"
+	        android:text="@string/secondsText"
 	         />
 	    
     </LinearLayout>
@@ -49,7 +49,7 @@
 	    	android:layout_marginTop="3dp"
 	    	android:layout_marginBottom="3dp"
 	    	android:layout_alignParentLeft="true"
-	        android:text="Flash at countdown"
+	        android:text="@string/flashTimerText"
 	         />
     
      <CheckBox
@@ -60,7 +60,7 @@
 	    	android:layout_marginTop="3dp"
 	    	android:layout_marginBottom="3dp"
 	    	android:layout_alignParentLeft="true"
-	        android:text="Sound at countdown"
+	        android:text="@string/soundTimerText"
 	         />
     
     <Button
@@ -72,7 +72,7 @@
 	    	android:layout_marginTop="3dp"
 	    	android:layout_marginBottom="3dp"
 	    	android:layout_centerHorizontal="true"
-	        android:text="Set" />
+	        android:text="@string/setTimerText" />
     
 
 </RelativeLayout>

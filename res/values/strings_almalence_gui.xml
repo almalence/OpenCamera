@@ -10,8 +10,9 @@
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
     <string name="Pref_Common_Shutter_Title">Silent operation</string>
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
-    <string name="Pref_Common_ShotOnTap_Title">Shot on tap</string>
-    <string name="Pref_Common_ShotOnTap_Summary">Perform picture taking by tap on screen after success focusing or immediately if focus isn\'t needed</string>
+    <string name="Pref_Common_HWShutter_Title">Use HW shutter to start application</string>
+    <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
     <string name="Pref_Common_JPEGQuality_Title">Jpeg quality</string>
@@ -27,10 +28,16 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Self-timer</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Exposure compensation</string>
     <string name="Pref_Common_DelayedCapture_Title">Self-timer capture</string>
     <string name="Pref_Common_DelayedCapture_Summary">Show self-timer control</string>
     <string name="Pref_ShowHelp_Title">Show help</string>
     <string name="Pref_WhowHelp_Summary">Show help when mode started (Panorama, Object removal, Sequence, Groupshot)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Headset shutter</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Use headset buttons as shutter</string>
+    
+    
+    <string name="helpTextDontShow">Do not show</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">Please wait, processing...</string>
@@ -244,5 +251,13 @@
 	<string name="layout_hint_center">Swipe for more/less info</string>
 	<string name="layout_hint_top_left">Long-press\nto configure</string>
 	<string name="layout_hint_top_center">Pull for more options</string>
+
+	<string name="Dro_Help">Almalence’s new technology makes cameras see like human eye! DRO (Dynamic Range Optimization) uses a technique similar to tone mapping, automatically improves the images in 100% cases and can substitute HDR in most of cases.\n\n1. Press shutter to take picture\n2. Wait until processed in a second!</string>
 	
+	<string name="setTimerText">Set</string>
+	<string name="soundTimerText">Sound at countdown</string>
+	<string name="flashTimerText">Flash at countdown</string>	
+
+	<string name="secondsText">seconds</string>	
+	<string name="okText">Ok</string>
 </resources>

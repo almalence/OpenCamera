@@ -531,9 +531,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 				float max_limit[3] = {3.0f,2.0f,2.0f};
 
 				if (local_mapping)
-					Dro_ComputeToneTable(hist_loc[x][y], lookup_table[x][y], 1, 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
+					Dro_ComputeToneTable(hist_loc[x][y], lookup_table[x][y], 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
 				else
-					Dro_ComputeToneTable(hist, lookup_table[x][y], 1, 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
+					Dro_ComputeToneTable(hist, lookup_table[x][y], 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
 			}
 
 

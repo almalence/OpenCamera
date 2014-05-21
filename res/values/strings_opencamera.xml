@@ -2,8 +2,8 @@
 <resources>
     <string name="Pref_Billing_Left">%1$s mode free shots left: %2$d</string>
     <!-- -+-  -->
-    <string name="app_name">ABC HALv3</string>
-    <string name="Pref_About">A Better Camera HALv3 v3.20\n(©) by Almalence Inc\n</string>
+    <string name="app_name">A Better Camera</string>
+    <string name="Pref_About">A Better Camera  v3.20\n(©) by Almalence Inc\n</string>
     <!--  -+- -->
     <!-- +++
     <string name="app_name">A Better Camera Unlocked</string>
@@ -22,6 +22,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Save to...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Select location to store images</string>
     <string name="choose_folder">Choose folder</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard.</string>
     
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>
@@ -29,7 +30,7 @@
     
     <string name="dimensions_none">None</string>
     
-    <string name="already_unlocked">Already unlocked</string>
+    <string name="already_unlocked">unlocked</string>
     
     <string name="device_name_ss3_01">GT-I9300</string>
     <string name="device_name_ss3_02">SHV-E210</string>
@@ -45,4 +46,9 @@
     <string name="device_name_ss3_12">SCH-I939</string>
     <string name="device_name_ss3_13">GT-I9305</string>
 
+    <string name="volumeBtnTakePic">Take picture</string>
+    <string name="volumeBtnZoom">Zoom</string>
+    <string name="volumeBtnExpoCorrection">Exposure correction</string>
+    <string name="volumeBtnNone">None</string>
+    
 </resources>

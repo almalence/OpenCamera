@@ -23,9 +23,7 @@ import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -148,7 +146,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);		
+				MainScreen.H.sendMessage(msg);
 			}
 			else
 			{
@@ -411,7 +409,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera){}	
+	public void onPreviewFrame(byte[] data, Camera paramCamera) {}
 }

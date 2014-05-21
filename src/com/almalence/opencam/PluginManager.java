@@ -76,14 +76,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.asynctaskmanager.Task;
-
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
-
 import com.almalence.opencam.R;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
@@ -107,6 +105,7 @@ import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
+import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
@@ -277,6 +276,10 @@ public class PluginManager {
 		pluginList.put(histgramVFPlugin.getID(), histgramVFPlugin);
 		listVF.add(histgramVFPlugin);
 
+		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
+		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
+		listVF.add(barcodeScannerVFPlugin);
+		
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
 		listVF.add(zoomVFPlugin);
@@ -751,11 +754,11 @@ public class PluginManager {
 	{
 		//<!-- -+-
 		// check if plugin payed
-//		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
-//		{
-//			MainScreen.guiManager.lockControls = false;
-//			return;
-//		}
+		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
+		{
+			MainScreen.guiManager.lockControls = false;
+			return;
+		}
 		//-+- -->
 		if (shutterRelease == false)
 			return;
@@ -783,11 +786,11 @@ public class PluginManager {
 	{
 		//<!-- -+-
 		// check if plugin payed
-//		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
-//		{
-//			MainScreen.guiManager.lockControls = false;
-//			return;
-//		}
+		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
+		{
+			MainScreen.guiManager.lockControls = false;
+			return;
+		}
 		//-+- -->
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).OnFocusButtonClick();
@@ -1538,10 +1541,10 @@ public class PluginManager {
 
 			// <!-- -+-
 			//if mode free
-//			Mode mode = getActiveMode();
-//	    	if (mode.SKU != null)
-//	    		if (!mode.SKU.isEmpty())
-//	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
+			Mode mode = getActiveMode();
+	    	if (mode.SKU != null)
+	    		if (!mode.SKU.isEmpty())
+	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
 	    	//-+- -->
 
 	    	MainScreen.guiManager.lockControls = false;
@@ -1616,6 +1619,34 @@ public class PluginManager {
 		    	}
 	        }
 			break;
+		
+		case MSG_EXPORT_FINISHED_IOEXCEPTION:
+			// event from plugin that saving finished and memory can be freed
+			if (cntProcessing > 0)
+				cntProcessing--;
+			// free memory in processing
+			if (null != pluginList.get(activeProcessing))
+				pluginList.get(activeProcessing).FreeMemory();
+
+			// notify GUI about saved images
+			MainScreen.guiManager.onExportFinished();
+
+			// notify capture plugins that saving finished
+			if (null != pluginList.get(activeCapture))
+				pluginList.get(activeCapture).onExportFinished();
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
+
+//			if (MainScreen.thiz.getIntent().getAction() != null)
+//	        {
+//		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+//		    			&& MainScreen.ForceFilename == null)
+//		    	{
+//		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+//		    	}
+//	        }
+			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+			break;
 
 		case MSG_DELAYED_CAPTURE: 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1680,12 +1711,52 @@ public class PluginManager {
 			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
 
 			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);
+			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+			if(s5 != null) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+			if(s6 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+			if(s7 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
+			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
+			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+
+		} catch (JpegProcessingException e1)
+		{
+			e1.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean addToSharedMem_ExifTagsFromJPEGForExpoBracketing(final byte[] paramArrayOfByte, int num, final long SessionID) {		
+		try
+    	{
+    		InputStream is = new ByteArrayInputStream(paramArrayOfByte);
+			Metadata metadata = JpegMetadataReader.readMetadata(is);
+			Directory exifDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);		
+			String s1 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME); //ExifInterface.TAG_EXPOSURE_TIME (String)
+			String s2 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER); //ExifInterface.TAG_APERTURE (String)
+			String s3 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FLASH); //ExifInterface.TAG_FLASH (int)
+			String s4 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH); //ExifInterface.TAG_FOCAL_LENGTH (rational)
+			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT); //ExifInterface.TAG_ISO (String)			
+			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
+			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
+			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+
+			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
+			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
+			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
+
+			if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
 			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
 			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
 			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
@@ -1703,7 +1774,7 @@ public class PluginManager {
 		}
 		return true;
 	}
-	
+
 	@TargetApi(19)
 	public boolean addToSharedMem_ExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{
@@ -2048,7 +2119,7 @@ public class PluginManager {
 
 	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
 
-		         Camera camera = CameraController.getInstance().getCamera();
+		         Camera camera = CameraController.getCamera();
 		     	 if (null==camera)
 		     		return;
 
@@ -2078,7 +2149,7 @@ public class PluginManager {
 		    	 countdownHandler.removeCallbacks(FlashOff);	 
 		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
 
-		 	    Camera camera = CameraController.getInstance().getCamera();
+		 	    Camera camera = CameraController.getCamera();
 		    	if (camera != null)		// paranoia
 				{
 					if(CameraController.getInstance().getSupportedFlashModes() != null)
@@ -2132,7 +2203,7 @@ public class PluginManager {
     
     private Runnable FlashOff = new Runnable() {
         public void run() {
-        	Camera camera = CameraController.getInstance().getCamera();
+        	Camera camera = CameraController.getCamera();
         	if (null==camera)
         		return;
         	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
@@ -2144,7 +2215,7 @@ public class PluginManager {
     private Runnable FlashBlink = new Runnable() {
     	boolean isFlashON = false;
         public void run() {
-        	Camera camera = CameraController.getInstance().getCamera();
+        	Camera camera = CameraController.getCamera();
         	if (null==camera)
         		return;
         	

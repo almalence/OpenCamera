@@ -5,5 +5,6 @@
     	  android:layout_height="wrap_content"
 		  android:textSize="@dimen/plugin_vf_infoset_textsize"
 		  android:textStyle="bold"
+		  android:background="@drawable/infounderlayer"
 		  android:gravity="center"
 		  style="@style/OpenCameraStyle"/>

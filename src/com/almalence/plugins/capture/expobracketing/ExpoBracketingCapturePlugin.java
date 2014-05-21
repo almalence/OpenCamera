@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
@@ -88,6 +87,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     // preferences
 	public static boolean RefocusPreference;
 	public static boolean UseLumaAdaptation;
+	private String preferenceSceneMode;
 
 	//set exposure based on onpreviewframe
 	public boolean previewMode = true;
@@ -125,6 +125,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         preferenceEVCompensationValue = prefs.getInt("EvCompensationValue", 0);
+        preferenceSceneMode = prefs.getString("SceneModeValue", Camera.Parameters.SCENE_MODE_AUTO);
+        
         
         if (true == prefs.contains("expo_previewMode")) 
         {
@@ -142,6 +144,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
+        prefs.edit().putString("SceneModeValue", preferenceSceneMode).commit();
 	}
 	
 	@Override
@@ -397,8 +400,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
-    	if(n == 0)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+//    	if(n == 0)
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEGForExpoBracketing(paramArrayOfByte, n + 1, SessionID);
     	
     	if (compressed_frame[n] == 0)
     	{
@@ -859,6 +862,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
     // onPreviewFrame is used only to provide an exact delay between setExposure
     // and takePicture
+	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera)
 	{
 		if (evLatency>0)
@@ -880,6 +884,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 	
+	@TargetApi(19)
+	@Override
 	public void onPreviewAvailable(Image im)
 	{
 		if (evLatency>0)

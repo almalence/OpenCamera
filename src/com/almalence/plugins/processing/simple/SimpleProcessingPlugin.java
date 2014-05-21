@@ -127,7 +127,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				PluginManager.getInstance().addToSharedMem("resultframe"+i+Long.toString(sessionID), String.valueOf(yuv));
 			}
 			else
-			{				
+			{
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
 	    		int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)));
 	    		

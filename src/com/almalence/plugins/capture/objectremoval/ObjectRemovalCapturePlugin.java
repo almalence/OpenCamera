@@ -23,9 +23,7 @@ import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -386,7 +384,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			//Log.e("ObjectRemoval", "MSG_NEXT_FRAME received!");
 			// play tick sound
 			MainScreen.guiManager.showCaptureIndication();
 			MainScreen.thiz.PlayShutter();
@@ -401,15 +398,15 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);	    			
+				MainScreen.H.sendMessage(msg);
 				MainScreen.guiManager.lockControls = false;
 			}
-							
+
     		return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera){}	
+	public void onPreviewFrame(byte[] data, Camera paramCamera) {}
 }

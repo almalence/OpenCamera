@@ -95,7 +95,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0);
+	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0, true);
 
 	env->ReleaseIntArrayElements(in, (jint*)jpeg, JNI_ABORT);
 	env->ReleaseIntArrayElements(in_len, (jint*)jpeg_length, JNI_ABORT);
@@ -197,7 +197,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	//pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
 
-	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
+	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
 
 //	FILE * pFile;
 //	pFile = fopen ("/sdcard/DCIM/blurlessparams.txt","wb");
@@ -218,7 +218,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
-	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
+	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
 
 //	char s[1024];
 //	sprintf(s, "/sdcard/DCIM/blurless_preview.bin");
@@ -249,13 +249,12 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	crop[0]=crop[1]=crop[2]=crop[3]=-1;
 	BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
 
-	char s[1024];
-
-	sprintf(s, "/sdcard/DCIM/night_result.bin");
-	FILE *f=fopen(s, "wb");
-	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-	fclose(f);
-
+//	char s[1024];
+//
+//	sprintf(s, "/sdcard/DCIM/night_result.bin");
+//	FILE *f=fopen(s, "wb");
+//	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//	fclose(f);
 
 	OutNV21 = OutPic;
 	if (jrot)

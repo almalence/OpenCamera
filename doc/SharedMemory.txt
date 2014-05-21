@@ -63,3 +63,5 @@ resultfromshared boolean  - indicates if result stored in shared memory or in he
 							
 							
 mode_name		string		- mode name, to add in exif data							
+
+modeSaveName	string		- mode name to add in export 

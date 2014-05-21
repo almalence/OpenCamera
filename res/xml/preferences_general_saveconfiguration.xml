@@ -28,6 +28,10 @@
                        android:defaultValue="true"
                        android:key="SaveConfiguration_FlashMode"/>
 	<CheckBoxPreference
+                       android:title="@string/Pref_SaveConfiguration_ExpoCompensation_Title"
+                       android:defaultValue="true"
+                       android:key="SaveConfiguration_ExpoCompensation"/>
+	<CheckBoxPreference
                        android:title="@string/Pref_SaveConfiguration_FrontRear_Title"
                        android:defaultValue="true"
                        android:key="SaveConfiguration_FrontRearCamera"/>

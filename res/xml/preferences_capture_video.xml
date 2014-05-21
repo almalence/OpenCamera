@@ -17,7 +17,11 @@
     	<CheckBoxPreference
             android:title="@string/Pref_Video_Stabilization_Title"
             android:defaultValue="false"
-            android:summary="@string/Pref_Video_Stabilization_Summary"
             android:key="videoStabilizationPref" />
+    	<CheckBoxPreference
+            android:title="@string/Pref_Video_StartStandard_Title"
+            android:defaultValue="false"
+            android:summary="@string/Pref_Video_StartStandard_Summary"
+            android:key="videoStartStandardPref" />
 </PreferenceCategory>
 </PreferenceScreen>

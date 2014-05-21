@@ -35,7 +35,6 @@ import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
-import com.almalence.opencam.MainScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

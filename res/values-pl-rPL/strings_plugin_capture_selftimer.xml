@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="Pref_SelfTimer_Category_Title">Samowyzwalacz</string>
+	<string name="Pref_SelfTimer_Preference_Title">Przechwyć</string>
+	<string name="Pref_SelfTimer_Preference_Summary">Samowyzwalacz</string>
+	
+	<string name="Pref_SelfTimer_DelayInterval_Title">Wartość samowyzwalacza</string>
+	
+	<string name="Pref_SelfTimer_ImagesAmount_Title">Liczba zdjęć</string>
+	
+	<string name="Pref_SelfTimerCapture_Blinking_Title">Miganie podczas odliczania</string>
+	<string name="Pref_SelfTimerCapture_Blinking_Summary">Lampa błyskowa miga co sekundę</string>
+	
+	<string name="Pref_SelfTimerCapture_Sound_Title">Dźwięk odliczania</string>
+	<string name="Pref_SelfTimerCapture_Sound_Summary">Sygnał co każdą sekundę</string>
+	
+	<string name="Res_SelfTimerCapture_Capture_1">1 obraz</string>
+    <string name="Res_SelfTimerCapture_Capture_2">2 obrazy</string>
+    <string name="Res_SelfTimerCapture_Capture_3">3 obrazy</string>
+</resources>

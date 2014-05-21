@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="Pref_Inactive_Preference_Title">Tryby nieaktywne</string>
+	<string name="Pref_Inactive_Preference_Summary">Inne preferencje</string>	
+	
+	<string name="Pref_Inactive_Title">Nieaktywne opcje</string>
+    <string name="Pref_Inactive_Summary">Inne ustawienia trybów</string>
+    
+    <string name="Pref_Shooting_Inactive_Title">Nieaktywne tryby fotografowania</string>
+    <string name="Pref_Shooting_Inactive_Summary">Inne ustawienia trybów</string>
+    
+    <string name="Pref_About_Title">O aplikacji</string>
+    <string name="Pref_About_Summary">Wersja, licencja, kontakty,</string>
+    
+    <string name="Pref_Only_Advanced">Ustawienia tylko zaawansowane</string>
+</resources>

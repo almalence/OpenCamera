@@ -4,7 +4,7 @@
     	<ListPreference android:key="BestshotImagesAmount" 
     	    			android:title="@string/Pref_Bestshot_ImagesAmount_Title" 
     	    			android:entries="@array/bestshotArray" 
-    	    			android:defaultValue="3" 
+    	    			android:defaultValue="5" 
     	    			android:entryValues="@array/bestshotValues" />
     	
 	</PreferenceCategory>

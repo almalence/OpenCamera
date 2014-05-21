@@ -6,8 +6,12 @@
     <string name="Pref_Video_Preference_Summary">video capturing</string>
     
     <string name="Pref_Video_Stabilization_Title">Video stabilization</string>
-    <string name="Pref_Video_Stabilization_Summary">May corrupt result on some devices</string>
     
     <string name="Pref_Video_ImageSize_Title">Video resolution</string>
     <string name="Pref_Video_None">None</string>
+    
+    <string name="setVideoText">Set</string>
+    
+    <string name="Pref_Video_StartStandard_Title">Standard video camera</string>
+    <string name="Pref_Video_StartStandard_Summary">Use standard camera for video recording</string>
 </resources>

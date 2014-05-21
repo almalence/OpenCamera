@@ -56,6 +56,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	{
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 		
@@ -116,8 +118,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 		}
 		
-//		/**/
-//		File saveDir = PluginManager.getInstance().GetSaveDir();
+		/**/
+//		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 //		String fileFormat;
 //		for (int i =0;i<imagesAmount;i++)
 //		{
@@ -142,7 +144,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
 //				e.printStackTrace();
 //			}
 //			
-//			byte[] frame1 = SwapHeap.SwapFromHeap(
+//			byte[] frame1 = SwapHeap.CopyFromHeap(
 //					compressed_frame[i],
 //					compressed_frame_len[i]);
 //			try {

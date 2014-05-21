@@ -9,7 +9,7 @@ LOCAL_LDLIBS := -ldl -lz -llog
 
 include $(BUILD_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := gbufferlib
-LOCAL_SRC_FILES := ../prebuilt/$(TARGET_ARCH_ABI)/libgbuffer.so
-include $(PREBUILT_SHARED_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := gbufferlib
+#LOCAL_SRC_FILES := ../prebuilt/$(TARGET_ARCH_ABI)/libgbuffer.so
+#include $(PREBUILT_SHARED_LIBRARY)

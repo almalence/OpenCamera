@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-   <dimen name="gridElementSize">150dp</dimen>
-   <dimen name="gridImageSize">70dp</dimen>
-   <dimen name="gridTextLayoutHeight">70dp</dimen>
+   <dimen name="gridElementSize">90dp</dimen>
+   <dimen name="gridImageSize">60dp</dimen>
+   <dimen name="gridImageSize2x">110dp</dimen>
+   <dimen name="gridTextLayoutHeight">40dp</dimen>
    <dimen name="gridTextLayoutWidth">140dp</dimen>
-   <dimen name="gridTextSize">18sp</dimen>
+   <dimen name="gridTextSize">16sp</dimen>
+   
+   <dimen name="gridSettingsTopMargin">190dp</dimen>
+   
    <dimen name="gridModeElementSize">90dp</dimen>
-   <dimen name="gridModeTextLayoutSize">70dp</dimen>
-   <dimen name="gridModeTextSize">18sp</dimen>
+   <dimen name="gridModeTextLayoutSize">60dp</dimen>
+   <dimen name="gridModeTextSize">16sp</dimen>
    <dimen name="gridModeImageSize">70dp</dimen>
-   <dimen name="gridModeVerticalSpacing">20dp</dimen>
+   <dimen name="gridModeImageSize2x">110dp</dimen>
+   <dimen name="gridModeVerticalSpacing">5dp</dimen>
+   
+   <dimen name="settingsModeLayoutWidth">400dp</dimen>
+   <dimen name="modeLayoutWidth">400dp</dimen>
+   
+   <dimen name="gridStoreImageSize">120dp</dimen>
+   <dimen name="gridStoreImageSize2x">250dp</dimen>
+   <dimen name="headerStoreImageSize">210dp</dimen>
    
    <dimen name="mainButtonHeight">65dp</dimen>
    <dimen name="mainButtonHeightSelect">65dp</dimen>
@@ -17,13 +29,15 @@
    <dimen name="scanerWidth">3dp</dimen>
    <dimen name="scanerHeight">60dp</dimen>
    
+   <dimen name="gui_element_size">60dp</dimen>
+   <dimen name="gui_element_2size">120dp</dimen>
    
    <dimen name="infoLayoutWidth">50dp</dimen>
    <dimen name="viewfinderViewsMarginTop">17dp</dimen>
    
    <dimen name="paramsLayoutHeight">75dp</dimen>
    
-   <dimen name="buttonsLayoutMarginTop">25dp</dimen>
+   <dimen name="buttonsLayoutMarginTop">0dp</dimen>
    
    <dimen name="exposureButtonSize">50dp</dimen>
    <dimen name="exposureSeekBarWidth">330dp</dimen>

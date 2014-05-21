@@ -19,4 +19,13 @@
     
     <string name="Panorama_Help">Important: Do not move your hand, rotate device only!\n\n1. Hold device still horizontally\n2. Press shutter to start panorama capture\n3. Rotate device to red guides and stop when green.\n4. Move camera to next guide\n5. To finish panorama - press shutter</string>
     
+    <string name="pref_plugin_capture_panoramaaugmented_frameoverlap_title">Frame overlap</string>
+    
+    <string name="pref_plugin_capture_panoramaaugmented_memory_title">Relax memory constraints</string>
+    <string name="pref_plugin_capture_panoramaaugmented_memory_summary">Allow more frames but may cause a crash due to out of memory</string>    
+    <string name="pref_plugin_capture_panoramaaugmented_aelock_title">Panorama AE/AWB lock</string>
+    
+    <string name="aelockNo">No AE/AWB lock</string>
+    <string name="aelockHorizontal">AE/AWB lock only for horizontal panorama</string>
+    <string name="aelockAlways">Always lock AE/AWB</string>
 </resources>

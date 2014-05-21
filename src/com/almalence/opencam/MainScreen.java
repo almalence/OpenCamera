@@ -29,8 +29,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+//import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -56,6 +59,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -78,19 +82,22 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
-import com.almalence.opencam.billing.IabHelper;
-import com.almalence.opencam.billing.IabResult;
-import com.almalence.opencam.billing.Inventory;
-import com.almalence.opencam.billing.Purchase;
+//<!-- -+-
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.R;
-//<!-- -+-
 import com.almalence.util.AppRater;
+
+import org.onepf.oms.OpenIabHelper;
+import org.onepf.oms.appstore.googleUtils.IabHelper;
+import org.onepf.oms.appstore.googleUtils.IabResult;
+import org.onepf.oms.appstore.googleUtils.Inventory;
+import org.onepf.oms.appstore.googleUtils.Purchase;
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ui.AlmalenceGUI;
@@ -119,7 +126,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = true;
+	public static boolean isHALv3 = false;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -218,10 +225,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 	public static final String EXTRA_TORCH = "WidgetTorchMode";
+	public static final String EXTRA_BARCODE = "WidgetBarcodeMode";
 	
 	public static final String EXTRA_SHOP = "WidgetGoShopping";
 	
 	public static boolean launchTorch = false;
+	public static boolean launchBarcode = false;
 	public static boolean goShopping = false;
 
 	public static final int VOLUME_FUNC_SHUTTER = 0;
@@ -299,6 +308,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
+		launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 		
 		startTime = System.currentTimeMillis();
@@ -329,30 +339,33 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if(launchTorch)
 			prefs.edit().putString(sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
 		
+		if(launchBarcode)
+			prefs.edit().putBoolean("PrefBarcodescannerVF", true).commit();
+		
 		// <!-- -+-
 		
-//		/**** Billing *****/
-//		if (true == prefs.contains("unlock_all_forever")) {
-//			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
-//		}
-//		if (true == prefs.contains("plugin_almalence_hdr")) {
-//			hdrPurchased = prefs.getBoolean("plugin_almalence_hdr", false);
-//		}
-//		if (true == prefs.contains("plugin_almalence_panorama")) {
-//			panoramaPurchased = prefs.getBoolean("plugin_almalence_panorama", false);
-//		}
-//		if (true == prefs.contains("plugin_almalence_moving_burst")) {
-//			objectRemovalBurstPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
-//		}
-//		if (true == prefs.contains("plugin_almalence_groupshot")) {
-//			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
-//		}
-//		
-//		createBillingHandler();
-//		/**** Billing *****/
-//		
-//		//application rating helper
-//		AppRater.app_launched(this);
+		/**** Billing *****/
+		if (true == prefs.contains("unlock_all_forever")) {
+			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
+		}
+		if (true == prefs.contains("plugin_almalence_hdr")) {
+			hdrPurchased = prefs.getBoolean("plugin_almalence_hdr", false);
+		}
+		if (true == prefs.contains("plugin_almalence_panorama")) {
+			panoramaPurchased = prefs.getBoolean("plugin_almalence_panorama", false);
+		}
+		if (true == prefs.contains("plugin_almalence_moving_burst")) {
+			objectRemovalBurstPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
+		}
+		if (true == prefs.contains("plugin_almalence_groupshot")) {
+			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
+		}
+		
+		createBillingHandler();
+		/**** Billing *****/
+		
+		//application rating helper
+		AppRater.app_launched(this);
 		//-+- -->
 		
 		AppWidgetNotifier.app_launched(this);
@@ -501,17 +514,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 		
 		// <!-- -+-
-//		if(goShopping)
-//		{
+		if(goShopping)
+		{
 //			MainScreen.thiz.showUnlock = true;
-//			if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
-//			{
-//				Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-//				return;
-//			}
+			if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
+			{
+				Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+				return;
+			}
 //			Intent shopintent = new Intent(MainScreen.thiz, Preferences.class);
 //			MainScreen.thiz.startActivity(shopintent);
-//		}
+			guiManager.showStore();
+		}
 		//-+- -->
 	}
 
@@ -656,9 +670,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		MainScreen.cameraController.onDestroy();
 
 		// <!-- -+-
-//		/**** Billing *****/
-//		destroyBillingHandler();
-//		/**** Billing *****/
+		/**** Billing *****/
+		destroyBillingHandler();
+		/**** Billing *****/
 		//-+- -->
 		
 		glView = null;
@@ -667,8 +681,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	@Override
 	protected void onResume()
-	{	
-		Log.e("", "ON RESUME!");
+	{
 		super.onResume();
 		
 //		if (!isCreating)
@@ -840,6 +853,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		PluginManager.getInstance().onGUICreate();
 		MainScreen.guiManager.onGUICreate();
+		if (showStore)
+		{
+			guiManager.showStore();
+			showStore = false;
+		}
 		orientListener.enable();
 		
 
@@ -852,10 +870,24 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			ScreenTimer.start();
 			isScreenTimerRunning = true;
 		}
-		
 
+		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		
+		long Free = getAvailableInternalMemory();
+		//Log.e("vdsfs", "Memory: free: "+Free+"Mb");
+		if (Free<30)
+			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 
+	private long getAvailableInternalMemory()
+	{
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSize();
+		long availableBlocks = stat.getAvailableBlocks();
+		return availableBlocks * blockSize / 1048576;
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -925,7 +957,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
 			final int width, final int height) {
 
-		Log.e("", "surfaceChanged");
 //		if (!isCreating)
 //		{
 //			if(!isHALv3)
@@ -997,7 +1028,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				}
 
 				public void onFinish() {
-					Log.e("", "surfaceCreated countDownTimer elapsed");
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
 					CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
@@ -1012,7 +1042,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
 							&& (!CameraController.isCameraCreated())) {
-						Log.e("", "surfaceCreated TimeDownTimer elapsed. surfaceCreated and camera == null");
 						surfaceWidth = width;
 						surfaceHeight = height;
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
@@ -1101,7 +1130,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
 						glView, 1);
-				Log.e("GL", "glView added");
 				glView.setZOrderMediaOverlay(true);
 				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 			}
@@ -1212,7 +1240,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			@Override
 			public void onTick(long millisUntilFinished) {
 			}
-		}.start();		
+		}.start();
 	}
 	
 	
@@ -1290,7 +1318,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void surfaceCreated(SurfaceHolder holder) {
 		// ----- Find 'normal' orientation of the device
 
-		Log.e("", "surfaceCreated");
 		Display display = ((WindowManager) this
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		int rotation = display.getRotation();
@@ -1309,7 +1336,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.e("", "surfaceDestroyed");
 		surfaceCreated = false;
 		surfaceJustCreated = false;
 	}
@@ -1480,18 +1506,35 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (!mApplicationStarted)
 			return true;
 
+		//menu button processing
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
 			menuButtonPressed();
 			return true;
 		}
+		//shutter/camera button processing
 		if (keyCode == KeyEvent.KEYCODE_CAMERA
 				|| keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
 			MainScreen.guiManager.onHardwareShutterButtonPressed();
 			return true;
 		}
+		//focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS) {
 			MainScreen.guiManager.onHardwareFocusButtonPressed();
 			return true;
+		}
+		
+		//check if Headset Hook button has some functions except standard
+		if ( keyCode == KeyEvent.KEYCODE_HEADSETHOOK )
+		{
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
+			if (headsetFunc)
+			{
+				MainScreen.guiManager.onHardwareFocusButtonPressed();
+				MainScreen.guiManager.onHardwareShutterButtonPressed();
+				return true;
+			}
 		}
 		
 		//check if volume button has some functions except Zoom-ing
@@ -1522,17 +1565,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			return true;
 
 		// <!-- -+-
-//		if (keyCode == KeyEvent.KEYCODE_BACK)
-//    	{
-//    		if (AppRater.showRateDialogIfNeeded(this))
-//    		{
-//    			return true;
-//    		}
-//    		if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-//    		{
-//    			return true;
-//    		}
-//    	}
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+    	{
+    		if (AppRater.showRateDialogIfNeeded(this))
+    		{
+    			return true;
+    		}
+    		if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+    		{
+    			return true;
+    		}
+    	}
 		//-+- -->
 		
 		if (super.onKeyDown(keyCode, event))
@@ -1618,7 +1661,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (glView != null && glView.getVisibility() == View.GONE) {
 			glView.setVisibility(View.VISIBLE);
 			glView.onResume();
-			Log.e("GL", "glView show");
 		}
 	}
 
@@ -1626,7 +1668,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (glView != null && glView.getVisibility() == View.VISIBLE) {
 			glView.setVisibility(View.GONE);
 			glView.onPause();
-			Log.e("GL", "glView hide");
 		}
 	}
 
@@ -1721,204 +1762,282 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 	/*******************************************************/
 	/************************ Billing ************************/
+
+	private boolean showStore = false;
 // <!-- -+-
-//	IabHelper mHelper;
-//	
-//	private boolean bOnSale = false;
-//
-//	private boolean unlockAllPurchased = false;
-//	private boolean hdrPurchased = false;
-//	private boolean panoramaPurchased = false;
-//	private boolean objectRemovalBurstPurchased = false;
-//	private boolean groupShotPurchased = false;
-//
-//	public boolean isUnlockedAll()
-//	{
-//		return unlockAllPurchased;
-//	}
-//	
-//	private void createBillingHandler() 
-//	{
-//		try {
-//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
-//			{
-//				hdrPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-//				prefsEditor.commit();
-//			}
-//			if (isInstalled("com.almalence.panorama.smoothpanorama"))
-//			{
-//				panoramaPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-//				prefsEditor.commit();
-//			}
-//	
-//			String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
-//			// Create the helper, passing it our context and the public key to
-//			// verify signatures with
-//			Log.v("Main billing", "Creating IAB helper.");
-//			mHelper = new IabHelper(this, base64EncodedPublicKey);
-//	
-//			mHelper.enableDebugLogging(true);
-//	
-//			Log.v("Main billing", "Starting setup.");
-//			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-//				public void onIabSetupFinished(IabResult result) 
-//				{
-//					try {
-//						Log.v("Main billing", "Setup finished.");
-//		
-//						if (!result.isSuccess()) {
-//							Log.v("Main billing", "Problem setting up in-app billing: "
-//									+ result);
-//							return;
-//						}
-//		
-//						List<String> additionalSkuList = new ArrayList<String>();
-//						additionalSkuList.add("plugin_almalence_hdr");
-//						additionalSkuList.add("plugin_almalence_panorama");
-//						additionalSkuList.add("unlock_all_forever");
-//						additionalSkuList.add("plugin_almalence_moving_burst");
-//						additionalSkuList.add("plugin_almalence_groupshot");
-//						
-//						//for sale
-//						additionalSkuList.add("abc_sale_controller1");
-//						additionalSkuList.add("abc_sale_controller2");
-//		
-//						Log.v("Main billing", "Setup successful. Querying inventory.");
-//						mHelper.queryInventoryAsync(true, additionalSkuList,
-//								mGotInventoryListener);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						Log.e("Main billing",
-//								"onIabSetupFinished exception: " + e.getMessage());
-//					}
-//				}
-//			});
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("Main billing",
-//					"createBillingHandler exception: " + e.getMessage());
-//		}
-//	}
-//
-//	private void destroyBillingHandler() {
-//		try {
-//			if (mHelper != null)
-//				mHelper.dispose();
-//			mHelper = null;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("Main billing",
-//					"destroyBillingHandler exception: " + e.getMessage());
-//		}
-//	}
-//
-//	public String titleUnlockAll = "$6.95";
-//	public String titleUnlockHDR = "$2.99";
-//	public String titleUnlockPano = "$2.99";
-//	public String titleUnlockMoving = "$2.99";
-//	public String titleUnlockGroup = "$2.99";
-//	
-//	public String summaryUnlockAll = "";
-//	public String summaryUnlockHDR = "";
-//	public String summaryUnlockPano = "";
-//	public String summaryUnlockMoving = "";
-//	public String summaryUnlockGroup = "";
-//	
-//	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-//		public void onQueryInventoryFinished(IabResult result,
-//				Inventory inventory) {
-//			if (inventory == null)
-//			{
-//				Log.e("Main billing", "mGotInventoryListener inventory null ");
-//				return;
-//			}
-//
-//			SharedPreferences prefs = PreferenceManager
-//					.getDefaultSharedPreferences(MainScreen.mainContext);
-//			
-//			if (inventory.hasPurchase("plugin_almalence_hdr")) {
-//				hdrPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-//				prefsEditor.commit();
-//			}
-//			if (inventory.hasPurchase("plugin_almalence_panorama")) {
-//				panoramaPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-//				prefsEditor.commit();
-//			}
-//			if (inventory.hasPurchase("unlock_all_forever")) {
-//				unlockAllPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("unlock_all_forever", true);
-//				prefsEditor.commit();
-//			}
-//			if (inventory.hasPurchase("plugin_almalence_moving_burst")) {
-//				objectRemovalBurstPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-//				prefsEditor.commit();
-//			}
-//			if (inventory.hasPurchase("plugin_almalence_groupshot")) {
-//				groupShotPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-//				prefsEditor.commit();
-//			}
-//			
-//			try{
-//			//if (inventory.hasPurchase("abc_sale_controller1") && inventory.hasPurchase("abc_sale_controller2")) {
-//				
-//				String[] separated = inventory.getSkuDetails("abc_sale_controller1").getPrice().split(",");
-//				int price1 = Integer.valueOf(separated[0]);
-//				String[] separated2 = inventory.getSkuDetails("abc_sale_controller2").getPrice().split(",");
-//				int price2 = Integer.valueOf(separated2[0]);
-//				
-//				if(price1<price2)
-//					bOnSale = true;
-//				else
-//					bOnSale = false;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("bOnSale", bOnSale);
-//				prefsEditor.commit();
-//				
-//				Log.e("Main billing SALE", "Sale status is " + bOnSale);
-//			}
-//			catch(Exception e)
-//			{
-//				Log.e("Main billing SALE", "No sale data available");
-//				bOnSale = false;
-//			}
-//			
-//			titleUnlockAll = inventory.getSkuDetails("unlock_all_forever").getPrice();
-//			titleUnlockHDR = inventory.getSkuDetails("plugin_almalence_hdr").getPrice();
-//			titleUnlockPano = inventory.getSkuDetails("plugin_almalence_panorama").getPrice();
-//			titleUnlockMoving = inventory.getSkuDetails("plugin_almalence_moving_burst").getPrice();
-//			titleUnlockGroup = inventory.getSkuDetails("plugin_almalence_groupshot").getPrice();
-//			
-//			summaryUnlockAll = inventory.getSkuDetails("unlock_all_forever").getDescription();
-//			summaryUnlockHDR = inventory.getSkuDetails("plugin_almalence_hdr").getDescription();
-//			summaryUnlockPano = inventory.getSkuDetails("plugin_almalence_panorama").getDescription();
-//			summaryUnlockMoving = inventory.getSkuDetails("plugin_almalence_moving_burst").getDescription();
-//			summaryUnlockGroup = inventory.getSkuDetails("plugin_almalence_groupshot").getDescription();
-//		}
-//	};
-//
-//	private int HDR_REQUEST = 100;
-//	private int PANORAMA_REQUEST = 101;
-//	private int ALL_REQUEST = 102;
-//	private int OBJECTREM_BURST_REQUEST = 103;
-//	private int GROUPSHOT_REQUEST = 104;
+	OpenIabHelper mHelper;
+	
+	private boolean bOnSale = false;
+	private boolean couponSale = false;
+	
+	private boolean unlockAllPurchased = false;
+	private boolean hdrPurchased = false;
+	private boolean panoramaPurchased = false;
+	private boolean objectRemovalBurstPurchased = false;
+	private boolean groupShotPurchased = false;
+
+	
+	static final String SKU_HDR = "plugin_almalence_hdr";
+	static final String SKU_PANORAMA = "plugin_almalence_panorama";
+	static final String SKU_UNLOCK_ALL = "unlock_all_forever";
+	static final String SKU_UNLOCK_ALL_COUPON = "unlock_all_forever_coupon";
+	static final String SKU_MOVING_SEQ = "plugin_almalence_moving_burst";
+	static final String SKU_GROUPSHOT = "plugin_almalence_groupshot";
+	
+	static final String SKU_SALE1 = "abc_sale_controller1";
+	static final String SKU_SALE2 = "abc_sale_controller2";
+	
+	static {
+		//Yandex store
+        OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
+        OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
+        OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
+        OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
+        
+        OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
+        OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
+        
+        //Amazon store
+        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
+        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_AMAZON, "plugin_almalence_panorama_amazon");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_amazon");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
+        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
+        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
+        
+        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
+        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
+        
+        
+        //Samsung store
+//        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018387");
+//        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018389");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001017613");
+//        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
+//        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018391");
+//        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018384");
+//        
+//        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018393");
+//        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018394");
+    }
+    
+	public void activateCouponSale()
+	{
+		couponSale = true;
+	}
+	
+	public boolean isCouponSale()
+	{
+		return couponSale;
+	}
+	
+	public boolean isUnlockedAll()
+	{
+		return unlockAllPurchased;
+	}
+	
+	private void createBillingHandler() 
+	{
+		try {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+			{
+				hdrPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
+			}
+			if (isInstalled("com.almalence.panorama.smoothpanorama"))
+			{
+				panoramaPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
+			}
+	
+			String base64EncodedPublicKeyGoogle = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
+			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
+			// Create the helper, passing it our context and the public key to
+			// verify signatures with
+			Log.v("Main billing", "Creating IAB helper.");
+			Map<String, String> storeKeys = new HashMap<String, String>();
+	        storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
+	        storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
+			mHelper = new OpenIabHelper(this, storeKeys);
+	
+			mHelper.enableDebugLogging(true);
+	
+			Log.v("Main billing", "Starting setup.");
+			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+				public void onIabSetupFinished(IabResult result) 
+				{
+					try {
+						Log.v("Main billing", "Setup finished.");
+		
+						if (!result.isSuccess()) {
+							Log.v("Main billing", "Problem setting up in-app billing: "
+									+ result);
+							return;
+						}
+		
+						List<String> additionalSkuList = new ArrayList<String>();
+						additionalSkuList.add(SKU_HDR);
+						additionalSkuList.add(SKU_PANORAMA);
+						additionalSkuList.add(SKU_UNLOCK_ALL);
+						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
+						additionalSkuList.add(SKU_MOVING_SEQ);
+						additionalSkuList.add(SKU_GROUPSHOT);
+						
+						//for sale
+						additionalSkuList.add(SKU_SALE1);
+						additionalSkuList.add(SKU_SALE2);
+		
+						Log.v("Main billing", "Setup successful. Querying inventory.");
+						mHelper.queryInventoryAsync(true, additionalSkuList,
+								mGotInventoryListener);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("Main billing",
+								"onIabSetupFinished exception: " + e.getMessage());
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing",
+					"createBillingHandler exception: " + e.getMessage());
+		}
+	}
+
+	private void destroyBillingHandler() {
+		try {
+			if (mHelper != null)
+				mHelper.dispose();
+			mHelper = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing",
+					"destroyBillingHandler exception: " + e.getMessage());
+		}
+	}
+
+	public String titleUnlockAll = "$6.95";
+	public String titleUnlockAllCoupon = "$3.95";
+	public String titleUnlockHDR = "$2.99";
+	public String titleUnlockPano = "$2.99";
+	public String titleUnlockMoving = "$2.99";
+	public String titleUnlockGroup = "$2.99";
+	
+	public String summaryUnlockAll = "";
+	public String summaryUnlockHDR = "";
+	public String summaryUnlockPano = "";
+	public String summaryUnlockMoving = "";
+	public String summaryUnlockGroup = "";
+	
+	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+		public void onQueryInventoryFinished(IabResult result,
+				Inventory inventory) {
+			if (inventory == null)
+			{
+				Log.e("Main billing", "mGotInventoryListener inventory null ");
+				return;
+			}
+
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			
+			if (inventory.hasPurchase(SKU_HDR)) {
+				hdrPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_PANORAMA)) {
+				panoramaPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_UNLOCK_ALL)) {
+				unlockAllPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_UNLOCK_ALL_COUPON)) {
+				unlockAllPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_MOVING_SEQ)) {
+				objectRemovalBurstPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
+			}
+			if (inventory.hasPurchase(SKU_GROUPSHOT)) {
+				groupShotPurchased = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
+			}
+			
+			try{
+				
+				String[] separated = inventory.getSkuDetails(SKU_SALE1).getPrice().split(",");
+				int price1 = Integer.valueOf(separated[0]);
+				String[] separated2 = inventory.getSkuDetails(SKU_SALE2).getPrice().split(",");
+				int price2 = Integer.valueOf(separated2[0]);
+				
+				if(price1<price2)
+					bOnSale = true;
+				else
+					bOnSale = false;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("bOnSale", bOnSale);
+				prefsEditor.commit();
+				
+				Log.e("Main billing SALE", "Sale status is " + bOnSale);
+			}
+			catch(Exception e)
+			{
+				Log.e("Main billing SALE", "No sale data available");
+				bOnSale = false;
+			}
+			
+			try{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Getting data for store");
+				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
+				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
+				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
+				titleUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getPrice();
+				titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
+				titleUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getPrice();
+				
+				summaryUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getDescription();
+				summaryUnlockHDR = inventory.getSkuDetails(SKU_HDR).getDescription();
+				summaryUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getDescription();
+				summaryUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getDescription();
+				summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
+			}catch(Exception e)
+			{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Error Getting data for store!!!!!!!!");
+			}
+		}
+	};
+
+	private int HDR_REQUEST = 100;
+	private int PANORAMA_REQUEST = 101;
+	private int ALL_REQUEST = 102;
+	private int OBJECTREM_BURST_REQUEST = 103;
+	private int GROUPSHOT_REQUEST = 104;
 //	Preference hdrPref, panoramaPref, allPref, objectremovalPref,
 //			groupshotPref;
-//
+
 //	public void onBillingPreferenceCreate(final PreferenceFragment prefActivity) {
 //		allPref = prefActivity.findPreference("purchaseAll");
 //		
@@ -1939,7 +2058,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //				String payload = "";
 //				try {
 //					mHelper.launchPurchaseFlow(MainScreen.thiz,
-//							"unlock_all_forever", ALL_REQUEST,
+//							SKU_UNLOCK_ALL, ALL_REQUEST,
 //							mPreferencePurchaseFinishedListener, payload);
 //				} catch (Exception e) {
 //					e.printStackTrace();
@@ -1983,7 +2102,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //				String payload = "";
 //				try {
 //					mHelper.launchPurchaseFlow(MainScreen.thiz,
-//							"plugin_almalence_hdr", HDR_REQUEST,
+//							SKU_HDR, HDR_REQUEST,
 //							mPreferencePurchaseFinishedListener, payload);
 //				} catch (Exception e) {
 //					e.printStackTrace();
@@ -2024,7 +2143,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //						String payload = "";
 //						try {
 //							mHelper.launchPurchaseFlow(MainScreen.thiz,
-//									"plugin_almalence_panorama",
+//									SKU_PANORAMA,
 //									PANORAMA_REQUEST,
 //									mPreferencePurchaseFinishedListener,
 //									payload);
@@ -2067,7 +2186,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //						String payload = "";
 //						try {
 //							mHelper.launchPurchaseFlow(MainScreen.thiz,
-//									"plugin_almalence_moving_burst",
+//									SKU_MOVING_SEQ,
 //									OBJECTREM_BURST_REQUEST,
 //									mPreferencePurchaseFinishedListener,
 //									payload);
@@ -2109,7 +2228,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //						String payload = "";
 //						try {
 //							mHelper.launchPurchaseFlow(MainScreen.thiz,
-//									"plugin_almalence_groupshot",
+//									SKU_GROUPSHOT,
 //									GROUPSHOT_REQUEST,
 //									mPreferencePurchaseFinishedListener,
 //									payload);
@@ -2132,15 +2251,152 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //			groupshotPref.setSummary(R.string.already_unlocked);
 //		}
 //	}
-//
+
+	public boolean isPurchasedAll()
+	{
+		return unlockAllPurchased;
+	}
+	
+	public boolean isPurchasedHDR()
+	{
+		return hdrPurchased;
+	}
+	
+	public boolean isPurchasedPanorama()
+	{
+		return panoramaPurchased;
+	}
+	
+	public boolean isPurchasedMoving()
+	{
+		return objectRemovalBurstPurchased;
+	}
+	
+	public boolean isPurchasedGroupshot()
+	{
+		return groupShotPurchased;
+	}
+	
+	public void purchaseAll()
+	{
+		if(MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseHDR()
+	{
+		if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_HDR, HDR_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchasePanorama()
+	{
+		if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_PANORAMA,
+					PANORAMA_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseMoving()
+	{
+		if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_MOVING_SEQ,
+					OBJECTREM_BURST_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchaseGroupshot()
+	{
+		if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			//guiManager.hideStore();
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_GROUPSHOT,
+					GROUPSHOT_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
 //	public boolean showUnlock = false;
-//	// Callback for when purchase from preferences is finished
-//	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-//		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-//			Log.v("Main billing", "Purchase finished: " + result
-//					+ ", purchase: " + purchase);
-//			if (result.isFailure()) {
-//				Log.v("Main billing", "Error purchasing: " + result);
+	// Callback for when purchase from preferences is finished
+	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+			showStore = true;
+			Log.v("Main billing", "Purchase finished: " + result
+					+ ", purchase: " + purchase);
+			if (result.isFailure()) {
+				Log.v("Main billing", "Error purchasing: " + result);
 //				new CountDownTimer(100, 100) {
 //					public void onTick(long millisUntilFinished) {
 //					}
@@ -2152,40 +2408,40 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //						startActivity(intent);
 //					}
 //				}.start();
-//				return;
-//			}
-//
-//			SharedPreferences prefs = PreferenceManager
-//					.getDefaultSharedPreferences(MainScreen.mainContext);
-//			
-//			Log.v("Main billing", "Purchase successful.");
-//
-//			if (purchase.getSku().equals("plugin_almalence_hdr")) {
-//				Log.v("Main billing", "Purchase HDR.");
-//
-//				hdrPurchased = true;
+				return;
+			}
+
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.mainContext);
+			
+			Log.v("Main billing", "Purchase successful.");
+
+			if (purchase.getSku().equals(SKU_HDR)) {
+				Log.v("Main billing", "Purchase HDR.");
+
+				hdrPurchased = true;
 //				hdrPref.setEnabled(false);
 //				hdrPref.setSummary(R.string.already_unlocked);
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_panorama")) {
-//				Log.v("Main billing", "Purchase Panorama.");
-//
-//				panoramaPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_PANORAMA)) {
+				Log.v("Main billing", "Purchase Panorama.");
+
+				panoramaPurchased = true;
 //				panoramaPref.setEnabled(false);
 //				panoramaPref.setSummary(R.string.already_unlocked);
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("unlock_all_forever")) {
-//				Log.v("Main billing", "Purchase all.");
-//
-//				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
+				Log.v("Main billing", "Purchase all.");
+
+				unlockAllPurchased = true;
 //				allPref.setEnabled(false);
 //				allPref.setSummary(R.string.already_unlocked);
 //
@@ -2200,253 +2456,271 @@ public class MainScreen extends Activity implements View.OnClickListener,
 //
 //				hdrPref.setEnabled(false);
 //				hdrPref.setSummary(R.string.already_unlocked);
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("unlock_all_forever", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_moving_burst")) {
-//				Log.v("Main billing", "Purchase object removal.");
-//
-//				objectRemovalBurstPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
+				Log.v("Main billing", "Purchase all coupon.");
+
+				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
+				Log.v("Main billing", "Purchase object removal.");
+
+				objectRemovalBurstPurchased = true;
 //				objectremovalPref.setEnabled(false);
 //				objectremovalPref.setSummary(R.string.already_unlocked);
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_groupshot")) {
-//				Log.v("Main billing", "Purchase groupshot.");
-//
-//				groupShotPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_GROUPSHOT)) {
+				Log.v("Main billing", "Purchase groupshot.");
+
+				groupShotPurchased = true;
 //				groupshotPref.setEnabled(false);
 //				groupshotPref.setSummary(R.string.already_unlocked);
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-//				prefsEditor.commit();
-//			}
-//		}
-//	};
-//
-//	public void launchPurchase(String SKU, int requestID) {
-//		String payload = "";
-//		try {
-//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
-//					mPurchaseFinishedListener, payload);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(this, "Error during purchase " + e.getMessage(),
-//					Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-//		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-//			Log.v("Main billing", "Purchase finished: " + result
-//					+ ", purchase: " + purchase);
-//			if (result.isFailure()) {
-//				Log.v("Main billing", "Error purchasing: " + result);
-//				return;
-//			}
-//
-//			Log.v("Main billing", "Purchase successful.");
-//
-//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//			
-//			if (purchase.getSku().equals("plugin_almalence_hdr")) {
-//				Log.v("Main billing", "Purchase HDR.");
-//				hdrPurchased = true;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_panorama")) {
-//				Log.v("Main billing", "Purchase Panorama.");
-//				panoramaPurchased = true;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("unlock_all_forever")) {
-//				Log.v("Main billing", "Purchase unlock_all_forever.");
-//				unlockAllPurchased = true;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("unlock_all_forever", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_moving_burst")) {
-//				Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-//				objectRemovalBurstPurchased = true;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-//				prefsEditor.commit();
-//			}
-//			if (purchase.getSku().equals("plugin_almalence_groupshot")) {
-//				Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
-//				groupShotPurchased = true;
-//				
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-//				prefsEditor.commit();
-//			}
-//
-//			showUnlock = true;
-//			Intent intent = new Intent(MainScreen.thiz, Preferences.class);
-//			startActivity(intent);
-//		}
-//	};
-//
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		Log.v("Main billing", "onActivityResult(" + requestCode + ","
-//				+ resultCode + "," + data);
-//
-//		// Pass on the activity result to the helper for handling
-//		if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
-//			// not handled, so handle it ourselves (here's where you'd
-//			// perform any handling of activity results not related to in-app
-//			// billing...
-//			super.onActivityResult(requestCode, resultCode, data);
-//		} else {
-//			Log.v("Main billing", "onActivityResult handled by IABUtil.");
-//		}
-//	}
-//
-//	// next methods used to store number of free launches.
-//	// using files to store this info
-//
-//	// returns number of launches left
-//	public int getLeftLaunches(String modeID) {
-//		String dirPath = getFilesDir().getAbsolutePath() + File.separator
-//				+ modeID;
-//		File projDir = new File(dirPath);
-//		if (!projDir.exists()) {
-//			projDir.mkdirs();
-//			WriteLaunches(projDir, 30);
-//		}
-//		int left = ReadLaunches(projDir);
-//		return left;
-//	}
-//
-//	// decrements number of launches left
-//	public void decrementLeftLaunches(String modeID) {
-//		String dirPath = getFilesDir().getAbsolutePath() + File.separator
-//				+ modeID;
-//		File projDir = new File(dirPath);
-//		if (!projDir.exists()) {
-//			projDir.mkdirs();
-//			WriteLaunches(projDir, 30);
-//		}
-//
-//		int left = ReadLaunches(projDir);
-//		if (left > 0)
-//			WriteLaunches(projDir, left - 1);
-//	}
-//
-//	// writes number of launches left into memory
-//	private void WriteLaunches(File projDir, int left) {
-//		FileOutputStream fos = null;
-//		try {
-//			fos = new FileOutputStream(projDir + "/left");
-//			fos.write(left);
-//			fos.close();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	// reads number of launches left from memory
-//	private int ReadLaunches(File projDir) {
-//		int left = 0;
-//		FileInputStream fis = null;
-//		try {
-//			fis = new FileInputStream(projDir + "/left");
-//			left = fis.read();
-//			fis.close();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return left;
-//	}
-//
-//	public boolean checkLaunches(Mode mode) {
-//		// if mode free
-//		if (mode.SKU == null)
-//			return true;
-//		if (mode.SKU.isEmpty())
-//			return true;
-//
-//		// if all unlocked
-//		if (unlockAllPurchased == true)
-//			return true;
-//
-//		// if current mode unlocked
-//		if (mode.SKU.equals("plugin_almalence_hdr")) {
-//			if (hdrPurchased == true)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented")) {
-//			if (panoramaPurchased == true)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_moving_burst")) {
-//			if (objectRemovalBurstPurchased == true)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_groupshot")) {
-//			if (groupShotPurchased == true)
-//				return true;
-//		}
-//
-//		// if (!mode.purchased)
-//		{
-//			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-//			if (0 == launchesLeft)// no more launches left
-//			{
-//				// show appstore for this mode
-//				launchPurchase(mode.SKU, 100);
-//				return false;
-//			} else if ((10 == launchesLeft) || (20 == launchesLeft)
-//					|| (5 >= launchesLeft)) {
-//				// show appstore button and say that it cost money
-//				int id = MainScreen.thiz.getResources().getIdentifier(
-//						mode.modeName, "string",
-//						MainScreen.thiz.getPackageName());
-//				String modename = MainScreen.thiz.getResources().getString(id);
-//
-//				String left = String.format(getResources().getString(R.string.Pref_Billing_Left),
-//						modename, launchesLeft);
-//				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
-//				toast.setGravity(Gravity.CENTER, 0, 0);
-//				toast.show();
-//			}
-//		}
-//		return true;
-//	}
-//
-//	private boolean isInstalled(String packageName) {
-//		PackageManager pm = getPackageManager();
-//		boolean installed = false;
-//		try {
-//			pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-//			installed = true;
-//		} catch (PackageManager.NameNotFoundException e) {
-//			installed = false;
-//		}
-//		return installed;
-//	}
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
+			}
+		}
+		
+	};
+
+	public void launchPurchase(String SKU, int requestID) {
+		String payload = "";
+		try {
+			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
+					mPurchaseFinishedListener, payload);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(this, "Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+			
+			guiManager.showStore();
+			Log.v("Main billing", "Purchase finished: " + result
+					+ ", purchase: " + purchase);
+			if (result.isFailure()) {
+				Log.v("Main billing", "Error purchasing: " + result);
+				return;
+			}
+
+			Log.v("Main billing", "Purchase successful.");
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			
+			if (purchase.getSku().equals(SKU_HDR)) {
+				Log.v("Main billing", "Purchase HDR.");
+				hdrPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_PANORAMA)) {
+				Log.v("Main billing", "Purchase Panorama.");
+				panoramaPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
+				Log.v("Main billing", "Purchase unlock_all_forever.");
+				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
+				Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
+				unlockAllPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("unlock_all_forever", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
+				Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
+				objectRemovalBurstPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+				prefsEditor.commit();
+			}
+			if (purchase.getSku().equals(SKU_GROUPSHOT)) {
+				Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
+				groupShotPurchased = true;
+				
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+				prefsEditor.commit();
+			}
+
+			
+		}
+	};
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v("Main billing", "onActivityResult(" + requestCode + ","
+				+ resultCode + "," + data);
+
+		// Pass on the activity result to the helper for handling
+		if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
+			// not handled, so handle it ourselves (here's where you'd
+			// perform any handling of activity results not related to in-app
+			// billing...
+			super.onActivityResult(requestCode, resultCode, data);
+		} else {
+			Log.v("Main billing", "onActivityResult handled by IABUtil.");
+		}
+	}
+	
+		// next methods used to store number of free launches.
+	// using files to store this info
+
+	// returns number of launches left
+	public int getLeftLaunches(String modeID) {
+		String dirPath = getFilesDir().getAbsolutePath() + File.separator
+				+ modeID;
+		File projDir = new File(dirPath);
+		if (!projDir.exists()) {
+			projDir.mkdirs();
+			WriteLaunches(projDir, 30);
+		}
+		int left = ReadLaunches(projDir);
+		return left;
+	}
+
+	// decrements number of launches left
+	public void decrementLeftLaunches(String modeID) {
+		String dirPath = getFilesDir().getAbsolutePath() + File.separator
+				+ modeID;
+		File projDir = new File(dirPath);
+		if (!projDir.exists()) {
+			projDir.mkdirs();
+			WriteLaunches(projDir, 30);
+		}
+
+		int left = ReadLaunches(projDir);
+		if (left > 0)
+			WriteLaunches(projDir, left - 1);
+	}
+
+	// writes number of launches left into memory
+	private void WriteLaunches(File projDir, int left) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(projDir + "/left");
+			fos.write(left);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// reads number of launches left from memory
+	private int ReadLaunches(File projDir) {
+		int left = 0;
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(projDir + "/left");
+			left = fis.read();
+			fis.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return left;
+	}
+
+	public boolean checkLaunches(Mode mode) {
+		// if mode free
+		if (mode.SKU == null)
+			return true;
+		if (mode.SKU.isEmpty())
+			return true;
+
+		// if all unlocked
+		if (unlockAllPurchased == true)
+			return true;
+
+		// if current mode unlocked
+		if (mode.SKU.equals("plugin_almalence_hdr")) {
+			if (hdrPurchased == true)
+				return true;
+		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented")) {
+			if (panoramaPurchased == true)
+				return true;
+		} else if (mode.SKU.equals("plugin_almalence_moving_burst")) {
+			if (objectRemovalBurstPurchased == true)
+				return true;
+		} else if (mode.SKU.equals("plugin_almalence_groupshot")) {
+			if (groupShotPurchased == true)
+				return true;
+		}
+
+		// if (!mode.purchased)
+		{
+			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
+			if (0 == launchesLeft)// no more launches left
+			{
+				// show appstore for this mode
+				launchPurchase(mode.SKU, 100);
+				return false;
+			} else if ((10 == launchesLeft) || (20 == launchesLeft)
+					|| (5 >= launchesLeft)) {
+				// show appstore button and say that it cost money
+				int id = MainScreen.thiz.getResources().getIdentifier(
+						mode.modeName, "string",
+						MainScreen.thiz.getPackageName());
+				String modename = MainScreen.thiz.getResources().getString(id);
+
+				String left = String.format(getResources().getString(R.string.Pref_Billing_Left),
+						modename, launchesLeft);
+				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+			}
+		}
+		return true;
+	}
+
+	private boolean isInstalled(String packageName) {
+		PackageManager pm = getPackageManager();
+		boolean installed = false;
+		try {
+			pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+			installed = true;
+		} catch (PackageManager.NameNotFoundException e) {
+			installed = false;
+		}
+		return installed;
+	}
 	
 // -+- -->
 	
@@ -2455,20 +2729,20 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 // <!-- -+-
 	
-//	//Application rater code
-//	public static void CallStoreFree(Activity act)
-//    {
-//    	try
-//    	{
-//        	Intent intent = new Intent(Intent.ACTION_VIEW);
-//       		intent.setData(Uri.parse("market://details?id=com.almalence.opencam"));
-//	        act.startActivity(intent);
-//    	}
-//    	catch(ActivityNotFoundException e)
-//    	{
-//    		return;
-//    	}
-//    }
+	//Application rater code
+	public static void CallStoreFree(Activity act)
+    {
+    	try
+    	{
+        	Intent intent = new Intent(Intent.ACTION_VIEW);
+       		intent.setData(Uri.parse("market://details?id=com.almalence.opencam"));
+	        act.startActivity(intent);
+    	}
+    	catch(ActivityNotFoundException e)
+    	{
+    		return;
+    	}
+    }
 // -+- -->
 	
 	//widget ad code
@@ -2549,6 +2823,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (false == isSaving)
 		{			
 			prefsEditor.putBoolean("useFrontCamera", false);
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", true);
+		if (false == isSaving)
+		{			
+			prefsEditor.putInt("EvCompensationValue", 0);
 			prefsEditor.commit();
 		}
 	}

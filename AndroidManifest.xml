@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="63"
+      android:versionCode="61"
       android:versionName="3.20">
 <!--  -+- -->
 
@@ -36,6 +36,7 @@
 
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA_SECURE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             
@@ -62,26 +63,30 @@
 				        android:hardwareAccelerated="true"/>
 		<!--  -+- -->
 				
-		<activity android:name="com.almalence.photoeditor.PhotoEditor"
-                android:label="@string/app_name"
-                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-                android:configChanges="keyboardHidden|orientation|screenSize"
-                android:hardwareAccelerated="true">            
-        </activity>
 		
 		<activity android:name="com.almalence.plugins.processing.hdr.ActivityAdjustments"
 		    						android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
 		<activity android:name="com.almalence.opencam.FolderPicker"
 		        android:label="@string/choose_folder"/>
-		<!-- 
+
 		<receiver android:name=".HWButtonStart" >
 		    <intent-filter android:priority="1000">         
 		        <action android:name="android.intent.action.CAMERA_BUTTON" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
-		 -->
+
+		<!-- Uncomment for Amazon market 1st part 
+		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
+	    	<intent-filter>
+	        	<action
+	            	android:name="com.amazon.inapp.purchasing.NOTIFY"
+	            	android:permission="com.amazon.inapp.purchasing.Permission.NOTIFY"
+	    	    />
+		    </intent-filter>
+		</receiver>
+		-->
 		 
  </application>
 	<uses-permission android:name="android.permission.CAMERA" />
@@ -97,7 +102,12 @@
 	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
 <!-- -+-  -->
 	<uses-permission android:name="com.android.vending.BILLING"/>
+	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
 <!--  -+- -->
+
+	<!-- Uncomment for Samsung market 
+	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
+	-->
 
 	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="19"/>

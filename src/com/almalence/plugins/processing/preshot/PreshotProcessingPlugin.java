@@ -171,6 +171,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		
     	sessionID=SessionID;
     	
+    	PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+    	
     	if (0 == PreShot.MakeCopy())
     	{
     		Log.v("Preshot processing", "Preshot processing make copy faied.");

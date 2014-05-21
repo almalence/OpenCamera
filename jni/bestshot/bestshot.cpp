@@ -31,9 +31,6 @@ static unsigned char *yuv[MAX_BEST_FRAMES] = {NULL};
 static void *instance = NULL;
 static int almashot_inited = 0;
 
-#define LOG_TAG "Best shot"
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
-
 
 // This triggers openmp constructors and destructors to be called upon library load/unload
 void __attribute__((constructor)) initialize_openmp() {}
@@ -104,7 +101,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bests
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	DecodeAndRotateMultipleJpegsNoRelease(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0);
+	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0, false);
 
 	env->ReleaseIntArrayElements(in, (jint*)jpeg, JNI_ABORT);
 	env->ReleaseIntArrayElements(in_len, (jint*)jpeg_length, JNI_ABORT);
@@ -187,16 +184,14 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 )
 {
 	int     fullScanMode = 1;
-	int    	BestFrames[MAX_BEST_FRAMES] = {};
-	float 	FramesScores[MAX_BEST_FRAMES] = {};
+	int    	BestFrames[MAX_BEST_FRAMES] = {0};
+	float 	FramesScores[MAX_BEST_FRAMES] = {0};
 	int 	nFramesToSelect = 1;
 
 //	unsigned char * *jpeg;
 //	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
-	LOGE("BestShot_Select start");
 	BestShot_Select(yuv, sx, sy, nFrames, fullScanMode, BestFrames, FramesScores, nFramesToSelect);
-	LOGE("BestShot_Select finish");
 
 	for (int i=0; i<nFrames; ++i)
 	{

@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
 #include <jni.h>
 #include <android/log.h>
 
-#include "almashot.h"
 #include "CreateJavaOutputStreamAdaptor.h"
 #include "YuvToJpegEncoder.h"
 
@@ -101,11 +100,11 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_GetByteFrame
 {
 	int x, y;
 	jbyteArray jpixels = NULL;
-	Uint8 * pixels;
+	unsigned char * pixels;
 
 	jpixels = env->NewByteArray(SX*SY+SX*((SY+1)/2));
 
-	pixels = (Uint8 *)env->GetByteArrayElements(jpixels, NULL);
+	pixels = (unsigned char *)env->GetByteArrayElements(jpixels, NULL);
 
 //	for (y=0; y<SY; ++y)
 //	{
@@ -156,13 +155,13 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 )
 {
 	int i, x, y;
-	Uint8 *Y, *U, *V;
-	Uint8 *UV;
+	unsigned char *Y, *U, *V;
+	unsigned char *UV;
 
 	// All Buffer objects have an effectiveDirectAddress field
-	Y = (Uint8*)env->GetDirectBufferAddress(bufY);
-	U = (Uint8*)env->GetDirectBufferAddress(bufU);
-	V = (Uint8*)env->GetDirectBufferAddress(bufV);
+	Y = (unsigned char*)env->GetDirectBufferAddress(bufY);
+	U = (unsigned char*)env->GetDirectBufferAddress(bufU);
+	V = (unsigned char*)env->GetDirectBufferAddress(bufV);
 
 	if ((Y == NULL) || (U == NULL) || (V == NULL))
 		return -1;

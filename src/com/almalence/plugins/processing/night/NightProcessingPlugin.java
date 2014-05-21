@@ -93,6 +93,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
 		mCameraMirrored = MainScreen.getCameraMirrored();
 		
@@ -168,19 +170,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     	}
     	else
     	{
-//            try
-//            {
-//        	AlmaShotNight.ConvertFromJpeg(
-//        			compressed_frame,
-//        			compressed_frame_len,
-//        			imagesAmount,
-//        			mImageWidth, mImageHeight);
-//            }
-//            catch(RuntimeException exp)
-//            {
-//            	Log.e("NIGHT CAMERA DEBUG", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg EXCEPTION = " + exp.getMessage());	
-//            }
-            
             boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     		if(!isYUV)
     		{
@@ -203,7 +192,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     		
     		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight,
     			Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
-    			8, SaturatedColors? 8 : 0,
+    			9, SaturatedColors? 9 : 0,
     			imagesAmount);
     	}
     	System.gc();

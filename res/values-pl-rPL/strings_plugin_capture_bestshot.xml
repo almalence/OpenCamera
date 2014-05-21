@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Bestshot_Category_Title">Przechwytywanie najlepszego zdjęcia</string>
+    <string name="Pref_Bestshot_Preference_Title">Tryb najlepszego zdjęcia</string>
+    <string name="Pref_Bestshot_Preference_Summary">Ustaw liczbę obrazów do przechwycenia</string>
+
+    <string name="Pref_Bestshot_ImagesAmount_Title">Liczba obrazów</string>
+    
+    <string name="Res_Bestshot_Images_Text"> obrazów</string>
+    
+    <string name="Bestshot_Help">Analizując serię zdjęć, funkcja Best Shot wybierze najlepsze, zwiększając szanse na mniej rozmyte zdjęcie. Best Shot automatycznie wybierze najlepsze i je zapisze.\n\n1. Wybierz liczbę obrazów do przechwycenia.\n2. Trzymaj urządzenie i nie ruszaj nim\n3. Naciśnij przycisk migawki, aby rozpocząć przechwytywanie\n4. Poczekaj, aż seria obrazów zostanie wykonana i przetworzona\n5. Mniej rozmazany obraz zostanie wybrany i zapisany</string>
+    
+    <string name="Res_Bestshot_3">3 obrazy</string>
+    <string name="Res_Bestshot_5">5 obrazów</string>
+    <string name="Res_Bestshot_10">10 obrazów</string>
+    
+</resources>

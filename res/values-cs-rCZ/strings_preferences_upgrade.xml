@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>	
+	<string name="Pref_Upgrde_All_Preference_Title">Odemknout vše</string>
+	<string name="Pref_Upgrde_All_Preference_Summary">Aktivuje všechny současné i budoucí prémiové doplňky</string>
+	
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Vyfotíte nádherné fotky s vysokým dynamickým rozsahem</string>
+	
+	<string name="Pref_Upgrde_Panorama_Preference_Title">HD Panorama</string>
+	<string name="Pref_Upgrde_Panorama_Preference_Summary">Vyfotíte skvělá panoramata ve vysokém rozlišení</string>
+	
+	<string name="Pref_Upgrde_Moving_Preference_Title">Pohybující se objekty</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Odstraníte nechtěné objekty ve vaší fotografii nebo vytvoříte sekvenční snímek z pohybujícího se objektu</string>
+	
+	<string name="Pref_Upgrde_Groupshot_Preference_Title">Skupinový snímek</string>
+	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Vyfotíte nejlepší skupinové snímky</string>
+	
+</resources>

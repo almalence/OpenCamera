@@ -253,6 +253,25 @@ public class HALv3
 	
 	
 	// Camera parameters interface
+	public static boolean isZoomSupportedHALv3()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+		{
+			float maxzoom = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+			return maxzoom > 1? true : false;
+		}
+		
+		return false;			
+	}
+	
+	public static float getMaxZoomHALv3()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);			
+		
+		return 1;
+	}
+	
 	public static boolean isExposureCompensationSupportedHALv3()
 	{
 		if(HALv3.getInstance().camCharacter != null)

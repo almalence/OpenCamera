@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -64,7 +63,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	private int imageAmount = 5;
 
     private boolean inCapture;
-    private int imagesTaken=0;    
+    private int imagesTaken=0;
 	
 	public BestShotCapturePlugin()
 	{
@@ -154,7 +153,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		//MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
+		MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
@@ -197,12 +196,12 @@ public class BestShotCapturePlugin extends PluginCapture
 			takingAlready = true;
 			new CountDownTimer(50, 50) {
 			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
+			     public void onFinish()
 			     {
 					Message msg = new Message();
 					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);					
+					MainScreen.H.sendMessage(msg);
 			     }
 			  }.start();
 		}

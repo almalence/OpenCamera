@@ -109,13 +109,6 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 				}
 				
-//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//				if (params != null && newEv >= minValue)
-//				{
-//					params.setExposureCompensation(newEv);
-//					CameraController.getInstance().setCameraParameters(params);
-//				}	
-
 				if(newEv >= minValue)
 					CameraController.getInstance().setCameraExposureCompensation(newEv);
 				
@@ -123,7 +116,9 @@ public class CapturePlugin extends PluginCapture
 				SharedPreferences.Editor editor = prefs.edit();		        	
 	        	editor.putString("modeStandardPref", ModePreference);
 	        	editor.commit();
-				
+	        	
+	        	if (ModePreference.compareTo("0") == 0)
+	    			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 			}
 		});
 		
@@ -141,13 +136,6 @@ public class CapturePlugin extends PluginCapture
 			int newEv = currEv;
 			int minValue = CameraController.getInstance().getMinExposureCompensation();
 			newEv -= 1;
-			
-//			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//			if (params != null && newEv >= minValue)
-//			{
-//				params.setExposureCompensation(newEv);
-//				CameraController.getInstance().setCameraParameters(params);
-//			}
 			
 			if(newEv >= minValue)
 				CameraController.getInstance().setCameraExposureCompensation(newEv);
@@ -197,6 +185,9 @@ public class CapturePlugin extends PluginCapture
 		this.modeSwitcher.requestLayout();
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		
+		if (ModePreference.compareTo("0") == 0)
+			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 	}
 	
 	
@@ -312,7 +303,7 @@ public class CapturePlugin extends PluginCapture
 				msg.what = PluginManager.MSG_BROADCAST;
 				MainScreen.H.sendMessage(msg);
 				MainScreen.guiManager.lockControls = false;
-			}				
+			}
     		return true;
 		}
 		return false;

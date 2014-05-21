@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.objectremoval;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,6 +144,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		
 		sessionID=SessionID;
 
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
     	mCameraMirrored = MainScreen.getCameraMirrored();
     	
@@ -241,9 +244,20 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     	            {
     	            	
     	            	String index = String.format("_%02d", i);
-    		            File file = new File(
-    		            		saveDir, fileFormat+index+".jpg"); 
-    		            FileOutputStream os = new FileOutputStream(file);
+    		            File file = new File(saveDir, fileFormat+index+".jpg"); 
+    		            FileOutputStream os = null;
+    		            try
+    			    	{
+    		            	os = new FileOutputStream(file);
+    			    	}
+    			    	catch (Exception e)
+    			        {
+    			    		//save always if not working saving to sdcard
+    			        	e.printStackTrace();
+    			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+    			        	file = new File(saveDir, fileFormat+index+".jpg");
+    			        	os = new FileOutputStream(file);
+    			        }
     		            
     		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
     		            Boolean orientationLandscape = false;
@@ -334,6 +348,11 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     	                
     	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
     	            }
+    	        }
+    			catch(IOException e) {
+    	            e.printStackTrace();
+    	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+    	            return;
     	        }
     	        catch (Exception e)
     	        {
@@ -574,7 +593,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-		
 //		try
 //        {	
 //			String[] filesSavedNames = new String[1];

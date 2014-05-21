@@ -23,7 +23,6 @@ import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -389,7 +388,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		if (0==frmCnt%(preview_fps/Integer.parseInt(FPS)))
 		{
-			System.gc();		
+			System.gc();
 		
 			if(frmCnt == 0)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
@@ -589,7 +588,7 @@ public class PreshotCapturePlugin extends PluginCapture
     void afterPause()
     {
     	if (isBuffering)
-		{    		
+		{
     		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 			if (RefocusPreference||(counter>=REFOCUS_INTERVAL) &&
 				!(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
@@ -653,7 +652,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
-	{		
+	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			try

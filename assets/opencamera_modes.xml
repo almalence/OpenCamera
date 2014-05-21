@@ -25,7 +25,9 @@
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
-	    <vf 		id="com.almalence.plugins.histogramvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/> 
+	    <vf 		id="com.almalence.plugins.barcodescannervf"/>   
+	    <vf 		id="com.almalence.plugins.gyrovf"/>  
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
@@ -45,8 +47,8 @@
 		<howtotext  id=""/>
 		
 	</mode>
-	 
-	<!-- <mode id="selftimer" name="selftimer_mode_name"  savename="">
+	<!-- 
+	<mode id="selftimer" name="selftimer_mode_name"  savename="">
 	
 	    <icon		id="gui_almalence_mode_selftimer"/>
 	    
@@ -54,6 +56,7 @@
 	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>      
 	
@@ -67,8 +70,8 @@
 		
 		<howtotext  id=""/>
 		
-	</mode> -->
-
+	</mode> 
+	 -->
 	<mode id="burstmode" name="burst_mode_name"  savename="">
 	    
 	    <icon		id="gui_almalence_mode_burst"/>
@@ -76,6 +79,7 @@
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 		<vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
@@ -196,6 +200,7 @@
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 	    <vf 		id="com.almalence.plugins.zoomvf"/>   
 	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
@@ -311,7 +316,6 @@
 		
 		<howtotext  id=""/>
 	</mode>
-		 
 
 <!-- 
 	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">

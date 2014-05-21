@@ -353,7 +353,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
     @Override
     public void OnShutterClick()
-    {    	
+    {
         if (needAutoFocusCall() && !focusOnShutterDisabled())
         { 
             if (mState == STATE_IDLE &&

@@ -63,6 +63,7 @@ import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
+//-+- -->
 
 /**
  * Collection of utility functions used in this package.
@@ -685,14 +686,6 @@ public final class Util {
     	return Math.round(freeMemory/imageSize);
     }
     
-    /**
-     * Return information about native heap memory:
-     *
-     * [0] = megabytes used
-     * [1] = megabytes free
-     */
-    public static native int[] getMemoryInfo();
-    
     public static
     <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
       List<T> list = new ArrayList<T>(c);
@@ -746,9 +739,4 @@ public final class Util {
         return rect;
     }
     
-    static
-	{
-		System.loadLibrary("utils-image");
-		System.loadLibrary("utils-jni");
-	}
 }

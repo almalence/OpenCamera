@@ -164,27 +164,27 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public final static Map<Integer, String> mode_wb = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.AWB_MODE_AUTO, wbAuto);
-			put(CameraParameters.AWB_MODE_INCANDESCENT, wbIncandescent);
-			put(CameraParameters.AWB_MODE_FLUORESCENT, wbFluorescent);
-			put(CameraParameters.AWB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
-			put(CameraParameters.AWB_MODE_DAYLIGHT, wbDaylight);
-			put(CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
-			put(CameraParameters.AWB_MODE_TWILIGHT, wbTwilight);
-			put(CameraParameters.AWB_MODE_SHADE, wbShade);
+			put(CameraParameters.WB_MODE_AUTO, wbAuto);
+			put(CameraParameters.WB_MODE_INCANDESCENT, wbIncandescent);
+			put(CameraParameters.WB_MODE_FLUORESCENT, wbFluorescent);
+			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
+			put(CameraParameters.WB_MODE_DAYLIGHT, wbDaylight);
+			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
+			put(CameraParameters.WB_MODE_TWILIGHT, wbTwilight);
+			put(CameraParameters.WB_MODE_SHADE, wbShade);
 		}
 	};
 	
 	public final static Map<String, Integer> key_wb = new Hashtable<String, Integer>() {
 		{
-			put(wbAuto, CameraParameters.AWB_MODE_AUTO);
-			put(wbIncandescent, CameraParameters.AWB_MODE_INCANDESCENT);
-			put(wbFluorescent, CameraParameters.AWB_MODE_FLUORESCENT);
-			put(wbWarmFluorescent, CameraParameters.AWB_MODE_WARM_FLUORESCENT);
-			put(wbDaylight, CameraParameters.AWB_MODE_DAYLIGHT);
-			put(wbCloudyDaylight, CameraParameters.AWB_MODE_CLOUDY_DAYLIGHT);
-			put(wbTwilight, CameraParameters.AWB_MODE_TWILIGHT);
-			put(wbShade, CameraParameters.AWB_MODE_SHADE);
+			put(wbAuto, CameraParameters.WB_MODE_AUTO);
+			put(wbIncandescent, CameraParameters.WB_MODE_INCANDESCENT);
+			put(wbFluorescent, CameraParameters.WB_MODE_FLUORESCENT);
+			put(wbWarmFluorescent, CameraParameters.WB_MODE_WARM_FLUORESCENT);
+			put(wbDaylight, CameraParameters.WB_MODE_DAYLIGHT);
+			put(wbCloudyDaylight, CameraParameters.WB_MODE_CLOUDY_DAYLIGHT);
+			put(wbTwilight, CameraParameters.WB_MODE_TWILIGHT);
+			put(wbShade, CameraParameters.WB_MODE_SHADE);
 		}
 	};
 
@@ -865,6 +865,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			camera.startPreview();
 	}
 	
+	public static void stopCameraPreview()
+	{
+		if(camera != null)
+			camera.stopPreview();
+	}
+	
+	public static void lockCamera()
+	{
+		if(camera != null)
+			camera.lock();
+	}
+	
+	public static void unlockCamera()
+	{
+		if(camera != null)
+			camera.unlock();
+	}
+	
 	@TargetApi(15)
 	public void setVideoStabilization(boolean stabilization)
 	{
@@ -906,6 +924,39 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		} else
 //			return false;
 		return true;
+	}
+	
+	public boolean isZoomSupported()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (null==camera)
+	    		return false;
+	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+	        
+	        return cp.isZoomSupported();
+		}
+		else
+		{
+			return HALv3.isZoomSupportedHALv3();
+		}
+	}
+	
+	public int getMaxZoom()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (null==camera)
+	    		return 1;
+	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+	        
+	        return cp.getMaxZoom();
+		}
+		else
+		{
+			float maxZoom = HALv3.getMaxZoomHALv3(); 
+			return (int)maxZoom;
+		}
 	}
 	
 	public boolean isLumaAdaptationSupported()

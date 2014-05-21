@@ -30,7 +30,6 @@ import android.util.Log;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
 import com.almalence.util.Size;
 
 public class AlmaCLRShot

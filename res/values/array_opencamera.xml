@@ -36,10 +36,10 @@
 </string-array>
 
 <string-array name="volumeButtonArrayCommon">
-   <item>Take picture</item>
-   <item>Zoom</item>
-   <item>Exposure correction</item>
-   <item>None</item>
+   <item>@string/volumeBtnTakePic</item>
+   <item>@string/volumeBtnZoom</item>
+   <item>@string/volumeBtnExpoCorrection</item>
+   <item>@string/volumeBtnNone</item>
 </string-array>
  
 <string-array name="volumeButtonValuesCommon">

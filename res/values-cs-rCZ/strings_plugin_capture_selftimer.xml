@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="Pref_SelfTimer_Category_Title">Focení s časovačem</string>
+	<string name="Pref_SelfTimer_Preference_Title">Snímání</string>
+	<string name="Pref_SelfTimer_Preference_Summary">Časovač</string>
+	
+	<string name="Pref_SelfTimer_DelayInterval_Title">Hodnota časovače</string>
+	
+	<string name="Pref_SelfTimer_ImagesAmount_Title">Počet snímků</string>
+	
+	<string name="Pref_SelfTimerCapture_Blinking_Title">Blikání při odpočítávání</string>
+	<string name="Pref_SelfTimerCapture_Blinking_Summary">Blesk bliká každou sekundu odpočtu</string>
+	
+	<string name="Pref_SelfTimerCapture_Sound_Title">Zvuk při odpočtu</string>
+	<string name="Pref_SelfTimerCapture_Sound_Summary">Vydat zvuk každou sekundu odpočtu</string>
+	
+	<string name="Res_SelfTimerCapture_Capture_1">1 fotka</string>
+    <string name="Res_SelfTimerCapture_Capture_2">2 fotky</string>
+    <string name="Res_SelfTimerCapture_Capture_3">3 fotky</string>
+</resources>

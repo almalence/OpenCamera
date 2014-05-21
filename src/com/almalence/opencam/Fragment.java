@@ -23,12 +23,12 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
-import com.almalence.opencam.R;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -84,6 +84,31 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
             }
         });
         
+        
+        CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
+        if (helpPref!=null)
+        	helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick(Preference preference)
+            {
+                if (((CheckBoxPreference)preference).isChecked())
+                {
+                	SharedPreferences prefs = PreferenceManager
+            				.getDefaultSharedPreferences(MainScreen.mainContext);
+                	Editor prefsEditor = prefs.edit();
+                	prefsEditor.putBoolean("droShowHelp", true);
+					prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+					prefsEditor.putBoolean("panoramaShowHelp", true);
+					prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+					prefsEditor.putBoolean("objectRemovalShowHelp", true);
+					prefsEditor.putBoolean("bestShotShowHelp", true);
+					prefsEditor.commit();
+                }
+
+                return true;
+            }
+        });
+        
         ListPreference saveToPreference = (ListPreference)this.findPreference("saveToPref");
         if (saveToPreference!=null)
 	        saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() 
@@ -103,6 +128,12 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					catch (NumberFormatException e)
 					{
 						
+					}
+					
+					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+					{
+						Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+						//return true;
 					}
 					
 					if (v == 2)
@@ -144,19 +175,25 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
     
     static public void setScreenBrightness(boolean setMax)
 	{
-		//ContentResolver cResolver = getContentResolver();
-		Window window = thiz.getActivity().getWindow();
-		
-		WindowManager.LayoutParams layoutpars = window.getAttributes();
-		
-        //Set the brightness of this window	
-		if(setMax)
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
-		else
-			layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-
-        //Apply attribute changes to this window
-        window.setAttributes(layoutpars);
+    	try{
+			//ContentResolver cResolver = getContentResolver();
+			Window window = thiz.getActivity().getWindow();
+			
+			WindowManager.LayoutParams layoutpars = window.getAttributes();
+			
+	        //Set the brightness of this window	
+			if(setMax)
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+			else
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+	
+	        //Apply attribute changes to this window
+	        window.setAttributes(layoutpars);
+    	}
+		catch(Exception e)
+		{
+			
+		}
 	}
     
     static public void closePrefs()

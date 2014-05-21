@@ -27,11 +27,20 @@ package com.almalence.opencam;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class HWButtonStart extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) 
     {
+    	
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        boolean useHWShutterButtonLauncher = prefs.getBoolean("useHWShutterButtonLauncher", false);
+    	
+        if (!useHWShutterButtonLauncher)
+        	return;
+        
     	abortBroadcast();
 
     	Intent startActivity = new Intent();
@@ -41,6 +50,13 @@ public class HWButtonStart extends BroadcastReceiver {
         Intent.FLAG_ACTIVITY_NEW_TASK
         | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(startActivity);
+        /*
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.setClass(context, MainScreen.class);
+        i.addCategory(Intent.CATEGORY_LAUNCHER);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);*/
     }
 }
 	
