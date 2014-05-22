@@ -1,3 +1,4 @@
+<!-- -+-  -->
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -29,3 +30,37 @@
 		</PreferenceScreen>
 		
 </PreferenceScreen>
+<!--  -+- -->
+<!-- +++
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+	    <CheckBoxPreference
+			android:title="@string/Pref_Common_DelayedCapture_Title"
+			android:summary="@string/Pref_Common_DelayedCapture_Summary"
+			android:defaultValue="false" 
+			android:key="showDelayedCapturePrefCommon" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_KeepScreenOn"
+	        android:summary="@string/Pref_KeepScreenOn_Summary"
+	        android:defaultValue="false"
+            android:key="keepScreenOn" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_MaxScreenBrightness"
+	        android:summary="@string/Pref_MaxScreenBrightness_Summary"
+	        android:defaultValue="false"
+            android:key="maxScreenBrightnessPref" />
+	    
+	    <PreferenceScreen 
+            android:fragment="com.almalence.opencam_plus.Fragment" 
+            android:title="@string/moreText" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="vf_more" />
+		</PreferenceScreen>
+		
+</PreferenceScreen>
++++ -->
