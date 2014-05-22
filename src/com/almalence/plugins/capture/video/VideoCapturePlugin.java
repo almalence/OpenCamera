@@ -1019,7 +1019,7 @@ public class VideoCapturePlugin extends PluginCapture
 				Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 			}
             releaseMediaRecorder(); // release the MediaRecorder object
-            CameraController.lockCamera();         // take camera access back from MediaRecorder
+//            CameraController.lockCamera();         // take camera access back from MediaRecorder
 
             CameraController.stopCameraPreview();
 	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();

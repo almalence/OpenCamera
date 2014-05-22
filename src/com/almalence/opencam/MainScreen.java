@@ -231,6 +231,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static boolean launchTorch = false;
 	public static boolean launchBarcode = false;
 	public static boolean goShopping = false;
+	
+	public static int 	  prefFlash = -1;
+	public static boolean prefBarcode = false;
 
 	public static final int VOLUME_FUNC_SHUTTER = 0;
 	public static final int VOLUME_FUNC_ZOOM 	= 1;
@@ -336,10 +339,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefs.edit().putString("defaultModeName", mode).commit();
 		
 		if(launchTorch)
+		{
+			prefFlash = prefs.getInt(sFlashModePref, CameraParameters.FLASH_MODE_AUTO);
 			prefs.edit().putInt(sFlashModePref, CameraParameters.FLASH_MODE_TORCH).commit();
+		}
 		
 		if(launchBarcode)
+		{
+			prefBarcode = prefs.getBoolean("PrefBarcodescannerVF", false);
 			prefs.edit().putBoolean("PrefBarcodescannerVF", true).commit();
+		}
 		
 		// <!-- -+-
 		
@@ -662,7 +671,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		if(launchTorch && prefs.getInt(sFlashModePref, -1) == CameraParameters.FLASH_MODE_TORCH)
 		{
-			prefs.edit().putInt(sFlashModePref, CameraParameters.FLASH_MODE_AUTO).commit();
+			prefs.edit().putInt(sFlashModePref, prefFlash).commit();
+		}
+		if(launchBarcode && prefs.getBoolean("PrefBarcodescannerVF", false))
+		{
+			prefs.edit().putBoolean("PrefBarcodescannerVF", prefBarcode).commit();
 		}
 		MainScreen.guiManager.onDestroy();
 		PluginManager.getInstance().onDestroy();
