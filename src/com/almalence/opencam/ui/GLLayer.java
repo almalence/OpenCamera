@@ -45,6 +45,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
+
 import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
@@ -65,6 +67,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -96,7 +100,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	private void init(final int version)
 	{
 		this.setEGLContextClientVersion(version);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+		if (version >= 2 && VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			this.setEGLConfigChooser(new EGLConfigChooser()
 			{
