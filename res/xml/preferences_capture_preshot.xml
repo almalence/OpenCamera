@@ -32,16 +32,9 @@
 		    android:entries="@array/pauseArrayPreShot" 
 		    android:entryValues="@array/pauseValuesPreShot" 
 		    android:defaultValue="500"/>
-		<CheckBoxPreference
-            android:title="@string/Pref_PreShot_RefocusOnEachShot_Title"
-            android:defaultValue="false"
-            android:summary="@string/Pref_PreShot_RefocusOnEachShot_Summary"
-            android:key="refocusPrefPreShot" />
-		<CheckBoxPreference
-            android:title="@string/Pref_PreShot_Autostart_Title"
-            android:defaultValue="false"
-            android:summary="@string/Pref_PreShot_Autostart_Summary"
-            android:key="autostartPrefPreShot" />
+		
+		
+		<PreferenceScreen android:title="@string/moreText"><CheckBoxPreference android:title="@string/Pref_PreShot_RefocusOnEachShot_Title" android:defaultValue="false" android:summary="@string/Pref_PreShot_RefocusOnEachShot_Summary" android:key="refocusPrefPreShot" /><CheckBoxPreference android:title="@string/Pref_PreShot_Autostart_Title" android:defaultValue="false" android:summary="@string/Pref_PreShot_Autostart_Summary" android:key="autostartPrefPreShot" /></PreferenceScreen>
 		
 	</PreferenceCategory>   
 </PreferenceScreen>
