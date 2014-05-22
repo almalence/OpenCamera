@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/horizon_indicator_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:visibility="invisible" >
+
+    <View
+        android:id="@+id/horizon_indicator_aim"
+        android:layout_width="172dp"
+        android:layout_height="172dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/horizon_indicator_aim" />
+
+    <RelativeLayout
+        android:id="@+id/horizon_indicator_mark_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center" >
+
+        <com.almalence.ui.RotateImageView
+            android:id="@+id/horizon_indicator_mark_horizontal"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:src="@drawable/horizon_indicator_mark" />
+        
+        <com.almalence.ui.RotateImageView
+            android:id="@+id/horizon_indicator_mark_vertical"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:src="@drawable/horizon_indicator_mark" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -225,8 +225,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 	public static final String EXTRA_TORCH = "WidgetTorchMode";
-	public static final String EXTRA_BARCODE = "WidgetBarcodeMode";
-	
+	public static final String EXTRA_BARCODE = "WidgetBarcodeMode";	
 	public static final String EXTRA_SHOP = "WidgetGoShopping";
 	
 	public static boolean launchTorch = false;
@@ -337,7 +336,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefs.edit().putString("defaultModeName", mode).commit();
 		
 		if(launchTorch)
-			prefs.edit().putString(sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
+			prefs.edit().putInt(sFlashModePref, CameraParameters.FLASH_MODE_TORCH).commit();
 		
 		if(launchBarcode)
 			prefs.edit().putBoolean("PrefBarcodescannerVF", true).commit();
@@ -661,9 +660,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	{	
 		super.onDestroy();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		if(launchTorch && prefs.getString(sFlashModePref, "").contains(getResources().getString(R.string.flashTorchSystem)))
+		if(launchTorch && prefs.getInt(sFlashModePref, -1) == CameraParameters.FLASH_MODE_TORCH)
 		{
-			prefs.edit().putString(sFlashModePref, getResources().getString(R.string.flashAutoSystem)).commit();
+			prefs.edit().putInt(sFlashModePref, CameraParameters.FLASH_MODE_AUTO).commit();
 		}
 		MainScreen.guiManager.onDestroy();
 		PluginManager.getInstance().onDestroy();

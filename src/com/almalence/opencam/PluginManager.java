@@ -82,7 +82,6 @@ import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
-import com.almalence.opencam.R;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -108,6 +107,7 @@ import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
+import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
@@ -279,6 +279,10 @@ public class PluginManager {
 		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
 		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
 		listVF.add(barcodeScannerVFPlugin);
+		
+		GyroVFPlugin gyroVFPlugin = new GyroVFPlugin();
+		pluginList.put(gyroVFPlugin.getID(), gyroVFPlugin);
+		listVF.add(gyroVFPlugin);
 		
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
@@ -1122,23 +1126,35 @@ public class PluginManager {
 			}
 			addHeadersContent(pf, inactivePlugins, true);
 		} 
-//		else if ("plugins_settings".equals(settings)) 
-//		{
-//			//<!-- -+-
+		else if ("plugins_settings".equals(settings)) 
+		{
+			//<!-- -+-
 //			if (MainScreen.thiz.isUnlockedAll())
 //			{
 //				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
 ////				return;
 //			}
-//
+
 //			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 //			if (false == prefs.getBoolean("unlock_all_forever", false))
 //			{
 //				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
 //				MainScreen.thiz.onBillingPreferenceCreate(pf);
 //			}
-//			//-+- -->
-//		}
+			pf.getActivity().finish();
+			Preferences.closePrefs();
+
+			new CountDownTimer(200, 200) {
+				public void onTick(long millisUntilFinished) {
+				}
+	
+				public void onFinish() {
+					MainScreen.guiManager.showStore();
+				}
+			}.start();
+			
+			//-+- -->
+		}
 
 		loadStandardSettingsAfter(pf, settings);
 	}
@@ -1797,24 +1813,24 @@ public class PluginManager {
 
 	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID)
 	{		
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (params==null)
-//			return false;
-//		
-//		String s1 = null;
-//		if(params.getSupportedWhiteBalance() != null)
-//			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
-//		String s2 = Build.MANUFACTURER;
-//		String s3 = Build.MODEL;
-//		
-//		String s4 = null;
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		if (params==null)
+			return false;
+
+		String s1 = null;
+		if(params.getSupportedWhiteBalance() != null)
+			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
+		String s2 = Build.MANUFACTURER;
+		String s3 = Build.MODEL;
+
+		String s4 = null;
 //		if(MainScreen.guiManager.mISOSupported)
-//			s4 = CameraController.getInstance().getISOMode();
-//		
-//		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
-//		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
-//		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
-//		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
+//			s4 = MainScreen.thiz.getISOMode();
+
+		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
 		return true;
 	}
 

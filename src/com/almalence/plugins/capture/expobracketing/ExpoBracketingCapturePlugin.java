@@ -87,7 +87,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     // preferences
 	public static boolean RefocusPreference;
 	public static boolean UseLumaAdaptation;
-	private String preferenceSceneMode;
+	private int preferenceSceneMode;
 
 	//set exposure based on onpreviewframe
 	public boolean previewMode = true;
@@ -125,7 +125,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         preferenceEVCompensationValue = prefs.getInt("EvCompensationValue", 0);
-        preferenceSceneMode = prefs.getString("SceneModeValue", Camera.Parameters.SCENE_MODE_AUTO);
+        preferenceSceneMode = prefs.getInt("SceneModeValue", CameraParameters.SCENE_MODE_AUTO);
         
         
         if (true == prefs.contains("expo_previewMode")) 
@@ -144,7 +144,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
-        prefs.edit().putString("SceneModeValue", preferenceSceneMode).commit();
+        prefs.edit().putInt("SceneModeValue", preferenceSceneMode).commit();
 	}
 	
 	@Override

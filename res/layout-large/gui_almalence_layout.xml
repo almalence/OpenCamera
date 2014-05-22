@@ -104,7 +104,7 @@
 					android:id="@+id/buttonGallery2"
 					android:src="@drawable/almalence_gui_processing_scanner"
 					android:layout_gravity="center_horizontal"
-					android:scaleType="center"
+					android:scaleType="centerCrop"
 					android:background="@android:color/transparent"
 					android:layout_height="@dimen/scanerHeight"
 					android:layout_width="@dimen/scanerWidth"
@@ -659,7 +659,7 @@
 		<ImageButton
 			android:id="@id/panelHandle"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="10dip"
 			android:background="@android:color/transparent" 
 			android:layout_gravity="center"
 			android:layout_marginTop="@dimen/paramsLayoutHeight"
@@ -669,9 +669,10 @@
 		<LinearLayout
 			android:id="@id/panelContent"
 			android:orientation="vertical"
-			android:background="@drawable/layout_border"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:background="@drawable/blacktransparentlayerpulldownmenu"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+    		android:layout_gravity="center">
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>

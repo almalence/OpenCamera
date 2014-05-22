@@ -15,32 +15,34 @@
 		    android:layout_height="match_parent"
 		    android:orientation="vertical"
 		    android:padding="10dp">
-		    <LinearLayout 
+		    <RelativeLayout 
 			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:orientation="horizontal"
-			    android:gravity="right">    
+			    android:layout_height="wrap_content">    
 			    
 			    <TextView
 			        android:id="@+id/barcodesHistoryTitle"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:textColor="#FFFFFF"
-			        android:layout_marginLeft="10dp"
-			        android:layout_marginRight="10dp"
-			        android:textSize="30sp"
-			        android:layout_weight="1"
-			        android:layout_gravity="center_vertical"
+			        android:textSize="22sp"
+			        android:layout_alignParentTop="true"
+			        android:layout_alignParentLeft="true"
 			        android:text="@string/History" />
 			    
-					<Button
-					    android:id="@+id/clearBarcodesButton"
-					    android:layout_width="120dp"
-			        	android:layout_height="wrap_content"
-			            android:text="@string/Clear_Barcodes_List"
-			            android:layout_weight="0"
-			            android:onClick="onClick" />
-		    </LinearLayout>
+				<Button
+				    android:id="@+id/clearBarcodesButton"
+				    android:background="@+drawable/plugin_vf_clearbutton_bg"
+				    android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		            android:text="@string/Clear_Barcodes_List"
+		            android:textSize="16sp"
+		            android:layout_margin="10dp"
+		            android:layout_alignParentRight="true"
+		            android:layout_centerVertical="true"
+		            android:padding="7dp"
+		            android:minHeight="0dp"
+		            android:onClick="onClick" />
+		    </RelativeLayout>
 		    
 		    <View android:id="@+id/separator" 
 					android:background="#ffffff" 

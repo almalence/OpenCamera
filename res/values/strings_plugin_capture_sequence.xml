@@ -12,7 +12,9 @@
     <string name="Res_Sequence_Capture_7">7 images</string>
     <string name="Res_Sequence_Capture_8">8 images</string>
     
+    <string name="Sequence_Help_Header">Sequence help</string>
     <string name="Sequence_Help">1. Hold device still and do not move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n4. Select which photos to use in result</string>
     
     <string name="Res_Sequence_Fast_Text">as fast as possible</string>
+    
 </resources>
