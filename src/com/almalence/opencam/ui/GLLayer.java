@@ -120,15 +120,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		
 		this.setRenderer(this);
 	}
-	
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		Log.e("Almalence", "GLSurfaceView.onResume()");
-		
-		this.setRenderMode(RENDERMODE_CONTINUOUSLY);
-	}
 
 	/**
 	 * The Surface is created/init()

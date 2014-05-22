@@ -41,6 +41,7 @@ import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -80,6 +81,7 @@ import android.widget.Toast;
 import com.almalence.SwapHeap;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
+import com.almalence.util.Util;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -264,11 +266,14 @@ public class VideoCapturePlugin extends PluginCapture
 		        	//*
 		        	if (VideoCapturePlugin.this.shouldPreviewToGPU())
 		        	{
-		        		MainScreen.thiz.showOpenGLLayer(2);
+		    	        MainScreen.thiz.showOpenGLLayer(2);
+		    	        MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		        	}
 		        	else
 		        	{
+		        		droEngine.onPause();
 		        		MainScreen.thiz.hideOpenGLLayer();
+		    			
 		    			try {
 		    				camera.setDisplayOrientation(90);
 		    			} catch (RuntimeException e) {
@@ -286,6 +291,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        	}
 	        	catch (final Exception e)
 	        	{
+	        		Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 	        		e.printStackTrace();
 	        	}
 			}
@@ -929,6 +935,8 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 			}
 		}
+		
+		this.droEngine.onPause();
 	}
 	
 	@Override
@@ -2087,7 +2095,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewTextureUpdated(final int texture, final float[] transform)
 	{
-		Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, logMatrix(transform, 4, 4).replace('\n', ' ')));
+		//Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, Util.logMatrix(transform, 4, 4).replace('\n', ' ')));
 		this.droEngine.onPreviewTextureUpdated(texture, transform);
 	}
 	
@@ -2107,34 +2115,5 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLDrawFrame(final GL10 gl)
 	{
 		this.droEngine.onDrawFrame(gl);
-	}
-	
-	public static String logMatrix(final float[] transform,
-			final int width, final int height)
-	{
-		if (width * height < transform.length)
-		{
-			throw new ArrayIndexOutOfBoundsException(
-					String.format("width(%d) * height(%d) > transform(%d)",
-							width, height, transform));
-		}
-		
-		String format = "";
-		final Object[] args = new Object[width * height];
-		int cursor = 0;
-		
-		for (int i = 0; i < height; i++)
-		{
-			for (int j = 0; j < width; j++)
-			{
-				format += "% #6.2f  ";
-				args[cursor] = transform[cursor];
-				cursor++;
-			}
-			
-			format += "\n";
-		}
-		
-		return String.format(format, args);
 	}
 }

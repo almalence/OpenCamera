@@ -58,6 +58,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 +++ --> */
@@ -751,4 +752,33 @@ public final class Util {
     	
     	return stringBuilder.toString();
     }
+	
+	public static String logMatrix(final float[] transform,
+			final int width, final int height)
+	{
+		if (width * height < transform.length)
+		{
+			throw new ArrayIndexOutOfBoundsException(
+					String.format("width(%d) * height(%d) > transform(%d)",
+							width, height, transform));
+		}
+		
+		String format = "";
+		final Object[] args = new Object[width * height];
+		int cursor = 0;
+		
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				format += "% #6.2f  ";
+				args[cursor] = transform[cursor];
+				cursor++;
+			}
+			
+			format += "\n";
+		}
+		
+		return String.format(format, args);
+	}
 }

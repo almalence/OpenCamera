@@ -9,6 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
+import com.almalence.util.Util;
 
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
@@ -117,11 +118,8 @@ public class DROVideoEngine
 	private int previewWidth = -1;
 	private int previewHeight = -1;
 	
-	private volatile boolean filtering = false;
 	private volatile boolean local = false;
-	private volatile boolean  night = false;
 	private volatile boolean forceUpdate = false;
-	private volatile int pullYUV = 0;
 	private volatile int uv_desat = 9;
 	private volatile int dark_uv_desat = 5;
 	private volatile float mix_factor = 0.1f;
@@ -148,24 +146,9 @@ public class DROVideoEngine
 		
 	}
 	
-	public void setFilteringEnabled(final boolean enabled)
-	{
-		this.filtering = enabled;
-	}
-	
 	public void setLocalEnabled(final boolean enabled)
 	{
 		this.local = enabled;
-	}
-	
-	public void setNightEnabled(final boolean enabled)
-	{
-		this.night = enabled;
-	}
-	
-	public void setPullYUV(final int value)
-	{
-		this.pullYUV = value;
 	}
 	
 	public void forceUpdateTM()
@@ -270,13 +253,17 @@ public class DROVideoEngine
 	private void stopPreview()
 	{
 		Log.i(TAG, "DROVideoEngine.stopPreview()");
+		//Log.w(TAG, Util.toString(Thread.currentThread().getStackTrace(), '\n'));
 		
 		synchronized (this.stateSync)
 		{
-			this.stopRecording();
-		
 			if (this.instance != 0)
-			{					
+			{			
+				if (this.encoder != null)
+				{
+					this.stopRecording();
+				}
+				
 				Log.i(TAG, "DRO instance is not null. Destroying.");
 				
 				final Object sync = new Object();
@@ -342,6 +329,8 @@ public class DROVideoEngine
 				this.instance = RealtimeDRO.initialize(
 						this.previewWidth,
 						this.previewHeight);
+				Log.e(TAG, String.format("RealtimeDRO.initialize(%d, %d)", this.previewWidth, this.previewHeight));
+				this.forceUpdate = true;
 			}
 			
 			if (this.instance != 0)
@@ -352,7 +341,7 @@ public class DROVideoEngine
 						transform,
 						this.previewWidth,
 						this.previewHeight,
-						this.filtering,
+						true,
 						this.local,
 						this.max_amplify,
 						this.forceUpdate,
@@ -372,6 +361,8 @@ public class DROVideoEngine
 				{
 					this.encoder.encode(this.texture_out);
 				}
+				
+				MainScreen.thiz.glRequestRender();
 			}
 			else
 			{
