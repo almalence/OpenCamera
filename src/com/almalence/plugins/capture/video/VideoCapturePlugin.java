@@ -1114,38 +1114,55 @@ public class VideoCapturePlugin extends PluginCapture
 	//Get optimal supported preview size with aspect ration 16:9 or 4:3
 	private Camera.Size getBestPreviewSize(boolean aspect169)
 	{
+		if (aspect169)
+		{
+			return selectMaxPreviewSize(16.0f / 9.0f);
+		}
+		else
+		{
+			return selectMaxPreviewSize(4.0f / 3.0f);
+		}
+	}
+	
+	private static Camera.Size selectMaxPreviewSize(final float ratioDisplay)
+	{
 		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-    	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
+		
+		final List<Camera.Size> sizes = cp.getSupportedPreviewSizes();
+		
+		Camera.Size size_best = sizes.get(0);
+		float size_ratio_best = size_best.width / (float)size_best.height;
+		float size_ratio_best_comp = size_ratio_best > ratioDisplay
+				? size_ratio_best / ratioDisplay
+						: ratioDisplay / size_ratio_best;
+		int pixels_best = size_best.width * size_best.height;
+		
+		for (final Camera.Size size : sizes)
+		{
+			final float size_ratio = size.width / (float)size.height;
+			final float size_ratio_comp = size_ratio > ratioDisplay ? size_ratio / ratioDisplay : ratioDisplay / size_ratio;
+			
+			if (size_ratio_comp == size_ratio_best_comp)
+			{
+				final int pixels = size.width * size.height;
+				
+				if (pixels >= pixels_best)
+				{
+					size_best = size;
+					size_ratio_best_comp = size_ratio_comp;
+					pixels_best = pixels;
+				}
+			}
+			else if (size_ratio_comp < size_ratio_best_comp)
+			{
+				final int pixels = size.width * size.height;
+				size_best = size;
+				size_ratio_best_comp = size_ratio_comp;
+				pixels_best = pixels;
+			}
+		}
 
-    	Camera.Size sz = cs.get(0);
-    	Long max_mpix = (long)sz.width*sz.height;
-    	for (int i=0; i<cs.size(); ++i)
-    	{
-            Size s = cs.get(i); 
-        	
-        	Long lmpix = (long)s.width*s.height;
-        	float ratio = (float)s.width/s.height;
-
-        	
-            if (Math.abs(ratio - 4/3.f)  < 0.1f && !aspect169)
-            {
-            	if(lmpix > max_mpix)
-            	{
-            		max_mpix = lmpix;
-            		sz = s;
-            	}
-            }            
-            else if (Math.abs(ratio - 16/9.f) < 0.15f && aspect169)
-            {
-            	if(lmpix > max_mpix)
-            	{
-            		max_mpix = lmpix;
-            		sz = s;
-            	}
-            }
-    	}
-    	
-    	return sz;
+		return size_best;
 	}
 	
 	@Override
