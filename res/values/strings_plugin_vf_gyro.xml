@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="Pref_ShowGyroVF">Show gyro</string>
-	<string name="Pref_GyroTypeVF">Use hardvare gyro</string>
+	<string name="Pref_ShowGyroVF">Show gyrovertical</string>
+	<string name="Pref_GyroTypeVF">Use hardvare gyroscope</string>
 </resources>
