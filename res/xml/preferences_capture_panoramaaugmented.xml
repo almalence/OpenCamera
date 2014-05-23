@@ -7,28 +7,11 @@
 			android:defaultValue="2"
 			android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
 			android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"/>
-    	<ListPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_frameoverlap_title"
-			android:key="pref_plugin_capture_panoramaaugmented_frameoverlap"
-			android:defaultValue="1"
-			android:entries="@array/plugin_capture_panoramaaugmented_frameoverlapArray"
-			android:entryValues="@array/plugin_capture_panoramaaugmented_frameoverlapValues"/>
-    	<ListPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_aelock_title"
-			android:key="pref_plugin_capture_panoramaaugmented_aelock"
-			android:defaultValue="1"
-			android:entries="@array/plugin_capture_panoramaaugmented_aelockArray"
-			android:entryValues="@array/plugin_capture_panoramaaugmented_aelockValues"/>
-    	<CheckBoxPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_memory_title"
-			android:defaultValue="false"
-			android:summary="@string/pref_plugin_capture_panoramaaugmented_memory_summary"
-			android:key="pref_plugin_capture_panoramaaugmented_memory"/>
-    	<CheckBoxPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_title"
-			android:defaultValue="false"
-			android:summary="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary"
-			android:key="pref_plugin_capture_panoramaaugmented_usehardwaregyro"/>
+    	
+    	
+    	
+    	
+    	<PreferenceScreen android:title="@string/moreText"><ListPreference android:title="@string/pref_plugin_capture_panoramaaugmented_frameoverlap_title" android:key="pref_plugin_capture_panoramaaugmented_frameoverlap" android:defaultValue="1" android:entries="@array/plugin_capture_panoramaaugmented_frameoverlapArray" android:entryValues="@array/plugin_capture_panoramaaugmented_frameoverlapValues" /><ListPreference android:title="@string/pref_plugin_capture_panoramaaugmented_aelock_title" android:key="pref_plugin_capture_panoramaaugmented_aelock" android:defaultValue="1" android:entries="@array/plugin_capture_panoramaaugmented_aelockArray" android:entryValues="@array/plugin_capture_panoramaaugmented_aelockValues" /><CheckBoxPreference android:title="@string/pref_plugin_capture_panoramaaugmented_memory_title" android:defaultValue="false" android:summary="@string/pref_plugin_capture_panoramaaugmented_memory_summary" android:key="pref_plugin_capture_panoramaaugmented_memory" /><CheckBoxPreference android:title="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_title" android:defaultValue="false" android:summary="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary" android:key="pref_plugin_capture_panoramaaugmented_usehardwaregyro" /></PreferenceScreen>
 </PreferenceCategory>
 
 </PreferenceScreen>

@@ -2898,11 +2898,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void launchPurchase(String SKU, int requestID) {
 		String payload = "";
 		try {
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
-					mPurchaseFinishedListener, payload);
+			guiManager.showStore();
+//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
+//					mPurchaseFinishedListener, payload);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
 			Toast.makeText(this, "Error during purchase " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}

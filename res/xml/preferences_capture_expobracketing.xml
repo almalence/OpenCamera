@@ -8,15 +8,8 @@
 			android:defaultValue="0"
 			android:entries="@array/evArrayExpoBracketing"
 			android:entryValues="@array/evValuesExpoBracketing" />		
-		<CheckBoxPreference
-			android:title="@string/Pref_ExpoBracketing_Luma_Title"
-			android:defaultValue="false"
-			android:summary="@string/Pref_ExpoBracketing_Luma_Summary"
-			android:key="lumaPrefExpoBracketing" />    		
-		<CheckBoxPreference
-			android:title="@string/Pref_ExpoBracketing_Refocus_Title"
-			android:defaultValue="false"
-			android:summary="@string/Pref_ExpoBracketing_Refocus_Summary"
-			android:key="refocusPrefExpoBracketing" />	
+		    		
+		
+		<PreferenceScreen android:title="@string/moreText"><CheckBoxPreference android:title="@string/Pref_ExpoBracketing_Luma_Title" android:defaultValue="false" android:summary="@string/Pref_ExpoBracketing_Luma_Summary" android:key="lumaPrefExpoBracketing" /><CheckBoxPreference android:title="@string/Pref_ExpoBracketing_Refocus_Title" android:defaultValue="false" android:summary="@string/Pref_ExpoBracketing_Refocus_Summary" android:key="refocusPrefExpoBracketing" /></PreferenceScreen>	
 	</PreferenceCategory>
 </PreferenceScreen>

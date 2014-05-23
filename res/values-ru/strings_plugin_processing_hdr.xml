@@ -7,7 +7,7 @@
     
 	<string name="Pref_HDR_ColorViv_Title">Цветовая насыщеность</string>
 	
-	<string name="Pref_HDR_LocalContrast_Title">Локльный контраст</string>
+	<string name="Pref_HDR_LocalContrast_Title">Локальный контраст</string>
 	<string name="Pref_HDR_LocalContrast_Summary">Регулировать контраст HDR результата</string>
 	
 	<string name="Pref_HDR_Microcontrast_Title">Микро контраст</string>
