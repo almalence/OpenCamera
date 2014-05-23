@@ -258,11 +258,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 	public static final String EXTRA_TORCH = "WidgetTorchMode";
-	
+	public static final String EXTRA_BARCODE = "WidgetBarcodeMode";	
 	public static final String EXTRA_SHOP = "WidgetGoShopping";
 	
 	public static boolean launchTorch = false;
+	public static boolean launchBarcode = false;
 	public static boolean goShopping = false;
+	
+	public static String  prefFlash = "";
+	public static boolean prefBarcode = false;
 
 	public static final int VOLUME_FUNC_SHUTTER = 0;
 	public static final int VOLUME_FUNC_ZOOM 	= 1;
@@ -317,6 +321,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
+		launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 		
 		startTime = System.currentTimeMillis();
@@ -345,7 +350,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefs.edit().putString("defaultModeName", mode).commit();
 		
 		if(launchTorch)
-			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashTorchSystem)).commit();
+		{
+			prefFlash = prefs.getString(GUI.sFlashModePref, Camera.Parameters.FLASH_MODE_AUTO);
+			prefs.edit().putString(GUI.sFlashModePref, Camera.Parameters.FLASH_MODE_TORCH).commit();
+		}
+		
+		if(launchBarcode)
+		{
+			prefBarcode = prefs.getBoolean("PrefBarcodescannerVF", false);
+			prefs.edit().putBoolean("PrefBarcodescannerVF", true).commit();
+		}
 		
 		// <!-- -+-
 		
@@ -644,9 +658,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	{	
 		super.onDestroy();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		if(launchTorch && prefs.getString(GUI.sFlashModePref, "").contains(getResources().getString(R.string.flashTorchSystem)))
+		if(launchTorch && prefs.getString(GUI.sFlashModePref, "").contains(Camera.Parameters.FLASH_MODE_TORCH))
 		{
-			prefs.edit().putString(GUI.sFlashModePref, getResources().getString(R.string.flashAutoSystem)).commit();
+			prefs.edit().putString(GUI.sFlashModePref, prefFlash).commit();
+		}
+		if(launchBarcode && prefs.getBoolean("PrefBarcodescannerVF", false))
+		{
+			prefs.edit().putBoolean("PrefBarcodescannerVF", prefBarcode).commit();
 		}
 		MainScreen.guiManager.onDestroy();
 		PluginManager.getInstance().onDestroy();
@@ -2892,11 +2910,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void launchPurchase(String SKU, int requestID) {
 		String payload = "";
 		try {
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
-					mPurchaseFinishedListener, payload);
+			guiManager.showStore();
+//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
+//					mPurchaseFinishedListener, payload);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
 			Toast.makeText(this, "Error during purchase " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}

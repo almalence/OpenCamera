@@ -843,7 +843,9 @@ public class PluginManager {
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
-
+		}
+		else if ("vf_more".equals(settings)) 
+		{
 			for (int i = 0; i < listVF.size(); i++) 
 			{				
 				Plugin pg = listVF.get(i);
@@ -857,15 +859,15 @@ public class PluginManager {
 			if (activePlugins.size() != listVF.size()
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
-		} 
-		else if ("vf_inactive_settings".equals(settings)) {
-			for (int i = 0; i < listVF.size(); i++) {
-				Plugin pg = listVF.get(i);
-				if (!activeVF.contains(pg.getID()))
-					inactivePlugins.add(pg);
-			}
-			addHeadersContent(pf, inactivePlugins, false);
 		}
+//		else if ("vf_inactive_settings".equals(settings)) {
+//			for (int i = 0; i < listVF.size(); i++) {
+//				Plugin pg = listVF.get(i);
+//				if (!activeVF.contains(pg.getID()))
+//					inactivePlugins.add(pg);
+//			}
+//			addHeadersContent(pf, inactivePlugins, false);
+//		}
 		else if ("save_configuration".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
@@ -1182,9 +1184,10 @@ public class PluginManager {
 		if ("general_settings".equals(settings)) {
 			pf.addPreferencesFromResource(R.xml.preferences);
 			MainScreen.thiz.onPreferenceCreate(pf);
-		} else if ("saving_settings".equals(settings)) {
-			pf.addPreferencesFromResource(R.xml.preferences_export_common);
 		}
+//		else if ("saving_settings".equals(settings)) {
+//			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+//		}
 	}
 
 	private void loadStandardSettingsAfter(PreferenceFragment pf,

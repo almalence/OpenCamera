@@ -363,7 +363,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
  		} 
      	catch (Exception e) 
  		{
-     		Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
+     		//make notifier in main thread
+     		//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
  			e.printStackTrace();
  		}
 		

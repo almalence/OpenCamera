@@ -1231,7 +1231,7 @@ public class VideoCapturePlugin extends PluginCapture
 					Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 				}
 	            releaseMediaRecorder(); // release the MediaRecorder object
-	            camera.lock();         // take camera access back from MediaRecorder
+//	            camera.lock();         // take camera access back from MediaRecorder
 	
 	            camera.stopPreview();
 		        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
@@ -1320,7 +1320,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        	mRecordingStartTime = SystemClock.uptimeMillis();
 	        	
 	        	mMediaRecorder = new MediaRecorder();
-	        	camera.startPreview();
+	        	camera.stopPreview();
 	    		camera.unlock();
 	    	    mMediaRecorder.setCamera(camera);
 	
@@ -1379,7 +1379,7 @@ public class VideoCapturePlugin extends PluginCapture
 	//    	    	}
 	//   	    	}
 	    	    
-	    	    boolean useProfile = true;	    	    
+	    	    boolean useProfile = true;
 	    	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
 	   	    	{
 	    	    	ImageSizeIdxPreference=3;

@@ -4955,7 +4955,7 @@ public class AlmalenceGUI extends GUI implements
 		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
 			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
 		
-		hideStore();
+		//hideStore();
 		
 		int id = button.getId();
 		if (lockControls && ((R.id.buttonShutter != id)))

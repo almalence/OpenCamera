@@ -3,11 +3,11 @@
     <string name="Pref_Billing_Left">%1$s mode free shots left: %2$d</string>
     <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera  v3.20\n(©) by Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera  v3.22\n(©) by Almalence Inc\n</string>
     <!--  -+- -->
     <!-- +++
     <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.20\n(©) by Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.22\n(©) by Almalence Inc\n</string>
     +++ -->
     <string name="cannot_create_jpeg">Error: Unable to save image!</string>
     <string name="choose_folder_pick">Use this folder</string>
