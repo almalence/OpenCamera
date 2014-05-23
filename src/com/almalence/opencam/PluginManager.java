@@ -854,7 +854,9 @@ public class PluginManager {
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
-
+		}
+		else if ("vf_more".equals(settings)) 
+		{
 			for (int i = 0; i < listVF.size(); i++) 
 			{				
 				Plugin pg = listVF.get(i);
@@ -868,15 +870,15 @@ public class PluginManager {
 			if (activePlugins.size() != listVF.size()
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
-		} 
-		else if ("vf_inactive_settings".equals(settings)) {
-			for (int i = 0; i < listVF.size(); i++) {
-				Plugin pg = listVF.get(i);
-				if (!activeVF.contains(pg.getID()))
-					inactivePlugins.add(pg);
-			}
-			addHeadersContent(pf, inactivePlugins, false);
 		}
+//		else if ("vf_inactive_settings".equals(settings)) {
+//			for (int i = 0; i < listVF.size(); i++) {
+//				Plugin pg = listVF.get(i);
+//				if (!activeVF.contains(pg.getID()))
+//					inactivePlugins.add(pg);
+//			}
+//			addHeadersContent(pf, inactivePlugins, false);
+//		}
 		else if ("save_configuration".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
@@ -1193,9 +1195,10 @@ public class PluginManager {
 		if ("general_settings".equals(settings)) {
 			pf.addPreferencesFromResource(R.xml.preferences);
 			MainScreen.thiz.onPreferenceCreate(pf);
-		} else if ("saving_settings".equals(settings)) {
-			pf.addPreferencesFromResource(R.xml.preferences_export_common);
 		}
+//		else if ("saving_settings".equals(settings)) {
+//			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+//		}
 	}
 
 	private void loadStandardSettingsAfter(PreferenceFragment pf,
@@ -1313,8 +1316,7 @@ public class PluginManager {
 		isDefaultsSelected = true;	
 	}
 
-	public void SelectImageDimension()
-	{
+	public void SelectImageDimension() {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).SelectImageDimension();
 	}
@@ -1635,34 +1637,34 @@ public class PluginManager {
 		    	}
 	        }
 			break;
-		
-		case MSG_EXPORT_FINISHED_IOEXCEPTION:
-			// event from plugin that saving finished and memory can be freed
-			if (cntProcessing > 0)
-				cntProcessing--;
-			// free memory in processing
-			if (null != pluginList.get(activeProcessing))
-				pluginList.get(activeProcessing).FreeMemory();
+			
+			case MSG_EXPORT_FINISHED_IOEXCEPTION:
+				// event from plugin that saving finished and memory can be freed
+				if (cntProcessing > 0)
+					cntProcessing--;
+				// free memory in processing
+				if (null != pluginList.get(activeProcessing))
+					pluginList.get(activeProcessing).FreeMemory();
 
-			// notify GUI about saved images
-			MainScreen.guiManager.onExportFinished();
+				// notify GUI about saved images
+				MainScreen.guiManager.onExportFinished();
 
-			// notify capture plugins that saving finished
-			if (null != pluginList.get(activeCapture))
-				pluginList.get(activeCapture).onExportFinished();
-			for (int i = 0; i < activeVF.size(); i++)
-				pluginList.get(activeVF.get(i)).onExportFinished();
+				// notify capture plugins that saving finished
+				if (null != pluginList.get(activeCapture))
+					pluginList.get(activeCapture).onExportFinished();
+				for (int i = 0; i < activeVF.size(); i++)
+					pluginList.get(activeVF.get(i)).onExportFinished();
 
-//			if (MainScreen.thiz.getIntent().getAction() != null)
-//	        {
-//		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
-//		    			&& MainScreen.ForceFilename == null)
-//		    	{
-//		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
-//		    	}
-//	        }
-			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
-			break;
+//				if (MainScreen.thiz.getIntent().getAction() != null)
+//		        {
+//			    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+//			    			&& MainScreen.ForceFilename == null)
+//			    	{
+//			    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+//			    	}
+//		        }
+				Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+				break;
 
 		case MSG_DELAYED_CAPTURE: 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1753,6 +1755,7 @@ public class PluginManager {
 		return true;
 	}
 	
+
 	public boolean addToSharedMem_ExifTagsFromJPEGForExpoBracketing(final byte[] paramArrayOfByte, int num, final long SessionID) {		
 		try
     	{

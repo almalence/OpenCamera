@@ -950,7 +950,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	    		return 1;
 	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 	        
-	        return cp.getMaxZoom();
+	        int maxZoom = cp.getMaxZoom();
+	        return maxZoom;
 		}
 		else
 		{

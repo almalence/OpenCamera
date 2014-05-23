@@ -124,5 +124,6 @@
 	<string name="soundTimerText">Звук при отсчете</string>
 	<string name="flashTimerText">Вспышка при отсчете</string>
 	<string name="secondsText">секунд</string>
-				
+
+	<string name="moreText">Ещё...</string>				
 </resources>

@@ -41,6 +41,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.Size;
 import android.media.Image;
+import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -257,6 +258,18 @@ public abstract class Plugin
     	//CameraCharacteristics params = CameraController.getInstance().getCameraParameters2();
     	//Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
     	List<CameraController.Size> cs = CameraController.ResolutionsSizeList;
+		//add 8 Mpix for rear camera for HTC One X
+		if(Build.MODEL.contains("HTC One X"))
+		{
+			if (MainScreen.getCameraMirrored() == false)
+			{
+				CameraController.Size additional= null;
+				additional= CameraController.getInstance().new Size(3264, 2448);
+				additional.setWidth(3264);
+				additional.setHeight(2448);
+				cs.add(additional);
+			}
+		}
 		int Capture5mIdx = -1;
 		long Capture5mMpix = 0;
 		int Capture5mWidth = 0;

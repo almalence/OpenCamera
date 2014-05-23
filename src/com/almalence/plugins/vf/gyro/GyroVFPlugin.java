@@ -88,23 +88,27 @@ public class GyroVFPlugin extends PluginViewfinder {
 	public void onCameraParametersSetup() {
 		this.checkCoordinatesRemapRequired();
 		
-		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		if (cp == null) {
-			return;
-		}
-		this.pictureWidth = cp.getPictureSize().width;
-		this.pictureHeight = cp.getPictureSize().height;
+//		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//		if (cp == null) {
+//			return;
+//		}
+		this.pictureWidth = MainScreen.imageWidth;//cp.getPictureSize().width;
+		this.pictureHeight = MainScreen.imageHeight;//cp.getPictureSize().height;
     	
 
-		try {
-			this.viewAngleX = cp.getHorizontalViewAngle();
-			this.viewAngleY = cp.getVerticalViewAngle();
-		}
-		catch (final Throwable e) {
-			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
-			this.viewAngleX = 55.4f;
-			this.viewAngleY = 42.7f;
-		}
+//		try {
+//			this.viewAngleX = cp.getHorizontalViewAngle();
+//			this.viewAngleY = cp.getVerticalViewAngle();
+//		}
+//		catch (final Throwable e) {
+//			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
+//			this.viewAngleX = 55.4f;
+//			this.viewAngleY = 42.7f;
+//		}
+		
+		//TODO: Temporary default values. HALv3 not supported view angles yet.
+		this.viewAngleX = 59.63f;
+		this.viewAngleY = 46.66f;
 
 		// some devices report incorrect FOV values, use typical view angles then
 		if (this.viewAngleX >= 150) {

@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -24,8 +26,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -322,6 +326,57 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
         new DecodeAsyncTask(previewWidth, previewHeight).execute(data);
         
 		mFrameCounter = 0;
+	}
+	
+	@TargetApi(19)
+	@Override
+	public void onPreviewAvailable(Image im)
+	{
+		if (mBarcodeScannerState == OFF)
+			return;
+		mFrameCounter++;
+		if (mFrameCounter != 10) {
+			return;
+		}
+		
+		ByteBuffer Y = im.getPlanes()[0].getBuffer();
+		ByteBuffer U = im.getPlanes()[1].getBuffer();
+		ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+		{
+			Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+			return;
+		}
+		
+		int imageWidth = im.getWidth();
+		int imageHeight = im.getHeight();
+		// Note: android documentation guarantee that:
+		// - Y pixel stride is always 1
+		// - U and V strides are the same
+		//   So, passing all these parameters is a bit overkill
+		int status = com.almalence.YuvImage.CreateYUVImage(Y, U, V,
+				im.getPlanes()[0].getPixelStride(),
+				im.getPlanes()[0].getRowStride(),
+				im.getPlanes()[1].getPixelStride(),
+				im.getPlanes()[1].getRowStride(),
+				im.getPlanes()[2].getPixelStride(),
+				im.getPlanes()[2].getRowStride(),
+				imageWidth, imageHeight, 0);
+		
+		if (status != 0)
+			Log.e("CapturePlugin", "Error while cropping: "+status);
+		
+		
+		byte[] data = com.almalence.YuvImage.GetByteFrame(0);
+		
+		int previewWidth = MainScreen.previewWidth;
+		int previewHeight = MainScreen.previewHeight;
+
+        new DecodeAsyncTask(previewWidth, previewHeight).execute(data);
+        
+		mFrameCounter = 0;
+		
 	}
 	
     public synchronized PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, Rect boundingRect) {

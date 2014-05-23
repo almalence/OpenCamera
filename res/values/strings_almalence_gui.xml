@@ -261,4 +261,7 @@
 
 	<string name="secondsText">seconds</string>	
 	<string name="okText">Ok</string>
+	
+	<string name="moreText">More...</string>
+	
 </resources>
