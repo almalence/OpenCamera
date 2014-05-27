@@ -9,7 +9,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
-import com.almalence.util.Util;
 
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
@@ -27,7 +26,7 @@ public class DROVideoEngine
 			+ "varying vec2 texCoord;\n"
 			+ "void main() {\n"
 			+ "  texCoord = vTexCoord;\n"
-			+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
+			+ "  gl_Position = vec4 ( vPosition.y, -vPosition.x, 1.0, 1.0 );\n"
 			+ "}";
 
 	private static final String SHADER_FRAGMENT =
@@ -355,6 +354,8 @@ public class DROVideoEngine
 						this.max_limit,
 						this.texture_out);
 				
+				DROVideoEngine.this.fps.measure();
+				
 				this.forceUpdate = false;
 				
 				if (this.encoder != null)
@@ -425,9 +426,7 @@ public class DROVideoEngine
 	}
 
 	public void onDrawFrame(final GL10 gl)
-	{
-		DROVideoEngine.this.fps.measure();
-				
+	{				
 		this.drawOutputTexture();
 	}
 	

@@ -66,7 +66,6 @@ import android.hardware.Camera;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
@@ -194,6 +193,15 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 			if (camera == null)
 			{
 				return;
+			}
+			
+			try
+			{
+				camera.setDisplayOrientation(0);
+			}
+			catch (RuntimeException e)
+			{
+				e.printStackTrace();
 			}
 	
 			try

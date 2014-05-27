@@ -120,7 +120,7 @@ public class EglEncoder
 	private MediaCodec mEncoder;
 	private CodecInputSurface mInputSurface;
 	private MediaMuxer mMuxer;
-	private int mTrackIndex;
+	private int mTrackIndex;;
 	private boolean mMuxerStarted;
 
 	// allocate one of these up front so we don't need to do it every time
@@ -134,6 +134,8 @@ public class EglEncoder
 	private int hProgram;
 	
 	private final FloatBuffer UV_BUFFER;
+	
+	private AudioRecorder audioRecorder;
 	
 	
 	public EglEncoder(final String outputPath, final int width, final int height, 
@@ -216,6 +218,8 @@ public class EglEncoder
 			this.timeLast = System.nanoTime();
 		}
 		
+		this.audioRecorder.updateTime(this.timeTotal);
+		
 		this.drawEncode(texture);
 	}
 	
@@ -223,6 +227,7 @@ public class EglEncoder
 	{
 		this.timeLast = System.nanoTime();
 		this.timeTotal += nanoSec;
+		this.audioRecorder.updateTime(this.timeTotal);
 		
 		this.drawEncode(texture);
 	}
@@ -367,6 +372,7 @@ public class EglEncoder
 		// Set some properties. Failing to specify some of these can cause the
 		// MediaCodec
 		// configure() call to throw an unhelpful exception.
+		//Log.e("Almalence", "FPS: " + this.definedFPS);
 		
 		// Video
 		format.setInteger(MediaFormat.KEY_COLOR_FORMAT,	MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
@@ -413,6 +419,8 @@ public class EglEncoder
 		try
 		{
 			this.mMuxer = new MediaMuxer(this.outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+			this.audioRecorder = new AudioRecorder(this.mMuxer);
+			this.audioRecorder.start();
 		}
 		catch (final IOException e)
 		{
@@ -433,6 +441,11 @@ public class EglEncoder
 		if (VERBOSE)
 			Log.d(TAG, "releasing encoder objects");
 		
+		if (this.audioRecorder != null)
+		{
+			this.audioRecorder.stop();
+			this.audioRecorder = null;
+		}
 		if (this.mEncoder != null)
 		{
 			this.mEncoder.stop();
@@ -473,7 +486,7 @@ public class EglEncoder
 			this.mEncoder.signalEndOfInputStream();
 		}
 
-		ByteBuffer[] encoderOutputBuffers = mEncoder.getOutputBuffers();
+		ByteBuffer[] encoderOutputBuffers = this.mEncoder.getOutputBuffers();
 		while (true)
 		{
 			final int encoderStatus = this.mEncoder.dequeueOutputBuffer(this.mBufferInfo, TIMEOUT_USEC);
@@ -510,6 +523,7 @@ public class EglEncoder
 				this.mTrackIndex = this.mMuxer.addTrack(newFormat);
 				this.mMuxer.start();
 				this.mMuxerStarted = true;
+				this.audioRecorder.muxerStarted();
 			}
 			else if (encoderStatus < 0)
 			{
@@ -546,7 +560,10 @@ public class EglEncoder
 					encodedData.position(this.mBufferInfo.offset);
 					encodedData.limit(this.mBufferInfo.offset + this.mBufferInfo.size);
 
-					this.mMuxer.writeSampleData(this.mTrackIndex, encodedData, this.mBufferInfo);
+					synchronized (this.mMuxer)
+					{
+						this.mMuxer.writeSampleData(this.mTrackIndex, encodedData, this.mBufferInfo);
+					}
 					if (VERBOSE)
 						Log.d(TAG, "sent " + this.mBufferInfo.size + " bytes to muxer");
 				}
