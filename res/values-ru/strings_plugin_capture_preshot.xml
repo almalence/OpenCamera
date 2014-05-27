@@ -20,7 +20,7 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">Пауза(hi-res)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Пауза после снимка - необходима для перефокусировки.</string>
 	
-	<string name="Pref_PreShot_Low">Low res (быстрее)</string>
+	<string name="Pref_PreShot_Low">High speed (быстрее)</string>
 	<string name="Pref_PreShot_High">High res (медленнее)</string>
 	
 	<string name="Pref_PreShot_None">None</string>

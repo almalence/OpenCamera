@@ -5596,17 +5596,32 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			if(params.get(isoParam) != null)
-				params.set(isoParam, newMode);
-			else if(params.get(isoParam2) != null)
-				params.set(isoParam2, newMode);
-			if(false == MainScreen.thiz.setCameraParameters(params))
 			{
-				if(params.get(isoParam) != null)
+				if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(newMode))
+					params.set(isoParam, newMode);
+				else if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(iso_default_values.get(newMode)))
 					params.set(isoParam, iso_default_values.get(newMode));
-				else if(params.get(isoParam2) != null)
-					params.set(isoParam2, iso_default_values.get(newMode));
-				MainScreen.thiz.setCameraParameters(params);	
+				else
+					params.set(isoParam, iso_default_values.get(newMode));
 			}
+			else if(params.get(isoParam2) != null)
+			{
+				if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(newMode))
+					params.set(isoParam2, newMode);
+				else if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(iso_default_values.get(newMode)))
+					params.set(isoParam2, iso_default_values.get(newMode));
+				else
+					params.set(isoParam2, iso_default_values.get(newMode));
+			}
+//			if(false == MainScreen.thiz.setCameraParameters(params))
+//			{
+//				if(params.get(isoParam) != null)
+//					params.set(isoParam, iso_default_values.get(newMode));
+//				else if(params.get(isoParam2) != null)
+//					params.set(isoParam2, iso_default_values.get(newMode));
+//				MainScreen.thiz.setCameraParameters(params);	
+//			}
+			MainScreen.thiz.setCameraParameters(params);
 			mISO = newMode;
 			setButtonSelected(ISOButtons, mISO);
 

@@ -259,7 +259,6 @@ public class ExportPlugin extends PluginExport
 	            else
 	            {
 	            	file = MainScreen.ForceFilename;
-	            	MainScreen.ForceFilename = null;
 	            }
 	
 		    	FileOutputStream os = null;
@@ -281,11 +280,10 @@ public class ExportPlugin extends PluginExport
 		            else
 		            {
 		            	file = MainScreen.ForceFilename;
-		            	MainScreen.ForceFilename = null;
 		            }
 		        	os = new FileOutputStream(file);
 		        }	            
-	            
+		    	MainScreen.ForceFilename = null;
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
 	            if(imagesAmount == 1 && imageIndex != 0)
@@ -514,11 +512,14 @@ public class ExportPlugin extends PluginExport
 		            	}
 		            }
 		            if(tag_iso != null) {
-		            	if (tag_iso.indexOf("ISO") > 0) {
-		            		tag_iso = tag_iso.substring(0, 2);
-		            	}
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            	try
+		            	{
+			            	if (tag_iso.indexOf("ISO") > 0) {
+			            		tag_iso = tag_iso.substring(0, 2);
+			            	}
+			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            	}catch(Exception e){}
 		            }
 		            if(tag_scene != null) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));

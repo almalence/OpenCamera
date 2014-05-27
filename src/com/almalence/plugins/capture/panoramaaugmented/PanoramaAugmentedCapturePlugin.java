@@ -824,6 +824,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	        }
         }
 		
+		if (ud_pref!=null)
 		ud_pref.setOnPreferenceChangeListener(
 	        new OnPreferenceChangeListener()
 			{
