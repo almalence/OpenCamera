@@ -1890,6 +1890,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		}
+		else
+			HALv3.setCameraFocusAreasHALv3(focusAreas);
 	}
 	
 	public void setCameraMeteringAreas(List<Area> meteringAreas)
@@ -1918,6 +1920,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		}
+		else
+			HALv3.setCameraMeteringAreasHALv3(meteringAreas);
 	}
 	
 	

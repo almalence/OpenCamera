@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.hardware.Camera.Area;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
@@ -24,7 +25,7 @@ import android.util.Log;
 @TargetApi(19)
 public class HALv3
 {
-	private final String TAG = "HALv3Controller";
+	private static final String TAG = "HALv3Controller";
 	
 	private static HALv3 instance = null;
 	
@@ -286,7 +287,7 @@ public class HALv3
 		}
 		zoomLevel = newZoom;
 		
-		zoomCropPreview = getZoomRect(zoomCropPreview, zoomLevel, MainScreen.previewWidth, MainScreen.previewHeight);
+		zoomCropPreview = getZoomRect(zoomLevel, MainScreen.previewWidth, MainScreen.previewHeight);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		try 
 		{
@@ -298,7 +299,7 @@ public class HALv3
 		}
 	}
 	
-	public static Rect getZoomRect(Rect zoomCrop, float zoom, int imgWidth, int imgHeight)
+	public static Rect getZoomRect(float zoom, int imgWidth, int imgHeight)
 	{
 		int CropWidth  = (int)(imgWidth/zoom)+2*64;
 		int CropHeight = (int)(imgHeight/zoom)+2*64;
@@ -604,6 +605,24 @@ public class HALv3
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();	
 	}
 	
+	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
+	{
+		Rect activeRect = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+		Rect zoomRect = getZoomRect(zoomLevel, MainScreen.previewWidth, MainScreen.previewHeight);
+		for(int i = 0; i < focusAreas.size(); i++)
+		{
+			Rect r = focusAreas.get(i).rect;
+			Log.e(TAG, "focusArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
+		}
+		Log.e(TAG, "activeRect: " + activeRect.left + " " + activeRect.top + " " + activeRect.right + " " + activeRect.bottom);
+		Log.e(TAG, "zoomRect: " + zoomRect.left + " " + zoomRect.top + " " + zoomRect.right + " " + zoomRect.bottom);
+	}
+	
+	public static void setCameraMeteringAreasHALv3(List<Area> focusAreas)
+	{
+		
+	}
+	
 	public static int getPreviewFrameRateHALv3()
 	{
 		int range[] = {0 , 0};
@@ -638,7 +657,7 @@ public class HALv3
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 			if(zoomLevel >= 0.4f)
 			{
-				zoomCropCapture = getZoomRect(zoomCropCapture, zoomLevel, MainScreen.imageWidth, MainScreen.imageHeight);
+				zoomCropCapture = getZoomRect(zoomLevel, MainScreen.imageWidth, MainScreen.imageHeight);
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 			}
 			
