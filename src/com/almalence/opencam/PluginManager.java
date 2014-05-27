@@ -1626,7 +1626,7 @@ public class PluginManager {
 //		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
 //		    	}
 //	        }
-			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainScreen.mainContext, "Can't save data.", Toast.LENGTH_LONG).show();
 			break;
 
 		case MSG_DELAYED_CAPTURE: 
