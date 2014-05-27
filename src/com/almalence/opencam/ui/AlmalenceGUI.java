@@ -200,32 +200,6 @@ public class AlmalenceGUI extends GUI implements
 
 	private final static int focusAfLock = 10;
 
-	private final static String isoAuto = MainScreen.thiz.getResources()
-			.getString(R.string.isoAutoSystem);
-	private final static String iso50 = MainScreen.thiz.getResources()
-			.getString(R.string.iso50System);
-	private final static String iso100 = MainScreen.thiz.getResources()
-			.getString(R.string.iso100System);
-	private final static String iso200 = MainScreen.thiz.getResources()
-			.getString(R.string.iso200System);
-	private final static String iso400 = MainScreen.thiz.getResources()
-			.getString(R.string.iso400System);
-	private final static String iso800 = MainScreen.thiz.getResources()
-			.getString(R.string.iso800System);
-	private final static String iso1600 = MainScreen.thiz.getResources()
-			.getString(R.string.iso1600System);
-	private final static String iso3200 = MainScreen.thiz.getResources()
-			.getString(R.string.iso3200System);
-	
-	private final static String meteringAuto = MainScreen.thiz.getResources()
-			.getString(R.string.meteringAutoSystem);
-	private final static String meteringMatrix = MainScreen.thiz.getResources()
-			.getString(R.string.meteringMatrixSystem);
-	private final static String meteringCenter = MainScreen.thiz.getResources()
-			.getString(R.string.meteringCenterSystem);
-	private final static String meteringSpot = MainScreen.thiz.getResources()
-			.getString(R.string.meteringSpotSystem);
-
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
 	private final static Map<Integer, Integer> icons_scene = new Hashtable<Integer, Integer>() {
@@ -395,10 +369,10 @@ public class AlmalenceGUI extends GUI implements
 	
 	private final static Map<Integer, String> names_metering = new Hashtable<Integer, String>() {
 		{
-			put(0, meteringAuto);
-			put(1, meteringMatrix);
-			put(2, meteringCenter);
-			put(3, meteringSpot);
+			put(0, MainScreen.thiz.getResources().getString(R.string.meteringAutoSystem));
+			put(1, MainScreen.thiz.getResources().getString(R.string.meteringMatrixSystem));
+			put(2, MainScreen.thiz.getResources().getString(R.string.meteringCenterSystem));
+			put(3, MainScreen.thiz.getResources().getString(R.string.meteringSpotSystem));
 		}
 	};
 	
@@ -464,53 +438,33 @@ public class AlmalenceGUI extends GUI implements
 //	};
 
 	
-	private final static Map<String, String> iso_keys = new Hashtable<String, String>() {
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), isoAuto);
-			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), iso50);
-			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), iso100);
-			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), iso200);
-			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), iso400);
-			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), iso800);
-			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), iso1600);
-			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), iso3200);
-		}
-	};
+//	private final static Map<String, String> iso_keys = new Hashtable<String, String>() {
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), isoAuto);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), iso50);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), iso100);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), iso200);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), iso400);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), iso800);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), iso1600);
+//			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), iso3200);
+//		}
+//	};
+//	
+//	private final static Map<String, String> iso2_keys = new Hashtable<String, String>() {
+//		{
+//			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
+//			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem));
+//		}
+//	};
 	
-	private final static Map<String, String> iso2_keys = new Hashtable<String, String>() {
-		{
-			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
-			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem));
-		}
-	};
 	
-	private final static List<String> iso_default = new ArrayList<String>() {
-		{			
-			add(isoAuto);			
-			add(iso100);
-			add(iso200);
-			add(iso400);
-			add(iso800);
-			add(iso1600);			
-		}
-	};
-	
-	private final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
-	{			
-			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
-			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
-			put(iso200, MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
-			put(iso400, MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
-			put(iso800, MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
-			put(iso1600, MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
-		}
-	};
 
 	// Defining for top menu buttons (camera parameters settings)
 	private final int MODE_EV = R.id.evButton;
@@ -700,7 +654,7 @@ public class AlmalenceGUI extends GUI implements
 			return -1;
 	}
 
-	public int getISOIcon(String isoMode)
+	public int getISOIcon(int isoMode)
 	{
 		if(icons_iso.containsKey(isoMode))
 			return icons_iso.get(isoMode);
@@ -2553,13 +2507,13 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// Create ISO button and adding supported ISOs
-//		List<String> supported_iso = CameraController.getInstance().getSupportedISO();
-//		if ((supported_iso != null && supported_iso.size() > 0 && activeISO != null) ||
-//				CameraController.getInstance().isISOSupported())
-//		{
-//
-//			//Collection<String> unsorted_keys = ISOButtons.keySet();
-//			//List<String> keys = Util.asSortedList(unsorted_keys);
+		byte[] supported_iso = CameraController.getInstance().getSupportedISO();
+		if ((supported_iso != null && supported_iso.length > 0 && activeISO != null) ||
+				CameraController.getInstance().isISOSupported())
+		{
+
+			//Collection<String> unsorted_keys = ISOButtons.keySet();
+			//List<String> keys = Util.asSortedList(unsorted_keys);
 //			Collection<String> unsorted_keys = iso_keys.keySet();
 //			List<String> keys = Util.asSortedList(unsorted_keys);
 //			Iterator<String> it = keys.iterator();
@@ -2577,36 +2531,42 @@ public class AlmalenceGUI extends GUI implements
 //					activeISONames.add(iso_name);
 //				}
 //			}
-//			
-//			if(activeISONames.size() > 0)
-//			{
-//				mISOSupported = true;
-//
-//				isoAdapter.Elements = activeISO;
-//				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
+			
+			for(byte iso_name : supported_iso)
+			{				
+				activeISO.add(ISOButtons.get(Integer.valueOf(iso_name)));
+				activeISONames.add(Integer.valueOf(iso_name));
+			}
+			
+			if(activeISONames.size() > 0)
+			{
+				mISOSupported = true;
+
+				isoAdapter.Elements = activeISO;
+				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
 //				gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
-//				gridview.setAdapter(isoAdapter);
-//	
-//				String initValue = preferences.getString(MainScreen.sISOPref, MainScreen.sDefaultValue);
-//				if (!activeISONames.contains(initValue)) {
-//					if (CameraController.getInstance().isFrontCamera())
-//						initValue = activeISONames.get(0);
-//					else
-//						initValue = MainScreen.sDefaultValue;
-//	
-//					preferences.edit().putString(MainScreen.sISOPref, initValue).commit();
-//				}
-//				setButtonSelected(ISOButtons, initValue);
-//				setCameraParameterValue(MODE_ISO, initValue);
-//	
-//				if (icons_iso!=null && icons_iso.containsKey(initValue))
-//				{
-//					RotateImageView but = (RotateImageView) topMenuButtons
-//							.get(MODE_ISO);
-//					int icon_id = icons_iso.get(initValue);
-//					but.setImageResource(icon_id);
-//				}
-//	
+				gridview.setAdapter(isoAdapter);
+	
+				int initValue = preferences.getInt(MainScreen.sISOPref, MainScreen.sDefaultValue);
+				if (!activeISONames.contains(initValue)) {
+					if (CameraController.getInstance().isFrontCamera())
+						initValue = activeISONames.get(0);
+					else
+						initValue = MainScreen.sDefaultValue;
+	
+					preferences.edit().putInt(MainScreen.sISOPref, initValue).commit();
+				}
+				setButtonSelected(ISOButtons, initValue);
+				setCameraParameterValue(MODE_ISO, initValue);
+	
+				if (icons_iso!=null && icons_iso.containsKey(initValue))
+				{
+					RotateImageView but = (RotateImageView) topMenuButtons
+							.get(MODE_ISO);
+					int icon_id = icons_iso.get(initValue);
+					but.setImageResource(icon_id);
+				}
+	
 //				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 //				Camera camera = CameraController.getInstance().getCamera();
 //				if (null != camera && params != null)
@@ -2622,19 +2582,20 @@ public class AlmalenceGUI extends GUI implements
 ////						Log.e("onCameraCreate", "ISO exception: " + e.getMessage());
 ////					}
 //				}
-//			}
-//			else
-//			{
-//				mISOSupported = false;
-//				mISO = null;	
-//			}
-//		}		
-//		else
-//		{
-//			mISOSupported = false;
-//			mISO = null;
-//		}
-		mISOSupported = false;
+				CameraController.getInstance().setCameraISO(mISO);
+			}
+			else
+			{
+				mISOSupported = false;
+				mISO = -1;	
+			}
+		}		
+		else
+		{
+			mISOSupported = false;
+			mISO = -1;
+		}
+//		mISOSupported = false;
 		
 		
 		int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
@@ -5220,7 +5181,7 @@ public class AlmalenceGUI extends GUI implements
 			int wbNew = CameraController.getInstance().getWBMode();
 			int flashNew = CameraController.getInstance().getFlashMode();
 			int focusNew = CameraController.getInstance().getFocusMode();
-			String isoNew = CameraController.getInstance().getISOMode();
+			int isoNew = CameraController.getInstance().getISOMode();
 			
 //				if(isoNew == null)
 //					isoNew = params.get(CameraParameters.isoParam2);
@@ -5479,16 +5440,12 @@ public class AlmalenceGUI extends GUI implements
 
 	private void setISO(int newMode)
 	{
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (newMode != null && params != null)
-//		{
-//			if (mSceneMode != null && (mSceneMode.compareTo(sceneAuto) != 0 && mISO.compareTo(newMode) != 0)
-//					&& MainScreen.thiz.mSceneModeSupported)
-//			{
-//				setSceneMode(sceneAuto);
-//				params = CameraController.getInstance().getCameraParameters();
-//			}
-//
+		if (newMode != -1)
+		{
+			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
+					&& CameraController.getInstance().mSceneModeSupported)
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+
 //			if(params.get(MainScreen.isoParam) != null)
 //				params.set(MainScreen.isoParam, newMode);
 //			else if(params.get(MainScreen.isoParam2) != null)
@@ -5501,24 +5458,25 @@ public class AlmalenceGUI extends GUI implements
 //					params.set(MainScreen.isoParam2, iso_default_values.get(newMode));
 //				CameraController.getInstance().setCameraParameters(params);	
 //			}
-//			mISO = newMode;
-//			setButtonSelected(ISOButtons, mISO);
-//
-//			preferences.edit().putString(MainScreen.sISOPref, newMode).commit();
-//		}
-//
-//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ISO);
-//		int icon_id = icons_iso.get(mISO);
-//		but.setImageResource(icon_id);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
-//
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
+			CameraController.getInstance().setCameraISO(newMode);
+			mISO = newMode;
+			setButtonSelected(ISOButtons, mISO);
+
+			preferences.edit().putInt(MainScreen.sISOPref, newMode).commit();
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ISO);
+		int icon_id = icons_iso.get(mISO);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+
+		Message msg = new Message();
+		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
+		msg.what = PluginManager.MSG_BROADCAST;
+		MainScreen.H.sendMessage(msg);
 	}
 	
 	private void setMeteringMode(int newMode)

@@ -6,6 +6,7 @@ import java.util.List;
 import android.annotation.TargetApi;
 
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
@@ -26,6 +27,10 @@ public class HALv3
 	private final String TAG = "HALv3Controller";
 	
 	private static HALv3 instance = null;
+	
+	private static Rect zoomCropPreview = null;
+	private static Rect zoomCropCapture = null;
+	private static float zoomLevel = 0.4f;
 	
 	public static HALv3 getInstance()
 	{
@@ -258,7 +263,7 @@ public class HALv3
 		if(HALv3.getInstance().camCharacter != null)
 		{
 			float maxzoom = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
-			return maxzoom > 1? true : false;
+			return maxzoom > 0? true : false;
 		}
 		
 		return false;			
@@ -267,9 +272,45 @@ public class HALv3
 	public static float getMaxZoomHALv3()
 	{
 		if(HALv3.getInstance().camCharacter != null)
-			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)*10.0f;			
 		
-		return 1;
+		return 0;
+	}
+	
+	public static void setZoom(float newZoom)
+	{
+		if(newZoom < 0.4f)
+		{
+			zoomLevel = 0.4f;
+			return;
+		}
+		zoomLevel = newZoom;
+		
+		zoomCropPreview = getZoomRect(zoomCropPreview, zoomLevel, MainScreen.previewWidth, MainScreen.previewHeight);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+		try 
+		{
+			CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);
+		}
+		catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static Rect getZoomRect(Rect zoomCrop, float zoom, int imgWidth, int imgHeight)
+	{
+		int CropWidth  = (int)(imgWidth/zoom)+2*64;
+		int CropHeight = (int)(imgHeight/zoom)+2*64;
+		// ensure crop w,h divisible by 4 (SZ requirement)
+		CropWidth  -= CropWidth&3;
+		CropHeight -= CropHeight&3;
+		// crop area for standard frame
+		int CropWidthStd  = CropWidth-2*64;
+		int CropHeightStd = CropHeight-2*64;
+		
+		return new Rect((imgWidth-CropWidthStd)/2, (imgHeight-CropHeightStd)/2,
+				(imgWidth+CropWidthStd)/2, (imgHeight+CropHeightStd)/2);
 	}
 	
 	public static boolean isExposureCompensationSupportedHALv3()
@@ -385,6 +426,47 @@ public class HALv3
 	}
 	
 	
+	public static byte[] getSupportedISOModesHALv3()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+		{
+			int iso[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			int max_analog_iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_MAX_ANALOG_SENSITIVITY);
+			int max_iso = iso[1];
+			
+			int index = 0;
+			for(index = 0; index < CameraController.iso_values.size(); index++)
+			{
+				if(max_iso <= CameraController.iso_values.get(index))
+				{
+					++index;
+					break;
+				}
+			}
+			byte[] iso_values = new byte[index];
+			for(int i = 0; i < index; i++)
+				iso_values[i] = CameraController.iso_values.get(i).byteValue();
+
+			if(iso_values.length > 0 )
+				return iso_values;				
+		}
+		
+		return null;
+	}
+	
+	public static boolean isISOModeSupportedHALv3()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+		{
+			int iso[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			if(iso[0] == iso[1])
+				return false;
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public static int getMaxNumMeteringAreasHALv3()
 	{
 		if(HALv3.getInstance().camCharacter != null)
@@ -484,6 +566,25 @@ public class HALv3
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sFlashModePref, mode).commit();
 	}
 	
+	public static void setCameraISOModeHALv3(int mode)
+	{
+		if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			if(mode != 1)
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, CameraController.mode_iso_HALv3.get(mode));
+			try 
+			{
+				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);
+			}
+			catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sISOPref, mode).commit();
+	}
+	
 	
 	public static void setCameraExposureCompensationHALv3(int iEV)
 	{
@@ -535,6 +636,11 @@ public class HALv3
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if(zoomLevel >= 0.4f)
+			{
+				zoomCropCapture = getZoomRect(zoomCropCapture, zoomLevel, MainScreen.imageWidth, MainScreen.imageHeight);
+				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+			}
 			
 			// no re-focus needed, already focused in preview, so keeping the same focusing mode for snapshot
 			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);

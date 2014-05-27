@@ -126,7 +126,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = false;
+	public static boolean isHALv3 = true;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -1263,8 +1263,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		sfl.add(mCameraSurface);				// surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
-		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-//		sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+//		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+		sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 		
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
@@ -1433,7 +1433,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		return guiManager.getFlashIcon(flashMode);
 	}
 
-	public int getISOIcon(String isoMode) {
+	public int getISOIcon(int isoMode) {
 		return guiManager.getISOIcon(isoMode);
 	}	
 

@@ -116,6 +116,49 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private final static String flashTorch = MainScreen.thiz.getResources()
 			.getString(R.string.flashTorchSystem);
 	
+	private final static String isoAuto = MainScreen.thiz.getResources()
+			.getString(R.string.isoAutoSystem);
+	private final static String iso50 = MainScreen.thiz.getResources()
+			.getString(R.string.iso50System);
+	private final static String iso100 = MainScreen.thiz.getResources()
+			.getString(R.string.iso100System);
+	private final static String iso200 = MainScreen.thiz.getResources()
+			.getString(R.string.iso200System);
+	private final static String iso400 = MainScreen.thiz.getResources()
+			.getString(R.string.iso400System);
+	private final static String iso800 = MainScreen.thiz.getResources()
+			.getString(R.string.iso800System);
+	private final static String iso1600 = MainScreen.thiz.getResources()
+			.getString(R.string.iso1600System);
+	private final static String iso3200 = MainScreen.thiz.getResources()
+			.getString(R.string.iso3200System);
+	
+	private final static String isoAuto_2 = MainScreen.thiz.getResources()
+			.getString(R.string.isoAutoDefaultSystem);
+	private final static String iso50_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso50DefaultSystem);
+	private final static String iso100_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso100DefaultSystem);
+	private final static String iso200_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso200DefaultSystem);
+	private final static String iso400_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso400DefaultSystem);
+	private final static String iso800_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso800DefaultSystem);
+	private final static String iso1600_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso1600DefaultSystem);
+	private final static String iso3200_2 = MainScreen.thiz.getResources()
+			.getString(R.string.iso3200DefaultSystem);
+	
+	private final static String meteringAuto = MainScreen.thiz.getResources()
+			.getString(R.string.meteringAutoSystem);
+	private final static String meteringMatrix = MainScreen.thiz.getResources()
+			.getString(R.string.meteringMatrixSystem);
+	private final static String meteringCenter = MainScreen.thiz.getResources()
+			.getString(R.string.meteringCenterSystem);
+	private final static String meteringSpot = MainScreen.thiz.getResources()
+			.getString(R.string.meteringSpotSystem);
+	
 	
 	// List of localized names for camera parameters values	
 	public final static Map<Integer, String> mode_scene = new Hashtable<Integer, String>() {
@@ -238,6 +281,110 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
 			put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
 			put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
+		}
+	};
+	
+	
+	public final static List<Integer> iso_values = new ArrayList<Integer>() {
+		{			
+			add(CameraParameters.ISO_AUTO);			
+			add(CameraParameters.ISO_50);
+			add(CameraParameters.ISO_100);
+			add(CameraParameters.ISO_200);
+			add(CameraParameters.ISO_400);
+			add(CameraParameters.ISO_800);
+			add(CameraParameters.ISO_1600);
+			add(CameraParameters.ISO_3200);
+		}
+	};
+	
+	
+	private final static List<String> iso_default = new ArrayList<String>() {
+		{			
+			add(isoAuto);			
+			add(iso100);
+			add(iso200);
+			add(iso400);
+			add(iso800);
+			add(iso1600);
+		}
+	};
+	
+		
+	private final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
+	{			
+			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
+			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
+			put(iso200, MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
+			put(iso400, MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
+			put(iso800, MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
+			put(iso1600, MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
+		}
+	};
+	
+	private final static Map<Integer, String> mode_iso = new Hashtable<Integer, String>() {
+		{
+			put(CameraParameters.ISO_AUTO, isoAuto);
+			put(CameraParameters.ISO_50, iso50);
+			put(CameraParameters.ISO_100, iso100);
+			put(CameraParameters.ISO_200, iso200);
+			put(CameraParameters.ISO_400, iso400);
+			put(CameraParameters.ISO_800, iso800);
+			put(CameraParameters.ISO_1600, iso1600);
+			put(CameraParameters.ISO_3200, iso3200);
+		}
+	};
+	
+	private final static Map<Integer, String> mode_iso2 = new Hashtable<Integer, String>() {
+		{
+			put(CameraParameters.ISO_AUTO, isoAuto_2);
+			put(CameraParameters.ISO_50, iso50_2);
+			put(CameraParameters.ISO_100, iso100_2);
+			put(CameraParameters.ISO_200, iso200_2);
+			put(CameraParameters.ISO_400, iso400_2);
+			put(CameraParameters.ISO_800, iso800_2);
+			put(CameraParameters.ISO_1600, iso1600_2);
+			put(CameraParameters.ISO_3200, iso3200_2);
+		}
+	};
+	
+	
+	public final static Map<Integer, Integer> mode_iso_HALv3 = new Hashtable<Integer, Integer>() {
+		{
+			put(CameraParameters.ISO_AUTO, 1);
+			put(CameraParameters.ISO_50, 50);
+			put(CameraParameters.ISO_100, 100);
+			put(CameraParameters.ISO_200, 200);
+			put(CameraParameters.ISO_400, 400);
+			put(CameraParameters.ISO_800, 800);
+			put(CameraParameters.ISO_1600, 1600);
+			put(CameraParameters.ISO_3200, 3200);
+		}
+	};
+	
+	private final static Map<String, Integer> key_iso = new Hashtable<String, Integer>() {
+		{
+			put(isoAuto, CameraParameters.ISO_AUTO);
+			put(iso50, CameraParameters.ISO_AUTO);
+			put(iso100, CameraParameters.ISO_AUTO);
+			put(iso200, CameraParameters.ISO_AUTO);
+			put(iso400, CameraParameters.ISO_AUTO);
+			put(iso800, CameraParameters.ISO_AUTO);
+			put(iso1600, CameraParameters.ISO_AUTO);
+			put(iso3200, CameraParameters.ISO_AUTO);
+		}
+	};
+	
+	private final static Map<String, Integer> key_iso2 = new Hashtable<String, Integer>() {
+		{
+			put(isoAuto_2, CameraParameters.ISO_AUTO);
+			put(iso50_2, CameraParameters.ISO_AUTO);
+			put(iso100_2, CameraParameters.ISO_AUTO);
+			put(iso200_2, CameraParameters.ISO_AUTO);
+			put(iso400_2, CameraParameters.ISO_AUTO);
+			put(iso800_2, CameraParameters.ISO_AUTO);
+			put(iso1600_2, CameraParameters.ISO_AUTO);
+			put(iso3200_2, CameraParameters.ISO_AUTO);
 		}
 	};
 	
@@ -955,9 +1102,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 		{
-			float maxZoom = HALv3.getMaxZoomHALv3(); 
-			return (int)maxZoom;
+			float maxZoom = HALv3.getMaxZoomHALv3();
+			return (int)(maxZoom - 4f);
 		}
+	}
+	
+	public void setZoom(int value)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			Camera.Parameters cp = this.getCameraParameters();
+			if(cp != null)
+			{
+				cp.setZoom(value);
+				this.setCameraParameters(cp);
+			}
+		}
+		else
+			HALv3.setZoom(value/10.0f + 0.4f);
+		
 	}
 	
 	public boolean isLumaAdaptationSupported()
@@ -1054,7 +1217,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			float currEv = prefs.getFloat(MainScreen.sEvPref, 0);
+			int currEv = prefs.getInt(MainScreen.sEvPref, 0);
 			
 			return currEv;
 		}
@@ -1293,11 +1456,62 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return false;
 		}
 		else
-			return false;
+			return HALv3.isISOModeSupportedHALv3();
 	}
 
 	public byte[] getSupportedISO()
 	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null)
+			{
+				List<String> isoModes = null;
+				Camera.Parameters camParams = CameraController.getInstance().getCameraParameters();
+				String supportedIsoValues = camParams.get("iso-values");
+				String supportedIsoValues2 = camParams.get("iso-speed-values");
+				String supportedIsoValues3 = camParams.get("iso-mode-values");
+				//String iso = camParams.get("iso");
+				
+				String delims = "[,]+";
+				String[] ISOs = null;
+				
+				if (supportedIsoValues != "" && supportedIsoValues != null)
+					ISOs = supportedIsoValues.split(delims);
+				else if(supportedIsoValues2 != "" && supportedIsoValues2 != null)
+					ISOs = supportedIsoValues2.split(delims);
+				else if(supportedIsoValues3 != "" && supportedIsoValues3 != null)
+					ISOs = supportedIsoValues3.split(delims);
+				
+				if(ISOs != null)
+				{
+					isoModes = new ArrayList<String>();				
+					for (int i = 0; i < ISOs.length; i++)
+						isoModes.add(ISOs[i]);
+				}
+				else
+					return null;
+				
+				byte iso[] = new byte[isoModes.size()];
+				for(int i = 0; i < isoModes.size(); i++)
+				{
+					String mode = isoModes.get(i);
+					if(CameraController.key_iso.containsKey(mode))
+					{
+						if(CameraController.key_iso.containsKey(mode))
+							iso[i] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
+						else if(CameraController.key_iso2.containsKey(mode))
+							iso[i] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
+					}
+				}
+				
+				return iso;
+			}
+	
+			return null;
+		}
+		else
+			return HALv3.getSupportedISOModesHALv3();
+		
 //		if (camera != null)
 //		{
 //			Camera.Parameters camParams = MainScreen.cameraParameters;
@@ -1325,8 +1539,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //				return isoList;
 //			}
 //		}
-
-		return null;
+//
+//		return null;
 	}	
 	
 	
@@ -1493,7 +1707,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return -1;
 	}
 
-	public String getISOMode()
+	public int getISOMode()
 	{
 		if(!MainScreen.isHALv3)
 		{
@@ -1507,12 +1721,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if(iso == null)
 						iso = params.get("iso-speed");
 					
-					return iso;
+					return CameraController.key_iso.get(iso);
 				}
 			}
 		}
+		else
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sISOPref, -1);
 
-		return null;
+		return -1;
 	}
 
 	public void setCameraSceneMode(int mode)
@@ -1596,18 +1812,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 
-	public void setCameraISO(String mode) {
-		if (CameraController.camera != null) {
-			Camera.Parameters params = CameraController.cameraParameters;
-			if (params != null) {
-				if(params.get("iso") != null)
-					params.set("iso", mode);
-				else if(params.get("iso-speed") != null)
-					params.set("iso-speed", mode);
-				
-				setCameraParameters(params);
+	public void setCameraISO(int mode)
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if (CameraController.camera != null) 
+			{
+				Camera.Parameters params = CameraController.cameraParameters;
+				if(params != null)
+				{
+					if(params.get(CameraParameters.isoParam) != null)
+						params.set(CameraParameters.isoParam, CameraController.mode_iso.get(mode));
+					else if(params.get(CameraParameters.isoParam2) != null)
+						params.set(CameraParameters.isoParam2, CameraController.mode_iso.get(mode));
+					if(false == this.setCameraParameters(params))
+					{
+						if(params.get(CameraParameters.isoParam) != null)
+							params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
+						else if(params.get(CameraParameters.isoParam2) != null)
+							params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+						this.setCameraParameters(params);
+					}
+				}
 			}
 		}
+		else
+			HALv3.setCameraISOModeHALv3(mode);
 	}
 	
 	

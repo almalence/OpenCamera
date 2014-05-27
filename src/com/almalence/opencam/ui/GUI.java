@@ -214,7 +214,7 @@ public abstract class GUI
 	
 	abstract public int getFlashIcon(int flashMode);
 	
-	abstract public int getISOIcon(String isoMode);
+	abstract public int getISOIcon(int isoMode);
 
 	
 	/*FOCUS MANAGER SECTION*/

@@ -320,7 +320,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			isoInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon("auto")));
+			isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon(CameraParameters.ISO_AUTO)));
 			isoInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(isoInfoImage);
@@ -484,8 +484,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useISOMonitor && isoInfoImage != null)
 		{
-			String iso = CameraController.getInstance().getISOMode();
-			if(iso != null && iso != "" && isoInfoImage != null && CameraController.getInstance().isISOSupported())
+			int iso = CameraController.getInstance().getISOMode();
+			if(iso != -1 && isoInfoImage != null && CameraController.getInstance().isISOSupported())
 			{
 				int iso_id = MainScreen.thiz.getISOIcon(iso);
 				if(iso_id != -1)
@@ -589,8 +589,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if(this.useISOMonitor && isoInfoImage != null)
 			{
-				String iso = CameraController.getInstance().getISOMode();
-				if(iso != null && iso != "" && isoInfoImage != null)
+				int iso = CameraController.getInstance().getISOMode();
+				if(iso != -1 && isoInfoImage != null)
 				{
 					int iso_id = MainScreen.thiz.getISOIcon(iso);
 					if(iso_id != -1)

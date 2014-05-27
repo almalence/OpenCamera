@@ -351,7 +351,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 				{
 					zoomCurrent = CameraController.getInstance().getMaxZoom();
 				}
-					
+				
+				CameraController.getInstance().setZoom(zoomCurrent);
 //				cp.setZoom(zoomCurrent);
 //					
 //				CameraController.getInstance().setCameraParameters(cp);
