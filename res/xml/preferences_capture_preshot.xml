@@ -33,8 +33,26 @@
 		    android:entryValues="@array/pauseValuesPreShot" 
 		    android:defaultValue="500"/>
 		
-		
-		<PreferenceScreen android:title="@string/moreText"><CheckBoxPreference android:title="@string/Pref_PreShot_RefocusOnEachShot_Title" android:defaultValue="false" android:summary="@string/Pref_PreShot_RefocusOnEachShot_Summary" android:key="refocusPrefPreShot" /><CheckBoxPreference android:title="@string/Pref_PreShot_Autostart_Title" android:defaultValue="false" android:summary="@string/Pref_PreShot_Autostart_Summary" android:key="autostartPrefPreShot" /></PreferenceScreen>
+		<!-- -+-  -->
+    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.opencam.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="capture_preshot_more" />
+    	</PreferenceScreen>
+    	<!--  -+- -->
+		<!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.opencam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="capture_preshot_more" />
+    	</PreferenceScreen>
+		+++ -->
 		
 	</PreferenceCategory>   
 </PreferenceScreen>

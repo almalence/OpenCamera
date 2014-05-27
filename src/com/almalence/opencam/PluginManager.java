@@ -838,7 +838,11 @@ public class PluginManager {
 		loadStandardSettingsBefore(pf, settings);
 		if ("general_settings".equals(settings)) 
 		{
-		} 
+		}
+		else if ("general_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_general_more);
+		}
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
@@ -871,9 +875,37 @@ public class PluginManager {
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
 		}
+		else if ("export_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+		}		
 		else if ("shooting_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
+		}
+		else if ("capture_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_expobracketing_more);
+		}
+		else if ("processing_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_hdr_more);
+		}
+		else if ("capture_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_night_more);
+		}
+		else if ("processing_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
+		}
+		else if ("capture_preshot_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);
+		}
+		else if ("capture_panorama_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
 		}
 //		else if ("selftimer".equals(settings))
 //		{
@@ -1134,7 +1166,7 @@ public class PluginManager {
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
-			new CountDownTimer(200, 200) {
+			new CountDownTimer(250, 250) {
 				public void onTick(long millisUntilFinished) {
 				}
 	
