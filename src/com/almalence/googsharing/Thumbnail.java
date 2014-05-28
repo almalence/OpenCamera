@@ -306,7 +306,7 @@ public class Thumbnail {
         final int color = 0xffffffff;
         final Paint paint = new Paint();
         final Rect rectSrc = new Rect(0, 0, bitmapCropped.getWidth(), bitmapCropped.getHeight());
-        final Rect rect = new Rect(3, 3, output.getWidth() - 3, output.getHeight() - 3);
+        final Rect rect = new Rect(6, 6, output.getWidth() - 6, output.getHeight() - 6);
         //final Rect rect = new Rect(0, 0, output.getWidth(), output.getHeight());
         final RectF rectF = new RectF(rect);
         final RectF rectFBorder = new RectF(0, 0, output.getWidth(), output.getHeight());
