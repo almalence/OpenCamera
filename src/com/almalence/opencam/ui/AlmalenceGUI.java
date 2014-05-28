@@ -1015,25 +1015,27 @@ public class AlmalenceGUI extends GUI implements
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		String defaultModeName = prefs.getString("defaultModeName", "");
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
-		Bitmap bm = null;
-		Bitmap iconBase = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
-				R.drawable.gui_almalence_select_mode);
-		Bitmap iconOverlay = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
-				MainScreen.thiz.getResources().getIdentifier(mode.icon,
-						"drawable", MainScreen.thiz.getPackageName()));
-		iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-				(int) (iconBase.getWidth() / 1.8),
-				(int) (iconBase.getWidth() / 1.8), false);
-
-		bm = mergeImage(iconBase, iconOverlay);
-		bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.mainContext
-				.getResources().getDimension(R.dimen.paramsLayoutHeight)),
-				(int) (MainScreen.mainContext.getResources()
-						.getDimension(R.dimen.paramsLayoutHeight)), false);
-		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
-				.setImageBitmap(bm);
+		try{
+			Bitmap bm = null;
+			Bitmap iconBase = BitmapFactory.decodeResource(
+					MainScreen.mainContext.getResources(),
+					R.drawable.gui_almalence_select_mode);
+			Bitmap iconOverlay = BitmapFactory.decodeResource(
+					MainScreen.mainContext.getResources(),
+					MainScreen.thiz.getResources().getIdentifier(mode.icon,
+							"drawable", MainScreen.thiz.getPackageName()));
+			iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
+					(int) (iconBase.getWidth() / 1.8),
+					(int) (iconBase.getWidth() / 1.8), false);
+	
+			bm = mergeImage(iconBase, iconOverlay);
+			bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.mainContext
+					.getResources().getDimension(R.dimen.paramsLayoutHeight)),
+					(int) (MainScreen.mainContext.getResources()
+							.getDimension(R.dimen.paramsLayoutHeight)), false);
+			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
+					.setImageBitmap(bm);
+		}catch(Exception e){}
 		
 		// <!-- -+-
 		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
@@ -3191,22 +3193,22 @@ public class AlmalenceGUI extends GUI implements
 				rotateViews(quickControlChangeres, startDegree, endDegree,
 						duration);
 
-			if (guiView.findViewById(R.id.scenemodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.scenemodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeScene, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.wbLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.wbLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeWB, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeFocus, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeFlash, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeISO, startDegree, endDegree, duration);
 			
-			if (guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeMetering, startDegree, endDegree, duration);
 		}
 	}
