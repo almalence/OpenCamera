@@ -106,13 +106,13 @@ public class GridVFPlugin extends PluginViewfinder
 		addView(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 		
 		
-		if (gridType == 3)
-		{
-			grid.setVisibility(View.GONE);
-		}
-		else {
+//		if (gridType == 3)
+//		{
+//			grid.setVisibility(View.GONE);
+//		}
+//		else {
 			grid.setVisibility(View.VISIBLE);
-		}
+		//}
 	}
 	
 	@Override
