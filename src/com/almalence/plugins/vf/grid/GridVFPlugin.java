@@ -82,6 +82,9 @@ public class GridVFPlugin extends PluginViewfinder
         case 2:
         	quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
         	break;
+        case 3:
+        	quickControlIconID = R.drawable.plugin_vf_grid_none;
+        	break;
         }
 	}
 
@@ -112,7 +115,6 @@ public class GridVFPlugin extends PluginViewfinder
 		}
 	}
 	
-	static boolean is100 = false;
 	@Override
 	public void onQuickControlClick()
 	{        
@@ -122,7 +124,7 @@ public class GridVFPlugin extends PluginViewfinder
 		if (gridType == 4)
 			return;
 			
-        gridType= (gridType+1)%3;
+        gridType= (gridType+1)%4;
         
     	Editor editor = prefs.edit();
     	switch (gridType)
@@ -138,6 +140,10 @@ public class GridVFPlugin extends PluginViewfinder
         case 2:
         	quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
         	editor.putString("typePrefGrid", "2");
+        	break;
+        case 3:
+        	quickControlIconID = R.drawable.plugin_vf_grid_none;
+        	editor.putString("typePrefGrid", "3");
         	break;
         }
     	editor.commit();
@@ -203,6 +209,10 @@ public class GridVFPlugin extends PluginViewfinder
 			default:resID=R.drawable.plugin_vf_grid_trisec4x3;			
 			}
 			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(resID));
+		}
+		else if (3 == gridType)
+		{
+			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(R.drawable.plugin_vf_grid_none_img));
 		}
 		else
 		{
