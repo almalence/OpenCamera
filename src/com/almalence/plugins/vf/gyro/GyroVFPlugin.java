@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.R.bool;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -21,9 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -327,6 +325,15 @@ public class GyroVFPlugin extends PluginViewfinder {
 			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
 			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
 
+			int color = (255 - (marginVerticalValue + marginHorizontalValue) * 4);
+			if (color > 50) {
+				mHorizonIndicatorMarkTopDown.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkTopDown.clearColorFilter();
+			}
+		     
+		     
 			if (verticalError < 0.0f) {
 				if (horizontalError < 0.0f) {
 					mHorizonIndicatorMarkContainer.setPadding(0, marginVerticalValue, marginHorizontalValue, 0);
@@ -377,6 +384,27 @@ public class GyroVFPlugin extends PluginViewfinder {
 	
 	private void rotateHorizonIndicator (float sideErrorVertical, float sideErrorHorizontal) {
 		mHorizonIndicatorAim.setOrientation(mOrientation - 90);
+		
+		int colorVert = (255 - Math.abs(((int)Math.toDegrees(sideErrorVertical)-90)%90) * 15);
+		int colorHorz = (255 - Math.abs(((int)Math.toDegrees(sideErrorHorizontal)-90)%90) * 15);
+		
+		if(mOrientation == 90 || mOrientation == 270) {
+			if (colorVert > 100) {
+				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorVert, colorVert, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+			}
+		}
+		else {
+			if (colorHorz > 100) {
+				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorHorz, colorHorz, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+			}	
+		}
+		
 		if (mOrientation == 90) {
 			mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideErrorVertical) + 180 + mOrientation);
 		} 	
