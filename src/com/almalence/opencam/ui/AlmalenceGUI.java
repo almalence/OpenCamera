@@ -7618,8 +7618,8 @@ public class AlmalenceGUI extends GUI implements
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
 
-		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerHeight);
-		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerWidth);
+		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeight);
+		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeight);
 		Animation rotation = new RotateAnimation(0, 360, width/2, height/2);
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());
