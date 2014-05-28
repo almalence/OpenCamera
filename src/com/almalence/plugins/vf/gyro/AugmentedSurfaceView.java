@@ -1,7 +1,5 @@
 package com.almalence.plugins.vf.gyro;
 
-import android.util.Log;
-
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 import com.almalence.plugins.capture.panoramaaugmented.Vector3d;
 
@@ -139,8 +137,6 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 					angle = -angle;
 				}
 			}
-			
-//			return angle;
 		}
 		
 		if (Math.abs(angle) > 1.0f && top.z > 0) {
