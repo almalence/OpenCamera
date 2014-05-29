@@ -606,6 +606,17 @@ public class ExportPlugin extends PluginExport
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
 		            }
+		            if (tag_version != null && !tag_version.equals("48 50 50 48")) {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		        		value.setBytes(tag_version.getBytes());
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+		            }
+		            else {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		            	byte[] version = {(byte) 0x48, (byte) 0x50, (byte) 0x50, (byte) 0x48};
+		        		value.setBytes(version);
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+		            }
 		            
 	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
 	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
