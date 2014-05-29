@@ -106,7 +106,7 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 			sensorEventPrev.accuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
 			sensorEventPrev.sensor = (Sensor)null; // (Sensor)this;
 		}
-		catch (Throwable e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

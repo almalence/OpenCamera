@@ -110,7 +110,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			this.viewAngleX = cp.getHorizontalViewAngle();
 			this.viewAngleY = cp.getVerticalViewAngle();
 		}
-		catch (final Throwable e) {
+		catch (final Exception e) {
 			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
 			this.viewAngleX = 55.4f;
 			this.viewAngleY = 42.7f;

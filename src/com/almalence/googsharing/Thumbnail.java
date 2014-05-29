@@ -147,7 +147,7 @@ public class Thumbnail {
                 if (rotated != bitmap) bitmap.recycle();
                 return rotated;
             } 
-            catch (Throwable t) 
+            catch (Exception t) 
             {
                 Log.w(TAG, "Failed to rotate thumbnail", t);
             }
