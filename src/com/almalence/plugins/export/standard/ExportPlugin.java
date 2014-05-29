@@ -611,7 +611,7 @@ public class ExportPlugin extends PluginExport
 		            }
 		            else {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		            	byte[] version = {(byte) 0x48, (byte) 0x50, (byte) 0x50, (byte) 0x48};
+		            	byte[] version = {(byte) 48, (byte) 50, (byte) 50, (byte) 48};
 		        		value.setBytes(version);
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
 		            }
