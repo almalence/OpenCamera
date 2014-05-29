@@ -319,7 +319,7 @@ public class EglEncoder
      * match is found, this throws a test failure -- the set of formats known to the test
      * should be expanded for new platforms.
      */
-    private static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
+	public static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
         MediaCodecInfo.CodecCapabilities capabilities = codecInfo.getCapabilitiesForType(mimeType);
         for (int i = 0; i < capabilities.colorFormats.length; i++) {
             int colorFormat = capabilities.colorFormats[i];
@@ -365,14 +365,13 @@ public class EglEncoder
 			throw new RuntimeException("No codec found.");
 		}
 
-        final int colorFormat = selectColorFormat(codecInfo, MIME_TYPE);
+        //final int colorFormat = selectColorFormat(codecInfo, MIME_TYPE);
 
 		final MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, this.mWidth, this.mHeight);
 
 		// Set some properties. Failing to specify some of these can cause the
 		// MediaCodec
 		// configure() call to throw an unhelpful exception.
-		//Log.e("Almalence", "FPS: " + this.definedFPS);
 		
 		// Video
 		format.setInteger(MediaFormat.KEY_COLOR_FORMAT,	MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);

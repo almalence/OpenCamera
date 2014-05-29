@@ -185,7 +185,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 				@Override
 				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
 				{					
-					MainScreen.thiz.queueGLEvent(this.runnable);
+					GLLayer.this.queueEvent(this.runnable);
 				}
 			});
 			
@@ -197,7 +197,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 			
 			try
 			{
-				camera.setDisplayOrientation(0);
+				camera.setDisplayOrientation(90);
 			}
 			catch (RuntimeException e)
 			{

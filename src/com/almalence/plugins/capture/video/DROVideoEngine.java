@@ -26,7 +26,7 @@ public class DROVideoEngine
 			+ "varying vec2 texCoord;\n"
 			+ "void main() {\n"
 			+ "  texCoord = vTexCoord;\n"
-			+ "  gl_Position = vec4 ( vPosition.y, -vPosition.x, 1.0, 1.0 );\n"
+			+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
 			+ "}";
 
 	private static final String SHADER_FRAGMENT =
@@ -133,8 +133,6 @@ public class DROVideoEngine
 	
 	private FpsMeasurer fps = new FpsMeasurer(10);
 	
-	private volatile int orientation = 0;
-	
 	public DROVideoEngine()
 	{
 		this.init();
@@ -173,9 +171,9 @@ public class DROVideoEngine
 									path,
 									DROVideoEngine.this.previewWidth,
 									DROVideoEngine.this.previewHeight,
-									(int)DROVideoEngine.this.fps.getFPS(),
+									24,
 									20000000,
-									DROVideoEngine.this.orientation);
+									(MainScreen.guiManager.getDisplayOrientation()) % 360);
 							
 							synchronized (sync)
 							{
@@ -334,6 +332,10 @@ public class DROVideoEngine
 			
 			if (this.instance != 0)
 			{
+				long t;
+				
+				t = System.currentTimeMillis();
+				
 				RealtimeDRO.render(
 						this.instance,
 						texture,
@@ -353,15 +355,11 @@ public class DROVideoEngine
 						this.min_limit,
 						this.max_limit,
 						this.texture_out);
-				
-				DROVideoEngine.this.fps.measure();
+
+				t = System.currentTimeMillis() - t;
+				//Log.d(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
 				
 				this.forceUpdate = false;
-				
-				if (this.encoder != null)
-				{
-					this.encoder.encode(this.texture_out);
-				}
 				
 				MainScreen.thiz.glRequestRender();
 			}
@@ -426,8 +424,19 @@ public class DROVideoEngine
 	}
 
 	public void onDrawFrame(final GL10 gl)
-	{				
-		this.drawOutputTexture();
+	{
+		synchronized (this.stateSync)
+		{
+			this.drawOutputTexture();
+			
+			DROVideoEngine.this.fps.measure();
+			//Log.d(TAG, String.format("FPS: %.2f", fps.getFPS()));
+			
+			if (this.encoder != null)
+			{
+				this.encoder.encode(this.texture_out);
+			}
+		}
 	}
 	
 	private void drawOutputTexture()

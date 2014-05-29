@@ -62,18 +62,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
-import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,8 +145,15 @@ public class VideoCapturePlugin extends PluginCapture
     boolean showRotateToLandscapeNotifier = false;
     private View rotatorLayout;
     
+    private boolean displayTakePicture;
+    
     private static Hashtable<Integer, Boolean> previewSizes = new Hashtable<Integer, Boolean>()
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6076051817063312974L;
+
 		{
 			put(CamcorderProfile.QUALITY_QCIF, false);
 			put(CamcorderProfile.QUALITY_CIF, false);
@@ -266,11 +268,17 @@ public class VideoCapturePlugin extends PluginCapture
 		        	//*
 		        	if (VideoCapturePlugin.this.shouldPreviewToGPU())
 		        	{
+		    			takePictureButton.setVisibility(View.GONE);
+		    			timeLapseButton.setVisibility(View.GONE);
 		    	        MainScreen.thiz.showOpenGLLayer(2);
 		    	        MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		        	}
 		        	else
 		        	{
+		        		if (displayTakePicture)
+		        			takePictureButton.setVisibility(View.VISIBLE);
+		        		timeLapseButton.setVisibility(View.VISIBLE);
+		        		
 		        		droEngine.onPause();
 		        		MainScreen.thiz.hideOpenGLLayer();
 		    			
@@ -504,9 +512,13 @@ public class VideoCapturePlugin extends PluginCapture
 			takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 			takePictureButton.invalidate();
 			takePictureButton.requestLayout();
+			displayTakePicture = true;
 		}
 		else
-			takePictureButton.setVisibility(View.INVISIBLE);
+		{
+			takePictureButton.setVisibility(View.GONE);
+			displayTakePicture = false;
+		}
 		
 		
 		timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
@@ -521,7 +533,16 @@ public class VideoCapturePlugin extends PluginCapture
 				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
-			takePictureButton.setVisibility(View.INVISIBLE);
+		{
+			takePictureButton.setVisibility(View.GONE);
+			displayTakePicture = false;
+		}
+		
+		if (this.shouldPreviewToGPU())
+		{
+			takePictureButton.setVisibility(View.GONE);
+			timeLapseButton.setVisibility(View.GONE);
+		}
 		
 		//SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		if (prefs.getBoolean("videoStartStandardPref", false))
@@ -813,10 +834,8 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		if (this.shouldPreviewToGPU())
 		{
-	        final Message msg = new Message();
-			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW_V2;
-			MainScreen.H.sendMessage(msg);
-			
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_SHOW_V2);
+	        MainScreen.H.sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
 		}
 	}
 	

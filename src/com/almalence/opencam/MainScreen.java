@@ -622,7 +622,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
  		final GLSurfaceView surfaceView = glView;
  		if (surfaceView != null)
  		{
- 			surfaceView.requestRender();;
+ 			surfaceView.requestRender();
  		}
  	}
 	public void queueGLEvent(final Runnable runnable)
@@ -721,9 +721,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 								.setVisibility(View.VISIBLE);
 						setupCamera(surfaceHolder);
 
-						if (glView != null && camera != null)
-							glView.onResume();
-
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.guiManager.onGUICreate();
 						
@@ -793,9 +790,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		if (glView != null) {
-			glView.onPause();
-		}
+		this.hideOpenGLLayer();
 
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
@@ -2051,7 +2046,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
 			glView.setZOrderMediaOverlay(true);
-			glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 		}
 	}
 
