@@ -46,6 +46,8 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.os.SystemClock;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
@@ -201,6 +203,10 @@ public class VideoCapturePlugin extends PluginCapture
 //		addView(mRecordingTimeView, ViewfinderZone.VIEWFINDER_ZONE_TOP_LEFT);
 		
 		this.createModeSwitcher();
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
+		{
+			this.modeSwitcher.setVisibility(View.GONE);
+		}
 	}
 	
 	private void createModeSwitcher()
