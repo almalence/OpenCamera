@@ -1725,6 +1725,7 @@ public class PluginManager {
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
 			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
+			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
@@ -1741,6 +1742,7 @@ public class PluginManager {
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
 			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
 
 		} catch (JpegProcessingException e1)
 		{
@@ -1764,6 +1766,7 @@ public class PluginManager {
 			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
@@ -1779,7 +1782,8 @@ public class PluginManager {
 			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
-
+			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
+			
 		} catch (JpegProcessingException e1)
 		{
 			e1.printStackTrace();

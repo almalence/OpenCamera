@@ -38,10 +38,8 @@ import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
@@ -62,7 +60,6 @@ import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 import com.almalence.ui.RotateImageView;
-
 import com.almalence.util.MLocation;
 
 /***
@@ -470,6 +467,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
+	            String tag_metering_mode = PluginManager.getInstance().getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));
 	            	   
 	            if (exifDriver != null) {
 	            	if(tag_exposure_time != null) {
@@ -616,6 +614,14 @@ public class ExportPlugin extends PluginExport
 		            	byte[] version = {(byte) 0x48, (byte) 0x50, (byte) 0x50, (byte) 0x48};
 		        		value.setBytes(version);
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+		            }
+		            if (tag_metering_mode != null && !tag_metering_mode.equals("")) {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_metering_mode));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+		            }
+		            else {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
 		            }
 		            
 	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
