@@ -391,7 +391,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 				return true;
 			}
 		}
-		catch (Throwable e)
+		catch (Exception e)
 		{
 			
 		}

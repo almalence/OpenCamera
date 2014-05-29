@@ -106,8 +106,8 @@
 					android:layout_gravity="center_horizontal"
 					android:scaleType="centerCrop"
 					android:background="@android:color/transparent"
-					android:layout_height="@dimen/paramsLayoutHeight"
-					android:layout_width="@dimen/paramsLayoutHeight"
+					android:layout_height="@dimen/paramsLayoutHeightScanner"
+					android:layout_width="@dimen/paramsLayoutHeightScanner"
 			   		android:onClick="onButtonClick"
 			   		android:visibility="gone">
 				</ImageView>
