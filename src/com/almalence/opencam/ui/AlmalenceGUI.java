@@ -1015,25 +1015,27 @@ public class AlmalenceGUI extends GUI implements
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		String defaultModeName = prefs.getString("defaultModeName", "");
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
-		Bitmap bm = null;
-		Bitmap iconBase = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
-				R.drawable.gui_almalence_select_mode);
-		Bitmap iconOverlay = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
-				MainScreen.thiz.getResources().getIdentifier(mode.icon,
-						"drawable", MainScreen.thiz.getPackageName()));
-		iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-				(int) (iconBase.getWidth() / 1.8),
-				(int) (iconBase.getWidth() / 1.8), false);
-
-		bm = mergeImage(iconBase, iconOverlay);
-		bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.mainContext
-				.getResources().getDimension(R.dimen.paramsLayoutHeight)),
-				(int) (MainScreen.mainContext.getResources()
-						.getDimension(R.dimen.paramsLayoutHeight)), false);
-		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
-				.setImageBitmap(bm);
+		try{
+			Bitmap bm = null;
+			Bitmap iconBase = BitmapFactory.decodeResource(
+					MainScreen.mainContext.getResources(),
+					R.drawable.gui_almalence_select_mode);
+			Bitmap iconOverlay = BitmapFactory.decodeResource(
+					MainScreen.mainContext.getResources(),
+					MainScreen.thiz.getResources().getIdentifier(mode.icon,
+							"drawable", MainScreen.thiz.getPackageName()));
+			iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
+					(int) (iconBase.getWidth() / 1.8),
+					(int) (iconBase.getWidth() / 1.8), false);
+	
+			bm = mergeImage(iconBase, iconOverlay);
+			bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.mainContext
+					.getResources().getDimension(R.dimen.paramsLayoutHeight)),
+					(int) (MainScreen.mainContext.getResources()
+							.getDimension(R.dimen.paramsLayoutHeight)), false);
+			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
+					.setImageBitmap(bm);
+		}catch(Exception e){}
 		
 		// <!-- -+-
 		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
@@ -3191,22 +3193,22 @@ public class AlmalenceGUI extends GUI implements
 				rotateViews(quickControlChangeres, startDegree, endDegree,
 						duration);
 
-			if (guiView.findViewById(R.id.scenemodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.scenemodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeScene, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.wbLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.wbLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeWB, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeFocus, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeFlash, startDegree, endDegree, duration);
 
-			if (guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeISO, startDegree, endDegree, duration);
 			
-			if (guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
+			//if (guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
 				rotateViews(activeMetering, startDegree, endDegree, duration);
 		}
 	}
@@ -5596,17 +5598,32 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			if(params.get(isoParam) != null)
-				params.set(isoParam, newMode);
-			else if(params.get(isoParam2) != null)
-				params.set(isoParam2, newMode);
-			if(false == MainScreen.thiz.setCameraParameters(params))
 			{
-				if(params.get(isoParam) != null)
+				if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(newMode))
+					params.set(isoParam, newMode);
+				else if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(iso_default_values.get(newMode)))
 					params.set(isoParam, iso_default_values.get(newMode));
-				else if(params.get(isoParam2) != null)
-					params.set(isoParam2, iso_default_values.get(newMode));
-				MainScreen.thiz.setCameraParameters(params);	
+				else
+					params.set(isoParam, iso_default_values.get(newMode));
 			}
+			else if(params.get(isoParam2) != null)
+			{
+				if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(newMode))
+					params.set(isoParam2, newMode);
+				else if(MainScreen.supportedISOModes != null && MainScreen.supportedISOModes.contains(iso_default_values.get(newMode)))
+					params.set(isoParam2, iso_default_values.get(newMode));
+				else
+					params.set(isoParam2, iso_default_values.get(newMode));
+			}
+//			if(false == MainScreen.thiz.setCameraParameters(params))
+//			{
+//				if(params.get(isoParam) != null)
+//					params.set(isoParam, iso_default_values.get(newMode));
+//				else if(params.get(isoParam2) != null)
+//					params.set(isoParam2, iso_default_values.get(newMode));
+//				MainScreen.thiz.setCameraParameters(params);	
+//			}
+			MainScreen.thiz.setCameraParameters(params);
 			mISO = newMode;
 			setButtonSelected(ISOButtons, mISO);
 
@@ -7618,8 +7635,8 @@ public class AlmalenceGUI extends GUI implements
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
 
-		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerHeight);
-		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.scanerWidth);
+		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
+		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
 		Animation rotation = new RotateAnimation(0, 360, width/2, height/2);
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());

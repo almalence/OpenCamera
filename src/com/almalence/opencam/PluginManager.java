@@ -842,7 +842,11 @@ public class PluginManager {
 		loadStandardSettingsBefore(pf, settings);
 		if ("general_settings".equals(settings)) 
 		{
-		} 
+		}
+		else if ("general_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_general_more);
+		}
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
@@ -875,9 +879,37 @@ public class PluginManager {
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
 		}
+		else if ("export_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+		}		
 		else if ("shooting_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
+		}
+		else if ("capture_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_expobracketing_more);
+		}
+		else if ("processing_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_hdr_more);
+		}
+		else if ("capture_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_night_more);
+		}
+		else if ("processing_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
+		}
+		else if ("capture_preshot_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);
+		}
+		else if ("capture_panorama_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
 		}
 //		else if ("selftimer".equals(settings))
 //		{
@@ -1138,7 +1170,7 @@ public class PluginManager {
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
-			new CountDownTimer(200, 200) {
+			new CountDownTimer(250, 250) {
 				public void onTick(long millisUntilFinished) {
 				}
 	
@@ -1640,7 +1672,7 @@ public class PluginManager {
 //		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
 //		    	}
 //	        }
-			Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainScreen.mainContext, "Can't save data.", Toast.LENGTH_LONG).show();
 			break;
 
 		case MSG_DELAYED_CAPTURE: 
@@ -1719,6 +1751,7 @@ public class PluginManager {
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
 			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
+			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
@@ -1735,6 +1768,7 @@ public class PluginManager {
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
 			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
 
 		} catch (JpegProcessingException e1)
 		{
@@ -1758,6 +1792,7 @@ public class PluginManager {
 			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
@@ -1773,7 +1808,8 @@ public class PluginManager {
 			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
-
+			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
+			
 		} catch (JpegProcessingException e1)
 		{
 			e1.printStackTrace();

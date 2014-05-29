@@ -38,10 +38,8 @@ import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
@@ -62,7 +60,6 @@ import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 import com.almalence.ui.RotateImageView;
-
 import com.almalence.util.MLocation;
 
 /***
@@ -259,7 +256,6 @@ public class ExportPlugin extends PluginExport
 	            else
 	            {
 	            	file = MainScreen.ForceFilename;
-	            	MainScreen.ForceFilename = null;
 	            }
 	
 		    	FileOutputStream os = null;
@@ -281,11 +277,10 @@ public class ExportPlugin extends PluginExport
 		            else
 		            {
 		            	file = MainScreen.ForceFilename;
-		            	MainScreen.ForceFilename = null;
 		            }
 		        	os = new FileOutputStream(file);
 		        }	            
-	            
+		    	MainScreen.ForceFilename = null;
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
 	            if(imagesAmount == 1 && imageIndex != 0)
@@ -472,6 +467,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
+	            String tag_metering_mode = PluginManager.getInstance().getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));
 	            	   
 	            if (exifDriver != null) {
 	            	if(tag_exposure_time != null) {
@@ -514,11 +510,14 @@ public class ExportPlugin extends PluginExport
 		            	}
 		            }
 		            if(tag_iso != null) {
-		            	if (tag_iso.indexOf("ISO") > 0) {
-		            		tag_iso = tag_iso.substring(0, 2);
-		            	}
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            	try
+		            	{
+			            	if (tag_iso.indexOf("ISO") > 0) {
+			            		tag_iso = tag_iso.substring(0, 2);
+			            	}
+			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+		            	}catch(Exception e){}
 		            }
 		            if(tag_scene != null) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
@@ -604,6 +603,25 @@ public class ExportPlugin extends PluginExport
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
+		            }
+		            if (tag_version != null && !tag_version.equals("48 50 50 48")) {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		        		value.setBytes(tag_version.getBytes());
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+		            }
+		            else {
+		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+		            	byte[] version = {(byte) 48, (byte) 50, (byte) 50, (byte) 48};
+		        		value.setBytes(version);
+		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+		            }
+		            if (tag_metering_mode != null && !tag_metering_mode.equals("")) {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_metering_mode));
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+		            }
+		            else {
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
 		            }
 		            
 	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);

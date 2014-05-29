@@ -441,7 +441,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;//mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270 || mDisplayOrientationOnStartProcessing == 180;
 	    		//boolean mirrored = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? false: mCameraMirrored;
 		        // Note: DecodeJpegs doing free() to jpeg data!
-	        	mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
+	    		int rotation = mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360 : mDisplayOrientationOnStartProcessing;
+	        	mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
 	    		//mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, false, mCameraMirrored, 0);
 	        	getFaceRects();	
 		        
@@ -672,32 +673,17 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	        {
 	        	Matrix matrix = new Matrix();
 	        	matrix.postRotate(90);
+	        	if (mCameraMirrored) {
+	    			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) {
+	    				matrix.preScale(1, -1);
+	    			} else {
+	    				matrix.preScale(-1, 1);
+	    			}
+	    		}
 	        	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 	        	        matrix, true);
 	        	PreviewBmpInitial = Bitmap.createBitmap(rotated);
 	        }
-	        
-//	        if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-//    		{
-//	        	Log.e("GroupShot", "PreviewBmp rotate to: " + mDisplayOrientationOnStartProcessing);
-//	    		Matrix matrix = new Matrix();
-//	    		matrix.postRotate(mCameraMirrored?(mDisplayOrientationOnStartProcessing+180)%360 : mDisplayOrientationOnStartProcessing);
-//	    		
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//    		}
-//	        
-//	        Matrix matrix = new Matrix();
-//	        matrix.postRotate(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? 270 : 90) : 90);
-//	        //matrix.postRotate(mCameraMirrored? 270 : 90);
-//    		PreviewBmpInitial = Bitmap.createBitmap(PreviewBmpInitial, 0, 0, PreviewBmpInitial.getWidth(), PreviewBmpInitial.getHeight(), matrix, true);
-    		
-//    		if(mDisplayOrientationCurrent == 0 || mDisplayOrientationCurrent == 180) //Device in landscape
-//			{
-//				Matrix matrix = new Matrix();
-//    		
-//				matrix.postRotate(mLayoutOrientationCurrent);
-//				PreviewBmpInitial = Bitmap.createBitmap(PreviewBmpInitial, 0, 0, PreviewBmpInitial.getWidth(), PreviewBmpInitial.getHeight(), matrix, true);
-//			}
 	        
 	        mImgView.setImageBitmap(PreviewBmpInitial);
 	        mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
@@ -803,13 +789,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			float bHeight = bitmap.getHeight();
 			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 			{
-				ratiox = (float)MainScreen.getImageHeight() / (float)bitmap.getWidth();
-				ratioy = (float)MainScreen.getImageWidth() / (float)bitmap.getHeight();
+				ratiox = (float)MainScreen.getImageHeight() / (float)bWidth;
+				ratioy = (float)MainScreen.getImageWidth() / (float)bHeight;
 			}
 			else
 			{
-				ratiox = (float)MainScreen.getImageWidth() / (float)bitmap.getWidth();
-				ratioy = (float)MainScreen.getImageHeight() / (float)bitmap.getHeight();
+				ratiox = (float)MainScreen.getImageWidth() / (float)bWidth;
+				ratioy = (float)MainScreen.getImageHeight() / (float)bHeight;
 			}
 
 			Paint paint = new Paint();
@@ -851,13 +837,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				y = mDisplayOrientationOnStartProcessing == 180? x_tmp : mDisplayHeight-1-x_tmp;
 				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 			}
-			else if(mDisplayOrientationOnStartProcessing == 270)
+			else if(!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
 			{				
 				x = mDisplayHeight - x;
 				y = mDisplayWidth - y;
 				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 			}
-			
+			else if(mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
+			{				
+				x = mDisplayHeight - x;
+				y = mDisplayWidth - y;
+				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
+			}
 //			if(mDisplayOrientationOnStartProcessing != mDisplayOrientationCurrent)
 //			{				
 //				if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
@@ -880,7 +871,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			if((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))				
 			{
 				x = x - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayHeight : mDisplayWidth) - previewBmpRealWidth)/2;
-				y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				if (mCameraMirrored) {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight);
+				}
+				else {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				}
 				Log.e("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
 			}
 			
@@ -926,66 +922,14 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    
 	    private void setupImageView()
 	    {
-	    	PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);	    	
+	    	PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);	    
+	    	
 	    	if (PreviewBmp != null) 
         	{
-	    		boolean isGuffyOrientation = this.mDisplayOrientationOnStartProcessing == 180 || this.mDisplayOrientationOnStartProcessing == 270;
-	    		Bitmap rotated = null;
-	    		if(this.mDisplayOrientationOnStartProcessing == 0 || this.mDisplayOrientationOnStartProcessing == 180)
-	    		{
-	    			if(isGuffyOrientation)
-	    			{
-	    				Matrix matrix = new Matrix();
-		            	matrix.postRotate(180);
-		            	PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-		            	        matrix, true);	
-	    			}
-	    			drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
-	            	Matrix matrix = new Matrix();
-	            	matrix.postRotate(isGuffyOrientation? 270 : 90);
-	            	rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-	            	        matrix, true);	            	
-	    		}
-	    		else
-	    		{
-	    			Matrix matrix = new Matrix();
-	            	matrix.postRotate(isGuffyOrientation? 270 : 90);
-	            	rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-	            	        matrix, true);	            	
-
-	            	drawFaceRectOnBitmap(rotated, mFaceList.get(mBaseFrame));
-	            	if(isGuffyOrientation)
-	    			{	    				
-		            	matrix.postRotate(270);
-		            	rotated = Bitmap.createBitmap(rotated, 0, 0, rotated.getWidth(), rotated.getHeight(),
-		            	        matrix, true);	
-	    			}
-	    		}
-            	
-            	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
+	    		updateBitmap();
+            	mImgView.setImageBitmap(PreviewBmp);
+            	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);				                        		
         	}
-	        
-	        
-	        
-//	        if(mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-//			{
-//	        	boolean isGuffyOrientation = mDisplayOrientationOnStartProcessing == 180;
-//	        	//Log.e("GroupShot", "PreviewBmp rotated to: " + mLayoutOrientationCurrent);
-//				Matrix matrix = new Matrix();
-//				matrix.postRotate(isGuffyOrientation? MainScreen.guiManager.getLayoutOrientation() : mLayoutOrientationCurrent);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//			}
-//	        else if(mDisplayOrientationOnStartProcessing == 270)
-//	        {
-//	        	Matrix matrix = new Matrix();
-//				matrix.postRotate(180);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//	        }
-	        
-//	        Matrix matrix = new Matrix();
-//			matrix.postRotate(this.mLayoutOrientationCurrent);
-//    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);	        	        
 	        
 	        mImgView.setOnTouchListener(new View.OnTouchListener()
 	        {
@@ -1206,7 +1150,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				matrix.postRotate((mDisplayOrientationOnStartProcessing+90%360));
 	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);	
 			}
-			else if(mDisplayOrientationOnStartProcessing == 270)
+			else if(!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(180);
+	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
+			}
+			else if(mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
 			{
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);

@@ -4,13 +4,22 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:visibility="invisible" >
-
-    <View
+    
+    <com.almalence.ui.RotateImageView
         android:id="@+id/horizon_indicator_aim"
-        android:layout_width="172dp"
-        android:layout_height="172dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_centerInParent="true"
-        android:background="@drawable/horizon_indicator_aim" />
+        android:layout_margin="10dp"
+        android:src="@drawable/plugin_vf_gyro_level_side_strips" />
+    
+    <com.almalence.ui.RotateImageView
+        android:id="@+id/horizon_indicator_aim_top_down"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:src="@drawable/plugin_vf_gyro_level_side_fourth_strips" />
 
     <RelativeLayout
         android:id="@+id/horizon_indicator_mark_container"
@@ -22,13 +31,13 @@
             android:id="@+id/horizon_indicator_mark_horizontal"
             android:layout_width="192dp"
             android:layout_height="192dp"
-            android:src="@drawable/horizon_indicator_mark" />
+            android:src="@drawable/plugin_vf_gyro_level_circle" />
         
         <com.almalence.ui.RotateImageView
-            android:id="@+id/horizon_indicator_mark_vertical"
+            android:id="@+id/horizon_indicator_mark_top_down"
             android:layout_width="192dp"
             android:layout_height="192dp"
-            android:src="@drawable/horizon_indicator_mark" />
+            android:src="@drawable/plugin_vf_gyro_level_circle_vertical" />
     </RelativeLayout>
 
 </RelativeLayout>

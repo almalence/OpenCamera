@@ -491,16 +491,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// init plugin manager
 		PluginManager.getInstance().onCreate();
 
-		if (this.getIntent().getAction() != null) {
-			if (this.getIntent().getAction()
-					.equals(MediaStore.ACTION_IMAGE_CAPTURE)) {
+		if (this.getIntent().getAction() != null) 
+		{
+			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)) 
+			{
 				try {
 					MainScreen.ForceFilename = new File(
 							((Uri) this.getIntent().getExtras()
 									.getParcelable(MediaStore.EXTRA_OUTPUT))
 									.getPath());
-					if (MainScreen.ForceFilename.getAbsolutePath().equals(
-							"/scrapSpace")) {
+					if (MainScreen.ForceFilename.getAbsolutePath().equals("/scrapSpace")) 
+					{
 						MainScreen.ForceFilename = new File(Environment
 								.getExternalStorageDirectory()
 								.getAbsolutePath()

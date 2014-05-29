@@ -258,7 +258,7 @@ public final class Util {
         if (c == null) return;
         try {
             c.close();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             // do nothing
         }
     }
