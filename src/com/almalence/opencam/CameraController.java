@@ -1103,7 +1103,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 		{
 			float maxZoom = HALv3.getMaxZoomHALv3();
-			return (int)(maxZoom - 4f);
+			return (int)(maxZoom - 10.0f);
 		}
 	}
 	
@@ -1119,7 +1119,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			HALv3.setZoom(value/10.0f + 0.4f);
+			HALv3.setZoom(value/10.0f + 1f);
 		
 	}
 	
