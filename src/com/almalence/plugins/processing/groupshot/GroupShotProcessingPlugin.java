@@ -871,7 +871,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			if((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))				
 			{
 				x = x - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayHeight : mDisplayWidth) - previewBmpRealWidth)/2;
-				y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				if (mCameraMirrored) {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight);
+				}
+				else {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				}
 				Log.e("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
 			}
 			
