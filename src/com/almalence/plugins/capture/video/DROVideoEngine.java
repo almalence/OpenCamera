@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
 
+import android.graphics.SurfaceTexture;
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
 import android.util.Log;
@@ -117,21 +118,24 @@ public class DROVideoEngine
 	private int previewWidth = -1;
 	private int previewHeight = -1;
 	
-	private volatile boolean local = false;
+	private volatile boolean local = true;
 	private volatile boolean forceUpdate = false;
 	private volatile int uv_desat = 9;
 	private volatile int dark_uv_desat = 5;
 	private volatile float mix_factor = 0.1f;
 	private volatile float gamma = 0.5f;
-	private volatile float max_black_level = 64.f;
+	private volatile float max_black_level = 64.0f;
 	private volatile float black_level_atten = 0.5f;
-	private volatile float max_amplify = 2.0f;
-	private volatile float[] min_limit = new float[]{0.5f,0.5f,0.5f};
-	private volatile float[] max_limit = new float[]{3.0f,2.0f,1.2f};
+	private volatile float max_amplify = 4.0f;
+	private volatile float[] min_limit = new float[]{ 0.5f, 0.5f, 0.5f };
+	private volatile float[] max_limit = new float[]{ 3.0f, 2.0f, 2.0f };
+	
+	private final float[] transform = new float[16];
+	private volatile boolean filled = false;
 	
 	private EglEncoder encoder = null;
 	
-	private FpsMeasurer fps = new FpsMeasurer(10);
+	private FpsMeasurer fps = new FpsMeasurer(5);
 	
 	public DROVideoEngine()
 	{
@@ -141,16 +145,6 @@ public class DROVideoEngine
 	private void init()
 	{
 		
-	}
-	
-	public void setLocalEnabled(final boolean enabled)
-	{
-		this.local = enabled;
-	}
-	
-	public void forceUpdateTM()
-	{
-		this.forceUpdate = true;
 	}
 	
 	public void startRecording(final String path)
@@ -294,80 +288,15 @@ public class DROVideoEngine
 		}
 	}
 	
-	public void onResume()
-	{
-		
-	}
-	
 	public void onPause()
 	{		
 		this.stopPreview();
 	}
-
-	public void onPreviewTextureUpdated(final int texture, final float[] transform)
-	{		
-		synchronized (this.stateSync)
-		{
-			if (this.instance != 0)
-			{
-				if (MainScreen.previewWidth != this.previewWidth
-						|| MainScreen.previewHeight != this.previewHeight)
-				{
-					RealtimeDRO.release(this.instance);
-					this.instance = 0;
-				}
-			}
-			
-			this.previewWidth = MainScreen.previewWidth;
-			this.previewHeight = MainScreen.previewHeight;
-			
-			if (this.instance == 0)
-			{
-				this.instance = RealtimeDRO.initialize(
-						this.previewWidth,
-						this.previewHeight);
-				Log.e(TAG, String.format("RealtimeDRO.initialize(%d, %d)", this.previewWidth, this.previewHeight));
-				this.forceUpdate = true;
-			}
-			
-			if (this.instance != 0)
-			{
-				long t;
-				
-				t = System.currentTimeMillis();
-				
-				RealtimeDRO.render(
-						this.instance,
-						texture,
-						transform,
-						this.previewWidth,
-						this.previewHeight,
-						true,
-						this.local,
-						this.max_amplify,
-						this.forceUpdate,
-						this.uv_desat,
-						this.dark_uv_desat,
-						this.mix_factor,
-						this.gamma,
-						this.max_black_level,
-						this.black_level_atten,
-						this.min_limit,
-						this.max_limit,
-						this.texture_out);
-
-				t = System.currentTimeMillis() - t;
-				//Log.d(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
-				
-				this.forceUpdate = false;
-				
-				MainScreen.thiz.glRequestRender();
-			}
-			else
-			{
-				throw new RuntimeException("Unable to create DRO instance.");
-			}
-		}
+	
+	public void onFrameAvailable()
+	{
+		this.filled = true;
+		MainScreen.thiz.glRequestRender();
 	}
 	
 	
@@ -407,17 +336,17 @@ public class DROVideoEngine
 	}
 	
 	public void onSurfaceCreated(final GL10 gl, final EGLConfig config)
-	{
-		Log.i("Almalence", "Renderer.onSurfaceCreated()");
-		
+	{		
 		this.initGL();
 		
 		DROVideoEngine.this.fps.flush();
+		
+		this.filled = false;
 	}
 
 	public void onSurfaceChanged(final GL10 gl, final int width, final int height)
 	{						
-		Log.i(TAG, String.format("Renderer.onSurfaceChanged(%dx%d)", width, height));
+		Log.i(TAG, String.format("DROVideoEngine.onSurfaceChanged(%dx%d)", width, height));
 		
 		this.surfaceWidth = width;
 		this.surfaceHeight = height;
@@ -425,16 +354,94 @@ public class DROVideoEngine
 
 	public void onDrawFrame(final GL10 gl)
 	{
+		if (this.filled)
+		{
+			this.filled = false;
+			
+			try
+			{
+				final SurfaceTexture surfaceTexture = MainScreen.thiz.glGetSurfaceTexture();
+				surfaceTexture.updateTexImage();
+				surfaceTexture.getTransformMatrix(this.transform);
+			}
+			catch (final Exception e)
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+		
 		synchronized (this.stateSync)
 		{
-			this.drawOutputTexture();
-			
-			DROVideoEngine.this.fps.measure();
-			//Log.d(TAG, String.format("FPS: %.2f", fps.getFPS()));
-			
-			if (this.encoder != null)
+			if (this.instance != 0)
 			{
-				this.encoder.encode(this.texture_out);
+				if (MainScreen.previewWidth != this.previewWidth
+						|| MainScreen.previewHeight != this.previewHeight)
+				{
+					RealtimeDRO.release(this.instance);
+					this.instance = 0;
+				}
+			}
+			
+			this.previewWidth = MainScreen.previewWidth;
+			this.previewHeight = MainScreen.previewHeight;
+			
+			if (this.instance == 0)
+			{
+				this.instance = RealtimeDRO.initialize(
+						this.previewWidth,
+						this.previewHeight);
+				Log.e(TAG, String.format("RealtimeDRO.initialize(%d, %d)", this.previewWidth, this.previewHeight));
+				this.forceUpdate = true;
+			}
+			
+			if (this.instance != 0)
+			{
+				long t;
+				
+				t = System.currentTimeMillis();
+				
+				RealtimeDRO.render(
+						this.instance,
+						MainScreen.thiz.glGetPreviewTexture(),
+						this.transform,
+						this.previewWidth,
+						this.previewHeight,
+						true,
+						this.local,
+						this.max_amplify,
+						this.forceUpdate,
+						this.uv_desat,
+						this.dark_uv_desat,
+						this.mix_factor,
+						this.gamma,
+						this.max_black_level,
+						this.black_level_atten,
+						this.min_limit,
+						this.max_limit,
+						this.texture_out);
+
+				t = System.currentTimeMillis() - t;
+				//Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
+				
+				this.forceUpdate = false;
+				
+				this.drawOutputTexture();
+					
+				DROVideoEngine.this.fps.measure();
+				//Log.v(TAG, String.format("DRO FPS: %.2f", fps.getFPS()));
+				
+				if (this.encoder != null)
+				{
+					this.encoder.encode(this.texture_out);
+				}
+			}
+			else
+			{
+				throw new RuntimeException("Unable to create DRO instance.");
 			}
 		}
 	}

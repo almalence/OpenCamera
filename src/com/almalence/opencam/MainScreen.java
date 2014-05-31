@@ -46,6 +46,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Size;
@@ -635,6 +636,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
+	public int glGetPreviewTexture()
+	{
+		return glView.getPreviewTexture();
+	}
+	
+	public SurfaceTexture glGetSurfaceTexture()
+	{
+		return glView.getSurfaceTexture();
+	}
+	
 	@Override
 	protected void onStart()
 	{

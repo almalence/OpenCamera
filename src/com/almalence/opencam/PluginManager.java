@@ -48,6 +48,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -1397,13 +1398,13 @@ public class PluginManager {
 			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
 	}
 	
-	public void onPreviewTextureUpdated(final int texture, final float[] mtx)
+	public void onFrameAvailable()
 	{
 		final Plugin plugin = pluginList.get(activeCapture);
 		
 		if (plugin != null && plugin instanceof PluginCapture)
 		{
-			((PluginCapture)plugin).onPreviewTextureUpdated(texture, mtx);
+			((PluginCapture)plugin).onFrameAvailable();
 		}
 	}
 

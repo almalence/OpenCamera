@@ -35,6 +35,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Build;
@@ -49,6 +50,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
 
@@ -74,7 +76,8 @@ public abstract class Plugin
 	//ID of icon and title for creating quick control button
 	//Each plugin may have only one quick control button
 	public int quickControlIconID = -1;
-	public String quickControlTitle = "";	 
+	public String quickControlTitle = "";
+	public View quickControlView = null;
 	
 	protected static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
 
@@ -576,6 +579,15 @@ Export Interface
 	public int getQuickControlIconID(){return quickControlIconID;}
 	public String getQuickControlTitle(){return quickControlTitle;}
 	public void onQuickControlClick(){}
+	public void refreshQuickControl()
+	{
+		if (this.quickControlView != null)
+		{
+			int icon_id = this.getQuickControlIconID();
+			Drawable icon = MainScreen.mainContext.getResources().getDrawable(icon_id);
+			((ImageView)this.quickControlView.findViewById(R.id.imageView)).setImageDrawable(icon);
+		}
+	}
 	
 /******************************************************************************************************
 	OpenGL layer functions

@@ -47,6 +47,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 
+
+
 import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
@@ -80,9 +82,12 @@ import android.view.SurfaceHolder;
  */
 public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Renderer
 {
+	public static final String TAG = "Almalence";
+	
 	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
 	
 	private volatile int texture_preview;
+	private SurfaceTexture surfaceTexture;
 	
 	public GLLayer(Context c, int version)
 	{
@@ -123,6 +128,16 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 		
 		this.setRenderer(this);
 	}
+	
+	public int getPreviewTexture()
+	{
+		return this.texture_preview;
+	}
+	
+	public SurfaceTexture getSurfaceTexture()
+	{
+		return this.surfaceTexture;
+	}
 
 	/**
 	 * The Surface is created/init()
@@ -130,6 +145,8 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
+		Log.i("Almalence", "GLLayer.onSurfaceCreated()");
+		
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 		
 		if (PluginManager.getInstance().shouldPreviewToGPU())
@@ -156,36 +173,15 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 					GLES20.GL_TEXTURE_MAG_FILTER,
 					GLES20.GL_LINEAR);
 			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
-			Log.e("Almalence", "GLSurfaceView.onSurfaceCreated(): texture created");
 	
 			
-			final SurfaceTexture surfaceTexture = new SurfaceTexture(this.texture_preview);
-			surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
-			{
-				final float[] mtx = new float[16];
-				final Runnable runnable = new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						try
-						{
-							surfaceTexture.updateTexImage();
-							surfaceTexture.getTransformMatrix(mtx);
-							PluginManager.getInstance().onPreviewTextureUpdated(texture_preview, mtx);
-						}
-						catch (final IllegalStateException e)
-						{
-							// This just means surface is not yet created
-							// or already destroyed.
-						}
-					}
-				};
-	
+			this.surfaceTexture = new SurfaceTexture(this.texture_preview);
+			this.surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
+			{				
 				@Override
 				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
-				{					
-					GLLayer.this.queueEvent(this.runnable);
+				{
+					PluginManager.getInstance().onFrameAvailable();
 				}
 			});
 			
@@ -206,7 +202,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	
 			try
 			{
-				camera.setPreviewTexture(surfaceTexture);
+				camera.setPreviewTexture(this.surfaceTexture);
 			}
 			catch (final IOException e)
 			{

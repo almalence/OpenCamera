@@ -23,7 +23,6 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
-
 import android.hardware.Camera;
 
 public abstract class PluginCapture extends Plugin
@@ -54,7 +53,7 @@ public abstract class PluginCapture extends Plugin
 		return false;
 	}
 	
-	public void onPreviewTextureUpdated(final int texture, final float[] transform)
+	public void onFrameAvailable()
 	{
 		
 	}

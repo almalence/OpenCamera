@@ -262,8 +262,22 @@ public class VideoCapturePlugin extends PluginCapture
 	        		return;
 	        	}
 	        	
+
+    	    	if (shouldPreviewToGPU())
+    	    	{
+    	            final int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
+    	            		MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
+    	            if (ImageSizeIdxPreference == 2)
+    	            {
+    			    	quickControlIconID = R.drawable.gui_almalence_video_720;
+    			    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "3");
+    			    	editor.commit();
+    			    	VideoCapturePlugin.this.refreshQuickControl();
+    	            }
+    	    	}
+	        	
 	        	try
-	        	{
+	        	{	        		
 		        	camera.stopPreview();
 			        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
 			        if (cp!=null)
@@ -349,8 +363,16 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	if (this.shouldPreviewToGPU())
+	    	{
+	    		quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	}
+	    	else
+	    	{
+	    		quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	}
 	    	break;
 	    case 3:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -639,9 +661,18 @@ public class VideoCapturePlugin extends PluginCapture
 	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "1");
 	    	break;
 	    case 1:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
-	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2");
+	    	if (this.shouldPreviewToGPU())
+	    	{
+		    	quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+		    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "3");
+	    	}
+	    	else
+	    	{
+		    	quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+		    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2");
+	    	}
 	    	break;
 	    case 2:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -669,7 +700,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    
 	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality) && !previewSizes.get(quality))
 	    {
-	    	ImageSizeIdxPreference = (Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2")) + 1)%5;
+	    	ImageSizeIdxPreference = (Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2")) + 1) % 5;
 	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
 	    	onQuickControlClick();
 	    }
@@ -1007,8 +1038,16 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	if (this.shouldPreviewToGPU())
+	    	{
+	    		quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	}
+	    	else
+	    	{
+	    		quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	}
 	    	break;
 	    case 3:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -1040,7 +1079,8 @@ public class VideoCapturePlugin extends PluginCapture
 	    Editor editor = prefs.edit();
 	    editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
 	    editor.commit();
-	    
+
+		cp.setPreviewFrameRate(30);
 		cp.setRecordingHint(true);
 		
 		int currEv = prefs.getInt(GUI.sEvPref, 0);
@@ -1270,6 +1310,8 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
+
+		modeSwitcher.setVisibility(View.VISIBLE);
     	
 		if (ModePreference.compareTo("0") == 0)
 		{
@@ -1383,7 +1425,8 @@ public class VideoCapturePlugin extends PluginCapture
 //   		  		msg.what = PluginManager.MSG_BROADCAST;
 //   		  		MainScreen.H.sendMessage(msg);
 //   		  	}
-    
+
+		modeSwitcher.setVisibility(View.GONE);
 		
 		if (ModePreference.compareTo("0") == 0)
 		{					
@@ -2215,10 +2258,10 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
 	
 	@Override
-	public void onPreviewTextureUpdated(final int texture, final float[] transform)
+	public void onFrameAvailable()
 	{
 		//Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, Util.logMatrix(transform, 4, 4).replace('\n', ' ')));
-		this.droEngine.onPreviewTextureUpdated(texture, transform);
+		this.droEngine.onFrameAvailable();
 	}
 	
 	@Override
