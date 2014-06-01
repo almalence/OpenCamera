@@ -136,6 +136,9 @@ public class DROVideoEngine
 	private EglEncoder encoder = null;
 	
 	private FpsMeasurer fps = new FpsMeasurer(5);
+
+	private volatile long recordingDelayed;
+	
 	
 	public DROVideoEngine()
 	{
@@ -147,20 +150,23 @@ public class DROVideoEngine
 		
 	}
 	
-	public void startRecording(final String path)
+	public void startRecording(final String path, final long delay)
 	{
+		this.recordingDelayed = System.currentTimeMillis() + delay;
+		
 		final Object sync = new Object();
-		synchronized (this.stateSync)
+		synchronized (sync)
 		{
-			synchronized (sync)
+			MainScreen.thiz.queueGLEvent(new Runnable()
 			{
-				if (this.encoder == null && this.instance != 0)
+				@Override
+				public void run()
 				{
-					MainScreen.thiz.queueGLEvent(new Runnable()
+					synchronized (DROVideoEngine.this.stateSync)
 					{
-						@Override
-						public void run()
-						{							
+						if (DROVideoEngine.this.encoder == null
+								&& DROVideoEngine.this.instance != 0)
+						{
 							DROVideoEngine.this.encoder = new EglEncoder(
 									path,
 									DROVideoEngine.this.previewWidth,
@@ -168,27 +174,23 @@ public class DROVideoEngine
 									24,
 									20000000,
 									(MainScreen.guiManager.getDisplayOrientation()) % 360);
-							
-							synchronized (sync)
-							{
-								sync.notify();
-							}
 						}
-					});
+					}
 					
-					try
+					synchronized (sync)
 					{
-						sync.wait();
-					}
-					catch (final InterruptedException e)
-					{
-						Thread.currentThread().interrupt();
+						sync.notify();
 					}
 				}
-				else
-				{
-					throw new IllegalStateException("Already recording.");
-				}
+			});
+			
+			try
+			{
+				sync.wait();
+			}
+			catch (final InterruptedException e)
+			{
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -196,16 +198,17 @@ public class DROVideoEngine
 	public void stopRecording()
 	{
 		final Object sync = new Object();
-		synchronized (this.stateSync)
+		synchronized (sync)
 		{
-			synchronized (sync)
+			MainScreen.thiz.queueGLEvent(new Runnable()
 			{
-				if (this.encoder != null)
+				@Override
+				public void run()
 				{
-					MainScreen.thiz.queueGLEvent(new Runnable()
+					synchronized (DROVideoEngine.this.stateSync)
 					{
-						@Override
-						public void run()
+
+						if (DROVideoEngine.this.encoder != null)
 						{
 							final String path = DROVideoEngine.this.encoder.getPath();
 							DROVideoEngine.this.encoder.close();
@@ -216,27 +219,23 @@ public class DROVideoEngine
 				            		new String[] { path }, 
 				            		null, 
 				            		null);
-							
-							synchronized (sync)
-							{
-								sync.notify();
-							}
 						}
-					});
+					}
 					
-					try
+					synchronized (sync)
 					{
-						sync.wait();
-					}
-					catch (final InterruptedException e)
-					{
-						Thread.currentThread().interrupt();
+						sync.notify();
 					}
 				}
-				else
-				{
-					throw new IllegalStateException("Not recording.");
-				}
+			});
+			
+			try
+			{
+				sync.wait();
+			}
+			catch (final InterruptedException e)
+			{
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -244,46 +243,42 @@ public class DROVideoEngine
 	private void stopPreview()
 	{
 		Log.i(TAG, "DROVideoEngine.stopPreview()");
-		//Log.w(TAG, Util.toString(Thread.currentThread().getStackTrace(), '\n'));
 		
-		synchronized (this.stateSync)
+		this.stopRecording();
+
+		final Object sync = new Object();
+		synchronized (sync)
 		{
-			if (this.instance != 0)
-			{			
-				if (this.encoder != null)
+			MainScreen.thiz.queueGLEvent(new Runnable()
+			{
+				@Override
+				public void run()
 				{
-					this.stopRecording();
-				}
-				
-				Log.i(TAG, "DRO instance is not null. Destroying.");
-				
-				final Object sync = new Object();
-				synchronized (sync)
-				{
-					MainScreen.thiz.queueGLEvent(new Runnable()
+					synchronized (DROVideoEngine.this.stateSync)
 					{
-						@Override
-						public void run()
-						{
+						if (DROVideoEngine.this.instance != 0)
+						{				
+							Log.i(TAG, "DRO instance is not null. Releasing.");
 							RealtimeDRO.release(DROVideoEngine.this.instance);
 							DROVideoEngine.this.instance = 0;
-							
-							synchronized (sync)
-							{
-								sync.notify();
-							}
+							Log.i(TAG, "DRO instance released");
 						}
-					});
-					
-					try
-					{
-						sync.wait();
 					}
-					catch (final InterruptedException e)
+
+					synchronized (sync)
 					{
-						Thread.currentThread().interrupt();
+						sync.notify();
 					}
 				}
+			});
+
+			try
+			{
+				sync.wait();
+			}
+			catch (final InterruptedException e)
+			{
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -434,7 +429,8 @@ public class DROVideoEngine
 				DROVideoEngine.this.fps.measure();
 				//Log.v(TAG, String.format("DRO FPS: %.2f", fps.getFPS()));
 				
-				if (this.encoder != null)
+				if (this.encoder != null
+						&& System.currentTimeMillis() > this.recordingDelayed)
 				{
 					this.encoder.encode(this.texture_out);
 				}

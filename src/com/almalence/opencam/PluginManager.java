@@ -1874,6 +1874,19 @@ public class PluginManager {
 		}
 	}
 
+	public boolean muteSounds()
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		if (plugin != null && plugin instanceof PluginCapture)
+		{
+			return ((PluginCapture)plugin).muteSound();
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/

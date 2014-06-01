@@ -35,6 +35,11 @@ public abstract class PluginCapture extends Plugin
 	{
 		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);		
 	}
+
+	public boolean muteSound()
+	{
+		return false;
+	}
 	
 	@Override
 	abstract public void OnShutterClick();

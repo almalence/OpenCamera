@@ -631,7 +631,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	{
 		final GLSurfaceView surfaceView = glView;
 
-		if (surfaceView != null && runnable != null) {
+		if (surfaceView != null && runnable != null)
+		{
 			surfaceView.queueEvent(runnable);
 		}
 	}
@@ -687,7 +688,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		/**** Billing *****/
 		//-+- -->
 		
-		glView = null;
+		this.hideOpenGLLayer();
 	}
 
 	@Override

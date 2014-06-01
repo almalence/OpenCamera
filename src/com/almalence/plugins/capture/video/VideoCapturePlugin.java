@@ -107,7 +107,7 @@ public class VideoCapturePlugin extends PluginCapture
 	
 	private boolean takingAlready=false;
 	
-    private boolean isRecording;
+    private volatile boolean isRecording;
     
     
     public static int CameraIDPreference;
@@ -216,8 +216,8 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         ModePreference = prefs.getString("modeVideoDROPref", "1");
-        modeSwitcher.setTextOn("DRO On");
-        modeSwitcher.setTextOff("DRO Off");
+        modeSwitcher.setTextOn(MainScreen.thiz.getString(R.string.Pref_Video_DRO_ON));
+        modeSwitcher.setTextOff(MainScreen.thiz.getString(R.string.Pref_Video_DRO_OFF));
         modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
 		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 		{
@@ -253,7 +253,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        	editor.putString("modeVideoDROPref", ModePreference);
 	        	editor.commit();
 	        	
-	        	if (ModePreference.compareTo("0") == 0)
+	        	if (VideoCapturePlugin.this.modeDRO())
 	    			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 			
 	        	final Camera camera = MainScreen.thiz.getCamera();
@@ -263,7 +263,7 @@ public class VideoCapturePlugin extends PluginCapture
 	        	}
 	        	
 
-    	    	if (shouldPreviewToGPU())
+    	    	if (modeDRO())
     	    	{
     	            final int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
     	            		MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
@@ -286,7 +286,7 @@ public class VideoCapturePlugin extends PluginCapture
 			        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
 			        }
 		        	//*
-		        	if (VideoCapturePlugin.this.shouldPreviewToGPU())
+		        	if (VideoCapturePlugin.this.modeDRO())
 		        	{
 		    			takePictureButton.setVisibility(View.GONE);
 		    			timeLapseButton.setVisibility(View.GONE);
@@ -363,7 +363,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	if (this.shouldPreviewToGPU())
+	    	if (this.modeDRO())
 	    	{
 	    		quality = CamcorderProfile.QUALITY_720P;
 		    	quickControlIconID = R.drawable.gui_almalence_video_720;
@@ -566,7 +566,7 @@ public class VideoCapturePlugin extends PluginCapture
 			displayTakePicture = false;
 		}
 		
-		if (this.shouldPreviewToGPU())
+		if (this.modeDRO())
 		{
 			takePictureButton.setVisibility(View.GONE);
 			timeLapseButton.setVisibility(View.GONE);
@@ -661,7 +661,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	editor.putString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "1");
 	    	break;
 	    case 1:
-	    	if (this.shouldPreviewToGPU())
+	    	if (this.modeDRO())
 	    	{
 		    	quality = CamcorderProfile.QUALITY_720P;
 		    	quickControlIconID = R.drawable.gui_almalence_video_720;
@@ -772,6 +772,12 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		}
     }
+
+	@Override
+	public boolean muteSound()
+	{
+		return this.isRecording;
+	}
 	
 	public void startrotateAnimation() 
 	{
@@ -789,8 +795,7 @@ public class VideoCapturePlugin extends PluginCapture
 			rotateToLandscapeNotifier.startAnimation(rotation);
 		}catch(Exception e){}
 	}
-	
-	
+
 	private static File getOutputMediaFile(){
 		File saveDir = null;
 //		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
@@ -1038,7 +1043,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	if (this.shouldPreviewToGPU())
+	    	if (this.modeDRO())
 	    	{
 	    		quality = CamcorderProfile.QUALITY_720P;
 		    	quickControlIconID = R.drawable.gui_almalence_video_720;
@@ -1108,7 +1113,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    
 	    final Camera.Size sz;
-	    if (ModePreference.compareTo("0") != 0)
+	    if (!this.modeDRO())
 	    {
 		    boolean aspect169 = true;
 		    switch (ImageSizeIdxPreference)
@@ -1285,6 +1290,11 @@ public class VideoCapturePlugin extends PluginCapture
 	//*captureRate/24 - to get correct recording time
 	double captureRate = 24;
 	
+	private boolean modeDRO()
+	{
+		return (ModePreference.compareTo("0") == 0);
+	}
+	
 	@Override
 	public void OnShutterClick()
 	{		
@@ -1293,6 +1303,7 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
+    	
 		if (isRecording) 
 		{
 			this.stopRecording();
@@ -1313,9 +1324,11 @@ public class VideoCapturePlugin extends PluginCapture
 
 		modeSwitcher.setVisibility(View.VISIBLE);
     	
-		if (ModePreference.compareTo("0") == 0)
+		if (this.modeDRO())
 		{
 			this.droEngine.stopRecording();
+
+    		MainScreen.thiz.PlayShutter();
 		}
 		else
 		{
@@ -1428,19 +1441,22 @@ public class VideoCapturePlugin extends PluginCapture
 
 		modeSwitcher.setVisibility(View.GONE);
 		
-		if (ModePreference.compareTo("0") == 0)
-		{					
+		if (this.modeDRO())
+		{
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
             
             MainScreen.guiManager.lockControls = true;
             // inform the user that recording has stopped
             isRecording = true;
+
+    		MainScreen.thiz.PlayShutter();
+    		
             showRecordingUI(isRecording);
             PreferenceManager.getDefaultSharedPreferences(
             		MainScreen.mainContext).edit().putBoolean("videorecording", true).commit();
 
-			this.droEngine.startRecording(getOutputMediaFile().toString());
+			this.droEngine.startRecording(getOutputMediaFile().toString(), 300);
 			
 	        new CountDownTimer(1000, 1000) {			 
 		     	public void onTick(long millisUntilFinished) {}
@@ -1928,13 +1944,13 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public boolean shouldPreviewToGPU()
 	{
-		return (ModePreference.compareTo("0") == 0);
+		return this.modeDRO();
 	}
 	
 	@Override
 	public boolean isGLSurfaceNeeded()
 	{
-		return (ModePreference.compareTo("0") == 0);
+		return this.modeDRO();
 	}
 	
 	private void showRecordingUI(boolean recording) {
