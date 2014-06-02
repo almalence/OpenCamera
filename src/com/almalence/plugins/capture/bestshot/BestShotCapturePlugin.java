@@ -182,25 +182,36 @@ public class BestShotCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		refreshPreferences();
 		inCapture = true;
+		refreshPreferences();
 		takingAlready = true;
-		new CountDownTimer(50, 50) {
-		     public void onTick(long millisUntilFinished) {}
-		     public void onFinish() 
-		     {
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);					
-		     }
-		  }.start();
+		if (imagesTaken==0)
+		{
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);		
+		}
+		else
+		{
+			new CountDownTimer(50, 50) {
+			     public void onTick(long millisUntilFinished) {}
+			     public void onFinish() 
+			     {
+					Message msg = new Message();
+					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+					msg.what = PluginManager.MSG_BROADCAST;
+					MainScreen.H.sendMessage(msg);					
+			     }
+			  }.start();
+		}
 	}
 
 
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
+		Log.i("Bestshot", "1");
 		imagesTaken++;
 		int frame_len = paramArrayOfByte.length;
 		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);

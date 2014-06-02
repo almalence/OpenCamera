@@ -1044,40 +1044,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 	}
 	
-//	private final AutoFocusCallback autoFocusCallbackReceiver = new AutoFocusCallback()
-//	{
-//		@Override
-//		public void onAutoFocus(final boolean success, final Camera camera)
-//		{
-//			PanoramaAugmentedCapturePlugin.this.takePictureReal();
-//		}
-//	};
-//	
-//	private void tryAutoFocus()
-//	{
-//		try
-//		{
-//			final Camera camera = MainScreen.thiz.getCamera();
-//	    	if (camera == null)
-//	    	{
-//	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
-//	    		return;
-//	    	}
-//			camera.autoFocus(this.autoFocusCallbackReceiver);
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//			this.takePicture();
-//		}
-//	}
-//	
-//	@Override
-//	public void onAutoFocus(final boolean success, final Camera camera)
-//	{
-//		
-//	}
-	
 	@Override
 	public void takePicture()
 	{		
@@ -1090,23 +1056,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				return;
 			}
 		}
-		
-//		try
-//		{
-//			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
-//			{
-//				this.tryAutoFocus();
-//			}
-//			else
-//			{
-//				this.takePictureReal();
-//			}
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//		}
-		
+				
 		takingAlready = true;
 		
 		takePictureReal();
@@ -1151,25 +1101,39 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		lock = false;
 	}
 	
+	//will reset ae/awb lock if not locked with controls. will reset directly in camera. 
 	private void unlockAEWB()
 	{
-		if (aewbLockedByPanorama)
+		try
 		{
-			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-			if (params != null)
+			if (aewbLockedByPanorama)
 			{
-				if(MainScreen.thiz.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				if (params != null)
 				{
-					params.setAutoWhiteBalanceLock(false);
-					MainScreen.thiz.setCameraParameters(params);
+					if(MainScreen.thiz.isWhiteBalanceLockSupported() /*&& params.getAutoWhiteBalanceLock()*/)
+					{
+						params.setAutoWhiteBalanceLock(false);
+						//MainScreen.thiz.setCameraParameters(params);
+						MainScreen.thiz.getCamera().setParameters(params);
+					}
 				}
-				if(MainScreen.thiz.isExposureLockSupported() && params.getAutoExposureLock())
+				params = MainScreen.thiz.getCameraParameters();
+				if (params != null)
 				{
-					params.setAutoExposureLock(false);
-					MainScreen.thiz.setCameraParameters(params);
+					if(MainScreen.thiz.isExposureLockSupported()/* && params.getAutoExposureLock()*/)
+					{
+						params.setAutoExposureLock(false);
+						//MainScreen.thiz.setCameraParameters(params);
+						MainScreen.thiz.getCamera().setParameters(params);
+					}
 				}
+				aewbLockedByPanorama = false;
 			}
-			aewbLockedByPanorama = false;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Panorama", "setCameraParameters exception: " + e.getMessage());
 		}
 	}
 	
