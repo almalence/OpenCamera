@@ -372,19 +372,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 						if (result <= 0)
 						{
 							this.stopCapture();
-							Message msg = new Message();
-		    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		    				msg.what = PluginManager.MSG_BROADCAST;
-		    				MainScreen.H.sendMessage(msg);
-		    				MainScreen.guiManager.lockControls = false;
+							Message message = new Message();
+							message.obj = String.valueOf(SessionID);
+							message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+							MainScreen.H.sendMessage(message);
 						}
 						
 						return true;
 					}
 				}
 			}
-		}
-		
+		}		
 		return false;
 	}
 	
@@ -1160,18 +1158,26 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	
     	try {
+    		MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
     		camera.setPreviewCallback(null);
-    		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
+    		camera.takePicture(null, null, null, MainScreen.thiz);
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 			Log.e("Panorama capture", "takePicture exception: " + e.getMessage());
 			
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+//			final Message msg = new Message();
+//			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
+//			msg.what = PluginManager.MSG_BROADCAST;
+//			MainScreen.H.sendMessage(msg);
+			
+			this.stopCapture();
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+			MainScreen.H.sendMessage(message);
 			
 			takingAlready = false;
 			capturing = false;
