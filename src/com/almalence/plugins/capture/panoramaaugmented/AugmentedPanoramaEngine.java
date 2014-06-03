@@ -434,9 +434,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public int getPictureTakingState(final boolean autoFocus)
 	{
-		if (this.isCircular())
+		synchronized (this.frames)
 		{
-			return STATE_STANDBY;
+			if (this.isCircular() || this.frames.size() == 0)
+			{
+				return STATE_STANDBY;
+			}
 		}
 		
 		synchronized (this.stateSynch)
@@ -512,9 +515,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					try
 					{
-						Log.e(TAG, "retrieveFrames(): before this.stateSynch.wait()");
 						this.stateSynch.wait();
-						Log.e(TAG, "retrieveFrames(): after this.stateSynch.wait()");
 					}
 					catch (final InterruptedException e)
 					{
@@ -578,9 +579,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			try
 			{
-				Log.e(TAG, "retrieveFrames(): before syncObject.wait()");
 				syncObject.wait();
-				Log.e(TAG, "retrieveFrames(): after syncObject.wait()");
 			}
 			catch (InterruptedException e)
 			{
