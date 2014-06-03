@@ -407,7 +407,7 @@ public class NightCapturePlugin extends PluginCapture
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
         ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? nightCaptureImageSizeBackPref : nightCaptureImageSizeFrontPref, "-1");
-        FocusPreference = prefs.getString(CameraController.CameraIndex == 0? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, defaultFocus);
+        FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
         OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
     }
 	
@@ -634,7 +634,6 @@ public class NightCapturePlugin extends PluginCapture
 	    	cp.setPreviewSize(os.getWidth(), os.getHeight());
     	}
     	
-    	
     	if(FocusPreference.compareTo("0") == 0 && !CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_FIXED))
         {
         	FocusPreference = "1";
@@ -655,7 +654,6 @@ public class NightCapturePlugin extends PluginCapture
 		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
-    	
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (Integer.parseInt(ModePreference) != 1)
 		{

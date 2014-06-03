@@ -19,7 +19,7 @@
     <string name="Preference_DelayedSoundValue">Preference_DelayedSoundValue</string>
     <string name="Preference_DelayedFlashValue">Preference_DelayedFlashValue</string>
     
-    <string name="Preference_UseFrontCameraValue">Preference_UseFrontCameraValue</string>
+    <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
     <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>
     <string name="Preference_ShotOnTapValue">Preference_ShotOnTapValue</string>
     <string name="Preference_VolumeButtonValue">volumeButtonPrefCommon</string>

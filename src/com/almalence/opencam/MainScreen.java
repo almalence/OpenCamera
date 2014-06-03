@@ -1211,7 +1211,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
 			if (glView == null) {
-				glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
+				glView = new GLLayer(MainScreen.mainContext);
 				glView.setLayoutParams(new LayoutParams(
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
@@ -1744,6 +1744,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void showOpenGLLayer() {
+		Log.e("MainScreen", "showOpenGL");
 		if (glView != null && glView.getVisibility() == View.GONE) {
 			glView.setVisibility(View.VISIBLE);
 			glView.onResume();
@@ -1751,6 +1752,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void hideOpenGLLayer() {
+		Log.e("MainScreen", "hideOpenGL");
 		if (glView != null && glView.getVisibility() == View.VISIBLE) {
 			glView.setVisibility(View.GONE);
 			glView.onPause();

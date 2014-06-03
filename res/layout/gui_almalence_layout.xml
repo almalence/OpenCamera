@@ -18,7 +18,7 @@
 				android:id="@+id/selectModeIcon"
 				android:paddingTop="2dp"
    		    	android:paddingBottom="2dp"
-   		    	android:paddingLeft="4dp"				
+   		    	android:paddingLeft="4dp"
 				android:layout_gravity="center_vertical|left"
 				android:background="@android:color/transparent"
 				android:layout_height="@dimen/mainButtonHeight"
