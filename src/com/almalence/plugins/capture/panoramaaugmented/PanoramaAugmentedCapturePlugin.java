@@ -1018,7 +1018,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	@Override
 	public void onPreviewFrame(final byte[] data, final Camera paramCamera)
-	{		
+	{
 		this.previewRestartFlag = false;
 		
 		if (!this.prefHardwareGyroscope)
@@ -1032,7 +1032,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			{
 				final int state = this.engine.getPictureTakingState(
 						MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO));
-				
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
 					this.takingAlready = true;
@@ -1161,17 +1160,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     		MainScreen.guiManager.showCaptureIndication();
     		MainScreen.thiz.PlayShutter();
     		camera.setPreviewCallback(null);
+    		Log.e("Almalence", "Camera.takePicture()");
     		camera.takePicture(null, null, null, MainScreen.thiz);
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			Log.e("Panorama capture", "takePicture exception: " + e.getMessage());
+			Log.e("Almalence", "takePicture exception: " + e.getMessage());
 			
 //			final Message msg = new Message();
 //			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
 //			msg.what = PluginManager.MSG_BROADCAST;
 //			MainScreen.H.sendMessage(msg);
+			
+			this.engine.onCameraError();
 			
 			this.stopCapture();
 			Message message = new Message();
