@@ -615,13 +615,15 @@ public class ExportPlugin extends PluginExport
 		        		value.setBytes(version);
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
 		            }
-		            if (tag_metering_mode != null && !tag_metering_mode.equals("")) {
+		            if (tag_metering_mode != null && !tag_metering_mode.equals("") && Integer.parseInt(tag_metering_mode) <= 255) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_metering_mode));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+	            		exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
 		            }
 		            else {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+	            		exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
 		            }
 		            
 	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
