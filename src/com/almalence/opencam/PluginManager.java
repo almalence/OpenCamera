@@ -104,10 +104,11 @@ import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
-import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
+import com.almalence.plugins.vf.gyro.GyroVFPlugin;
+
 
 /***
  * Plugins managing class.
@@ -180,6 +181,7 @@ public class PluginManager {
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
 	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
+	public static final int MSG_CAPTURE_FINISHED_NORESULT = 15;
 
 	public static final int MSG_SET_EXPOSURE = 22;
 	public static final int MSG_NEXT_FRAME = 23;
@@ -1565,6 +1567,30 @@ public class PluginManager {
 			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message.what = PluginManager.MSG_BROADCAST;
 			MainScreen.H.sendMessage(message);
+			break;
+			
+		case MSG_CAPTURE_FINISHED_NORESULT:
+			shutterRelease = true;
+
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onCaptureFinished();
+
+			MainScreen.guiManager.onCaptureFinished();
+			MainScreen.guiManager.startProcessingAnimation();
+
+			MainScreen.thiz.MuteShutter(false);
+
+	    	MainScreen.guiManager.lockControls = false;
+			Message messageNoResult = new Message();
+			messageNoResult.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			messageNoResult.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(messageNoResult);
+			
+			MainScreen.guiManager.onExportFinished();
+
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
+			
 			break;
 
 		case MSG_START_POSTPROCESSING:

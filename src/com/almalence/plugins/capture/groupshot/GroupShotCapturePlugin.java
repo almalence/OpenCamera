@@ -65,8 +65,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-
-		//refreshPreferences();
 	}
 	
 	@Override
@@ -245,14 +243,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 	{
 		if(takingAlready == true)
 			takePicture();
-		
-//		if(takingAlready == true && paramBoolean == true)
-//			takePicture();
-//		else if(takingAlready == true)
-//		{
-//			takingAlready = false;
-//			MainScreen.guiManager.lockControls = false;
-//		}
 	}
 
 	@Override

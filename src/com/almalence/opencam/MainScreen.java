@@ -3184,7 +3184,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putString(GUI.sSceneModePref, GUI.sDefaultValue);
@@ -3199,14 +3199,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putString(GUI.sWBModePref, GUI.sDefaultValue);
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putString(GUI.sISOPref, GUI.sDefaultValue);
@@ -3227,7 +3227,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putInt("EvCompensationValue", 0);
