@@ -113,7 +113,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		if (this.currentPath == null)
 		{
 			String savedPath = PreferenceManager.getDefaultSharedPreferences(this).getString(
-					MainScreen.SavePathPref, "/");
+					MainScreen.sSavePathPref, "/");
 			
 			if (savedPath.startsWith(this.currentRoot.getAbsolutePath()))
 			{	
@@ -139,7 +139,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		this.editText = (EditText)this.findViewById(R.id.folderpicker_address);	
 				
 		
-		this.old_value = this.getIntent().getExtras().getInt(MainScreen.SavePathPref, 0);
+		this.old_value = this.getIntent().getExtras().getInt(MainScreen.sSavePathPref, 0);
 		
 		Object obj = this.getLastNonConfigurationInstance();
 		if (obj != null)
@@ -404,7 +404,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 			if (this.isCurrentPathWritable())
 			{
 				PreferenceManager.getDefaultSharedPreferences(this).edit().putString(
-						MainScreen.SavePathPref, 
+						MainScreen.sSavePathPref, 
 						this.currentPath.getAbsolutePath()).commit();
 				
 				this.finish();

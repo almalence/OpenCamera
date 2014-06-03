@@ -11,6 +11,8 @@
     <string name="Pref_Common_Shutter_Title">Silent operation</string>
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
     <string name="Pref_Common_HWShutter_Title">Use HW shutter to start application</string>
+    <string name="Pref_Common_UseHALv3_Title">Use HALv3 camera interface</string>
+    <string name="Pref_Common_UseHALv3_Summary">Not stable mode. Can work on limited number of devices (Google Nexus 5, 7)</string>
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
@@ -260,8 +262,14 @@
 	<string name="flashTimerText">Flash at countdown</string>	
 
 	<string name="secondsText">seconds</string>	
-	<string name="okText">Ok</string>
+	<string name="okText">OK</string>
 	
 	<string name="moreText">More...</string>
+	
+	<string name="Preference_DefaultModeName">defaultModeName</string>
+	<string name="Preference_QuickControlButton1">quickControlButton1</string>
+	<string name="Preference_QuickControlButton2">quickControlButton2</string>
+	<string name="Preference_QuickControlButton3">quickControlButton3</string>
+	<string name="Preference_QuickControlButton4">quickControlButton4</string>
 	
 </resources>

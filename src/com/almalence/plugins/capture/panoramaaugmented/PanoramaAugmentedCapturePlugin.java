@@ -136,6 +136,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private int aewblock = 1;
 	private boolean aewbLockedByPanorama = false;
 	
+	private static String sMemoryPref;
+	private static String sFrameOverlapPref;
+	private static String sAELockPref;
+	
 	public PanoramaAugmentedCapturePlugin()
 	{
 		super("com.almalence.plugins.panoramacapture_augmented",
@@ -315,7 +319,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	@Override
 	public void onCreate()
-	{		
+	{
+		sMemoryPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaMemory);
+		sFrameOverlapPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaFrameOverlap);
+		sAELockPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaAELock);
+
 		this.engine = new AugmentedPanoramaEngine();
 	}
 	
@@ -743,9 +751,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
         this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
         
-        this.prefMemoryRelax = prefs.getBoolean("pref_plugin_capture_panoramaaugmented_memory", false);
+        this.prefMemoryRelax = prefs.getBoolean(sMemoryPref, false);
         
-         int overlap = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_frameoverlap", "1"));
+         int overlap = Integer.parseInt(prefs.getString(sFrameOverlapPref, "1"));
          switch(overlap)
          {
          case 0:
@@ -766,7 +774,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 */
          }
          
-         aewblock = Integer.parseInt(prefs.getString("pref_plugin_capture_panoramaaugmented_aelock", "1"));
+         aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
     }
 	
 	private void createPrefs(final ListPreference lp, final Preference ud_pref)

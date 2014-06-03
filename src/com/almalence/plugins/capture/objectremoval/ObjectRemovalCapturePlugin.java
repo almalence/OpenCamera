@@ -63,6 +63,9 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     private boolean inCapture;
     private int imagesTaken=0;
     
+    private static String sImagesAmountPref;
+    private static String sPauseBetweenShotsPref;
+    
 	public ObjectRemovalCapturePlugin()
 	{
 		super("com.almalence.plugins.objectremovalcapture",
@@ -71,6 +74,13 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			  0,
 			  null);
 		refreshPreferences();
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_ObjectRemovalImagesAmountPref);
+		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_ObjectRemovalPauseBetweenShotsPref);
 	}
 	
 	@Override

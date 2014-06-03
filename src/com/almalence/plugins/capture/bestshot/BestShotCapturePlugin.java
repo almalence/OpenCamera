@@ -64,6 +64,8 @@ public class BestShotCapturePlugin extends PluginCapture
 
     private boolean inCapture;
     private int imagesTaken=0;
+    
+    private static String sImagesAmountPref;
 	
 	public BestShotCapturePlugin()
 	{
@@ -74,6 +76,12 @@ public class BestShotCapturePlugin extends PluginCapture
 			  "Best Shot images");
 
 		//refreshPreferences();
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_BestShotImagesAmount);
 	}
 	
 	@Override
@@ -90,7 +98,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
+			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
 		}
 		catch (Exception e)
 		{
@@ -115,7 +123,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
+        int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
         int selected = 0;
         switch (val)
         {

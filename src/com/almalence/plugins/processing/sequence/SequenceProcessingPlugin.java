@@ -747,7 +747,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         mSensitivity = prefs.getInt("Sensitivity", 19);
         mMinSize = prefs.getInt("MinSize", 1000);
         mGhosting = prefs.getString("Ghosting", "2");
-        SaveInputPreference = prefs.getBoolean("saveInputPrefSequence", false);
+        SaveInputPreference = prefs.getBoolean(MainScreen.thiz.getResources().getString(R.string.saveInputPrefSequence), false);
     }
 
 /************************************************

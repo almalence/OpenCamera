@@ -6,4 +6,6 @@
 	
 	<string name="Pref_ObjectRemoval_Save">Save original frames</string>
 	
+	<string name="saveInputPrefObjectRemoval">saveInputPrefObjectRemoval</string>
+	
 </resources>

@@ -417,9 +417,9 @@ public class PluginManager {
 
 		// checks preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		if (true == prefs.contains("defaultModeName")) 
+		if (true == prefs.contains(MainScreen.sDefaultModeName)) 
 		{
-			String defaultModeName = prefs.getString("defaultModeName", "");
+			String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 			mode = ConfigParser.getInstance().getMode(defaultModeName);
 		} else 
 		{
@@ -469,8 +469,8 @@ public class PluginManager {
 		// checks preferences
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		if (true == prefs.contains("defaultModeName")) {
-			String defaultModeName = prefs.getString("defaultModeName", "");
+		if (true == prefs.contains(MainScreen.sDefaultModeName)) {
+			String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 			mode = ConfigParser.getInstance().getMode(defaultModeName);
 		} else {
 			// set default mode - get this val from mode.xml and later control
@@ -768,10 +768,10 @@ public class PluginManager {
 			return;
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		delayedCaptureFlashPrefCommon = prefs.getBoolean("delayedCaptureFlashPrefCommon", false);
-		delayedCaptureSoundPrefCommon = prefs.getBoolean("delayedCaptureSoundPrefCommon", false);
-		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
-		boolean showDelayedCapturePrefCommon = prefs.getBoolean("showDelayedCapturePrefCommon", false);
+		delayedCaptureFlashPrefCommon = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
+		delayedCaptureSoundPrefCommon = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
+		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
 		if (showDelayedCapturePrefCommon == false ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
 		{	
 			for (int i = 0; i < activeVF.size(); i++)

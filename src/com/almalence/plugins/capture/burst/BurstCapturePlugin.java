@@ -65,6 +65,9 @@ public class BurstCapturePlugin extends PluginCapture
 
     private boolean inCapture;
     private int imagesTaken=0;
+    
+    private static String sImagesAmountPref;
+    private static String sPauseBetweenShotsPref;
 	
     
 	public BurstCapturePlugin()
@@ -76,6 +79,13 @@ public class BurstCapturePlugin extends PluginCapture
 			  "Burst images");
 
 		refreshPreferences();
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_BurstImagesAmount);
+		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_BurstPauseBetweenShots);
 	}
 	
 	@Override
@@ -92,8 +102,8 @@ public class BurstCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("burstImagesAmount", "3"));
-			pauseBetweenShots = Integer.parseInt(prefs.getString("burstPauseBetweenShots", "0"));
+			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "3"));
+			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
 		}
 		catch (Exception e)
 		{
@@ -124,7 +134,7 @@ public class BurstCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("burstImagesAmount", "1"));
+        int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "1"));
         int selected = 0;
         switch (val)
         {

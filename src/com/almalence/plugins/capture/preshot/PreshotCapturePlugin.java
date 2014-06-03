@@ -94,6 +94,11 @@ public class PreshotCapturePlugin extends PluginCapture
     
     private boolean captureStarted=false;
     
+    private static String sPreShotIntervalPref;
+    private static String sPauseBetweenShotsPref;
+    private static String sFPSPref;
+    private static String sModePref;
+    
 	public PreshotCapturePlugin()
 	{
 		super("com.almalence.plugins.preshotcapture",
@@ -101,6 +106,15 @@ public class PreshotCapturePlugin extends PluginCapture
 			  R.xml.preferences_capture_preshot,
 			  0,
 			  null);
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sPreShotIntervalPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotIntervalPref);
+		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotPauseBetweenShotsPref);
+		sFPSPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotFPSPref);
+		sModePref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotModePref);
 	}
 	
 	@Override

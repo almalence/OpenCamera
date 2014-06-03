@@ -784,7 +784,7 @@ public class AlmalenceGUI extends GUI implements
 		// create merged image for select mode button
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		String defaultModeName = prefs.getString("defaultModeName", "");
+		String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
 		Bitmap bm = null;
 		Bitmap iconBase = BitmapFactory.decodeResource(
@@ -1470,7 +1470,7 @@ public class AlmalenceGUI extends GUI implements
 			infoLayout.requestLayout();
 		}
 		
-		infoSet = prefs.getInt("defaultInfoSet", INFO_PARAMS);
+		infoSet = prefs.getInt(MainScreen.sDefaultInfoSetPref, INFO_PARAMS);
 		if (infoSet == INFO_PARAMS && !isAnyViewOnViewfinder()) {
 			infoSet = INFO_ALL;
 			prefs.edit().putInt("defaultInfoSet", infoSet).commit();
@@ -1583,7 +1583,7 @@ public class AlmalenceGUI extends GUI implements
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		int delayInterval = prefs.getInt("delayedCapturePrefCommon", 0);
+		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
         switch (delayInterval)
         {
          case 0:
@@ -2509,7 +2509,7 @@ public class AlmalenceGUI extends GUI implements
 		// Create ISO button and adding supported ISOs
 		byte[] supported_iso = CameraController.getInstance().getSupportedISO();
 		if ((supported_iso != null && supported_iso.length > 0 && activeISO != null) ||
-				CameraController.getInstance().isISOSupported())
+				(CameraController.getInstance().isISOSupported() && activeISO != null))
 		{
 
 			//Collection<String> unsorted_keys = ISOButtons.keySet();
@@ -2531,11 +2531,19 @@ public class AlmalenceGUI extends GUI implements
 //					activeISONames.add(iso_name);
 //				}
 //			}
-			
-			for(byte iso_name : supported_iso)
-			{				
-				activeISO.add(ISOButtons.get(Integer.valueOf(iso_name)));
-				activeISONames.add(Integer.valueOf(iso_name));
+			if(supported_iso != null)
+				for(byte iso_name : supported_iso)
+				{				
+					activeISO.add(ISOButtons.get(Integer.valueOf(iso_name)));
+					activeISONames.add(Integer.valueOf(iso_name));
+				}
+			else
+			{
+				for(String iso_name : CameraController.iso_default)
+				{
+					activeISO.add(ISOButtons.get(CameraController.key_iso.get(iso_name)));
+					activeISONames.add(CameraController.key_iso.get(iso_name));
+				}
 			}
 			
 			if(activeISONames.size() > 0)
@@ -2675,13 +2683,13 @@ public class AlmalenceGUI extends GUI implements
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		String qc1 = prefs.getString("quickControlButton1",
+		String qc1 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1),
 				defaultQuickControl1);
-		String qc2 = prefs.getString("quickControlButton2",
+		String qc2 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton2),
 				defaultQuickControl2);
-		String qc3 = prefs.getString("quickControlButton3",
+		String qc3 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton3),
 				defaultQuickControl3);
-		String qc4 = prefs.getString("quickControlButton4",
+		String qc4 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton4),
 				defaultQuickControl4);
 
 		quickControl1 = isCameraParameterSupported(qc1) ? getQuickControlButton(
@@ -4591,16 +4599,16 @@ public class AlmalenceGUI extends GUI implements
 		int currentQCNumber = -1;
 		String currentViewID = "";
 		if (currentView == quickControl1) {
-			currentViewID = pref.getString("quickControlButton1", "");
+			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1), "");
 			currentQCNumber = 1;
 		} else if (currentView == quickControl2) {
-			currentViewID = pref.getString("quickControlButton2", "");
+			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton2), "");
 			currentQCNumber = 2;
 		} else if (currentView == quickControl3) {
-			currentViewID = pref.getString("quickControlButton3", "");
+			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton3), "");
 			currentQCNumber = 3;
 		} else if (currentView == quickControl4) {
-			currentViewID = pref.getString("quickControlButton4", "");
+			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton4), "");
 			currentQCNumber = 4;
 		}
 
@@ -7687,8 +7695,8 @@ public class AlmalenceGUI extends GUI implements
 	public void SelfTimerDialog()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		int interval = prefs.getInt("delayedIndexCapturePrefCommon", 0);
-		swChecked = prefs.getBoolean("swChecked", false);		
+		int interval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);		
 		
 		final Dialog d = new Dialog(MainScreen.thiz);
         d.setTitle("Self timer settings");

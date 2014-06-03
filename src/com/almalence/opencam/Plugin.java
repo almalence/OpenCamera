@@ -372,7 +372,7 @@ public abstract class Plugin
     		return;
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+    	int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
     	
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());

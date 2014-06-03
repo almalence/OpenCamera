@@ -817,9 +817,9 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     {
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
-        mSensitivity = prefs.getInt("Sensitivity", 19);
-        mMinSize = prefs.getInt("MinSize", 1000);
-        mGhosting = prefs.getString("Ghosting", "2");
-        SaveInputPreference = prefs.getBoolean("saveInputPrefObjectRemoval", false);
+        mSensitivity = prefs.getInt("Sensitivity", 19); //TODO: Should we manage this parameter or it's final value of 19?
+        mMinSize = prefs.getInt("MinSize", 1000); //TODO: Should we manage this parameter or it's final value of 1000?
+        mGhosting = prefs.getString("Ghosting", "2"); //TODO: Should we manage this parameter or it's final value of 2?
+        SaveInputPreference = prefs.getBoolean(MainScreen.thiz.getResources().getString(R.string.saveInputPrefObjectRemoval), false);
     }
 }

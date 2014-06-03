@@ -140,7 +140,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
 						
-						intent.putExtra(MainScreen.SavePathPref, v_old);
+						intent.putExtra(MainScreen.sSavePathPref, v_old);
 						
 						Preferences.thiz.startActivity(intent);
 					}

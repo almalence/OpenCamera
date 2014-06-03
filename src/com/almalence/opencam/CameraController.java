@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CameraManager;
 
 import android.media.Image;
 import android.media.ImageReader;
@@ -299,7 +300,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	};
 	
 	
-	private final static List<String> iso_default = new ArrayList<String>() {
+	public final static List<String> iso_default = new ArrayList<String>() {
 		{			
 			add(isoAuto);			
 			add(iso100);
@@ -311,7 +312,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	};
 	
 		
-	private final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
+	public final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
 	{			
 			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
 			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
@@ -322,7 +323,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	};
 	
-	private final static Map<Integer, String> mode_iso = new Hashtable<Integer, String>() {
+	public final static Map<Integer, String> mode_iso = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.ISO_AUTO, isoAuto);
 			put(CameraParameters.ISO_50, iso50);
@@ -335,7 +336,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	};
 	
-	private final static Map<Integer, String> mode_iso2 = new Hashtable<Integer, String>() {
+	public final static Map<Integer, String> mode_iso2 = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.ISO_AUTO, isoAuto_2);
 			put(CameraParameters.ISO_50, iso50_2);
@@ -362,7 +363,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	};
 	
-	private final static Map<String, Integer> key_iso = new Hashtable<String, Integer>() {
+	public final static Map<String, Integer> key_iso = new Hashtable<String, Integer>() {
 		{
 			put(isoAuto, CameraParameters.ISO_AUTO);
 			put(iso50, CameraParameters.ISO_AUTO);
@@ -375,7 +376,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	};
 	
-	private final static Map<String, Integer> key_iso2 = new Hashtable<String, Integer>() {
+	public final static Map<String, Integer> key_iso2 = new Hashtable<String, Integer>() {
 		{
 			put(isoAuto_2, CameraParameters.ISO_AUTO);
 			put(iso50_2, CameraParameters.ISO_AUTO);
@@ -506,7 +507,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void onCreate()
 	{
-		if(MainScreen.isHALv3)
+		if(MainScreen.isHALv3Supported)
 			HALv3.onCreateHALv3();
 	}
 	

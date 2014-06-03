@@ -3,6 +3,6 @@
 		<CheckBoxPreference
 			android:title="@string/Pref_ObjectRemoval_Save"
 			android:defaultValue="false"
-			android:key="saveInputPrefObjectRemoval" />
+			android:key="@string/saveInputPrefObjectRemoval" />
 	</PreferenceCategory>
 </PreferenceScreen>

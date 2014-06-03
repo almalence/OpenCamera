@@ -6,4 +6,6 @@
 	
 	<string name="Pref_Sequence_Save">Save original frames</string>
 	
+	<string name="saveInputPrefSequence">saveInputPrefSequence</string>
+	
 </resources>

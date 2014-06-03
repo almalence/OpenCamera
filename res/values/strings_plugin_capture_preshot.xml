@@ -34,4 +34,10 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">Autostart</string>
 	<string name="Pref_PreShot_Autostart_Summary">Start capturing on camera launch</string>
+	
+	<string name="Preference_PreShotIntervalPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotPauseBetweenShotsPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotFPSPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotModePref">objectRemovalPauseBetweenShots</string>
+	
 </resources>

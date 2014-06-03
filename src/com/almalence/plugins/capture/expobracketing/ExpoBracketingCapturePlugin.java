@@ -93,6 +93,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public boolean previewMode = true;
 	public boolean previewWorking=false;
 	public CountDownTimer cdt = null;
+	
+	private static String sEvPref;
+	private static String sRefocusPref;
+	private static String sUseLumaPref;
+	
+	private static String sExpoPreviewModePref;
+	
 	public ExpoBracketingCapturePlugin()
 	{
 		super("com.almalence.plugins.expobracketingcapture",
@@ -106,6 +113,16 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 	// if user is asking for higher resolution that can normally be handled with this amount of mem
 	public static boolean userInsists = false;
+	
+	@Override
+	public void onCreate()
+	{
+		sEvPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingPref);
+		sRefocusPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
+		sUseLumaPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
+		
+		sExpoPreviewModePref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
+	}
 	
 	@Override
 	public void onStart()
@@ -124,13 +141,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         MainScreen.thiz.MuteShutter(false);
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        preferenceEVCompensationValue = prefs.getInt("EvCompensationValue", 0);
-        preferenceSceneMode = prefs.getInt("SceneModeValue", CameraParameters.SCENE_MODE_AUTO);
+        preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
+        preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
         
         
-        if (true == prefs.contains("expo_previewMode")) 
+        if (true == prefs.contains(sExpoPreviewModePref)) 
         {
-        	previewMode = prefs.getBoolean("expo_previewMode", true);
+        	previewMode = prefs.getBoolean(sExpoPreviewModePref, true);
         }
         else
         	previewMode = true;
@@ -453,7 +470,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					previewMode=false;
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("expo_previewMode", false);
+					prefsEditor.putBoolean(sExpoPreviewModePref, false);
 					prefsEditor.commit();
 					evLatency=0;
 					Message msg = new Message();
@@ -590,7 +607,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					previewMode=false;
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("expo_previewMode", false);
+					prefsEditor.putBoolean(sExpoPreviewModePref, false);
 					prefsEditor.commit();
 					evLatency=0;
 					Message msg = new Message();
@@ -619,10 +636,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 
-        RefocusPreference = prefs.getBoolean("refocusPrefExpoBracketing", false);
-        UseLumaAdaptation = prefs.getBoolean("lumaPrefExpoBracketing", false);
+        RefocusPreference = prefs.getBoolean(sRefocusPref, false);
+        UseLumaAdaptation = prefs.getBoolean(sUseLumaPref, false);
         
-        EvPreference = prefs.getString("evPrefExpoBracketing", "0");
+        EvPreference = prefs.getString(sEvPref, "0");
     }
 
 	

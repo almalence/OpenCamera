@@ -3,6 +3,6 @@
 		<CheckBoxPreference
 			android:title="@string/Pref_Sequence_Save"
 			android:defaultValue="false"
-			android:key="saveInputPrefSequence" />
+			android:key="@string/saveInputPrefSequence" />
 	</PreferenceCategory>
 </PreferenceScreen>

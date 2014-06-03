@@ -6,6 +6,9 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">Number of images in a burst</string>
     
+    <string name="Preference_BurstImagesAmount">burstImagesAmount</string>
+    <string name="Preference_BurstPauseBetweenShots">burstPauseBetweenShots</string>
+    
     <string name="Res_Burst_Images_Text"> images</string>
     <string name="Pref_Burst_PauseBetweenShots_Title"> Pause between shots</string>
     <string name="Res_Burst_Fast_Text">as fast as possible</string>

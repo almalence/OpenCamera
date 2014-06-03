@@ -15,4 +15,9 @@
     
     <string name="Pref_ExpoBracketing_Expo">Maximum possible</string>
     <string name="Pref_ExpoBracketing_None">None</string>
+    
+    <string name="Preference_ExpoBracketingPref">evPrefExpoBracketing</string>
+    <string name="Preference_ExpoBracketingRefocusPref">refocusPrefExpoBracketing</string>
+    <string name="Preference_ExpoBracketingUseLumaPref">lumaPrefExpoBracketing</string>
+    <string name="Preference_ExpoBracketingPreviewModePref">expo_previewMode</string>
 </resources>

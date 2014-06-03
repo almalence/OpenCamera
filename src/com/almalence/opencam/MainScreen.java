@@ -60,6 +60,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StatFs;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -126,7 +127,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static Context mainContext;
 	public static Handler H;
 
-	public static boolean isHALv3 = true;
+	public static boolean isHALv3 = false;
+	public static boolean isHALv3Supported = false;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -197,7 +199,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static boolean showHelp = false;
 	// public static boolean FullMediaRescan;
-	public static final String SavePathPref = "savePathPref";
+	
 
 	private boolean keepScreenOn = false;
 	
@@ -273,15 +275,37 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public static int currentMeteringMode = -1;
 	
+	public static String sEvPref;
+	public static String sSceneModePref;
+	public static String sWBModePref;
+	public static String sFrontFocusModePref;
+	public static String sRearFocusModePref;
+	public static String sFlashModePref;
+	public static String sISOPref;
+	public static String sMeteringModePref;
 	
-	public final static String sEvPref = "EvCompensationValue";
-	public final static String sSceneModePref = "SceneModeValue";
-	public final static String sWBModePref = "WBModeValue";
-	public final static String sFrontFocusModePref = "FrontFocusModeValue";
-	public final static String sRearFocusModePref = "RearFocusModeValue";
-	public final static String sFlashModePref = "FlashModeValue";
-	public final static String sISOPref = "ISOValue";
-	public final static String sMeteringModePref = "MeteringModeValue";
+	public static String sDelayedCapturePref;
+	public static String sShowDelayedCapturePref;
+	public static String sDelayedSoundPref;
+	public static String sDelayedFlashPref;
+	
+	public static String sUseFrontCameraPref;
+	public static String sShutterPref;
+	public static String sShotOnTapPref;
+	public static String sVolumeButtonPref;
+	
+	public static String sImageSizeRearPref;
+	public static String sImageSizeFrontPref;
+	
+	public static String sJPEGQualityPref;
+	
+	public static String sDefaultInfoSetPref;	
+	public static String sSWCheckedPref;
+	public static String sSavePathPref;
+	public static String sSaveToPref;
+	public static String sSortByDataPref;
+	
+	public static String sDefaultModeName;
 	
 	public static int sDefaultValue = CameraParameters.SCENE_MODE_AUTO;
 	public static int sDefaultFocusValue = CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
@@ -292,6 +316,38 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
+		sEvPref = getResources().getString(R.string.Preference_EvCompensationValue);
+		sSceneModePref = getResources().getString(R.string.Preference_SceneModeValue);
+		sWBModePref = getResources().getString(R.string.Preference_WBModeValue);
+		sFrontFocusModePref = getResources().getString(R.string.Preference_FrontFocusModeValue);
+		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
+		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
+		sISOPref = getResources().getString(R.string.Preference_ISOValue);
+		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
+		
+		sDelayedCapturePref = getResources().getString(R.string.Preference_DelayedCaptureValue);
+		sShowDelayedCapturePref = getResources().getString(R.string.Preference_ShowDelayedCaptureValue);
+		sDelayedSoundPref = getResources().getString(R.string.Preference_DelayedSoundValue);
+		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
+		
+		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
+		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
+		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
+		sVolumeButtonPref = getResources().getString(R.string.Preference_VolumeButtonValue);
+		
+		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
+		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
+		
+		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
+		
+		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);		
+		sSWCheckedPref = getResources().getString(R.string.Preference_SWCheckedValue);
+		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
+		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
+		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
+		
+		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 		
 		deviceSS3_01 = getResources().getString(R.string.device_name_ss3_01);
 		deviceSS3_02 = getResources().getString(R.string.device_name_ss3_02);
@@ -379,6 +435,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		AppWidgetNotifier.app_launched(this);
 		
 		
+		isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+		if(null == MainScreen.mainContext.getSystemService("camera"))
+		{
+			isHALv3 = false;
+			isHALv3Supported = false;
+			prefs.edit().putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+		}
+		else
+			isHALv3Supported = true;
+
 		try{
 		cameraController = CameraController.getInstance();
 		}
@@ -540,6 +606,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
+		if(!isHALv3Supported)
+		{
+			CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
+			cp.setEnabled(false);
+		}
+		
 		CharSequence[] entries;
 		CharSequence[] entryValues;
 
@@ -762,7 +834,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			onResumeMain(isHALv3);
 	}
 	
-	public void onResumeMain(boolean isHALv3)
+	public void onResumeMain(boolean useHALv3)
 	{
 //		new CountDownTimer(50, 50)
 //		{
@@ -823,24 +895,26 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+		CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
 				: 1;
-		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+		ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 				false);
-		ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+		ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
 				false);
 		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+				MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
 		Log.e("MainScreen", "ImageSizeIdxPreference 222 = " + ImageSizeIdxPreference);
 		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-		SaveToPath = prefs.getString(SavePathPref, Environment
+		SaveToPath = prefs.getString(sSavePathPref, Environment
 				.getExternalStorageDirectory().getAbsolutePath());
-		SaveToPreference = prefs.getString("saveToPref", "0");
-		SortByDataPreference = prefs.getBoolean("sortByDataPref",
+		SaveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
+		SortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref,
 				false);
 		
 		MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 		setScreenBrightness(MaxScreenBrightnessPreference);
+		
+		isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
 
 		MainScreen.guiManager.onResume();
 		PluginManager.getInstance().onResume();
@@ -1554,7 +1628,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
-			int buttonFunc = Integer.parseInt(prefs.getString("volumeButtonPrefCommon", "0"));
+			int buttonFunc = Integer.parseInt(prefs.getString(MainScreen.sVolumeButtonPref, "0"));
 			if (buttonFunc == VOLUME_FUNC_SHUTTER)
 			{
 				MainScreen.guiManager.onHardwareFocusButtonPressed();

@@ -63,6 +63,9 @@ public class GroupShotCapturePlugin extends PluginCapture
     
     private int imagesTaken=0;
     private boolean inCapture;
+    
+    private static String sImagesAmountPref;
+    private static String sPauseBetweenShotsPref;
 
 	public GroupShotCapturePlugin()
 	{
@@ -73,6 +76,13 @@ public class GroupShotCapturePlugin extends PluginCapture
 			  null);
 
 		refreshPreferences();
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_GroupShotImagesAmountPref);
+		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_GroupShotPauseBetweenShotsPref);
 	}
 	
 	@Override
@@ -93,8 +103,8 @@ public class GroupShotCapturePlugin extends PluginCapture
 	private void refreshPreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		imageAmount = Integer.parseInt(prefs.getString("groupShotImagesAmount", "7"));
-		pauseBetweenShots = Integer.parseInt(prefs.getString("groupShotPauseBetweenShots", "750"));
+		imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "7"));
+		pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "750"));
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
