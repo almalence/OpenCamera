@@ -573,6 +573,61 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void setupCamera(SurfaceHolder holder)
 	{
+//		if (camera == null) {
+//			try {
+//				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+//					openCameraFrontOrRear();
+//				} else {
+//					camera = Camera.open();
+//				}
+//			} catch (RuntimeException e) {
+//				camera = null;
+//			}
+//
+//			if (camera == null) {
+//				Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+//				return;
+//			}
+//		}
+//		
+//		cameraParameters = camera.getParameters(); //Initialize of camera parameters variable
+//		
+//		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//	    	mVideoStabilizationSupported = isVideoStabilizationSupported();
+//
+//		PluginManager.getInstance().SelectDefaults();
+//
+//		// screen rotation
+//		try {
+//			camera.setDisplayOrientation(90);
+//		} catch (RuntimeException e) {
+//			e.printStackTrace();
+//		}
+//
+//		try {
+//			camera.setPreviewDisplay(holder);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//		if (camera == null)
+//			return;
+//		//Camera.Parameters cp = MainScreen.cameraParameters;
+//		
+//		PopulateCameraDimensions();
+//		ResolutionsMPixListIC = ResolutionsMPixList;
+//		ResolutionsIdxesListIC = ResolutionsIdxesList;
+//		ResolutionsNamesListIC = ResolutionsNamesList;
+//
+//		PluginManager.getInstance().SelectImageDimension(); // updates SX, SY
+//															// values
+//
+//
+//		MainScreen.thiz.configureCamera();
+		
+		
+		//HALv3
+		
 		if(!MainScreen.isHALv3)
 		{
 			if (CameraController.camera == null) {
@@ -618,10 +673,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	
-			if (CameraController.camera == null)
-				return;
-			Camera.Parameters cp = CameraController.cameraParameters;
 		}
 		
 		if(MainScreen.isHALv3)
@@ -644,6 +695,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		if(!MainScreen.isHALv3)
 			MainScreen.thiz.configureCamera();
+		
+		//HALv3 ^^^^^^^
+		
 		
 //		// ----- Select preview dimensions with ratio correspondent to full-size
 //		// image

@@ -768,183 +768,82 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	{
 		super.onResume();
 		
-//		if (!isCreating)
-//			new CountDownTimer(50, 50) {
-//				public void onTick(long millisUntilFinished) {
-//				}
-//
-//				public void onFinish() {
-//					SharedPreferences prefs = PreferenceManager
-//							.getDefaultSharedPreferences(MainScreen.mainContext);
-//					CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-//							: 1;
-//					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-//							false);
-//					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-//							false);
-//					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-//							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-//					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
-//					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-//					SaveToPath = prefs.getString(SavePathPref, Environment
-//							.getExternalStorageDirectory().getAbsolutePath());
-//					SaveToPreference = prefs.getString("saveToPref", "0");
-//					SortByDataPreference = prefs.getBoolean("sortByDataPref",
-//							false);
-//					
-//					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-//					setScreenBrightness(MaxScreenBrightnessPreference);
-//
-//					MainScreen.guiManager.onResume();
-//					PluginManager.getInstance().onResume();
-//					MainScreen.thiz.mPausing = false;
-//
-//					if (surfaceCreated && !CameraController.isCameraCreated()) {
-//						MainScreen.thiz.findViewById(R.id.mainLayout2)
-//								.setVisibility(View.VISIBLE);
-//						cameraController.setupCamera(surfaceHolder);
-//
-//						if (glView != null && CameraController.isCameraCreated())
-//						{
-//							Log.e("", "OpenGL onResume");
-//							glView.onResume();
-//						}
-//
-//						PluginManager.getInstance().onGUICreate();
-//						MainScreen.guiManager.onGUICreate();
-//					}
-//					orientListener.enable();
-//				}
-//			}.start();
-//
-//		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources()
-//				.openRawResourceFd(R.raw.plugin_capture_tick));
-//
-//		if (ScreenTimer != null) {
-//			if (isScreenTimerRunning)
-//				ScreenTimer.cancel();
-//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//			ScreenTimer.start();
-//			isScreenTimerRunning = true;
-//		}
-//
-//		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
-		
 		if (!isCreating)
-			onResumeMain(isHALv3);
-	}
-	
-	public void onResumeMain(boolean useHALv3)
-	{
-//		new CountDownTimer(50, 50)
-//		{
-//			@Override
-//			public void onTick(long millisUntilFinished) {}
-//			
-//			@Override
-//			public void onFinish()
-//			{
-//				SharedPreferences prefs = PreferenceManager
-//						.getDefaultSharedPreferences(MainScreen.mainContext);
-//				CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-//						: 1;
-//				ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-//						false);
-//				ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-//						false);
-//				ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-//						"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-//				Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
-//				// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-//				SaveToPath = prefs.getString(SavePathPref, Environment
-//						.getExternalStorageDirectory().getAbsolutePath());
-//				SaveToPreference = prefs.getString("saveToPref", "0");
-//				SortByDataPreference = prefs.getBoolean("sortByDataPref",
-//						false);
-//				
-//				MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-//				setScreenBrightness(MaxScreenBrightnessPreference);
-//		
-//				MainScreen.guiManager.onResume();
-//				PluginManager.getInstance().onResume();
-//				MainScreen.thiz.mPausing = false;
-//				
-//				if(MainScreen.isHALv3)
-//				{
-//					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-//					cameraController.setupCamera(null);
-//				}
-//				else if (surfaceCreated && (!CameraController.isCameraCreated()))
-//				{
-//					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-//					cameraController.setupCamera(surfaceHolder);
-//				}
-//		
-//				if (glView != null)
-//				{
-//					glView.onResume();
-//					Log.e("GL", "glView onResume");
-//				}
-//				
-//				PluginManager.getInstance().onGUICreate();
-//				MainScreen.guiManager.onGUICreate();
-//			}
-//
-//			
-//		}.start();
-		
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
-		CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
-				: 1;
-		ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
-				false);
-		ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
-				false);
-		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-				MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
-		Log.e("MainScreen", "ImageSizeIdxPreference 222 = " + ImageSizeIdxPreference);
-		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-		SaveToPath = prefs.getString(sSavePathPref, Environment
-				.getExternalStorageDirectory().getAbsolutePath());
-		SaveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
-		SortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref,
-				false);
-		
-		MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-		setScreenBrightness(MaxScreenBrightnessPreference);
-		
-		isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+			new CountDownTimer(50, 50) {
+				public void onTick(long millisUntilFinished) {
+				}
 
-		MainScreen.guiManager.onResume();
-		PluginManager.getInstance().onResume();
-		MainScreen.thiz.mPausing = false;
-		
-		if(MainScreen.isHALv3)
-		{
-			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-			cameraController.setupCamera(null);
-		}
-		else if (surfaceCreated && (!CameraController.isCameraCreated()))
-		{
-			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-			cameraController.setupCamera(surfaceHolder);
-		}
+				public void onFinish() {
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.mainContext);
+					CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
+							: 1;
+					ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
+							false);
+					ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
+							false);
+					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+							MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
+					Log.e("MainScreen", "ImageSizeIdxPreference 222 = " + ImageSizeIdxPreference);
+					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
+					SaveToPath = prefs.getString(sSavePathPref, Environment
+							.getExternalStorageDirectory().getAbsolutePath());
+					SaveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
+					SortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref,
+							false);
+					
+					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+					setScreenBrightness(MaxScreenBrightnessPreference);
+					
+					isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+			
+					MainScreen.guiManager.onResume();
+					PluginManager.getInstance().onResume();
+					MainScreen.thiz.mPausing = false;
+					
+					if(MainScreen.isHALv3)
+					{
+						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						cameraController.setupCamera(null);
+						
+						if (glView != null)
+						{
+							glView.onResume();
+							Log.e("GL", "glView onResume");
+						}
+						
+						PluginManager.getInstance().onGUICreate();
+						MainScreen.guiManager.onGUICreate();
 
-		if (glView != null)
-		{
-			glView.onResume();
-			Log.e("GL", "glView onResume");
-		}
-		
-		PluginManager.getInstance().onGUICreate();
-		MainScreen.guiManager.onGUICreate();
-		if (showStore)
-		{
-			guiManager.showStore();
-			showStore = false;
-		}
-		orientListener.enable();
+						if (showStore)
+						{
+							guiManager.showStore();
+							showStore = false;
+						}
+					}
+					else if (surfaceCreated && (!CameraController.isCameraCreated()))
+					{
+						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						cameraController.setupCamera(surfaceHolder);
+						
+						if (glView != null)
+						{
+							glView.onResume();
+							Log.e("GL", "glView onResume");
+						}
+						
+						PluginManager.getInstance().onGUICreate();
+						MainScreen.guiManager.onGUICreate();
+
+						if (showStore)
+						{
+							guiManager.showStore();
+							showStore = false;
+						}
+					}					
+					orientListener.enable();
+				}
+		}.start();
 		
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources()
@@ -964,6 +863,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (Free<30)
 			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
+
 
 	private long getAvailableInternalMemory()
 	{
@@ -1214,10 +1114,11 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				glView = new GLLayer(MainScreen.mainContext);
 				glView.setLayoutParams(new LayoutParams(
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-						glView, 1);
 				glView.setZOrderMediaOverlay(true);
+				
 				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
+						glView, 1);				
 			}
 		} else {
 			((RelativeLayout) findViewById(R.id.mainLayout2))
@@ -1285,10 +1186,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			previewHeight = CameraController.getInstance().getCameraParameters().getPreviewSize().height;
 		}
 
-				Util.initialize(mainContext);
-				Util.initializeMeteringMatrix();
+		Util.initialize(mainContext);
+		Util.initializeMeteringMatrix();
 //				
-				prepareMeteringAreas();
+		prepareMeteringAreas();
 
 		guiManager.onCameraCreate();
 		PluginManager.getInstance().onCameraParametersSetup();
