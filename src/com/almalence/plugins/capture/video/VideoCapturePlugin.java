@@ -231,10 +231,10 @@ public class VideoCapturePlugin extends PluginCapture
 				float expStep = MainScreen.thiz.getExposureCompensationStep();
 				if (isChecked)
 				{
-					int diff = (int)Math.round(0.5/expStep);
-					if(diff < 1)
-						diff = 1;
-					newEv -= diff;
+					if (expStep < 0.3f) expStep = 0.33f;	// there is a bug in Nexus 5 (android 4.4.2) 
+		    		int cmpns = -(int)(0.8f/expStep);
+		    		if (cmpns == 0) cmpns = -1;	// on Ascend P6 Ev compensation step is 1.0
+					newEv -= cmpns;
 					ModePreference = "0";
 				}
 				else
@@ -243,9 +243,9 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 				
 				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-				if (params != null && newEv >= minValue)
+				if (params != null)
 				{
-					params.setExposureCompensation(newEv);
+					params.setExposureCompensation(Math.max(minValue, newEv));
 					MainScreen.thiz.setCameraParameters(params);
 				}
 				
