@@ -14,82 +14,38 @@
 		android:defaultValue="0"
 		android:entries="@array/dimsArrayCommon"
 		android:entryValues="@array/dimsValuesCommon" />
-	
-	
-	
 	<ListPreference
 		android:title="@string/Pref_Common_VolumeButton_Title"
 		android:key="volumeButtonPrefCommon"
 		android:defaultValue="0"
 		android:entries="@array/volumeButtonArrayCommon"
 		android:entryValues="@array/volumeButtonValuesCommon" />
-
-	
-	
-	
-	<!-- -+-  -->
-		
-	<!--  -+- -->
-	<!-- +++
-	<PreferenceScreen
-		 android:fragment="com.almalence.opencam_plus.Fragment"
-		 android:title="@string/Pref_SaveConfiguration_Title"
-		 android:summary="@string/Pref_SaveConfiguration_Summary">
-		 <extra android:name="type" android:value="save_configuration"/>
-	</PreferenceScreen>
-	+++ -->
 	<CheckBoxPreference
 		android:title="@string/Pref_ShowHelp_Title"
 		android:summary="@string/Pref_WhowHelp_Summary"
 		android:defaultValue="true" 
 		android:key="showHelpPrefCommon" />
-	
-	
-	
-	
-	
     <Preference android:key="about" 
        	android:title="@string/Pref_About_Title" 
        	android:summary="@string/Pref_About_Summary"
        	/>
-    <PreferenceScreen android:title="@string/moreText">
-        <ListPreference 
-            android:title="@string/Pref_Common_JPEGQuality_Title" 
-            android:key="commonJPEGQuality" 
-            android:defaultValue="95" 
-            android:entries="@array/JPEGQualityArrayCommon" 
-            android:entryValues="@array/JPEGQualityValuesCommon" />
-        <CheckBoxPreference 
-            android:title="@string/Pref_Common_ShotOnTap_Title" 
-            android:summary="@string/Pref_Common_ShotOnTap_Summary" 
-            android:defaultValue="false" 
-            android:key="shotontapPrefCommon" />
-        <CheckBoxPreference 
-            android:title="@string/Pref_Common_HeadsetTap_Title" 
-            android:summary="@string/Pref_Common_HeadsetTap_Summary" 
-            android:defaultValue="false" 
-            android:key="headsetPrefCommon" />
-        <PreferenceScreen 
-            android:fragment="com.almalence.opencam.Fragment" 
-            android:title="@string/Pref_SaveConfiguration_Title" 
-            android:summary="@string/Pref_SaveConfiguration_Summary">
-			 <extra 
-			     android:name="type" 
-			     android:value="save_configuration" />
-		</PreferenceScreen>
-		<CheckBoxPreference 
-		    android:title="@string/Pref_Common_Shutter_Title" 
-		    android:summary="@string/Pref_Common_Shutter_Summary" 
-		    android:defaultValue="false" 
-		    android:key="shutterPrefCommon" />
-		<CheckBoxPreference 
-		    android:title="@string/Pref_Common_HWShutter_Title" 
-		    android:defaultValue="false" 
-		    android:key="useHWShutterButtonLauncher" />
-		<CheckBoxPreference 
-		    android:title="@string/Pref_Common_UseHALv3_Title"
-		    android:summary="@string/Pref_Common_UseHALv3_Summary" 
-		    android:defaultValue="false" 
-		    android:key="@string/Preference_UseHALv3Key" />
-    </PreferenceScreen>
+    
+    <!-- -+-  -->
+    <PreferenceScreen android:title="@string/moreText"
+        	android:fragment="com.almalence.opencam.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_more" />
+	</PreferenceScreen>
+	<!--  -+- -->
+	<!-- +++
+	<PreferenceScreen android:title="@string/moreText"
+        	android:fragment="com.almalence.opencam_plus.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_more" />
+	</PreferenceScreen>
+	+++ -->
 </PreferenceScreen>

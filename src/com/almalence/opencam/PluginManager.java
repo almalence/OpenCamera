@@ -107,10 +107,11 @@ import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
-import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
+import com.almalence.plugins.vf.gyro.GyroVFPlugin;
+
 
 /***
  * Plugins managing class.
@@ -183,14 +184,15 @@ public class PluginManager {
 	public static final int MSG_DELAYED_CAPTURE = 11;	
 	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
 	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
+	public static final int MSG_CAPTURE_FINISHED_NORESULT = 15;
 	
 	//For HALv3 code version
-	public static final int MSG_CAMERA_OPENED = 15;
-	public static final int MSG_SURFACE_READY = 16;
-	public static final int MSG_NOT_LEVEL_FULL = 17;
-	public static final int MSG_PROCESS = 18;
-	public static final int MSG_PROCESS_FINISHED = 19;
-	public static final int MSG_VOLUME_ZOOM = 20;
+	public static final int MSG_CAMERA_OPENED = 16;
+	public static final int MSG_SURFACE_READY = 17;
+	public static final int MSG_NOT_LEVEL_FULL = 18;
+	public static final int MSG_PROCESS = 19;
+	public static final int MSG_PROCESS_FINISHED = 20;
+	public static final int MSG_VOLUME_ZOOM = 21;
 	// ^^ For HALv3 code version
 
 	public static final int MSG_SET_EXPOSURE = 22;
@@ -428,7 +430,7 @@ public class PluginManager {
 			mode = ConfigParser.getInstance().getDefaultMode();
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putString("defaultModeName", mode.modeID);
+			prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
 			prefsEditor.commit();
 		}
 
@@ -440,7 +442,7 @@ public class PluginManager {
 			mode = ConfigParser.getInstance().getDefaultMode();
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putString("defaultModeName", mode.modeID);
+			prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
 			prefsEditor.commit();
 		}
 
@@ -478,7 +480,7 @@ public class PluginManager {
 			mode = ConfigParser.getInstance().getDefaultMode();
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putString("defaultModeName", mode.modeID);
+			prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
 			prefsEditor.commit();
 		}
 
@@ -850,7 +852,11 @@ public class PluginManager {
 		loadStandardSettingsBefore(pf, settings);
 		if ("general_settings".equals(settings)) 
 		{
-		} 
+		}
+		else if ("general_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_general_more);
+		}
 		else if ("vf_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
@@ -883,9 +889,37 @@ public class PluginManager {
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
 		}
+		else if ("export_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+		}		
 		else if ("shooting_settings".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
+		}
+		else if ("capture_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_expobracketing_more);
+		}
+		else if ("processing_expobracketing_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_hdr_more);
+		}
+		else if ("capture_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_night_more);
+		}
+		else if ("processing_night_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
+		}
+		else if ("capture_preshot_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);
+		}
+		else if ("capture_panorama_more".equals(settings)) 
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
 		}
 //		else if ("selftimer".equals(settings))
 //		{
@@ -1146,7 +1180,7 @@ public class PluginManager {
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
-			new CountDownTimer(200, 200) {
+			new CountDownTimer(250, 250) {
 				public void onTick(long millisUntilFinished) {
 				}
 	
@@ -1572,6 +1606,30 @@ public class PluginManager {
 			MainScreen.H.sendMessage(message);
 			break;
 
+		case MSG_CAPTURE_FINISHED_NORESULT:
+			shutterRelease = true;
+
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onCaptureFinished();
+
+			MainScreen.guiManager.onCaptureFinished();
+			MainScreen.guiManager.startProcessingAnimation();
+
+			MainScreen.thiz.MuteShutter(false);
+
+	    	MainScreen.guiManager.lockControls = false;
+			Message messageNoResult = new Message();
+			messageNoResult.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			messageNoResult.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(messageNoResult);
+			
+			MainScreen.guiManager.onExportFinished();
+
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
+			
+			break;
+
 		case MSG_START_POSTPROCESSING:
 			if (null != pluginList.get(activeProcessing))
 			{
@@ -1730,6 +1788,7 @@ public class PluginManager {
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
 			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
+			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
@@ -1746,6 +1805,7 @@ public class PluginManager {
 			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
 			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);			
 
 		} catch (JpegProcessingException e1)
 		{

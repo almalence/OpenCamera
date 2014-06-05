@@ -18,8 +18,27 @@
 						android:title="@string/Pref_NightCapture_NightVision_Title"
 						android:defaultValue="true"
 						android:summary="@string/Pref_NightCapture_NightVision_Summary"
-						android:key="@string/NightVisionLayerShow" />
+						android:key="openglPref" />
 		
-		<PreferenceScreen android:title="@string/moreText"><ListPreference android:title="@string/Pref_NightCapture_FocusMode_Title" android:defaultValue="0" android:summary="@string/Pref_NightCapture_FocusMode_Summary" android:key="focusPref" android:entries="@array/focusArray" android:entryValues="@array/focusValues" /></PreferenceScreen>
+        <!-- -+-  -->
+    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.opencam.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="capture_night_more" />
+    	</PreferenceScreen>
+    	<!--  -+- -->
+		<!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.opencam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="capture_night_more" />
+    	</PreferenceScreen>
+		+++ -->
 	</PreferenceCategory>
 </PreferenceScreen>

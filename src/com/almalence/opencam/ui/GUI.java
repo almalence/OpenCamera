@@ -54,7 +54,7 @@ Extend GUI class to implement new GUI.
 ***/
 
 public abstract class GUI
-{	
+{
 	// Flags to know which camera feature supported at current device
 	public boolean mEVSupported = false;	
 	public boolean mSceneModeSupported = false;

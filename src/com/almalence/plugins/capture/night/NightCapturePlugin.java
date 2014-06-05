@@ -431,8 +431,8 @@ public class NightCapturePlugin extends PluginCapture
 		String defaultFocus = "0";
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
-        ModePreference = prefs.getString("modePref", defaultMode);
-		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
+        ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
+		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? nightCaptureImageSizeBackPref : nightCaptureImageSizeFrontPref, "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		SelectImageDimension();		
 	}
@@ -884,8 +884,8 @@ public class NightCapturePlugin extends PluginCapture
 	        entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
 
 	        PreferenceCategory cat = (PreferenceCategory)prefActivity.findPreference("Pref_NightCapture_Category");
-	        ListPreference lp = (ListPreference)prefActivity.findPreference("imageSizePrefNightBack");
-	        ListPreference lp2 = (ListPreference)prefActivity.findPreference("imageSizePrefNightFront");
+	        ListPreference lp = (ListPreference)cat.findPreference(nightCaptureImageSizeBackPref);
+	        ListPreference lp2 = (ListPreference)cat.findPreference(nightCaptureImageSizeFrontPref);
 	        
 	        if(CameraController.CameraIndex == 0 && lp2 != null)
 	        	cat.removePreference(lp2);
@@ -975,8 +975,8 @@ public class NightCapturePlugin extends PluginCapture
 	        entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
 
 	        PreferenceCategory cat = (PreferenceCategory)prefActivity.findPreference("Pref_NightCapture_Category");
-	        ListPreference lp = (ListPreference)prefActivity.findPreference("imageSizePrefNightBack");
-	        ListPreference lp2 = (ListPreference)prefActivity.findPreference("imageSizePrefNightFront");
+	        ListPreference lp = (ListPreference)cat.findPreference(nightCaptureImageSizeBackPref);
+	        ListPreference lp2 = (ListPreference)cat.findPreference(nightCaptureImageSizeFrontPref);
 	        
 	        if(CameraController.CameraIndex == 0 && lp2 != null)
 	        	cat.removePreference(lp2);

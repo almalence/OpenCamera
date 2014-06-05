@@ -56,7 +56,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		"sd-ext", 
 		"external_sd", 
 		"external_SD",
-		"sdcard-ext", 
+		"sdcard-ext",
 		"extSdCard", 
 		"sdcard",
 		"bootsdcard",
@@ -65,13 +65,16 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		"ExtSDCard",
 		"sdcard0",
 		"sdcard1",
-		"sdcard2"
+		"sdcard2",
+		"ext_sdcard",
+		"MicroSD"
 	};
 	
 	private static final String[] ROOT_CANDIDATES = new String[]
 	{
 		"/storage",
 		"/mnt",
+		"/Removable",
 		"/"
 	};
 
@@ -388,7 +391,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 				return true;
 			}
 		}
-		catch (Throwable e)
+		catch (Exception e)
 		{
 			
 		}

@@ -20,8 +20,8 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">Pause between shots (hi-res)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pause after picture taken - for re-focus purposes.</string>
 	
-	<string name="Pref_PreShot_Low">Low res (faster)</string>
-	<string name="Pref_PreShot_High">High res (slower)</string>
+	<string name="Pref_PreShot_Low">High speed (preview)</string>
+	<string name="Pref_PreShot_High">High res (still)</string>
 	
 	<string name="Pref_PreShot_None">None</string>
 	

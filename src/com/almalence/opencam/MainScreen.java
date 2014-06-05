@@ -569,8 +569,8 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							((Uri) this.getIntent().getExtras()
 									.getParcelable(MediaStore.EXTRA_OUTPUT))
 									.getPath());
-					if (MainScreen.ForceFilename.getAbsolutePath().equals(
-							"/scrapSpace")) {
+					if (MainScreen.ForceFilename.getAbsolutePath().equals("/scrapSpace")) 
+					{
 						MainScreen.ForceFilename = new File(Environment
 								.getExternalStorageDirectory()
 								.getAbsolutePath()
@@ -688,7 +688,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 
-	
 	@Override
 	protected void onStart()
 	{
@@ -784,7 +783,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 							false);
 					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
 							MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
-					Log.e("MainScreen", "ImageSizeIdxPreference 222 = " + ImageSizeIdxPreference);
+					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 					SaveToPath = prefs.getString(sSavePathPref, Environment
 							.getExternalStorageDirectory().getAbsolutePath());
@@ -863,7 +862,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		if (Free<30)
 			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
-
 
 	private long getAvailableInternalMemory()
 	{
@@ -1016,14 +1014,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				public void onFinish() {
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
-					CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+					CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
 							: 1;
-					ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+					ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 							false);
-					ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+					ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
 							false);
 					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-							"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
+							MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
@@ -1041,12 +1039,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		else {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
-			CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
+			CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
 					: 1;
-			ShutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",false);
+			ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref, false);
+			ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,false);
 			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-					"imageSizePrefCommonBack" : "imageSizePrefCommonFront",
+					MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref,
 					"-1");
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
