@@ -372,19 +372,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 						if (result <= 0)
 						{
 							this.stopCapture();
-							Message msg = new Message();
-		    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		    				msg.what = PluginManager.MSG_BROADCAST;
-		    				MainScreen.H.sendMessage(msg);
-		    				MainScreen.guiManager.lockControls = false;
+							Message message = new Message();
+							message.obj = String.valueOf(SessionID);
+							message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+							MainScreen.H.sendMessage(message);
 						}
 						
 						return true;
 					}
 				}
 			}
-		}
-		
+		}		
 		return false;
 	}
 	
@@ -1020,7 +1018,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	@Override
 	public void onPreviewFrame(final byte[] data, final Camera paramCamera)
-	{		
+	{
 		this.previewRestartFlag = false;
 		
 		if (!this.prefHardwareGyroscope)
@@ -1034,7 +1032,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			{
 				final int state = this.engine.getPictureTakingState(
 						MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO));
-				
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
 					this.takingAlready = true;
@@ -1043,40 +1040,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			}
 		}
 	}
-	
-//	private final AutoFocusCallback autoFocusCallbackReceiver = new AutoFocusCallback()
-//	{
-//		@Override
-//		public void onAutoFocus(final boolean success, final Camera camera)
-//		{
-//			PanoramaAugmentedCapturePlugin.this.takePictureReal();
-//		}
-//	};
-//	
-//	private void tryAutoFocus()
-//	{
-//		try
-//		{
-//			final Camera camera = MainScreen.thiz.getCamera();
-//	    	if (camera == null)
-//	    	{
-//	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
-//	    		return;
-//	    	}
-//			camera.autoFocus(this.autoFocusCallbackReceiver);
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//			this.takePicture();
-//		}
-//	}
-//	
-//	@Override
-//	public void onAutoFocus(final boolean success, final Camera camera)
-//	{
-//		
-//	}
 	
 	@Override
 	public void takePicture()
@@ -1090,23 +1053,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				return;
 			}
 		}
-		
-//		try
-//		{
-//			if (MainScreen.thiz.getFocusMode().equals(Parameters.FOCUS_MODE_AUTO))
-//			{
-//				this.tryAutoFocus();
-//			}
-//			else
-//			{
-//				this.takePictureReal();
-//			}
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//		}
-		
+				
 		takingAlready = true;
 		
 		takePictureReal();
@@ -1151,25 +1098,39 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		lock = false;
 	}
 	
+	//will reset ae/awb lock if not locked with controls. will reset directly in camera. 
 	private void unlockAEWB()
 	{
-		if (aewbLockedByPanorama)
+		try
 		{
-			Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-			if (params != null)
+			if (aewbLockedByPanorama)
 			{
-				if(MainScreen.thiz.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+				Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+				if (params != null)
 				{
-					params.setAutoWhiteBalanceLock(false);
-					MainScreen.thiz.setCameraParameters(params);
+					if(MainScreen.thiz.isWhiteBalanceLockSupported() /*&& params.getAutoWhiteBalanceLock()*/)
+					{
+						params.setAutoWhiteBalanceLock(false);
+						//MainScreen.thiz.setCameraParameters(params);
+						MainScreen.thiz.getCamera().setParameters(params);
+					}
 				}
-				if(MainScreen.thiz.isExposureLockSupported() && params.getAutoExposureLock())
+				params = MainScreen.thiz.getCameraParameters();
+				if (params != null)
 				{
-					params.setAutoExposureLock(false);
-					MainScreen.thiz.setCameraParameters(params);
+					if(MainScreen.thiz.isExposureLockSupported()/* && params.getAutoExposureLock()*/)
+					{
+						params.setAutoExposureLock(false);
+						//MainScreen.thiz.setCameraParameters(params);
+						MainScreen.thiz.getCamera().setParameters(params);
+					}
 				}
+				aewbLockedByPanorama = false;
 			}
-			aewbLockedByPanorama = false;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Panorama", "setCameraParameters exception: " + e.getMessage());
 		}
 	}
 	
@@ -1196,18 +1157,29 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	this.coordsRecorded = false;
     	
     	try {
+    		MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
     		camera.setPreviewCallback(null);
-    		camera.takePicture(MainScreen.thiz, null, null, MainScreen.thiz);
+    		Log.e("Almalence", "Camera.takePicture()");
+    		camera.takePicture(null, null, null, MainScreen.thiz);
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			Log.e("Panorama capture", "takePicture exception: " + e.getMessage());
+			Log.e("Almalence", "takePicture exception: " + e.getMessage());
 			
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+//			final Message msg = new Message();
+//			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
+//			msg.what = PluginManager.MSG_BROADCAST;
+//			MainScreen.H.sendMessage(msg);
+			
+			this.engine.onCameraError();
+			
+			this.stopCapture();
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+			MainScreen.H.sendMessage(message);
 			
 			takingAlready = false;
 			capturing = false;

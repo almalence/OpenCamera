@@ -138,14 +138,10 @@ public class DROVideoEngine
 	private FpsMeasurer fps = new FpsMeasurer(5);
 
 	private volatile long recordingDelayed;
+	private boolean paused;
 	
 	
 	public DROVideoEngine()
-	{
-		this.init();
-	}
-	
-	private void init()
 	{
 		
 	}
@@ -163,10 +159,12 @@ public class DROVideoEngine
 				public void run()
 				{
 					synchronized (DROVideoEngine.this.stateSync)
-					{
+					{						
 						if (DROVideoEngine.this.encoder == null
 								&& DROVideoEngine.this.instance != 0)
 						{
+							DROVideoEngine.this.paused = false;
+							
 							DROVideoEngine.this.encoder = new EglEncoder(
 									path,
 									DROVideoEngine.this.previewWidth,
@@ -294,6 +292,27 @@ public class DROVideoEngine
 		MainScreen.thiz.glRequestRender();
 	}
 	
+	public void setPaused(final boolean paused)
+	{
+		MainScreen.thiz.queueGLEvent(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//synchronized (DROVideoEngine.this.stateSync)
+				{
+					if (!DROVideoEngine.this.paused
+							&& paused
+							&& DROVideoEngine.this.encoder != null)
+					{
+						DROVideoEngine.this.encoder.pause();
+					}
+					
+					DROVideoEngine.this.paused = paused;
+				}
+			}
+		});
+	}
 	
 	
 	private int hProgram;
@@ -420,7 +439,7 @@ public class DROVideoEngine
 						this.texture_out);
 
 				t = System.currentTimeMillis() - t;
-				//Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
+				Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
 				
 				this.forceUpdate = false;
 				
@@ -430,7 +449,8 @@ public class DROVideoEngine
 				//Log.v(TAG, String.format("DRO FPS: %.2f", fps.getFPS()));
 				
 				if (this.encoder != null
-						&& System.currentTimeMillis() > this.recordingDelayed)
+						&& System.currentTimeMillis() > this.recordingDelayed
+						&& !this.paused)
 				{
 					this.encoder.encode(this.texture_out);
 				}

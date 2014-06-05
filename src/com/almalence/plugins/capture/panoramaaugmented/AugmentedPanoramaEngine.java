@@ -52,6 +52,8 @@ import android.util.Log;
 
 public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationReceiver
 {
+	public static final String TAG = "Almalence";
+	
 	public static final int STATE_STANDBY = 0;
 	public static final int STATE_CLOSEENOUGH = 1;
 	public static final int STATE_TAKINGPICTURE = 2;
@@ -206,7 +208,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private int width;
 	private int height;
-	@SuppressWarnings("unused")
 	private int halfWidth;
 	private int halfHeight;
 
@@ -433,9 +434,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public int getPictureTakingState(final boolean autoFocus)
 	{
-		if (this.isCircular())
+		synchronized (this.frames)
 		{
-			return STATE_STANDBY;
+			if (this.isCircular() || this.frames.size() == 0)
+			{
+				return STATE_STANDBY;
+			}
 		}
 		
 		synchronized (this.stateSynch)
@@ -486,6 +490,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		synchronized (this.frames)
 		{
 			return (this.frames.size() >= this.framesMax);
+		}
+	}
+	
+	public void onCameraError()
+	{
+		synchronized (this.stateSynch)
+		{
+			this.state = STATE_STANDBY;
 		}
 	}
 	
@@ -598,6 +610,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 			else
 			{
+				this.state = STATE_STANDBY;
 				frame = null;
 			}
 		}
@@ -1341,7 +1354,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				
 				try
 				{
+					Log.e(TAG, "AugmentedFrameTaken(): before syncObject.wait()");
 					syncObject.wait();
+					Log.e(TAG, "AugmentedFrameTaken(): after syncObject.wait()");
 				}
 				catch (final InterruptedException e)
 				{

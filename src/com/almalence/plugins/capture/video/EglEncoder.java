@@ -137,6 +137,8 @@ public class EglEncoder
 	
 	private AudioRecorder audioRecorder;
 	
+	private volatile boolean paused = false;
+	
 	
 	public EglEncoder(final String outputPath, final int width, final int height, 
 			final int fps, final int bitrate, int orientation)
@@ -204,19 +206,47 @@ public class EglEncoder
 		super.finalize();
 	}
 	
-	public void encode(final int texture)
-	{		
-		if (this.timeLast >= 0)
+	private boolean checkPaused()
+	{
+		if (this.paused)
 		{
-			final long time = System.nanoTime();
-			final long timeDiff = time - this.timeLast;
-			this.timeLast = time;
-			this.timeTotal += timeDiff;
+			this.paused = false;
+			this.audioRecorder.record(true);
+			
+			return true;
 		}
 		else
 		{
-			this.timeLast = System.nanoTime();
+			return false;
 		}
+	}
+	
+	public void pause()
+	{
+		this.paused = true;
+		this.audioRecorder.record(false);
+	}
+	
+	public void encode(final int texture)
+	{
+		final long time = System.nanoTime();
+		final long timeDiff;
+		
+		if (this.checkPaused())
+		{
+			timeDiff = 0;
+		}
+		else
+		{
+			timeDiff = time - this.timeLast;
+		}
+		
+		if (this.timeLast >= 0)
+		{
+			this.timeTotal += timeDiff;
+		}
+
+		this.timeLast = time;
 		
 		this.audioRecorder.updateTime(this.timeTotal);
 		
@@ -225,6 +255,13 @@ public class EglEncoder
 	
 	public void encode(final int texture, final long nanoSec)
 	{
+		if (nanoSec < 0)
+		{
+			throw new IllegalArgumentException("Time shift can't be negative.");
+		}
+		
+		this.checkPaused();
+		
 		this.timeLast = System.nanoTime();
 		this.timeTotal += nanoSec;
 		this.audioRecorder.updateTime(this.timeTotal);

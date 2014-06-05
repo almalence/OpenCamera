@@ -33,9 +33,10 @@ public class AudioRecorder
     private final Object sync = new Object();
     private boolean started = false;
     private boolean running = false;
-    private volatile boolean muxedStarted = false;
+    private volatile boolean muxerStarted = false;
+    private volatile boolean record = true;
     private volatile long time = 0;
-	
+    private volatile long timeOrigin = 0;
 	
 	public AudioRecorder(final MediaMuxer muxer)
 	{
@@ -47,11 +48,17 @@ public class AudioRecorder
 	public void updateTime(final long time)
 	{
 		this.time = time;
+		this.timeOrigin = System.nanoTime();
 	}
 	
 	public void muxerStarted()
 	{
-		this.muxedStarted = true;
+		this.muxerStarted = true;
+	}
+	
+	public void record(final boolean record)
+	{
+		this.record = record;
 	}
 	
 	public void start()
@@ -98,151 +105,6 @@ public class AudioRecorder
 			this.running = false;
 			
 			this.encodingThread.finish();
-		}
-	}
-	
-	private class RecordingThread extends Thread
-	{
-		private boolean running = true;
-		
-		public RecordingThread()
-		{
-			
-		}
-		
-		@Override
-		public void run()
-		{
-			/*
-            final byte[] recordedBytes = new byte[SAMPLES_PER_FRAME];
-			
-	        final AudioRecord audioRecorder = new AudioRecord(
-	                AUDIO_SOURCE,
-	                SAMPLE_RATE,
-	                CHANNEL_CONFIG,
-	                AUDIO_FORMAT,
-	                this.iBufferSize);
-	        audioRecorder.startRecording();
-	        
-	        final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
-			int track = 0;
-			ByteBuffer[] buffersInput = null;
-			ByteBuffer[] buffersOutput = this.encoder.getOutputBuffers();
-			ByteBuffer encodedData;
-			
-			while (this.running)
-			{
-				final int resultRead = audioRecorder.read(recordedBytes, 0, SAMPLES_PER_FRAME);
-				
-                if(resultRead == AudioRecord.ERROR_BAD_VALUE
-                		|| resultRead == AudioRecord.ERROR_INVALID_OPERATION)
-                {
-                	break;
-                }
-            	
-				try
-				{
-					if (buffersInput == null)
-						buffersInput = this.encoder.getInputBuffers();
-
-					int inputBufferIndex = this.encoder.dequeueInputBuffer(0);
-					if (inputBufferIndex >= 0)
-					{
-						final ByteBuffer inputBuffer = buffersInput[inputBufferIndex];
-						inputBuffer.clear();
-						inputBuffer.put(recordedBytes);
-						// recycleInputBuffer(mTempBuffer);
-
-						this.encoder.queueInputBuffer(inputBufferIndex, 
-								0, recordedBytes.length, time / 1000, 0);
-					}
-				}
-				catch (final Throwable t)
-				{
-					Log.e(TAG, "sendFrameToAudioEncoder exception");
-					t.printStackTrace();
-					break;
-				}     
-                
-       
-                
-				final int encoderStatus = this.encoder.dequeueOutputBuffer(bufferInfo, TIMEOUT_USEC);
-				if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER)
-				{
-					
-				}
-				else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED)
-				{
-					// not expected for an encoder
-					buffersOutput = this.encoder.getOutputBuffers();
-				}
-				else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED)
-				{
-					final MediaFormat newFormat = this.encoder.getOutputFormat();
-					
-					track = AudioRecorder.this.muxer.addTrack(newFormat);
-					
-					synchronized (this.sync)
-					{
-						sync.notify();
-					}
-
-				}
-				else if (encoderStatus < 0)
-				{
-					Log.w(TAG, "Unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);
-				}
-				else
-				{
-					encodedData = buffersOutput[encoderStatus];
-					if (encodedData == null)
-					{
-						throw new RuntimeException("encoderOutputBuffer " + encoderStatus + " was null");
-					}
-
-					if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0)
-					{
-						// The codec config data was pulled out and fed
-						// to the muxer when we got
-						// the INFO_OUTPUT_FORMAT_CHANGED status. Ignore
-						// it.
-						bufferInfo.size = 0;
-					}
-
-					if (bufferInfo.size != 0)
-					{
-						// adjust the ByteBuffer values to match
-						// BufferInfo (not needed?)
-						encodedData.position(bufferInfo.offset);
-						encodedData.limit(bufferInfo.offset	+ bufferInfo.size);
-
-						if (AudioRecorder.this.muxedStarted)
-						{
-							synchronized (AudioRecorder.this.muxer)
-							{
-								AudioRecorder.this.muxer.writeSampleData(track, encodedData, bufferInfo);
-							}
-						}
-					}
-
-					this.encoder.releaseOutputBuffer(encoderStatus, false);
-
-					if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0)
-					{
-						Log.w(TAG, "AudioRecorder: EOS reached.");
-						break;
-					}
-				}
-			}
-			
-			audioRecorder.stop();
-			audioRecorder.release();
-			//*/
-		}
-		
-		public void finish()
-		{
-			this.running = false;
 		}
 	}
 	
@@ -317,8 +179,9 @@ public class AudioRecorder
 						inputBuffer.put(recordedBytes);
 						// recycleInputBuffer(mTempBuffer);
 
-						this.encoder.queueInputBuffer(inputBufferIndex, 
-								0, recordedBytes.length, time / 1000, 0);
+						this.encoder.queueInputBuffer(inputBufferIndex, 0, recordedBytes.length,
+								(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000,
+								0);
 					}
 				}
 				catch (final Throwable t)
@@ -380,7 +243,7 @@ public class AudioRecorder
 						encodedData.position(bufferInfo.offset);
 						encodedData.limit(bufferInfo.offset	+ bufferInfo.size);
 
-						if (AudioRecorder.this.muxedStarted)
+						if (AudioRecorder.this.muxerStarted && AudioRecorder.this.record)
 						{
 							synchronized (AudioRecorder.this.muxer)
 							{

@@ -15,7 +15,7 @@
         app:switchTextAppearance="@style/TextAppearance"
         app:thumb="@drawable/switch_inner_holo_dark"
         app:track="@drawable/switch_track_holo_dark"
-        android:id="@+id/switch_nightmode"/>
+        android:id="@+id/switch_preshottmode"/>
 <!--  -+- -->	
 <!-- +++
 <com.almalence.ui.Switch.Switch
@@ -33,5 +33,5 @@
         app:switchTextAppearance="@style/TextAppearance"
         app:thumb="@drawable/switch_inner_holo_dark"
         app:track="@drawable/switch_track_holo_dark"
-        android:id="@+id/switch_nightmode"/>
+        android:id="@+id/switch_preshottmode"/>
 +++ -->
