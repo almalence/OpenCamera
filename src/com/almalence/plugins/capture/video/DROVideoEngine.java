@@ -439,7 +439,7 @@ public class DROVideoEngine
 						this.texture_out);
 
 				t = System.currentTimeMillis() - t;
-				Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
+				//Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
 				
 				this.forceUpdate = false;
 				
