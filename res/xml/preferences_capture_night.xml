@@ -4,13 +4,13 @@
         				android:key="Pref_NightCapture_Category">   
         <ListPreference
 						android:title="@string/Pref_NightCapture_ImageSize_Title"
-						android:key="imageSizePrefNightBack"
+						android:key="@string/NightCaptureBackImageSize"
 						android:defaultValue="0"
 						android:entries="@array/dimsArrayNight"
 						android:entryValues="@array/dimsValuesNight" />
         <ListPreference
 						android:title="@string/Pref_NightCapture_ImageSize_Title"
-						android:key="imageSizePrefNightFront"
+						android:key="@string/NightCaptureFrontImageSize"
 						android:defaultValue="0"
 						android:entries="@array/dimsArrayNight"
 						android:entryValues="@array/dimsValuesNight" />

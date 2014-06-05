@@ -884,8 +884,8 @@ public class NightCapturePlugin extends PluginCapture
 	        entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
 
 	        PreferenceCategory cat = (PreferenceCategory)prefActivity.findPreference("Pref_NightCapture_Category");
-	        ListPreference lp = (ListPreference)cat.findPreference(nightCaptureImageSizeBackPref);
-	        ListPreference lp2 = (ListPreference)cat.findPreference(nightCaptureImageSizeFrontPref);
+	        ListPreference lp = (ListPreference)prefActivity.findPreference(nightCaptureImageSizeBackPref);
+	        ListPreference lp2 = (ListPreference)prefActivity.findPreference(nightCaptureImageSizeFrontPref);
 	        
 	        if(CameraController.CameraIndex == 0 && lp2 != null)
 	        	cat.removePreference(lp2);
@@ -975,8 +975,8 @@ public class NightCapturePlugin extends PluginCapture
 	        entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
 
 	        PreferenceCategory cat = (PreferenceCategory)prefActivity.findPreference("Pref_NightCapture_Category");
-	        ListPreference lp = (ListPreference)cat.findPreference(nightCaptureImageSizeBackPref);
-	        ListPreference lp2 = (ListPreference)cat.findPreference(nightCaptureImageSizeFrontPref);
+	        ListPreference lp = (ListPreference)prefActivity.findPreference(nightCaptureImageSizeBackPref);
+	        ListPreference lp2 = (ListPreference)prefActivity.findPreference(nightCaptureImageSizeFrontPref);
 	        
 	        if(CameraController.CameraIndex == 0 && lp2 != null)
 	        	cat.removePreference(lp2);
