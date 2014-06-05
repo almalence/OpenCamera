@@ -350,12 +350,12 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		});
 		
-//		pauseVideoButton.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				pauseVideoRecording();
-//			}
-//		});
+		pauseVideoButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pauseVideoRecording();
+			}
+		});
 		
 		if (snapshotSupported)
 		{
