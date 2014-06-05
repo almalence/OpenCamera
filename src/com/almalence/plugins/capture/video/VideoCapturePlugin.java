@@ -330,7 +330,7 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
 		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonTimeLapse);
-		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
+//		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
 		Camera camera = MainScreen.thiz.getCamera();
 	    if (camera != null)
 	    {
@@ -350,12 +350,12 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		});
 		
-		pauseVideoButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				pauseVideoRecording();
-			}
-		});
+//		pauseVideoButton.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				pauseVideoRecording();
+//			}
+//		});
 		
 		if (snapshotSupported)
 		{
@@ -1108,7 +1108,11 @@ public class VideoCapturePlugin extends PluginCapture
 		        	File firstFile = filesList.get(0);
 		        	for (int i = 1; i < filesList.size(); i++) {
 		        		File currentFile = filesList.get(i);
-		        		append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+		        		try {
+		        			append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+		        		} catch (Exception e) {
+		        			e.printStackTrace();
+		        		}
 		        	}
 		        	// if not onPause, then last video isn't added to list.
 		        	if (!onPause) {
@@ -1519,6 +1523,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (onPause) {
 			onPause = false;
 			showRecordingUI(isRecording);
+			onPause = true;
 		}
 		prefs.edit().putBoolean("videorecording", true).commit();
 
@@ -1832,18 +1837,28 @@ public class VideoCapturePlugin extends PluginCapture
 		// Pause video recording, merge files and remove last.
 		else {
 			onPause = true;
-			 // stop recording and release camera
-            mMediaRecorder.stop();  // stop the recording
-            
-            ContentValues values=null;
-            values = new ContentValues(7);
-            values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-            values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-            values.put(ImageColumns.MIME_TYPE, "video/mp4");
-            values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-            
-            filesList.add(fileSaved);
+			try {
+				// stop recording and release camera
+				mMediaRecorder.stop();  // stop the recording
+				
+				ContentValues values=null;
+				values = new ContentValues(7);
+				values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+				values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+				values.put(ImageColumns.MIME_TYPE, "video/mp4");
+				values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+				
+				filesList.add(fileSaved);
+			} catch (RuntimeException e) {
+				// Note that a RuntimeException is intentionally thrown to the application, 
+				// if no valid audio/video data has been received when stop() is called. 
+				// This happens if stop() is called immediately after start().
+				// The failure lets the application take action accordingly to clean up the output file (delete the output file, 
+				// for instance), since the output file is not properly constructed when this happens.
+				fileSaved.delete();
+				e.printStackTrace();
+			}
 		}
 	}
 	

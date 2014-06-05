@@ -635,7 +635,15 @@ public class ExportPlugin extends PluginExport
 		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
 		            if (dateString != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(dateString.getBytes());
+		            	// Date string length is 19 bytes. But exif tag specification length is 20 bytes.
+		            	// That's why we add "empty" byte (0x00) in the end.
+		            	byte[] bytes = dateString.getBytes();
+		            	byte[] res = new byte[20];
+		            	for (int ii = 0; ii < bytes.length; ii++) {
+		            		res[ii] = bytes[ii];
+		            	}
+		            	res[19] = 0x00;
+		        		value.setBytes(res);
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
 		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
 		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
