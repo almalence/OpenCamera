@@ -46,6 +46,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.Size;
@@ -602,16 +603,50 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				
 		}
 	}
-
+	
+	public void glSetRenderingMode(final int renderMode)
+ 	{
+ 		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
+ 				&& renderMode != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+ 		{
+ 			throw new IllegalArgumentException();
+ 		}
+ 
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.setRenderMode(renderMode);
+ 		}
+ 	}
+ 
+ 	public void glRequestRender()
+ 	{
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.requestRender();
+ 		}
+ 	}
 	public void queueGLEvent(final Runnable runnable)
 	{
 		final GLSurfaceView surfaceView = glView;
 
-		if (surfaceView != null && runnable != null) {
+		if (surfaceView != null && runnable != null)
+		{
 			surfaceView.queueEvent(runnable);
 		}
 	}
 
+	public int glGetPreviewTexture()
+	{
+		return glView.getPreviewTexture();
+	}
+	
+	public SurfaceTexture glGetSurfaceTexture()
+	{
+		return glView.getSurfaceTexture();
+	}
+	
 	@Override
 	protected void onStart()
 	{
@@ -653,7 +688,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		/**** Billing *****/
 		//-+- -->
 		
-		glView = null;
+		this.hideOpenGLLayer();
 	}
 
 	@Override
@@ -698,9 +733,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
 								.setVisibility(View.VISIBLE);
 						setupCamera(surfaceHolder);
-
-						if (glView != null && camera != null)
-							glView.onResume();
 
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.guiManager.onGUICreate();
@@ -771,9 +803,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		if (glView != null) {
-			glView.onPause();
-		}
+		this.hideOpenGLLayer();
 
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
@@ -923,16 +953,19 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().SelectDefaults();
 
 		// screen rotation
-		try {
-			camera.setDisplayOrientation(90);
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			camera.setPreviewDisplay(holder);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!PluginManager.getInstance().shouldPreviewToGPU())
+		{
+			try {
+				camera.setDisplayOrientation(90);
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+	
+			try {
+				camera.setPreviewDisplay(holder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (MainScreen.camera == null)
@@ -954,32 +987,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.setupViewfinderPreviewSize(cameraParameters);
 
 		Size previewSize = cameraParameters.getPreviewSize();
-
-		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
-			if (glView == null) {
-				glView = new GLLayer(MainScreen.mainContext);// (GLLayer)findViewById(R.id.SurfaceView02);
-				glView.setLayoutParams(new LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-						glView, 1);
-				glView.setZOrderMediaOverlay(true);
-				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-			}
-		} else {
-			((RelativeLayout) findViewById(R.id.mainLayout2))
-					.removeView(glView);
-			glView = null;
-		}
-
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) preview
-				.getLayoutParams();
-		if (glView != null) {
-			glView.setVisibility(View.VISIBLE);
-			glView.setLayoutParams(lp);
-		} else {
-			if (glView != null)
-				glView.setVisibility(View.GONE);
-		}
 
 		pviewBuffer = new byte[previewSize.width
 				* previewSize.height
@@ -1046,13 +1053,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		new CountDownTimer(10, 10) {
 			@Override
 			public void onFinish() {
-				try // exceptions sometimes happen here when resuming after
-					// processing
+				if (!PluginManager.getInstance().shouldPreviewToGPU())
 				{
-					camera.startPreview();
-				} catch (RuntimeException e) {
-					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
-					return;
+					try // exceptions sometimes happen here when resuming after
+						// processing
+					{
+						camera.startPreview();
+					} catch (RuntimeException e) {
+						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						return;
+					}
 				}
 
 				camera.setPreviewCallbackWithBuffer(MainScreen.thiz);
@@ -2040,17 +2050,25 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
 	}
 
-	public void showOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.GONE) {
-			glView.setVisibility(View.VISIBLE);
-			glView.onResume();
+	public void showOpenGLLayer(final int version)
+	{
+		if (glView == null)
+		{
+			glView = new GLLayer(MainScreen.mainContext, version);// (GLLayer)findViewById(R.id.SurfaceView02);
+			glView.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
+			glView.setZOrderMediaOverlay(true);
 		}
 	}
 
-	public void hideOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.VISIBLE) {
-			glView.setVisibility(View.GONE);
+	public void hideOpenGLLayer()
+	{
+		if (glView != null)
+		{
 			glView.onPause();
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).removeView(glView);
+			glView = null;
 		}
 	}
 

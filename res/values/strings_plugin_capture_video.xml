@@ -14,4 +14,7 @@
     
     <string name="Pref_Video_StartStandard_Title">Standard video camera</string>
     <string name="Pref_Video_StartStandard_Summary">Use standard camera for video recording</string>
+    
+    <string name="Pref_Video_DRO_ON">HDR On</string>
+    <string name="Pref_Video_DRO_OFF">HDR Off</string>
 </resources>

@@ -3453,6 +3453,8 @@ public class AlmalenceGUI extends GUI implements
 			quickControlChangeres.add(qcView);
 		else
 			settingsViews.add(qcView);
+
+		plugin.quickControlView = qcView;
 	}
 
 	/***************************************************************************************

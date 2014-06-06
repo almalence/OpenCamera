@@ -23,7 +23,6 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
-
 import android.hardware.Camera;
 
 public abstract class PluginCapture extends Plugin
@@ -35,6 +34,11 @@ public abstract class PluginCapture extends Plugin
 						 String quickControlInitTitle)
 	{
 		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);		
+	}
+
+	public boolean muteSound()
+	{
+		return false;
 	}
 	
 	@Override
@@ -48,4 +52,14 @@ public abstract class PluginCapture extends Plugin
 	
 	@Override
 	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);
+	
+	public boolean shouldPreviewToGPU()
+	{
+		return false;
+	}
+	
+	public void onFrameAvailable()
+	{
+		
+	}
 }
