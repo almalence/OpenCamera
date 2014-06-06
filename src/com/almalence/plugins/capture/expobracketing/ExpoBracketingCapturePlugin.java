@@ -174,21 +174,40 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void SetupCameraParameters()
 	{
-//		Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters prm = CameraController.getInstance().getCameraParameters();
-//		if(prm != null)
-//		{
-//			prm.setExposureCompensation(0);
-//			PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
-//		}
-		
 		CameraController.getInstance().resetExposureCompensation();
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
 	}
 
 	public boolean delayedCaptureSupported(){return true;}
+	
+	@Override
+	public void SetCameraPictureSize()
+	{
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+    	
+		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.getInstance().setJpegQuality(jpegQuality);
+		
+		CameraController.getInstance().applyCameraParameters();
+				
+		try
+        {			
+			byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+			if(sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
+			{
+				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);				
+				
+		    	SharedPreferences.Editor editor = prefs.edit();        	
+		    	editor.putInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
+		    	editor.commit();
+			}
+        }
+        catch(RuntimeException e)
+        {
+        	Log.e("ExpoBracketing", "MainScreen.setupCamera unable to setSceneMode");	
+        }
+	}
 	
 	public void OnShutterClick()
 	{
@@ -653,18 +672,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	void FindExpoParameters()
     {
     	int ev_inc;
-        int min_ev, max_ev;
-        
-//        Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-//        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//        
-//        String luma = cp.get("luma-adaptation");
-//        if (luma == null)
-//        	LumaAdaptationAvailable = false;
-//        else
-//        	LumaAdaptationAvailable = true;
+        int min_ev, max_ev;     
         
         LumaAdaptationAvailable = CameraController.getInstance().isLumaAdaptationSupported();
 

@@ -1061,6 +1061,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return false;		
 	}
 	
+	public boolean applyCameraParameters()
+	{
+		if (CameraController.camera != null)
+		{			
+			try
+			{
+				CameraController.camera.setParameters(CameraController.cameraParameters);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				Log.e("MainScreen", "applyCameraParameters exception: " + e.getMessage());
+				return false;
+			}
+			
+			return true;
+		}
+		
+		return false;		
+	}
+	
 	public static void startCameraPreview()
 	{
 		if(camera != null)
@@ -2034,6 +2054,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		
 		cp.setJpegQuality(quality);
+	}
+	
+	public float getHorizontalViewAngle()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if(camera != null)
+				return cameraParameters.getHorizontalViewAngle();
+		}
+		else if(Build.MODEL.contains("Nexus"))
+			return 59.63f;			
+		
+		return 55.4f;		
+	}
+	
+	public float getVerticalViewAngle()
+	{
+		if(!MainScreen.isHALv3)
+		{
+			if(camera != null)
+				return cameraParameters.getVerticalViewAngle();
+		}
+		else if(Build.MODEL.contains("Nexus"))
+			return 46.66f;			
+		
+		return 42.7f;	
 	}
 	
 	

@@ -20,11 +20,19 @@ package com.almalence.plugins.capture.video;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -41,10 +49,13 @@ import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.os.SystemClock;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
@@ -74,13 +85,13 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.Switch.Switch;
+import com.almalence.util.Util;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
@@ -95,8 +106,15 @@ import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+import com.almalence.opencam.ui.GUI;
+import com.coremedia.iso.IsoFile;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.Track;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
 //-+- -->
 
@@ -106,9 +124,12 @@ Implements basic functionality of Video capture.
 
 public class VideoCapturePlugin extends PluginCapture
 {
+	public static final String TAG = "Almalence";
+	
 	private boolean takingAlready=false;
 	
-    private boolean isRecording;
+    private volatile boolean isRecording;
+    private boolean onPause;
     
     
     public static int CameraIDPreference;
@@ -122,16 +143,19 @@ public class VideoCapturePlugin extends PluginCapture
     
     //video duration text view
     private TextView mRecordingTimeView;
+    private long mRecorded;
     
     private boolean mRecordingTimeCountsDown = false;
 
     private boolean shutterOff=false;
     
     private static File fileSaved=null;
+    private ArrayList<File> filesList = new ArrayList<File>();
 
     private int preferenceFocusMode;
     
     private RotateImageView timeLapseButton;
+    private RotateImageView pauseVideoButton;
     private RotateImageView takePictureButton;
 
     private boolean showRecording = false;
@@ -148,8 +172,15 @@ public class VideoCapturePlugin extends PluginCapture
     boolean showRotateToLandscapeNotifier = false;
     private View rotatorLayout;
     
+    private boolean displayTakePicture;
+    
     private static Hashtable<Integer, Boolean> previewSizes = new Hashtable<Integer, Boolean>()
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6076051817063312974L;
+
 		{
 			put(CamcorderProfile.QUALITY_QCIF, false);
 			put(CamcorderProfile.QUALITY_CIF, false);
@@ -166,6 +197,11 @@ public class VideoCapturePlugin extends PluginCapture
     private boolean quality720Supported = false;
     private boolean quality1080Supported = false;
     private boolean quality4KSupported = false;
+    
+ 	private volatile String ModePreference;	// 0=DRO On 1=DRO Off
+ 	private Switch modeSwitcher;
+ 	
+ 	private DROVideoEngine droEngine = new DROVideoEngine();
     
 	public VideoCapturePlugin()
 	{
@@ -190,6 +226,131 @@ public class VideoCapturePlugin extends PluginCapture
 		
 //		clearViews();
 //		addView(mRecordingTimeView, ViewfinderZone.VIEWFINDER_ZONE_TOP_LEFT);
+		
+		this.createModeSwitcher();
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
+		{
+			this.modeSwitcher.setVisibility(View.GONE);
+		}
+	}
+	
+	private void setExposureParameters()
+	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		
+		final int currEv = prefs.getInt(MainScreen.sEvPref, 0);
+		int newEv = currEv;
+		final int minValue = CameraController.getInstance().getMinExposureCompensation();
+		float expStep = CameraController.getInstance().getExposureCompensationStep();
+		
+		if (this.modeDRO())
+		{
+			if (expStep < 0.3f) expStep = 0.33f;	// there is a bug in Nexus 5 (android 4.4.2) 
+    		int cmpns = -(int)(0.8f/expStep);
+    		if (cmpns == 0) cmpns = -1;	// on Ascend P6 Ev compensation step is 1.0
+			newEv -= cmpns;
+		}
+		
+		CameraController.getInstance().setCameraExposureCompensation(Math.max(minValue, newEv));
+	}
+	
+	private void createModeSwitcher()
+	{
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        ModePreference = prefs.getString("modeVideoDROPref", "1");
+        modeSwitcher.setTextOn(MainScreen.thiz.getString(R.string.Pref_Video_DRO_ON));
+        modeSwitcher.setTextOff(MainScreen.thiz.getString(R.string.Pref_Video_DRO_OFF));
+        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
+		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+
+				if (isChecked)
+				{
+					ModePreference = "0";
+				}
+				else
+				{
+					ModePreference = "1";
+				}
+				
+				
+				VideoCapturePlugin.this.setExposureParameters();				
+				
+				SharedPreferences.Editor editor = prefs.edit();		        	
+	        	editor.putString("modeVideoDROPref", ModePreference);
+	        	editor.commit();
+
+    	    	if (modeDRO())
+    	    	{
+    	            final int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
+    	            		CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
+    	            if (ImageSizeIdxPreference == 2)
+    	            {
+    			    	quickControlIconID = R.drawable.gui_almalence_video_720;
+    			    	editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "3");
+    			    	editor.commit();
+    			    	VideoCapturePlugin.this.refreshQuickControl();
+    	            }
+    	    	}
+	        	
+	        	try
+	        	{	        		
+	        		CameraController.stopCameraPreview();
+			        Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+			        if (cp!=null)
+			        {
+			        	SetCameraPreviewSize(cp);
+			        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);
+			        }
+		        	//*
+		        	if (VideoCapturePlugin.this.modeDRO())
+		        	{
+		    			takePictureButton.setVisibility(View.GONE);
+		    			timeLapseButton.setVisibility(View.GONE);
+		    	        MainScreen.thiz.showOpenGLLayer(2);
+		    	        MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+		        	}
+		        	else
+		        	{
+		        		if (displayTakePicture)
+		        			takePictureButton.setVisibility(View.VISIBLE);
+		        		timeLapseButton.setVisibility(View.VISIBLE);
+		        		
+		        		droEngine.onPause();
+		        		MainScreen.thiz.hideOpenGLLayer();
+		    			
+		    			try {
+		    				camera.setDisplayOrientation(90);
+		    			} catch (RuntimeException e) {
+		    				e.printStackTrace();
+		    			}
+		    	
+		    			try {
+		    				camera.setPreviewDisplay(MainScreen.thiz.surfaceHolder);
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+			        	camera.startPreview();
+		        	}
+		        	//*/
+	        	}
+	        	catch (final Exception e)
+	        	{
+	        		Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
+	        		e.printStackTrace();
+	        	}
+			}
+		});
+		
+		if(PluginManager.getInstance().getProcessingCounter() == 0)
+			modeSwitcher.setEnabled(true);
 	}
 	
 	@Override
@@ -201,6 +362,8 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
+		this.clearViews();
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 				
 		//change shutter icon
@@ -224,8 +387,16 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	if (this.modeDRO())
+	    	{
+	    		quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	}
+	    	else
+	    	{
+	    		quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	}
 	    	break;
 	    case 3:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -290,6 +461,20 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		}
 		
+		{
+			final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
+			params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			
+			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).removeView(this.modeSwitcher);
+			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+			
+			this.modeSwitcher.setLayoutParams(params);
+			this.modeSwitcher.requestLayout();
+		}
+		
 //    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
 //    	int orientation = MainScreen.guiManager.getLayoutOrientation();
 //    	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
@@ -324,7 +509,8 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout = inflator.inflate(R.layout.plugin_capture_video_layout, null, false);
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
-		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
+		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonTimeLapse);
+		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
 		Camera camera = CameraController.getCamera();
 	    if (camera != null)
 	    {
@@ -338,12 +524,17 @@ public class VideoCapturePlugin extends PluginCapture
     	takePictureButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonCaptureImage);
 	    
 		timeLapseButton.setOnClickListener(new OnClickListener(){
-
 			@Override
 			public void onClick(View v) {			
 				TimeLapseDialog();
 			}
-			
+		});
+		
+		pauseVideoButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				pauseVideoRecording();
+			}
 		});
 		
 		if (snapshotSupported)
@@ -380,9 +571,13 @@ public class VideoCapturePlugin extends PluginCapture
 			takePictureButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 			takePictureButton.invalidate();
 			takePictureButton.requestLayout();
+			displayTakePicture = true;
 		}
 		else
-			takePictureButton.setVisibility(View.INVISIBLE);
+		{
+			takePictureButton.setVisibility(View.GONE);
+			displayTakePicture = false;
+		}
 		
 		
 		timeLapseButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
@@ -488,9 +683,18 @@ public class VideoCapturePlugin extends PluginCapture
 	    	editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "1");
 	    	break;
 	    case 1:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
-	    	editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2");
+	    	if (this.modeDRO())
+	    	{
+		    	quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+		    	editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "3");
+	    	}
+	    	else
+	    	{
+		    	quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+		    	editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2");
+	    	}
 	    	break;
 	    case 2:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -587,6 +791,12 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		}
     }
+
+	@Override
+	public boolean muteSound()
+	{
+		return this.isRecording;
+	}
 	
 	public void startrotateAnimation() 
 	{
@@ -679,6 +889,12 @@ public class VideoCapturePlugin extends PluginCapture
 	    swChecked = false;
 	    interval = 0;
 		measurementVal = 0;
+		
+		if (this.shouldPreviewToGPU())
+		{
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_SHOW_V2);
+	        MainScreen.H.sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
+		}
 	}
 	
 	@Override
@@ -794,6 +1010,28 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 	
 	@Override
+	public void onStop()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
+	
+	@Override
 	public void onCameraParametersSetup()
 	{
     	this.qualityQCIFSupported = false;
@@ -857,8 +1095,16 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quickControlIconID = R.drawable.gui_almalence_video_cif;
 	    	break;
 	    case 2:
-	    	quality = CamcorderProfile.QUALITY_1080P;
-	    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	if (this.modeDRO())
+	    	{
+	    		quality = CamcorderProfile.QUALITY_720P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_720;
+	    	}
+	    	else
+	    	{
+	    		quality = CamcorderProfile.QUALITY_1080P;
+		    	quickControlIconID = R.drawable.gui_almalence_video_1080;
+	    	}
 	    	break;
 	    case 3:
 	    	quality = CamcorderProfile.QUALITY_720P;
@@ -894,6 +1140,7 @@ public class VideoCapturePlugin extends PluginCapture
 	    Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 	    if(cp != null)
 	    {
+	    	cp.setPreviewFrameRate(30);
 	    	cp.setRecordingHint(true);
 	    	CameraController.getInstance().setCameraParameters(cp);
 	    }
@@ -911,6 +1158,9 @@ public class VideoCapturePlugin extends PluginCapture
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 	    	
+	    final Camera.Size sz;
+	    if (!this.modeDRO())
+	    {	    
 	    boolean aspect169 = true;
 	    switch (ImageSizeIdxPreference)
 	    {
@@ -924,49 +1174,132 @@ public class VideoCapturePlugin extends PluginCapture
 	    case 5:
 	    	aspect169 = true;
 	    	break;
+	    	
+	    	sz = getBestPreviewSizeNormal(aspect169);
+	    }
+	    }
+	    else
+	    {
+	    	sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 	    }
 	    
-	    Camera.Size sz = getBestPreviewSize(aspect169);
+	    
 	    cp.setPreviewSize(sz.width, sz.height);    	
     	
     	CameraController.getInstance().setCameraParameters(cp);
+	    MainScreen.previewWidth = sz.width;
+	    MainScreen.previewHeight = sz.height;    	
 	}
 	
 	//Get optimal supported preview size with aspect ration 16:9 or 4:3
-	private Camera.Size getBestPreviewSize(boolean aspect169)
+	private static Camera.Size getBestPreviewSizeNormal(final boolean aspect169)
+	{
+		if (aspect169)
+		{
+			return selectMaxPreviewSize(16.0f / 9.0f);
+		}
+		else
+		{
+			return selectMaxPreviewSize(4.0f / 3.0f);
+		}
+	}
+	
+	private static Camera.Size getBestPreviewSizeDRO(final int quality)
+	{
+		final int width;
+		final int height;
+		
+		switch (quality)
+		{
+		case 0:
+			width = 176;
+			height = 144;
+			break;
+		case 1:
+			width = 352;
+			height = 288;
+			break;
+		case 2:
+			width = 1920;
+			height = 1080;
+			break;
+		case 3:
+			width = 1280;
+			height = 720;
+			break;
+		case 4:
+			width = 720;
+			height = 480;
+			break;
+		case 5:
+			width = 4096;
+			height = 2160;
+			break;
+	    default:
+	    	return getBestPreviewSizeNormal(false);
+	    }
+
+		
+		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		final List<Camera.Size> sizes = cp.getSupportedPreviewSizes();
+		
+		Camera.Size size_best = sizes.get(0);
+		for (final Camera.Size size : sizes)
+		{
+			if (Math.sqrt(sqr(size.width - width) + sqr(size.height - height))
+					< Math.sqrt(sqr(size_best.width - width) + sqr(size_best.height - height)))
+			{
+				size_best = size;
+			}
+		}
+		
+		return size_best;
+	}
+	
+	private static int sqr(final int v)
+	{
+		return v * v;
+	}
+	
+	private static Camera.Size selectMaxPreviewSize(final float ratioDisplay)
 	{
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-    	List<Camera.Size> cs = cp.getSupportedPreviewSizes();
+		
+		final List<Camera.Size> sizes = cp.getSupportedPreviewSizes();
+		
+		Camera.Size size_best = sizes.get(0);
+		float size_ratio_best = size_best.width / (float)size_best.height;
+		float size_ratio_best_comp = size_ratio_best > ratioDisplay
+				? size_ratio_best / ratioDisplay
+						: ratioDisplay / size_ratio_best;
+		int pixels_best = size_best.width * size_best.height;
+		
+		for (final Camera.Size size : sizes)
+		{
+			final float size_ratio = size.width / (float)size.height;
+			final float size_ratio_comp = size_ratio > ratioDisplay ? size_ratio / ratioDisplay : ratioDisplay / size_ratio;
+			
+			if (size_ratio_comp == size_ratio_best_comp)
+			{
+				final int pixels = size.width * size.height;
+				
+				if (pixels >= pixels_best)
+				{
+					size_best = size;
+					size_ratio_best_comp = size_ratio_comp;
+					pixels_best = pixels;
+				}
+			}
+			else if (size_ratio_comp < size_ratio_best_comp)
+			{
+				final int pixels = size.width * size.height;
+				size_best = size;
+				size_ratio_best_comp = size_ratio_comp;
+				pixels_best = pixels;
+			}
+		}
 
-    	Camera.Size sz = cs.get(0);
-    	Long max_mpix = (long)sz.width*sz.height;
-    	for (int i=0; i<cs.size(); ++i)
-    	{
-            Size s = cs.get(i); 
-        	
-        	Long lmpix = (long)s.width*s.height;
-        	float ratio = (float)s.width/s.height;
-
-        	
-            if (Math.abs(ratio - 4/3.f)  < 0.1f && !aspect169)
-            {
-            	if(lmpix > max_mpix)
-            	{
-            		max_mpix = lmpix;
-            		sz = s;
-            	}
-            }            
-            else if (Math.abs(ratio - 16/9.f) < 0.15f && aspect169)
-            {
-            	if(lmpix > max_mpix)
-            	{
-            		max_mpix = lmpix;
-            		sz = s;
-            	}
-            }
-    	}
-    	
-    	return sz;
+		return size_best;
 	}
 	
 	@Override
@@ -1001,38 +1334,46 @@ public class VideoCapturePlugin extends PluginCapture
 
 	//*captureRate/24 - to get correct recording time
 	double captureRate = 24;
+
+	private boolean lastUseProfile;
+	private boolean lastUseProf;
+	private CamcorderProfile lastCamcorderProfile;
+	private CameraController.Size lastSz;
+	private Camera lastCamera;
+	
+	private boolean modeDRO()
+	{
+		return (ModePreference.compareTo("0") == 0);
+	}
 	
 	@Override
 	public void OnShutterClick()
-	{
+	{		
 		if (shutterOff)
-			return;
+			return;		
+    	
 		if (isRecording) 
 		{
-			// stop recording and release camera
-			try
-			{
-				mMediaRecorder.stop();  // stop the recording
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
-			}
-            releaseMediaRecorder(); // release the MediaRecorder object
-//            CameraController.lockCamera();         // take camera access back from MediaRecorder
+			this.stopRecording();
+        }
+		else 
+        {
+			this.startRecording();
+        }
+	}
 
-            CameraController.stopCameraPreview();
-	        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-	        if (cp!=null)
-	        {
-	        	SetCameraPreviewSize(cp);
-	        	Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
-	        	MainScreen.guiManager.setupViewfinderPreviewSize(CameraController.getInstance().new Size(sz.width, sz.height));
-	        }
-	        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-   	    		CameraController.getInstance().setVideoStabilization(false);
-	        
-	        CameraController.startCameraPreview();
+	private void stopRecording()
+	{
+		if (shutterOff)
+			return;		
+    	
+		modeSwitcher.setVisibility(View.VISIBLE);
+    	
+		if (this.modeDRO())
+		{			
+			this.droEngine.stopRecording();
+
+    		MainScreen.thiz.PlayShutter();
             
             MainScreen.guiManager.lockControls = false;
             // inform the user that recording has stopped
@@ -1043,395 +1384,87 @@ public class VideoCapturePlugin extends PluginCapture
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
             
-	        ContentValues values=null;
-	        values = new ContentValues(7);
-	        values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-	        values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-	        values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-	        values.put(ImageColumns.MIME_TYPE, "video/mp4");
-	        values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+            ContentValues values=null;
+            values = new ContentValues(7);
+            values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+            values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+            values.put(ImageColumns.MIME_TYPE, "video/mp4");
+            values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+            
+            if (filesList.size() > 0) {
+	        	File firstFile = filesList.get(0);
+	        	for (int i = 1; i < filesList.size(); i++) {
+	        		File currentFile = filesList.get(i);
+	        		try {
+	        			append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+	        		} catch (Exception e) {
+	        			e.printStackTrace();
+	        		}
+	        	}
+	        	// if not onPause, then last video isn't added to list.
+	        	if (!onPause) {
+	        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+	        	}
+	        	
+	        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+	        		fileSaved.delete();
+	        		firstFile.renameTo(fileSaved);
+	        	}
+	        }
+	        onPause = false;
 	        
 	        String[] filesSavedNames= new String[1];
 	        filesSavedNames[0] = fileSaved.toString();
-	           
-			MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-	        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
+	        filesList.clear();
+	        mRecordingTimeView.setText("00:00");
+	        mRecorded = 0;
+               
+    		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+            MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
             
             new CountDownTimer(500, 500) {			 
-   		     	public void onTick(long millisUntilFinished) {}
+    		     	public void onTick(long millisUntilFinished) {}
 
-	   		     public void onFinish() {
-	   		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-	   		    	shutterOff = false;
-	   				showRecording=false;
-	   		     }
-   		  	}.start();  		  	
-
-
-//   		 if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
-// 				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
-// 				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
-// 				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
-// 				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
-// 				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
-//   		  	{
-//   		  		MainScreen.guiManager.lockControls = false;
-//   		  		
-//   		  		Message msg = new Message();
-//   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-//   		  		msg.what = PluginManager.MSG_BROADCAST;
-//   		  		MainScreen.H.sendMessage(msg);
-//   		  	}
-			
-        } else 
-        {
-//        	if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
-//    				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
-//    				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
-//    				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
-//    				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
-//    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
-//   		  	{
-//   		  		MainScreen.guiManager.lockControls = true;
-//   		  		
-//   		  		Message msg = new Message();
-//   		  		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-//   		  		msg.what = PluginManager.MSG_BROADCAST;
-//   		  		MainScreen.H.sendMessage(msg);
-//   		  	}
-        
-        	Date curDate = new Date();
-        	SessionID = curDate.getTime();
-        	
-   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-   	    		CameraController.getInstance().setVideoStabilization(true);
-        	
+       		     public void onFinish() {
+       		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+       		    	shutterOff = false;
+       				showRecording=false;
+       		     }
+    		  	}.start();
+		}
+		else
+		{
+            this.stopVideoRecording();
+		}
+	}
+	
+	private void startRecording()
+	{
+		if (shutterOff)
+			return;
+		
+		if (this.modeDRO())
+		{
+			modeSwitcher.setVisibility(View.GONE);
+		
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
-        	
-        	mMediaRecorder = new MediaRecorder();
-        	CameraController.stopCameraPreview();
-    		CameraController.unlockCamera();
-    	    mMediaRecorder.setCamera(CameraController.getCamera());
-
-    	    // Step 2: Set sources
-    	    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-    	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-    	    
-    	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
-   	    	
-    	    int quality = 0;
-    	    switch (ImageSizeIdxPreference)
-    	    {
-    	    case 0:
-    	    	quality = CamcorderProfile.QUALITY_QCIF;
-    	    	break;
-    	    case 1:
-    	    	quality = CamcorderProfile.QUALITY_CIF;
-    	    	break;
-    	    case 2:
-    	    	quality = CamcorderProfile.QUALITY_1080P;
-    	    	break;
-    	    case 3:
-    	    	quality = CamcorderProfile.QUALITY_720P;
-    	    	break;
-    	    case 4:
-    	    	quality = CamcorderProfile.QUALITY_480P;
-    	    	break;
-    	    case 5:
-    	    	quality = QUALITY_4K;
-    	    	break;    	    	
-    	    }
-    	    
-//    	    if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-//   	    	{
-//    	    	ImageSizeIdxPreference=3;
-//    	    	quality = CamcorderProfile.QUALITY_720P;
-//    	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-//    	    	{
-//    	    		ImageSizeIdxPreference=4;
-//        	    	quality = CamcorderProfile.QUALITY_480P;
-//        	    	
-//        	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-//        	    	{
-//        	    		ImageSizeIdxPreference=0;
-//            	    	quality = CamcorderProfile.QUALITY_QCIF;
-//            	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-//            	    	{
-//            	    		ImageSizeIdxPreference=1;
-//                	    	quality = CamcorderProfile.QUALITY_CIF;
-//                	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-//                	    	{
-//                	    		return;
-//                	    	}
-//            	    	}
-//        	    	}
-//    	    	}
-//   	    	}
-    	    
-    	    boolean useProfile = true;
-    	    if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
-   	    	{
-    	    	ImageSizeIdxPreference=3;
-    	    	quality = CamcorderProfile.QUALITY_720P;
-    	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
-    	    	{
-    	    		ImageSizeIdxPreference=4;
-        	    	quality = CamcorderProfile.QUALITY_480P;
-        	    	
-        	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
-        	    	{
-        	    		ImageSizeIdxPreference=0;
-            	    	quality = CamcorderProfile.QUALITY_QCIF;
-            	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
-            	    	{
-            	    		ImageSizeIdxPreference=1;
-                	    	quality = CamcorderProfile.QUALITY_CIF;
-                	    	if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-                	    	{
-                	    		return;
-                	    	}
-            	    	}
-            	    	else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-            	    		useProfile = false;
-            	    	else
-            	    		return;
-        	    	}
-        	    	else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-        	    		useProfile = false;
-    	    	}
-    	    	else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-    	    		useProfile = false;
-   	    	}
-    	    else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-    	    	useProfile = false;
-
-    	    Editor editor = prefs.edit();
-    	    editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
-    	    editor.commit();
-
-    	    // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-    	        	    
-    	    try
-    		{
-    	    	try
-        		{
-	    	    	if (swChecked)
-	    	    	{
-	    	    		int qualityTimeLapse = quality;
-	    	    		boolean useProf = false;
-		    	    	CameraController.Size sz = null;
-	    	    		switch(quality)
-	    	    		{
-	    	    		 case CamcorderProfile.QUALITY_QCIF:
-	    	     	    	sz = CameraController.getInstance().new Size(176,144);
-	    	     	    	break;
-	    	     	    case CamcorderProfile.QUALITY_CIF:
-	    	     	    	sz = CameraController.getInstance().new Size(352,288);
-	    	     	    	break;
-	    	     	    case CamcorderProfile.QUALITY_1080P:
-	    	     	    {
-	    	     	    	if(CamcorderProfile.hasProfile(CameraController.CameraIndex, CamcorderProfile.QUALITY_720P))
-	    	     	    	{
-	    	     	    		CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
-	    	     	    		prof.videoFrameHeight=1080;
-	    	     	    		prof.videoFrameWidth=1920;
-	    	     	    		mMediaRecorder.setProfile(prof);
-	    	     	    		useProf = true;
-	    	     	    	}
-	    	     	    	else
-	    	     	    	{
-	    	     	    		List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();    	     			
-	    	     	    		sz = CameraController.getInstance().new Size(1920,1080);
-	    	     	    		if(!psz.contains(sz))
-	    	     	    			sz = CameraController.getInstance().new Size(1920,1088);
-	    	     	    	}
-	    	     	    } break;
-	    	     	    case CamcorderProfile.QUALITY_720P:
-	    	     	    	sz = CameraController.getInstance().new Size(1280,720);
-	    	     	    	break;
-	    	     	    case CamcorderProfile.QUALITY_480P:
-	    	     	    	sz = CameraController.getInstance().new Size(640,480);
-	    	     	    	break;
-	    	     	    case QUALITY_4K:
-	    	     	    {
-	    	     	    	if(CamcorderProfile.hasProfile(CameraController.CameraIndex, CamcorderProfile.QUALITY_1080P))
-	    	     	    	{
-	    	     	    		CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
-	    	     	    		prof.videoFrameHeight=2160;
-	    	     	    		prof.videoFrameWidth=4096;
-	    	     	    		mMediaRecorder.setProfile(prof);
-	    	     	    		useProf = true;
-	    	     	    	}
-	    	     	    	else
-	    	     	    		sz = CameraController.getInstance().new Size(4096,2160);
-	    	     	    }
-	    	     	    	break;
-	    	    		}
-	    	    		if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
-	    	   	    	{
-	    	    			Toast.makeText(MainScreen.thiz, "Time lapse not supported", Toast.LENGTH_LONG).show();
-	    	   	    	}
-	    	    		else
-	    	    			quality = qualityTimeLapse;
-	    	    	}
-        		} catch (Exception e) {
-    				e.printStackTrace();
-    				Log.e("Video", "Time lapse error catched" + e.getMessage());
-    				swChecked = false;
-    				
-    				MainScreen.guiManager.lockControls = false;
-       		  		
-       		  		Message msg = new Message();
-       		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-       		  		msg.what = PluginManager.MSG_BROADCAST;
-       		  		MainScreen.H.sendMessage(msg);
-    			}
-    	    	
-    	    	if(useProfile)
-    	    	{
-	    	    	CamcorderProfile pr = CamcorderProfile.get(CameraController.CameraIndex, quality);
-	    	    	mMediaRecorder.setProfile(pr);
-    	    	}
-    	    	else
-    	    	{
-	    	    	mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-	    	    	mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-	    	    	mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-	    	    	
-	//    	    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-	//    	    	params.set("cam_mode",1);
-	//    	    	MainScreen.thiz.setCameraParameters(params);
-	    	    	
-	    	    	if (swChecked)
-	    	    	{
-	    	    		double val1 = Double.valueOf(stringInterval[interval]);
-	    	    		int val2 = measurementVal;
-	    	    		switch (val2)
-	    	    		{
-	    	    		case 0:
-	    	    			val2 = 1;
-	    	    			break;
-	    	    		case 1:
-	    	    			val2 = 60;
-	    	    			break;
-	    	    		case 2:
-	    	    			val2 = 3600;
-	    	    			break;
-	    	    		}
-	    	    		captureRate = 1/(val1 * val2);
-	    	    		mMediaRecorder.setCaptureRate(captureRate);
-	    	    	}
-	//    	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-	//    	        if (cp!=null)
-	//    	        {
-	//    	        	Log.e("Video", "cp null");
-	//    	        }
-	//    	    	List<int[]> frame = cp.getSupportedPreviewFpsRange();
-	    	    	//mMediaRecorder.setCaptureRate(0.1);
-	    	    	
-	    	    	CameraController.Size sz = null;
-    	    		//if time lapse activated
-    	    		switch(quality)
-    	    		{
-    	    		 case CamcorderProfile.QUALITY_QCIF:
-    	     	    	sz = CameraController.getInstance().new Size(176,144);
-    	     	    	break;
-    	     	    case CamcorderProfile.QUALITY_CIF:
-    	     	    	sz = CameraController.getInstance().new Size(352,288);
-    	     	    	break;
-    	     	    case CamcorderProfile.QUALITY_1080P:
-    	     	    {
-    	     			List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();    	     			
-    	     	    	sz = CameraController.getInstance().new Size(1920,1080);
-    	     	    	if(!psz.contains(sz))
-    	     	    		sz = CameraController.getInstance().new Size(1920,1088);
-    	     	    } break;
-    	     	    case CamcorderProfile.QUALITY_720P:
-    	     	    	sz = CameraController.getInstance().new Size(1280,720);
-    	     	    	break;
-    	     	    case CamcorderProfile.QUALITY_480P:
-    	     	    	sz = CameraController.getInstance().new Size(640,480);
-    	     	    	break;
-    	    		}
-	    	    	mMediaRecorder.setVideoSize(sz.getWidth(), sz.getHeight());	    	    	
-    	    	}
-	        } catch (Exception e) {
-				e.printStackTrace();
-				Log.e("Video", "On shutter pressed " + e.getMessage());
-				
-				MainScreen.guiManager.lockControls = false;
-   		  		Message msg = new Message();
-   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-   		  		msg.what = PluginManager.MSG_BROADCAST;
-   		  		MainScreen.H.sendMessage(msg);
-	   		  	releaseMediaRecorder(); // release the MediaRecorder object
-	            CameraController.lockCamera();         // take camera access back from MediaRecorder
-	            CameraController.stopCameraPreview();
-		        CameraController.startCameraPreview();
-		        
-				return;
-				//Toast.makeText(this, "Error during purchase " +e.getMessage(), Toast.LENGTH_LONG).show();
-			}
-
-    	    //mMediaRecorder.setMaxDuration(mMaxVideoDurationInMs);
-    	    
-    	    // Step 4: Set output file
-    	    mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
-
-    	    // Step 5: Set the preview output
-    	    mMediaRecorder.setPreviewDisplay(MainScreen.thiz.surfaceHolder.getSurface());
-
-//   	    	mMediaRecorder.setOrientationHint(
-//   	    			MainScreen.getCameraMirrored()?
-//   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.orientationMain:(MainScreen.orientationMain+180)%360)
-//   	    			:MainScreen.orientationMain);
-   	    	
-   	    	mMediaRecorder.setOrientationHint(
-   	    			MainScreen.getCameraMirrored()?
-   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.guiManager.getDisplayOrientation():(MainScreen.guiManager.getDisplayOrientation()+180)%360)
-   	    			:MainScreen.guiManager.getDisplayOrientation());
-
-   	    	
-    	    // Step 6: Prepare configured MediaRecorder
-    	    try {
-    	        mMediaRecorder.prepare();
-    	        
-                // Camera is available and unlocked, MediaRecorder is prepared,
-                // now you can start recording
-                mMediaRecorder.start();
-
-    	    } catch (Exception e)
-    	    {
-    	        Log.d("Video", "Exception preparing MediaRecorder: " + e.getMessage());
-    	        releaseMediaRecorder();
-    	        Toast.makeText(MainScreen.thiz, "Failed to start video recording", Toast.LENGTH_LONG).show();
-    	        
-    	        MainScreen.guiManager.lockControls = false;
-   		  		Message msg = new Message();
-   		  		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-   		  		msg.what = PluginManager.MSG_BROADCAST;
-   		  		MainScreen.H.sendMessage(msg);
-	   		  	CameraController.lockCamera();         // take camera access back from MediaRecorder
-	            CameraController.stopCameraPreview();
-		        CameraController.startCameraPreview();
-
-    	        return;
-    	    }
-
-            //change shutter icon
-            MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_STOP);
             
-            // inform the user that recording has started
+            MainScreen.guiManager.lockControls = true;
+            // inform the user that recording has stopped
             isRecording = true;
+
+    		MainScreen.thiz.PlayShutter();
+    		
             showRecordingUI(isRecording);
-            prefs.edit().putBoolean("videorecording", true).commit();
-            
-            //PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", true).commit();
-            
-            new CountDownTimer(1000, 1000) {
-   		     	public void onTick(long millisUntilFinished) {}
+            PreferenceManager.getDefaultSharedPreferences(
+            		MainScreen.mainContext).edit().putBoolean("videorecording", true).commit();
+
+			this.droEngine.startRecording(getOutputMediaFile().toString(), 300);
+			
+	        new CountDownTimer(1000, 1000) {			 
+		     	public void onTick(long millisUntilFinished) {}
 
 	   		     public void onFinish() {
 	   		    	 shutterOff=false;
@@ -1443,10 +1476,478 @@ public class VideoCapturePlugin extends PluginCapture
 	   						Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13)))
 	   		    		 MainScreen.guiManager.lockControls = false;
 	   		     }
-   		  	}.start();
+		  	}.start();
+		}
+		else
+		{
+			this.startVideoRecording();
+		}
+	}
+	
+	private void stopVideoRecording()
+	{
+		if (shutterOff)
+			return;		
+
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
+			modeSwitcher.setVisibility(View.VISIBLE);
+		
+        // stop recording and release camera
+		try
+		{
+			mMediaRecorder.stop();  // stop the recording
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
+		}
+        releaseMediaRecorder(); // release the MediaRecorder object
+//        camera.lock();         // take camera access back from MediaRecorder
+
+        CameraController.stopCameraPreview();
+        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+        if (cp!=null)
+        {
+        	SetCameraPreviewSize(cp);
+        	MainScreen.guiManager.setupViewfinderPreviewSize(cp);	        	
+   	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
+   	    		CameraController.getInstance().setVideoStabilization(false);
         }
+        CameraController.startCameraPreview();
+        
+        MainScreen.guiManager.lockControls = false;
+        // inform the user that recording has stopped
+        isRecording = false;
+        showRecordingUI(isRecording);
+        PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("videorecording", false).commit();
+        
+        //change shutter icon
+        MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
+        
+        ContentValues values=null;
+        values = new ContentValues(7);
+        values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+        values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+        values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+        values.put(ImageColumns.MIME_TYPE, "video/mp4");
+        values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+        
+        if (filesList.size() > 0) {
+        	File firstFile = filesList.get(0);
+        	for (int i = 1; i < filesList.size(); i++) {
+        		File currentFile = filesList.get(i);
+        		append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+        	}
+        	// if not onPause, then last video isn't added to list.
+        	if (!onPause) {
+        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+        	}
+        	
+        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+        		fileSaved.delete();
+        		firstFile.renameTo(fileSaved);
+        	}
+        }
+        onPause = false;
+        
+        String[] filesSavedNames= new String[1];
+        filesSavedNames[0] = fileSaved.toString();
+        filesList.clear();
+        mRecordingTimeView.setText("00:00");
+        mRecorded = 0;
+           
+		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
+        
+        new CountDownTimer(500, 500) {			 
+		     	public void onTick(long millisUntilFinished) {}
+
+   		     public void onFinish() {
+   		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+   		    	shutterOff = false;
+   				showRecording=false;
+   		     }
+		  	}.start();
 	}
   
+	private void startVideoRecording() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		Camera camera = CameraController.getCamera();
+		lastCamera = camera;
+		//        	if(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+		//    				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+		//    				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+		//    				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+		//    				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+		//    				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13))
+		//   		  	{
+		//   		  		MainScreen.guiManager.lockControls = true;
+		//   		  		
+		//   		  		Message msg = new Message();
+		//   		  		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
+		//   		  		msg.what = PluginManager.MSG_BROADCAST;
+		//   		  		MainScreen.H.sendMessage(msg);
+		//   		  	}
+
+		Date curDate = new Date();
+		SessionID = curDate.getTime();
+
+		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
+			CameraController.getInstance().setVideoStabilization(true);
+
+		shutterOff=true;
+		mRecordingStartTime = SystemClock.uptimeMillis();
+
+		mMediaRecorder = new MediaRecorder();
+		CameraController.stopCameraPreview();
+		CameraController.unlockCamera();
+		mMediaRecorder.setCamera(camera);
+
+		// Step 2: Set sources
+		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(MainScreen.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
+
+		int quality = 0;
+		switch (ImageSizeIdxPreference)
+		{
+		case 0:
+			quality = CamcorderProfile.QUALITY_QCIF;
+			break;
+		case 1:
+			quality = CamcorderProfile.QUALITY_CIF;
+			break;
+		case 2:
+			quality = CamcorderProfile.QUALITY_1080P;
+			break;
+		case 3:
+			quality = CamcorderProfile.QUALITY_720P;
+			break;
+		case 4:
+			quality = CamcorderProfile.QUALITY_480P;
+			break;
+		case 5:
+			quality = QUALITY_4K;
+			break;
+		}
+
+		//    	    if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality))
+			//   	    	{
+			//    	    	ImageSizeIdxPreference=3;
+			//    	    	quality = CamcorderProfile.QUALITY_720P;
+			//    	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality))
+		//    	    	{
+		//    	    		ImageSizeIdxPreference=4;
+		//        	    	quality = CamcorderProfile.QUALITY_480P;
+		//        	    	
+		//        	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality))
+		//        	    	{
+		//        	    		ImageSizeIdxPreference=0;
+		//            	    	quality = CamcorderProfile.QUALITY_QCIF;
+		//            	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality))
+		//            	    	{
+		//            	    		ImageSizeIdxPreference=1;
+		//                	    	quality = CamcorderProfile.QUALITY_CIF;
+		//                	    	if (!CamcorderProfile.hasProfile(MainScreen.CameraIndex, quality))
+		//                	    	{
+		//                	    		return;
+		//                	    	}
+		//            	    	}
+		//        	    	}
+		//    	    	}
+		//   	    	}
+
+		boolean useProfile = true;
+		if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
+		{
+			ImageSizeIdxPreference=3;
+			quality = CamcorderProfile.QUALITY_720P;
+			if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
+			{
+				ImageSizeIdxPreference=4;
+				quality = CamcorderProfile.QUALITY_480P;
+
+				if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
+				{
+					ImageSizeIdxPreference=0;
+					quality = CamcorderProfile.QUALITY_QCIF;
+					if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality) && !previewSizes.get(quality))
+					{
+						ImageSizeIdxPreference=1;
+						quality = CamcorderProfile.QUALITY_CIF;
+						if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+						{
+							return;
+						}
+					}
+					else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+						useProfile = false;
+					else
+						return;
+				}
+				else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+					useProfile = false;
+			}
+			else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+				useProfile = false;
+		}
+		else if(!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+			useProfile = false;
+
+		Editor editor = prefs.edit();
+		editor.putString(CameraController.CameraIndex == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", String.valueOf(ImageSizeIdxPreference));
+		editor.commit();
+
+		// Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+
+		try
+		{
+
+			try
+			{
+				if (swChecked)
+				{
+					int qualityTimeLapse = quality;
+					//if time lapse activated
+					switch(quality)
+					{
+					case CamcorderProfile.QUALITY_QCIF:
+						quality = CamcorderProfile.QUALITY_TIME_LAPSE_QCIF;
+						break;
+					case CamcorderProfile.QUALITY_CIF:
+						quality = CamcorderProfile.QUALITY_TIME_LAPSE_CIF;
+						break;
+					case CamcorderProfile.QUALITY_1080P:
+						quality = CamcorderProfile.QUALITY_TIME_LAPSE_1080P;
+						break;
+					case CamcorderProfile.QUALITY_720P:
+						quality = CamcorderProfile.QUALITY_TIME_LAPSE_720P;
+						break;
+					case CamcorderProfile.QUALITY_480P:
+						quality = CamcorderProfile.QUALITY_TIME_LAPSE_480P;
+						break;
+					case QUALITY_4K:
+						quality = QUALITY_4K;
+						break;
+					}
+					if (!CamcorderProfile.hasProfile(CameraController.CameraIndex, quality))
+					{
+						Toast.makeText(MainScreen.thiz, "Time lapse not supported", Toast.LENGTH_LONG).show();
+					}
+					else
+						quality = qualityTimeLapse;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("Video", "Time lapse error catched" + e.getMessage());
+				swChecked = false;
+
+				MainScreen.guiManager.lockControls = false;
+
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+
+			lastUseProfile = useProfile;
+			if(useProfile)
+			{
+				CamcorderProfile pr = CamcorderProfile.get(CameraController.CameraIndex, quality);
+				mMediaRecorder.setProfile(pr);
+				lastCamcorderProfile = pr;
+			}
+			else
+			{
+				boolean useProf = false;
+				lastUseProf = useProf;
+				CameraController.Size sz = null;
+				switch(quality)
+				{
+				case CamcorderProfile.QUALITY_QCIF:
+					sz = CameraController.getInstance().new Size(176,144);
+					break;
+				case CamcorderProfile.QUALITY_CIF:
+					sz = CameraController.getInstance().new Size(352,288);
+					break;
+				case CamcorderProfile.QUALITY_1080P:
+				{
+					if(CamcorderProfile.hasProfile(CameraController.CameraIndex, CamcorderProfile.QUALITY_720P))
+					{
+						CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
+						prof.videoFrameHeight=1080;
+						prof.videoFrameWidth=1920;
+						mMediaRecorder.setProfile(prof);
+						lastCamcorderProfile = prof;
+						useProf = true;
+						lastUseProf = useProf;
+					}
+					else
+					{
+						List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();    	     			
+						sz = CameraController.getInstance().new Size(1920,1080);
+						if(!psz.contains(sz))
+							sz = CameraController.getInstance().new Size(1920,1088);
+					}
+				} break;
+				case CamcorderProfile.QUALITY_720P:
+					sz = CameraController.getInstance().new Size(1280,720);
+					break;
+				case CamcorderProfile.QUALITY_480P:
+					sz = CameraController.getInstance().new Size(640,480);
+					break;
+				case QUALITY_4K:
+				{
+					if(CamcorderProfile.hasProfile(CameraController.CameraIndex, CamcorderProfile.QUALITY_1080P))
+					{
+						CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
+						prof.videoFrameHeight=2160;
+						prof.videoFrameWidth=4096;
+						mMediaRecorder.setProfile(prof);
+						lastCamcorderProfile = prof;
+						useProf = true;
+						lastUseProf = useProf;
+					}
+					else
+						sz = CameraController.getInstance().new Size(4096,2160);
+				}
+				break;
+				}
+
+				if(!useProf)
+				{
+					mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+					mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+					mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+					mMediaRecorder.setVideoSize(sz.getWidth(), sz.getHeight());
+					lastSz = sz;
+				}
+			}
+
+			//    	    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
+			//    	    	params.set("cam_mode",1);
+			//    	    	MainScreen.thiz.setCameraParameters(params);
+
+			if (swChecked)
+			{
+				double val1 = Double.valueOf(stringInterval[interval]);
+				int val2 = measurementVal;
+				switch (val2)
+				{
+				case 0:
+					val2 = 1;
+					break;
+				case 1:
+					val2 = 60;
+					break;
+				case 2:
+					val2 = 3600;
+					break;
+				}
+				captureRate = 1/(val1 * val2);
+				mMediaRecorder.setCaptureRate(captureRate);
+			}
+			//    	    	Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+			//    	        if (cp!=null)
+				//    	        {
+				//    	        	Log.e("Video", "cp null");
+				//    	        }
+			//    	    	List<int[]> frame = cp.getSupportedPreviewFpsRange();
+			//mMediaRecorder.setCaptureRate(0.1);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Video", "On shutter pressed " + e.getMessage());
+
+			MainScreen.guiManager.lockControls = false;
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+			releaseMediaRecorder(); // release the MediaRecorder object
+			camera.lock();         // take camera access back from MediaRecorder
+			camera.stopPreview();
+			camera.startPreview();
+
+			return;
+			//Toast.makeText(this, "Error during purchase " +e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+
+		//mMediaRecorder.setMaxDuration(mMaxVideoDurationInMs);
+
+		// Step 4: Set output file
+		mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
+
+		// Step 5: Set the preview output
+		mMediaRecorder.setPreviewDisplay(MainScreen.thiz.surfaceHolder.getSurface());
+
+		//		   	    	mMediaRecorder.setOrientationHint(
+		//		   	    			MainScreen.getCameraMirrored()?
+		//		   	    			(MainScreen.getWantLandscapePhoto()?MainScreen.orientationMain:(MainScreen.orientationMain+180)%360)
+		//		   	    			:MainScreen.orientationMain);  	    	
+		mMediaRecorder.setOrientationHint(
+				MainScreen.getCameraMirrored()?
+						(MainScreen.getWantLandscapePhoto()?MainScreen.guiManager.getDisplayOrientation():(MainScreen.guiManager.getDisplayOrientation()+180)%360)
+						:MainScreen.guiManager.getDisplayOrientation());
+
+		// Step 6: Prepare configured MediaRecorder
+		try {
+			mMediaRecorder.prepare();
+
+			// Camera is available and unlocked, MediaRecorder is prepared,
+			// now you can start recording
+			mMediaRecorder.start();
+
+		} catch (Exception e) 
+		{
+			Log.d("Video", "Exception preparing MediaRecorder: " + e.getMessage());
+			releaseMediaRecorder();
+			Toast.makeText(MainScreen.thiz, "Failed to start video recording", Toast.LENGTH_LONG).show();
+
+			MainScreen.guiManager.lockControls = false;
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+			camera.lock();         // take camera access back from MediaRecorder
+			camera.stopPreview();
+			camera.startPreview();
+
+			return;
+		}
+
+		//change shutter icon
+		MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_STOP);
+
+		// inform the user that recording has started
+		isRecording = true;
+		showRecordingUI(isRecording);
+		if (onPause) {
+			onPause = false;
+			showRecordingUI(isRecording);
+			onPause = true;
+		}
+		prefs.edit().putBoolean("videorecording", true).commit();
+
+		//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("ContinuousCapturing", true).commit();
+
+		new CountDownTimer(1000, 1000) {			 
+			public void onTick(long millisUntilFinished) {}
+
+			public void onFinish() {
+				shutterOff=false;
+				if(!(Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+						Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+						Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+						Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+						Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+						Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13)))
+					MainScreen.guiManager.lockControls = false;
+			}
+		}.start();
+	}
+	
 	@Override
 	public void onPreferenceCreate(PreferenceFragment pf)
 	{
@@ -1555,6 +2056,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private void getPrefs()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        
+        ModePreference = prefs.getString("modeVideoDROPref", "1");
 
         CameraIDPreference = 0;
         
@@ -1563,11 +2066,25 @@ public class VideoCapturePlugin extends PluginCapture
         readVideoPreferences(prefs);
     }
 	
+	@Override
+	public boolean shouldPreviewToGPU()
+	{
+		return this.modeDRO();
+	}
+	
+	@Override
+	public boolean isGLSurfaceNeeded()
+	{
+		return this.modeDRO();
+	}
+	
 	private void showRecordingUI(boolean recording) {
         if (recording) {
     		mRecordingTimeView.setRotation(MainScreen.guiManager.getDisplayRotation()); 
     		mRecordingTimeView.invalidate();
-        	mRecordingTimeView.setText("");
+    		if (!onPause) {
+    			mRecordingTimeView.setText("");
+    		}
             mRecordingTimeView.setVisibility(View.VISIBLE);
             updateRecordingTime();
         } else {
@@ -1577,10 +2094,18 @@ public class VideoCapturePlugin extends PluginCapture
 	
 	//update recording time indicator.
 	private void updateRecordingTime() {
-        if (!isRecording) {
+        if (!isRecording && !onPause) {
         	mRecordingTimeView.setText("00:00");
+        	mRecorded = 0;
             return;
         }
+        
+        if (onPause) {
+        	mRecorded = timeStringToMillisecond(mRecordingTimeView.getText().toString());
+        	return;
+        }
+        
+        
         long now = SystemClock.uptimeMillis();
         long delta = now - mRecordingStartTime;
 
@@ -1648,6 +2173,22 @@ public class VideoCapturePlugin extends PluginCapture
         } else
             mMaxVideoDurationInMs = 0;
     }
+	
+	private static long timeStringToMillisecond(String time) {
+		long res = 0;
+		String[] timeSplited = time.split(":");
+		if (timeSplited.length > 2) {
+			res = Long.parseLong(timeSplited[2]) * 1000;
+			res += Long.parseLong(timeSplited[1]) * 60 * 1000;
+			res += Long.parseLong(timeSplited[0]) * 60 * 60 * 1000;
+		}
+		else {
+			res = Long.parseLong(timeSplited[1]) * 1000;
+			res += Long.parseLong(timeSplited[0]) * 60 * 1000;
+		}
+		
+		return res;
+	}
 	
 	private static String millisecondToTimeString(long milliSeconds, boolean displayCentiSeconds) {
         long seconds = milliSeconds / 1000; // round down to compute seconds
@@ -1750,7 +2291,7 @@ public class VideoCapturePlugin extends PluginCapture
         np2.setDisplayedValues(stringMeasurement);
         np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         
-        final Switch sw = (Switch) d.findViewById(R.id.timelapse_switcher);
+        final android.widget.Switch sw = (android.widget.Switch)d.findViewById(R.id.timelapse_switcher);
         
         //disable/enable controls in dialog
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1912,4 +2453,22 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
 	
+	@Override
+	public void onFrameAvailable()
+	{
+		//Log.v(TAG, String.format("onPreviewTextureUpdated(%d, %s)", texture, Util.logMatrix(transform, 4, 4).replace('\n', ' ')));
+		this.droEngine.onFrameAvailable();
+	}
+	
+	@Override
+	public void onGLSurfaceCreated(final GL10 gl, final EGLConfig config)
+	{		
+		this.droEngine.onSurfaceCreated(gl, config);
+	}
+
+	@Override
+	public void onGLSurfaceChanged(final GL10 gl, final int width, final int height)
+	{
+		this.droEngine.onSurfaceChanged(gl, width, height);
+	}
 }

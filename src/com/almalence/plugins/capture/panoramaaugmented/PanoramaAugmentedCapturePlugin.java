@@ -73,8 +73,8 @@ import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
 
 import com.almalence.util.HeapUtil;
@@ -396,8 +396,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 					}
 				}
 			}
-		}
-		
+		}		
 		return false;
 	}
 	
@@ -408,7 +407,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.clearViews();
 		
-		MainScreen.guiManager.showHelp("Panorama help",
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Panorama_Help_Header),
 				MainScreen.thiz.getResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
@@ -418,13 +417,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	public void SelectImageDimension()
     {
 		this.init();
-		
-//		Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-		
-//		final Parameters params = CameraController.getInstance().getCameraParameters();
-//		final List<Camera.Size> cs = params.getSupportedPictureSizes();
 		
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
 		if(Build.MODEL.contains("HTC One X"))
@@ -443,7 +435,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
-		Log.e("Almalence", String.format("Picture dimensions: %dx%d", size.getWidth(), size.getHeight()));
+		Log.e(TAG, String.format("Picture dimensions: %dx%d", size.getWidth(), size.getHeight()));
 		
 		
     	MainScreen.setImageWidth(this.pictureWidth);
@@ -472,11 +464,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void SetCameraPictureSize()
 	{
-//		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		if (cp == null)
-//		{
-//			return;
-//		}
     	final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
 		
     	if(Build.MODEL.contains("HTC One X"))
@@ -496,48 +483,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 		CameraController.getInstance().setJpegQuality(100);
-    	
-
-//		String sUserFocusMode = null;
-		
-//    	if (sUserFocusMode != null)
-//    	{
-//        	cp.setFocusMode(sUserFocusMode);
-//        	
-//	    	PreferenceManager.getDefaultSharedPreferences(
-//	    			MainScreen.mainContext).edit().putString(
-//	    					MainScreen.getCameraMirrored()
-//	    						? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, 
-//	    								sUserFocusMode).commit();
-//    	}
-//		
-//		if (MainScreen.supportedFocusModes != null)
-//		{
-//			if (MainScreen.supportedFocusModes.contains(
-//					Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
-//			{
-//				sUserFocusMode = Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-//			}
-//		}
-    	
 
 		try
 		{
-//			try
-//			{
-//				this.viewAngleX = cp.getHorizontalViewAngle();
-//				this.viewAngleY = cp.getVerticalViewAngle();
-//			}
-//			catch (final Throwable e)
-//			{
-//				// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
-//				this.viewAngleX = 55.4f;
-//				this.viewAngleY = 42.7f;
-//			}
-			
-			//TODO: Temporary default values. HALv3 not supported view angles yet.
-			this.viewAngleX = 59.63f;
-			this.viewAngleY = 46.66f;
+			try
+			{
+				this.viewAngleX = CameraController.getInstance().getHorizontalViewAngle();
+				this.viewAngleY = CameraController.getInstance().getVerticalViewAngle();
+			}
+			catch (final Throwable e)
+			{
+				// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
+				this.viewAngleX = 55.4f;
+				this.viewAngleY = 42.7f;
+			}
 			
 			// some devices report incorrect FOV values, use typical view angles then
 			if (this.viewAngleX >= 150)
@@ -569,11 +528,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		else if ((HorizontalViewFromAspect < 0.9f*this.viewAngleX) || (HorizontalViewFromAspect > 1.1f*this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		//Log.i(TAG,"viewAngleX: "+this.viewAngleX);
-		//Log.i(TAG,"viewAngleY: "+this.viewAngleY);
-
-//    	CameraController.getInstance().setCameraParameters(cp);
-    	
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 		
 		if (!this.prefHardwareGyroscope)
@@ -657,13 +611,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	{
 		if (command == PluginManager.MSG_NEXT_FRAME)
 		{
-//			final Camera camera = CameraController.getInstance().getCamera();
-//	    	if (camera == null)
-//	    	{
-//	    		Log.e("Almalence", "onBroadcast(): camera is null");
-//	    		return false;
-//	    	}
-	    	
 	    	this.previewRestartFlag = true;
 	    	
     		CameraController.startCameraPreview();
@@ -854,6 +801,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	        }
         }
 		
+		if (ud_pref!=null)
 		ud_pref.setOnPreferenceChangeListener(
 	        new OnPreferenceChangeListener()
 			{
@@ -911,12 +859,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	ResolutionsPictureIdxesList.clear();
     	ResolutionsPictureSizesList.clear();
 		
-//		Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-//		final Parameters cp = CameraController.getInstance().getCameraParameters();
-//		final List<Camera.Size> cs = cp.getSupportedPictureSizes();
-    	
     	final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
     	if(Build.MODEL.contains("HTC One X"))
 		{
@@ -1051,7 +993,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	@Override
 	public void onPreviewFrame(final byte[] data, final Camera paramCamera)
-	{		
+	{
 		this.previewRestartFlag = false;
 		
 		if (!this.prefHardwareGyroscope)
@@ -1135,41 +1077,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 	}
 	
-//	private final AutoFocusCallback autoFocusCallbackReceiver = new AutoFocusCallback()
-//	{
-//		@Override
-//		public void onAutoFocus(final boolean success, final Camera camera)
-//		{
-//			PanoramaAugmentedCapturePlugin.this.takePictureReal();
-//		}
-//	};
-//	
-//	private void tryAutoFocus()
-//	{
-//		try
-//		{
-////			final Camera camera = CameraController.getInstance().getCamera();
-////	    	if (camera == null)
-////	    	{
-////	    		Log.e("Almalence", "tryAutoFocus(): camera is null");
-////	    		return;
-////	    	}
-////			camera.autoFocus(this.autoFocusCallbackReceiver);
-//			CameraController.autoFocus(this.autoFocusCallbackReceiver);
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//			this.takePicture();
-//		}
-//	}
-//	
-//	@Override
-//	public void onAutoFocus(final boolean success, final Camera camera)
-//	{
-//		
-//	}
-	
 	@Override
 	public void onAutoFocus(final boolean success)
 	{
@@ -1189,22 +1096,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				return;
 			}
 		}
-		
-//		try
-//		{
-//			if (CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO)
-//			{
-//				this.tryAutoFocus();
-//			}
-//			else
-//			{
-//				this.takePictureReal();
-//			}
-//		}
-//		catch (final Throwable e)
-//		{
-//			e.printStackTrace();
-//		}
 		
 		this.takingAlready = true;
 		
@@ -1284,10 +1175,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		{
 			e.printStackTrace();
 			
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			this.engine.onCameraError();
+			
+			this.stopCapture();
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+			MainScreen.H.sendMessage(message);
 			
 			takingAlready = false;
 			capturing = false;

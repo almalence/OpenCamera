@@ -78,7 +78,7 @@ public class BurstCapturePlugin extends PluginCapture
 			  R.drawable.gui_almalence_mode_burst,
 			  "Burst images");
 
-		refreshPreferences();
+		//refreshPreferences();
 	}
 	
 	@Override
@@ -221,16 +221,10 @@ public class BurstCapturePlugin extends PluginCapture
 		takingAlready = true;
 		if (imagesTaken==0 || pauseBetweenShots==0)
 		{
-			new CountDownTimer(50, 50) {
-			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
-			     {
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);					
-			     }
-			  }.start();
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);					
 		}
 		else
 		{
@@ -437,14 +431,6 @@ public class BurstCapturePlugin extends PluginCapture
 	{
 		if(takingAlready == true)
 			takePicture();
-		
-//		if(takingAlready == true && paramBoolean == true)
-//			takePicture();
-//		else if(takingAlready == true)
-//		{
-//			takingAlready = false;
-//			MainScreen.guiManager.lockControls = false;
-//		}
 	}
 
 	@Override

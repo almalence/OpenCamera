@@ -74,8 +74,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-
-		refreshPreferences();
 	}
 	
 	@Override
@@ -97,7 +95,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Groupshot help", MainScreen.thiz.getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.GroupShot_Help_Header), MainScreen.thiz.getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()
@@ -381,14 +379,6 @@ public class GroupShotCapturePlugin extends PluginCapture
 	{
 		if(takingAlready == true)
 			takePicture();
-		
-//		if(takingAlready == true && paramBoolean == true)
-//			takePicture();
-//		else if(takingAlready == true)
-//		{
-//			takingAlready = false;
-//			MainScreen.guiManager.lockControls = false;
-//		}
 	}
 
 	@Override

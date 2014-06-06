@@ -1184,9 +1184,16 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			previewHeight = CameraController.getInstance().getCameraParameters().getPreviewSize().height;
 		}
 
-		Util.initialize(mainContext);
-		Util.initializeMeteringMatrix();
-//				
+		try
+		{
+			Util.initialize(mainContext);
+			Util.initializeMeteringMatrix();
+		}
+		catch(Exception e)
+		{
+			Log.e("Main setup camera", "Util.initialize failed!");
+		}
+		
 		prepareMeteringAreas();
 
 		guiManager.onCameraCreate();
@@ -1643,7 +1650,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void showOpenGLLayer() {
-		Log.e("MainScreen", "showOpenGL");
 		if (glView != null && glView.getVisibility() == View.GONE) {
 			glView.setVisibility(View.VISIBLE);
 			glView.onResume();
@@ -1651,7 +1657,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}
 
 	public void hideOpenGLLayer() {
-		Log.e("MainScreen", "hideOpenGL");
 		if (glView != null && glView.getVisibility() == View.VISIBLE) {
 			glView.setVisibility(View.GONE);
 			glView.onPause();
@@ -1997,7 +2002,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			}
 			
 			try{
-				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Getting data for store");
 				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
 				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
 				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
@@ -2486,11 +2490,12 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void launchPurchase(String SKU, int requestID) {
 		String payload = "";
 		try {
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
-					mPurchaseFinishedListener, payload);
+			guiManager.showStore();
+//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU, requestID,
+//					mPurchaseFinishedListener, payload);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
 			Toast.makeText(this, "Error during purchase " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
@@ -2770,7 +2775,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putInt(sSceneModePref, sDefaultValue);
@@ -2785,14 +2790,14 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putInt(sWBModePref, sDefaultValue);
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putInt(sISOPref, sDefaultValue);
@@ -2813,7 +2818,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			prefsEditor.commit();
 		}
 		
-		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", true);
+		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", false);
 		if (false == isSaving)
 		{			
 			prefsEditor.putInt("EvCompensationValue", 0);

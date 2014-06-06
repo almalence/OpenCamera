@@ -64,6 +64,8 @@ import android.util.Log;
 
 public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationReceiver
 {
+	public static final String TAG = "Almalence";
+	
 	public static final int STATE_STANDBY = 0;
 	public static final int STATE_CLOSEENOUGH = 1;
 	public static final int STATE_TAKINGPICTURE = 2;
@@ -218,7 +220,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private int width;
 	private int height;
-	@SuppressWarnings("unused")
 	private int halfWidth;
 	private int halfHeight;
 
@@ -445,9 +446,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	public int getPictureTakingState(final boolean autoFocus)
 	{
-		if (this.isCircular())
+		synchronized (this.frames)
 		{
-			return STATE_STANDBY;
+			if (this.isCircular() || this.frames.size() == 0)
+			{
+				return STATE_STANDBY;
+			}
 		}
 		
 		synchronized (this.stateSynch)
@@ -498,6 +502,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		synchronized (this.frames)
 		{
 			return (this.frames.size() >= this.framesMax);
+		}
+	}
+	
+	public void onCameraError()
+	{
+		synchronized (this.stateSynch)
+		{
+			this.state = STATE_STANDBY;
 		}
 	}
 	
@@ -610,6 +622,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 			else
 			{
+				this.state = STATE_STANDBY;
 				frame = null;
 			}
 		}
@@ -902,15 +915,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					AugmentedPanoramaEngine.this.frames.add(frame);
 				}
 			}
-	
-			//final byte[] jpeg_copy = new byte[jpeg.length];
-			//System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
-//			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, jpeg_copy);
-//		
-//			synchronized (AugmentedPanoramaEngine.this.frames)
-//			{
-//				AugmentedPanoramaEngine.this.frames.add(frame);
-//			}
 		}
 			
 		synchronized (AugmentedPanoramaEngine.this.stateSynch)
@@ -1479,47 +1483,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		            										   AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width,
 		            										   0, 0, 1);
 		            			AugmentedFrameTaken.this.nv21address = yuv_rotated;
-		            			
-//		            			FileOutputStream os = null;
-//		                        try
-//		                        {
-//		                        	File saveDir = PluginManager.getInstance().GetSaveDir(false);
-//		                        	final Calendar d = Calendar.getInstance();
-//		                        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-//		                            		d.get(Calendar.YEAR),
-//		                            		d.get(Calendar.MONTH)+1,
-//		                            		d.get(Calendar.DAY_OF_MONTH),
-//		                            		d.get(Calendar.HOUR_OF_DAY),
-//		                            		d.get(Calendar.MINUTE),
-//		                            		d.get(Calendar.SECOND));
-//				    				File yourFile = new File(
-//						            		saveDir, 
-//						            		fileFormat+"_PANO_INPUT.jpg");
-//		                        	os = new FileOutputStream(yourFile);
-//		                            final YuvImage out = new com.almalence.YuvImage(
-//		                            		AugmentedFrameTaken.this.nv21address, ImageFormat.NV21, AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height, null);
-//		                            
-//		                            out.compressToJpeg(new Rect(0, 0, AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height), 100, os);
-//		                        }
-//		                        catch (final IOException e)
-//		                        {
-//		                        	e.printStackTrace();
-//		                        	throw new RuntimeException();
-//		                        }
-//		                        finally
-//		                        {
-//		                            try
-//		            				{
-//		                            	if (os != null)
-//		                            	{
-//		                            		os.close();
-//		                            	}
-//		            				} 
-//		                            catch (final IOException e)
-//		            				{
-//		                            	e.printStackTrace();
-//		            				}
-//		                        }
 		            		}
 	            		}
 		            }
@@ -1527,7 +1490,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				
 				try
 				{
+					Log.e(TAG, "AugmentedFrameTaken(): before syncObject.wait()");
 					syncObject.wait();
+					Log.e(TAG, "AugmentedFrameTaken(): after syncObject.wait()");
 				}
 				catch (final InterruptedException e)
 				{

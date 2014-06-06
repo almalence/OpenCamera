@@ -161,7 +161,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Best shot help", MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Bestshot_Help_Header), MainScreen.thiz.getResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot, "bestShotShowHelp");
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
@@ -199,9 +199,18 @@ public class BestShotCapturePlugin extends PluginCapture
 	{
 		if(inCapture == false)
 		{
-			refreshPreferences();
 			inCapture = true;
+			refreshPreferences();
 			takingAlready = true;
+			if (imagesTaken==0)
+			{
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);		
+			}
+			else
+			{
 			new CountDownTimer(50, 50) {
 			     public void onTick(long millisUntilFinished) {}
 			     public void onFinish()
@@ -212,6 +221,7 @@ public class BestShotCapturePlugin extends PluginCapture
 					MainScreen.H.sendMessage(msg);
 			     }
 			  }.start();
+			}
 		}
 	}
 

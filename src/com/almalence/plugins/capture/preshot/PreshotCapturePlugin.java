@@ -18,8 +18,10 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.preshot;
 
+import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -30,8 +32,11 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
@@ -145,6 +150,28 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 	
 	@Override
+	public void onStop()
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
+	
+	@Override
 	public void onDestroy()
 	{
 		PreShot.FreeBuffer();
@@ -181,19 +208,49 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		});
 		
-		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		lp.topMargin = 17;
-		
-		modeSwitcher.setLayoutParams(lp);
+//		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
+//				LayoutParams.WRAP_CONTENT,
+//				LayoutParams.WRAP_CONTENT);
+//		lp.topMargin = 17;
+//		
+//		modeSwitcher.setLayoutParams(lp);
 		if (PluginManager.getInstance().getProcessingCounter()==0)
 			modeSwitcher.setEnabled(true);
 		else
 			modeSwitcher.setEnabled(false);
 		
-		clearViews();
-		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
+//		clearViews();
+//		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
+		
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int zoom_id = this.modeSwitcher.getId();
+			if(view_id == zoom_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				
+				specialLayout.removeView(view);
+			}
+		}
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+		
+		this.modeSwitcher.setLayoutParams(params);
+		this.modeSwitcher.requestLayout();
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 	
 	private void getPrefs()

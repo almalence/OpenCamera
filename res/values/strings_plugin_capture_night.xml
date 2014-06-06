@@ -16,8 +16,8 @@
 	
 	<string name="NightCaptureFocusPref">Preference_NightCaptureFocusPref</string>
 	
-	<string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
-	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string>
+	<!-- <string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
+	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string> -->
 	
 	<string name="hold_still">Hold still!</string>
 	<string name="capturing">Capturing</string>

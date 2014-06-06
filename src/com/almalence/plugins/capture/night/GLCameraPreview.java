@@ -160,9 +160,6 @@ public class GLCameraPreview {
 		previewWidth = params.getPreviewSize().width;
 		previewHeight = params.getPreviewSize().height;
 		
-		Log.e("GLCameraPreview", "previewWidth = " + previewWidth + " previewHeight = " + previewHeight);
-		Log.e("GLCameraPreview", "previewWidth2 = " + MainScreen.previewWidth + " previewHeight2 = " + MainScreen.previewHeight);
-		
 //		this.textureHeight = (int)(0.5f * previewHeight);
 //		
 //		if (this.textureHeight >= MAX_TEXTURE_SIZE)

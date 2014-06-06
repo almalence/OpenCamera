@@ -71,7 +71,7 @@ public class SequenceCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-		refreshPreferences();
+//		refreshPreferences();
 	}
 	
 	@Override
@@ -86,7 +86,7 @@ public class SequenceCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp("Sequence help", MainScreen.thiz.getResources().getString(R.string.Sequence_Help), R.drawable.plugin_help_sequence, "sequenceRemovalShowHelp");
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Sequence_Help_Header), MainScreen.thiz.getResources().getString(R.string.Sequence_Help), R.drawable.plugin_help_sequence, "sequenceRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()

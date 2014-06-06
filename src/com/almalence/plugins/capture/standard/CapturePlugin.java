@@ -46,6 +46,9 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.ui.GUI;
+import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
@@ -440,14 +443,6 @@ public class CapturePlugin extends PluginCapture
 	{
 		if(aboutToTakePicture == true)
 				takePicture();
-		
-//		if(aboutToTakePicture == true && paramBoolean == true)
-//			takePicture();
-//		else if(aboutToTakePicture == true)
-//		{
-//			aboutToTakePicture = false;
-//			MainScreen.guiManager.lockControls = false;
-//		}
 	}
 	
 	@Override
