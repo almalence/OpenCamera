@@ -109,6 +109,7 @@ public class AudioRecorder
 		
 		private volatile boolean running = true;
 	    private int iBufferSize;
+	    private long timeLast = 0;
 	    
 	    
 		public EncodingThread()
@@ -174,10 +175,11 @@ public class AudioRecorder
 							inputBuffer.clear();
 							inputBuffer.put(recordedBytes);
 							// recycleInputBuffer(mTempBuffer);
+							
+							this.timeLast = Math.max(this.timeLast + 1,
+									(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000);
 	
-							this.encoder.queueInputBuffer(inputBufferIndex, 0, recordedBytes.length,
-									(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000,
-									0);
+							this.encoder.queueInputBuffer(inputBufferIndex, 0, recordedBytes.length, this.timeLast, 0);
 						}
 					}
 					catch (final Throwable t)
