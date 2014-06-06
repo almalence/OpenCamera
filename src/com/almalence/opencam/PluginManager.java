@@ -2083,38 +2083,47 @@ public class PluginManager {
 		                }					
 			            else
 			            {
-			            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
+			            	memcardDir = new File("/storage", "emulated");		//Huawei honor 2
 				            if (memcardDir.exists())
 				            {
-					            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
+					            saveDir = new File("/storage", "emulated/0/DCIM/" + abcDir);
 				            	usePhoneMem = false;
 				            }
-			                else
-			                {
-								memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
+				            else
+				            {
+				            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
 					            if (memcardDir.exists())
 					            {
-						            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
+						            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
 					            	usePhoneMem = false;
 					            }
-					            else
-					            {
-									memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
+				                else
+				                {
+									memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
 						            if (memcardDir.exists())
 						            {
-							            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
+							            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
 						            	usePhoneMem = false;
 						            }
 						            else
 						            {
-										memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+										memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
 							            if (memcardDir.exists())
 							            {
-								            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+								            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
 							            	usePhoneMem = false;
 							            }
+							            else
+							            {
+											memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+								            if (memcardDir.exists())
+								            {
+									            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+								            	usePhoneMem = false;
+								            }
+							            }
 						            }
-					            }
+				                }
 			                }
 			            }
 		            }
