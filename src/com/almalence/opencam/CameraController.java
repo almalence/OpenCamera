@@ -651,6 +651,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 				cameraController.mVideoStabilizationSupported = isVideoStabilizationSupported();
+			
+			PluginManager.getInstance().SelectDefaults();
+
+			// screen rotation
+			if (!PluginManager.getInstance().shouldPreviewToGPU())
+			{
+				try {
+					camera.setDisplayOrientation(90);
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				}
+		
+				try {
+					camera.setPreviewDisplay(holder);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		else
 			HALv3.openCameraHALv3();

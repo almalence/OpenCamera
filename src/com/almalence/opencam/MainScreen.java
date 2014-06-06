@@ -46,6 +46,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
@@ -678,16 +679,50 @@ public class MainScreen extends Activity implements View.OnClickListener,
 				
 		}
 	}
-
+	
+	public void glSetRenderingMode(final int renderMode)
+ 	{
+ 		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
+ 				&& renderMode != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+ 		{
+ 			throw new IllegalArgumentException();
+ 		}
+ 
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.setRenderMode(renderMode);
+ 		}
+ 	}
+ 
+ 	public void glRequestRender()
+ 	{
+ 		final GLSurfaceView surfaceView = glView;
+ 		if (surfaceView != null)
+ 		{
+ 			surfaceView.requestRender();
+ 		}
+ 	}
 	public void queueGLEvent(final Runnable runnable)
 	{
 		final GLSurfaceView surfaceView = glView;
 
-		if (surfaceView != null && runnable != null) {
+		if (surfaceView != null && runnable != null)
+		{
 			surfaceView.queueEvent(runnable);
 		}
 	}
 
+	public int glGetPreviewTexture()
+	{
+		return glView.getPreviewTexture();
+	}
+	
+	public SurfaceTexture glGetSurfaceTexture()
+	{
+		return glView.getSurfaceTexture();
+	}
+	
 	@Override
 	protected void onStart()
 	{
@@ -758,7 +793,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		/**** Billing *****/
 		//-+- -->
 		
-		glView = null;
+		this.hideOpenGLLayer();
 	}
 
 	
@@ -901,9 +936,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 
 		this.mPausing = true;
 
-		if (glView != null) {
-			glView.onPause();
-		}
+		this.hideOpenGLLayer();
 
 		if (ScreenTimer != null) {
 			if (isScreenTimerRunning)
@@ -941,70 +974,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
 			final int width, final int height) {
 
-//		if (!isCreating)
-//		{
-//			if(!isHALv3)
-//			{
-//				new CountDownTimer(50, 50) 
-//				{
-//					public void onTick(long millisUntilFinished)
-//					{
-//					}
-//					public void onFinish()
-//					{
-//						onSurfaceChangedMain(holder, width, height);
-//					}
-//				}.start();
-//			}
-//			else
-//			{
-//				onSurfaceChangedMain(holder, width, height);
-//			}
-//			
-////			SharedPreferences prefs = PreferenceManager
-////					.getDefaultSharedPreferences(MainScreen.mainContext);
-////			CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-////					: 1;
-////			ShutterPreference = prefs.getBoolean("shutterPrefCommon",
-////					false);
-////			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
-////					false);
-////			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-////					"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-////			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-////
-////			if (!MainScreen.thiz.mPausing && surfaceCreated
-////					&& (CameraController.camera == null)) {
-////				surfaceWidth = width;
-////				surfaceHeight = height;
-////				MainScreen.thiz.findViewById(R.id.mainLayout2)
-////						.setVisibility(View.VISIBLE);
-////				
-////				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
-//////				setupCamera(holder);
-//////				PluginManager.getInstance().onGUICreate();
-//////				MainScreen.guiManager.onGUICreate();
-////			}
-//		}
-//		else {
-//			SharedPreferences prefs = PreferenceManager
-//					.getDefaultSharedPreferences(MainScreen.mainContext);
-//			CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-//					: 1;
-//			ShutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-//			ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",false);
-//			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
-//					"imageSizePrefCommonBack" : "imageSizePrefCommonFront",
-//					"-1");
-//			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
-//
-//			if (!MainScreen.thiz.mPausing && surfaceCreated) {
-//				surfaceWidth = width;
-//				surfaceHeight = height;
-//			}
-//		}
-		
-		
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
 				public void onTick(long millisUntilFinished) {
@@ -1107,32 +1076,32 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8];
 		}
 
-		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
-			if (glView == null) {
-				glView = new GLLayer(MainScreen.mainContext);
-				glView.setLayoutParams(new LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-				glView.setZOrderMediaOverlay(true);
-				
-				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-						glView, 1);				
-			}
-		} else {
-			((RelativeLayout) findViewById(R.id.mainLayout2))
-					.removeView(glView);
-			glView = null;
-		}
-
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) preview
-				.getLayoutParams();
-		if (glView != null) {
-			glView.setVisibility(View.VISIBLE);
-			glView.setLayoutParams(lp);
-		} else {
-			if (glView != null)
-				glView.setVisibility(View.GONE);
-		}
+//		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
+//			if (glView == null) {
+//				glView = new GLLayer(MainScreen.mainContext);
+//				glView.setLayoutParams(new LayoutParams(
+//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//				glView.setZOrderMediaOverlay(true);
+//				
+//				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+//				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
+//						glView, 1);				
+//			}
+//		} else {
+//			((RelativeLayout) findViewById(R.id.mainLayout2))
+//					.removeView(glView);
+//			glView = null;
+//		}
+//
+//		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) preview
+//				.getLayoutParams();
+//		if (glView != null) {
+//			glView.setVisibility(View.VISIBLE);
+//			glView.setLayoutParams(lp);
+//		} else {
+//			if (glView != null)
+//				glView.setVisibility(View.GONE);
+//		}
 
 ////				pviewBuffer = new byte[previewSize.width
 ////						* previewSize.height
@@ -1649,17 +1618,25 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
 	}
 
-	public void showOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.GONE) {
-			glView.setVisibility(View.VISIBLE);
-			glView.onResume();
+	public void showOpenGLLayer(final int version)
+	{
+		if (glView == null)
+		{
+			glView = new GLLayer(MainScreen.mainContext, version);// (GLLayer)findViewById(R.id.SurfaceView02);
+			glView.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
+			glView.setZOrderMediaOverlay(true);
 		}
 	}
 
-	public void hideOpenGLLayer() {
-		if (glView != null && glView.getVisibility() == View.VISIBLE) {
-			glView.setVisibility(View.GONE);
+	public void hideOpenGLLayer()
+	{
+		if (glView != null)
+		{
 			glView.onPause();
+			((RelativeLayout)this.findViewById(R.id.mainLayout2)).removeView(glView);
+			glView = null;
 		}
 	}
 

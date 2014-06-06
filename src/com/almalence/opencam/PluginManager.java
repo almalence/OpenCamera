@@ -49,9 +49,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -227,6 +229,9 @@ public class PluginManager {
 	// OpenGL layer messages
 	public static final int MSG_OPENGL_LAYER_SHOW = 70;
 	public static final int MSG_OPENGL_LAYER_HIDE = 71;
+	public static final int MSG_OPENGL_LAYER_SHOW_V2 = 72;
+	public static final int MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS = 73;
+	public static final int MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY = 74;
 
 	//events to pause/resume capture. for example to stop capturing in preshot when popup share opened
 	public static final int MSG_STOP_CAPTURE = 80;
@@ -1432,6 +1437,16 @@ public class PluginManager {
 			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
 	}
 
+	public void onFrameAvailable()
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		
+		if (plugin != null && plugin instanceof PluginCapture)
+		{
+			((PluginCapture)plugin).onFrameAvailable();
+		}
+	}
+
 	public void SetupCameraParameters() {
 		CameraController.getInstance().updateCameraFeatures();
 		for (int i = 0; i < activeVF.size(); i++)
@@ -1745,11 +1760,23 @@ public class PluginManager {
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW:
-			MainScreen.thiz.showOpenGLLayer();
+			MainScreen.thiz.showOpenGLLayer(1);
+			break;
+
+		case MSG_OPENGL_LAYER_SHOW_V2:
+			MainScreen.thiz.showOpenGLLayer(2);
 			break;
 
 		case MSG_OPENGL_LAYER_HIDE:
 			MainScreen.thiz.hideOpenGLLayer();
+			break;
+
+		case MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS:
+			MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+			break;
+
+		case MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY:
+			MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 			break;
 
 		case MSG_PROCESSING_BLOCK_UI:
@@ -1931,9 +1958,36 @@ public class PluginManager {
 		}
 	}
 
+	public boolean muteSounds()
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		if (plugin != null && plugin instanceof PluginCapture)
+		{
+			return ((PluginCapture)plugin).muteSound();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/
+	public boolean shouldPreviewToGPU()
+	{
+		final Plugin plugin = pluginList.get(activeCapture);
+		
+		if (plugin != null && (plugin instanceof PluginCapture))
+		{
+			return ((PluginCapture)plugin).shouldPreviewToGPU();
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public boolean isGLSurfaceNeeded() {
 		boolean ret = false;
 		if (null != pluginList.get(activeCapture))
