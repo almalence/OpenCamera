@@ -330,7 +330,7 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
 		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonTimeLapse);
-//		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
+		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
 		Camera camera = MainScreen.thiz.getCamera();
 	    if (camera != null)
 	    {
@@ -711,7 +711,12 @@ public class VideoCapturePlugin extends PluginCapture
     	
 		if (isRecording) {
             // stop recording and release camera
-            mMediaRecorder.stop();  // stop the recording
+			try {
+				mMediaRecorder.stop();  // stop the recording
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
+			}
             releaseMediaRecorder(); // release the MediaRecorder object
             camera.lock();         // take camera access back from MediaRecorder
 
@@ -751,20 +756,29 @@ public class VideoCapturePlugin extends PluginCapture
 	        	File firstFile = filesList.get(0);
 	        	for (int i = 1; i < filesList.size(); i++) {
 	        		File currentFile = filesList.get(i);
-	        		append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+	        		try {
+	        			append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+	        		} catch (Exception e) {
+	        			e.printStackTrace();
+	        		}
 	        	}
 	        	// if not onPause, then last video isn't added to list.
 	        	if (!onPause) {
 	        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
 	        	}
-	        	fileSaved.delete();
-	        	firstFile.renameTo(fileSaved);
+	        	
+	        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+	        		fileSaved.delete();
+	        		firstFile.renameTo(fileSaved);
+	        	}
 	        }
 	        onPause = false;
 	        
 	        String[] filesSavedNames= new String[1];
 	        filesSavedNames[0] = fileSaved.toString();
 	        filesList.clear();
+	        mRecordingTimeView.setText("00:00");
+	        mRecorded = 0;
                
     		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
             MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
@@ -1118,8 +1132,11 @@ public class VideoCapturePlugin extends PluginCapture
 		        	if (!onPause) {
 		        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
 		        	}
-		        	fileSaved.delete();
-		        	firstFile.renameTo(fileSaved);
+		        	
+		        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+		        		fileSaved.delete();
+		        		firstFile.renameTo(fileSaved);
+		        	}
 		        }
 		        onPause = false;
 		        

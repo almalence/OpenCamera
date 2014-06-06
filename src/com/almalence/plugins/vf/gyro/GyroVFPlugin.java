@@ -14,6 +14,7 @@ import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -295,6 +297,11 @@ public class GyroVFPlugin extends PluginViewfinder {
 			if (!flat) {
 				rotateHorizonIndicator(sideErrorVertical, sideErrorHorizontal);
 			}
+			
+			int color = 255;
+			mHorizonIndicatorMarkTopDown.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
+			mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
+			
 			horizon_updating.set(false);
 			return;
 		}
@@ -308,17 +315,17 @@ public class GyroVFPlugin extends PluginViewfinder {
 			
 			if(Math.abs(verticalError) > 0.9f) {
 				if (verticalError > 0.0f) {
-					verticalError = verticalError - 1.53f;
+					verticalError = (float) (verticalError - Math.PI / 2);
 				} else {
-					verticalError = verticalError + 1.47f;
+					verticalError = (float) (verticalError + Math.PI / 2);
 				}
 			}
 
 			if (Math.abs(horizontalError) > 0.9f) {
 				if (horizontalError > 0.0f) {
-					horizontalError = horizontalError - 1.53f;
+					horizontalError = (float) (horizontalError - Math.PI / 2);
 				} else {
-					horizontalError = horizontalError + 1.47f;
+					horizontalError = (float) (horizontalError + Math.PI / 2);
 				}
 			}
 			
