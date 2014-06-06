@@ -1442,7 +1442,8 @@ public class VideoCapturePlugin extends PluginCapture
             MainScreen.guiManager.lockControls = true;
             // inform the user that recording has stopped
             isRecording = true;
-
+            onPause = false;
+            
     		MainScreen.thiz.PlayShutter();
     		
             showRecordingUI(isRecording);
@@ -2240,8 +2241,15 @@ public class VideoCapturePlugin extends PluginCapture
     	
 		// Continue video recording
     	if (this.modeDRO()) {
+    		if (onPause) {
+    			onPause = false;
+    			mRecordingStartTime = SystemClock.uptimeMillis();
+    			showRecordingUI(isRecording);
+    			onPause = true;
+    		}
     		this.onPause = !this.onPause;
     		this.droEngine.setPaused(this.onPause);
+    		
     	}
     	else {
     		if (onPause) {
