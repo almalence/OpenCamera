@@ -4194,7 +4194,7 @@ public class AlmalenceGUI extends GUI implements
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		prefs.edit().putInt("defaultInfoSet", infoSet).commit();
+		prefs.edit().putInt(MainScreen.sDefaultInfoSetPref, infoSet).commit();
 	}
 
 	private void setInfo(boolean toLeft, float XtoVisible, float XtoInvisible,
@@ -4455,7 +4455,7 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		Editor prefsEditor = prefs.edit();
-		prefsEditor.putInt("defaultInfoSet", infoSet);
+		prefsEditor.putInt(MainScreen.sDefaultInfoSetPref, infoSet);
 		prefsEditor.commit();
 	}
 
