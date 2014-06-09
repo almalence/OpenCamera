@@ -229,6 +229,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
+		Log.i("Bestshot", "1");
 		imagesTaken++;
 		int frame_len = paramArrayOfByte.length;
 		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);

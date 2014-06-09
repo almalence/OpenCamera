@@ -550,3 +550,103 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 
 	return (jint)result_yuv;
 }
+
+jint throwRuntimeException(JNIEnv* env, const char* message)
+{
+	const char* className = "java/lang/RuntimeException";
+
+	jclass exClass = exClass = env->FindClass(className);
+
+	return env->ThrowNew(exClass, message);
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_video_RealtimeDRO_initialize
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint output_width,
+	jint output_height
+)
+{
+	void* fi;
+
+	const int result = Dro_StreamingInitialize(&fi, output_width, output_height);
+
+	if (result != ALMA_ALL_OK)
+	{
+		throwRuntimeException(env, "Native function Dro_StreamingInitialize() failed.");
+	}
+
+	return (jint)fi;
+}
+
+
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_video_RealtimeDRO_render
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint instance,
+	jint texture_in,
+	jfloatArray jmtx,
+	jint sx,
+	jint sy,
+	jboolean filter,
+	jboolean local_mapping,
+	jfloat  max_amplify,
+	jboolean force_update,
+    jint uv_desat,
+    jint dark_uv_desat,
+    jfloat mix_factor,
+    jfloat gamma,				// default = 0.5
+    jfloat max_black_level,		// default = 16
+    jfloat black_level_atten,	// default = 0.5
+    jfloatArray jmin_limit,			// default = 0.5 0.5 0.5
+    jfloatArray jmax_limit,			// default = 3 2 2
+	jint texture_out
+)
+{
+	float* mtx = env->GetFloatArrayElements(jmtx, 0);
+	float* min_limit = env->GetFloatArrayElements(jmin_limit, 0);
+	float* max_limit = env->GetFloatArrayElements(jmax_limit, 0);
+
+    Dro_StreamingRender(
+                        (void *)instance,
+                        texture_in,
+                        mtx,
+                        sx,
+                        sy,
+                        filter,
+                        max_amplify,
+                        local_mapping,
+                        force_update,
+                        uv_desat,
+                        dark_uv_desat,
+                        mix_factor,
+                        gamma,
+                        max_black_level,
+                        black_level_atten,
+                        min_limit,
+                        max_limit,
+                        texture_out
+                        );
+
+	env->ReleaseFloatArrayElements(jmtx, mtx, JNI_ABORT);
+	env->ReleaseFloatArrayElements(jmin_limit, min_limit, JNI_ABORT);
+	env->ReleaseFloatArrayElements(jmax_limit, max_limit, JNI_ABORT);
+}
+
+
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_video_RealtimeDRO_release
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint instance
+)
+{
+	const int result = Dro_StreamingRelease((void*)instance);
+
+	if (result != ALMA_ALL_OK)
+	{
+		throwRuntimeException(env, "Native function Dro_StreamingRelease() failed.");
+	}
+}

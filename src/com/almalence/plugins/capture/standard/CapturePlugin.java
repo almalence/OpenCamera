@@ -121,7 +121,7 @@ public class CapturePlugin extends PluginCapture
 	        	editor.commit();
 	        	
 	        	if (ModePreference.compareTo("0") == 0)
-	    			MainScreen.guiManager.showHelp("Dro help", MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
+	    			MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Dro_Help_Header), MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
 			}
 		});
 		

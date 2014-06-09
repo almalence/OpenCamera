@@ -58,6 +58,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 		
@@ -103,8 +105,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	    			mImageWidth, mImageHeight);
 		}
 
-		
 		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight);				
+
 		AlmaShotBestShot.Release();
 
 		if(orientation == 90 || orientation == 270)

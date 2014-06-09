@@ -36,6 +36,7 @@
    <dimen name="viewfinderViewsMarginTop">30dp</dimen>
    
    <dimen name="paramsLayoutHeight">75dp</dimen>
+   <dimen name="paramsLayoutHeightScanner">80dp</dimen>
    
    <dimen name="buttonsLayoutMarginTop">0dp</dimen>
    

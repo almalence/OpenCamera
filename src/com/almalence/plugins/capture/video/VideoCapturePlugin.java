@@ -30,11 +30,11 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -674,75 +674,6 @@ public class VideoCapturePlugin extends PluginCapture
 			
 			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
 		}
-		
-		//SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		if (prefs.getBoolean("videoStartStandardPref", false))
-		{
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-			        switch (which){
-			        case DialogInterface.BUTTON_POSITIVE:
-			        	PluginManager.getInstance().onPause(true);
-						Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-					    //MainScreen.thiz.startActivityForResult(intent, 111);
-						MainScreen.thiz.startActivity(intent);
-			            break;
-
-			        case DialogInterface.BUTTON_NEGATIVE:
-			            //No button clicked
-			            break;
-			        }
-			    }
-			};
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.thiz);
-			builder.setMessage("You selected to start standard camera. Start camera?").setPositiveButton("Yes", dialogClickListener)
-			    .setNegativeButton("No", dialogClickListener).show();
-		}
-		
-		//if(showRotateToLandscapeNotifier)
-		{
-			rotatorLayout = inflator.inflate(R.layout.plugin_capture_video_lanscaperotate_layout, null, false);
-			rotatorLayout.setVisibility(View.VISIBLE);
-			
-			rotateToLandscapeNotifier = (ImageView)rotatorLayout.findViewById(R.id.rotatorImageView);
-			
-	//    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-	//    	int orientation = MainScreen.guiManager.getLayoutOrientation();
-	//    	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
-			
-			List<View> specialViewRotator = new ArrayList<View>();
-			RelativeLayout specialLayoutRotator = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-			for(int i = 0; i < specialLayoutRotator.getChildCount(); i++)
-				specialViewRotator.add(specialLayoutRotator.getChildAt(i));
-	
-			for(int j = 0; j < specialViewRotator.size(); j++)
-			{
-				View view = specialViewRotator.get(j);
-				int view_id = view.getId();
-				int layout_id = this.rotatorLayout.getId();
-				if(view_id == layout_id)
-				{
-					if(view.getParent() != null)
-						((ViewGroup)view.getParent()).removeView(view);
-					
-					specialLayoutRotator.removeView(view);
-				}
-			}
-			
-			RelativeLayout.LayoutParams paramsRotator = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			paramsRotator.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.gui_element_2size);
-			
-			paramsRotator.addRule(RelativeLayout.CENTER_IN_PARENT);		
-			
-			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.rotatorLayout, paramsRotator);
-			
-			rotatorLayout.setLayoutParams(paramsRotator);
-			rotatorLayout.requestLayout();
-			
-			((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
-		}
 	}
 	
 	@Override
@@ -878,6 +809,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		return this.isRecording;
 	}
+
 	
 	public void startrotateAnimation() 
 	{
@@ -895,8 +827,7 @@ public class VideoCapturePlugin extends PluginCapture
 			rotateToLandscapeNotifier.startAnimation(rotation);
 		}catch(Exception e){}
 	}
-	
-	
+
 	private static File getOutputMediaFile(){
 		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 
@@ -1121,7 +1052,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			previewSizes.put(QUALITY_4K, true);
 			this.quality4KSupported = true;
-		}
+		}		
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         //preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
@@ -1229,7 +1160,6 @@ public class VideoCapturePlugin extends PluginCapture
 	    {
 	    	sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 	    }
-	    
 	    
 	    cp.setPreviewSize(sz.width, sz.height);    	
     	
@@ -1501,7 +1431,8 @@ public class VideoCapturePlugin extends PluginCapture
             MainScreen.guiManager.lockControls = true;
             // inform the user that recording has stopped
             isRecording = true;
-
+            onPause = false;
+            
     		MainScreen.thiz.PlayShutter();
     		
             showRecordingUI(isRecording);
@@ -2649,5 +2580,11 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLSurfaceChanged(final GL10 gl, final int width, final int height)
 	{
 		this.droEngine.onSurfaceChanged(gl, width, height);
+	}
+
+	@Override
+	public void onGLDrawFrame(final GL10 gl)
+	{
+		this.droEngine.onDrawFrame(gl);
 	}
 }

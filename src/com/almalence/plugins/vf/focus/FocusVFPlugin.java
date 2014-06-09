@@ -461,9 +461,10 @@ public class FocusVFPlugin extends PluginViewfinder
                 // so the state is always STATE_FOCUSING.
                 if (!Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)
                         && mSoundPlayerOK != null)
-                */                
+                */              
                 if (mSoundPlayerOK != null)                
-                	if (!MainScreen.ShutterPreference)
+                	if (!MainScreen.ShutterPreference
+                			&& !PluginManager.getInstance().muteSounds())
                 		mSoundPlayerOK.play();
                 
                 //With enabled preference 'Shot on tap' perform shutter button click after success focusing.
@@ -475,7 +476,8 @@ public class FocusVFPlugin extends PluginViewfinder
             else
             {
             	if(mSoundPlayerFalse != null)
-            		if (!MainScreen.ShutterPreference)
+            		if (!MainScreen.ShutterPreference
+                			&& !PluginManager.getInstance().muteSounds())
             			mSoundPlayerFalse.play();
                 mState = STATE_FAIL;
                 

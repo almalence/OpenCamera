@@ -20,6 +20,7 @@ package com.almalence.plugins.capture.expobracketing;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;

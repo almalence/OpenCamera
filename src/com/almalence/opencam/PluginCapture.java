@@ -41,7 +41,7 @@ public abstract class PluginCapture extends Plugin
 	{
 		return false;
 	}
-	
+
 	@Override
 	abstract public void OnShutterClick();
 	

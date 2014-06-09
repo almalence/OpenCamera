@@ -87,6 +87,7 @@ import android.widget.Toast;
 
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -562,9 +563,10 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		// init plugin manager
 		PluginManager.getInstance().onCreate();
 
-		if (this.getIntent().getAction() != null) {
-			if (this.getIntent().getAction()
-					.equals(MediaStore.ACTION_IMAGE_CAPTURE)) {
+		if (this.getIntent().getAction() != null) 
+		{
+			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)) 
+			{
 				try {
 					MainScreen.ForceFilename = new File(
 							((Uri) this.getIntent().getExtras()
@@ -1273,7 +1275,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		mMeteringAreaSpot.add(new Area(spotRect, 1000));
 	}
 
-	
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {

@@ -385,11 +385,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 						if (result <= 0)
 						{
 							this.stopCapture();
-							Message msg = new Message();
-		    				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		    				msg.what = PluginManager.MSG_BROADCAST;
-		    				MainScreen.H.sendMessage(msg);
-		    				MainScreen.guiManager.lockControls = false;
+							Message message = new Message();
+							message.obj = String.valueOf(SessionID);
+							message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
+							MainScreen.H.sendMessage(message);
 						}
 						
 						return true;
@@ -509,9 +508,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			if (this.viewAngleY == this.viewAngleX)
 				this.viewAngleY = this.viewAngleX*3/4;
 		}
-		catch (final Throwable e)
+		catch (final Exception e)
 		{
-			// Some bugged camera drivers pop ridiculous exception here 
+			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
+			this.viewAngleX = 55.4f;
+			this.viewAngleY = 42.7f;
+		}
+
+		// some devices report incorrect FOV values, use typical view angles then
+		if (this.viewAngleX >= 150)
+		{
+			this.viewAngleX = 55.4f;
+			this.viewAngleY = 42.7f;
 		}
 
 		// Some cameras report incorrect view angles
@@ -527,6 +535,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				this.viewAngleY = VerticalViewFromAspect;
 		else if ((HorizontalViewFromAspect < 0.9f*this.viewAngleX) || (HorizontalViewFromAspect > 1.1f*this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
+
+		//Log.i(TAG,"viewAngleX: "+this.viewAngleX);
+		//Log.i(TAG,"viewAngleY: "+this.viewAngleY);
 
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 		
@@ -1096,6 +1107,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				return;
 			}
 		}
+				
+		takingAlready = true;
 		
 		this.takingAlready = true;
 		
@@ -1163,6 +1176,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		}
 	}
 
+	
 	private void takePictureReal()
 	{    	
     	this.coordsRecorded = false;

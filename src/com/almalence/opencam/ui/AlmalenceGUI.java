@@ -606,6 +606,10 @@ public class AlmalenceGUI extends GUI implements
 		storeViews = new ArrayList<View>();
 		buttonStoreViewAssoc = new Hashtable<View, Integer>();
 		
+		storeAdapter = new ElementAdapter();
+		storeViews = new ArrayList<View>();
+		buttonStoreViewAssoc = new Hashtable<View, Integer>();
+		
 		mMeteringMatrix = new Matrix();
 	}
 
@@ -1399,13 +1403,10 @@ public class AlmalenceGUI extends GUI implements
 							setMeteringMode(system_name);
 							break;
 						}
-						guiView.findViewById(R.id.topPanel).setVisibility(
-								View.VISIBLE);
-						quickControlsVisible = false;	
+						return false;
 					}
-					return false;
-				}
-				
+						return false;
+				}					
 			});
 
 			paramMode.setOnClickListener(new OnClickListener() {
@@ -1629,7 +1630,7 @@ public class AlmalenceGUI extends GUI implements
         		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
         	 else
         		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-        	 break;
+        	 break;         
          }
 	}
 
@@ -2420,7 +2421,7 @@ public class AlmalenceGUI extends GUI implements
 
 				isoAdapter.Elements = activeISO;
 				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
-//				gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
+				//gridview.setNumColumns(activeISO.size() > 9 ? 4 : 3);
 				gridview.setAdapter(isoAdapter);
 	
 				int initValue = preferences.getInt(MainScreen.sISOPref, MainScreen.sDefaultValue);
@@ -3172,6 +3173,8 @@ public class AlmalenceGUI extends GUI implements
 			quickControlChangeres.add(qcView);
 		else
 			settingsViews.add(qcView);
+
+		plugin.quickControlView = qcView;
 	}
 
 	/***************************************************************************************
@@ -3769,6 +3772,7 @@ public class AlmalenceGUI extends GUI implements
 						hideSecondaryMenus();					
 						showParams(MODE_WB);
 					}
+
 					else
 						hideSecondaryMenus();
 				} else {
@@ -4679,6 +4683,8 @@ public class AlmalenceGUI extends GUI implements
 
 		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
 			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
+		
+		//hideStore();
 		
 		//hideStore();
 		
