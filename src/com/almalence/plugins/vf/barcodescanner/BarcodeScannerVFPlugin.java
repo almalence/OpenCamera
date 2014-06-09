@@ -5,12 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -26,10 +24,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,11 +36,20 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
 import com.almalence.opencam.CameraController;
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.SoundPlayer;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
+//-+- -->
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.ImageConversion;
 import com.google.zxing.BinaryBitmap;
@@ -210,10 +215,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		if (mBound != null) {
 			return;
 		}
-//		Camera camera = MainScreen.thiz.getCamera();
-//    	if (null==camera) {
-//    		return;
-//    	}
+		Camera camera = CameraController.getCamera();
+    	if (null==camera) {
+    		return;
+    	}
 		
 		mBound = new BoundingView(MainScreen.mainContext);
 		mBound.setVisibility(View.VISIBLE);
@@ -285,6 +290,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	protected void showBarcodesHistoryDialog() {
 		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.thiz);
+		barcodeHistoryDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
 
 		barcodeHistoryDialog.list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -320,69 +326,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 //
 //		int previewWidth = params.getPreviewSize().width;
 //		int previewHeight = params.getPreviewSize().height;
-		int previewWidth = MainScreen.previewWidth;
-		int previewHeight = MainScreen.previewHeight;
 
-        new DecodeAsyncTask(previewWidth, previewHeight).execute(data);
+        new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
         
 		mFrameCounter = 0;
-	}
-	
-	@TargetApi(19)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		if (mBarcodeScannerState == OFF)
-			return;
-		mFrameCounter++;
-		if (mFrameCounter != 10) {
-			return;
-		}
-		
-		ByteBuffer Y = im.getPlanes()[0].getBuffer();
-		ByteBuffer U = im.getPlanes()[1].getBuffer();
-		ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
-		{
-			Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-			return;
-		}
-		
-		int imageWidth = im.getWidth();
-		int imageHeight = im.getHeight();
-		// Note: android documentation guarantee that:
-		// - Y pixel stride is always 1
-		// - U and V strides are the same
-		//   So, passing all these parameters is a bit overkill
-		int status = com.almalence.YuvImage.CreateYUVImage(Y, U, V,
-				im.getPlanes()[0].getPixelStride(),
-				im.getPlanes()[0].getRowStride(),
-				im.getPlanes()[1].getPixelStride(),
-				im.getPlanes()[1].getRowStride(),
-				im.getPlanes()[2].getPixelStride(),
-				im.getPlanes()[2].getRowStride(),
-				imageWidth, imageHeight, 0);
-		
-		if (status != 0)
-			Log.e("CapturePlugin", "Error while cropping: "+status);
-		
-		
-		byte[] data = com.almalence.YuvImage.GetByteFrame(0);
-		
-		int previewWidth = MainScreen.previewWidth;
-		int previewHeight = MainScreen.previewHeight;
-
-        new DecodeAsyncTask(previewWidth, previewHeight).execute(data);
-        
-		mFrameCounter = 0;
-		
 	}
 	
     public synchronized PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, Rect boundingRect) {
-    	if (boundingRect == null || data == null) {
-    		return null;
-    	}
     	return new PlanarYUVLuminanceSource(data, width, height, boundingRect.left, boundingRect.top,
                 boundingRect.width(), boundingRect.height(), false);
     }
@@ -418,7 +368,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	protected void showBarcodeViewDialog(Barcode barcode) {
 		try{		
     	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
-    	
+    	barcodeViewDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
     	showGUI();
     	
     	barcodeViewDialog.setOnDismissListener(new OnDismissListener() {
@@ -442,22 +392,20 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 //            Camera.Size previewSize = params.getPreviewSize();
 //            int previewHeight = previewSize.height;
 //            int previewWidth = previewSize.width;
-            
-            int previewHeight = MainScreen.previewHeight;
-            int previewWidth = MainScreen.previewWidth;
 
             double heightFraction = BOUNDS_FRACTION;
             double widthFraction = BOUNDS_FRACTION;
 
-            int height = (int) (previewHeight * heightFraction);
-            int width = (int) (previewWidth * widthFraction);
-            int left = (int) (previewWidth * ((1 - widthFraction) / 2));
-            int top = (int) (previewHeight * ((1 - heightFraction) / 2));
+            int height = (int) (MainScreen.previewHeight * heightFraction);
+            int width = (int) (MainScreen.previewWidth * widthFraction);
+            int left = (int) (MainScreen.previewWidth * ((1 - widthFraction) / 2));
+            int top = (int) (MainScreen.previewHeight * ((1 - heightFraction) / 2));
             int right = left + width;
             int bottom = top + height;
 
             return new Rect(left, top, right, bottom);
 //        }
+//        return null;
     }
 	
 	/**
@@ -540,11 +488,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 //		int imageWidth = params.getPreviewSize().width;
 //		int imageHeight = params.getPreviewSize().height;
 		
-		int imageWidth = MainScreen.previewWidth;
-		int imageHeight = MainScreen.previewHeight;
-		
 		byte[] dataRotated = new byte[datas[0].length];
-		ImageConversion.TransformNV21(datas[0], dataRotated, imageWidth, imageHeight, 0, 0, 1);
+		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.previewWidth, MainScreen.previewHeight, 0, 0, 1);
 		datas[0] = dataRotated;
 		
 		
@@ -561,7 +506,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
         		d.get(Calendar.SECOND));
         
         File saveDir = PluginManager.getInstance().GetSaveDir(false);
-        file = new File(saveDir, "QR_" + fileFormat + ".jpg");
+        file = new File(saveDir, fileFormat+".jpg");
         FileOutputStream os = null;
         try {
         	os = new FileOutputStream(file);
@@ -594,7 +539,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	            matrix.postRotate(mOrientation - 90);
 
 	            // We rotate the same Bitmap
-	            bitmap = Bitmap.createBitmap(bitmap, 0, 0, imageHeight, imageWidth, matrix, false);
+	            bitmap = Bitmap.createBitmap(bitmap, 0, 0, MainScreen.previewHeight, MainScreen.previewWidth, matrix, false);
 
 	            // We dump the rotated Bitmap to the stream 
 	            bitmap.compress(CompressFormat.JPEG, 100, os);

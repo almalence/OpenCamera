@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -223,6 +224,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		
 		sessionID=SessionID;
 		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		
         getPrefs();
         
         Display display = ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -326,56 +329,41 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     			try
     	        {
     	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
-
-    	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-    	        	Calendar d = Calendar.getInstance();
-    	        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-    	            		d.get(Calendar.YEAR),
-    	            		d.get(Calendar.MONTH)+1,
-    	            		d.get(Calendar.DAY_OF_MONTH),
-    	            		d.get(Calendar.HOUR_OF_DAY),
-    	            		d.get(Calendar.MINUTE),
-    	            		d.get(Calendar.SECOND));
-    	        	switch (saveOption)
-    	        	{
-    	        	case 1://YEARMMDD_HHMMSS
-    	        		break;
-    	        		
-    	        	case 2://YEARMMDD_HHMMSS_MODE
-    	        		fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-    	        		break;
-    	        		
-    	        	case 3://IMG_YEARMMDD_HHMMSS
-    	        		fileFormat = "IMG_" + fileFormat;
-    	        		break;
-    	        		
-    	        	case 4://IMG_YEARMMDD_HHMMSS_MODE
-    	        		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-    	        		break;
-    	        	}
-    	        	
-    	        	ContentValues values=null;
-    	        	
+    	
     	            for (int i = 0; i<imagesAmount; ++i)
     	            {
-    	            	
-    	            	String index = String.format("_%02d", i);
+    			    	Calendar d = Calendar.getInstance();
+
     		            File file = new File(
-    		            		saveDir, fileFormat+index+".jpg"); 
-    		            FileOutputStream os = new FileOutputStream(file);
-    		            
-    		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
-    		            Boolean orientationLandscape = false;
-    		            if (resultOrientation == null)
-    			            orientationLandscape = true;
-    		            else
-    		            	orientationLandscape = Boolean.parseBoolean(resultOrientation);
-    		            
-    		            String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(sessionID));
-    		            Boolean cameraMirrored = false;
-    		            if (resultMirrored != null)
-    		            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
+    		            		saveDir, 
+    		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_GROUP.jpg",
+    		            		d.get(Calendar.YEAR),
+    		            		d.get(Calendar.MONTH)+1,
+    		            		d.get(Calendar.DAY_OF_MONTH),
+    		            		d.get(Calendar.HOUR_OF_DAY),
+    		            		d.get(Calendar.MINUTE),
+    		            		d.get(Calendar.SECOND)));
+    	                
+    		            FileOutputStream os = null;
+    		            try
+    			    	{
+    		            	os = new FileOutputStream(file);
+    			    	}
+    			    	catch (Exception e)
+    			        {
+    			    		//save always if not working saving to sdcard
+    			        	e.printStackTrace();
+    			        	file = new File(
+        		            		saveDir, 
+        		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM.jpg",
+        		            		d.get(Calendar.YEAR),
+        		            		d.get(Calendar.MONTH)+1,
+        		            		d.get(Calendar.DAY_OF_MONTH),
+        		            		d.get(Calendar.HOUR_OF_DAY),
+        		            		d.get(Calendar.MINUTE),
+        		            		d.get(Calendar.SECOND)));
+    			        	os = new FileOutputStream(file);
+    			        }
     		            
     		            if (os != null)
     		            {
@@ -402,62 +390,27 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
     		            		break;
     		            	case 90:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
     		            		break;
     		            	case 180:
     		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
     		            		break;
     		            	case 270:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
     		            		break;
     		            	}
     		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
     			            ei.saveAttributes();
     		            }
-    		            
-    		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-    		            values = new ContentValues(9);
-    	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-    	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
-    	                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-    	                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-    	                values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
-    	                values.put(ImageColumns.DATA, file.getAbsolutePath());
-    	                
-    	                if (prefs.getBoolean("useGeoTaggingPrefExport", false))
-    		            {
-    		            	Location l = MLocation.getLocation(MainScreen.mainContext);
-    			            
-    			            if (l != null)
-    			            {	     
-//    			            	Exiv2.writeGeoDataIntoImage(
-//    			            		file.getAbsolutePath(), 
-//    			            		true,
-//    			            		l.getLatitude(), 
-//    			            		l.getLongitude(), 
-//    			            		dateString, 
-//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-
-    			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-
-    			            	ei.saveAttributes();
-    			            	
-    				            values.put(ImageColumns.LATITUDE, l.getLatitude());
-    				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-    		            	}
-    		            }
-    	                
-    	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
     	            }
+    	        }
+    			catch(IOException e) {
+    	            e.printStackTrace();
+    	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+    	            return;
     	        }
     	        catch (Exception e)
     	        {
-    	        	Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}
@@ -477,7 +430,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
  		} 
      	catch (Exception e) 
  		{
-     		Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
+     		//make notifier in main thread
+     		//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
  			e.printStackTrace();
  		}
 		
@@ -554,10 +508,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;//mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270 || mDisplayOrientationOnStartProcessing == 180;
 	    		//boolean mirrored = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? false: mCameraMirrored;
 		        // Note: DecodeJpegs doing free() to jpeg data!
+	    		int rotation = mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360 : mDisplayOrientationOnStartProcessing;	    		
 	    		if(!isYUV)
-	    			mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
+	    			mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
 	    		else
-	    			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, mCameraMirrored, mDisplayOrientationOnStartProcessing);
+	    			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
 	    		//mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, false, mCameraMirrored, 0);
 	        	getFaceRects();	
 		        
@@ -751,32 +706,17 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	        {
 	        	Matrix matrix = new Matrix();
 	        	matrix.postRotate(90);
+	        	if (mCameraMirrored) {
+	    			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) {
+	    				matrix.preScale(1, -1);
+	    			} else {
+	    				matrix.preScale(-1, 1);
+	    			}
+	    		}
 	        	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 	        	        matrix, true);
 	        	PreviewBmpInitial = Bitmap.createBitmap(rotated);
 	        }
-	        
-//	        if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-//    		{
-//	        	Log.e("GroupShot", "PreviewBmp rotate to: " + mDisplayOrientationOnStartProcessing);
-//	    		Matrix matrix = new Matrix();
-//	    		matrix.postRotate(mCameraMirrored?(mDisplayOrientationOnStartProcessing+180)%360 : mDisplayOrientationOnStartProcessing);
-//	    		
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//    		}
-//	        
-//	        Matrix matrix = new Matrix();
-//	        matrix.postRotate(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? 270 : 90) : 90);
-//	        //matrix.postRotate(mCameraMirrored? 270 : 90);
-//    		PreviewBmpInitial = Bitmap.createBitmap(PreviewBmpInitial, 0, 0, PreviewBmpInitial.getWidth(), PreviewBmpInitial.getHeight(), matrix, true);
-    		
-//    		if(mDisplayOrientationCurrent == 0 || mDisplayOrientationCurrent == 180) //Device in landscape
-//			{
-//				Matrix matrix = new Matrix();
-//    		
-//				matrix.postRotate(mLayoutOrientationCurrent);
-//				PreviewBmpInitial = Bitmap.createBitmap(PreviewBmpInitial, 0, 0, PreviewBmpInitial.getWidth(), PreviewBmpInitial.getHeight(), matrix, true);
-//			}
 	        
 	        mImgView.setImageBitmap(PreviewBmpInitial);
 	        mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
@@ -886,13 +826,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			float bHeight = bitmap.getHeight();
 			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 			{
-				ratiox = (float)MainScreen.getImageHeight() / (float)bitmap.getWidth();
-				ratioy = (float)MainScreen.getImageWidth() / (float)bitmap.getHeight();
+				ratiox = (float)MainScreen.getImageHeight() / (float)bWidth;
+				ratioy = (float)MainScreen.getImageWidth() / (float)bHeight;
 			}
 			else
 			{
-				ratiox = (float)MainScreen.getImageWidth() / (float)bitmap.getWidth();
-				ratioy = (float)MainScreen.getImageHeight() / (float)bitmap.getHeight();
+				ratiox = (float)MainScreen.getImageWidth() / (float)bWidth;
+				ratioy = (float)MainScreen.getImageHeight() / (float)bHeight;
 			}
 
 			Paint paint = new Paint();
@@ -934,13 +874,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				y = mDisplayOrientationOnStartProcessing == 180? x_tmp : mDisplayHeight-1-x_tmp;
 				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 			}
-			else if(mDisplayOrientationOnStartProcessing == 270)
+			else if(!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
 			{				
 				x = mDisplayHeight - x;
 				y = mDisplayWidth - y;
 				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 			}
-			
+			else if(mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
+			{				
+				x = mDisplayHeight - x;
+				y = mDisplayWidth - y;
+				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
+			}
 //			if(mDisplayOrientationOnStartProcessing != mDisplayOrientationCurrent)
 //			{				
 //				if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
@@ -963,7 +908,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			if((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))				
 			{
 				x = x - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayHeight : mDisplayWidth) - previewBmpRealWidth)/2;
-				y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				if (mCameraMirrored) {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight);
+				}
+				else {
+					y = y - (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)? mDisplayWidth : mDisplayHeight) - previewBmpRealHeight)/2;
+				}
 				Log.e("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
 			}
 			
@@ -1009,66 +959,14 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    
 	    private void setupImageView()
 	    {
-	    	PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);	    	
+	    	PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);	    
+	    	
 	    	if (PreviewBmp != null) 
         	{
-	    		boolean isGuffyOrientation = this.mDisplayOrientationOnStartProcessing == 180 || this.mDisplayOrientationOnStartProcessing == 270;
-	    		Bitmap rotated = null;
-	    		if(this.mDisplayOrientationOnStartProcessing == 0 || this.mDisplayOrientationOnStartProcessing == 180)
-	    		{
-	    			if(isGuffyOrientation)
-	    			{
-	    				Matrix matrix = new Matrix();
-		            	matrix.postRotate(180);
-		            	PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-		            	        matrix, true);	
-	    			}
-	    			drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
-	            	Matrix matrix = new Matrix();
-	            	matrix.postRotate(isGuffyOrientation? 270 : 90);
-	            	rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-	            	        matrix, true);	            	
-	    		}
-	    		else
-	    		{
-	    			Matrix matrix = new Matrix();
-	            	matrix.postRotate(isGuffyOrientation? 270 : 90);
-	            	rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-	            	        matrix, true);	            	
-
-	            	drawFaceRectOnBitmap(rotated, mFaceList.get(mBaseFrame));
-	            	if(isGuffyOrientation)
-	    			{	    				
-		            	matrix.postRotate(270);
-		            	rotated = Bitmap.createBitmap(rotated, 0, 0, rotated.getWidth(), rotated.getHeight(),
-		            	        matrix, true);	
-	    			}
-	    		}
-            	
-            	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);
+	    		updateBitmap();
+            	mImgView.setImageBitmap(PreviewBmp);
+            	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);				                        		
         	}
-	        
-	        
-	        
-//	        if(mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-//			{
-//	        	boolean isGuffyOrientation = mDisplayOrientationOnStartProcessing == 180;
-//	        	//Log.e("GroupShot", "PreviewBmp rotated to: " + mLayoutOrientationCurrent);
-//				Matrix matrix = new Matrix();
-//				matrix.postRotate(isGuffyOrientation? MainScreen.guiManager.getLayoutOrientation() : mLayoutOrientationCurrent);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//			}
-//	        else if(mDisplayOrientationOnStartProcessing == 270)
-//	        {
-//	        	Matrix matrix = new Matrix();
-//				matrix.postRotate(180);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//	        }
-	        
-//	        Matrix matrix = new Matrix();
-//			matrix.postRotate(this.mLayoutOrientationCurrent);
-//    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);	        	        
 	        
 	        mImgView.setOnTouchListener(new View.OnTouchListener()
 	        {
@@ -1290,7 +1188,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				matrix.postRotate((mDisplayOrientationOnStartProcessing+90%360));
 	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);	
 			}
-			else if(mDisplayOrientationOnStartProcessing == 270)
+			else if(!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(180);
+	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
+			}
+			else if(mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
 			{
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);

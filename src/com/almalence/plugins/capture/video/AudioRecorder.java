@@ -33,8 +33,7 @@ public class AudioRecorder
     private final Object sync = new Object();
     private boolean started = false;
     private boolean running = false;
-    private volatile boolean muxerStarted = false;
-    private volatile boolean record = true;
+    private volatile boolean record = false;
     private volatile long time = 0;
     private volatile long timeOrigin = 0;
 	
@@ -49,11 +48,6 @@ public class AudioRecorder
 	{
 		this.time = time;
 		this.timeOrigin = System.nanoTime();
-	}
-	
-	public void muxerStarted()
-	{
-		this.muxerStarted = true;
 	}
 	
 	public void record(final boolean record)
@@ -115,6 +109,7 @@ public class AudioRecorder
 		
 		private volatile boolean running = true;
 	    private int iBufferSize;
+	    private long timeLast = 0;
 	    
 	    
 		public EncodingThread()
@@ -166,30 +161,34 @@ public class AudioRecorder
                 	break;
                 }
             	
-				try
-				{
-					if (buffersInput == null)
-						buffersInput = this.encoder.getInputBuffers();
-
-					int inputBufferIndex = this.encoder.dequeueInputBuffer(-1);
-					if (inputBufferIndex >= 0)
+                if (AudioRecorder.this.record)
+                {
+					try
 					{
-						final ByteBuffer inputBuffer = buffersInput[inputBufferIndex];
-						inputBuffer.clear();
-						inputBuffer.put(recordedBytes);
-						// recycleInputBuffer(mTempBuffer);
-
-						this.encoder.queueInputBuffer(inputBufferIndex, 0, recordedBytes.length,
-								(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000,
-								0);
+						if (buffersInput == null)
+							buffersInput = this.encoder.getInputBuffers();
+	
+						int inputBufferIndex = this.encoder.dequeueInputBuffer(-1);
+						if (inputBufferIndex >= 0)
+						{
+							final ByteBuffer inputBuffer = buffersInput[inputBufferIndex];
+							inputBuffer.clear();
+							inputBuffer.put(recordedBytes);
+							// recycleInputBuffer(mTempBuffer);
+							
+							this.timeLast = Math.max(this.timeLast + 1,
+									(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000);
+	
+							this.encoder.queueInputBuffer(inputBufferIndex, 0, recordedBytes.length, this.timeLast, 0);
+						}
 					}
-				}
-				catch (final Throwable t)
-				{
-					Log.e(TAG, "sendFrameToAudioEncoder exception");
-					t.printStackTrace();
-					break;
-				}     
+					catch (final Throwable t)
+					{
+						Log.e(TAG, "sendFrameToAudioEncoder exception");
+						t.printStackTrace();
+						break;
+					}
+                }
                 
        
                 
@@ -243,7 +242,7 @@ public class AudioRecorder
 						encodedData.position(bufferInfo.offset);
 						encodedData.limit(bufferInfo.offset	+ bufferInfo.size);
 
-						if (AudioRecorder.this.muxerStarted && AudioRecorder.this.record)
+						if (AudioRecorder.this.record)
 						{
 							synchronized (AudioRecorder.this.muxer)
 							{

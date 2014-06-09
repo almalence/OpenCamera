@@ -592,7 +592,7 @@ public class FocusVFPlugin extends PluginViewfinder
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
-        Log.e("FocusPlugin", "Click! x = " + x + " y = " + y + " Preview size: " + MainScreen.thiz.preview.getWidth() + " " + MainScreen.thiz.preview.getHeight());
+//        Log.e("FocusPlugin", "Click! x = " + x + " y = " + y + " Preview size: " + MainScreen.thiz.preview.getWidth() + " " + MainScreen.thiz.preview.getHeight());
         calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
                 mFocusArea.get(0).rect);
         if(MainScreen.currentMeteringMode != -1 && MainScreen.currentMeteringMode == MainScreen.meteringModeSpot)
@@ -675,7 +675,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
     private void cancelAutoFocus()
     {
-        Log.e(TAG, "Cancel autofocus.");
+//        Log.e(TAG, "Cancel autofocus.");
 
         //Camera camera = CameraController.getInstance().getCamera();
         // Note: CameraController.getInstance().getFocusMode(); will return 'FOCUS_MODE_AUTO' if actual

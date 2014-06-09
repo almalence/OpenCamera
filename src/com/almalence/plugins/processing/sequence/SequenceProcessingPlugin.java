@@ -395,7 +395,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	        }
     	        catch (Exception e)
     	        {
-    	        	Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
+    	        	//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}

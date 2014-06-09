@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -20,8 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 
 import com.almalence.opencam.CameraController;
 /* <!-- +++
@@ -59,14 +61,20 @@ public class GyroVFPlugin extends PluginViewfinder {
 	private int pictureWidth;
 	private int pictureHeight;
 	
+	private int previewWidth;
+	private int previewHeight;
+	
 	private boolean remapOrientation;
 	private boolean mPrefHardwareGyroscope = true;
 	
 	private RelativeLayout mHorizonIndicatorContainer;
 	private RelativeLayout mHorizonIndicatorMarkContainer;
 	private RotateImageView mHorizonIndicatorMarkHorizontal;
-	private RotateImageView mHorizonIndicatorMarkVertical;
+	private RotateImageView mHorizonIndicatorMarkTopDown;
+	private RotateImageView mHorizonIndicatorAim;
+	private RotateImageView mHorizonIndicatorAimTopDown;
 	private View mHorizonLayout;
+	private Boolean flat = false;
 	
 	  
 	public GyroVFPlugin() {
@@ -74,7 +82,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			  R.xml.preferences_vf_gyro,
 			  0,
 			  R.drawable.gui_almalence_settings_scene_barcode_on,
-			  "Gyro");
+			  "Gyrovertical");
 		
 		mSensorManager = (SensorManager) MainScreen.thiz.getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -88,27 +96,26 @@ public class GyroVFPlugin extends PluginViewfinder {
 	public void onCameraParametersSetup() {
 		this.checkCoordinatesRemapRequired();
 		
-//		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		if (cp == null) {
-//			return;
-//		}
-		this.pictureWidth = MainScreen.imageWidth;//cp.getPictureSize().width;
-		this.pictureHeight = MainScreen.imageHeight;//cp.getPictureSize().height;
+		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		if (cp == null) {
+			return;
+		}
+		this.pictureWidth = cp.getPictureSize().width;
+		this.pictureHeight = cp.getPictureSize().height;
+		
+		this.previewWidth = cp.getPreviewSize().width;
+		this.previewHeight = cp.getPreviewSize().height;
     	
 
-//		try {
-//			this.viewAngleX = cp.getHorizontalViewAngle();
-//			this.viewAngleY = cp.getVerticalViewAngle();
-//		}
-//		catch (final Throwable e) {
-//			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
-//			this.viewAngleX = 55.4f;
-//			this.viewAngleY = 42.7f;
-//		}
-		
-		//TODO: Temporary default values. HALv3 not supported view angles yet.
-		this.viewAngleX = 59.63f;
-		this.viewAngleY = 46.66f;
+		try {
+			this.viewAngleX = cp.getHorizontalViewAngle();
+			this.viewAngleY = cp.getVerticalViewAngle();
+		}
+		catch (final Exception e) {
+			// Some bugged camera drivers pop ridiculous exception here, use typical view angles then 
+			this.viewAngleX = 55.4f;
+			this.viewAngleY = 42.7f;
+		}
 
 		// some devices report incorrect FOV values, use typical view angles then
 		if (this.viewAngleX >= 150) {
@@ -131,10 +138,13 @@ public class GyroVFPlugin extends PluginViewfinder {
 			this.viewAngleX = HorizontalViewFromAspect;
 
 		mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+		
+		if (!mPrefHardwareGyroscope) {
+			mVfGyroscope.SetFrameParameters(this.previewWidth,
+					this.previewHeight, this.viewAngleX, this.viewAngleY);
+		}
 	}
 
-	
-	
 	private void checkCoordinatesRemapRequired() {
 		final Display display = ((WindowManager)MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		// This is proved way of checking it so we better use deprecated methods.
@@ -171,11 +181,14 @@ public class GyroVFPlugin extends PluginViewfinder {
 			}
 			releaseSensors();
 		}
-		
 	}
 	
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera) {
+		if (!this.mPrefHardwareGyroscope) {
+			this.mVfGyroscope.NewData(data);
+		}
+		
 		if (mGyroState == OFF)
 			return;
 		
@@ -216,7 +229,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 		if (mGyroState == ON) {	
 			mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 			
-			mAugmentedListener = new AugmentedRotationListener(remapOrientation,mPrefHardwareGyroscope);
+			mAugmentedListener = new AugmentedRotationListener(remapOrientation,!mPrefHardwareGyroscope);
 			
 			if (this.mGyroscope != null) {
 				if (mPrefHardwareGyroscope) {
@@ -225,6 +238,9 @@ public class GyroVFPlugin extends PluginViewfinder {
 			}
 			
 			if (!mPrefHardwareGyroscope) {
+				if (mVfGyroscope == null) {
+					mVfGyroscope = new VfGyroSensor(null);
+				}
 				mVfGyroscope.open();
 				mVfGyroscope.SetListener(mAugmentedListener);
 			}
@@ -265,49 +281,67 @@ public class GyroVFPlugin extends PluginViewfinder {
 	}
 	
 	private AtomicBoolean horizon_updating = new AtomicBoolean(false);
-	public void updateHorizonIndicator(float verticalError, float horizontalError, final float sideError) {
+	public void updateHorizonIndicator(float verticalError, float horizontalError, final float sideErrorVertical, final float sideErrorHorizontal) {
+		if (MainScreen.guiManager.lockControls) {
+			mHorizonIndicatorContainer.setVisibility(View.GONE);
+			return;
+		}
+		
+		mHorizonIndicatorContainer.setVisibility(View.VISIBLE);
+		
 		if (!horizon_updating.compareAndSet(false, true)) {
 			return;
 		}
 		
-		if (verticalError > 1.6) {
-			verticalError -= 1.6;
-		}
-		if (verticalError < -1.6) {
-			verticalError += 1.6;
+		if (Math.abs(horizontalError) <= 0.01f && Math.abs(verticalError) <= 0.01f) {
+			mHorizonIndicatorMarkContainer.setPadding(0, 0, 0, 0);
+			if (!flat) {
+				rotateHorizonIndicator(sideErrorVertical, sideErrorHorizontal);
+			}
+			
+			int color = 255;
+			mHorizonIndicatorMarkTopDown.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
+			mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
+			
+			horizon_updating.set(false);
+			return;
 		}
 		
-		if (horizontalError > 1.6) {
-			horizontalError -= 1.6;
-		}
-		if (horizontalError < -1.6) {
-			horizontalError += 1.6;
-		}
-		
-		if ((Math.abs(horizontalError) > 0.9f && (mOrientation == 0 || mOrientation == 180)) || (Math.abs(verticalError) > 0.9f && (mOrientation == 90 || mOrientation == 270))) {
-			mHorizonIndicatorMarkHorizontal.setOrientation(0);
-			mHorizonIndicatorMarkVertical.setOrientation(90);
+		if ((Math.abs(horizontalError) > 1.0f && (mOrientation == 0 || mOrientation == 180 || flat)) || (Math.abs(verticalError) > 1.0f && (mOrientation == 90 || mOrientation == 270 || flat))) {
+			flat = true;
+			mHorizonIndicatorMarkHorizontal.setVisibility(View.GONE);
+			mHorizonIndicatorMarkTopDown.setVisibility(View.VISIBLE);
+			mHorizonIndicatorAim.setVisibility(View.GONE);
+			mHorizonIndicatorAimTopDown.setVisibility(View.VISIBLE);
+			
 			if(Math.abs(verticalError) > 0.9f) {
 				if (verticalError > 0.0f) {
-					verticalError = verticalError - 1.53f;
+					verticalError = (float) (verticalError - Math.PI / 2);
 				} else {
-					verticalError = verticalError + 1.47f;
+					verticalError = (float) (verticalError + Math.PI / 2);
 				}
 			}
 
 			if (Math.abs(horizontalError) > 0.9f) {
 				if (horizontalError > 0.0f) {
-					horizontalError = horizontalError - 1.53f;
+					horizontalError = (float) (horizontalError - Math.PI / 2);
 				} else {
-					horizontalError = horizontalError + 1.47f;
+					horizontalError = (float) (horizontalError + Math.PI / 2);
 				}
 			}
 			
 			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
 			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
-			mHorizonIndicatorMarkVertical.setVisibility(View.VISIBLE);
-			mHorizonIndicatorMarkHorizontal.setOrientation(0);
 
+			int color = (255 - (marginVerticalValue + marginHorizontalValue) * 4);
+			if (color > 50) {
+				mHorizonIndicatorMarkTopDown.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkTopDown.clearColorFilter();
+			}
+		     
+		     
 			if (verticalError < 0.0f) {
 				if (horizontalError < 0.0f) {
 					mHorizonIndicatorMarkContainer.setPadding(0, marginVerticalValue, marginHorizontalValue, 0);
@@ -326,17 +360,16 @@ public class GyroVFPlugin extends PluginViewfinder {
 			}
 			horizon_updating.set(false);
 		} else {
+			flat = false;
+			mHorizonIndicatorMarkHorizontal.setVisibility(View.VISIBLE);
+			mHorizonIndicatorMarkTopDown.setVisibility(View.GONE);
+			mHorizonIndicatorAim.setVisibility(View.VISIBLE);
+			mHorizonIndicatorAimTopDown.setVisibility(View.GONE);
 			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
 			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
-			if (sideError == Float.POSITIVE_INFINITY) {
-				mHorizonIndicatorMarkHorizontal.setOrientation(mOrientation - 90);
-				mHorizonIndicatorMarkVertical.setOrientation(mOrientation);
-			}
-			else {
-				mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideError));
-				mHorizonIndicatorMarkVertical.setOrientation((int)Math.toDegrees(sideError)+90);
-			}	
 
+			rotateHorizonIndicator(sideErrorVertical, sideErrorHorizontal);
+				
 			if (mOrientation == 90 || mOrientation == 270) {
 				if (verticalError < 0.0f) {
 					mHorizonIndicatorMarkContainer.setPadding(0, marginVerticalValue, 0, 0);
@@ -356,6 +389,46 @@ public class GyroVFPlugin extends PluginViewfinder {
 			horizon_updating.set(false);
 		}
 	}
+	
+	private void rotateHorizonIndicator (float sideErrorVertical, float sideErrorHorizontal) {
+		mHorizonIndicatorAim.setOrientation(mOrientation - 90);
+		
+		int colorVert = (255 - Math.abs(((int)Math.toDegrees(sideErrorVertical)-90)%90) * 15);
+		int colorHorz = (255 - Math.abs(((int)Math.toDegrees(sideErrorHorizontal)-90)%90) * 15);
+		
+		if(mOrientation == 90 || mOrientation == 270) {
+			if (colorVert > 100) {
+				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorVert, colorVert, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+			}
+		}
+		else {
+			if (colorHorz > 100) {
+				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorHorz, colorHorz, 0), Mode.MULTIPLY); 
+			}
+			else {
+				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+			}	
+		}
+		
+		if (mOrientation == 90) {
+			mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideErrorVertical) + 180 + mOrientation);
+		} 	
+		
+		if (mOrientation == 270) {
+			mHorizonIndicatorMarkHorizontal.setOrientation(- (int)Math.toDegrees(sideErrorVertical) + mOrientation);
+		}
+		
+		if (mOrientation == 180) {
+			mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideErrorHorizontal) + 180 + mOrientation);
+		}
+		
+		if (mOrientation == 0) {
+			mHorizonIndicatorMarkHorizontal.setOrientation(- (int)Math.toDegrees(sideErrorHorizontal) + mOrientation);
+		}
+	} 
 	
 	private void createGyroUI() {
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
@@ -386,8 +459,10 @@ public class GyroVFPlugin extends PluginViewfinder {
 		mHorizonLayout.requestLayout();
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
 		
+		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
+		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim_top_down);
 		mHorizonIndicatorMarkHorizontal = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_horizontal);
-		mHorizonIndicatorMarkVertical = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_vertical);
+		mHorizonIndicatorMarkTopDown = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_top_down);
 		mHorizonIndicatorContainer = (RelativeLayout) mHorizonLayout.findViewById(R.id.horizon_indicator_container);
 		mHorizonIndicatorMarkContainer = (RelativeLayout) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_container);
 	}

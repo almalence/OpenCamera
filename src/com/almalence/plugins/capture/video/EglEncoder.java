@@ -137,7 +137,7 @@ public class EglEncoder
 	
 	private AudioRecorder audioRecorder;
 	
-	private volatile boolean paused = false;
+	private volatile boolean paused = true;
 	
 	
 	public EglEncoder(final String outputPath, final int width, final int height, 
@@ -210,8 +210,11 @@ public class EglEncoder
 	{
 		if (this.paused)
 		{
-			this.paused = false;
-			this.audioRecorder.record(true);
+			if (this.mMuxerStarted)
+			{
+				this.paused = false;
+				this.audioRecorder.record(true);
+			}
 			
 			return true;
 		}
@@ -559,7 +562,6 @@ public class EglEncoder
 				this.mTrackIndex = this.mMuxer.addTrack(newFormat);
 				this.mMuxer.start();
 				this.mMuxerStarted = true;
-				this.audioRecorder.muxerStarted();
 			}
 			else if (encoderStatus < 0)
 			{
@@ -766,7 +768,6 @@ public class EglEncoder
 				//throw new IllegalStateException(
 					//	"Call makeCurrent() for this instance first.");
 			}
-			
 			EGLExt.eglPresentationTimeANDROID(this.eglDisplay, this.eglSurfaceSwap, nsecs);
 			checkEglError("eglPresentationTimeANDROID");
 		}

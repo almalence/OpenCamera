@@ -1,7 +1,6 @@
 package com.almalence.plugins.vf.barcodescanner;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.ContextMenu;
@@ -14,13 +13,17 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
+//-+- -->
 
 public class BarcodeHistoryListDialog extends RotateDialog implements android.view.View.OnClickListener {
 	Context mainContext;

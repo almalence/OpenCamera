@@ -23,8 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 /**
  * Handles any locale-specific logic for the client.
