@@ -1915,8 +1915,8 @@ public class PluginManager {
 		String s3 = Build.MODEL;
 
 		String s4 = null;
-//		if(MainScreen.guiManager.mISOSupported)
-//			s4 = MainScreen.thiz.getISOMode();
+		if(MainScreen.guiManager.mISOSupported)
+			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
 		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
 		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
