@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.almalence.opencam.R;
 
@@ -366,26 +367,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public final static Map<String, Integer> key_iso = new Hashtable<String, Integer>() {
 		{
 			put(isoAuto, CameraParameters.ISO_AUTO);
-			put(iso50, CameraParameters.ISO_AUTO);
-			put(iso100, CameraParameters.ISO_AUTO);
-			put(iso200, CameraParameters.ISO_AUTO);
-			put(iso400, CameraParameters.ISO_AUTO);
-			put(iso800, CameraParameters.ISO_AUTO);
-			put(iso1600, CameraParameters.ISO_AUTO);
-			put(iso3200, CameraParameters.ISO_AUTO);
+			put(iso50, CameraParameters.ISO_50);
+			put(iso100, CameraParameters.ISO_100);
+			put(iso200, CameraParameters.ISO_200);
+			put(iso400, CameraParameters.ISO_400);
+			put(iso800, CameraParameters.ISO_800);
+			put(iso1600, CameraParameters.ISO_1600);
+			put(iso3200, CameraParameters.ISO_3200);
 		}
 	};
 	
 	public final static Map<String, Integer> key_iso2 = new Hashtable<String, Integer>() {
 		{
 			put(isoAuto_2, CameraParameters.ISO_AUTO);
-			put(iso50_2, CameraParameters.ISO_AUTO);
-			put(iso100_2, CameraParameters.ISO_AUTO);
-			put(iso200_2, CameraParameters.ISO_AUTO);
-			put(iso400_2, CameraParameters.ISO_AUTO);
-			put(iso800_2, CameraParameters.ISO_AUTO);
-			put(iso1600_2, CameraParameters.ISO_AUTO);
-			put(iso3200_2, CameraParameters.ISO_AUTO);
+			put(iso50_2, CameraParameters.ISO_50);
+			put(iso100_2, CameraParameters.ISO_100);
+			put(iso200_2, CameraParameters.ISO_200);
+			put(iso400_2, CameraParameters.ISO_400);
+			put(iso800_2, CameraParameters.ISO_800);
+			put(iso1600_2, CameraParameters.ISO_1600);
+			put(iso3200_2, CameraParameters.ISO_3200);
 		}
 	};
 	
@@ -1201,6 +1202,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (CameraController.camera != null)
 			{
 				List<String> sceneModes = CameraController.cameraParameters.getSupportedSceneModes();
+				Set<String> known_scenes = CameraController.key_scene.keySet();
+				sceneModes.retainAll(known_scenes);
 				byte scenes[] = new byte[sceneModes.size()];
 				for(int i = 0; i < sceneModes.size(); i++)
 				{
