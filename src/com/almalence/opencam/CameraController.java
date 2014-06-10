@@ -7,17 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.almalence.opencam.R;
-
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
-import android.hardware.camera2.CameraManager;
-
-import android.media.Image;
-import android.media.ImageReader;
 import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -445,6 +438,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 	public static int maxRegionsSupported;
+	
+	public static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaMatrix1 = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaCenter = new ArrayList<Area>();	
+	public static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
+	
+	public static int currentMeteringMode = -1;
 	
 	
 	public static int CameraIndex = 0;
@@ -1167,27 +1168,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public boolean isSceneModeSupported()
 	{
-//		if(!MainScreen.isHALv3)
-//		{
-//		List<String> supported_scene = getSupportedSceneModes();
-//		if (supported_scene != null && supported_scene.size() > 0)
-//			return true;
-//		else
-//			return false;
-//		}
-//		else
-//		{
-//			if(HALv3.getInstance().camCharacter != null)
-//			{
-//				byte scenes[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
-//				if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
-//					return true;				
-//			}
-//			
-//			return false;
-//		}
-		
-		
 		byte supported_scene[] = getSupportedSceneModes();
 		if (supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED)
 			return true;
@@ -1247,7 +1227,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();
+				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();				
+				Set<String> known_wb = CameraController.key_wb.keySet();
+				wbModes.retainAll(known_wb);
 				byte wb[] = new byte[wbModes.size()];
 				for(int i = 0; i < wbModes.size(); i++)
 				{
@@ -1291,7 +1273,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();
+				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();				
+				Set<String> known_focus = CameraController.key_focus.keySet();
+				focusModes.retainAll(known_focus);
 				byte focus[] = new byte[focusModes.size()];
 				for(int i = 0; i < focusModes.size(); i++)
 				{
@@ -1355,6 +1339,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (CameraController.camera != null)
 			{
 				List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
+				Set<String> known_flash = CameraController.key_flash.keySet();
+				flashModes.retainAll(known_flash);
 				byte flash[] = new byte[flashModes.size()];
 				for(int i = 0; i < flashModes.size(); i++)
 				{

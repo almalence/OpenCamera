@@ -263,17 +263,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static List<Area> mMeteringAreaCenter = new ArrayList<Area>();	
 	public static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
 	
-//	public static String meteringModeMatrix = "Matrix";
-//	public static String meteringModeCenter = "Center-weighted";
-//	public static String meteringModeSpot = "Spot";
-//	public static String meteringModeAuto = "Auto";
-	
-	public final static int meteringModeAuto = 0;
-	public final static int meteringModeMatrix = 1;	
-	public final static int meteringModeCenter = 2;
-	public final static int meteringModeSpot = 3;
-	
-	
 	public static int currentMeteringMode = -1;
 	
 	public static String sEvPref;
@@ -1390,34 +1379,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public void setCameraMeteringMode(int mode)
 	{
-//		if (camera != null)
-//		{
-//			Camera.Parameters params = cameraParameters;
-//			if(meteringModeAuto.contains(mode))
-//				setCameraMeteringAreas(null);
-//			else if(meteringModeMatrix.contains(mode))
-//			{				
-//				int maxAreasCount = params.getMaxNumMeteringAreas();
-//				if(maxAreasCount > 4)
-//					setCameraMeteringAreas(mMeteringAreaMatrix5);
-//				else if(maxAreasCount > 3)
-//					setCameraMeteringAreas(mMeteringAreaMatrix4);
-//				else if(maxAreasCount > 0)
-//					setCameraMeteringAreas(mMeteringAreaMatrix1);
-//				else
-//					setCameraMeteringAreas(null);					
-//			}
-//			else if(meteringModeCenter.contains(mode))
-//				setCameraMeteringAreas(mMeteringAreaCenter);
-//			else if(meteringModeSpot.contains(mode))
-//				setCameraMeteringAreas(mMeteringAreaSpot);
-//			
-//			currentMeteringMode = mode;
-//		}
-		
-		if(meteringModeAuto == mode)
+		if(CameraParameters.meteringModeAuto == mode)
 			cameraController.setCameraMeteringAreas(null);
-		else if(meteringModeMatrix == mode)
+		else if(CameraParameters.meteringModeMatrix == mode)
 		{				
 			int maxAreasCount = CameraController.getInstance().getMaxNumMeteringAreas();
 			if(maxAreasCount > 4)
@@ -1429,9 +1393,9 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			else
 				cameraController.setCameraMeteringAreas(null);					
 		}
-		else if(meteringModeCenter == mode)
+		else if(CameraParameters.meteringModeCenter == mode)
 			cameraController.setCameraMeteringAreas(mMeteringAreaCenter);
-		else if(meteringModeSpot == mode)
+		else if(CameraParameters.meteringModeSpot == mode)
 			cameraController.setCameraMeteringAreas(mMeteringAreaSpot);
 		
 		currentMeteringMode = mode;

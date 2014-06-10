@@ -5025,158 +5025,140 @@ public class AlmalenceGUI extends GUI implements
 
 	private void setSceneMode(int newMode)
 	{
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (params != null)
-//		{
-			if(newMode != -1 && SceneModeButtons.containsKey(newMode))
-			{
-//				params.setSceneMode(newMode);
-//				CameraController.getInstance().setCameraParameters(params);
-				CameraController.getInstance().setCameraSceneMode(newMode);
-				mSceneMode = newMode;
-			}
-			else if(SceneModeButtons.containsKey(CameraParameters.SCENE_MODE_AUTO))
-			{
-//				params.setSceneMode(sceneAuto);
-//				CameraController.getInstance().setCameraParameters(params);
-				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
-				mSceneMode = CameraParameters.SCENE_MODE_AUTO;	
-			}
-			else if(CameraController.getInstance().getSupportedSceneModes() != null)
-			{
-//				params.setSceneMode(params.getSupportedSceneModes().get(0));
-//				CameraController.getInstance().setCameraParameters(params);
-				CameraController.getInstance().setCameraSceneMode(CameraController.getInstance().getSupportedSceneModes()[0]);
-				mSceneMode = CameraController.getInstance().getSupportedSceneModes()[0];
-			}
+		if(newMode != -1 && SceneModeButtons.containsKey(newMode))
+		{
+			CameraController.getInstance().setCameraSceneMode(newMode);
+			mSceneMode = newMode;
+		}
+		else if(SceneModeButtons.containsKey(CameraParameters.SCENE_MODE_AUTO))
+		{
+			CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
+			mSceneMode = CameraParameters.SCENE_MODE_AUTO;	
+		}
+		else if(CameraController.getInstance().getSupportedSceneModes() != null)
+		{
+			CameraController.getInstance().setCameraSceneMode(CameraController.getInstance().getSupportedSceneModes()[0]);
+			mSceneMode = CameraController.getInstance().getSupportedSceneModes()[0];
+		}
 
-			// After change scene mode it may be changed other stuff such as
-			// flash, wb, focus mode.
-			// Need to get this information and update state of current
-			// parameters.
-			//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
-//				String wbNew = params.getWhiteBalance();
-//				String flashNew = params.getFlashMode();
-//				String focusNew = params.getFocusMode();
-//				String isoNew = params.get(CameraParameters.isoParam);
-			
-			int wbNew = CameraController.getInstance().getWBMode();
-			int flashNew = CameraController.getInstance().getFlashMode();
-			int focusNew = CameraController.getInstance().getFocusMode();
-			int isoNew = CameraController.getInstance().getISOMode();
-			
-//				if(isoNew == null)
-//					isoNew = params.get(CameraParameters.isoParam2);
+		// After change scene mode it may be changed other stuff such as
+		// flash, wb, focus mode.
+		// Need to get this information and update state of current
+		// parameters.						
+		int wbNew = CameraController.getInstance().getWBMode();
+		int flashNew = CameraController.getInstance().getFlashMode();
+		int focusNew = CameraController.getInstance().getFocusMode();
+		int isoNew = CameraController.getInstance().getISOMode();
+		
+		// Save new params value
+		if(wbNew != -1 && WBModeButtons.containsKey(wbNew))
+			mWB = wbNew;
+		else if(WBModeButtons.containsKey(CameraParameters.WB_MODE_AUTO))
+			mWB = CameraParameters.WB_MODE_AUTO;
+		else if(CameraController.getInstance().isWhiteBalanceSupported())
+			mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
+		else
+			mWB = -1;
+		
+		if(focusNew != -1 && FocusModeButtons.containsKey(focusNew))
+			mFocusMode = focusNew;
+		else if(FocusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
+			mFocusMode = CameraParameters.AF_MODE_AUTO;
+		else if(CameraController.getInstance().isFocusModeSupported())
+			mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
+		else
+			mFocusMode = -1;
+		
+		if(flashNew != -1 && FlashModeButtons.containsKey(flashNew))
+			mFlashMode = flashNew;
+		else if(FocusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
+			mFlashMode = CameraParameters.FLASH_MODE_AUTO;
+		else if(CameraController.getInstance().isFlashModeSupported())
+			mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
+		else
+			mFlashMode = -1;
+		
+		if(isoNew != -1 && ISOButtons.containsKey(isoNew))
+			mISO = isoNew;
+		else if(ISOButtons.containsKey(CameraParameters.ISO_AUTO))
+			mISO = CameraParameters.ISO_AUTO;
+		else if(CameraController.getInstance().getSupportedISO() != null)
+			mISO = CameraController.getInstance().getSupportedISO()[0];
+		else
+			mISO = -1;
 
-			// Save new params value
-			if(wbNew != -1 && WBModeButtons.containsKey(wbNew))
-				mWB = wbNew;
-			else if(WBModeButtons.containsKey(CameraParameters.WB_MODE_AUTO))
-				mWB = CameraParameters.WB_MODE_AUTO;
-			else if(CameraController.getInstance().isWhiteBalanceSupported())
-				mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
-			else
-				mWB = -1;
-			
-			if(focusNew != -1 && FocusModeButtons.containsKey(focusNew))
-				mFocusMode = focusNew;
-			else if(FocusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
-				mFocusMode = CameraParameters.AF_MODE_AUTO;
-			else if(CameraController.getInstance().isFocusModeSupported())
-				mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
-			else
-				mFocusMode = -1;
-			
-			if(flashNew != -1 && FlashModeButtons.containsKey(flashNew))
-				mFlashMode = flashNew;
-			else if(FocusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
-				mFlashMode = CameraParameters.FLASH_MODE_AUTO;
-			else if(CameraController.getInstance().isFlashModeSupported())
-				mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
-			else
-				mFlashMode = -1;
-			
-//				if(isoNew != null && ISOButtons.containsKey(isoNew))
-//					mISO = isoNew;
-//				else if(ISOButtons.containsKey(isoAuto))
-//					mISO = isoAuto;
-//				else if(CameraController.getInstance().getSupportedISO() != null)
-//					mISO = CameraController.getInstance().getSupportedISO().get(0);
-//				else
-//					mISO = null;
+		// Set appropriate params buttons pressed
+		setButtonSelected(SceneModeButtons, mSceneMode);
+		setButtonSelected(WBModeButtons, mWB);
+		setButtonSelected(FocusModeButtons, mFocusMode);
+		setButtonSelected(FlashModeButtons, mFlashMode);
+		setButtonSelected(ISOButtons, mISO);
 
-			// Set appropriate params buttons pressed
-			setButtonSelected(SceneModeButtons, mSceneMode);
-			setButtonSelected(WBModeButtons, mWB);
-			setButtonSelected(FocusModeButtons, mFocusMode);
-			setButtonSelected(FlashModeButtons, mFlashMode);
-			//setButtonSelected(ISOButtons, mISO);
+		// Update icons for other camera parameter buttons
+		RotateImageView but = null;
+		int icon_id = -1;
+		if (mWB != -1)
+		{
+			but = (RotateImageView) topMenuButtons.get(MODE_WB);
+			icon_id = icons_wb.get(mWB);
+			but.setImageResource(icon_id);
+			preferences.edit().putInt(MainScreen.sWBModePref, mWB).commit();
 
-			// Update icons for other camera parameter buttons
-			RotateImageView but = null;
-			int icon_id = -1;
-			if (mWB != -1)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_WB);
-				icon_id = icons_wb.get(mWB);
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_WB_CHANGED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
+		if (mFocusMode != -1)
+		{				
+			try {
+				but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+				icon_id = icons_focus.get(mFocusMode);
 				but.setImageResource(icon_id);
-				preferences.edit().putInt(MainScreen.sWBModePref, mWB).commit();
-
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_WB_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
 			}
-			if (mFocusMode != -1)
-			{				
-				try {
-					but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
-					icon_id = icons_focus.get(mFocusMode);
-					but.setImageResource(icon_id);
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
-				}
-				
-				preferences
-						.edit()
-						.putInt(
-								MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
-										: MainScreen.sFrontFocusModePref, mFocusMode)
-						.commit();
+			
+			preferences
+					.edit()
+					.putInt(
+							MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, mFocusMode)
+					.commit();
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			if (mFlashMode != -1)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-				icon_id = icons_flash.get(mFlashMode);
-				but.setImageResource(icon_id);
-				preferences.edit().putInt(MainScreen.sFlashModePref, mFlashMode)
-						.commit();
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
+		if (mFlashMode != -1)
+		{
+			but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
+			icon_id = icons_flash.get(mFlashMode);
+			but.setImageResource(icon_id);
+			preferences.edit().putInt(MainScreen.sFlashModePref, mFlashMode)
+					.commit();
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			if (mISO != -1)
-			{
-				but = (RotateImageView) topMenuButtons.get(MODE_ISO);
-				icon_id = icons_iso.get(mISO);
-				but.setImageResource(icon_id);
-				preferences.edit().putInt(MainScreen.sISOPref, mISO).commit();
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
+		if (mISO != -1)
+		{
+			but = (RotateImageView) topMenuButtons.get(MODE_ISO);
+			icon_id = icons_iso.get(mISO);
+			but.setImageResource(icon_id);
+			preferences.edit().putInt(MainScreen.sISOPref, mISO).commit();
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-			}
-			preferences.edit().putInt(MainScreen.sSceneModePref, newMode).commit();
-//		}
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_ISO_CHANGED;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
+		}
+		preferences.edit().putInt(MainScreen.sSceneModePref, newMode).commit();
+
 
 		but = (RotateImageView) topMenuButtons.get(MODE_SCENE);
 		icon_id = icons_scene.get(mSceneMode);
@@ -5196,18 +5178,6 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1)
 		{
-//			if(!MainScreen.isHALv3)
-//			{
-//				if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
-//						&& CameraController.getInstance().mSceneModeSupported)
-//				{
-//					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-//				}
-//			}
-//				Camera.Parameters params = CameraController.cameraParameters;
-//				params.setWhiteBalance(CameraController.mode_wb.get(newMode));
-//				CameraController.getInstance().setCameraParameters(params);
-			
 			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
 					&& CameraController.getInstance().mSceneModeSupported)
 			{
@@ -5240,15 +5210,6 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1 )
 		{
-//			if(!MainScreen.isHALv3)
-//			{
-//				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
-//				{
-//					if (CameraController.getInstance().mSceneModeSupported)
-//						setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-//				}
-//			}
-			
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
 			{
 				if (CameraController.getInstance().mSceneModeSupported)
@@ -5288,13 +5249,6 @@ public class AlmalenceGUI extends GUI implements
 	{
 		if (newMode != -1)
 		{
-//			if(!MainScreen.isHALv3)
-//			{
-//				if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-//						&& CameraController.getInstance().mSceneModeSupported)
-//					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-//			}
-			
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
 					&& CameraController.getInstance().mSceneModeSupported)
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
@@ -5328,18 +5282,6 @@ public class AlmalenceGUI extends GUI implements
 					&& CameraController.getInstance().mSceneModeSupported)
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-//			if(params.get(MainScreen.isoParam) != null)
-//				params.set(MainScreen.isoParam, newMode);
-//			else if(params.get(MainScreen.isoParam2) != null)
-//				params.set(MainScreen.isoParam2, newMode);
-//			if(false == CameraController.getInstance().setCameraParameters(params))
-//			{
-//				if(params.get(MainScreen.isoParam) != null)
-//					params.set(MainScreen.isoParam, iso_default_values.get(newMode));
-//				else if(params.get(MainScreen.isoParam2) != null)
-//					params.set(MainScreen.isoParam2, iso_default_values.get(newMode));
-//				CameraController.getInstance().setCameraParameters(params);	
-//			}
 			CameraController.getInstance().setCameraISO(newMode);
 			mISO = newMode;
 			setButtonSelected(ISOButtons, mISO);
@@ -5363,23 +5305,22 @@ public class AlmalenceGUI extends GUI implements
 	
 	private void setMeteringMode(int newMode)
 	{
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (newMode != null && params != null && !mMeteringMode.contains(newMode))
-//		{
-//			mMeteringMode = newMode;
-//			setButtonSelected(MeteringModeButtons, mMeteringMode);
-//
-//			preferences.edit().putString(MainScreen.sMeteringModePref, newMode).commit();
-//			CameraController.getInstance().setCameraMeteringMode(newMode);
-//		}
-//
-//		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
-//		int icon_id = icons_metering.get(mMeteringMode);
-//		but.setImageResource(icon_id);
-//
-//		initSettingsMenu();
-//		hideSecondaryMenus();
-//		unselectPrimaryTopMenuButtons(-1);
+		if (newMode != -1 && mMeteringMode != newMode)
+		{
+			mMeteringMode = newMode;
+			setButtonSelected(MeteringModeButtons, mMeteringMode);
+
+			preferences.edit().putInt(MainScreen.sMeteringModePref, newMode).commit();
+			MainScreen.thiz.setCameraMeteringMode(newMode);
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
+		int icon_id = icons_metering.get(mMeteringMode);
+		but.setImageResource(icon_id);
+
+		initSettingsMenu();
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
 	}
 
 	// Hide all pop-up layouts
