@@ -63,4 +63,9 @@ public final class CameraParameters
 	//Possible names of iso in Camera.Parameters variable
 	public final static String isoParam = "iso";
 	public final static String isoParam2 = "iso-speed";
+	
+	public final static int meteringModeAuto = 0;
+	public final static int meteringModeMatrix = 1;	
+	public final static int meteringModeCenter = 2;
+	public final static int meteringModeSpot = 3;
 }
