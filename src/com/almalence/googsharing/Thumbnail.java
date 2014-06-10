@@ -290,7 +290,6 @@ public class Thumbnail {
     {
     	final int side = Math.min(bitmap.getWidth(), bitmap.getHeight());
 
-    	//System.gc();
     	final Bitmap bitmapCropped = Bitmap.createBitmap(    				
     		bitmap,
     		(bitmap.getWidth() - side) / 2,
@@ -298,7 +297,6 @@ public class Thumbnail {
     		side, 
     		side);
     	
-    	//System.gc();
     	final Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         
         Canvas canvas = new Canvas(output);
@@ -307,7 +305,6 @@ public class Thumbnail {
         final Paint paint = new Paint();
         final Rect rectSrc = new Rect(0, 0, bitmapCropped.getWidth(), bitmapCropped.getHeight());
         final Rect rect = new Rect(6, 6, output.getWidth() - 6, output.getHeight() - 6);
-        //final Rect rect = new Rect(0, 0, output.getWidth(), output.getHeight());
         final RectF rectF = new RectF(rect);
         final RectF rectFBorder = new RectF(0, 0, output.getWidth(), output.getHeight());
         final float roundPx = pixels;
