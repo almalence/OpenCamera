@@ -1434,36 +1434,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 			return HALv3.getSupportedISOModesHALv3();
-		
-//		if (camera != null)
-//		{
-//			Camera.Parameters camParams = MainScreen.cameraParameters;
-//			String supportedIsoValues = camParams.get("iso-values");
-//			String supportedIsoValues2 = camParams.get("iso-speed-values");
-//			String supportedIsoValues3 = camParams.get("iso-mode-values");
-//			//String iso = camParams.get("iso");
-//			
-//			String delims = "[,]+";
-//			String[] ISOs = null;
-//			
-//			if (supportedIsoValues != "" && supportedIsoValues != null)
-//				ISOs = supportedIsoValues.split(delims);
-//			else if(supportedIsoValues2 != "" && supportedIsoValues2 != null)
-//				ISOs = supportedIsoValues2.split(delims);
-//			else if(supportedIsoValues3 != "" && supportedIsoValues3 != null)
-//				ISOs = supportedIsoValues3.split(delims);
-//			
-//			if(ISOs != null)
-//			{
-//				List<String> isoList = new ArrayList<String>();				
-//				for (int i = 0; i < ISOs.length; i++)
-//					isoList.add(ISOs[i]);
-//
-//				return isoList;
-//			}
-//		}
-//
-//		return null;
 	}	
 	
 	
