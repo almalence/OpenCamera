@@ -74,8 +74,6 @@ public class BestShotCapturePlugin extends PluginCapture
 			  0,
 			  R.drawable.gui_almalence_mode_bestshot,
 			  "Best Shot images");
-
-		//refreshPreferences();
 	}
 	
 	@Override
@@ -337,9 +335,6 @@ public class BestShotCapturePlugin extends PluginCapture
 			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
 			
 			isYUV = true;
-			
-//			if(imagesTaken == 1)
-//	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
 		{

@@ -73,7 +73,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-		//refreshPreferences();
 	}
 	
 	@Override
@@ -194,7 +193,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(false);
 			inCapture = false;
 			return;
-    		//NotEnoughMemory();
     	}
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
@@ -291,9 +289,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		int frame = YuvImage.GetFrame(0);
 		int frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
 		
-//		int frame_len = paramArrayOfByte.length;
-//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-    	
     	if (frame == 0)
     	{
     		Log.e("Object Removal", "Load to heap failed");
@@ -307,7 +302,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(false);
 			inCapture = false;
 			return;
-    		//NotEnoughMemory();
     	}
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
@@ -319,9 +313,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     	
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
     	
-//    	if(imagesTaken == 1)
-//    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-		
 		try
 		{
 			CameraController.startCameraPreview();
@@ -356,13 +347,6 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			
 			imagesTaken=0;
 			inCapture = false;
-//			new CountDownTimer(5000, 5000) {
-//			     public void onTick(long millisUntilFinished) {}
-//			     public void onFinish() 
-//			     {
-//			    	 inCapture = false;
-//			     }
-//			  }.start();
 		}
 		
 		takingAlready = false;

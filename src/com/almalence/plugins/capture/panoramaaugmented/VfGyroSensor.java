@@ -175,8 +175,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 				{
 		    		sensorEventPrev.timestamp = System.nanoTime(); // timestamp;
 		    		
-	    			//Log.i ("CameraTest", "blank-run sensorEventPrev.timestamp "+(sensorEventPrev.timestamp-timestamp_initial)/1000000+"ms");
-	
 					++nBlankRuns;
 	
 					// emit sensor event
@@ -204,7 +202,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 
 		if (EARLY_TIMESTAMP)
 		{
-			//Log.i ("CameraTest", "dt: " + (timestamp-sensorEvent.timestamp)/1000);
 			sensorEvent.timestamp = timestamp;
 		}
 		
@@ -219,9 +216,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 		    		Update(datacopy, sensorEvent.timestamp, m_justStability);
 			
 					Get(sensorEvent.values);
-					//sensorEvent.values[0] = 0.01f;
-					//sensorEvent.values[1] = 0.0f;
-					//sensorEvent.values[2] = 0.0f;
 					
 					// clean any pending blank-run messages
 					if (SMOOTH_MOTION)
@@ -244,9 +238,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 			    			long dt1 = sensorEvent.timestamp - timestamp_initial; 
 			    			long dt2 = sensorEventPrev.timestamp - timestamp_initial;
 
-			    			//Log.i ("CameraTest", "sensorEvent.values "+sensorEvent.values[0]+" "+sensorEvent.values[1]+" "+sensorEvent.values[2]);
-			    			//Log.i ("CameraTest", "sensorEventPrev.values "+sensorEventPrev.values[0]+" "+sensorEventPrev.values[1]+" "+sensorEventPrev.values[2]);
-
 			    			if (dt1 != dt2)	// replace with dt1 > dt2
 			    			{
 			    				float norm = 1.f/(dt1-dt2);
@@ -258,9 +249,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 				    				
 				    				sensorEvent.values[i] = (dx1-dx2)*norm;
 				    			}
-				    			
-				    			//Log.i ("CameraTest", "dt1 "+dt1/1000000+"ms dt2 "+dt2/1000000+"ms");
-				    			//Log.i ("CameraTest", "sensorEvent.values "+sensorEvent.values[0]+" "+sensorEvent.values[1]+" "+sensorEvent.values[2]);
 			    			}
 			    		}
 			    		

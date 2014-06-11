@@ -437,8 +437,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
-//    	if(n == 0)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEGForExpoBracketing(paramArrayOfByte, n + 1, SessionID);
+   		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEGForExpoBracketing(paramArrayOfByte, n + 1, SessionID);
     	
     	if (compressed_frame[n] == 0)
     	{
@@ -860,28 +859,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	// on motorola xt5 cm7 this function is called twice!
     		// on motorola droid's onAutoFocus seem to be called at every startPreview,
     		// causing additional frame(s) taken after sequence is finished 
-//        	if (!takingAlready)
-//        	{
-//	        	CaptureFrame(paramCamera);
-//	    		takingAlready = true;
-//        	}
-        	
         	if(aboutToTakePicture == true)
         	{
     			CaptureFrame();
     			takingAlready = true;
         	}
-        	
-//        	if(aboutToTakePicture == true && paramBoolean == true)
-//        	{
-//    			CaptureFrame(paramCamera);
-//    			takingAlready = true;
-//        	}
-//    		else if(aboutToTakePicture == true)
-//    		{
-//    			MainScreen.guiManager.lockControls = false;
-//    		}
-        	
         	aboutToTakePicture = false;
         }
     }

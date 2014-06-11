@@ -274,10 +274,6 @@ public final class Util {
         return object;
     }
 
-    public static boolean equals(Object a, Object b) {
-        return (a == b) || (a == null ? false : a.equals(b));
-    }
-
     public static int nextPowerOf2(int n) {
         n -= 1;
         n |= n >>> 16;
