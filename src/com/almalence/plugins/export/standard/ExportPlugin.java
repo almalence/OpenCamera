@@ -30,15 +30,12 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -84,7 +81,6 @@ public class ExportPlugin extends PluginExport
 	boolean isResultFromProcessingPlugin = false;
 	
 	private int saveOption;
-//	private int exportFormat;
 	private boolean useGeoTaggingPrefExport;
 
 	Thread saving;
@@ -117,7 +113,6 @@ public class ExportPlugin extends PluginExport
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
-//        exportFormat = Integer.parseInt(prefs.getString("exportFormat", "1"));
         useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 	}
 	
@@ -163,10 +158,6 @@ public class ExportPlugin extends PluginExport
 	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_search));
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	        break;
-//	    case GpsStatus.GPS_EVENT_STOPPED:
-//	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
-//	    	gpsInfoImage.setVisibility(View.INVISIBLE);
-//	        break;
 	    case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 	    	if (!isFirstGpsFix)
 	    		return;
@@ -245,10 +236,7 @@ public class ExportPlugin extends PluginExport
 		    		break;
 		    	}
 		    		
-//		    	if (1 == exportFormat)
-		    		fileFormat += idx+".jpg";
-//		    	else
-//		    		fileFormat += idx+".png";
+		    	fileFormat += idx+".jpg";
 		    	
 		    	File file;
 		    	if (MainScreen.ForceFilename == null)
@@ -408,7 +396,6 @@ public class ExportPlugin extends PluginExport
                 values.put(ImageColumns.DISPLAY_NAME, file.getName());
                 values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
                 values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-                //values.put(ImageColumns.ORIENTATION, (!orientationLandscape && writeOrientationTag && !cameraMirrored) ? 90 : ( (!orientationLandscape && writeOrientationTag && cameraMirrored) ? 270 : 0) );
                 values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
                 values.put(ImageColumns.DATA, file.getAbsolutePath());
                 
@@ -453,11 +440,6 @@ public class ExportPlugin extends PluginExport
 			        		value.setBytes(GPSDateString.getBytes());
 			        		exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
 			            }
-	            	}
-	            	else
-	            	{
-	            		//Toast.makeText(MainScreen.mainContext, "Can't get location. Turn on \"use GPS satellites\" setting", Toast.LENGTH_LONG).show();
-	            		
 	            	}
 	            }
     	    	
