@@ -1456,7 +1456,7 @@ public class AlmalenceGUI extends GUI implements
 		//add self-timer control
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		boolean showDelayedCapturePrefCommon = prefs.getBoolean("showDelayedCapturePrefCommon", false);
+		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
 		AddSelfTimerControl(showDelayedCapturePrefCommon);
 
 		LinearLayout infoLayout = (LinearLayout) guiView
@@ -7525,11 +7525,11 @@ public class AlmalenceGUI extends GUI implements
         np.setWrapSelectorWheel(false);
         
         final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
-        boolean flash = prefs.getBoolean("delayedCaptureFlashPrefCommon", false);
+        boolean flash = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
         flashCheckbox.setChecked(flash);
         
         final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
-        boolean sound = prefs.getBoolean("delayedCaptureSoundPrefCommon", false);
+        boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
         soundCheckbox.setChecked(sound);
         
 //        final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
@@ -7610,14 +7610,14 @@ public class AlmalenceGUI extends GUI implements
              int real_int = Integer.parseInt(stringInterval[np.getValue()]);
              prefsEditor.putBoolean("swChecked", swChecked);
              if (swChecked)
-            	 prefsEditor.putInt("delayedCapturePrefCommon", real_int);
+            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
              else
              {
-            	 prefsEditor.putInt("delayedCapturePrefCommon", 0);
+            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, 0);
             	 real_int = 0;
              }
-             prefsEditor.putBoolean("delayedCaptureFlashPrefCommon", flashCheckbox.isChecked());
-             prefsEditor.putBoolean("delayedCaptureSoundPrefCommon", soundCheckbox.isChecked());
+             prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
+             prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
              prefsEditor.putInt("delayedIndexCapturePrefCommon", interval);
              prefsEditor.commit();
 
