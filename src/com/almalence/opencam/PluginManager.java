@@ -2146,9 +2146,8 @@ public class PluginManager {
 			         {
 			        	try 
 			        	{
-			        		 Camera.Parameters p = CameraController.getInstance().getCameraParameters();
-				        	 p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-				        	 CameraController.getInstance().setCameraParameters(p);
+			        		flashModeBackUp = CameraController.getInstance().getFlashMode();
+			        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
 						} catch (Exception e) {
 							e.printStackTrace();
 							Log.e("Self-timer", "Torch exception: " + e.getMessage());
