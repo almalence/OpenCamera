@@ -37,10 +37,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.Size;
 import android.media.Image;
 import android.os.Build;
 import android.preference.EditTextPreference;
@@ -146,9 +143,6 @@ public abstract class Plugin
 		}
 		
 		setAdvancedPreferenceName(advancedPreferenceID);
-		//for dynamic preference generation. Header text and preferences xml
-		//title = preferenceTitle;
-		//summary = preferenceSummary;
 		
 		quickControlIconID = quickControlID;
 		quickControlTitle = quickControlInitTitle;
@@ -213,24 +207,7 @@ public abstract class Plugin
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
 	
 	private int MIN_MPIX_SUPPORTED = 1280 * 960;
-	
-//	@TargetApi(9)
-//	protected void openCameraFrontOrRear()
-//	{
-//		if (Camera.getNumberOfCameras() > 0) {
-//			CameraController.getInstance().setCamera(Camera.open(CameraController.CameraIndex));
-//		}
-//
-//		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-//		Camera.getCameraInfo(CameraController.CameraIndex,
-//				cameraInfo);
-//
-//		if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-//			MainScreen.setCameraMirrored(true);
-//		else
-//			MainScreen.setCameraMirrored(false);		
-//	}
-	
+		
 	public void SelectImageDimension()
 	{
 		// ----- Figure how much memory do we have and possibly limit resolution
@@ -251,15 +228,6 @@ public abstract class Plugin
     		prefIdx = -1;
     	}
 
-		// ----- Find max-resolution capture dimensions
-//    	Camera camera = CameraController.getInstance().getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		List<Camera.Size> cs = cp.getSupportedPictureSizes();
-    	
-    	//CameraCharacteristics params = CameraController.getInstance().getCameraParameters2();
-    	//Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
     	List<CameraController.Size> cs = CameraController.ResolutionsSizeList;
 		//add 8 Mpix for rear camera for HTC One X
 		if(Build.MODEL.contains("HTC One X"))
@@ -287,8 +255,6 @@ public abstract class Plugin
 		int ii = 0;
 		for(CameraController.Size s : cs)
 		{
-//		for (int ii = 0; ii < cs.size(); ++ii) {
-			//Size s = cs.get(ii);
 			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((mpix >= MIN_MPIX_SUPPORTED)
@@ -307,8 +273,6 @@ public abstract class Plugin
 		ii = 0;
 		for(CameraController.Size s : cs)
 		{
-//		for (int ii = 0; ii < cs.size(); ++ii) {
-//			Size s = cs.get(ii);
 			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((ii == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
@@ -348,8 +312,6 @@ public abstract class Plugin
 		
 		MainScreen.setSaveImageWidth(CaptureWidth);
 		MainScreen.setSaveImageHeight(CaptureHeight);
-//		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(CaptureWidth));
-//    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(CaptureHeight));
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {

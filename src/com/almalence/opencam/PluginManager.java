@@ -49,7 +49,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
@@ -180,11 +179,11 @@ public class PluginManager {
 	public static final int MSG_POSTPROCESSING_FINISHED = 6;
 	public static final int MSG_FILTER_FINISHED = 7;
 	public static final int MSG_EXPORT_FINISHED = 8;
-	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 888;
-    public static final int MSG_START_FX = 9;
-	public static final int MSG_FX_FINISHED = 10;
-	public static final int MSG_DELAYED_CAPTURE = 11;	
-	public static final int MSG_FORCE_FINISH_CAPTURE = 12;
+	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 9;
+    public static final int MSG_START_FX = 10;
+	public static final int MSG_FX_FINISHED = 11;
+	public static final int MSG_DELAYED_CAPTURE = 12;	
+	public static final int MSG_FORCE_FINISH_CAPTURE = 13;
 	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
 	public static final int MSG_CAPTURE_FINISHED_NORESULT = 15;
 	
@@ -209,7 +208,7 @@ public class PluginManager {
 
 	public static final int MSG_RESTART_MAIN_SCREEN = 30;
 
-	public static final int MSG_RETURN_CAPTURED = 222;
+	public static final int MSG_RETURN_CAPTURED = 31;
 
 	public static final int MSG_RESULT_OK = 40;
 	public static final int MSG_RESULT_UNSAVED = 41;
@@ -321,10 +320,6 @@ public class PluginManager {
 		pluginList.put(nightCapturePlugin.getID(), nightCapturePlugin);
 		listCapture.add(nightCapturePlugin);
 
-//		SelfTimerCapturePlugin testTimerCapturePlugin = new SelfTimerCapturePlugin();
-//		pluginList.put(testTimerCapturePlugin.getID(), testTimerCapturePlugin);
-//		listCapture.add(testTimerCapturePlugin);
-
 		BurstCapturePlugin burstCapturePlugin = new BurstCapturePlugin();
 		pluginList.put(burstCapturePlugin.getID(), burstCapturePlugin);
 		listCapture.add(burstCapturePlugin);
@@ -362,10 +357,6 @@ public class PluginManager {
 				backInTimeProcessingPlugin);
 		listCapture.add(backInTimeProcessingPlugin);
 
-//		HiresPortraitCapturePlugin hiresPortraitCapturePlugin = new HiresPortraitCapturePlugin();
-//		pluginList.put(hiresPortraitCapturePlugin.getID(),hiresPortraitCapturePlugin);
-//		listCapture.add(hiresPortraitCapturePlugin);
-
 		// Processing
 		// or move this to onCreate from processing??!??!!??!
 
@@ -401,9 +392,6 @@ public class PluginManager {
 		pluginList.put(bestshotProcessingPlugin.getID(), bestshotProcessingPlugin);
 		listProcessing.add(bestshotProcessingPlugin);
 
-//		HiresPortraitProcessingPlugin hiresPortraitProcessingPlugin = new HiresPortraitProcessingPlugin();
-//		pluginList.put(hiresPortraitProcessingPlugin.getID(), hiresPortraitProcessingPlugin);
-//		listProcessing.add(hiresPortraitProcessingPlugin);
 		// Filter
 
 		// Export
@@ -519,7 +507,6 @@ public class PluginManager {
 	private void restartMainScreen() {
 		// disable old plugins
 		MainScreen.guiManager.onStop();
-		// onPause(true);
 		MainScreen.thiz.PauseMain();
 		onStop();
 
@@ -530,9 +517,6 @@ public class PluginManager {
 
 		countdownView.clearAnimation();
         countdownLayout.setVisibility(View.GONE);
-        
-		// onGUICreate();
-		// MainScreen.guiManager.onGUICreate();
 	}
 
 	// parse config to get camera and modes configurations
@@ -652,9 +636,6 @@ public class PluginManager {
 	// base onResume stage
 	public void onResume() {
 		shutterRelease = true;
-		//Date curDate = new Date();
-		//SessionID = curDate.getTime();
-
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onResume();
 		if (null != pluginList.get(activeCapture))
@@ -835,7 +816,6 @@ public class PluginManager {
 			if (mode.Capture.equals(pg.getID()))
 			{
 				addHeadersContent(pf, pg, false);
-				//addHeadersContent(pf, pg, true);
 			}
 		}
 		for (int j = 0; j < listProcessing.size(); j++) {
@@ -843,7 +823,6 @@ public class PluginManager {
 			if (mode.Processing.equals(pg.getID()))
 			{
 				addHeadersContent(pf, pg, false);
-				//addHeadersContent(pf, pg, true);
 			}
 		}
 	}
@@ -882,14 +861,6 @@ public class PluginManager {
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
 		}
-//		else if ("vf_inactive_settings".equals(settings)) {
-//			for (int i = 0; i < listVF.size(); i++) {
-//				Plugin pg = listVF.get(i);
-//				if (!activeVF.contains(pg.getID()))
-//					inactivePlugins.add(pg);
-//			}
-//			addHeadersContent(pf, inactivePlugins, false);
-//		}
 		else if ("save_configuration".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
@@ -926,10 +897,6 @@ public class PluginManager {
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
 		}
-//		else if ("selftimer".equals(settings))
-//		{
-//			AddModeSettings("selftimer", pf);
-//		}
 		else if ("burst".equals(settings))
 		{
 			AddModeSettings("burstmode", pf);
@@ -974,47 +941,6 @@ public class PluginManager {
 		{
 			AddModeSettings("bestshotmode", pf);
 		}
-//			List<Mode> modes = ConfigParser.getInstance().getList();
-//			for (int i = 0; i < modes.size(); i++)
-//			{
-//				pf.addPreferencesFromResource(R.xml.preferences_modes);
-//				Mode mode = modes.get(i);
-//				for (int j = 0; j < listCapture.size(); j++) {
-//					Plugin pg = listCapture.get(j);
-//					if (mode.Capture.equals(pg.getID()))
-//						addHeadersContent(pf, pg, false);
-//				}
-//				
-//			}
-/*			
-			for (int i = 0; i < listCapture.size(); i++) {
-				Plugin pg = listCapture.get(i);
-				if (activeCapture.equals(pg.getID()))
-					activePlugins.add(pg);
-				else
-					inactivePlugins.add(pg);
-			}
-			if (activePlugins.size() != listCapture.size()
-					&& isPreferenecesAvailable(inactivePlugins, false))
-				hasInactive = true;
-			addHeadersContent(pf, activePlugins, false);
-
-			activePlugins.clear();
-			inactivePlugins.clear();
-			for (int i = 0; i < listProcessing.size(); i++) {
-				Plugin pg = listProcessing.get(i);
-				if (activeProcessing.equals(pg.getID()))
-					activePlugins.add(pg);
-			}
-			if (activePlugins.size() != listProcessing.size()
-					&& isPreferenecesAvailable(inactivePlugins, false))
-				hasInactive = true;
-			addHeadersContent(pf, activePlugins, false);
-
-			if (hasInactive)
-				pf.addPreferencesFromResource(R.xml.preferences_shooting_inactive);
-				*/
-//		}
 		else if ("saving_settings".equals(settings)) {
 			for (int i = 0; i < listFilter.size(); i++) {
 				Plugin pg = listFilter.get(i);
@@ -1170,18 +1096,6 @@ public class PluginManager {
 		else if ("plugins_settings".equals(settings)) 
 		{
 			//<!-- -+-
-//			if (MainScreen.thiz.isUnlockedAll())
-//			{
-//				Toast.makeText(MainScreen.mainContext, "Already unlocked all", Toast.LENGTH_LONG).show();
-////				return;
-//			}
-
-//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//			if (false == prefs.getBoolean("unlock_all_forever", false))
-//			{
-//				pf.addPreferencesFromResource(R.xml.preferences_plugins_upgrade);
-//				MainScreen.thiz.onBillingPreferenceCreate(pf);
-//			}
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
@@ -1193,7 +1107,6 @@ public class PluginManager {
 					MainScreen.guiManager.showStore();
 				}
 			}.start();
-			
 			//-+- -->
 		}
 
@@ -1235,9 +1148,6 @@ public class PluginManager {
 			pf.addPreferencesFromResource(R.xml.preferences);
 			MainScreen.thiz.onPreferenceCreate(pf);
 		}
-//		else if ("saving_settings".equals(settings)) {
-//			pf.addPreferencesFromResource(R.xml.preferences_export_common);
-//		}
 	}
 
 	private void loadStandardSettingsAfter(PreferenceFragment pf,
@@ -1334,22 +1244,10 @@ public class PluginManager {
 
 	public void SelectDefaults()
 	{
-//		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
-
 		if(!isDefaultsSelected)
 			for (final Entry<String, Plugin> entry : this.pluginList.entrySet())
 			{
 				final Plugin plugin = entry.getValue();
-
-//				final String plugin_key = PREFERENCE_KEY_DEFAULTS_SELECTED + plugin.ID;
-//				
-//				if (!prefs.getBoolean(plugin_key, false))
-//				{
-//					plugin.onDefaultsSelect();
-//				
-//					prefs.edit().putBoolean(plugin_key, true).commit();
-//				}
-
 				plugin.onDefaultsSelect();
 			}
 		isDefaultsSelected = true;	
@@ -1595,15 +1493,9 @@ public class PluginManager {
 			cntProcessing++;
 			ProcessingTask task = new ProcessingTask(MainScreen.thiz);
 			task.SessionID = Long.valueOf((String)msg.obj);
-//			Log.e("NIGHT CAMERA DEBUG", "MSG_CAPTURE_FINISHED session = " + SessionID);
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
-
-//			Date curDate = new Date();
-//			SessionID = curDate.getTime();
-//			Log.e("NIGHT CAMERA DEBUG", "New created session = " + SessionID);
-
 			MainScreen.thiz.MuteShutter(false);
 
 			// <!-- -+-
@@ -1728,14 +1620,6 @@ public class PluginManager {
 				for (int i = 0; i < activeVF.size(); i++)
 					pluginList.get(activeVF.get(i)).onExportFinished();
 
-//				if (MainScreen.thiz.getIntent().getAction() != null)
-//		        {
-//			    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
-//			    			&& MainScreen.ForceFilename == null)
-//			    	{
-//			    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
-//			    	}
-//		        }
 				Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
 				break;
 
@@ -2035,15 +1919,11 @@ public class PluginManager {
 			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
 			//if post rpocessing not needed - save few values 
 			//from main screen to shared memory for current session
-//			Plugin processing = pluginList.get(activeProcessing);
-//			Plugin export = pluginList.get(activeExport);
 			if (null != processing)
 				if(!processing.isPostProcessingNeeded())
 				{
 					addToSharedMem("imageHeight"+SessionID, String.valueOf(MainScreen.getImageHeight()));
 					addToSharedMem("imageWidth"+SessionID, String.valueOf(MainScreen.getImageWidth()));
-//					addToSharedMem("saveImageHeight"+SessionID, String.valueOf(MainScreen.getSaveImageHeight()));
-//					addToSharedMem("saveImageWidth"+SessionID, String.valueOf(MainScreen.getSaveImageWidth()));
 					addToSharedMem("wantLandscapePhoto"+SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
 					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(MainScreen.getCameraMirrored()));
 				}
@@ -2081,11 +1961,6 @@ public class PluginManager {
 		return cntProcessing;
 	}
 
-	//return current session id!!!
-//	public long getSessionID() {
-//		return SessionID;
-//	}
-
 	//get file saving directory
 	//toInternalMemory - should be true only if force save to internal 
 	public File GetSaveDir(boolean forceSaveToInternalMemory)
@@ -2102,13 +1977,9 @@ public class PluginManager {
         
         if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
         {
-//        	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-//        		Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
-        	
 			dcimDir = Environment.getExternalStorageDirectory();
 
 			// there are variations in sd-card directory namings
-
 			memcardDir = new File("/storage", "sdcard1");		// Jelly Bean fix
             if (memcardDir.exists())
             {
@@ -2141,47 +2012,56 @@ public class PluginManager {
 		                }					
 			            else
 			            {
-			            	memcardDir = new File("/storage", "emulated");		//Huawei honor 2
+			            	memcardDir = new File("/Removable", "MicroSD");		//Huawei honor 2
 				            if (memcardDir.exists())
 				            {
-					            saveDir = new File("/storage", "emulated/0/DCIM/" + abcDir);
+					            saveDir = new File("/Removable", "MicroSD/DCIM/" + abcDir);
 				            	usePhoneMem = false;
 				            }
 				            else
 				            {
-				            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
+				            	memcardDir = new File("/storage", "emulated");		//Huawei honor 2
 					            if (memcardDir.exists())
 					            {
-						            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
+						            saveDir = new File("/storage", "emulated/0/DCIM/" + abcDir);
 					            	usePhoneMem = false;
 					            }
-				                else
-				                {
-									memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
+					            else
+					            {
+					            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
 						            if (memcardDir.exists())
 						            {
-							            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
+							            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
 						            	usePhoneMem = false;
 						            }
-						            else
-						            {
-										memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
+					                else
+					                {
+										memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
 							            if (memcardDir.exists())
 							            {
-								            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
+								            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
 							            	usePhoneMem = false;
 							            }
 							            else
 							            {
-											memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+											memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
 								            if (memcardDir.exists())
 								            {
-									            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+									            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
 								            	usePhoneMem = false;
 								            }
+								            else
+								            {
+												memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+									            if (memcardDir.exists())
+									            {
+										            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+									            	usePhoneMem = false;
+									            }
+								            }
 							            }
-						            }
-				                }
+					                }
+					            }
 			                }
 			            }
 		            }
@@ -2193,11 +2073,6 @@ public class PluginManager {
         	saveDir = new File(MainScreen.SaveToPath);
         	usePhoneMem = false;
         }
-        
-//        if (!saveDir.exists())
-//        {
-//        	usePhoneMem = true;
-//        }
         
         if (usePhoneMem || forceSaveToInternalMemory)		// phone memory (internal sd card)
 		{
@@ -2220,7 +2095,6 @@ public class PluginManager {
     }
 
 	//delayed capture feature
-
 	private SoundPlayer countdownPlayer = null;
     private SoundPlayer finalcountdownPlayer = null;
 
@@ -2268,7 +2142,7 @@ public class PluginManager {
 
 		         if(delayedCaptureFlashPrefCommon)
 		         {
-			         if(millisUntilFinished > 1000)// || (imagesTaken != 0 && isFirstTick))
+			         if(millisUntilFinished > 1000)
 			         {
 			        	try 
 			        	{

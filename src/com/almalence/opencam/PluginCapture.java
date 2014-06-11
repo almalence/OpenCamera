@@ -54,9 +54,6 @@ public abstract class PluginCapture extends Plugin
 	@Override
 	abstract public void onImageAvailable(Image im);
 	
-//	@Override
-//	abstract public void onPreviewAvailable(Image im);
-	
 	@Override
 	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);
 	
