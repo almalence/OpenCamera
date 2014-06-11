@@ -2136,9 +2136,9 @@ public class PluginManager {
 
 	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
 
-		         Camera camera = CameraController.getCamera();
-		     	 if (null==camera)
-		     		return;
+//		         Camera camera = CameraController.getCamera();
+//		     	 if (null==camera)
+//		     		return;
 
 		         if(delayedCaptureFlashPrefCommon)
 		         {
@@ -2165,16 +2165,24 @@ public class PluginManager {
 		    	 countdownHandler.removeCallbacks(FlashOff);	 
 		 	     finalcountdownHandler.removeCallbacks(FlashBlink);
 
-		 	    Camera camera = CameraController.getCamera();
-		    	if (camera != null)		// paranoia
-				{
-					if(CameraController.getInstance().getSupportedFlashModes() != null)
-						CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
+//		 	    Camera camera = CameraController.getCamera();
+//		    	if (camera != null)		// paranoia
+//				{
+//					if(CameraController.getInstance().getSupportedFlashModes() != null)
+//						CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
+//
+//					Message msg = new Message();
+//					msg.what = PluginManager.MSG_DELAYED_CAPTURE;
+//					MainScreen.H.sendMessage(msg);
+//				}
+		    	
+		    	if(CameraController.getInstance().getSupportedFlashModes() != null)
+					CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
 
-					Message msg = new Message();
-					msg.what = PluginManager.MSG_DELAYED_CAPTURE;
-					MainScreen.H.sendMessage(msg);
-				}
+				Message msg = new Message();
+				msg.what = PluginManager.MSG_DELAYED_CAPTURE;
+				MainScreen.H.sendMessage(msg);
+				
 		    	timer=null;
 		     }
 		  };
@@ -2219,35 +2227,39 @@ public class PluginManager {
     
     private Runnable FlashOff = new Runnable() {
         public void run() {
-        	Camera camera = CameraController.getCamera();
-        	if (null==camera)
-        		return;
-        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
-       	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-       	 	CameraController.getInstance().setCameraParameters(p); 
+//        	Camera camera = CameraController.getCamera();
+//        	if (null==camera)
+//        		return;
+//        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
+//       	 	p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+//       	 	CameraController.getInstance().setCameraParameters(p);
+       	 	
+       	 CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
         }
     };
     
     private Runnable FlashBlink = new Runnable() {
     	boolean isFlashON = false;
         public void run() {
-        	Camera camera = CameraController.getCamera();
-        	if (null==camera)
-        		return;
+//        	Camera camera = CameraController.getCamera();
+//        	if (null==camera)
+//        		return;
         	
         	try {
-	        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
+//	        	Camera.Parameters p = CameraController.getInstance().getCameraParameters();
 	        	if(isFlashON)
 	        	{
-	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+//	       	 		p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+	        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 	       	 		isFlashON = false;
 	        	}
 	        	else
 	        	{
-	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+//	        		p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+	        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
 	       	 		isFlashON = true;
 	        	}
-	        	CameraController.getInstance().setCameraParameters(p);
+//	        	CameraController.getInstance().setCameraParameters(p);
         	} catch (Exception e) {
 				e.printStackTrace();
 				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());

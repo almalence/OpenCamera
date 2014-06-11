@@ -278,6 +278,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static String sShowDelayedCapturePref;
 	public static String sDelayedSoundPref;
 	public static String sDelayedFlashPref;
+	public static String sDelayedCaptureIntervalPref;
 	
 	public static String sUseFrontCameraPref;
 	public static String sShutterPref;
@@ -320,6 +321,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		sShowDelayedCapturePref = getResources().getString(R.string.Preference_ShowDelayedCaptureValue);
 		sDelayedSoundPref = getResources().getString(R.string.Preference_DelayedSoundValue);
 		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
+		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
 		
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
@@ -597,10 +599,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
-		if(!isHALv3Supported)
+		CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
+		if(cp != null)
 		{
-			CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
-			cp.setEnabled(false);
+			if(!isHALv3Supported)
+				cp.setEnabled(false);
+			else
+				cp.setEnabled(true);
 		}
 		
 		CharSequence[] entries;

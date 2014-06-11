@@ -18,6 +18,7 @@
     <string name="Preference_ShowDelayedCaptureValue">Preference_ShowDelayedCaptureValue</string>
     <string name="Preference_DelayedSoundValue">Preference_DelayedSoundValue</string>
     <string name="Preference_DelayedFlashValue">Preference_DelayedFlashValue</string>
+    <string name="Preference_DelayedCaptureIntervalValue">Preference_DelayedCaptureIntervalValue</string>
     
     <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
     <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>

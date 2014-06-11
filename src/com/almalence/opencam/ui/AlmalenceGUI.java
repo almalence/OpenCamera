@@ -7509,7 +7509,7 @@ public class AlmalenceGUI extends GUI implements
 	public void SelfTimerDialog()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		int interval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		int interval = prefs.getInt(MainScreen.sDelayedCaptureIntervalPref, 0);
 		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);		
 		
 		final Dialog d = new Dialog(MainScreen.thiz);
@@ -7608,7 +7608,7 @@ public class AlmalenceGUI extends GUI implements
 //            	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
              }
              int real_int = Integer.parseInt(stringInterval[np.getValue()]);
-             prefsEditor.putBoolean("swChecked", swChecked);
+             prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swChecked);
              if (swChecked)
             	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
              else
@@ -7618,7 +7618,7 @@ public class AlmalenceGUI extends GUI implements
              }
              prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
              prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
-             prefsEditor.putInt("delayedIndexCapturePrefCommon", interval);
+             prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
              prefsEditor.commit();
 
              RotateImageView timeLapseButton = (RotateImageView)guiView.findViewById(R.id.buttonSelftimer);
