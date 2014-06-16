@@ -20,8 +20,6 @@ package com.almalence.plugins.vf.grid;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -102,14 +100,7 @@ public class GridVFPlugin extends PluginViewfinder
 		clearViews();
 		addView(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 		
-		
-//		if (gridType == 3)
-//		{
-//			grid.setVisibility(View.GONE);
-//		}
-//		else {
-			grid.setVisibility(View.VISIBLE);
-		//}
+		grid.setVisibility(View.VISIBLE);
 	}
 	
 	@Override

@@ -38,6 +38,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginViewfinder;
@@ -114,16 +116,12 @@ public class InfosetVFPlugin extends PluginViewfinder
 	        {
 	        	batteryInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.battery_charging));
 	        	currentBatteryStatus = status;
-	        	//Toast.makeText(MainScreen.mainContext, "Battery: Charging", Toast.LENGTH_LONG).show();
 	        }	        
 	        else if(status ==  BatteryManager.BATTERY_STATUS_DISCHARGING || status ==  BatteryManager.BATTERY_STATUS_NOT_CHARGING)
 	        {
-	        	//Toast.makeText(MainScreen.mainContext, "Battery: DISCHARGE OR NOT CHARGING", Toast.LENGTH_SHORT).show();
 	        	if(currentBatteryLevel != batteryPct || currentBatteryStatus != status)
 	        	{
 	        		currentBatteryLevel = batteryPct;
-	        		
-	        		//Toast.makeText(MainScreen.mainContext, "Battery Level: " + String.valueOf(currentBatteryLevel), Toast.LENGTH_SHORT).show();
 	        		
 	        		if(currentBatteryLevel > 0.8f)
 	        			batteryInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.battery_full));
@@ -596,7 +594,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 					if(iso_id != -1)
 						isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(iso_id));
 				}
-				//isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon(iso)));				
 			}			
 		}
 		

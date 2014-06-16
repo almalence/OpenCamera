@@ -80,11 +80,9 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
-		//this.prefLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));
 		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));		
 		this.prefLandscape = orient == 0 || orient == 180? true : false;
 		mOrientation = this.prefLandscape? (orient == 180? 90 : 270) : (orient == 270? 180 : 0);
-		//mOrientation = 0;
 		
 		try
 		{
@@ -159,9 +157,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(output_height));
 			}
 			PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
-			//PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), this.prefLandscape ? "true" : "false");
 	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mOrientation));			
-	    	//PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), Boolean.toString(this.prefLandscape));
 			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
 	    	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(this.out_ptr));
 	    	PluginManager.getInstance().addToSharedMem("resultcrop0"+Long.toString(sessionID), String.valueOf(crop_x));

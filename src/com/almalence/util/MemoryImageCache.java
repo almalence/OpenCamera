@@ -19,7 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.util;
 
 import java.io.File;
-import java.util.HashMap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

@@ -259,7 +259,6 @@ public final class Util {
         try {
             c.close();
         } catch (Exception t) {
-            // do nothing
         }
     }
 
@@ -585,7 +584,6 @@ public final class Util {
     public static void enterLightsOutMode(Window window) 
     {
         WindowManager.LayoutParams params = window.getAttributes();
-        //params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
         window.setAttributes(params);
     }
 
@@ -700,14 +698,6 @@ public final class Util {
     }
     public static Rect convertToDriverCoordinates(Rect rect)
     {
-//        int areaWidth = (int)(focusWidth * areaMultiple);
-//        int areaHeight = (int)(focusHeight * areaMultiple);
-//        int left = Util.clamp(x - areaWidth / 2, 0, previewWidth - areaWidth);
-//        int top = Util.clamp(y - areaHeight / 2, 0, previewHeight - areaHeight);
-//        
-//        int right = Util.clamp(x + areaWidth / 2, areaWidth, previewWidth);
-//        int bottom = Util.clamp(y + areaHeight / 2, areaHeight, previewHeight);
-//        
         RectF rectF = new RectF(rect.left, rect.top, rect.right, rect.bottom);
         mMeteringMatrix.mapRect(rectF);
         Util.rectFToRect(rectF, rect);

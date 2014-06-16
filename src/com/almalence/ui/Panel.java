@@ -335,7 +335,6 @@ public class Panel extends LinearLayout
 				if (!mOpened)
 				{
 					handle=false;
-					//Log.d(TAG, "action: " + action + " Y=" +event.getY());
 					if (action == MotionEvent.ACTION_DOWN)
 					{
 						if ( event.getRawY() > ((20 +(toTheTop?0:65))*MainScreen.mainContext.getResources().getDisplayMetrics().density)) 

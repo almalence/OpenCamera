@@ -73,7 +73,6 @@ public class AppWidgetNotifier
     {
         try
         {
-        	//activity.getPackageManager().getInstallerPackageName("com.almalence.pixfix");
         	activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
         }
         catch (IllegalArgumentException e)

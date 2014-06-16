@@ -73,9 +73,6 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	boolean aeLocked = false;
 	boolean awLocked = false;
 	
-//	private int mLayoutOrientationCurrent;
-//	private int mDisplayOrientationCurrent;
-	
 	public AeAwLockVFPlugin()
 	{
 		super("com.almalence.plugins.aeawlockvf",
@@ -153,12 +150,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			}
 			
 		});
-		
-//    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-//    	int orientation = MainScreen.guiManager.getLayoutOrientation();
-//    	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
-		
-		
+				
 		List<View> specialView = new ArrayList<View>();
 		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
 		for(int i = 0; i < specialLayout.getChildCount(); i++)

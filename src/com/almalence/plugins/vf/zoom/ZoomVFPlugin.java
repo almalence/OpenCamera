@@ -23,7 +23,6 @@ import java.util.List;
 
 import android.content.SharedPreferences;
 import android.graphics.PointF;
-import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -36,7 +35,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
@@ -47,6 +45,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginViewfinder;
@@ -100,7 +99,7 @@ public class ZoomVFPlugin extends PluginViewfinder
             }
         }
     }
-//    
+
 	public ZoomVFPlugin()
 	{
 		super("com.almalence.plugins.zoomvf",
@@ -252,7 +251,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 		}
 		
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)MainScreen.thiz.findViewById(R.id.specialPluginsLayout).getLayoutParams();
-		//mainLayoutHeight = MainScreen.thiz.findViewById(R.id.specialPluginsLayout).getHeight();
 		mainLayoutHeight = lp.height;
 		
 		zoomPanelWidth = MainScreen.thiz.getResources().getDrawable(R.drawable.scrubber_control_pressed_holo).getMinimumWidth();
@@ -313,11 +311,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		zoomCurrent = 0;				
 
-//		Camera camera = CameraController.getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//        if (cp.isZoomSupported())
 		if(CameraController.getInstance().isZoomSupported())
         {
         	zoomBar.setMax(CameraController.getInstance().getMaxZoom());
@@ -330,13 +323,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 	
 	private void zoomModify(int delta)
 	{
-//		Camera camera = CameraController.getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-//		if (cp==null)
-//			return;
-		
 		if (CameraController.getInstance().isZoomSupported())
 		{		
 			try
@@ -353,9 +339,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 				}
 				
 				CameraController.getInstance().setZoom(zoomCurrent);
-//				cp.setZoom(zoomCurrent);
-//					
-//				CameraController.getInstance().setCameraParameters(cp);
 				
 				zoomBar.setProgressAndThumb(zoomCurrent);
 			}

@@ -31,8 +31,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -58,7 +56,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
@@ -92,15 +89,15 @@ Implements night processing
 public class ObjectRemovalProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener, Handler.Callback, OnClickListener
 {
 	private long sessionID=0;
-    public static int mSensitivity = 15;
-    public static int mMinSize = 1000;
-    public static String mGhosting = "0";
+	private static int mSensitivity = 15;
+    private static int mMinSize = 1000;
+    private static String mGhosting = "0";
     
-    public static int mAngle = 0;
+    private static int mAngle = 0;
 
-    public static boolean SaveInputPreference;
+    private static boolean SaveInputPreference;
     
-    public boolean released=false;
+    private boolean released=false;
     private AlmaCLRShot mAlmaCLRShot;
 
     static public int imgWidthOR;
@@ -324,15 +321,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     			            
     			            if (l != null)
     			            {	     
-//    			            	Exiv2.writeGeoDataIntoImage(
-//    			            		file.getAbsolutePath(), 
-//    			            		true,
-//    			            		l.getLatitude(), 
-//    			            		l.getLongitude(), 
-//    			            		dateString, 
-//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-    			            		
     			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
@@ -400,16 +388,10 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
  		} 
      	catch (Exception e) 
  		{
-     		//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
  			e.printStackTrace();
  		}
      }
 		
-//	public void FreeMemory()
-//	{
-//		mAlmaCLRShot.release();
-//	}
-
 /************************************************
  * 		POST PROCESSING
  ************************************************/
@@ -474,7 +456,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
         	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
@@ -484,14 +465,9 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 	public void getDisplaySize(byte[] data) 
 	{
 		Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-//		BitmapFactory.Options options = new BitmapFactory.Options();
-//		options.inPreferredConfig = Config.ARGB_8888;
-//		options.inJustDecodeBounds = true;
-//		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		Point dis = new Point();
 		display.getSize(dis);
 
-		//float imageRatio = (float)options.outWidth / (float)options.outHeight;
 		float imageRatio = (float)MainScreen.getImageWidth() / (float)MainScreen.getImageHeight();
 		float displayRatio = (float)dis.y / (float)dis.x;
 		
@@ -580,8 +556,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     	byte[] result = mAlmaCLRShot.processingSaveData();
 		int frame_len = result.length;
 		int frame = SwapHeap.SwapToHeap(result);
-		//boolean wantLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
-		//boolean cameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("framemirrored1" + Long.toString(sessionID)));
 		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
@@ -593,66 +567,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-//		try
-//        {	
-//			String[] filesSavedNames = new String[1];
-//			Calendar d = Calendar.getInstance();
-//			File saveDir = PluginManager.getInstance().GetSaveDir();
-//			String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-//            		d.get(Calendar.YEAR),
-//            		d.get(Calendar.MONTH)+1,
-//            		d.get(Calendar.DAY_OF_MONTH),
-//            		d.get(Calendar.HOUR_OF_DAY),
-//            		d.get(Calendar.MINUTE),
-//            		d.get(Calendar.SECOND));
-//			
-//			fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeName + ".jpg";
-//			
-//			File file = new File(
-//            		saveDir, 
-//            		fileFormat);				
-//            
-//            filesSavedNames[0] = file.toString();
-//
-//            FileOutputStream os = new FileOutputStream(file);
-//            
-////            byte[] data = mAlmaCLRShot.processingSaveData();
-////         	int frame_len = data.length;
-////    		int frame = SwapHeap.SwapToHeap(data);
-////         	
-////         	PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
-////    		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
-////        	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-////        	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
-//
-//        	os.write(mAlmaCLRShot.processingSaveData());
-//            
-//            os.close();
-//            
-//            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-//            if(!mDisplayLandscape)			            	
-//            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + (mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90));
-//            ei.saveAttributes();
-//
-//           	ContentValues values = new ContentValues(9);
-//            values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-//            values.put(ImageColumns.DISPLAY_NAME, file.getName());
-//            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-//            values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-//            values.put(ImageColumns.ORIENTATION, mDisplayLandscape? 0 : mCameraMirrored? -90 : 90);
-//            values.put(ImageColumns.DATA, file.getAbsolutePath());
-//            
-//            MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-//            MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-//        }
-//        catch (Exception e)
-//        {
-//
-//        	Toast toast = Toast.makeText(context, R.string.cannot_create_jpeg, Toast.LENGTH_LONG);
-//        	toast.show();
-//        	e.printStackTrace();
-//        }
-		
     }
     
     @Override
@@ -707,7 +621,6 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
             	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             break;

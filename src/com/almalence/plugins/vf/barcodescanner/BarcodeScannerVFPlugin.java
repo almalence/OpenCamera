@@ -202,9 +202,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	@Override
 	public void onGUICreate() {
-		//clearViews();
-		//createBoundView();
-		//createScreenButton();
 		showGUI();
 	}
 	
@@ -320,14 +317,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			return;
 		}
 
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//		if (params == null)
-//			return;
-//
-//		int previewWidth = params.getPreviewSize().width;
-//		int previewHeight = params.getPreviewSize().height;
-
-        new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
+      new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
         
 		mFrameCounter = 0;
 	}
@@ -387,11 +377,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
      * @return bounding rect for camera
      */
     public final synchronized Rect getBoundingRect() {
-//    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//        if (params != null) {
-//            Camera.Size previewSize = params.getPreviewSize();
-//            int previewHeight = previewSize.height;
-//            int previewWidth = previewSize.width;
 
             double heightFraction = BOUNDS_FRACTION;
             double widthFraction = BOUNDS_FRACTION;
@@ -404,8 +389,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
             int bottom = top + height;
 
             return new Rect(left, top, right, bottom);
-//        }
-//        return null;
     }
 	
 	/**
@@ -484,10 +467,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	private synchronized File saveDecodedImageToFile(byte[]... datas) {
 		File file = null;
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
-//		int imageWidth = params.getPreviewSize().width;
-//		int imageHeight = params.getPreviewSize().height;
-		
 		byte[] dataRotated = new byte[datas[0].length];
 		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.previewWidth, MainScreen.previewHeight, 0, 0, 1);
 		datas[0] = dataRotated;

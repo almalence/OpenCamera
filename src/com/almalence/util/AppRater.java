@@ -113,12 +113,6 @@ public class AppRater
 		b1.setText("Rate " + APP_TITLE);
 		ll.addView(b1);
 
-		/*
-		Button b2 = new Button(mContext);
-		b2.setText("Remind me later");
-		ll.addView(b2);
-		*/
-
 		Button b3 = new Button(mContext);
 		b3.setText("No, thanks");
 		ll.addView(b3);
@@ -151,17 +145,6 @@ public class AppRater
 				dialog.dismiss();
 			}
 		});
-		/*
-		b2.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				dialog.dismiss();
-				
-				mContext.finish();
-			}
-		});
-		*/
 		b3.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)

@@ -163,9 +163,6 @@ public class Switch extends CompoundButton
 		Resources res = getResources();
 		mTextPaint.density = res.getDisplayMetrics().density;
 
-		// TODO resolve error
-		// mTextPaint.setCompatibilityScaling(res.getCompatibilityInfo().applicationScale);		
-
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Switch, defStyle, 0);
 
 		mThumbDrawable = a.getDrawable(R.styleable.Switch_thumb);
@@ -199,7 +196,6 @@ public class Switch extends CompoundButton
 			@Override
 			public void onClick(View v)
 			{
-				// do nothing
 			}
 		});
 	}
