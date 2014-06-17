@@ -42,9 +42,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
@@ -72,18 +70,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
-import android.widget.NumberPicker.OnScrollListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,12 +86,13 @@ import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.Util;
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
-import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
@@ -108,7 +102,8 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
-import com.almalence.opencam.ui.GUI;
+//-+- -->
+
 import com.coremedia.iso.IsoFile;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
@@ -116,23 +111,20 @@ import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
-//-+- -->
-
 /***
 Implements basic functionality of Video capture.
 ***/
 
 public class VideoCapturePlugin extends PluginCapture
 {
-	public static final String TAG = "Almalence";
+	private static final String TAG = "Almalence";
 	
 	private boolean takingAlready=false;
 	
     private volatile boolean isRecording;
     private boolean onPause;
-    
-    
-    public static int CameraIDPreference;
+        
+    private static int CameraIDPreference;
 
     private MediaRecorder mMediaRecorder;
     

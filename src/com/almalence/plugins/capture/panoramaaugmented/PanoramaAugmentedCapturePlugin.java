@@ -88,14 +88,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private static final String PREFERENCES_KEY_RESOLUTION = "pref_plugin_capture_panoramaaugmented_imageheight2_";
 	private static final String PREFERENCES_KEY_USE_DEVICE_GYRO = "pref_plugin_capture_panoramaaugmented_usehardwaregyro";
 	
-	
 	private AugmentedPanoramaEngine engine;
 
-
-	public final int MIN_HEIGHT_SUPPORTED = 640;
-	public final List<Point> ResolutionsPictureSizesList = new ArrayList<Point>();
-	public final List<String> ResolutionsPictureIdxesList = new ArrayList<String>();
-	public final List<String> ResolutionsPictureNamesList = new ArrayList<String>();
+	private final int MIN_HEIGHT_SUPPORTED = 640;
+	private final List<Point> ResolutionsPictureSizesList = new ArrayList<Point>();
+	private final List<String> ResolutionsPictureIdxesList = new ArrayList<String>();
+	private final List<String> ResolutionsPictureNamesList = new ArrayList<String>();
 	
 	private int prefResolution;
 	private boolean prefHardwareGyroscope;

@@ -31,11 +31,10 @@ import android.hardware.Camera;
 import android.util.Log;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
-import com.almalence.opencam.MainScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -77,7 +76,6 @@ public class GLCameraPreview {
 	/** The texture pointer */	
 	private int[] textures = new int[1];
 
-
 	private byte[] out;
 	
 	private int surfaceWidth;
@@ -91,8 +89,6 @@ public class GLCameraPreview {
 	private int textureWidth;
 	
 	private int cropRect[];
-	
-	private static final int MAX_TEXTURE_SIZE = 512;
 	
 	public void setSurfaceSize(int width, int height)
 	{
@@ -146,7 +142,6 @@ public class GLCameraPreview {
 
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 	    gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
-	    //gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
 
 	    Camera camera = CameraController.getCamera();
     	if (null==camera)
@@ -159,20 +154,7 @@ public class GLCameraPreview {
 		
 		previewWidth = params.getPreviewSize().width;
 		previewHeight = params.getPreviewSize().height;
-		
-//		this.textureHeight = (int)(0.5f * previewHeight);
-//		
-//		if (this.textureHeight >= MAX_TEXTURE_SIZE)
-//		{		
-//			this.textureHeight = MAX_TEXTURE_SIZE;
-//		}
-//		else
-//		{
-//			this.textureHeight = GLCameraPreview.pow2roundup(this.textureHeight);
-//		}
-//		
-//		this.textureWidth = GLCameraPreview.pow2roundup(
-//				(int)(previewWidth * ((float)this.textureHeight / previewHeight)));
+
 		textureWidth = 512;
 		textureHeight = 512;
 		
@@ -201,9 +183,6 @@ public class GLCameraPreview {
 		
 		//...and bind it to our array
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);		
-		
-	    //gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, textureWidth, textureHeight, 0, GL10.GL_RGB, GL10.GL_UNSIGNED_BYTE, null);
-		//gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0,previewHalfHeight, previewHalfWidth, GL10.GL_RGB, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(out));
 		
 		gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGB, textureWidth, textureHeight, 0, GL10.GL_RGB, GL10.GL_UNSIGNED_BYTE, ByteBuffer.wrap(out));
 		
@@ -251,20 +230,4 @@ public class GLCameraPreview {
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 	
-	private static int pow2roundup(int x)
-	{
-	    if (x < 0)
-	    {
-	        return 0;
-	    }
-	    
-	    --x;
-	    x |= x >> 1;
-	    x |= x >> 2;
-	    x |= x >> 4;
-	    x |= x >> 8;
-	    x |= x >> 16;
-	    
-	    return (x + 1);
-	}
 }

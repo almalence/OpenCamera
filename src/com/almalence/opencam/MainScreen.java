@@ -1204,6 +1204,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 	
 	
+	
 	@TargetApi(19)
 	private void configureHALv3Camera()
 	{

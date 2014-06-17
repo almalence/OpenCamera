@@ -64,8 +64,8 @@ public class GroupShotCapturePlugin extends PluginCapture
     private int imagesTaken=0;
     private boolean inCapture;
     
-    private static String sImagesAmountPref;
-    private static String sPauseBetweenShotsPref;
+    private String sImagesAmountPref;
+    private String sPauseBetweenShotsPref;
 
 	public GroupShotCapturePlugin()
 	{

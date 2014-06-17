@@ -31,7 +31,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
@@ -51,8 +50,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -60,11 +57,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.ui.GUI;
 import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
@@ -89,33 +87,28 @@ Implements night capture plugin - different capture logics available
 
 public class NightCapturePlugin extends PluginCapture
 {
-	public static final int HI_SPEED_FRAMES = 12;
-	public static final int HI_RES_FRAMES = 8;
-	public static final int MIN_MPIX_SUPPORTED = 1280*960;
-	public static final int MIN_MPIX_PREVIEW = 600*400;
+	private static final int HI_SPEED_FRAMES = 12;
+	private static final int HI_RES_FRAMES = 8;
+	private static final int MIN_MPIX_SUPPORTED = 1280*960;
+	private static final int MIN_MPIX_PREVIEW = 600*400;
 	
     private static Toast capturingDialog;
-    public static boolean inCapture = false;
+    private static boolean inCapture = false;
 
     //almashot - related
-    public static int evValues[] = new int[HI_SPEED_FRAMES];
-    public static int evIdx[] = new int[HI_SPEED_FRAMES];
     private int frame_num;
-    public static float ev_step;
 	private boolean takingAlready;
 	private boolean aboutToTakePicture=false;
 	private int nVFframesToBuffer;
 
 	// shared between activities 
-    public static int CapIdx;
-    public static int total_frames;
-    public static boolean wantLandscapePhoto = false;
-    public static int compressed_frame[] = new int[HI_SPEED_FRAMES];
-    public static int compressed_frame_len[] = new int[HI_SPEED_FRAMES];
+	private static int CapIdx;
+	private static int total_frames;
+	private static int compressed_frame[] = new int[HI_SPEED_FRAMES];
+	private static int compressed_frame_len[] = new int[HI_SPEED_FRAMES];
     
     //Night vision variables
     private GLCameraPreview cameraPreview;
-    public static byte[] currByte;
     private byte[] data1;
 	private byte[] data2;
 	private byte[] dataS;
@@ -139,28 +132,15 @@ public class NightCapturePlugin extends PluginCapture
 	
 	float cameraDist;
     
-    public static Bitmap sweet;
-    public static int currLen;
-    
-    public static boolean FramesShot = false;
-    
     //preferences
- 	public static String ModePreference;	// 0=hi-res 1=hi-speed  
- 	public static String FocusPreference;
- 	public static boolean OpenGLPreference;
- 	public static String ImageSizeIdxPreference;
+	private static String ModePreference;	// 0=hi-res 1=hi-speed  
+	private static String FocusPreference;
+	private static boolean OpenGLPreference;
+	private static String ImageSizeIdxPreference;
  	
- 	public static List<Long> ResolutionsMPixList;
-	public static List<String> ResolutionsIdxesList;
-	public static List<String> ResolutionsNamesList;
-	
-	public static List<Long> ResolutionsMPixListIC;
-	public static List<String> ResolutionsIdxesListIC;
-	public static List<String> ResolutionsNamesListIC;
-	
-	public static List<Long> ResolutionsMPixListVF;
-	public static List<String> ResolutionsIdxesListVF;
-	public static List<String> ResolutionsNamesListVF;
+	private static List<Long> ResolutionsMPixList;
+	private static List<String> ResolutionsIdxesList;
+	private static List<String> ResolutionsNamesList;
 	
 	private int preferenceSceneMode;
 	private int preferenceFocusMode;
@@ -171,9 +151,6 @@ public class NightCapturePlugin extends PluginCapture
 	private static String hiSpeedModeTitle;
 	private static String nightVisionLayerShowPref;
 	private static String nightCaptureFocusPref;
-	
-//	private static String nightCaptureImageSizeBackPref;
-//	private static String nightCaptureImageSizeFrontPref;
 	
 	private Switch modeSwitcher;
 
@@ -196,9 +173,6 @@ public class NightCapturePlugin extends PluginCapture
 		hiSpeedModeTitle = MainScreen.thiz.getResources().getString(R.string.NightCaptureModeHiSpeed);
 		nightVisionLayerShowPref = MainScreen.thiz.getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.thiz.getResources().getString(R.string.NightCaptureFocusPref);
-		
-//		nightCaptureImageSizeBackPref = MainScreen.thiz.getResources().getString(R.string.NightCaptureBackImageSize);
-//		nightCaptureImageSizeFrontPref = MainScreen.thiz.getResources().getString(R.string.NightCaptureFrontImageSize);
 		
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
 		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
@@ -228,12 +202,6 @@ public class NightCapturePlugin extends PluginCapture
 				MainScreen.H.sendMessage(msg);
 			}
 		});
-		
-//		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
-//				LayoutParams.WRAP_CONTENT,
-//				LayoutParams.WRAP_CONTENT);
-//		
-//		modeSwitcher.setLayoutParams(lp);
 		if(PluginManager.getInstance().getProcessingCounter() == 0)
 			modeSwitcher.setEnabled(true);
 	}
@@ -311,9 +279,6 @@ public class NightCapturePlugin extends PluginCapture
 		this.modeSwitcher.requestLayout();
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
-		
-//		clearViews();
-//		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
 	}
 	
 	@Override
@@ -407,10 +372,6 @@ public class NightCapturePlugin extends PluginCapture
 		int mode = Integer.parseInt(ModePreference);
 
         PopulateCameraDimensions(1);
-        ResolutionsMPixListVF = ResolutionsMPixList;
-        ResolutionsIdxesListVF = ResolutionsIdxesList;
-        ResolutionsNamesListVF = ResolutionsNamesList;
-        
     	
     	long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
     	long maxMpix = (maxMem - 1000000) / 3;	// 2 x Mpix - result, 1/4 x Mpix x 4 - compressed input jpegs, 1Mb - safe reserve
@@ -448,7 +409,6 @@ public class NightCapturePlugin extends PluginCapture
         else
         {
         	cs = CameraController.getInstance().getSupportedPictureSizes();
-        	//cs = cp.getSupportedPictureSizes();
         	if(Build.MODEL.contains("HTC One X"))
     		{
     			if (MainScreen.getCameraMirrored() == false)
@@ -818,9 +778,6 @@ public class NightCapturePlugin extends PluginCapture
 	{
         //int mode = Integer.parseInt(ModePreference);
         PopulateCameraDimensions(1);
-        ResolutionsMPixListVF = ResolutionsMPixList;
-        ResolutionsIdxesListVF = ResolutionsIdxesList;
-        ResolutionsNamesListVF = ResolutionsNamesList;
 	}
 	
 	@Override
@@ -864,12 +821,6 @@ public class NightCapturePlugin extends PluginCapture
 				if (idx < ResolutionsIdxesList.size())
 				{
 					lp.setValueIndex(idx);
-//				}
-//				else 
-//				{
-//					idx=0;
-//					lp.setValueIndex(idx);
-//				}
 					lp.setSummary(entries[idx]);
 			        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			        {
@@ -955,12 +906,6 @@ public class NightCapturePlugin extends PluginCapture
 				if (idx < ResolutionsIdxesList.size())
 				{
 					lp.setValueIndex(idx);
-//				}
-//				else 
-//				{
-//					idx=0;
-//					lp.setValueIndex(idx);
-//				}
 					lp.setSummary(entries[idx]);
 			        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			        {
@@ -1028,15 +973,11 @@ public class NightCapturePlugin extends PluginCapture
 	    	{
 				MainScreen.setSaveImageWidth(imgCaptureWidth*2);
 				MainScreen.setSaveImageHeight(imgCaptureHeight*2);
-//	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth*2));
-//	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight*2));
 	    	}
 	    	else
 	    	{
 	    		MainScreen.setSaveImageWidth(imgCaptureWidth);
 				MainScreen.setSaveImageHeight(imgCaptureHeight);
-//	        	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imgCaptureWidth));
-//	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imgCaptureHeight));
 	    	}
 
 			
@@ -1054,7 +995,6 @@ public class NightCapturePlugin extends PluginCapture
             frame_num = 0;
     		total_frames = HI_RES_FRAMES;
     		
-    		//Log.e("NIGHT CAMERA DEBUG", "startCaptureSequence session = " + PluginManager.getInstance().getSessionID());
             PluginManager.getInstance().addToSharedMem("nightmode"+String.valueOf(SessionID), ModePreference);
             
             if (FocusPreference.compareTo("0") == 0)
@@ -1132,7 +1072,6 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageAvailable(Image im)
 	{
-		int frame = 0;
 		int frame_len = 0;
 		boolean isYUV = false;
 		
@@ -1335,7 +1274,6 @@ public class NightCapturePlugin extends PluginCapture
 					
 					takingAlready = false;
 					inCapture = false;
-					//modeSwitcher.setEnabled(true);
 				}
 			}
 			
@@ -1391,7 +1329,6 @@ public class NightCapturePlugin extends PluginCapture
 				else if (dataS.length<data2.length)
 					dataS = new byte[data2.length];
 				
-				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
 				int previewWidth = 1280;
 				int previewHeight = 720;
 				
@@ -1494,7 +1431,6 @@ public class NightCapturePlugin extends PluginCapture
 					
 					takingAlready = false;
 					inCapture = false;
-					//modeSwitcher.setEnabled(true);
 				}
 			}
 			
@@ -1593,19 +1529,6 @@ public class NightCapturePlugin extends PluginCapture
     			takingAlready = true;
         	}
         	
-//        	if(aboutToTakePicture == true && paramBoolean == true)
-//        	{
-//    			CaptureFrame(paramCamera);
-//    			takingAlready = true;
-//        	}
-//    		else if(aboutToTakePicture == true)
-//    		{
-//    			modeSwitcher.setEnabled(true);
-//        		inCapture = false;
-//        		takingAlready = false;
-//    			MainScreen.guiManager.lockControls = false;
-//    		}
-        	
         	aboutToTakePicture = false;
         }
     }
@@ -1621,7 +1544,6 @@ public class NightCapturePlugin extends PluginCapture
             	// re-open preview (closed once frame is captured)
 				try
 				{
-					//MainScreen.camera.startPreview();
 					// remaining frames
 	            	if (FocusPreference.compareTo("2") == 0 && !MainScreen.getAutoFocusLock())
 	            	{
@@ -1649,8 +1571,6 @@ public class NightCapturePlugin extends PluginCapture
             }
             else
             {
-            	//modeSwitcher.setEnabled(true);
-            		            	
             	Message message = new Message();
             	message.obj = String.valueOf(SessionID);
     			message.what = PluginManager.MSG_CAPTURE_FINISHED;

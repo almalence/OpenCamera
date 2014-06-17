@@ -18,10 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.preshot;
 
-import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -32,8 +30,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
@@ -41,11 +37,12 @@ import android.widget.Toast;
 
 import com.almalence.YuvImage;
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
@@ -67,27 +64,19 @@ Stops capturing when shutter button pressed.
 
 public class PreshotCapturePlugin extends PluginCapture
 {
-	public static final int MIN_MPIX_SUPPORTED = 1280*960;
-	public static final int MIN_MPIX_PREVIEW = 600*400;
-	
-    public static boolean inCapture = false;
+	private static boolean inCapture = false;
 
 	private boolean takingAlready = false;
 
-	public static int CapIdx;
-	
-	public static boolean wantLandscapePhoto = false;
-	
     // preferences
-    public static String PreShotInterval;
-	public static String FPS;
-	public static boolean IsRecordSound;
-	public static boolean RefocusPreference;
-	public static boolean AutostartPreference;
-	public static String PauseBetweenShots;
+	private static String PreShotInterval;
+	private static String FPS;
+	private static boolean RefocusPreference;
+	private static boolean AutostartPreference;
+	private static String PauseBetweenShots;
 	private int preferenceFocusMode;
 	
-	public static boolean isSlowMode = false;
+	private static boolean isSlowMode = false;
 	
 	private static boolean isBuffering = false;
 	
@@ -97,11 +86,6 @@ public class PreshotCapturePlugin extends PluginCapture
     private Switch modeSwitcher;
     
     private boolean captureStarted=false;
-    
-    private static String sPreShotIntervalPref;
-    private static String sPauseBetweenShotsPref;
-    private static String sFPSPref;
-    private static String sModePref;
     
 	public PreshotCapturePlugin()
 	{
@@ -115,10 +99,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sPreShotIntervalPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotIntervalPref);
-		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotPauseBetweenShotsPref);
-		sFPSPref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotFPSPref);
-		sModePref = MainScreen.thiz.getResources().getString(R.string.Preference_PreShotModePref);
 	}
 	
 	@Override

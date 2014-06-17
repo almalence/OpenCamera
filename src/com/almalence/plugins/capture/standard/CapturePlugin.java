@@ -19,9 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.standard;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -33,8 +31,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
@@ -43,12 +39,12 @@ import com.almalence.YuvImage;
 import com.almalence.SwapHeap;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.ui.GUI;
-import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
@@ -70,7 +66,7 @@ public class CapturePlugin extends PluginCapture
 	private boolean takingAlready=false;
 	private boolean aboutToTakePicture=false;
 	
-	public static String ModePreference;	// 0=DRO On 1=DRO Off
+	private static String ModePreference;	// 0=DRO On 1=DRO Off
 	private Switch modeSwitcher;
 	
 	public CapturePlugin()

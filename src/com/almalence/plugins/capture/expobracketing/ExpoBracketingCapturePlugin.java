@@ -20,7 +20,6 @@ package com.almalence.plugins.capture.expobracketing;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -61,8 +60,7 @@ Implements capture plugin with exposure bracketing. Used for HDR image processin
 
 public class ExpoBracketingCapturePlugin extends PluginCapture
 {
-	public static final int MAX_HDR_FRAMES = 4;
-	public static final int MIN_MPIX_SUPPORTED = 1280*960;
+	private static final int MAX_HDR_FRAMES = 4;
 	
     private boolean inCapture;
     
@@ -91,9 +89,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	private int preferenceSceneMode;
 
 	//set exposure based on onpreviewframe
-	public boolean previewMode = true;
-	public boolean previewWorking=false;
-	public CountDownTimer cdt = null;
+	private boolean previewMode = true;
+	private boolean previewWorking=false;
+	private CountDownTimer cdt = null;
 	
 	private static String sEvPref;
 	private static String sRefocusPref;
@@ -110,10 +108,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			  null);
 	}
 	
-	public static String EvPreference;
-	
-	// if user is asking for higher resolution that can normally be handled with this amount of mem
-	public static boolean userInsists = false;
+	private static String EvPreference;
 	
 	@Override
 	public void onCreate()

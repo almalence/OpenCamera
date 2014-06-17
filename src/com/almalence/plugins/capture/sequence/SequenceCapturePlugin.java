@@ -71,7 +71,6 @@ public class SequenceCapturePlugin extends PluginCapture
 			  0,
 			  0,
 			  null);
-//		refreshPreferences();
 	}
 	
 	@Override
@@ -283,11 +282,8 @@ public class SequenceCapturePlugin extends PluginCapture
 		
 		
 		byte byte_frame[] = YuvImage.GetByteFrame(0);
-		int frame_len = byte_frame.length;//MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+		int frame_len = byte_frame.length;
 		int frame = SwapHeap.SwapToHeap(byte_frame);
-		
-//		int frame_len = paramArrayOfByte.length;
-//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
     	
     	if (frame == 0)
     	{
