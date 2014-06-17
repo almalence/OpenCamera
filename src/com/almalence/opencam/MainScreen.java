@@ -113,7 +113,7 @@ import com.almalence.opencam_plus.ui.GUI;
  * Passes all main events to PluginManager
  ***/
 
-public class MainScreen extends Activity implements View.OnClickListener,
+public class MainScreen extends Activity implements ApplicationInterface, View.OnClickListener,
 		View.OnTouchListener, SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 {
 	// >>Description
@@ -127,9 +127,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	public static MainScreen thiz;
 	public static Context mainContext;
 	public static Handler H;
-
-	public static boolean isHALv3 = false;
-	public static boolean isHALv3Supported = false;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
 
@@ -427,15 +424,15 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		AppWidgetNotifier.app_launched(this);
 		
 		
-		isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+		CameraController.isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
 		if(null == MainScreen.mainContext.getSystemService("camera"))
 		{
-			isHALv3 = false;
-			isHALv3Supported = false;
+			CameraController.isHALv3 = false;
+			CameraController.isHALv3Supported = false;
 			prefs.edit().putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 		}
 		else
-			isHALv3Supported = true;
+			CameraController.isHALv3Supported = true;
 
 		try{
 		cameraController = CameraController.getInstance();
@@ -444,7 +441,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		{
 			Log.e("MainScreen", exp.getMessage());
 		}
-		cameraController.onCreate();	
+		cameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());	
 		
 		
 		// set preview, on click listener and surface buffers
@@ -455,7 +452,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		preview.setKeepScreenOn(true);
 
 		surfaceHolder = preview.getHolder();
-		if(!isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			surfaceHolder.addCallback(this);
 			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -599,15 +596,6 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
-		CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
-		if(cp != null)
-		{
-			if(!isHALv3Supported)
-				cp.setEnabled(false);
-			else
-				cp.setEnabled(true);
-		}
-		
 		CharSequence[] entries;
 		CharSequence[] entryValues;
 
@@ -675,6 +663,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		}
 	}
 	
+	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
+	{
+		CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
+		if(cp != null)
+		{
+			if(!CameraController.isHALv3Supported)
+				cp.setEnabled(false);
+			else
+				cp.setEnabled(true);
+		}	
+	}
+	
 	public void glSetRenderingMode(final int renderMode)
  	{
  		if (renderMode != GLSurfaceView.RENDERMODE_WHEN_DIRTY
@@ -739,7 +739,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().onStop();
 		MainScreen.cameraController.onStop();
 		
-		if(isHALv3)
+		if(CameraController.isHALv3)
 			stopImageReaders();
 	}
 	
@@ -824,13 +824,13 @@ public class MainScreen extends Activity implements View.OnClickListener,
 					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 					setScreenBrightness(MaxScreenBrightnessPreference);
 					
-					isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+					CameraController.isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
 			
 					MainScreen.guiManager.onResume();
 					PluginManager.getInstance().onResume();
 					MainScreen.thiz.mPausing = false;
 					
-					if(MainScreen.isHALv3)
+					if(CameraController.isHALv3)
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						cameraController.setupCamera(null);
@@ -1040,7 +1040,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			MainScreen.thiz.findViewById(R.id.mainLayout2)
 					.setVisibility(View.VISIBLE);			
 			
-			if(isHALv3)
+			if(CameraController.isHALv3)
 				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 			else
 			{
@@ -1052,11 +1052,18 @@ public class MainScreen extends Activity implements View.OnClickListener,
 	}	
 	
 	
+	@Override
+	public void addSurfaceCallback()
+	{
+		thiz.surfaceHolder.addCallback(thiz);
+	}
+	
+	@Override
 	public void configureCamera()
 	{
 		Log.e("MainScreen", "configureCamera()");
 		// prepare list of surfaces to be used in capture requests
-		if(isHALv3)
+		if(CameraController.isHALv3)
 			configureHALv3Camera();
 		else
 		{
@@ -1103,7 +1110,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 ////						* ImageFormat.getBitsPerPixel(cameraParameters
 ////								.getPreviewFormat()) / 8];
 //
-		if(!isHALv3)
+		if(!CameraController.isHALv3)
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
 		CameraController.supportedSceneModes = cameraController.getSupportedSceneModes();
@@ -1118,7 +1125,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		PluginManager.getInstance().SetupCameraParameters();
 		//cp = cameraParameters;
 
-		if(!isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			try {
 				//Log.i("CameraTest", Build.MODEL);
@@ -1172,7 +1179,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 			@Override
 			public void onFinish() 
 			{
-				if(!isHALv3)
+				if(!CameraController.isHALv3)
 				{
 					try // exceptions sometimes happen here when resuming after
 						// processing
@@ -1208,7 +1215,7 @@ public class MainScreen extends Activity implements View.OnClickListener,
 		sfl.add(mCameraSurface);				// surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
 		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-//		sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+		//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 		
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 

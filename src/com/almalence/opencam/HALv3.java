@@ -1,4 +1,27 @@
+/*
+The contents of this file are subject to the Mozilla Public License
+Version 1.1 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+The Original Code is collection of files collectively known as Open Camera.
+
+The Initial Developer of the Original Code is Almalence Inc.
+Portions created by Initial Developer are Copyright (C) 2013 
+by Almalence Inc. All Rights Reserved.
+*/
+
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import java.util.ArrayList;
 import java.util.List;
@@ -818,11 +841,12 @@ public class HALv3
 	{
 		if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{		
-			if(af_regions != null)
-				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
+//			if(af_regions != null)
+//				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			try 
-			{
+			{	
+				Log.e(TAG, "autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
 				CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);
 			}
 			catch (CameraAccessException e)
@@ -931,6 +955,7 @@ public class HALv3
 				{
 					if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(true);
 						HALv3.autoFocusTriggered = false;
@@ -938,9 +963,17 @@ public class HALv3
 					}				
 					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(false);
 						HALv3.autoFocusTriggered = false;
+					}
+					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN && HALv3.autoFocusTriggered)
+					{
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
+//						resetCaptureListener();
+//						CameraController.getInstance().onAutoFocus(false);
+//						HALv3.autoFocusTriggered = false;
 					}
 				}
 				catch(Exception e)

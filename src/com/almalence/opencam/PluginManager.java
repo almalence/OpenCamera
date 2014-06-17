@@ -124,7 +124,7 @@ import com.almalence.plugins.vf.gyro.GyroVFPlugin;
  * plugins
  ***/
 
-public class PluginManager {
+public class PluginManager implements PluginManagerInterface {
 	private static final String PREFERENCE_KEY_DEFAULTS_SELECTED  = "DEFAULTS_SELECTED_";
 
 	private static PluginManager pluginManager;
@@ -840,6 +840,7 @@ public class PluginManager {
 		else if ("general_more".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_more);
+			MainScreen.thiz.onAdvancePreferenceCreate(pf);
 		}
 		else if ("vf_settings".equals(settings)) 
 		{
@@ -1242,6 +1243,7 @@ public class PluginManager {
 	 * VF/Capture Interfaces
 	 ******************************************************************************************************/
 
+	@Override
 	public void SelectDefaults()
 	{
 		if(!isDefaultsSelected)
@@ -1253,6 +1255,7 @@ public class PluginManager {
 		isDefaultsSelected = true;	
 	}
 
+	@Override
 	public void SelectImageDimension() {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).SelectImageDimension();
@@ -1268,6 +1271,7 @@ public class PluginManager {
 			pluginList.get(activeCapture).SetCameraPictureSize();
 	}
 
+	@Override
 	public void onAutoFocus(boolean paramBoolean) {
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onAutoFocus(paramBoolean);
@@ -1287,7 +1291,8 @@ public class PluginManager {
 			pluginList.get(activeCapture).onShutter();
 	}
 
-	void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
+	@Override
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte,
 					paramCamera);
@@ -1319,7 +1324,8 @@ public class PluginManager {
 			pluginList.get(activeCapture).onPreviewAvailable(im);
 	}
 
-	void onPreviewFrame(byte[] data, Camera paramCamera) {
+	@Override
+	public void onPreviewFrame(byte[] data, Camera paramCamera) {
 		// prevents plugin's views to disappear
 		if (isRestarting) {
 			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
@@ -1858,6 +1864,7 @@ public class PluginManager {
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/
+	@Override
 	public boolean shouldPreviewToGPU()
 	{
 		final Plugin plugin = pluginList.get(activeCapture);

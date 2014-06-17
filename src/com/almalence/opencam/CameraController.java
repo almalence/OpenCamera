@@ -1,4 +1,27 @@
+/*
+The contents of this file are subject to the Mozilla Public License
+Version 1.1 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+The Original Code is collection of files collectively known as Open Camera.
+
+The Initial Developer of the Original Code is Almalence Inc.
+Portions created by Initial Developer are Copyright (C) 2013 
+by Almalence Inc. All Rights Reserved.
+*/
+
+/* <!-- +++
+package com.almalence.opencam_plus;
++++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
@@ -26,393 +50,110 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int YUV = 1;
 	public static final int JPEG = 0;
 	// Android camera parameters constants
-	private final static String sceneAuto = MainScreen.thiz.getResources()
-			.getString(R.string.sceneAutoSystem);
-	private final static String sceneAction = MainScreen.thiz.getResources()
-			.getString(R.string.sceneActionSystem);
-	private final static String scenePortrait = MainScreen.thiz.getResources()
-			.getString(R.string.scenePortraitSystem);
-	private final static String sceneLandscape = MainScreen.thiz.getResources()
-			.getString(R.string.sceneLandscapeSystem);
-	private final static String sceneNight = MainScreen.thiz.getResources()
-			.getString(R.string.sceneNightSystem);
-	private final static String sceneNightPortrait = MainScreen.thiz
-			.getResources().getString(R.string.sceneNightPortraitSystem);
-	private final static String sceneTheatre = MainScreen.thiz.getResources()
-			.getString(R.string.sceneTheatreSystem);
-	private final static String sceneBeach = MainScreen.thiz.getResources()
-			.getString(R.string.sceneBeachSystem);
-	private final static String sceneSnow = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSnowSystem);
-	private final static String sceneSunset = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSunsetSystem);
-	private final static String sceneSteadyPhoto = MainScreen.thiz
-			.getResources().getString(R.string.sceneSteadyPhotoSystem);
-	private final static String sceneFireworks = MainScreen.thiz.getResources()
-			.getString(R.string.sceneFireworksSystem);
-	private final static String sceneSports = MainScreen.thiz.getResources()
-			.getString(R.string.sceneSportsSystem);
-	private final static String sceneParty = MainScreen.thiz.getResources()
-			.getString(R.string.scenePartySystem);
-	private final static String sceneCandlelight = MainScreen.thiz
-			.getResources().getString(R.string.sceneCandlelightSystem);
-	private final static String sceneBarcode = MainScreen.thiz.getResources()
-			.getString(R.string.sceneBarcodeSystem);
-	private final static String sceneHDR = MainScreen.thiz.getResources()
-			.getString(R.string.sceneHDRSystem);
-	private final static String sceneAR = MainScreen.thiz.getResources()
-			.getString(R.string.sceneARSystem);
+	private static String sceneAuto;
+	private static String sceneAction;
+	private static String scenePortrait;
+	private static String sceneLandscape;
+	private static String sceneNight;
+	private static String sceneNightPortrait;
+	private static String sceneTheatre;
+	private static String sceneBeach;
+	private static String sceneSnow;
+	private static String sceneSunset;
+	private static String sceneSteadyPhoto;
+	private static String sceneFireworks;
+	private static String sceneSports;
+	private static String sceneParty;
+	private static String sceneCandlelight;
+	private static String sceneBarcode;
+	private static String sceneHDR;
+	private static String sceneAR;
 
-	private final static String wbAuto = MainScreen.thiz.getResources()
-			.getString(R.string.wbAutoSystem);
-	private final static String wbIncandescent = MainScreen.thiz.getResources()
-			.getString(R.string.wbIncandescentSystem);
-	private final static String wbFluorescent = MainScreen.thiz.getResources()
-			.getString(R.string.wbFluorescentSystem);
-	private final static String wbWarmFluorescent = MainScreen.thiz
-			.getResources().getString(R.string.wbWarmFluorescentSystem);
-	private final static String wbDaylight = MainScreen.thiz.getResources()
-			.getString(R.string.wbDaylightSystem);
-	private final static String wbCloudyDaylight = MainScreen.thiz
-			.getResources().getString(R.string.wbCloudyDaylightSystem);
-	private final static String wbTwilight = MainScreen.thiz.getResources()
-			.getString(R.string.wbTwilightSystem);
-	private final static String wbShade = MainScreen.thiz.getResources()
-			.getString(R.string.wbShadeSystem);
+	private static String wbAuto;
+	private static String wbIncandescent;
+	private static String wbFluorescent;
+	private static String wbWarmFluorescent;
+	private static String wbDaylight;
+	private static String wbCloudyDaylight;
+	private static String wbTwilight;
+	private static String wbShade;
 
-	private final static String focusAuto = MainScreen.thiz.getResources()
-			.getString(R.string.focusAutoSystem);
-	private final static String focusInfinity = MainScreen.thiz.getResources()
-			.getString(R.string.focusInfinitySystem);
-	private final static String focusNormal = MainScreen.thiz.getResources()
-			.getString(R.string.focusNormalSystem);
-	private final static String focusMacro = MainScreen.thiz.getResources()
-			.getString(R.string.focusMacroSystem);
-	private final static String focusFixed = MainScreen.thiz.getResources()
-			.getString(R.string.focusFixedSystem);
-	private final static String focusEdof = MainScreen.thiz.getResources()
-			.getString(R.string.focusEdofSystem);
-	private final static String focusContinuousVideo = MainScreen.thiz
-			.getResources().getString(R.string.focusContinuousVideoSystem);
-	private final static String focusContinuousPicture = MainScreen.thiz
-			.getResources().getString(R.string.focusContinuousPictureSystem);
-	private final static String focusAfLock = MainScreen.thiz
-			.getResources().getString(R.string.focusAfLockSystem);
+	private static String focusAuto;
+	private static String focusInfinity;
+	private static String focusNormal;
+	private static String focusMacro;
+	private static String focusFixed;
+	private static String focusEdof;
+	private static String focusContinuousVideo;
+	private static String focusContinuousPicture;
+	private static String focusAfLock;
 
 
-	private final static String flashAuto = MainScreen.thiz.getResources()
-			.getString(R.string.flashAutoSystem);
-	private final static String flashOn = MainScreen.thiz.getResources()
-			.getString(R.string.flashOnSystem);
-	private final static String flashOff = MainScreen.thiz.getResources()
-			.getString(R.string.flashOffSystem);
-	private final static String flashRedEye = MainScreen.thiz.getResources()
-			.getString(R.string.flashRedEyeSystem);
-	private final static String flashTorch = MainScreen.thiz.getResources()
-			.getString(R.string.flashTorchSystem);
+	private static String flashAuto;
+	private static String flashOn;
+	private static String flashOff;
+	private static String flashRedEye;
+	private static String flashTorch;
 	
-	private final static String isoAuto = MainScreen.thiz.getResources()
-			.getString(R.string.isoAutoSystem);
-	private final static String iso50 = MainScreen.thiz.getResources()
-			.getString(R.string.iso50System);
-	private final static String iso100 = MainScreen.thiz.getResources()
-			.getString(R.string.iso100System);
-	private final static String iso200 = MainScreen.thiz.getResources()
-			.getString(R.string.iso200System);
-	private final static String iso400 = MainScreen.thiz.getResources()
-			.getString(R.string.iso400System);
-	private final static String iso800 = MainScreen.thiz.getResources()
-			.getString(R.string.iso800System);
-	private final static String iso1600 = MainScreen.thiz.getResources()
-			.getString(R.string.iso1600System);
-	private final static String iso3200 = MainScreen.thiz.getResources()
-			.getString(R.string.iso3200System);
+	private static String isoAuto;
+	private static String iso50;
+	private static String iso100;
+	private static String iso200;
+	private static String iso400;
+	private static String iso800;
+	private static String iso1600;
+	private static String iso3200;
 	
-	private final static String isoAuto_2 = MainScreen.thiz.getResources()
-			.getString(R.string.isoAutoDefaultSystem);
-	private final static String iso50_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso50DefaultSystem);
-	private final static String iso100_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso100DefaultSystem);
-	private final static String iso200_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso200DefaultSystem);
-	private final static String iso400_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso400DefaultSystem);
-	private final static String iso800_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso800DefaultSystem);
-	private final static String iso1600_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso1600DefaultSystem);
-	private final static String iso3200_2 = MainScreen.thiz.getResources()
-			.getString(R.string.iso3200DefaultSystem);
+	private static String isoAuto_2;
+	private static String iso50_2;
+	private static String iso100_2;
+	private static String iso200_2;
+	private static String iso400_2;
+	private static String iso800_2;
+	private static String iso1600_2;
+	private static String iso3200_2;
 	
-	private final static String meteringAuto = MainScreen.thiz.getResources()
-			.getString(R.string.meteringAutoSystem);
-	private final static String meteringMatrix = MainScreen.thiz.getResources()
-			.getString(R.string.meteringMatrixSystem);
-	private final static String meteringCenter = MainScreen.thiz.getResources()
-			.getString(R.string.meteringCenterSystem);
-	private final static String meteringSpot = MainScreen.thiz.getResources()
-			.getString(R.string.meteringSpotSystem);
+	private static String meteringAuto;
+	private static String meteringMatrix;
+	private static String meteringCenter;
+	private static String meteringSpot;
 	
 	
 	// List of localized names for camera parameters values	
-	public final static Map<Integer, String> mode_scene = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.SCENE_MODE_AUTO, sceneAuto);
-			put(CameraParameters.SCENE_MODE_ACTION, sceneAction);
-			put(CameraParameters.SCENE_MODE_PORTRAIT, scenePortrait);
-			put(CameraParameters.SCENE_MODE_LANDSCAPE,	sceneLandscape);
-			put(CameraParameters.SCENE_MODE_NIGHT,	sceneNight);
-			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, sceneNightPortrait);
-			put(CameraParameters.SCENE_MODE_THEATRE, sceneTheatre);
-			put(CameraParameters.SCENE_MODE_BEACH,	sceneBeach);
-			put(CameraParameters.SCENE_MODE_SNOW, sceneSnow);
-			put(CameraParameters.SCENE_MODE_SUNSET, sceneSunset);
-			put(CameraParameters.SCENE_MODE_STEADYPHOTO, sceneSteadyPhoto);
-			put(CameraParameters.SCENE_MODE_FIREWORKS, sceneFireworks);
-			put(CameraParameters.SCENE_MODE_SPORTS, sceneSports);
-			put(CameraParameters.SCENE_MODE_PARTY, sceneParty);
-			put(CameraParameters.SCENE_MODE_CANDLELIGHT, sceneCandlelight);
-			put(CameraParameters.SCENE_MODE_BARCODE, sceneBarcode);
-		}
-	};
-	
-	public final static Map<String, Integer> key_scene = new Hashtable<String, Integer>() {
-		{
-			put(sceneAuto, CameraParameters.SCENE_MODE_AUTO);
-			put(sceneAction, CameraParameters.SCENE_MODE_ACTION);
-			put(scenePortrait, CameraParameters.SCENE_MODE_PORTRAIT);
-			put(sceneLandscape, CameraParameters.SCENE_MODE_LANDSCAPE);
-			put(sceneNight, CameraParameters.SCENE_MODE_NIGHT);
-			put(sceneNightPortrait, CameraParameters.SCENE_MODE_NIGHT_PORTRAIT);
-			put(sceneTheatre, CameraParameters.SCENE_MODE_THEATRE);
-			put(sceneBeach, CameraParameters.SCENE_MODE_BEACH);
-			put(sceneSnow, CameraParameters.SCENE_MODE_SNOW);
-			put(sceneSunset, CameraParameters.SCENE_MODE_SUNSET);
-			put(sceneSteadyPhoto, CameraParameters.SCENE_MODE_STEADYPHOTO);
-			put(sceneFireworks, CameraParameters.SCENE_MODE_FIREWORKS);
-			put(sceneSports, CameraParameters.SCENE_MODE_SPORTS);
-			put(sceneParty, CameraParameters.SCENE_MODE_PARTY);
-			put(sceneCandlelight, CameraParameters.SCENE_MODE_CANDLELIGHT);
-			put(sceneBarcode, CameraParameters.SCENE_MODE_BARCODE);
-		}
-	};
-	
-	
+	public static Map<Integer, String> mode_scene;	
+	public static Map<String, Integer> key_scene;	
 
-	public final static Map<Integer, String> mode_wb = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.WB_MODE_AUTO, wbAuto);
-			put(CameraParameters.WB_MODE_INCANDESCENT, wbIncandescent);
-			put(CameraParameters.WB_MODE_FLUORESCENT, wbFluorescent);
-			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
-			put(CameraParameters.WB_MODE_DAYLIGHT, wbDaylight);
-			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
-			put(CameraParameters.WB_MODE_TWILIGHT, wbTwilight);
-			put(CameraParameters.WB_MODE_SHADE, wbShade);
-		}
-	};
-	
-	public final static Map<String, Integer> key_wb = new Hashtable<String, Integer>() {
-		{
-			put(wbAuto, CameraParameters.WB_MODE_AUTO);
-			put(wbIncandescent, CameraParameters.WB_MODE_INCANDESCENT);
-			put(wbFluorescent, CameraParameters.WB_MODE_FLUORESCENT);
-			put(wbWarmFluorescent, CameraParameters.WB_MODE_WARM_FLUORESCENT);
-			put(wbDaylight, CameraParameters.WB_MODE_DAYLIGHT);
-			put(wbCloudyDaylight, CameraParameters.WB_MODE_CLOUDY_DAYLIGHT);
-			put(wbTwilight, CameraParameters.WB_MODE_TWILIGHT);
-			put(wbShade, CameraParameters.WB_MODE_SHADE);
-		}
-	};
+	public static Map<Integer, String> mode_wb;	
+	public static Map<String, Integer> key_wb;
 
-
-//	public final static int CONTROL_AF_MODE_INFINITY = 6;
-//	public final static int CONTROL_AF_MODE_NORMAL = 7;
-//	public final static int CONTROL_AF_MODE_FIXED = 8;
-	public final static Map<Integer, String> mode_focus = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.AF_MODE_AUTO, focusAuto);
-			put(CameraParameters.AF_MODE_INFINITY, focusInfinity);
-			put(CameraParameters.AF_MODE_NORMAL, focusNormal);
-			put(CameraParameters.AF_MODE_MACRO, focusMacro);
-			put(CameraParameters.AF_MODE_FIXED, focusFixed);
-			put(CameraParameters.AF_MODE_EDOF, focusEdof);
-			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, focusContinuousVideo);
-			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, focusContinuousPicture);
-		}
-	};
+	public static Map<Integer, String> mode_focus;	
+	public static Map<String, Integer> key_focus;
 	
-	public final static Map<String, Integer> key_focus = new Hashtable<String, Integer>() {
-		{
-			put(focusAuto, CameraParameters.AF_MODE_AUTO);
-			put(focusInfinity, CameraParameters.AF_MODE_INFINITY);
-			put(focusNormal, CameraParameters.AF_MODE_NORMAL);
-			put(focusMacro, CameraParameters.AF_MODE_MACRO);
-			put(focusFixed, CameraParameters.AF_MODE_FIXED);
-			put(focusEdof, CameraParameters.AF_MODE_EDOF);
-			put(focusContinuousVideo, CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
-			put(focusContinuousPicture, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
-		}
-	};
-
+	public static Map<Integer, String> mode_flash;	
+	public static Map<String, Integer> key_flash;	
 	
-//	public final static int FLASH_MODE_AUTO = 3;
-//	public final static int FLASH_MODE_REDEYE = 4;
-	public final static Map<Integer, String> mode_flash = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.FLASH_MODE_OFF, flashOff);
-			put(CameraParameters.FLASH_MODE_AUTO, flashAuto);
-			put(CameraParameters.FLASH_MODE_SINGLE, flashOn);
-			put(CameraParameters.FLASH_MODE_REDEYE, flashRedEye);
-			put(CameraParameters.FLASH_MODE_TORCH, flashTorch);
-		}
-	};
-	
-	public final static Map<String, Integer> key_flash = new Hashtable<String, Integer>() {
-		{
-			put(flashOff, CameraParameters.FLASH_MODE_OFF);
-			put(flashAuto, CameraParameters.FLASH_MODE_AUTO);
-			put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
-			put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
-			put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
-		}
-	};
-	
-	
-	public final static List<Integer> iso_values = new ArrayList<Integer>() {
-		{			
-			add(CameraParameters.ISO_AUTO);			
-			add(CameraParameters.ISO_50);
-			add(CameraParameters.ISO_100);
-			add(CameraParameters.ISO_200);
-			add(CameraParameters.ISO_400);
-			add(CameraParameters.ISO_800);
-			add(CameraParameters.ISO_1600);
-			add(CameraParameters.ISO_3200);
-		}
-	};
-	
-	
-	public final static List<String> iso_default = new ArrayList<String>() {
-		{			
-			add(isoAuto);			
-			add(iso100);
-			add(iso200);
-			add(iso400);
-			add(iso800);
-			add(iso1600);
-		}
-	};
-	
-		
-	public final static Map<String, String> iso_default_values = new Hashtable<String, String>() {
-	{			
-			put(isoAuto, MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));			
-			put(iso100, MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
-			put(iso200, MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
-			put(iso400, MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
-			put(iso800, MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
-			put(iso1600, MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
-		}
-	};
-	
-	public final static Map<Integer, String> mode_iso = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.ISO_AUTO, isoAuto);
-			put(CameraParameters.ISO_50, iso50);
-			put(CameraParameters.ISO_100, iso100);
-			put(CameraParameters.ISO_200, iso200);
-			put(CameraParameters.ISO_400, iso400);
-			put(CameraParameters.ISO_800, iso800);
-			put(CameraParameters.ISO_1600, iso1600);
-			put(CameraParameters.ISO_3200, iso3200);
-		}
-	};
-	
-	public final static Map<Integer, String> mode_iso2 = new Hashtable<Integer, String>() {
-		{
-			put(CameraParameters.ISO_AUTO, isoAuto_2);
-			put(CameraParameters.ISO_50, iso50_2);
-			put(CameraParameters.ISO_100, iso100_2);
-			put(CameraParameters.ISO_200, iso200_2);
-			put(CameraParameters.ISO_400, iso400_2);
-			put(CameraParameters.ISO_800, iso800_2);
-			put(CameraParameters.ISO_1600, iso1600_2);
-			put(CameraParameters.ISO_3200, iso3200_2);
-		}
-	};
-	
-	
-	public final static Map<Integer, Integer> mode_iso_HALv3 = new Hashtable<Integer, Integer>() {
-		{
-			put(CameraParameters.ISO_AUTO, 1);
-			put(CameraParameters.ISO_50, 50);
-			put(CameraParameters.ISO_100, 100);
-			put(CameraParameters.ISO_200, 200);
-			put(CameraParameters.ISO_400, 400);
-			put(CameraParameters.ISO_800, 800);
-			put(CameraParameters.ISO_1600, 1600);
-			put(CameraParameters.ISO_3200, 3200);
-		}
-	};
-	
-	public final static Map<String, Integer> key_iso = new Hashtable<String, Integer>() {
-		{
-			put(isoAuto, CameraParameters.ISO_AUTO);
-			put(iso50, CameraParameters.ISO_50);
-			put(iso100, CameraParameters.ISO_100);
-			put(iso200, CameraParameters.ISO_200);
-			put(iso400, CameraParameters.ISO_400);
-			put(iso800, CameraParameters.ISO_800);
-			put(iso1600, CameraParameters.ISO_1600);
-			put(iso3200, CameraParameters.ISO_3200);
-		}
-	};
-	
-	public final static Map<String, Integer> key_iso2 = new Hashtable<String, Integer>() {
-		{
-			put(isoAuto_2, CameraParameters.ISO_AUTO);
-			put(iso50_2, CameraParameters.ISO_50);
-			put(iso100_2, CameraParameters.ISO_100);
-			put(iso200_2, CameraParameters.ISO_200);
-			put(iso400_2, CameraParameters.ISO_400);
-			put(iso800_2, CameraParameters.ISO_800);
-			put(iso1600_2, CameraParameters.ISO_1600);
-			put(iso3200_2, CameraParameters.ISO_3200);
-		}
-	};
-	
+	public static List<Integer> iso_values;	
+	public static List<String> iso_default;		
+	public static Map<String, String> iso_default_values;	
+	public static Map<Integer, String> mode_iso;	
+	public static Map<Integer, String> mode_iso2;	
+	public static Map<Integer, Integer> mode_iso_HALv3;	
+	public static Map<String, Integer> key_iso;	
+	public static Map<String, Integer> key_iso2;	
 	
 	private static CameraController cameraController = null;
+	
+	private PluginManagerInterface pluginManager = null;
+	private ApplicationInterface appInterface= null;
+	private Context mainContext = null;
 	
 	//Old camera interface
 	private static Camera camera = null;
 	private static Camera.Parameters cameraParameters = null;
 	public byte[] pviewBuffer;
 	
-//	//HALv3 camera's objects
-//	@TargetApi(19)
-//	@SuppressLint("NewApi")
-//	public static class HALv3
-//	{
-//		private static HALv3 instance = null;
-//		
-//		public static HALv3 getInstance()
-//		{
-//			if (instance == null)
-//			{
-//				instance = new HALv3();
-//			}
-//			return instance;
-//		}
-//		
-//		public CameraManager manager = null;
-//		public CameraCharacteristics camCharacter=null;
-//		public cameraAvailableListener availListener = null;
-//		public CameraDevice camDevice = null;
-//		public CaptureRequest.Builder previewRequestBuilder = null;
-//	}
+	public static boolean isHALv3 = false;
+	public static boolean isHALv3Supported = false;
 	
 	public String[] cameraIdList={""};
 	
@@ -507,9 +248,304 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 	
-	public void onCreate()
+	public void onCreate(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase)
 	{
-		if(MainScreen.isHALv3Supported)
+		pluginManager = pluginManagerBase;
+		appInterface = app;
+		mainContext = context;
+		
+		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
+		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
+		scenePortrait = mainContext.getResources().getString(R.string.scenePortraitSystem);
+		sceneLandscape = mainContext.getResources().getString(R.string.sceneLandscapeSystem);
+		sceneNight = mainContext.getResources().getString(R.string.sceneNightSystem);
+		sceneNightPortrait = mainContext.getResources().getString(R.string.sceneNightPortraitSystem);
+		sceneTheatre = mainContext.getResources().getString(R.string.sceneTheatreSystem);
+		sceneBeach = mainContext.getResources().getString(R.string.sceneBeachSystem);
+		sceneSnow = mainContext.getResources().getString(R.string.sceneSnowSystem);
+		sceneSunset = mainContext.getResources().getString(R.string.sceneSunsetSystem);
+		sceneSteadyPhoto = mainContext.getResources().getString(R.string.sceneSteadyPhotoSystem);
+		sceneFireworks = mainContext.getResources().getString(R.string.sceneFireworksSystem);
+		sceneSports = mainContext.getResources().getString(R.string.sceneSportsSystem);
+		sceneParty = mainContext.getResources().getString(R.string.scenePartySystem);
+		sceneCandlelight = mainContext.getResources().getString(R.string.sceneCandlelightSystem);
+		sceneBarcode = mainContext.getResources().getString(R.string.sceneBarcodeSystem);
+		sceneHDR = mainContext.getResources().getString(R.string.sceneHDRSystem);
+		sceneAR = mainContext.getResources().getString(R.string.sceneARSystem);
+
+		wbAuto = mainContext.getResources().getString(R.string.wbAutoSystem);
+		wbIncandescent = mainContext.getResources().getString(R.string.wbIncandescentSystem);
+		wbFluorescent = mainContext.getResources().getString(R.string.wbFluorescentSystem);
+		wbWarmFluorescent = mainContext.getResources().getString(R.string.wbWarmFluorescentSystem);
+		wbDaylight = mainContext.getResources().getString(R.string.wbDaylightSystem);
+		wbCloudyDaylight = mainContext.getResources().getString(R.string.wbCloudyDaylightSystem);
+		wbTwilight = mainContext.getResources().getString(R.string.wbTwilightSystem);
+		wbShade = mainContext.getResources().getString(R.string.wbShadeSystem);
+
+		focusAuto = mainContext.getResources().getString(R.string.focusAutoSystem);
+		focusInfinity = mainContext.getResources().getString(R.string.focusInfinitySystem);
+		focusNormal = mainContext.getResources().getString(R.string.focusNormalSystem);
+		focusMacro = mainContext.getResources().getString(R.string.focusMacroSystem);
+		focusFixed = mainContext.getResources().getString(R.string.focusFixedSystem);
+		focusEdof = mainContext.getResources().getString(R.string.focusEdofSystem);
+		focusContinuousVideo = mainContext.getResources().getString(R.string.focusContinuousVideoSystem);
+		focusContinuousPicture = mainContext.getResources().getString(R.string.focusContinuousPictureSystem);
+		focusAfLock = mainContext.getResources().getString(R.string.focusAfLockSystem);
+
+
+		flashAuto = mainContext.getResources().getString(R.string.flashAutoSystem);
+		flashOn = mainContext.getResources().getString(R.string.flashOnSystem);
+		flashOff = mainContext.getResources().getString(R.string.flashOffSystem);
+		flashRedEye = mainContext.getResources().getString(R.string.flashRedEyeSystem);
+		flashTorch = mainContext.getResources().getString(R.string.flashTorchSystem);
+		
+		isoAuto = mainContext.getResources().getString(R.string.isoAutoSystem);
+		iso50 = mainContext.getResources().getString(R.string.iso50System);
+		iso100 = mainContext.getResources().getString(R.string.iso100System);
+		iso200 = mainContext.getResources().getString(R.string.iso200System);
+		iso400 = mainContext.getResources().getString(R.string.iso400System);
+		iso800 = mainContext.getResources().getString(R.string.iso800System);
+		iso1600 = mainContext.getResources().getString(R.string.iso1600System);
+		iso3200 = mainContext.getResources().getString(R.string.iso3200System);
+		
+		isoAuto_2 = mainContext.getResources().getString(R.string.isoAutoDefaultSystem);
+		iso50_2 = mainContext.getResources().getString(R.string.iso50DefaultSystem);
+		iso100_2 = mainContext.getResources().getString(R.string.iso100DefaultSystem);
+		iso200_2 = mainContext.getResources().getString(R.string.iso200DefaultSystem);
+		iso400_2 = mainContext.getResources().getString(R.string.iso400DefaultSystem);
+		iso800_2 = mainContext.getResources().getString(R.string.iso800DefaultSystem);
+		iso1600_2 = mainContext.getResources().getString(R.string.iso1600DefaultSystem);
+		iso3200_2 = mainContext.getResources().getString(R.string.iso3200DefaultSystem);
+		
+		meteringAuto = mainContext.getResources().getString(R.string.meteringAutoSystem);
+		meteringMatrix = mainContext.getResources().getString(R.string.meteringMatrixSystem);
+		meteringCenter = mainContext.getResources().getString(R.string.meteringCenterSystem);
+		meteringSpot = mainContext.getResources().getString(R.string.meteringSpotSystem);
+		
+		// List of localized names for camera parameters values	
+		mode_scene = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.SCENE_MODE_AUTO, sceneAuto);
+				put(CameraParameters.SCENE_MODE_ACTION, sceneAction);
+				put(CameraParameters.SCENE_MODE_PORTRAIT, scenePortrait);
+				put(CameraParameters.SCENE_MODE_LANDSCAPE,	sceneLandscape);
+				put(CameraParameters.SCENE_MODE_NIGHT,	sceneNight);
+				put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, sceneNightPortrait);
+				put(CameraParameters.SCENE_MODE_THEATRE, sceneTheatre);
+				put(CameraParameters.SCENE_MODE_BEACH,	sceneBeach);
+				put(CameraParameters.SCENE_MODE_SNOW, sceneSnow);
+				put(CameraParameters.SCENE_MODE_SUNSET, sceneSunset);
+				put(CameraParameters.SCENE_MODE_STEADYPHOTO, sceneSteadyPhoto);
+				put(CameraParameters.SCENE_MODE_FIREWORKS, sceneFireworks);
+				put(CameraParameters.SCENE_MODE_SPORTS, sceneSports);
+				put(CameraParameters.SCENE_MODE_PARTY, sceneParty);
+				put(CameraParameters.SCENE_MODE_CANDLELIGHT, sceneCandlelight);
+				put(CameraParameters.SCENE_MODE_BARCODE, sceneBarcode);
+			}
+		};
+		
+		key_scene = new Hashtable<String, Integer>() {
+			{
+				put(sceneAuto, CameraParameters.SCENE_MODE_AUTO);
+				put(sceneAction, CameraParameters.SCENE_MODE_ACTION);
+				put(scenePortrait, CameraParameters.SCENE_MODE_PORTRAIT);
+				put(sceneLandscape, CameraParameters.SCENE_MODE_LANDSCAPE);
+				put(sceneNight, CameraParameters.SCENE_MODE_NIGHT);
+				put(sceneNightPortrait, CameraParameters.SCENE_MODE_NIGHT_PORTRAIT);
+				put(sceneTheatre, CameraParameters.SCENE_MODE_THEATRE);
+				put(sceneBeach, CameraParameters.SCENE_MODE_BEACH);
+				put(sceneSnow, CameraParameters.SCENE_MODE_SNOW);
+				put(sceneSunset, CameraParameters.SCENE_MODE_SUNSET);
+				put(sceneSteadyPhoto, CameraParameters.SCENE_MODE_STEADYPHOTO);
+				put(sceneFireworks, CameraParameters.SCENE_MODE_FIREWORKS);
+				put(sceneSports, CameraParameters.SCENE_MODE_SPORTS);
+				put(sceneParty, CameraParameters.SCENE_MODE_PARTY);
+				put(sceneCandlelight, CameraParameters.SCENE_MODE_CANDLELIGHT);
+				put(sceneBarcode, CameraParameters.SCENE_MODE_BARCODE);
+			}
+		};
+		
+		
+
+		mode_wb = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.WB_MODE_AUTO, wbAuto);
+				put(CameraParameters.WB_MODE_INCANDESCENT, wbIncandescent);
+				put(CameraParameters.WB_MODE_FLUORESCENT, wbFluorescent);
+				put(CameraParameters.WB_MODE_WARM_FLUORESCENT, wbWarmFluorescent);
+				put(CameraParameters.WB_MODE_DAYLIGHT, wbDaylight);
+				put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT, wbCloudyDaylight);
+				put(CameraParameters.WB_MODE_TWILIGHT, wbTwilight);
+				put(CameraParameters.WB_MODE_SHADE, wbShade);
+			}
+		};
+		
+		key_wb = new Hashtable<String, Integer>() {
+			{
+				put(wbAuto, CameraParameters.WB_MODE_AUTO);
+				put(wbIncandescent, CameraParameters.WB_MODE_INCANDESCENT);
+				put(wbFluorescent, CameraParameters.WB_MODE_FLUORESCENT);
+				put(wbWarmFluorescent, CameraParameters.WB_MODE_WARM_FLUORESCENT);
+				put(wbDaylight, CameraParameters.WB_MODE_DAYLIGHT);
+				put(wbCloudyDaylight, CameraParameters.WB_MODE_CLOUDY_DAYLIGHT);
+				put(wbTwilight, CameraParameters.WB_MODE_TWILIGHT);
+				put(wbShade, CameraParameters.WB_MODE_SHADE);
+			}
+		};
+
+
+		mode_focus = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.AF_MODE_AUTO, focusAuto);
+				put(CameraParameters.AF_MODE_INFINITY, focusInfinity);
+				put(CameraParameters.AF_MODE_NORMAL, focusNormal);
+				put(CameraParameters.AF_MODE_MACRO, focusMacro);
+				put(CameraParameters.AF_MODE_FIXED, focusFixed);
+				put(CameraParameters.AF_MODE_EDOF, focusEdof);
+				put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, focusContinuousVideo);
+				put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, focusContinuousPicture);
+			}
+		};
+		
+		key_focus = new Hashtable<String, Integer>() {
+			{
+				put(focusAuto, CameraParameters.AF_MODE_AUTO);
+				put(focusInfinity, CameraParameters.AF_MODE_INFINITY);
+				put(focusNormal, CameraParameters.AF_MODE_NORMAL);
+				put(focusMacro, CameraParameters.AF_MODE_MACRO);
+				put(focusFixed, CameraParameters.AF_MODE_FIXED);
+				put(focusEdof, CameraParameters.AF_MODE_EDOF);
+				put(focusContinuousVideo, CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+				put(focusContinuousPicture, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+			}
+		};
+
+		
+		mode_flash = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.FLASH_MODE_OFF, flashOff);
+				put(CameraParameters.FLASH_MODE_AUTO, flashAuto);
+				put(CameraParameters.FLASH_MODE_SINGLE, flashOn);
+				put(CameraParameters.FLASH_MODE_REDEYE, flashRedEye);
+				put(CameraParameters.FLASH_MODE_TORCH, flashTorch);
+			}
+		};
+		
+		key_flash = new Hashtable<String, Integer>() {
+			{
+				put(flashOff, CameraParameters.FLASH_MODE_OFF);
+				put(flashAuto, CameraParameters.FLASH_MODE_AUTO);
+				put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
+				put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
+				put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
+			}
+		};
+		
+		
+		iso_values = new ArrayList<Integer>() {
+			{			
+				add(CameraParameters.ISO_AUTO);			
+				add(CameraParameters.ISO_50);
+				add(CameraParameters.ISO_100);
+				add(CameraParameters.ISO_200);
+				add(CameraParameters.ISO_400);
+				add(CameraParameters.ISO_800);
+				add(CameraParameters.ISO_1600);
+				add(CameraParameters.ISO_3200);
+			}
+		};
+		
+		
+		iso_default = new ArrayList<String>() {
+			{			
+				add(isoAuto);			
+				add(iso100);
+				add(iso200);
+				add(iso400);
+				add(iso800);
+				add(iso1600);
+			}
+		};
+		
+			
+		iso_default_values = new Hashtable<String, String>() {
+			{			
+				put(isoAuto, mainContext.getResources().getString(R.string.isoAutoDefaultSystem));			
+				put(iso100, mainContext.getResources().getString(R.string.iso100DefaultSystem));
+				put(iso200, mainContext.getResources().getString(R.string.iso200DefaultSystem));
+				put(iso400, mainContext.getResources().getString(R.string.iso400DefaultSystem));
+				put(iso800, mainContext.getResources().getString(R.string.iso800DefaultSystem));
+				put(iso1600, mainContext.getResources().getString(R.string.iso1600DefaultSystem));
+			}
+		};
+		
+		mode_iso = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.ISO_AUTO, isoAuto);
+				put(CameraParameters.ISO_50, iso50);
+				put(CameraParameters.ISO_100, iso100);
+				put(CameraParameters.ISO_200, iso200);
+				put(CameraParameters.ISO_400, iso400);
+				put(CameraParameters.ISO_800, iso800);
+				put(CameraParameters.ISO_1600, iso1600);
+				put(CameraParameters.ISO_3200, iso3200);
+			}
+		};
+		
+		mode_iso2 = new Hashtable<Integer, String>() {
+			{
+				put(CameraParameters.ISO_AUTO, isoAuto_2);
+				put(CameraParameters.ISO_50, iso50_2);
+				put(CameraParameters.ISO_100, iso100_2);
+				put(CameraParameters.ISO_200, iso200_2);
+				put(CameraParameters.ISO_400, iso400_2);
+				put(CameraParameters.ISO_800, iso800_2);
+				put(CameraParameters.ISO_1600, iso1600_2);
+				put(CameraParameters.ISO_3200, iso3200_2);
+			}
+		};
+		
+		
+		mode_iso_HALv3 = new Hashtable<Integer, Integer>() {
+			{
+				put(CameraParameters.ISO_AUTO, 1);
+				put(CameraParameters.ISO_50, 50);
+				put(CameraParameters.ISO_100, 100);
+				put(CameraParameters.ISO_200, 200);
+				put(CameraParameters.ISO_400, 400);
+				put(CameraParameters.ISO_800, 800);
+				put(CameraParameters.ISO_1600, 1600);
+				put(CameraParameters.ISO_3200, 3200);
+			}
+		};
+		
+		key_iso = new Hashtable<String, Integer>() {
+			{
+				put(isoAuto, CameraParameters.ISO_AUTO);
+				put(iso50, CameraParameters.ISO_50);
+				put(iso100, CameraParameters.ISO_100);
+				put(iso200, CameraParameters.ISO_200);
+				put(iso400, CameraParameters.ISO_400);
+				put(iso800, CameraParameters.ISO_800);
+				put(iso1600, CameraParameters.ISO_1600);
+				put(iso3200, CameraParameters.ISO_3200);
+			}
+		};
+		
+		key_iso2 = new Hashtable<String, Integer>() {
+			{
+				put(isoAuto_2, CameraParameters.ISO_AUTO);
+				put(iso50_2, CameraParameters.ISO_50);
+				put(iso100_2, CameraParameters.ISO_100);
+				put(iso200_2, CameraParameters.ISO_200);
+				put(iso400_2, CameraParameters.ISO_400);
+				put(iso800_2, CameraParameters.ISO_800);
+				put(iso1600_2, CameraParameters.ISO_1600);
+				put(iso3200_2, CameraParameters.ISO_3200);
+			}
+		};
+		
+		if(CameraController.isHALv3Supported)
 			HALv3.onCreateHALv3();
 	}
 	
@@ -528,7 +564,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onPause()
 	{
 		//reset torch
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			try 
 	    	{
@@ -575,7 +611,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void setupCamera(SurfaceHolder holder)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera == null) {
 				try {
@@ -589,7 +625,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 	
 				if (CameraController.camera == null) {
-					Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+					Toast.makeText(mainContext, "Unable to start camera", Toast.LENGTH_LONG).show();
 					return;
 				}
 			}
@@ -599,10 +635,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 				cameraController.mVideoStabilizationSupported = isVideoStabilizationSupported();
 			
-			PluginManager.getInstance().SelectDefaults();
+			pluginManager.SelectDefaults();
 
 			// screen rotation
-			if (!PluginManager.getInstance().shouldPreviewToGPU())
+			if (!pluginManager.shouldPreviewToGPU())
 			{
 				try {
 					camera.setDisplayOrientation(90);
@@ -622,9 +658,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 
 
-		PluginManager.getInstance().SelectDefaults();
+		pluginManager.SelectDefaults();
 
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			// screen rotation
 			try {
@@ -640,7 +676,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 			HALv3.PopulateCameraDimensionsHALv3();
 		else
 			PopulateCameraDimensions();
@@ -649,17 +685,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
 		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
 
-		PluginManager.getInstance().SelectImageDimension(); // updates SX, SY
-															// values
-
+		pluginManager.SelectImageDimension(); // updates SX, SY values
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 			HALv3.setupImageReadersHALv3();
 			
-		MainScreen.thiz.surfaceHolder.addCallback(MainScreen.thiz);
+		appInterface.addSurfaceCallback();
 		
-		if(!MainScreen.isHALv3)
-			MainScreen.thiz.configureCamera();
+		if(!CameraController.isHALv3)
+			appInterface.configureCamera();
 	}
 	
 	
@@ -684,7 +718,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isCameraCreated()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 			return camera != null;
 		else
 			return isCameraCreatedHALv3();
@@ -791,7 +825,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public List<CameraController.Size> getSupportedPreviewSizes()
 	{
 		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			List<Camera.Size> sizes = cameraParameters.getSupportedPreviewSizes();
 			for(Camera.Size sz : sizes)
@@ -808,7 +842,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public List<CameraController.Size> getSupportedPictureSizes()
 	{
 		List<CameraController.Size> pictureSizes = new ArrayList<CameraController.Size>();
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
 			for(Camera.Size sz : sizes)
@@ -823,7 +857,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static int getNumberOfCameras()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 			return Camera.getNumberOfCameras();
 		else
 			return CameraController.getInstance().cameraIdList.length;
@@ -1000,7 +1034,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public boolean isZoomSupported()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (null==camera)
 	    		return false;
@@ -1016,7 +1050,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public int getMaxZoom()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (null==camera)
 	    		return 1;
@@ -1034,7 +1068,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void setZoom(int value)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			Camera.Parameters cp = this.getCameraParameters();
 			if(cp != null)
@@ -1050,7 +1084,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public boolean isLumaAdaptationSupported()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{			
 	    	if (null==camera)
 	    		return false;
@@ -1071,7 +1105,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public boolean isExposureCompensationSupported()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null && CameraController.cameraParameters != null) {
 				if (CameraController.cameraParameters.getMinExposureCompensation() == 0
@@ -1089,7 +1123,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getMinExposureCompensation()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null && CameraController.cameraParameters != null)
 				return CameraController.cameraParameters.getMinExposureCompensation();
@@ -1103,7 +1137,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getMaxExposureCompensation()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null && CameraController.cameraParameters != null)
 				return CameraController.cameraParameters.getMaxExposureCompensation();
@@ -1117,7 +1151,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public float getExposureCompensationStep()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null && CameraController.cameraParameters != null)
 				return CameraController.cameraParameters.getExposureCompensationStep();
@@ -1131,7 +1165,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public float getExposureCompensation()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null && CameraController.cameraParameters != null)
 				return CameraController.cameraParameters.getExposureCompensation()
@@ -1150,7 +1184,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void resetExposureCompensation()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null) {
 				if (!isExposureCompensationSupported())
@@ -1177,11 +1211,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public byte[] getSupportedSceneModes()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
+			List<String> sceneModes = CameraController.cameraParameters.getSupportedSceneModes();
+			if (CameraController.camera != null && sceneModes != null)
 			{
-				List<String> sceneModes = CameraController.cameraParameters.getSupportedSceneModes();
 				Set<String> known_scenes = CameraController.key_scene.keySet();
 				sceneModes.retainAll(known_scenes);
 				byte scenes[] = new byte[sceneModes.size()];
@@ -1223,11 +1257,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		if (camera != null)
 //			return cameraParameters.getSupportedWhiteBalance();
 		
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
+			List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();
+			if (CameraController.camera != null && wbModes != null)
 			{
-				List<String> wbModes = CameraController.cameraParameters.getSupportedWhiteBalance();				
 				Set<String> known_wb = CameraController.key_wb.keySet();
 				wbModes.retainAll(known_wb);
 				byte wb[] = new byte[wbModes.size()];
@@ -1269,11 +1303,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //
 //		return null;
 		
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
-			{
-				List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();				
+			List<String> focusModes = CameraController.cameraParameters.getSupportedFocusModes();
+			if (CameraController.camera != null && focusModes != null)
+			{								
 				Set<String> known_focus = CameraController.key_focus.keySet();
 				focusModes.retainAll(known_focus);
 				byte focus[] = new byte[focusModes.size()];
@@ -1295,14 +1329,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 
-	public boolean isFlashModeSupported() {
+	public boolean isFlashModeSupported()
+	{
 //		List<String> supported_flash = getSupportedFlashModes();
 //		if (supported_flash != null && supported_flash.size() > 0)
 //			return true;
 //		else
 //			return false;
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 			return HALv3.isFlashModeSupportedHALv3();
 		else
 		{
@@ -1323,7 +1358,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //
 //		return null;
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 		{
 			if(isFlashModeSupported())
 			{
@@ -1336,9 +1371,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 		{
-			if (CameraController.camera != null)
+			List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
+			if (CameraController.camera != null && flashModes != null)
 			{
-				List<String> flashModes = CameraController.cameraParameters.getSupportedFlashModes();
 				Set<String> known_flash = CameraController.key_flash.keySet();
 				flashModes.retainAll(known_flash);
 				byte flash[] = new byte[flashModes.size()];
@@ -1356,8 +1391,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return null;		
 	}
 
-	public boolean isISOSupported() {
-		if(!MainScreen.isHALv3)
+	public boolean isISOSupported()
+	{
+		if(!CameraController.isHALv3)
 		{
 			byte supported_iso[] = getSupportedISO();
 			String isoSystem = CameraController.getInstance().getCameraParameters().get("iso");
@@ -1373,7 +1409,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public byte[] getSupportedISO()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1436,7 +1472,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		
 //		return 0;
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 			return HALv3.getMaxNumMeteringAreasHALv3();
 		else if(CameraController.camera != null)
 		{
@@ -1458,7 +1494,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		
 //		return 0;
 		
-		if(MainScreen.isHALv3)
+		if(CameraController.isHALv3)
 			return HALv3.getMaxNumFocusAreasHALv3();
 		else if(CameraController.camera != null)
 		{
@@ -1490,7 +1526,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getSceneMode()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1515,7 +1551,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getWBMode()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1541,7 +1577,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public int getFocusMode()
 	{
 		
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			try
 			{
@@ -1566,7 +1602,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getFlashMode()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1591,7 +1627,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public int getISOMode()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1615,7 +1651,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraSceneMode(int mode)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1635,7 +1671,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraWhiteBalance(int mode)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1655,7 +1691,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraFocusMode(int mode)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1676,7 +1712,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraFlashMode(int mode)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
 			{
@@ -1696,7 +1732,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraISO(int mode)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null) 
 			{
@@ -1735,7 +1771,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraExposureCompensation(int iEV)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null) {
 				Camera.Parameters params = CameraController.cameraParameters;
@@ -1753,7 +1789,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void setCameraFocusAreas(List<Area> focusAreas)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.getCamera() != null)
 			{
@@ -1778,7 +1814,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void setCameraMeteringAreas(List<Area> meteringAreas)
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.getCamera() != null)
 			{
@@ -1830,7 +1866,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public int getPreviewFrameRate()
 	{		
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			int range[] = {0 , 0};
 			cameraParameters.getPreviewFpsRange(range);
@@ -1865,7 +1901,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public float getHorizontalViewAngle()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if(camera != null)
 				return cameraParameters.getHorizontalViewAngle();
@@ -1878,7 +1914,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public float getVerticalViewAngle()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if(camera != null)
 				return cameraParameters.getVerticalViewAngle();
@@ -1905,7 +1941,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //				mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 //				// Log.e("", "mFocusState = " + getFocusState());
 //				camera.setPreviewCallback(null);
-//				camera.takePicture(null, null, null, MainScreen.thiz);
+//				camera.takePicture(null, null, null, mainContext);
 //				return true;
 //			}
 //
@@ -1916,7 +1952,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static int captureImage(int nFrames, int format)
 	{
 		//In old camera interface we can capture only JPEG images, so image format parameter will be ignored.
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			synchronized (CameraController.getInstance().syncObject)
 			{
@@ -1942,7 +1978,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		synchronized (CameraController.getInstance().syncObject)
 		{
-			if(!MainScreen.isHALv3)
+			if(!CameraController.isHALv3)
 			{
 			if (CameraController.getCamera() != null)
 			{
@@ -1973,7 +2009,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		synchronized (CameraController.getInstance().syncObject)
 		{
-			if(!MainScreen.isHALv3)
+			if(!CameraController.isHALv3)
 			{
 				if (CameraController.getCamera() != null)
 				{
@@ -2004,7 +2040,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void cancelAutoFocus()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			if (CameraController.getCamera() != null) {
 				CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
@@ -2030,7 +2066,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 		
-		PluginManager.getInstance().onPictureTaken(paramArrayOfByte,
+		pluginManager.onPictureTaken(paramArrayOfByte,
 				paramCamera);
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 	}
@@ -2038,7 +2074,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onAutoFocus(boolean focused, Camera paramCamera)
 	{
-		PluginManager.getInstance().onAutoFocus(focused);
+		pluginManager.onAutoFocus(focused);
 		if (focused)
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
 		else
@@ -2048,7 +2084,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void onAutoFocus(boolean focused)
 	{
-		PluginManager.getInstance().onAutoFocus(focused);
+		pluginManager.onAutoFocus(focused);
 		if (focused)
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
 		else
@@ -2058,14 +2094,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera)
 	{
-		PluginManager.getInstance().onPreviewFrame(data, paramCamera);
+		pluginManager.onPreviewFrame(data, paramCamera);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 	}
 	
 	
 	public static void setPreviewCallbackWithBuffer()
 	{
-		if(!MainScreen.isHALv3)
+		if(!CameraController.isHALv3)
 		{
 			CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 			CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().pviewBuffer);
