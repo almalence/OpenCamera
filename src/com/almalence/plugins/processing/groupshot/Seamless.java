@@ -38,9 +38,9 @@ public class Seamless
 	private final String TAG = this.getClass().getName()
 			.substring(this.getClass().getName().lastIndexOf(".") + 1);
 	
-	private final static int IMAGE_TO_LAYOUT = 8;
-	private final static int MAX_INPUT_FRAME = 8;
-	private final static int MAX_WIDTH_FOR_FACEDETECTION = 1280;
+	private static final int IMAGE_TO_LAYOUT = 8;
+	private static final int MAX_INPUT_FRAME = 8;
+	private static final int MAX_WIDTH_FOR_FACEDETECTION = 1280;
 	
 	private int mNumOfFrame = 0;
 	private int mBasebaseFrameIndex;

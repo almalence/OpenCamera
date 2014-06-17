@@ -48,9 +48,9 @@ import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;
 
 public class ImageAdapter extends BaseAdapter {
-	final static int THUMBNAIL_WIDTH = 150;
-	final static int THUMBNAIL_HEIGHT = 180;
-	final static int IMAGEVIEW_PADDING = 4;
+	static final int THUMBNAIL_WIDTH = 150;
+	static final int THUMBNAIL_HEIGHT = 180;
+	static final int IMAGEVIEW_PADDING = 4;
 	int mGalleryItemBackground;
 	private Context mContext = null;
 	private String[] imagePath = null;

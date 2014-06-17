@@ -39,7 +39,6 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -131,11 +130,8 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putBoolean("UseFocus", false).commit();
 		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);        
-
 		MainScreen.thiz.MuteShutter(false);
-		
 		captureStarted=false;
 	}
 
@@ -152,23 +148,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onStop()
 	{
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.modeSwitcher.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 	}
 	
 	@Override
@@ -208,38 +188,12 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		});
 		
-//		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
-//				LayoutParams.WRAP_CONTENT,
-//				LayoutParams.WRAP_CONTENT);
-//		lp.topMargin = 17;
-//		
-//		modeSwitcher.setLayoutParams(lp);
 		if (PluginManager.getInstance().getProcessingCounter()==0)
 			modeSwitcher.setEnabled(true);
 		else
 			modeSwitcher.setEnabled(false);
 		
-//		clearViews();
-//		addView(modeSwitcher, ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT);
-		
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.modeSwitcher.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -335,11 +289,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void OnShutterClick()
 	{
-//		if (PluginManager.getInstance().getProcessingCounter()!=0)
-//		{
-//			Toast.makeText(MainScreen.thiz, "Processing in progress. Please wait.", Toast.LENGTH_SHORT).show();
-//			return;
-//		}
 		if (captureStarted || AutostartPreference)
 		{
 			if (0 == PreShot.GetImageCount())
@@ -369,7 +318,6 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 	public static int imW = 0;
 	public static int imH = 0;
-	//public static int format = 0;
 	
 	// starts buffering to native buffer
 	void StartBuffering() {
@@ -387,12 +335,9 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			imW = MainScreen.previewWidth;
 			imH = MainScreen.previewHeight;
-			//format = CameraController.getInstance().getCameraParameters().getPreviewFormat();
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-//			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
-//        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 	
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 			
@@ -412,10 +357,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);
-//			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(imW));
-//        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(imH));
 			
-			//Log.i("StartBuffering", "SX "+ SX +" SY "+ SY);
 			int secondsAllocated = PreShot.AllocateBuffer(imW, imH, Integer.parseInt(FPS), Integer.parseInt(PreShotInterval), 1);
 			if (secondsAllocated==0) {
 				Log.i("Preshot capture","StartBuffering failed, can't allocate native buffer!");
@@ -573,7 +515,6 @@ public class PreshotCapturePlugin extends PluginCapture
     	if (0 == PreShot.GetImageCount())
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
 			
-    	//PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getWantLandscapePhoto()?0:1);
     	PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.guiManager.getDisplayOrientation());
     	
 		takingAlready = false;
@@ -612,7 +553,6 @@ public class PreshotCapturePlugin extends PluginCapture
     	if (0 == PreShot.GetImageCount())
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 			
-    	//PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getWantLandscapePhoto()?0:1);
     	PreShot.InsertToBuffer(jpegByteArray, MainScreen.guiManager.getDisplayOrientation());
     	
 		takingAlready = false;
@@ -696,7 +636,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	    		MainScreen.guiManager.showCaptureIndication();
 	    		MainScreen.thiz.PlayShutter();
 	    		
-	    		//paramCamera.takePicture(null, null, null, MainScreen.thiz);
 	    		requestID = CameraController.captureImage(1, CameraController.JPEG);
 	    		counter++;
     		}

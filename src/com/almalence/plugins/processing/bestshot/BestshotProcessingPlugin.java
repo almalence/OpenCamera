@@ -24,13 +24,6 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 +++ --> */
 // <!-- -+-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import android.util.Log;
-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
@@ -120,45 +113,6 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 		}
 		
-		/**/
-//		File saveDir = PluginManager.getInstance().GetSaveDir(false);
-//		String fileFormat;
-//		for (int i =0;i<imagesAmount;i++)
-//		{
-//			File file;
-//	    	if (MainScreen.ForceFilename == null)
-//	        {
-//	    		fileFormat = "IMG_" + i+".jpg";
-//	    		file = new File(
-//	            		saveDir, 
-//	            		fileFormat);
-//	        }
-//	        else
-//	        {
-//	        	file = MainScreen.ForceFilename;
-//	        	MainScreen.ForceFilename = null;
-//	        }
-//	    	FileOutputStream os = null;
-//			try {
-//				os = new FileOutputStream(file);
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			byte[] frame1 = SwapHeap.CopyFromHeap(
-//					compressed_frame[i],
-//					compressed_frame_len[i]);
-//			try {
-//				os.write(frame1);
-//				os.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
-		/**/
 		int frame = compressed_frame[idxResult];
 		int len = compressed_frame_len[idxResult];
 		

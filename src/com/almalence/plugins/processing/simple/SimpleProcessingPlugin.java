@@ -24,14 +24,10 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 +++ --> */
 // <!-- -+-
-import android.util.Log;
-
-import com.almalence.SwapHeap;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 //-+- -->
-import com.almalence.util.ImageConversion;
 
 /***
 Implements simple processing plugin - just translate shared memory values 
@@ -64,7 +60,6 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int mImageWidth = MainScreen.getImageWidth();
 		int mImageHeight = MainScreen.getImageHeight();
 		
-//		Log.v("!!!!!!!!!!!!", "SessionID " + sessionID + " shared size " + PluginManager.getInstance().sizeOfSharedMemory());
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID));
 		if (num == null)
 			return;

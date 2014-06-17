@@ -36,5 +36,5 @@ public abstract class PluginExport extends Plugin
 	}
 	
 	@Override
-	abstract public void onExportActive(long SessionID);
+	public abstract void onExportActive(long SessionID);
 }

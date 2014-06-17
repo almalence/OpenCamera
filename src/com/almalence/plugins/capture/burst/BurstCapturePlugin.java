@@ -77,8 +77,6 @@ public class BurstCapturePlugin extends PluginCapture
 			  0,
 			  R.drawable.gui_almalence_mode_burst,
 			  "Burst images");
-
-		//refreshPreferences();
 	}
 	
 	@Override
@@ -363,8 +361,6 @@ public class BurstCapturePlugin extends PluginCapture
 			frame_len = jpeg.limit();
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
-//			byte[] jpegByteArray = jpeg.array();			
-//			int frame_len = jpegByteArray.length;
 			
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 			

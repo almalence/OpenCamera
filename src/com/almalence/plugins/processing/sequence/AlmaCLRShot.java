@@ -38,7 +38,7 @@ public class AlmaCLRShot
 			.substring(this.getClass().getName().lastIndexOf(".") + 1);
 	
 	private int IMAGE_TO_LAYOUT = 8;
-	private final static int MAX_INPUT_FRAME = 8;
+	private static final int MAX_INPUT_FRAME = 8;
 	
 	private List<byte []> mJpegData;
 	private Size mPreviewSize;
@@ -62,8 +62,7 @@ public class AlmaCLRShot
     public static AlmaCLRShot getInstance() {
         return mInstance;
     }
-    
-	
+    	
 	public void addJPEGInputFrame(List<byte[]> inputFrame, Size size)  throws Exception
 	{
 		mNumOfFrame = inputFrame.size();
@@ -114,13 +113,11 @@ public class AlmaCLRShot
 		}
 		return;
 	}
-	
-	
+		
 	public void addYUVInputFrame(List<Integer> inputFrame, Size size)  throws Exception {
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 		
-		//mInputFrameSize = size;
 		Log.e(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 		
 		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
@@ -134,7 +131,7 @@ public class AlmaCLRShot
 		
 		int data_lenght = mInputFrameSize.getWidth()*mInputFrameSize.getHeight()+2*((mInputFrameSize.getWidth()+1)/2)*((mInputFrameSize.getHeight()+1)/2);
 		for (int i = 0;i < mNumOfFrame;i++) {
-			PointOfYUVData[i] = inputFrame.get(i);//SwapHeap.SwapYuvToHeap(inputFrame.get(i), data_lenght);
+			PointOfYUVData[i] = inputFrame.get(i);
 			LengthOfYUVData[i] = data_lenght;
 	    	if (PointOfYUVData[i] == 0) {
 	    		Log.d(TAG, "Out of Memory in Native");
@@ -154,7 +151,6 @@ public class AlmaCLRShot
 		return;
 	}
 	
-
 	public boolean initialize(Size previewSize, int angle, int sensitivity, int minSize, int ghosting, int[] sports_order) throws Exception
 	{
 		mGhosting = ghosting;
@@ -283,7 +279,7 @@ public class AlmaCLRShot
 		return;
 	}
 	
-	synchronized private void removeProcessing(int[] sports_order) {
+	private synchronized void removeProcessing(int[] sports_order) {
     	if (mOutNV21 != 0) {
     		SwapHeap.FreeFromHeap(mOutNV21);
     		mOutNV21 = 0;
@@ -307,4 +303,3 @@ public class AlmaCLRShot
         System.loadLibrary("almashot-sequence");
     }
 }
-//*/

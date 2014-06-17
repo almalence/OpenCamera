@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.vf.aeawlock;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -31,7 +28,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -57,11 +53,11 @@ Implements viewfinder plugin - controls Auto exposure and Auto white balance loc
 
 public class AeAwLockVFPlugin extends PluginViewfinder							  
 {
-	private final static Integer icon_ae_lock = R.drawable.gui_almalence_aelock_on;
-	private final static Integer icon_ae_unlock = R.drawable.gui_almalence_aelock_off;
+	private static final Integer icon_ae_lock = R.drawable.gui_almalence_aelock_on;
+	private static final Integer icon_ae_unlock = R.drawable.gui_almalence_aelock_off;
 	
-	private final static Integer icon_aw_lock = R.drawable.gui_almalence_awlock_on;
-	private final static Integer icon_aw_unlock = R.drawable.gui_almalence_awlock_off;
+	private static final Integer icon_aw_lock = R.drawable.gui_almalence_awlock_on;
+	private static final Integer icon_aw_unlock = R.drawable.gui_almalence_awlock_off;
 	
 	RotateImageView aeLockButton;
 	RotateImageView awLockButton;
@@ -72,9 +68,6 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	
 	boolean aeLocked = false;
 	boolean awLocked = false;
-	
-//	private int mLayoutOrientationCurrent;
-//	private int mDisplayOrientationCurrent;
 	
 	public AeAwLockVFPlugin()
 	{
@@ -153,30 +146,8 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			}
 			
 		});
-		
-//    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-//    	int orientation = MainScreen.guiManager.getLayoutOrientation();
-//    	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
-		
-		
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = this.buttonsLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
 				
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
@@ -203,26 +174,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	public void onPause()
 	{
 		if(this.buttonsLayout != null)
-		{
-			List<View> specialView = new ArrayList<View>();
-			RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-			for(int i = 0; i < specialLayout.getChildCount(); i++)
-				specialView.add(specialLayout.getChildAt(i));
-	
-			for(int j = 0; j < specialView.size(); j++)
-			{
-				View view = specialView.get(j);
-				int view_id = view.getId();
-				int layout_id = this.buttonsLayout.getId();
-				if(view_id == layout_id)
-				{
-					if(view.getParent() != null)
-						((ViewGroup)view.getParent()).removeView(view);
-					
-					specialLayout.removeView(view);
-				}
-			}
-		}
+			MainScreen.guiManager.removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 	}
 	
 	private void AeLock()

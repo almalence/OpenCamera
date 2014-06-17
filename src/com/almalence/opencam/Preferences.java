@@ -40,7 +40,7 @@ Preference activity class - manages preferences
 
 public class Preferences extends PreferenceActivity 
 {
-	static public PreferenceActivity thiz;
+	public static PreferenceActivity thiz;
 	// Called only on Honeycomb and later
 	//loading headers for common and plugins
 	@Override
@@ -63,12 +63,12 @@ public class Preferences extends PreferenceActivity
 
 	}
 	
-	static public void closePrefs()
+	public static void closePrefs()
 	{
 		thiz.finish();
 	}
 	
-	static public void setScreenBrightness(boolean setMax)
+	public static void setScreenBrightness(boolean setMax)
 	{
 		try{
 			Window window = thiz.getWindow();

@@ -21,10 +21,8 @@ package com.almalence.plugins.processing.sequence;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -54,7 +52,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
@@ -87,30 +84,30 @@ Implements night processing
 public class SequenceProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener, Handler.Callback, OnClickListener, SequenceListener
 {
 	private long sessionID=0;
-    public static int mSensitivity = 15;
-    public static int mMinSize = 1000;
-    public static String mGhosting = "0";
+	private static int mSensitivity = 15;
+	private static int mMinSize = 1000;
+	private static String mGhosting = "0";
     
-    public static int mAngle = 0;
+	private static int mAngle = 0;
 
-    public static boolean SaveInputPreference;
+	private static boolean SaveInputPreference;
     
     private AlmaCLRShot mAlmaCLRShot;
 
-    static public int imgWidthOR;
-	static public int imgHeightOR;
+    public static int imgWidthOR;
+	public static int imgHeightOR;
 	private int mDisplayOrientation;
 	private boolean mCameraMirrored;
 
 	private int[] indexes;
 	
 	private OrderControl sequenceView;
-	public static ArrayList<Bitmap> thumbnails = new ArrayList<Bitmap>();
+	private static ArrayList<Bitmap> thumbnails = new ArrayList<Bitmap>();
 
 	//indicates that no more user interaction needed
 	private boolean finishing = false;
 	
-	public static boolean isYUV = false;
+	private static boolean isYUV = false;
 		
 	public SequenceProcessingPlugin()
 	{
@@ -172,7 +169,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
      	try {
      		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
             int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-           // ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
      		int minSize = 1000;
      		if (mMinSize == 0) {
      			minSize = 0;
@@ -219,7 +215,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			}
     		}
     		
-    		//mJpegBufferList = compressed_frame;
     		if(!isYUV)
     			getDisplaySize(mJpegBufferList.get(0));
     		else
@@ -348,7 +343,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			            ei.saveAttributes();
     		            }
     		            
-    		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
     		            values = new ContentValues(9);
     	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
     	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
@@ -363,15 +357,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			            
     			            if (l != null)
     			            {	     
-//    			            	Exiv2.writeGeoDataIntoImage(
-//    			            		file.getAbsolutePath(), 
-//    			            		true,
-//    			            		l.getLatitude(), 
-//    			            		l.getLongitude(), 
-//    			            		dateString, 
-//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-
     			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
@@ -395,7 +380,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	        }
     	        catch (Exception e)
     	        {
-    	        	//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}
@@ -448,12 +432,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
  			e.printStackTrace();
  		}
      		}
-		
-//	public void FreeMemory()
-//	{
-//		mAlmaCLRShot.release();
-//	}
-
 /************************************************
  * 		POST PROCESSING
  ************************************************/
@@ -469,7 +447,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private static final int MSG_LEAVING = 3;
 	private static final int MSG_END_OF_LOADING = 4;
 	private final Handler mHandler = new Handler(this);
-	private boolean[] mObjStatus;
 	private int mLayoutOrientationCurrent;
 	private int mDisplayOrientationCurrent;
 	private Bitmap PreviewBmp = null;
@@ -490,9 +467,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		
 		mImgView = ((ImageView)postProcessingView.findViewById(R.id.sequenceImageHolder));
 		
-//		mObjStatus = new boolean[mAlmaCLRShot.getTotalObjNum()];
-//        Arrays.fill(mObjStatus, true);
-
         if (PreviewBmp != null) {
         	PreviewBmp.recycle();
         }
@@ -503,7 +477,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		paint.setPathEffect(new DashPathEffect(new float[] {5,5},0));
 
     	PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-//    	drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
 
         if (PreviewBmp != null)  
         {
@@ -512,7 +485,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
         	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
@@ -525,8 +497,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	matrix.postRotate(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270 : 90) : 90);
         	Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(),
         	        matrix, true);
-//        	mImgView.setImageBitmap(rotated);
-//        	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
     		thumbnailsArray[i] = rotated;
     	}
     	sequenceView.setContent(thumbnailsArray, this);
@@ -696,8 +666,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		sequenceView.setEnabled(false);
 
 		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-        //int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-        //ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
  		int minSize = 1000;
  		if (mMinSize == 0) {
  			minSize = 0;

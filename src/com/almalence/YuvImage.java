@@ -41,7 +41,7 @@ public class YuvImage {
      * Number of bytes of temp storage we use for communicating between the
      * native compressor and the java OutputStream.
      */
-    private final static int WORKING_COMPRESS_STORAGE = 4096;
+    private static final int WORKING_COMPRESS_STORAGE = 4096;
 
    /**
      * The YUV format as defined in {@link PixelFormat}.

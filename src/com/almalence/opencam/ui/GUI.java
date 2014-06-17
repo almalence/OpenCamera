@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
-import android.hardware.Camera;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -43,7 +44,9 @@ import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
+import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 
 
@@ -129,6 +132,27 @@ public abstract class GUI
 	
 	//onGUICreate called when main layout is rendered and size's variables is available
 	abstract public void onGUICreate();
+	
+	public void removeViews(View viewElement, int layoutId)
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(layoutId);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int viewElement_id = viewElement.getId();
+			if(view_id == viewElement_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
 	
 	abstract public void onCaptureFinished();
 	

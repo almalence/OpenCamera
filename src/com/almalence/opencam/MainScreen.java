@@ -29,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-//import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,8 +128,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static Handler H;
 
 	private static final int MSG_RETURN_CAPTURED = -1;
-
-	// public static boolean FramesShot = false;
 
 	public static File ForceFilename = null;
 

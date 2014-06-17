@@ -102,15 +102,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private boolean prefMemoryRelax = false;
 	
-	//private String preferenceFocusMode;
-	
 	private float viewAngleX = 55.4f;
 	private float viewAngleY = 42.7f;
 
 	private SensorManager sensorManager;
 	private Sensor sensorGravity;
 	private Sensor sensorAccelerometer;
-	//private Sensor sensorMagnetometer;
 	private Sensor sensorGyroscope;
 	private VfGyroSensor sensorSoftGyroscope = null;
 	private boolean remapOrientation;
@@ -153,7 +150,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		this.sensorManager = (SensorManager)MainScreen.mainContext.getSystemService(Context.SENSOR_SERVICE);
 		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		//this.sensorMagnetometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 	}
 	
@@ -180,10 +176,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void initSensors()
 	{
-		//List<Sensor> ls = this.sensorManager.getSensorList(Sensor.TYPE_GRAVITY);
-		//for (int i=0; i<ls.size(); ++i)
-		//	Log.i("CameraTest", "sensor: "+ls.get(i).getName());
-		
 		if (this.prefHardwareGyroscope)
 		{
 			this.sensorManager.registerListener(
@@ -199,7 +191,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			}
 			this.sensorSoftGyroscope.open();
 			this.sensorSoftGyroscope.SetListener(this.rotationListener);
-			//this.sensorSoftGyroscope.SetStabilityOnly(this.prefHardwareGyroscope);
 		}
 
 		
@@ -224,14 +215,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 					this.sensorGravity,
 					SensorManager.SENSOR_DELAY_GAME);
 		}
-		
-		/*
-		// magnetometer - a lot of 'breathing'
-		this.sensorManager.registerListener(
-				this.rotationListener,
-				this.sensorMagnetometer,
-				SensorManager.SENSOR_DELAY_GAME);
-		*/
 		this.rotationListener.setReceiver(this.engine);
 	}
 
@@ -249,7 +232,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.sensorManager.unregisterListener(this.rotationListener, this.sensorAccelerometer);
 		this.sensorManager.unregisterListener(this.rotationListener, this.sensorGravity);
-		//this.sensorManager.unregisterListener(this.rotationListener, this.sensorMagnetometer);
 	}
 	
 	
@@ -337,14 +319,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		MainScreen.H.sendMessage(msg);
 		
 		showGyroWarnOnce = false;
-		
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//		preferenceFocusMode = prefs.getString(MainScreen.getCameraMirrored() 
-//				? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, Camera.Parameters.FOCUS_MODE_AUTO);
-		
-		//this.rotationListener = new AugmentedRotationListener(this.remapOrientation);
-
-		//initSensors();
 		aewbLockedByPanorama = false;
 		this.getPrefs();
 	}
@@ -364,9 +338,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				}
 			}
 		}
-		
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
-//        prefs.edit().putString(MainScreen.getCameraMirrored()? GUI.sRearFocusModePref : GUI.sFrontFocusModePref, preferenceFocusMode).commit();
 	}
 	
 	@Override
@@ -536,9 +507,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		else if ((HorizontalViewFromAspect < 0.9f*this.viewAngleX) || (HorizontalViewFromAspect > 1.1f*this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		//Log.i(TAG,"viewAngleX: "+this.viewAngleX);
-		//Log.i(TAG,"viewAngleY: "+this.viewAngleY);
-
 		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 		
 		if (!this.prefHardwareGyroscope)
@@ -593,8 +561,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				{
 					this.isFirstFrame = true;
 					this.capturing = true;
-//					this.takingAlready = true;
-//					this.startCapture();
 					int fm =CameraController.getInstance().getFocusMode();
 					int fs = CameraController.getFocusState();
 					if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
@@ -608,7 +574,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 							aboutToTakePicture = true;			
 					else if(takingAlready == false)
 					{
-						//takePicture();
 						this.startCapture();
 					}
 				}
@@ -723,13 +688,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
          case 2:
         	 AugmentedPanoramaEngine.setFrameIntersection(0.30f);
         	 break;
-/*       case 3:
-        	 AugmentedPanoramaEngine.setFrameIntersection(0.25f);
-        	 break;
-         case 4:
-        	 AugmentedPanoramaEngine.setFrameIntersection(0.15f);
-        	 break;
-*/
          }
          
          aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
@@ -765,12 +723,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				{
 					
 					lp.setValueIndex(idx);
-//				}
-//				else 
-//				{
-//					idx=0;
-//					lp.setValueIndex(idx);
-//				}
 					lp.setSummary(entries[idx]);
 			        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			        {
@@ -1293,12 +1245,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			}
 			
 			goodPlace = this.engine.onImageAvailable(im);
-			
-//			if (this.isFirstFrame)
-//			{
-//				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-//				this.isFirstFrame = false;
-//			}
 		}
 		
 		final boolean done = this.engine.isCircular();
@@ -1406,9 +1352,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			
 			frame.getPosition(normalLast);
 			normalLast = transformVector(normalLast, baseTransform);
-			
-			//final int[] frames_ptr = new int[frames.size()];
-			//final float[][][] frames_trs = new float[frames.size()][][];
+
 			int frame_cursor = 0;
 			
 			while (true)
@@ -1438,8 +1382,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				// convert rotation around center into rotation around top-left corner
 				PixelsShiftX +=   MainScreen.getImageWidth()/2 * (1-FloatMath.cos(angleR)) + MainScreen.getImageHeight()/2 * FloatMath.sin(angleR); 
 				PixelsShiftY += - MainScreen.getImageWidth()/2 * FloatMath.sin(angleR)     + MainScreen.getImageHeight()/2 * (1-FloatMath.cos(angleR)); 
-				
-				//Log.i("CameraTest","vTop: " + vTop + " angleR: " + angleR*180/Math.PI);
 				
 				PluginManager.getInstance().addToSharedMem("pano_frame"+(frame_cursor+1)+"."+String.valueOf(SessionID), String.valueOf(frame.getNV21address()));
 

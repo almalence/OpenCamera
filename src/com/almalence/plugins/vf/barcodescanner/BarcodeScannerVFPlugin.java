@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -62,8 +59,8 @@ import com.google.zxing.common.HybridBinarizer;
 public class BarcodeScannerVFPlugin extends PluginViewfinder {
     
 	private static final double BOUNDS_FRACTION = 0.6;
-	private final static Boolean ON = true;
-	private final static Boolean OFF = false;
+	private static final Boolean ON = true;
+	private static final Boolean OFF = false;
 	  
 	private final MultiFormatReader mMultiFormatReader = new MultiFormatReader();
 	private SoundPlayer mSoundPlayer = null;
@@ -202,9 +199,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	@Override
 	public void onGUICreate() {
-		//clearViews();
-		//createBoundView();
-		//createScreenButton();
 		showGUI();
 	}
 	
@@ -243,25 +237,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		mBarcodesListButton = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonBarcodesList);
 	
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = mButtonsLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
+		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 				
-				specialLayout.removeView(view);
-			}
-		}
-		
 		mBarcodesListButton.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -320,14 +297,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			return;
 		}
 
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//		if (params == null)
-//			return;
-//
-//		int previewWidth = params.getPreviewSize().width;
-//		int previewHeight = params.getPreviewSize().height;
-
-        new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
+      new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
         
 		mFrameCounter = 0;
 	}
@@ -387,11 +357,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
      * @return bounding rect for camera
      */
     public final synchronized Rect getBoundingRect() {
-//    	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-//        if (params != null) {
-//            Camera.Size previewSize = params.getPreviewSize();
-//            int previewHeight = previewSize.height;
-//            int previewWidth = previewSize.width;
 
             double heightFraction = BOUNDS_FRACTION;
             double widthFraction = BOUNDS_FRACTION;
@@ -404,8 +369,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
             int bottom = top + height;
 
             return new Rect(left, top, right, bottom);
-//        }
-//        return null;
     }
 	
 	/**
@@ -484,10 +447,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	private synchronized File saveDecodedImageToFile(byte[]... datas) {
 		File file = null;
-//		Camera.Parameters params = MainScreen.thiz.getCameraParameters();			
-//		int imageWidth = params.getPreviewSize().width;
-//		int imageHeight = params.getPreviewSize().height;
-		
 		byte[] dataRotated = new byte[datas[0].length];
 		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.previewWidth, MainScreen.previewHeight, 0, 0, 1);
 		datas[0] = dataRotated;

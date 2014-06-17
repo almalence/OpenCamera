@@ -19,7 +19,7 @@ public class DROVideoEngine
 {
 	private static final String TAG = "Almalence";
 	
-	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
+	private static final int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
     
 	private static final String SHADER_VERTEX =
 			"attribute vec2 vPosition;\n"

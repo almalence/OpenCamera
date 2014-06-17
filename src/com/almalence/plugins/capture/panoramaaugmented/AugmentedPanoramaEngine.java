@@ -18,15 +18,9 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -44,7 +38,6 @@ import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -54,7 +47,6 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener
 
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
@@ -258,8 +250,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	{
 		this.width = width;
 		this.height = height;
-
-		//Log.i("CameraTest", "reset w: "+width+" h: "+height+" FOV: "+verticalViewAngle);
 		
 		this.halfWidth = this.width / 2;
 		this.halfHeight = this.height / 2;
@@ -279,13 +269,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		// ToDo: check why
 		this.radiusGL = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
-
 		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width, this.radius);
 
 		// this is the radius to the intersection of neighbor frames
 		// somehow setting it to the same value as radius to the center gives a more precise results
 		this.radiusEdge = this.radius;
-		//this.radiusEdge = (float)(this.radius / Math.cos(HalfTileShiftAngle));
 		
 		final int circle_frames = (int)Math.ceil(2.0f * Math.PI / (2.0f*HalfTileShiftAngle));
 		this.angleShift = (float)(2.0f * Math.PI / circle_frames);
@@ -372,14 +360,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				throw new RuntimeException();
 			}
 			
-			/*
-			Log.d("ALMAP", "MATRIX");
-			Log.d("ALMAP", this.transform[0] + " " + this.transform[1] + " " + this.transform[2] + " " +this.transform[3]);
-			Log.d("ALMAP", this.transform[4] + " " + this.transform[5] + " " + this.transform[6] + " " +this.transform[7]);
-			Log.d("ALMAP", this.transform[8] + " " + this.transform[9] + " " + this.transform[10] + " " +this.transform[11]);
-			Log.d("ALMAP", this.transform[12] + " " + this.transform[13] + " " + this.transform[14] + " " +this.transform[15]);
-			//*/
-
 			synchronized (this.topVector)
 			{
 				this.topVector.x = this.transform[1];
@@ -575,8 +555,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					}	
 					
 					AugmentedPanoramaEngine.this.capturing.set(false);
-					//AugmentedPanoramaEngine.this.activated.set(false);
-					
 				}
 			});
 			
@@ -1189,9 +1167,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				GLES10.glBindTexture(GL10.GL_TEXTURE_2D, this.texture);
 				
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-				//GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-				//GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
@@ -1239,8 +1215,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					this.colorBuffer.position(0);
 					//*/
 				}
-
-				//part = Math.min((System.currentTimeMillis() - AugmentedSurfaceView.this.capture_time) / (float)FRAME_WHITE_FADE_IN, 1.0f);
 			}
 			
 			gl.glPushMatrix();
@@ -1293,7 +1267,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				gl.glColor4f(0.75f+part/4, 0.75f+part/4, 0.75f+part/4, 0.75f+part/4);
 			
 			gl.glDrawElements(GL10.GL_TRIANGLES, 6, GL10.GL_UNSIGNED_BYTE,	AugmentedPanoramaEngine.FRAME_INDICES_BUFFER);
-			//gl.glDrawElements(GL10.GL_LINE_LOOP, 5, GL10.GL_UNSIGNED_BYTE,	AugmentedSurfaceView.FRAME_LINE_INDICES_BUFFER);
 			
 			gl.glDisable(GLES10.GL_BLEND);
 			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1368,14 +1341,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			this.move(-(int)Math.signum(this.angle));
 		}
-		
-		// Not used as target frame is kept as long as GL context remains
-		/*
-		public void destroy()
-		{
-			GLES10.glDeleteTextures(1, new int[] { this.texture }, 0);
-		}
-		*/
 	}
 	
 	public class AugmentedFrameTaken
@@ -1525,7 +1490,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, this.texture[0]);
 					
-					//GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_NEAREST);
 					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
 					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
 	
@@ -1608,7 +1572,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			gl.glMultMatrixf(this.transform, 0);
 			
-			//float scale = Math.max(0.2f, 1.0f - Math.max(0.1f, this.distance-0.1f));
 			float scale = Math.max(0.20f, 1.0f - this.distance);
 			gl.glScalef(scale, scale, scale);	
 			

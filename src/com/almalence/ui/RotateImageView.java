@@ -188,7 +188,6 @@ public class RotateImageView extends ImageView
                 - getPaddingTop() - getPaddingBottom();
         mThumb = ThumbnailUtils.extractThumbnail(
                 bitmap, miniThumbWidth, miniThumbHeight);
-        //Drawable drawable;
         if (mThumbs == null || !mEnableAnimation)
         {
             mThumbs = new Drawable[2];

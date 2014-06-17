@@ -51,7 +51,7 @@ New interface for preferences. Loads sections for Common preferences.
 @TargetApi(11)
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
-	static public PreferenceFragment thiz;
+	public static PreferenceFragment thiz;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,7 +179,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		setScreenBrightness(MaxScreenBrightnessPreference);
     }
     
-    static public void setScreenBrightness(boolean setMax)
+    public static void setScreenBrightness(boolean setMax)
 	{
     	try{
 			//ContentResolver cResolver = getContentResolver();
@@ -202,7 +202,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 	}
     
-    static public void closePrefs()
+    public static void closePrefs()
 	{
 		thiz.getFragmentManager().popBackStack();
 	}

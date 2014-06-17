@@ -40,7 +40,6 @@ import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
@@ -61,9 +60,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 	RotateImageView histogramRIV;
 	RotateImageView histogramRGBRIV;
 
-	private final static int RGB = 0;
-	private final static int LUMA = 1;
-	private final static int NONE = 2;
+	private static final int RGB = 0;
+	private static final int LUMA = 1;
+	private static final int NONE = 2;
 
 	private int[] histFacts;
 	private int[] histFactsR;
@@ -367,13 +366,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 		if (frameCounter != 4) {
 			return;
 		}
-
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (params == null)
-//			return;
-
-		int previewWidth = MainScreen.previewWidth;//params.getPreviewSize().width;
-		int previewHeight = MainScreen.previewHeight;//params.getPreviewSize().height;
+		int previewWidth = MainScreen.previewWidth;
+		int previewHeight = MainScreen.previewHeight;
 
 		if (histogramType == LUMA) {
 			Histogram.createHistogram(data, histFacts, previewWidth,
