@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -194,15 +193,15 @@ public class AlmalenceGUI extends GUI implements
 	
 	private RotateImageView shutterButton;
 
-	private final static Integer icon_ev = R.drawable.gui_almalence_settings_exposure;
-	private final static Integer icon_cam = R.drawable.gui_almalence_settings_changecamera;
-	private final static Integer icon_settings = R.drawable.gui_almalence_settings_more_settings;
+	private static final Integer icon_ev = R.drawable.gui_almalence_settings_exposure;
+	private static final Integer icon_cam = R.drawable.gui_almalence_settings_changecamera;
+	private static final Integer icon_settings = R.drawable.gui_almalence_settings_more_settings;
 
-	private final static int focusAfLock = 10;
+	private static final int focusAfLock = 10;
 
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
-	private final static Map<Integer, Integer> icons_scene = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_scene = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraParameters.SCENE_MODE_AUTO, R.drawable.gui_almalence_settings_scene_auto);
 			put(CameraParameters.SCENE_MODE_ACTION, R.drawable.gui_almalence_settings_scene_action);
@@ -223,7 +222,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, Integer> icons_wb = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_wb = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraParameters.WB_MODE_AUTO, R.drawable.gui_almalence_settings_wb_auto);
 			put(CameraParameters.WB_MODE_INCANDESCENT, R.drawable.gui_almalence_settings_wb_incandescent);
@@ -236,7 +235,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, Integer> icons_focus = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_focus = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraParameters.AF_MODE_AUTO, R.drawable.gui_almalence_settings_focus_auto);
 			put(CameraParameters.AF_MODE_INFINITY, R.drawable.gui_almalence_settings_focus_infinity);
@@ -250,7 +249,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, Integer> icons_flash = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_flash = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraParameters.FLASH_MODE_OFF, R.drawable.gui_almalence_settings_flash_off);
 			put(CameraParameters.FLASH_MODE_AUTO, R.drawable.gui_almalence_settings_flash_auto);
@@ -260,7 +259,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, Integer> icons_iso = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_iso = new Hashtable<Integer, Integer>() {
 		{
 			put(CameraParameters.ISO_AUTO, R.drawable.gui_almalence_settings_iso_auto);
 			put(CameraParameters.ISO_50, R.drawable.gui_almalence_settings_iso_50);
@@ -273,7 +272,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-	private final static Map<String, Integer> icons_default_iso = new Hashtable<String, Integer>() {
+	private static final Map<String, Integer> icons_default_iso = new Hashtable<String, Integer>() {
 		{
 			put(MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem), R.drawable.gui_almalence_settings_iso_auto);
 			put(MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem), R.drawable.gui_almalence_settings_iso_50);
@@ -286,7 +285,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-	private final static Map<Integer, Integer> icons_metering = new Hashtable<Integer, Integer>() {
+	private static final Map<Integer, Integer> icons_metering = new Hashtable<Integer, Integer>() {
 		{
 			put(0, R.drawable.gui_almalence_settings_metering_auto);
 			put(1, R.drawable.gui_almalence_settings_metering_matrix);
@@ -296,7 +295,7 @@ public class AlmalenceGUI extends GUI implements
 	};
 
 	// List of localized names for camera parameters values	
-	private final static Map<Integer, String> names_scene = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_scene = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.SCENE_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.sceneAuto));
 			put(CameraParameters.SCENE_MODE_ACTION, MainScreen.thiz.getResources().getString(R.string.sceneAction));
@@ -317,7 +316,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, String> names_wb = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_wb = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.WB_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.wbAuto));
 			put(CameraParameters.WB_MODE_INCANDESCENT, MainScreen.thiz.getResources().getString(R.string.wbIncandescent));
@@ -331,7 +330,7 @@ public class AlmalenceGUI extends GUI implements
 	};
 
 
-	private final static Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
 			put(CameraParameters.AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
@@ -344,7 +343,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
 			put(CameraParameters.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
@@ -354,7 +353,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 
-	private final static Map<Integer, String> names_iso = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_iso = new Hashtable<Integer, String>() {
 		{
 			put(CameraParameters.ISO_AUTO, MainScreen.thiz.getResources().getString(R.string.isoAuto));
 			put(CameraParameters.ISO_50, MainScreen.thiz.getResources().getString(R.string.iso50));
@@ -367,7 +366,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-	private final static Map<Integer, String> names_metering = new Hashtable<Integer, String>() {
+	private static final Map<Integer, String> names_metering = new Hashtable<Integer, String>() {
 		{
 			put(0, MainScreen.thiz.getResources().getString(R.string.meteringAutoSystem));
 			put(1, MainScreen.thiz.getResources().getString(R.string.meteringMatrixSystem));
@@ -376,7 +375,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-//	private final static Map<String, String> scene_keys = new Hashtable<String, String>()
+//	private static final Map<String, String> scene_keys = new Hashtable<String, String>()
 //	{
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.sceneAutoKey), sceneAuto);
@@ -400,7 +399,7 @@ public class AlmalenceGUI extends GUI implements
 //		}
 //	};
 	
-//	private final static Map<String, String> wb_keys = new Hashtable<String, String>() {
+//	private static final Map<String, String> wb_keys = new Hashtable<String, String>() {
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.wbAutoKey), wbAuto);
 //			put(MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylightKey), wbCloudyDaylight);
@@ -413,7 +412,7 @@ public class AlmalenceGUI extends GUI implements
 //		}
 //	};
 //	
-//	private final static Map<String, String> focus_keys = new Hashtable<String, String>() {
+//	private static final Map<String, String> focus_keys = new Hashtable<String, String>() {
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.focusAutoKey), focusAuto);
 //			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousVideoKey), focusContinuousVideo);
@@ -427,7 +426,7 @@ public class AlmalenceGUI extends GUI implements
 //	};
 //	
 //	
-//	private final static Map<String, String> flash_keys = new Hashtable<String, String>() {
+//	private static final Map<String, String> flash_keys = new Hashtable<String, String>() {
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.flashAutoKey), flashAuto);
 //			put(MainScreen.thiz.getResources().getString(R.string.flashOnKey), flashOn);
@@ -438,7 +437,7 @@ public class AlmalenceGUI extends GUI implements
 //	};
 
 	
-//	private final static Map<String, String> iso_keys = new Hashtable<String, String>() {
+//	private static final Map<String, String> iso_keys = new Hashtable<String, String>() {
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), isoAuto);
 //			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), iso50);
@@ -451,7 +450,7 @@ public class AlmalenceGUI extends GUI implements
 //		}
 //	};
 //	
-//	private final static Map<String, String> iso2_keys = new Hashtable<String, String>() {
+//	private static final Map<String, String> iso2_keys = new Hashtable<String, String>() {
 //		{
 //			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));
 //			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem));
@@ -543,14 +542,14 @@ public class AlmalenceGUI extends GUI implements
 
 	// Prefer sizes for plugin's controls in pixels for screens with density =
 	// 1;
-	private static float fScreenDensity;
+	private float fScreenDensity;
 
-	private static int iInfoViewMaxHeight;
-	private static int iInfoViewMaxWidth;
-	private static int iInfoViewHeight;
+	private int iInfoViewMaxHeight;
+	private int iInfoViewMaxWidth;
+	private int iInfoViewHeight;
 
-	private static int iCenterViewMaxHeight;
-	private static int iCenterViewMaxWidth;
+	private int iCenterViewMaxHeight;
+	private int iCenterViewMaxWidth;
 
 	// indicates if it's first launch - to show hint layer.
 	private boolean isFirstLaunch = true;
@@ -2653,9 +2652,9 @@ public class AlmalenceGUI extends GUI implements
 	
 
 	private boolean isCameraParameterSupported(String param) {
-		if (param != "" && topMenuPluginButtons.containsKey(param))
+		if (!param.equals("") && topMenuPluginButtons.containsKey(param))
 			return true;
-		else if (param != "" && com.almalence.util.Util.isNumeric(param))
+		else if (!param.equals("") && com.almalence.util.Util.isNumeric(param))
 		{
 			int cameraParameter = Integer.valueOf(param);
 			switch (cameraParameter) {
@@ -2765,7 +2764,7 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	private View getQuickControlButton(String qcID, View defaultView) {
-		if (qcID != "" && topMenuPluginButtons.containsKey(qcID)) {
+		if (!qcID.equals("") && topMenuPluginButtons.containsKey(qcID)) {
 			Plugin plugin = PluginManager.getInstance().getPlugin(qcID);
 			RotateImageView view = (RotateImageView) topMenuPluginButtons
 					.get(qcID);
@@ -2776,7 +2775,7 @@ public class AlmalenceGUI extends GUI implements
 
 			view.setImageResource(plugin.getQuickControlIconID());
 			return view;
-		} else if (qcID != ""
+		} else if (!qcID.equals("")
 				&& topMenuButtons.containsKey(Integer.valueOf(qcID)))
 			return topMenuButtons.get(Integer.valueOf(qcID));
 

@@ -44,7 +44,7 @@ public class AlmaCLRShot
 			.substring(this.getClass().getName().lastIndexOf(".") + 1);
 	
 	private int IMAGE_TO_LAYOUT = 8;
-	private final static int MAX_INPUT_FRAME = 8;
+	private static final int MAX_INPUT_FRAME = 8;
 	
 	private List<byte []> mJpegData;
 	private int mBaseFrameIndex;
@@ -267,7 +267,7 @@ public class AlmaCLRShot
 		return newRect;
 	}
 
-	synchronized public ObjectInfo[] getObjectInfoList() {
+	public synchronized ObjectInfo[] getObjectInfoList() {
 		Log.d(TAG, "getObjectInfoList() -- start");
 		long start = System.currentTimeMillis();
 
@@ -402,10 +402,10 @@ public class AlmaCLRShot
 		return rect;
 	}
 
-	private final static int UP_DIRECTION = 0;
-	private final static int RIGHT_DIRECTION = 1;
-	private final static int DOWN_DIRECTION = 2;
-	private final static int LEFT_DIRECTION = 3;
+	private static final int UP_DIRECTION = 0;
+	private static final int RIGHT_DIRECTION = 1;
+	private static final int DOWN_DIRECTION = 2;
+	private static final int LEFT_DIRECTION = 3;
 
 	private Bitmap getObjBorderSource(int index, Paint paint, Rect rect) {	
 		int i = 0;
@@ -702,7 +702,7 @@ public class AlmaCLRShot
 		return bitmap;
 	}
 
-	synchronized public ObjBorderInfo[] getObjBorderBitmap(Paint paint) {
+	public synchronized ObjBorderInfo[] getObjBorderBitmap(Paint paint) {
 		Log.d(TAG, "getObjBoundaryBitmap() -- start");
 		
 		if (mObjBorderInfo != null) {
@@ -994,7 +994,7 @@ public class AlmaCLRShot
 		return;
 	}
 	
-	synchronized private void removeProcessing(byte[] layout) {
+	private synchronized void removeProcessing(byte[] layout) {
     	if (mOutNV21 != 0) {
     		SwapHeap.FreeFromHeap(mOutNV21);
     		mOutNV21 = 0;
@@ -1009,7 +1009,7 @@ public class AlmaCLRShot
 		return;
 	}
 	
-	synchronized private void updateLayout() {
+	private synchronized void updateLayout() {
     	System.arraycopy(mAutoLayout, 0, mManualLayout, 0, mAutoLayout.length);
     	mTotalObj = MovObjEnumerate(mNumOfFrame, mLayoutSize, mManualLayout, mEnumObj, mBaseFrameIndex);
 	    MovObjFixHoles(mLayoutSize, mEnumObj, 0);

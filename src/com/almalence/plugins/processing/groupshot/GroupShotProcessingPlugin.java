@@ -96,14 +96,14 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     
 	static final int img2lay = 8; // 16		// image-to-layout subsampling factor
 	
-	static public int nFrames;						// number of input images
-	static public int imgWidthFD;
-	static public int imgHeightFD;
-	static public int layWidth; 
-	static public int layHeight;
+	public static int nFrames;						// number of input images
+	public static int imgWidthFD;
+	public static int imgHeightFD;
+	public static int layWidth; 
+	public static int layHeight;
 	
-	static public int previewBmpRealWidth;
-	static public int previewBmpRealHeight;
+	public static int previewBmpRealWidth;
+	public static int previewBmpRealHeight;
 	
 	static Bitmap PreviewBmpInitial;
 	static Bitmap PreviewBmp;
@@ -126,13 +126,13 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	static int[] mPixelsforPreview = null;
 	
 	static int mBaseFrame = 0;  // temporary
-    static public byte[] manualLayout;
-    static public int[] mArraryofFaceIndex;
+	public static byte[] manualLayout;
+	public static int[] mArraryofFaceIndex;
 
 	static int[] crop = new int[5];			// crop parameters and base image are stored here
 	
-	static public String[] filesSavedNames;
-	static public int nFilesSaved;
+	public static String[] filesSavedNames;
+	public static int nFilesSaved;
 	
 	private ImageView mImgView;
 	private Button mSaveButton;

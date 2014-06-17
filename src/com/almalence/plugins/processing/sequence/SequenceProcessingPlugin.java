@@ -21,10 +21,8 @@ package com.almalence.plugins.processing.sequence;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -96,8 +94,8 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     
     private AlmaCLRShot mAlmaCLRShot;
 
-    static public int imgWidthOR;
-	static public int imgHeightOR;
+    public static int imgWidthOR;
+	public static int imgHeightOR;
 	private int mDisplayOrientation;
 	private boolean mCameraMirrored;
 

@@ -47,14 +47,14 @@ Implements night processing
 
 public class NightProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener
 {
-	static public boolean preview_computing = false;
-	static public boolean processing_computing = false;
-	static public boolean should_save = true;
-	static public boolean should_unload = true;
-	static public boolean hdr_processing_returned = false;
-	static public Bitmap PreviewBmp;			// on-screen preview
+	public static boolean preview_computing = false;
+	public static boolean processing_computing = false;
+	public static boolean should_save = true;
+	public static boolean should_unload = true;
+	public static boolean hdr_processing_returned = false;
+	public static Bitmap PreviewBmp;			// on-screen preview
 	public int yuv;						// fused result
-	static public int[] crop = new int[4];
+	public static int[] crop = new int[4];
 	
 	public static int HI_SPEED_FRAMES = 12;
 

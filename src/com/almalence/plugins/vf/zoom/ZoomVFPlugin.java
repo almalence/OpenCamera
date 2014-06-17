@@ -392,8 +392,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					}
 					return;
 				}
-				
-				
+								
 				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)zoomPanel.getLayoutParams();
 				if (params==null)
 				{

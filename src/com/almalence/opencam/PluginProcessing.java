@@ -36,11 +36,11 @@ public abstract class PluginProcessing extends Plugin
 	}
 	
 	@Override
-	abstract public void onStartProcessing(long SessionID);
+	public abstract void onStartProcessing(long SessionID);
 
 	@Override
-	abstract public boolean isPostProcessingNeeded();
+	public abstract boolean isPostProcessingNeeded();
 	
 	@Override
-	abstract public void onStartPostProcessing();
+	public abstract void onStartPostProcessing();
 }

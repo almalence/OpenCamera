@@ -1,7 +1,5 @@
 package com.almalence.plugins.vf.gyro;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -41,8 +38,8 @@ import com.almalence.ui.RotateImageView;
 
 public class GyroVFPlugin extends PluginViewfinder {
     
-	private final static Boolean ON = true;
-	private final static Boolean OFF = false;
+	private static final Boolean ON = true;
+	private static final Boolean OFF = false;
 	
 	private int mOrientation;
 	private Boolean mGyroState;

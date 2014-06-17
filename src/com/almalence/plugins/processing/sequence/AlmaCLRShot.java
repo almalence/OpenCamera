@@ -38,7 +38,7 @@ public class AlmaCLRShot
 			.substring(this.getClass().getName().lastIndexOf(".") + 1);
 	
 	private int IMAGE_TO_LAYOUT = 8;
-	private final static int MAX_INPUT_FRAME = 8;
+	private static final int MAX_INPUT_FRAME = 8;
 	
 	private List<byte []> mJpegData;
 	private Size mPreviewSize;
@@ -279,7 +279,7 @@ public class AlmaCLRShot
 		return;
 	}
 	
-	synchronized private void removeProcessing(int[] sports_order) {
+	private synchronized void removeProcessing(int[] sports_order) {
     	if (mOutNV21 != 0) {
     		SwapHeap.FreeFromHeap(mOutNV21);
     		mOutNV21 = 0;

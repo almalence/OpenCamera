@@ -47,7 +47,7 @@ public class GPSTagsConverter {
      * @param latitude could be longitude.
      * @return
      */
-    synchronized public static final String convert(double latitude) {
+    public static final synchronized String convert(double latitude) {
         latitude=Math.abs(latitude);
         int degree = (int) latitude;
         latitude *= 60;

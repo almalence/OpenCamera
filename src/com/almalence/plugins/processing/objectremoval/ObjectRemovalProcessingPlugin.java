@@ -100,8 +100,8 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
     private boolean released=false;
     private AlmaCLRShot mAlmaCLRShot;
 
-    static public int imgWidthOR;
-	static public int imgHeightOR;
+    public static int imgWidthOR;
+    public static int imgHeightOR;
 	private int mDisplayOrientation;
 	private boolean mCameraMirrored;
 	

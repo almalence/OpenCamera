@@ -77,7 +77,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private TextView memoryInfoText = null;
 	private TextView evInfoText = null;
 	
-	static private int mDeviceOrientation;
+	private static int mDeviceOrientation;
 	private OrientationEventListener orientListener;
 	
 	private boolean useBatteryMonitor;

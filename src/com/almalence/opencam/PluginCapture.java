@@ -43,19 +43,19 @@ public abstract class PluginCapture extends Plugin
 	}
 
 	@Override
-	abstract public void OnShutterClick();
+	public abstract void OnShutterClick();
 	
 	@Override
-	abstract public void onAutoFocus(boolean paramBoolean);
+	public abstract void onAutoFocus(boolean paramBoolean);
 	
 	@Override
-	abstract public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
+	public abstract void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
 
 	@Override
-	abstract public void onImageAvailable(Image im);
+	public abstract void onImageAvailable(Image im);
 	
 	@Override
-	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);
+	public abstract void onPreviewFrame(byte[] data, Camera paramCamera);
 	
 	public boolean shouldPreviewToGPU()
 	{

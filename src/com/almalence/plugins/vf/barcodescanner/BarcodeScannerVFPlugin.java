@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -62,8 +59,8 @@ import com.google.zxing.common.HybridBinarizer;
 public class BarcodeScannerVFPlugin extends PluginViewfinder {
     
 	private static final double BOUNDS_FRACTION = 0.6;
-	private final static Boolean ON = true;
-	private final static Boolean OFF = false;
+	private static final Boolean ON = true;
+	private static final Boolean OFF = false;
 	  
 	private final MultiFormatReader mMultiFormatReader = new MultiFormatReader();
 	private SoundPlayer mSoundPlayer = null;

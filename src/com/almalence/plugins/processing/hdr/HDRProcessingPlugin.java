@@ -109,15 +109,15 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 																	 OnItemSelectedListener,
 																	 OnTaskCompleteListener
 {
-	static public boolean preview_computing = false;
-	static public boolean processing_computing = false;
-	static public boolean should_save = true;
-	static public boolean should_unload = true;
-	static public boolean should_wait = true;
-	static public boolean hdr_processing_returned = false;
-	static public Bitmap PreviewBmp;			// on-screen preview
+	public static boolean preview_computing = false;
+	public static boolean processing_computing = false;
+	public static boolean should_save = true;
+	public static boolean should_unload = true;
+	public static boolean should_wait = true;
+	public static boolean hdr_processing_returned = false;
+	public static Bitmap PreviewBmp;			// on-screen preview
 	private byte[] yuv;						// fused result
-	static final public int[] crop = new int[4];
+	public static final int[] crop = new int[4];
 
 	public static final int PREVIEW_TIME_PROGRESS_PARTS = 200;
 	

@@ -27,7 +27,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -91,8 +90,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private static int idx=0;
 	private static int imgCnt=0;
 	
-	static public String[] filesSavedNames;
-	static public int nFilesSaved;
+	public static String[] filesSavedNames;
+	public static int nFilesSaved;
 	
 	private Bitmap[] mini_frames;
 	private AtomicBoolean miniframesReady = new AtomicBoolean(false);
@@ -100,9 +99,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private Button mSaveButton;
 	private Button mSaveAllButton;
 	
-	private long ProcTimeSt;
 	//Thread saving;
-	private boolean should_save= false;
 	private boolean isSaveAll = false;
 	
 	private DisplayMetrics metrics = null;

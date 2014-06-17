@@ -32,32 +32,14 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.MainScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.CameraController;
 //-+- -->
-
 
 import com.almalence.plugins.capture.video.EglEncoder;
 
@@ -85,7 +67,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 {
 	public static final String TAG = "Almalence";
 	
-	private final static int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
+	private static final int GL_TEXTURE_EXTERNAL_OES = 0x00008d65;
 	
 	private volatile int texture_preview;
 	private SurfaceTexture surfaceTexture;

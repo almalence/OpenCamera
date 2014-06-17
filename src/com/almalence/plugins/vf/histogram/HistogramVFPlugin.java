@@ -60,9 +60,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 	RotateImageView histogramRIV;
 	RotateImageView histogramRGBRIV;
 
-	private final static int RGB = 0;
-	private final static int LUMA = 1;
-	private final static int NONE = 2;
+	private static final int RGB = 0;
+	private static final int LUMA = 1;
+	private static final int NONE = 2;
 
 	private int[] histFacts;
 	private int[] histFactsR;

@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.vf.aeawlock;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -31,7 +28,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -57,11 +53,11 @@ Implements viewfinder plugin - controls Auto exposure and Auto white balance loc
 
 public class AeAwLockVFPlugin extends PluginViewfinder							  
 {
-	private final static Integer icon_ae_lock = R.drawable.gui_almalence_aelock_on;
-	private final static Integer icon_ae_unlock = R.drawable.gui_almalence_aelock_off;
+	private static final Integer icon_ae_lock = R.drawable.gui_almalence_aelock_on;
+	private static final Integer icon_ae_unlock = R.drawable.gui_almalence_aelock_off;
 	
-	private final static Integer icon_aw_lock = R.drawable.gui_almalence_awlock_on;
-	private final static Integer icon_aw_unlock = R.drawable.gui_almalence_awlock_off;
+	private static final Integer icon_aw_lock = R.drawable.gui_almalence_awlock_on;
+	private static final Integer icon_aw_unlock = R.drawable.gui_almalence_awlock_off;
 	
 	RotateImageView aeLockButton;
 	RotateImageView awLockButton;
