@@ -151,24 +151,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			
 		});
 				
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = this.buttonsLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.aeawlock_size);
@@ -195,26 +178,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	public void onPause()
 	{
 		if(this.buttonsLayout != null)
-		{
-			List<View> specialView = new ArrayList<View>();
-			RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-			for(int i = 0; i < specialLayout.getChildCount(); i++)
-				specialView.add(specialLayout.getChildAt(i));
-	
-			for(int j = 0; j < specialView.size(); j++)
-			{
-				View view = specialView.get(j);
-				int view_id = view.getId();
-				int layout_id = this.buttonsLayout.getId();
-				if(view_id == layout_id)
-				{
-					if(view.getParent() != null)
-						((ViewGroup)view.getParent()).removeView(view);
-					
-					specialLayout.removeView(view);
-				}
-			}
-		}
+			MainScreen.guiManager.removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 	}
 	
 	private void AeLock()

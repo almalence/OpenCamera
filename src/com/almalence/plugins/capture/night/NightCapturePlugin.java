@@ -34,8 +34,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.opengl.GLES10;
@@ -283,23 +281,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onStop()
 	{
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.modeSwitcher.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 	}
 
 	@Override
@@ -312,24 +294,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.modeSwitcher.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}		
+		MainScreen.guiManager.removeViews(modeSwitcher, R.id.specialPluginsLayout3);		
 		
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);

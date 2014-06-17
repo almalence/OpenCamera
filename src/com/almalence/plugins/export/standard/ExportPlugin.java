@@ -495,13 +495,15 @@ public class ExportPlugin extends PluginExport
 		            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
 		            	}
 		            }
-		            if(tag_iso != null) {
-		            	if (tag_iso.indexOf("ISO") > 0) {
-		            		tag_iso = tag_iso.substring(0, 2);
-		            	}
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
-		            }
+		            try{
+			            if(tag_iso != null) {
+			            	if (tag_iso.indexOf("ISO") > 0) {
+			            		tag_iso = tag_iso.substring(0, 2);
+			            	}
+			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
+		            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+			            }
+		            }catch(Exception e){}
 		            if(tag_scene != null) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);

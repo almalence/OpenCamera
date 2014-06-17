@@ -1532,24 +1532,7 @@ public class AlmalenceGUI extends GUI implements
 		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
 		selfTimerControl.setVisibility(View.VISIBLE);
 		
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = selfTimerControl.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}
+		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
 		
 		if (needToShow == false || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
 		{

@@ -434,25 +434,8 @@ public class GyroVFPlugin extends PluginViewfinder {
 		mHorizonLayout = inflator.inflate(R.layout.plugin_vf_gyro_layout, null, false);
 		mHorizonLayout.setVisibility(View.VISIBLE);
 		
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = mHorizonLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
+		MainScreen.guiManager.removeViews(mHorizonLayout, R.id.specialPluginsLayout);
 				
-				specialLayout.removeView(view);
-			}
-		}
-		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout, params);
 		mHorizonLayout.requestLayout();

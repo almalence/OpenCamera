@@ -240,25 +240,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		mBarcodesListButton = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonBarcodesList);
 	
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = mButtonsLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
+		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 				
-				specialLayout.removeView(view);
-			}
-		}
-		
 		mBarcodesListButton.setOnClickListener(new OnClickListener()
 		{
 			@Override

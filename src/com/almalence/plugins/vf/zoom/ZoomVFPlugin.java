@@ -209,46 +209,13 @@ public class ZoomVFPlugin extends PluginViewfinder
 	public void onStop()
 	{
 		zoomStopping = true;
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.zoomPanel.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(zoomPanel, R.id.specialPluginsLayout);
 	}
 	
 	@Override
 	public void onGUICreate()
 	{
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.zoomPanel.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(zoomPanel, R.id.specialPluginsLayout);
 		
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)MainScreen.thiz.findViewById(R.id.specialPluginsLayout).getLayoutParams();
 		mainLayoutHeight = lp.height;
@@ -269,7 +236,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
-
+	
 	@Override
 	public void onResume()
 	{
