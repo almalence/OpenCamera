@@ -2390,10 +2390,10 @@ public class AlmalenceGUI extends GUI implements
 				}
 			else
 			{
-				for(String iso_name : CameraController.iso_default)
+				for(String iso_name : CameraController.getIsoDefaultList())
 				{
-					activeISO.add(ISOButtons.get(CameraController.key_iso.get(iso_name)));
-					activeISONames.add(CameraController.key_iso.get(iso_name));
+					activeISO.add(ISOButtons.get(CameraController.getIsoKey().get(iso_name)));
+					activeISONames.add(CameraController.getIsoKey().get(iso_name));
 				}
 			}
 			
@@ -5161,7 +5161,7 @@ public class AlmalenceGUI extends GUI implements
 		if (newMode != -1)
 		{
 			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
-					&& CameraController.getInstance().mSceneModeSupported)
+					&& CameraController.getInstance().isSceneModeSupported())
 			{
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 			}
@@ -5194,7 +5194,7 @@ public class AlmalenceGUI extends GUI implements
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
 			{
-				if (CameraController.getInstance().mSceneModeSupported)
+				if (CameraController.getInstance().isSceneModeSupported())
 					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 			}
 
@@ -5232,7 +5232,7 @@ public class AlmalenceGUI extends GUI implements
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-					&& CameraController.getInstance().mSceneModeSupported)
+					&& CameraController.getInstance().isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
 			CameraController.getInstance().setCameraFlashMode(newMode);
@@ -5261,7 +5261,7 @@ public class AlmalenceGUI extends GUI implements
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-					&& CameraController.getInstance().mSceneModeSupported)
+					&& CameraController.getInstance().isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
 			CameraController.getInstance().setCameraISO(newMode);
