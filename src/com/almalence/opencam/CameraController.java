@@ -860,8 +860,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.ResolutionsMPixList.add(loc, lmpix);
 			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(s.width, s.height));
-			
-			ii++;
 		}
 
 		if (CameraController.ResolutionsNamesList.size() == 0) {

@@ -275,7 +275,7 @@ public abstract class Plugin
 		{
 			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((ii == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
+			if ((Integer.parseInt(CameraController.ResolutionsIdxesList.get(ii)) == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
 				prefFound = true;
 				CaptureIdx = ii;
 				CaptureMpix = mpix;

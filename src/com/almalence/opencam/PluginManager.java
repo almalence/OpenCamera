@@ -1335,7 +1335,7 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	public void SetupCameraParameters() {
-		CameraController.getInstance().updateCameraFeatures();
+//		CameraController.getInstance().updateCameraFeatures();
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).SetupCameraParameters();
 		if (null != pluginList.get(activeCapture))
