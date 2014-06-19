@@ -615,7 +615,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			// set currently selected image size
 			int idx;
 			for (idx = 0; idx < CameraController.ResolutionsIdxesList.size(); ++idx) {
-				if (Integer.parseInt(CameraController.ResolutionsIdxesList.get(idx)) == CameraController.CapIdx) {
+				if (idx == CameraController.CapIdx) {
 					break;
 				}
 			}
@@ -1048,6 +1048,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void configureCamera()
 	{
 		Log.e("MainScreen", "configureCamera()");
+		
+		CameraController.getInstance().updateCameraFeatures();
 		// prepare list of surfaces to be used in capture requests
 		if(CameraController.isUseHALv3())
 			configureHALv3Camera();
@@ -1066,14 +1068,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if(!CameraController.isUseHALv3())
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-		CameraController.supportedSceneModes = cameraController.getSupportedSceneModes();
-		CameraController.supportedWBModes = cameraController.getSupportedWhiteBalance();
-		CameraController.supportedFocusModes = cameraController.getSupportedFocusModes();
-		CameraController.supportedFlashModes = cameraController.getSupportedFlashModes();
-		CameraController.supportedISOModes = cameraController.getSupportedISO();
 		
-		CameraController.maxRegionsSupported = cameraController.getMaxNumFocusAreas();
-
 		PluginManager.getInstance().SetCameraPictureSize();
 		PluginManager.getInstance().SetupCameraParameters();
 
