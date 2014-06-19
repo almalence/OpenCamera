@@ -64,10 +64,6 @@ Stops capturing when shutter button pressed.
 
 public class PreshotCapturePlugin extends PluginCapture
 {
-	private static boolean inCapture = false;
-
-	private boolean takingAlready = false;
-
     // preferences
 	private static String PreShotInterval;
 	private static String FPS;

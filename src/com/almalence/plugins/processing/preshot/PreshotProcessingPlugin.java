@@ -37,7 +37,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
@@ -490,11 +489,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
         final int actW = Math.round(origW * scaleX);
         final int actH = Math.round(origH * scaleY);
 		
-		AnimationSet rlvisible = new AnimationSet(true);
-		rlvisible.setInterpolator(new DecelerateInterpolator());
-		
-		AnimationSet lrvisible = new AnimationSet(true);
-		lrvisible.setInterpolator(new DecelerateInterpolator());
+		AnimationSet visible = new AnimationSet(true);
+		visible.setInterpolator(new DecelerateInterpolator());
 		
 		int duration_visible = 0;
 		
@@ -503,33 +499,19 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		else
 			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actW)), 250, 500);
 		
-		Animation visible_alpha = new AlphaAnimation(0, 1);		
-		visible_alpha.setDuration(duration_visible);
-		visible_alpha.setRepeatCount(0);
-		
-		Animation rlvisible_translate;
+		Animation visible_translate;
 		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			rlvisible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
+			visible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
 		else
-			rlvisible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
-		rlvisible_translate.setDuration(duration_visible);		
-		rlvisible_translate.setFillAfter(true);
+			visible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
+		visible_translate.setDuration(duration_visible);		
+		visible_translate.setFillAfter(true);
 		
-		Animation lrvisible_translate;
-		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			lrvisible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
-		else
-			lrvisible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
-		lrvisible_translate.setDuration(duration_visible);		
-		lrvisible_translate.setFillAfter(true);
+		visible.addAnimation(visible_translate);
 		
-		rlvisible.addAnimation(rlvisible_translate);
+		postProcessingView.findViewById(R.id.imageListed).startAnimation(visible);
 		
-		lrvisible.addAnimation(lrvisible_translate);
-		
-		postProcessingView.findViewById(R.id.imageListed).startAnimation(toLeft?rlvisible:lrvisible);
-		
-		rlvisible.setAnimationListener(new AnimationListener() {
+		visible.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				postProcessingView.findViewById(R.id.imageListed).clearAnimation();
@@ -542,20 +524,66 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			@Override
 			public void onAnimationStart(Animation animation) {}
 		});
-		
-		lrvisible.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				postProcessingView.findViewById(R.id.imageListed).clearAnimation();
-				postProcessingView.findViewById(R.id.imageListed).setVisibility(View.GONE);
-				Show(false);
-				isFlipping = false;
+	}
+    
+    @Override
+    public Bitmap getMultishotBitmap(int index)
+	{
+    	if(isSlowMode == false)
+    	{
+	    	int[] data = PreShot.GetFromBufferRGBA(index, false, false);
+	    	
+	    	if (data.length == 0)
+	    	{
+	    		return null;
+	    	}
+	
+	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
+	    	int or = PreShot.getOrientation(index);
+	    	Log.e("PreShot", "getMultishotBitmap orientation: " + or);
+	    	if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
+	    	{ 
+	    		H = MainScreen.previewWidth;
+	    		W = MainScreen.previewHeight;
+	    	}
+			
+			Bitmap bitmap;
+			bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
+			bitmap.setPixels(data, 0, W, 0, 0, W, H);
+			
+			if (mCameraMirrored && (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))/*1 == PreShot.isPortrait(index)*/)
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(180);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			}
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-			@Override
-			public void onAnimationStart(Animation animation) {}
-		});
+			
+			return bitmap;
+	    }
+    	else
+    	{//slow mode
+    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, MainScreen.getCameraMirrored());
+	    	
+	    	if (data.length == 0)
+	    	{
+	    		return null;
+	    	}
+	
+	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
+    		
+	        Bitmap photo = null ;
+	        photo = BitmapFactory.decodeByteArray(data, 0, data.length);
+	        photo = Bitmap.createScaledBitmap(photo, W, H, false);
+	        
+	        if(90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(mCameraMirrored? 270 : 90);
+	    		photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+			}
+	        
+	        return photo;
+    	}
 	}
     
     private static float X=0;

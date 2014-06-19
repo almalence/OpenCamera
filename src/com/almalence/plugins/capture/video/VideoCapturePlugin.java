@@ -119,8 +119,6 @@ public class VideoCapturePlugin extends PluginCapture
 {
 	private static final String TAG = "Almalence";
 	
-	private boolean takingAlready=false;
-	
     private volatile boolean isRecording;
     private boolean onPause;
         

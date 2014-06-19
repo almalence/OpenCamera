@@ -111,7 +111,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private boolean remapOrientation;
 
 	private volatile boolean capturing;
-	private boolean takingAlready = false;
 	private boolean aboutToTakePicture=false;
 	
 	private AugmentedRotationListener rotationListener;

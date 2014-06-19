@@ -62,8 +62,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 {
 	private static final int MAX_HDR_FRAMES = 4;
 	
-    private boolean inCapture;
-    
     private int preferenceEVCompensationValue;
 
     // almashot - related
@@ -72,7 +70,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     private int cur_ev, frame_num;
     public static float ev_step;
     private int evRequested, evLatency;
-	private boolean takingAlready = false;
 	private boolean aboutToTakePicture=false;
 	private boolean cm7_crap;
 	
