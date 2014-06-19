@@ -109,25 +109,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 																	 OnItemSelectedListener,
 																	 OnTaskCompleteListener
 {
-	public static boolean preview_computing = false;
-	public static boolean processing_computing = false;
-	public static boolean should_save = true;
-	public static boolean should_unload = true;
-	public static boolean should_wait = true;
-	public static boolean hdr_processing_returned = false;
-	public static Bitmap PreviewBmp;			// on-screen preview
 	private byte[] yuv;						// fused result
-	public static final int[] crop = new int[4];
+	private static final int[] crop = new int[4];
 
-	public static final int PREVIEW_TIME_PROGRESS_PARTS = 200;
-	
-    public static String ContrastPreference;
-	public static String mContrastPreference;
-	public static String ExpoPreference;
-	public static String ColorPreference;
-	public static String NoisePreference;
-	public static boolean AutoAdjustments = false;
-	public static int SaveInputPreference;
+	private static String ContrastPreference;
+	private static String mContrastPreference;
+	private static String ExpoPreference;
+	private static String ColorPreference;
+	private static String NoisePreference;
+	private static boolean AutoAdjustments = false;
+	private static int SaveInputPreference;
 	
 	private int mLayoutOrientationCurrent = 0;
 	private int mDisplayOrientationOnStartProcessing = 0;
@@ -363,7 +354,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 //			            ei.saveAttributes();
 		            }
 		            
-		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
 		            values = new ContentValues(9);
 	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
 	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
@@ -939,8 +929,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		
 	private ArrayList<Adjustment> adjustments = null;
 	private final ArrayList<AdjustmentsPreset> presets = new ArrayList<AdjustmentsPreset>();
-	
-	private AlertDialog trashDialog = null;
 	
 	private ImageView imageView;
 	

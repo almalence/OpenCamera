@@ -4,9 +4,8 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener
 import com.almalence.plugins.capture.panoramaaugmented.Vector3d;
 
 
-public class AugmentedSurfaceView implements AugmentedRotationReceiver {
-	public final float[] initialTransform = new float[16];
-
+public class AugmentedSurfaceView implements AugmentedRotationReceiver 
+{
 	private final Vector3d currentVector = new Vector3d();
 	private final Vector3d topVector = new Vector3d(0.0f, 0.0f, 1.0f);
 	private final Vector3d sideVector = new Vector3d(0.0f, 1.0f, 0.0f);

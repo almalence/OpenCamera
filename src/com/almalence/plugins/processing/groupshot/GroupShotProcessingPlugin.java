@@ -96,14 +96,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     
 	static final int img2lay = 8; // 16		// image-to-layout subsampling factor
 	
-	public static int nFrames;						// number of input images
-	public static int imgWidthFD;
-	public static int imgHeightFD;
-	public static int layWidth; 
-	public static int layHeight;
+	private static int nFrames;						// number of input images
+	private static int imgWidthFD;
+	private static int imgHeightFD;
 	
-	public static int previewBmpRealWidth;
-	public static int previewBmpRealHeight;
+	private static int previewBmpRealWidth;
+	private static int previewBmpRealHeight;
 	
 	static Bitmap PreviewBmpInitial;
 	static Bitmap PreviewBmp;
@@ -126,13 +124,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	static int[] mPixelsforPreview = null;
 	
 	static int mBaseFrame = 0;  // temporary
-	public static byte[] manualLayout;
-	public static int[] mArraryofFaceIndex;
 
 	static int[] crop = new int[5];			// crop parameters and base image are stored here
-	
-	public static String[] filesSavedNames;
-	public static int nFilesSaved;
 	
 	private ImageView mImgView;
 	private Button mSaveButton;
@@ -152,23 +145,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	/*
      * Group shot testing start
      */
-	public static final int MAX_GS_FRAMES = 8; // 8 - is the same as in almashot-seamless.cpp
-    public static int compressed_frame[] = new int[MAX_GS_FRAMES];
-    public static int compressed_frame_len[] = new int[MAX_GS_FRAMES];
-    public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
-    public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
-    public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
+	private static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
+	private static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
     ArrayList<ArrayList <Rect>> mFaceList;
     
-    public static int mFrameCount = 0;
+    private static int mFrameCount = 0;
     
-    public static final int MAX_FACE_DETECTED = 20;
-    public static final float FACE_CONFIDENCE_LEVEL = 0.4f;
+    private static final int MAX_FACE_DETECTED = 20;
+    private static final float FACE_CONFIDENCE_LEVEL = 0.4f;
 	
     private final Object syncObject = new Object();
-	
 
-    public static boolean SaveInputPreference;
+    private static boolean SaveInputPreference;
     
     private boolean postProcessingRun = false;
 
@@ -176,7 +164,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
   	private boolean finishing = false;
   	private boolean changingFace = false;
   	
-  	public static boolean isYUV = false;
+  	private static boolean isYUV = false;
   	
 	public GroupShotProcessingPlugin()
 	{

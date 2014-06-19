@@ -72,8 +72,8 @@ with specified pattern name
 
 public class ExportPlugin extends PluginExport
 {
-	public static String[] filesSavedNames;
-	public static int nFilesSaved;
+	private static String[] filesSavedNames;
+	private static int nFilesSaved;
 
 	boolean should_save= false;
 	private RotateImageView gpsInfoImage;

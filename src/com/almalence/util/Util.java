@@ -79,12 +79,9 @@ public final class Util {
     private static final float DEFAULT_CAMERA_BRIGHTNESS = 0.7f;
 
     // Orientation hysteresis amount used in rounding, in degrees
-    public static final int ORIENTATION_HYSTERESIS = 5;
+    private static final int ORIENTATION_HYSTERESIS = 5;
 
-    public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
-
-    public static final String DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-    public static final String DIRECTORY = DCIM + "/Camera";
+    private static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
 
     private static boolean sIsTabletUI;
     private static float sPixelDensity = 1;

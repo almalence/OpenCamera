@@ -79,7 +79,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	private int histoHeight = 0;
 	private int histoWidth = 0;
 
-	public static int histogramType = RGB;
+	private static int histogramType = RGB;
 
 	public HistogramVFPlugin() {
 		super("com.almalence.plugins.histogramvf",

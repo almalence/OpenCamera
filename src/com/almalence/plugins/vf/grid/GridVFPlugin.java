@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.Plugin;
 import com.almalence.opencam_plus.PluginViewfinder;
@@ -47,7 +48,7 @@ public class GridVFPlugin extends PluginViewfinder
 {
 	ImageView grid = null;
 
-	public int gridType = 1;
+	private int gridType = 1;
 	
 	public GridVFPlugin()
 	{

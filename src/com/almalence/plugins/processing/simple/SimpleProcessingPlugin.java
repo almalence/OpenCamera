@@ -38,9 +38,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 {
 	private long sessionID=0;
 	
-	public static boolean DROLocalTMPreference = true;
-	public static int prefStrongFilter = 0;
-	public static int prefPullYUV = 0;
+	private static boolean DROLocalTMPreference = true;
+	private static int prefStrongFilter = 0;
+	private static int prefPullYUV = 0;
 	
 	public SimpleProcessingPlugin()
 	{

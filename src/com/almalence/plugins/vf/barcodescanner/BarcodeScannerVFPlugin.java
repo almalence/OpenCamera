@@ -64,7 +64,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	  
 	private final MultiFormatReader mMultiFormatReader = new MultiFormatReader();
 	private SoundPlayer mSoundPlayer = null;
-	public static Boolean mBarcodeScannerState = OFF;
+	private static Boolean mBarcodeScannerState = OFF;
 	private int mFrameCounter = 0;
 	private int mOrientation = 0;
 	private BoundingView mBound = null;
@@ -520,16 +520,19 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     /**
      * View for displaying bounds for active camera region
      */
-    class BoundingView extends View {
-            public BoundingView(Context context) {
+    class BoundingView extends View 
+    {
+    	private Paint paint;
+        public BoundingView(Context context) 
+        {
             super(context);
+            paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setARGB(110, 128, 128, 128);
         }
 
         @Override
-        protected void onDraw(Canvas canvas) {
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setARGB(110, 128, 128, 128);
-            
+        protected void onDraw(Canvas canvas) 
+        {
             int width = canvas.getWidth();
             int height = canvas.getHeight();
             Rect boundingRect = getBoundingRectUi(canvas.getWidth(), canvas.getHeight());

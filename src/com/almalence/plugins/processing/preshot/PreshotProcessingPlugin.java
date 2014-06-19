@@ -90,9 +90,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private static int idx=0;
 	private static int imgCnt=0;
 	
-	public static String[] filesSavedNames;
-	public static int nFilesSaved;
-	
 	private Bitmap[] mini_frames;
 	private AtomicBoolean miniframesReady = new AtomicBoolean(false);
 
@@ -119,7 +116,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     
     private ProgressDialog mSavingDialog;
     
- // indicates if it's first launch - to show hint layer.
+    //indicates if it's first launch - to show hint layer.
  	private boolean isFirstLaunch = true;
     
     @Override
@@ -439,7 +436,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	if (imgCnt==1 || mini_frames.length==1)
     		idx = 0;
     	
-    	Bitmap photo = mini_frames[idx];//getMultishotBitmap(idx);
+    	Bitmap photo = mini_frames[idx];
     	if(photo != null)
     	{    		
     		if(initial)
@@ -471,65 +468,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	}
     }
     
-    public Bitmap getMultishotBitmap(int index)
-	{
-    	if(isSlowMode == false)
-    	{
-	    	int[] data = PreShot.GetFromBufferRGBA(index, false, false);
-	    	
-	    	if (data.length == 0)
-	    	{
-	    		return null;
-	    	}
-	
-	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
-	    	int or = PreShot.getOrientation(index);
-	    	Log.e("PreShot", "getMultishotBitmap orientation: " + or);
-	    	if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
-	    	{ 
-	    		H = MainScreen.previewWidth;
-	    		W = MainScreen.previewHeight;
-	    	}
-			
-			Bitmap bitmap;
-			bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
-			bitmap.setPixels(data, 0, W, 0, 0, W, H);
-			
-			if (mCameraMirrored && (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))/*1 == PreShot.isPortrait(index)*/)
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate(180);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			}
-			
-			return bitmap;
-	    }
-    	else
-    	{//slow mode
-    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, MainScreen.getCameraMirrored());
-	    	
-	    	if (data.length == 0)
-	    	{
-	    		return null;
-	    	}
-	
-	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
-    		
-	        Bitmap photo = null ;
-	        photo = BitmapFactory.decodeByteArray(data, 0, data.length);
-	        photo = Bitmap.createScaledBitmap(photo, W, H, false);
-	        
-	        if(90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate(mCameraMirrored? 270 : 90);
-	    		photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-			}
-	        
-	        return photo;
-    	}
-	}
-
     static boolean isFlipping = false;
     private void flipPhoto(boolean toLeft, float XtoVisible)
 	{

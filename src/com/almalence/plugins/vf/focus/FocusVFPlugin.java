@@ -40,12 +40,13 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.SoundPlayer;
-import com.almalence.opencam_plus.ui.GUI;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraController;
@@ -54,7 +55,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.R;
 //-+- -->
 
@@ -102,13 +102,9 @@ public class FocusVFPlugin extends PluginViewfinder
     private Handler mHandler;
     
     //Camera capabilities  	
-  	public boolean mFocusAreaSupported = false;
-  	public boolean mMeteringAreaSupported = false;
-  	public boolean mAeLockSupported = false;
-  	public boolean mAwbLockSupported = false;
-  	
-  	public static boolean gridChange = true;
-  	
+    private boolean mFocusAreaSupported = false;
+    private boolean mMeteringAreaSupported = false;
+ 	
   	private boolean mFocusDisabled = false;
 
   	private int preferenceFocusMode;
@@ -265,8 +261,6 @@ public class FocusVFPlugin extends PluginViewfinder
                 && isSupported(CameraParameters.AF_MODE_AUTO,
                         CameraController.supportedFocusModes));
         mMeteringAreaSupported = CameraController.maxRegionsSupported > 0;
-	    mAeLockSupported = CameraController.isAutoExposureLockSupported();
-	    mAwbLockSupported = CameraController.isAutoWhiteBalanceLockSupported();
     }
 
     public void initialize(boolean mirror, int displayOrientation)
@@ -416,7 +410,7 @@ public class FocusVFPlugin extends PluginViewfinder
     private static float Y = 0;
     private static boolean focusCanceled = false;
     private static boolean delayedFocus = false;
-    public static MotionEvent lastEvent = null;
+    private static MotionEvent lastEvent = null;
     @Override
     public boolean onTouch(View view, MotionEvent e)
     {
