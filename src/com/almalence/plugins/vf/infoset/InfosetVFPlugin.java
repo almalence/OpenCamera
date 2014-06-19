@@ -179,32 +179,32 @@ public class InfosetVFPlugin extends PluginViewfinder
 		Preference flashPref = preferenceFragment.findPreference("useFlashMonitorPrefInfoset");
 		Preference isoPref = preferenceFragment.findPreference("useISOMonitorPrefInfoset");
 		
-		if(MainScreen.cameraController.mEVSupported)
+		if(MainScreen.cameraController.isExposureCompensationSupported())
 			evPref.setEnabled(true);
 		else
 			evPref.setEnabled(false);
 		
-		if(MainScreen.cameraController.mSceneModeSupported)
+		if(MainScreen.cameraController.isSceneModeSupported())
 			scenePref.setEnabled(true);
 		else
 			scenePref.setEnabled(false);
 		
-		if(MainScreen.cameraController.mWBSupported)
+		if(MainScreen.cameraController.isWhiteBalanceSupported())
 			wbPref.setEnabled(true);
 		else
 			wbPref.setEnabled(false);
 		
-		if(MainScreen.cameraController.mFocusModeSupported)
+		if(MainScreen.cameraController.isFocusModeSupported())
 			focusPref.setEnabled(true);
 		else
 			focusPref.setEnabled(false);
 		
-		if(MainScreen.cameraController.mFlashModeSupported)
+		if(MainScreen.cameraController.isFlashModeSupported())
 			flashPref.setEnabled(true);
 		else
 			flashPref.setEnabled(false);
 		
-		if(MainScreen.cameraController.mISOSupported)
+		if(MainScreen.cameraController.isISOSupported())
 			isoPref.setEnabled(true);
 		else
 			isoPref.setEnabled(false);		

@@ -45,7 +45,7 @@ import android.widget.Toast;
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback, Camera.PreviewCallback, Camera.ShutterCallback
 {
-	private final String TAG = "CameraController";
+	private final static String TAG = "CameraController";
 	
 	public static final int YUV = 1;
 	public static final int JPEG = 0;
@@ -120,26 +120,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 	// List of localized names for camera parameters values	
-	public static Map<Integer, String> mode_scene;	
-	public static Map<String, Integer> key_scene;	
+	private static Map<Integer, String> mode_scene;	
+	private static Map<String, Integer> key_scene;	
 
-	public static Map<Integer, String> mode_wb;	
-	public static Map<String, Integer> key_wb;
+	private static Map<Integer, String> mode_wb;	
+	private static Map<String, Integer> key_wb;
 
-	public static Map<Integer, String> mode_focus;	
-	public static Map<String, Integer> key_focus;
+	private static Map<Integer, String> mode_focus;	
+	private static Map<String, Integer> key_focus;
 	
-	public static Map<Integer, String> mode_flash;	
-	public static Map<String, Integer> key_flash;	
+	private static Map<Integer, String> mode_flash;	
+	private static Map<String, Integer> key_flash;	
 	
-	public static List<Integer> iso_values;	
-	public static List<String> iso_default;		
-	public static Map<String, String> iso_default_values;	
-	public static Map<Integer, String> mode_iso;	
-	public static Map<Integer, String> mode_iso2;	
-	public static Map<Integer, Integer> mode_iso_HALv3;	
-	public static Map<String, Integer> key_iso;	
-	public static Map<String, Integer> key_iso2;	
+	private static List<Integer> iso_values;	
+	private static List<String> iso_default;		
+	private static Map<String, String> iso_default_values;	
+	private static Map<Integer, String> mode_iso;	
+	private static Map<Integer, String> mode_iso2;	
+	private static Map<Integer, Integer> mode_iso_HALv3;	
+	private static Map<String, Integer> key_iso;	
+	private static Map<String, Integer> key_iso2;	
 	
 	private static CameraController cameraController = null;
 	
@@ -150,10 +150,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//Old camera interface
 	private static Camera camera = null;
 	private static Camera.Parameters cameraParameters = null;
-	public byte[] pviewBuffer;
+	private byte[] pviewBuffer;
 	
-	public static boolean isHALv3 = false;
-	public static boolean isHALv3Supported = false;
+	private static boolean isHALv3 = false;
+	private static boolean isHALv3Supported = false;
 	
 	public String[] cameraIdList={""};
 	
@@ -161,13 +161,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 	// Flags to know which camera feature supported at current device
-	public boolean mEVSupported = false;
-	public boolean mSceneModeSupported = false;
-	public boolean mWBSupported = false;
-	public boolean mFocusModeSupported = false;
-	public boolean mFlashModeSupported = false;
-	public boolean mISOSupported = false;
-	public boolean mCameraChangeSupported = false;
+	private boolean mEVSupported = false;
+	private boolean mSceneModeSupported = false;
+	private boolean mWBSupported = false;
+	private boolean mFocusModeSupported = false;
+	private boolean mFlashModeSupported = false;
+	private boolean mISOSupported = false;
+	private boolean mCameraChangeSupported = false;
+	
+	private int minExpoCompensation = 0;
+	private int maxExpoCompensation = 0;
+	private float expoCompensationStep = 0;
 	
 	public boolean mVideoStabilizationSupported = false;
 
@@ -545,6 +549,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		
+		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
+		if(null == mainContext.getSystemService("camera"))
+		{
+			isHALv3 = false;
+			isHALv3Supported = false;
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+		}
+		else
+			isHALv3Supported = true;
+		
 		if(CameraController.isHALv3Supported)
 			HALv3.onCreateHALv3();
 	}
@@ -603,9 +619,62 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 	}
 	
+	
+	/* Get different list and maps of camera parameters */
+	public static List<Integer> getIsoValuesList()
+	{
+		return iso_values;
+	}
+	
+	public static List<String> getIsoDefaultList()
+	{
+		return iso_default;
+	}
+	
+	public static Map<String, Integer> getIsoKey()
+	{
+		return key_iso;
+	}
+	
+	public static Map<Integer, Integer> getIsoModeHALv3()
+	{
+		return mode_iso_HALv3;
+	}
+	/* ^^^ Get different list and maps of camera parameters */
+	
+	
 	public void setPreviewSurface(Surface srf)
 	{
 		mPreviewSurface = srf;
+	}
+	
+	
+	/* Preview buffer methods */
+	public void allocatePreviewBuffer(int size)
+	{
+		pviewBuffer = new byte[size];
+	}
+	
+	public byte[] getPreviewBuffer()
+	{
+		return pviewBuffer;
+	}
+	/* ^^^ Preview buffer methods */
+	
+	
+	public static void useHALv3(boolean useHALv3)
+	{
+		isHALv3 = useHALv3;
+	}
+	
+	public static boolean isUseHALv3()
+	{
+		return isHALv3;
+	}
+	
+	public static boolean isHALv3Supported()
+	{
+		return isHALv3Supported;
 	}
 	
 	
@@ -866,12 +935,34 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public void updateCameraFeatures()
 	{
-		mEVSupported = isExposureCompensationSupported();
-		mSceneModeSupported = isSceneModeSupported();
-		mWBSupported = isWhiteBalanceSupported();
-		mFocusModeSupported = isFocusModeSupported();
-		mFlashModeSupported = isFlashModeSupported();
-		mISOSupported = isISOSupported();
+		mEVSupported = getExposureCompensationSupported();
+		mSceneModeSupported = getSceneModeSupported();
+		mWBSupported = getWhiteBalanceSupported();
+		mFocusModeSupported = getFocusModeSupported();
+		mFlashModeSupported = getFlashModeSupported();
+		mISOSupported = getISOSupported();
+		
+		if(!CameraController.isHALv3)
+		{
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+			{
+				minExpoCompensation = CameraController.cameraParameters.getMinExposureCompensation();
+				maxExpoCompensation = CameraController.cameraParameters.getMaxExposureCompensation();
+				expoCompensationStep = CameraController.cameraParameters.getExposureCompensationStep();
+			}
+		}
+		else
+		{
+			minExpoCompensation = HALv3.getMinExposureCompensationHALv3();
+			maxExpoCompensation = HALv3.getMaxExposureCompensationHALv3();
+			expoCompensationStep = HALv3.getExposureCompensationStepHALv3();
+		}
+		
+		supportedSceneModes = getSupportedSceneModesInternal();
+		supportedWBModes = getSupportedWhiteBalanceInternal();
+		supportedFocusModes = getSupportedFocusModesInternal();
+		supportedFlashModes = getSupportedFlashModesInternal();
+		supportedISOModes = getSupportedISOInternal();
 	}
 
 	@Override
@@ -1103,7 +1194,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 
-	public boolean isExposureCompensationSupported()
+	//Used to initialize internal variable
+	private boolean getExposureCompensationSupported()
 	{
 		if(!CameraController.isHALv3)
 		{
@@ -1120,46 +1212,28 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.isExposureCompensationSupportedHALv3();
 	}
 	
+	// Used by CameraController class users.
+	public boolean isExposureCompensationSupported()
+	{
+		return mEVSupported;
+	}
+	
 
 	public int getMinExposureCompensation()
 	{
-		if(!CameraController.isHALv3)
-		{
-			if (CameraController.camera != null && CameraController.cameraParameters != null)
-				return CameraController.cameraParameters.getMinExposureCompensation();
-			else
-				return 0;
-		}
-		else
-			return HALv3.getMinExposureCompensationHALv3();
+		return minExpoCompensation;
 	}
 	
 
 	public int getMaxExposureCompensation()
 	{
-		if(!CameraController.isHALv3)
-		{
-			if (CameraController.camera != null && CameraController.cameraParameters != null)
-				return CameraController.cameraParameters.getMaxExposureCompensation();
-			else
-				return 0;
-		}
-		else
-			return HALv3.getMaxExposureCompensationHALv3();
+		return maxExpoCompensation;
 	}
 	
 
 	public float getExposureCompensationStep()
 	{
-		if(!CameraController.isHALv3)
-		{
-			if (CameraController.camera != null && CameraController.cameraParameters != null)
-				return CameraController.cameraParameters.getExposureCompensationStep();
-			else
-				return 0;
-		}
-		else
-			return HALv3.getExposureCompensationStepHALv3();
+		return expoCompensationStep;
 	}
 	
 
@@ -1200,16 +1274,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	
 
-	public boolean isSceneModeSupported()
+	private boolean getSceneModeSupported()
 	{
-		byte supported_scene[] = getSupportedSceneModes();
+		byte supported_scene[] = getSupportedSceneModesInternal();
 		if (supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED)
 			return true;
 		else
 			return false;
 	}
+	
+	public boolean isSceneModeSupported()
+	{
+		return mSceneModeSupported;
+	}
 
-	public byte[] getSupportedSceneModes()
+	private byte[] getSupportedSceneModesInternal()
 	{
 		if(!CameraController.isHALv3)
 		{
@@ -1235,8 +1314,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.getSupportedSceneModesHALv3();
 	}
 	
+	public byte[] getSupportedSceneModes()
+	{
+		return supportedSceneModes;
+	}
+	
 
-	public boolean isWhiteBalanceSupported()
+	private boolean getWhiteBalanceSupported()
 	{
 //		List<String> supported_wb = getSupportedWhiteBalance();
 //		if (supported_wb != null && supported_wb.size() > 0)
@@ -1245,14 +1329,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //			return false;
 
 		
-		byte supported_wb[] = getSupportedWhiteBalance();
+		byte supported_wb[] = getSupportedWhiteBalanceInternal();
 		if (supported_wb != null && supported_wb.length > 0)
 			return true;
 		else
 			return false;
 	}
+	
+	public boolean isWhiteBalanceSupported()
+	{
+		return mWBSupported;
+	}
 
-	public byte[] getSupportedWhiteBalance()
+	private byte[] getSupportedWhiteBalanceInternal()
 	{
 //		if (camera != null)
 //			return cameraParameters.getSupportedWhiteBalance();
@@ -1280,9 +1369,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.getSupportedWhiteBalanceHALv3();
 	}
 	
+	public byte[] getSupportedWhiteBalance()
+	{
+		return supportedWBModes;
+	}
+	
 	
 
-	public boolean isFocusModeSupported()
+	private boolean getFocusModeSupported()
 	{
 //		List<String> supported_focus = getSupportedFocusModes();
 //		if (supported_focus != null && supported_focus.size() > 0)
@@ -1290,14 +1384,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //		else
 //			return false;
 		
-		byte supported_focus[] = getSupportedFocusModes();
+		byte supported_focus[] = getSupportedFocusModesInternal();
 		if (supported_focus != null && supported_focus.length > 0)
 			return true;
 		else
 			return false;
 	}
+	
+	public boolean isFocusModeSupported()
+	{
+		return mFocusModeSupported;
+	}
 
-	public byte[] getSupportedFocusModes() {
+	private byte[] getSupportedFocusModesInternal()
+	{
 //		if (camera != null)
 //			return cameraParameters.getSupportedFocusModes();
 //
@@ -1327,9 +1427,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.getSupportedFocusModesHALv3();
 	}
 	
+	public byte[] getSupportedFocusModes()
+	{
+		return supportedFocusModes;
+	}
+	
 	
 
-	public boolean isFlashModeSupported()
+	private boolean getFlashModeSupported()
 	{
 //		List<String> supported_flash = getSupportedFlashModes();
 //		if (supported_flash != null && supported_flash.size() > 0)
@@ -1341,7 +1446,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.isFlashModeSupportedHALv3();
 		else
 		{
-			byte supported_flash[] = getSupportedFlashModes();
+			byte supported_flash[] = getSupportedFlashModesInternal();
 			if (supported_flash != null && supported_flash.length > 0)
 				return true;
 		}
@@ -1349,9 +1454,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return false;
 	}
 	
+	public boolean isFlashModeSupported()
+	{
+		return mFlashModeSupported;
+	}
 	
 
-	public byte[] getSupportedFlashModes()
+	private byte[] getSupportedFlashModesInternal()
 	{		
 //		if (camera != null)
 //			return cameraParameters.getSupportedFlashModes();
@@ -1390,8 +1499,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		return null;		
 	}
+	
+	public byte[] getSupportedFlashModes()
+	{
+		return supportedFlashModes;
+	}
+	
 
-	public boolean isISOSupported()
+	private boolean getISOSupported()
 	{
 		if(!CameraController.isHALv3)
 		{
@@ -1406,8 +1521,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 			return HALv3.isISOModeSupportedHALv3();
 	}
+	
+	public boolean isISOSupported()
+	{
+		return mISOSupported;
+	}
 
-	public byte[] getSupportedISO()
+	private byte[] getSupportedISOInternal()
 	{
 		if(!CameraController.isHALv3)
 		{
@@ -1459,7 +1579,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 			return HALv3.getSupportedISOModesHALv3();
-	}	
+	}
+	
+	public byte[] getSupportedISO()
+	{
+		return supportedISOModes;
+	}
 	
 	
 	public int getMaxNumMeteringAreas()

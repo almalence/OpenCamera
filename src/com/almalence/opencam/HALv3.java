@@ -468,9 +468,9 @@ public class HALv3
 			int max_iso = iso[1];
 			
 			int index = 0;
-			for(index = 0; index < CameraController.iso_values.size(); index++)
+			for(index = 0; index < CameraController.getIsoValuesList().size(); index++)
 			{
-				if(max_iso <= CameraController.iso_values.get(index))
+				if(max_iso <= CameraController.getIsoValuesList().get(index))
 				{
 					++index;
 					break;
@@ -478,7 +478,7 @@ public class HALv3
 			}
 			byte[] iso_values = new byte[index];
 			for(int i = 0; i < index; i++)
-				iso_values[i] = CameraController.iso_values.get(i).byteValue();
+				iso_values[i] = CameraController.getIsoValuesList().get(i).byteValue();
 
 			if(iso_values.length > 0 )
 				return iso_values;				
@@ -604,7 +604,7 @@ public class HALv3
 		if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			if(mode != 1)
-				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, CameraController.mode_iso_HALv3.get(mode));
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, CameraController.getIsoModeHALv3().get(mode));
 			try 
 			{
 				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);

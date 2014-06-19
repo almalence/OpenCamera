@@ -419,17 +419,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		//-+- -->
 		
 		AppWidgetNotifier.app_launched(this);
-		
-		
-		CameraController.isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
-		if(null == MainScreen.mainContext.getSystemService("camera"))
-		{
-			CameraController.isHALv3 = false;
-			CameraController.isHALv3Supported = false;
-			prefs.edit().putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
-		}
-		else
-			CameraController.isHALv3Supported = true;
 
 		try{
 		cameraController = CameraController.getInstance();
@@ -449,7 +438,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		preview.setKeepScreenOn(true);
 
 		surfaceHolder = preview.getHolder();
-		if(!CameraController.isHALv3)
+		if(!CameraController.isUseHALv3())
 		{
 			surfaceHolder.addCallback(this);
 			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -665,7 +654,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CheckBoxPreference cp = (CheckBoxPreference)prefActivity.findPreference(getResources().getString(R.string.Preference_UseHALv3Key));
 		if(cp != null)
 		{
-			if(!CameraController.isHALv3Supported)
+			if(!CameraController.isHALv3Supported())
 				cp.setEnabled(false);
 			else
 				cp.setEnabled(true);
@@ -736,7 +725,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().onStop();
 		MainScreen.cameraController.onStop();
 		
-		if(CameraController.isHALv3)
+		if(CameraController.isUseHALv3())
 			stopImageReaders();
 	}
 	
@@ -821,13 +810,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 					setScreenBrightness(MaxScreenBrightnessPreference);
 					
-					CameraController.isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+					CameraController.useHALv3(prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false));
 			
 					MainScreen.guiManager.onResume();
 					PluginManager.getInstance().onResume();
 					MainScreen.thiz.mPausing = false;
 					
-					if(CameraController.isHALv3)
+					if(CameraController.isUseHALv3())
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						cameraController.setupCamera(null);
@@ -1037,7 +1026,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			MainScreen.thiz.findViewById(R.id.mainLayout2)
 					.setVisibility(View.VISIBLE);			
 			
-			if(CameraController.isHALv3)
+			if(CameraController.isUseHALv3())
 				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 			else
 			{
@@ -1060,54 +1049,21 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		Log.e("MainScreen", "configureCamera()");
 		// prepare list of surfaces to be used in capture requests
-		if(CameraController.isHALv3)
+		if(CameraController.isUseHALv3())
 			configureHALv3Camera();
 		else
 		{
-			// ----- Select preview dimensions with ratio correspondent to full-size
-			// image
+			// ----- Select preview dimensions with ratio correspondent to full-size image
 			PluginManager.getInstance().SetCameraPreviewSize(CameraController.getInstance().getCameraParameters());
 	
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 			
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
-			CameraController.getInstance().pviewBuffer = new byte[sz.width * sz.height
-			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8];
+			CameraController.getInstance().allocatePreviewBuffer(sz.width * sz.height
+			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8);
 		}
 
-//		if (PluginManager.getInstance().isGLSurfaceNeeded()) {
-//			if (glView == null) {
-//				glView = new GLLayer(MainScreen.mainContext);
-//				glView.setLayoutParams(new LayoutParams(
-//						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-//				glView.setZOrderMediaOverlay(true);
-//				
-//				glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-//				((RelativeLayout) findViewById(R.id.mainLayout2)).addView(
-//						glView, 1);				
-//			}
-//		} else {
-//			((RelativeLayout) findViewById(R.id.mainLayout2))
-//					.removeView(glView);
-//			glView = null;
-//		}
-//
-//		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) preview
-//				.getLayoutParams();
-//		if (glView != null) {
-//			glView.setVisibility(View.VISIBLE);
-//			glView.setLayoutParams(lp);
-//		} else {
-//			if (glView != null)
-//				glView.setVisibility(View.GONE);
-//		}
-
-////				pviewBuffer = new byte[previewSize.width
-////						* previewSize.height
-////						* ImageFormat.getBitsPerPixel(cameraParameters
-////								.getPreviewFormat()) / 8];
-//
-		if(!CameraController.isHALv3)
+		if(!CameraController.isUseHALv3())
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
 		CameraController.supportedSceneModes = cameraController.getSupportedSceneModes();
@@ -1120,12 +1076,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		PluginManager.getInstance().SetCameraPictureSize();
 		PluginManager.getInstance().SetupCameraParameters();
-		//cp = cameraParameters;
 
-		if(!CameraController.isHALv3)
+		if(!CameraController.isUseHALv3())
 		{
 			try {
-				//Log.i("CameraTest", Build.MODEL);
 				if (Build.MODEL.contains("Nexus 5"))
 				{
 					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
@@ -1146,8 +1100,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						+ e.getMessage());
 			}
 
-//				previewWidth = cameraParameters.getPreviewSize().width;
-//				previewHeight = cameraParameters.getPreviewSize().height;
 			previewWidth = CameraController.getInstance().getCameraParameters().getPreviewSize().width;
 			previewHeight = CameraController.getInstance().getCameraParameters().getPreviewSize().height;
 		}
@@ -1176,19 +1128,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			@Override
 			public void onFinish() 
 			{
-				if(!CameraController.isHALv3)
+				if(!CameraController.isUseHALv3())
 				{
-					try // exceptions sometimes happen here when resuming after
-						// processing
+					// exceptions sometimes happen here when resuming after processing
+					try
 					{
 						CameraController.startCameraPreview();
 					} catch (RuntimeException e) {
 						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
 						return;
 					}
-	
+
 					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-					CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().pviewBuffer);
+					CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().getPreviewBuffer());
 				}
 
 				PluginManager.getInstance().onCameraSetup();
@@ -1219,6 +1171,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
 		//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
+		
 		// configure camera with all the surfaces to be ever used
 		try {
 			HALv3.getInstance().camDevice.configureOutputs(sfl);
