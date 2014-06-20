@@ -1950,7 +1950,7 @@ public class AlmalenceGUI extends GUI implements
 		removeAllQuickViews();
 		initDefaultQuickControls();
 		
-		ViewParent p = quickControl3.getParent();
+//		ViewParent p = quickControl3.getParent();
 
 		createPluginTopMenuButtons();
 		

@@ -1632,6 +1632,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return CameraIndex;
 	}
 	
+	public static void setCameraIndex(int index)
+	{
+		CameraIndex = index;
+	}
+	
 	public static int getCameraImageSizeIndex()
 	{
 		return CapIdx;
