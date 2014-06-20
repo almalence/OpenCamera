@@ -1349,13 +1349,15 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void stopRecording()
 	{
+		MainScreen.guiManager.startProcessingAnimation();
 		if (shutterOff)
 			return;
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
     	
-		modeSwitcher.setVisibility(View.VISIBLE);
+    	if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2)
+			modeSwitcher.setVisibility(View.VISIBLE);
     	
 		if (this.modeDRO())
 		{			
@@ -1425,6 +1427,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
             this.stopVideoRecording();
 		}
+//		MainScreen.guiManager.onExportFinished();
 	}
 	
 	private void startRecording()
@@ -1432,10 +1435,9 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 		
+		modeSwitcher.setVisibility(View.GONE);
 		if (this.modeDRO())
 		{
-			modeSwitcher.setVisibility(View.GONE);
-		
         	shutterOff=true;
         	mRecordingStartTime = SystemClock.uptimeMillis();
             
@@ -1480,9 +1482,6 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera camera = MainScreen.thiz.getCamera();
     	if (null==camera)
     		return;
-
-		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
-			modeSwitcher.setVisibility(View.VISIBLE);
 		
         // stop recording and release camera
 		try

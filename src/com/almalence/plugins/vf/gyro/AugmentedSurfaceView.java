@@ -117,7 +117,7 @@ public class AugmentedSurfaceView implements AugmentedRotationReceiver {
 		final float plane_top_y = topProjection.z;
 
 		float angle;
-		if (Math.abs(plane_top_x) > 0.03f && Math.abs(plane_top_y) > 0.03f) {
+		if (Math.abs(plane_top_x) > 0.01f && Math.abs(plane_top_y) > 0.01f) {
 			angle = (float)Math.asin(plane_top_x / Math.sqrt(plane_top_x * plane_top_x + plane_top_y * plane_top_y));
 
 			if (plane_top_y < 0.0f)		

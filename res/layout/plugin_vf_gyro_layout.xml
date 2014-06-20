@@ -21,6 +21,13 @@
         android:layout_margin="10dp"
         android:src="@drawable/plugin_vf_gyro_level_side_fourth_strips" />
 
+    <com.almalence.ui.RotateImageView
+            android:id="@+id/horizon_indicator_mark_rotation"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/plugin_vf_gyro_level_circle" />
+    
     <RelativeLayout
         android:id="@+id/horizon_indicator_mark_container"
         android:layout_width="fill_parent"
