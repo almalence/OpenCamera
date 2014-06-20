@@ -34,7 +34,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -48,6 +47,7 @@ import android.media.Image;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.opengl.GLSurfaceView;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -1303,54 +1303,7 @@ public class VideoCapturePlugin extends PluginCapture
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
             
-            ContentValues values=null;
-            values = new ContentValues(7);
-            values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-            values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-            values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-            values.put(ImageColumns.MIME_TYPE, "video/mp4");
-            values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-            
-            if (filesList.size() > 0) {
-	        	File firstFile = filesList.get(0);
-	        	for (int i = 1; i < filesList.size(); i++) {
-	        		File currentFile = filesList.get(i);
-	        		try {
-	        			append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
-	        		} catch (Exception e) {
-	        			e.printStackTrace();
-	        		}
-	        	}
-	        	// if not onPause, then last video isn't added to list.
-	        	if (!onPause) {
-	        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
-	        	}
-	        	
-	        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
-	        		fileSaved.delete();
-	        		firstFile.renameTo(fileSaved);
-	        	}
-	        }
-	        onPause = false;
-	        
-	        String[] filesSavedNames= new String[1];
-	        filesSavedNames[0] = fileSaved.toString();
-	        filesList.clear();
-	        mRecordingTimeView.setText("00:00");
-	        mRecorded = 0;
-               
-    		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-            MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-            
-            new CountDownTimer(500, 500) {			 
-    		     	public void onTick(long millisUntilFinished) {}
-
-       		     public void onFinish() {
-       		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-       		    	shutterOff = false;
-       				showRecording=false;
-       		     }
-    		  	}.start();
+            new VideoExportAsyncTask().execute();
 		}
 		else
 		{
@@ -1444,50 +1397,7 @@ public class VideoCapturePlugin extends PluginCapture
         //change shutter icon
         MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
         
-        ContentValues values=null;
-        values = new ContentValues(7);
-        values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-        values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-        values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-        values.put(ImageColumns.MIME_TYPE, "video/mp4");
-        values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-        
-        if (filesList.size() > 0) {
-        	File firstFile = filesList.get(0);
-        	for (int i = 1; i < filesList.size(); i++) {
-        		File currentFile = filesList.get(i);
-        		append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
-        	}
-        	// if not onPause, then last video isn't added to list.
-        	if (!onPause) {
-        		append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
-        	}
-        	
-        	if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
-        		fileSaved.delete();
-        		firstFile.renameTo(fileSaved);
-        	}
-        }
-        onPause = false;
-        
-        String[] filesSavedNames= new String[1];
-        filesSavedNames[0] = fileSaved.toString();
-        filesList.clear();
-        mRecordingTimeView.setText("00:00");
-        mRecorded = 0;
-           
-		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-        
-        new CountDownTimer(500, 500) {			 
-		     	public void onTick(long millisUntilFinished) {}
-
-   		     public void onFinish() {
-   		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-   		    	shutterOff = false;
-   				showRecording=false;
-   		     }
-		  	}.start();
+        new VideoExportAsyncTask().execute();
 	}
   
 	private void startVideoRecording() {
@@ -2527,5 +2437,63 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLDrawFrame(final GL10 gl)
 	{
 		this.droEngine.onDrawFrame(gl);
+	}
+	
+	private class VideoExportAsyncTask extends AsyncTask<Void, Void, Void> {
+		private ContentValues values;
+		@Override
+		protected void onPreExecute() {
+			values=new ContentValues(7);
+	        values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+	        values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+	        values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+	        values.put(ImageColumns.MIME_TYPE, "video/mp4");
+	        values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (filesList.size() > 0) {
+				File firstFile = filesList.get(0);
+				for (int i = 1; i < filesList.size(); i++) {
+					File currentFile = filesList.get(i);
+					append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+				}
+				// if not onPause, then last video isn't added to list.
+				if (!onPause) {
+					append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+				}
+				
+				if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+					fileSaved.delete();
+					firstFile.renameTo(fileSaved);
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			onPause = false;
+	        
+	        String[] filesSavedNames= new String[1];
+	        filesSavedNames[0] = fileSaved.toString();
+	        filesList.clear();
+	        mRecordingTimeView.setText("00:00");
+	        mRecorded = 0;
+	           
+			MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
+	        
+	        new CountDownTimer(500, 500) {			 
+			     	public void onTick(long millisUntilFinished) {}
+
+	   		     public void onFinish() {
+	   		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+	   		    	shutterOff = false;
+	   				showRecording=false;
+	   		     }
+			  	}.start();
+		}
 	}
 }
