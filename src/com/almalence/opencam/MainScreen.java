@@ -129,25 +129,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static File ForceFilename = null;
 
-//	private static Camera camera = null;
-//	private static Camera.Parameters cameraParameters = null;
-	
 	//Interface to HALv3 camera and Old style camera
 	public static CameraController cameraController = null;
 	
 	//HALv3 camera's objects
-//	CameraManager manager = null;
-//	private static CameraCharacteristics camCharacter=null;
-//	cameraAvailableListener availListener = null;
-//	private static CameraDevice camDevice = null;
-//	CaptureRequest.Builder previewRequestBuilder = null;
 	public static ImageReader mImageReaderPreviewYUV;
 	public static ImageReader mImageReaderYUV;
 	public static ImageReader mImageReaderJPEG;
-//	String[] cameraIdList={""};
-//	
-//	public static boolean cameraConfigured = false;
-	
 
 	public static GUI guiManager = null;
 
@@ -158,7 +146,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean mPausing = false;
 
 	Bundle msavedInstanceState;
-	// private. if necessary?!?!?
 	public SurfaceHolder surfaceHolder;
 	public SurfaceView preview;
 	private Surface mCameraSurface = null;
@@ -172,7 +159,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int imageWidth, imageHeight;
 	public static int previewWidth, previewHeight;
 	public static int saveImageWidth, saveImageHeight;
-//	public static PowerManager pm = null;
 
 	private CountDownTimer ScreenTimer = null;
 	private boolean isScreenTimerRunning = false;
@@ -468,7 +454,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				if(orientationMain != orientationMainPrevious)
 				{
 					orientationMainPrevious = orientationMain;
-					//PluginManager.getInstance().onOrientationChanged(orientationMain);
 				}
 			}
 		};
@@ -1025,21 +1010,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if(!CameraController.isUseHALv3())
 		{
 			try {
+				// Nexus 5 is giving preview which is too dark without this
 				if (Build.MODEL.contains("Nexus 5"))
 				{
 					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 					params.setPreviewFpsRange(7000, 30000);
 					cameraController.setCameraParameters(params);
 				}
-				
-				//Log.i("CameraTest", "fps ranges "+range.size()+" " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] + " " + range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-				//cameraParameters.setPreviewFpsRange(range.get(0)[Camera.Parameters.PREVIEW_FPS_MIN_INDEX], range.get(0)[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-				//cameraParameters.setPreviewFpsRange(7000, 30000);
-				// an obsolete but much more reliable way of setting preview to a reasonable fps range
-				// Nexus 5 is giving preview which is too dark without this
-				//cameraParameters.setPreviewFrameRate(30);
-			
-				
 			} catch (RuntimeException e) {
 				Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "
 						+ e.getMessage());
@@ -1110,12 +1087,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sfl.add(mCameraSurface);				// surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
 		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-		//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 		
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
-		//guiManager.setupViewfinderPreviewSize(cameraController.new Size(previewWidth, previewWidth));
 		
 		// configure camera with all the surfaces to be ever used
 		try {
