@@ -21,6 +21,7 @@
 package com.almalence;
 
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -40,7 +41,7 @@ public class YuvImage {
      * Number of bytes of temp storage we use for communicating between the
      * native compressor and the java OutputStream.
      */
-    private final static int WORKING_COMPRESS_STORAGE = 4096;
+    private static final int WORKING_COMPRESS_STORAGE = 4096;
 
    /**
      * The YUV format as defined in {@link PixelFormat}.
@@ -233,6 +234,21 @@ public class YuvImage {
     public static native boolean SaveJpegFreeOut (int oriYuv,
             int format, int width, int height, int[] offsets, int[] strides,
             int quality, OutputStream stream, byte[] tempStorage);
+    
+    
+    // Return: pointer to the frame data in heap converted to int
+    public static synchronized native int GetFrame(int frame);
+    public static synchronized native byte[] GetByteFrame(int frame);
+    public static synchronized native void RemoveFrame(int frame);
+
+    // Return: error status (0 = all ok)
+    public static synchronized native int CreateYUVImage(
+    		ByteBuffer Y, ByteBuffer U, ByteBuffer V,
+    		int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
+    		int sx, int sy, int nFrame);
+    
+    // Return pointer to heap with size for one yuv image
+    public static synchronized native int AllocateMemoryForYUV(int sx, int sy);
     
     static {
         System.loadLibrary("yuvimage");

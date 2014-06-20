@@ -40,7 +40,7 @@ Preference activity class - manages preferences
 
 public class Preferences extends PreferenceActivity 
 {
-	static public PreferenceActivity thiz;
+	public static PreferenceActivity thiz;
 	// Called only on Honeycomb and later
 	//loading headers for common and plugins
 	@Override
@@ -61,26 +61,17 @@ public class Preferences extends PreferenceActivity
 		thiz=this;
 		loadHeadersFromResource(R.xml.preferences_headers, target);
 
-//		// <!-- -+-
-//		if (MainScreen.thiz.showUnlock)
-//		{
-//			MainScreen.thiz.showUnlock=false;
-//			startWithFragment("com.almalence.opencam.FragmentUpgrade", null, null, 0);
-//		}
-//		//-+- -->
 	}
 	
-	static public void closePrefs()
+	public static void closePrefs()
 	{
 		thiz.finish();
 	}
 	
-	static public void setScreenBrightness(boolean setMax)
+	public static void setScreenBrightness(boolean setMax)
 	{
 		try{
-			//ContentResolver cResolver = getContentResolver();
 			Window window = thiz.getWindow();
-			
 			WindowManager.LayoutParams layoutpars = window.getAttributes();
 			
 	        //Set the brightness of this window	

@@ -41,8 +41,8 @@ import com.almalence.opencam_plus.R;
 
 public class AppWidgetNotifier
 {
-	private final static int DAYS_UNTIL_PROMPT = 0;
-	private final static int LAUNCHES_UNTIL_PROMPT = 2;
+	private static final int DAYS_UNTIL_PROMPT = 0;
+	private static final int LAUNCHES_UNTIL_PROMPT = 2;
 
 	public static void app_launched(Activity mContext)
 	{
@@ -73,7 +73,6 @@ public class AppWidgetNotifier
     {
         try
         {
-        	//activity.getPackageManager().getInstallerPackageName("com.almalence.pixfix");
         	activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
         }
         catch (IllegalArgumentException e)

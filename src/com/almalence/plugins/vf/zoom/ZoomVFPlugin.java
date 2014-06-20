@@ -23,7 +23,6 @@ import java.util.List;
 
 import android.content.SharedPreferences;
 import android.graphics.PointF;
-import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -36,7 +35,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
@@ -47,12 +45,14 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
@@ -99,7 +99,7 @@ public class ZoomVFPlugin extends PluginViewfinder
             }
         }
     }
-//    
+
 	public ZoomVFPlugin()
 	{
 		super("com.almalence.plugins.zoomvf",
@@ -209,54 +209,20 @@ public class ZoomVFPlugin extends PluginViewfinder
 	public void onStop()
 	{
 		zoomStopping = true;
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.zoomPanel.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(zoomPanel, R.id.specialPluginsLayout);
 	}
 	
 	@Override
 	public void onGUICreate()
 	{
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int zoom_id = this.zoomPanel.getId();
-			if(view_id == zoom_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
-				
-				specialLayout.removeView(view);
-			}
-		}
+		MainScreen.guiManager.removeViews(zoomPanel, R.id.specialPluginsLayout);
 		
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)MainScreen.thiz.findViewById(R.id.specialPluginsLayout).getLayoutParams();
-		//mainLayoutHeight = MainScreen.thiz.findViewById(R.id.specialPluginsLayout).getHeight();
 		mainLayoutHeight = lp.height;
 		
 		zoomPanelWidth = MainScreen.thiz.getResources().getDrawable(R.drawable.scrubber_control_pressed_holo).getMinimumWidth();
 		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 		params.setMargins(-zoomPanelWidth/2, 0, 0, 0);
 		params.height = (int)(mainLayoutHeight/2.2);
 		
@@ -270,7 +236,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
-
+	
 	@Override
 	public void onResume()
 	{
@@ -312,13 +278,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 		
 		zoomCurrent = 0;				
 
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-        if (cp.isZoomSupported())
+		if(CameraController.getInstance().isZoomSupported())
         {
-        	zoomBar.setMax(cp.getMaxZoom());
+        	zoomBar.setMax(CameraController.getInstance().getMaxZoom());
         	zoomBar.setProgressAndThumb(0);
         	zoomPanel.setVisibility(View.VISIBLE);
         }
@@ -328,14 +290,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 	
 	private void zoomModify(int delta)
 	{
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-		if (cp==null)
-			return;
-		
-		if (cp.isZoomSupported())
+		if (CameraController.getInstance().isZoomSupported())
 		{		
 			try
 			{
@@ -345,14 +300,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 				{
 					zoomCurrent = 0;
 				}
-				else if (zoomCurrent > cp.getMaxZoom())
+				else if (zoomCurrent > CameraController.getInstance().getMaxZoom())
 				{
-					zoomCurrent = cp.getMaxZoom();
+					zoomCurrent = CameraController.getInstance().getMaxZoom();
 				}
-					
-				cp.setZoom(zoomCurrent);
-					
-				MainScreen.thiz.setCameraParameters(cp);
+				
+				CameraController.getInstance().setZoom(zoomCurrent);
 				
 				zoomBar.setProgressAndThumb(zoomCurrent);
 			}
@@ -439,8 +392,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					}
 					return;
 				}
-				
-				
+								
 				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)zoomPanel.getLayoutParams();
 				if (params==null)
 				{

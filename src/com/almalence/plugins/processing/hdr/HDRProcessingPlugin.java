@@ -37,6 +37,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.ImageFormat;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
@@ -97,7 +98,6 @@ import com.almalence.util.MLocation;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 
 /***
 Implements HDR processing plugin.
@@ -109,25 +109,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 																	 OnItemSelectedListener,
 																	 OnTaskCompleteListener
 {
-	static public boolean preview_computing = false;
-	static public boolean processing_computing = false;
-	static public boolean should_save = true;
-	static public boolean should_unload = true;
-	static public boolean should_wait = true;
-	static public boolean hdr_processing_returned = false;
-	static public Bitmap PreviewBmp;			// on-screen preview
 	private byte[] yuv;						// fused result
-	static final public int[] crop = new int[4];
+	private static final int[] crop = new int[4];
 
-	public static final int PREVIEW_TIME_PROGRESS_PARTS = 200;
-	
-    public static String ContrastPreference;
-	public static String mContrastPreference;
-	public static String ExpoPreference;
-	public static String ColorPreference;
-	public static String NoisePreference;
-	public static boolean AutoAdjustments = false;
-	public static int SaveInputPreference;
+	private static String ContrastPreference;
+	private static String mContrastPreference;
+	private static String ExpoPreference;
+	private static String ColorPreference;
+	private static String NoisePreference;
+	private static boolean AutoAdjustments = false;
+	private static int SaveInputPreference;
 	
 	private int mLayoutOrientationCurrent = 0;
 	private int mDisplayOrientationOnStartProcessing = 0;
@@ -244,6 +235,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
+		
+		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
         
 		if (HDRProcessingPlugin.SaveInputPreference != 0)
 		{
@@ -280,8 +273,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        	}
 	        	
 	        	ContentValues values=null;
-//				String[] filesSavedNames = new String[imagesAmount];
-//				int nFilesSaved = 0;
 	        	
 	        	int tmpImagesAmount = imagesAmount;
 	        	if (HDRProcessingPlugin.SaveInputPreference == 2)
@@ -322,13 +313,26 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		            
 		            if (os != null)
 		            {
-		            	// ToDo: not enough memory error reporting
-			            os.write(SwapHeap.CopyFromHeap(
-			            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
-			            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));
+		            	if(!isYUV)
+		            	{
+			            	// ToDo: not enough memory error reporting
+				            os.write(SwapHeap.CopyFromHeap(
+				            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+				            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));
+		            	}
+		            	else
+		            	{
+		            		com.almalence.YuvImage image = new com.almalence.YuvImage(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+		            																  ImageFormat.NV21,
+		            																  mImageWidth,
+		            																  mImageHeight,
+		            																  null);
+		            		//to avoid problems with SKIA
+		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+		            	}
 			            os.close();
 			        
-//			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 		            	switch(mDisplayOrientationOnStartProcessing)
 		            	{
@@ -350,7 +354,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 //			            ei.saveAttributes();
 		            }
 		            
-		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
 		            values = new ContentValues(9);
 	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
 	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
@@ -365,23 +368,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			            
 			            if (l != null)
 			            {	     
-//			            	Exiv2.writeGeoDataIntoImage(
-//			            		file.getAbsolutePath(), 
-//			            		true,
-//			            		l.getLatitude(), 
-//			            		l.getLongitude(), 
-//			            		dateString, 
-//			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-//			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-			            		
-//			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-//				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-//				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-//				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-//				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-//
-//			            	ei.saveAttributes();
-			            	
 				            values.put(ImageColumns.LATITUDE, l.getLatitude());
 				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
 		            	}
@@ -393,7 +379,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			catch(IOException e) {
 	            e.printStackTrace();
 	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-	            //return;
 	        }
 	        catch (Exception e)
 	        {
@@ -401,12 +386,24 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        }
 		}
 		
-    	AlmaShotHDR.HDRConvertFromJpeg(
-    			compressed_frame,
-    			compressed_frame_len,
-    			imagesAmount,
-    			mImageWidth, mImageHeight);
-    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+		
+		if(!isYUV)
+		{
+	    	AlmaShotHDR.HDRConvertFromJpeg(
+	    			compressed_frame,
+	    			compressed_frame_len,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+	    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+		}
+		else
+		{
+			AlmaShotHDR.HDRAddYUVFrames(
+	    			compressed_frame,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+	    	Log.e("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+		}
     	
     	int nf = HDRProcessingPlugin.getNoise();
     	
@@ -625,14 +622,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	
 	private static final int CUSTOM_PRESET_POSITION = 4;
 
-	private static final String BUNDLE_SELECTION = "adjustment_selected";
-	private static final String BUNDLE_PRESET_SELECTION = "adjustment_preset_selected";
-	private static final String BUNDLE_TRASHDIALOG = "adjustment_trashdialog";
-// <!-- -+-
-	private static final String BUNDLE_MODIFIED = "adjustments_modified";
-	private static final String BUNDLE_BANNERDIALOG = "adjustment_bannerdialog";
-// -+- -->
-	
 	private static final float PRESET_ICONS_ROUND_RADIUS = 0.2f;
 	private static final int PRESET_ICONS_SIZE = 82;
 	private static final float PRESET_ICONS_CROP_PART = 2.0f / 3.0f; 
@@ -729,13 +718,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	    				0, 
 	    				SYP, 
 	    				SXP);
-	    		
-//	    		boolean isGuffyOrientation = mDisplayOrientationCurrent == 180 || mDisplayOrientationCurrent == 270;
-//    			
-//    			Matrix matrix = new Matrix();
-//	    		
-//				matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
-//				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	    	}
 			
 			return null;
@@ -948,19 +930,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private ArrayList<Adjustment> adjustments = null;
 	private final ArrayList<AdjustmentsPreset> presets = new ArrayList<AdjustmentsPreset>();
 	
-	private AlertDialog trashDialog = null;
-// <!-- -+-
-	private AlertDialog bannerDialog = null;
-	private boolean modified = false;
-// -+- -->
-	
 	private ImageView imageView;
 	
 	private int selection = -1;
 	
 	private AdjustmentsAdapter adapter;
-	
-	//private AsyncTaskManager mAsyncTaskManager;
 
 	private GridView adjustmentsList;	
 	private Button buttonTrash;
@@ -979,9 +953,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private TextView adjustmentsTextView;
 	
 	private AdjustmentsPreset preset_custom = null;
-	
-	
-	
 
 	@Override
 	public boolean isPostProcessingNeeded(){return AutoAdjustments;}
@@ -1004,9 +975,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		this.adjustmentsTextView = ((TextView)postProcessingView.findViewById(R.id.adjustments_seek_title));
 		
 		saveButtonPressed = false;
-	
-
-		//this.mAsyncTaskManager = new AsyncTaskManager(this, this);
 		
 		Object obj = MainScreen.thiz.getLastNonConfigurationInstance();
 		if (obj != null)
@@ -1019,15 +987,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			{
 				e.printStackTrace();
 			}
-			
-//			try
-//			{
-//				this.mAsyncTaskManager.handleRetainedTask(((Object[])obj)[1]);
-//			}
-//			catch (ClassCastException e)
-//			{
-//				e.printStackTrace();
-//			}
 			
 			try
 			{
@@ -1108,12 +1067,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		this.presetSelection = CUSTOM_PRESET_POSITION;
 			
 		this.presetsGallery.setSelection(CUSTOM_PRESET_POSITION);
-				
-//		if (this.selection >= 0)
-//		{
-//			this.showSeekBar();
-//		}
-		
 		this.requestPreviewUpdate();		
 	}
 	
@@ -1128,7 +1081,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			}
 			else
 			{		
-				//fireUpTrashDialog();
 				AlmaShotHDR.HDRFreeInstance();
 			    AlmaShotHDR.Release();
 
@@ -1149,61 +1101,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		
 		return super.onKeyDown(keyCode, event);
 	}
-	
-	private void fireUpTrashDialog()
-	{
-		this.trashDialog = new AlertDialog.Builder(MainScreen.thiz).create();
-
-		this.trashDialog.setTitle(R.string.adjustments_trashDialog_title);	
-		this.trashDialog.setIcon(R.drawable.alert_dialog_icon);
-		TextView textView = new TextView(MainScreen.thiz);
-		textView.setText(R.string.adjustments_trashDialog_content);
-		textView.setPadding(
-				(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-				(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 5), 
-				(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-				(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 5));
-		textView.setTextSize((int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 12));
-		this.trashDialog.setView(textView);
-		
-		
-//		this.trashDialog.setButton(
-//				MainScreen.thiz.getResources().getString(R.string.adjustments_trashDialog_positive), 
-//				new DialogInterface.OnClickListener() 
-//				{
-//				   public void onClick(DialogInterface dialog, int which) 
-//				   {
-//					   
-//					   if (Processing.yuv != 0)
-//				       {
-//					       Processing.yuv = 0;
-//				       }
-//			    		
-//					   AlmaShot.HDRFreeInstance();
-//			    		
-//				       AlmaShot.Release();
-//					   
-//// <!-- -+-
-//					   ActivityAds.maintainAds(ActivityAdjustments.this);
-//// -+- -->	
-//				       
-//					   ActivityAdjustments.this.finish();
-//				   }
-//				});
-//		
-//		this.trashDialog.setButton2(
-//				MainScreen.thiz.getResources().getString(R.string.adjustments_trashDialog_negative),
-//				new DialogInterface.OnClickListener() 
-//				{
-//					public void onClick(DialogInterface dialog,	int which) 
-//					{
-//						dialog.cancel();
-//					}
-//				});
-
-		this.trashDialog.show();
-	}
-
 	
 	private Bitmap createThumbnail()
 	{
@@ -1391,13 +1288,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		this.fillSeekBar();
 		
 		this.requestPreviewUpdate();
-
-// <!-- -+-		
-		if (position != CUSTOM_PRESET_POSITION)
-		{
-			this.modified = true;
-		}
-// -+- -->	
 	}
 	
 	@Override
@@ -1426,7 +1316,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 		    AlmaShotHDR.Release();
 
-			//fireUpTrashDialog();
 			Message msg2 = new Message();
     		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     		msg2.what = PluginManager.MSG_BROADCAST;
@@ -1442,7 +1331,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			cancelAllTasks();
 			saveButtonPressed = true;
-			//saveImage();
 			new SaveTask(MainScreen.thiz).execute();
 			this.buttonTrash.setVisibility(View.GONE);
 			this.buttonSave.setVisibility(View.GONE);
@@ -1459,10 +1347,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	{
 		if (this.selection >= 0 && this.selection < this.adjustments.size() && fromUser)
 		{
-// <!-- -+-
-			this.modified = true;
-// -+- -->
-			
 			this.presetSelection = CUSTOM_PRESET_POSITION;
 				
 			this.presetsGallery.setSelection(CUSTOM_PRESET_POSITION);
@@ -1495,16 +1379,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	{
 		
 	}
-	
-	
-	
-	
+
 	private void saveImage()
 	{
 		if (this.previewTaskCurrent == null)
 		{
-//			this.saving = true;
-//			this.mAsyncTaskManager.setupTask(new AdjustmentsSavingTask(MainScreen.thiz.getResources()));
 			HDRProcessing();
 			Log.e("HDR", "HDRProcessing success");
 			
@@ -1540,8 +1419,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			this.previewTaskCurrent = null;
 			this.previewTaskPending = null;
-			
-			//this.saveImage();
 			new SaveTask(MainScreen.thiz).execute();
 		}
 		else
@@ -1577,22 +1454,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	
 	protected void requestPreviewUpdate()
 	{
-//		if (!this.mAsyncTaskManager.isWorking())
-//		{
-//			if (this.previewTaskCurrent == null)
-//			{
-//				this.previewTaskCurrent = new AdjustmentsPreviewTask();
-//				this.previewTaskCurrent.execute();
-//			}
-//			else
-//			{
-//				if (this.previewTaskPending == null)
-//				{
-//					this.previewTaskPending = new AdjustmentsPreviewTask();
-//				}
-//			}
-//		}
-		
 		if (this.previewTaskCurrent == null)
 		{
 			this.previewTaskCurrent = new AdjustmentsPreviewTask();
@@ -1624,7 +1485,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	    	this.mSavingDialog = new ProgressDialog(context);
 	    	this.mSavingDialog.setIndeterminate(true);
 	    	this.mSavingDialog.setCancelable(false);
-	    	this.mSavingDialog.setMessage("Saving");//(context.getResources().getString(R.string.please_wait));	  
+	    	this.mSavingDialog.setMessage("Saving");	  
 	    }
 	    
 	    @Override

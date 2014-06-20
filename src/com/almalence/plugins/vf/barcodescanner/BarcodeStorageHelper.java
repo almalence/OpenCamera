@@ -25,7 +25,7 @@ import com.almalence.opencam.MainScreen;
 
 public class BarcodeStorageHelper {
 	
-	private final static String FILENAME = "scanned_barcodes.txt";
+	private static final String FILENAME = "scanned_barcodes.txt";
 	private static ArrayList<Barcode> barcodesList;
 	
 	public static void addBarcode(Barcode barcode) {

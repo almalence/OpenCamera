@@ -6,6 +6,8 @@
 
     <string name="Pref_Bestshot_ImagesAmount_Title">Number of images</string>
     
+    <string name="Preference_BestShotImagesAmount">BestshotImagesAmount</string>
+    
     <string name="Res_Bestshot_Images_Text"> images</string>
     
     <string name="Bestshot_Help_Header">Bestshot help</string>

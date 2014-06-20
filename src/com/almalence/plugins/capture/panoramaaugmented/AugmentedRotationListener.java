@@ -25,7 +25,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.FloatMath;
-import android.util.Log;
 
 @SuppressLint("FloatMath")
 public class AugmentedRotationListener implements SensorEventListener

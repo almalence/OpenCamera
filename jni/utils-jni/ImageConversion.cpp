@@ -48,6 +48,15 @@ jbyte NightGamma[511] =
 	255,255,255,255,255,255,255
 };
 
+inline int min(int a, int b)
+{
+	return (a > b ? b : a);
+}
+inline int max(int a, int b)
+{
+	return (a > b ? a : b);
+}
+
 // summation with tone-curve applied after
 // used in night-mode viewfinder
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_sumByteArraysNV21
@@ -191,14 +200,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_conver
 	env->ReleaseByteArrayElements(aout, cImageOut, 0);
 }
 
-inline int min(int a, int b)
-{
-	return (a > b ? b : a);
-}
-inline int max(int a, int b)
-{
-	return (a > b ? a : b);
-}
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_nativeresizeJpeg2RGBA(
 		JNIEnv *env, jclass clazz,
 		jbyteArray jpeg,

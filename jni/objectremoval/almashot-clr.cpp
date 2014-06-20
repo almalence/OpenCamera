@@ -106,6 +106,53 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectre
 }
 
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectremoval_AlmaCLRShot_AddYUVInputFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jintArray in,
+	jintArray in_len,
+	jint nFrames,
+	jint sx,
+	jint sy
+)
+{
+	int i;
+	int *yuv_length;
+	unsigned char * *yuv;
+	int isFoundinInput;
+
+	yuv = (unsigned char**)env->GetIntArrayElements(in, NULL);
+	yuv_length = (int*)env->GetIntArrayElements(in_len, NULL);
+
+	// pre-allocate uncompressed yuv buffers
+	for (i=0; i<nFrames; ++i)
+	{
+		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+
+		if (inputFrame[i]==NULL)
+		{
+			i--;
+			for (;i>=0;--i)
+			{
+				free(inputFrame[i]);
+				inputFrame[i] = NULL;
+			}
+			break;
+		}
+
+		inputFrame[i] = yuv[i];
+		++isFoundinInput;
+	}
+	//isFoundinInput = DecodeAndRotateMultipleJpegs(inputFrame, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0);
+
+	env->ReleaseIntArrayElements(in, (jint*)yuv, JNI_ABORT);
+	env->ReleaseIntArrayElements(in_len, (jint*)yuv_length, JNI_ABORT);
+
+	return isFoundinInput;
+}
+
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectremoval_AlmaCLRShot_ConvertFromJpeg
 (
 	JNIEnv* env,

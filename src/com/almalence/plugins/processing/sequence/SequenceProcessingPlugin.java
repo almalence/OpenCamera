@@ -21,10 +21,8 @@ package com.almalence.plugins.processing.sequence;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -33,9 +31,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.DashPathEffect;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Handler;
@@ -52,7 +52,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
@@ -71,6 +70,7 @@ import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
 
+import com.almalence.util.ImageConversion;
 import com.almalence.util.MLocation;
 import com.almalence.util.Size;
 
@@ -84,28 +84,30 @@ Implements night processing
 public class SequenceProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener, Handler.Callback, OnClickListener, SequenceListener
 {
 	private long sessionID=0;
-    public static int mSensitivity = 15;
-    public static int mMinSize = 1000;
-    public static String mGhosting = "0";
+	private static int mSensitivity = 15;
+	private static int mMinSize = 1000;
+	private static String mGhosting = "0";
     
-    public static int mAngle = 0;
+	private static int mAngle = 0;
 
-    public static boolean SaveInputPreference;
+	private static boolean SaveInputPreference;
     
     private AlmaCLRShot mAlmaCLRShot;
 
-    static public int imgWidthOR;
-	static public int imgHeightOR;
+    public static int imgWidthOR;
+	public static int imgHeightOR;
 	private int mDisplayOrientation;
 	private boolean mCameraMirrored;
 
 	private int[] indexes;
 	
 	private OrderControl sequenceView;
-	public static ArrayList<Bitmap> thumbnails = new ArrayList<Bitmap>();
+	private static ArrayList<Bitmap> thumbnails = new ArrayList<Bitmap>();
 
 	//indicates that no more user interaction needed
 	private boolean finishing = false;
+	
+	private static boolean isYUV = false;
 		
 	public SequenceProcessingPlugin()
 	{
@@ -167,7 +169,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
      	try {
      		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
             int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-            ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
      		int minSize = 1000;
      		if (mMinSize == 0) {
      			minSize = 0;
@@ -177,26 +178,63 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		
     		if (imagesAmount==0)
     			imagesAmount=1;
+    		
+    		int iImageWidth = MainScreen.getImageWidth();
+    		int iImageHeight = MainScreen.getImageHeight();
+    		
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     
     		thumbnails.clear();
     		for (int i=1; i<=imagesAmount; i++)
     		{
-    			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
-    	        		);
-    			
-    			compressed_frame.add(i-1, in);
-    			
-    			BitmapFactory.Options opts = new BitmapFactory.Options();
-    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
-    	    			(int)(opts.outHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
-    	    			false));
+    			if(isYUV)
+    			{
+    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+    				mYUVBufferList.add(i-1, yuv);
+    				
+    				thumbnails.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(i-1), iImageWidth, iImageHeight),
+	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(iImageHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
+	    	    			false));
+    			}
+    			else
+    			{
+	    			byte[] in = SwapHeap.CopyFromHeap(
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+	    	        		);
+	    			
+	    			mJpegBufferList.add(i-1, in);
+	    			
+	    			
+	    			BitmapFactory.Options opts = new BitmapFactory.Options();
+	    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
+	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(opts.outHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
+	    	    			false));
+    			}
     		}
     		
-    		mJpegBufferList = compressed_frame;
-    		getDisplaySize(mJpegBufferList.get(0));
+    		if(!isYUV)
+    			getDisplaySize(mJpegBufferList.get(0));
+    		else
+    		{
+    			Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();    			
+    			Point dis = new Point();
+    			display.getSize(dis);
+    			
+    			float imageRatio = (float)iImageWidth / (float)iImageHeight;
+    			float displayRatio = (float)dis.y / (float)dis.x;
+    			
+    			if (imageRatio > displayRatio) {
+    				mDisplayWidth = dis.y;
+    				mDisplayHeight = (int)((float)dis.y / (float)imageRatio);
+    			} else {
+    				mDisplayWidth = (int)((float)dis.x * (float)imageRatio);
+    				mDisplayHeight = dis.x;
+    			}
+    		}
+    		
     		Size preview = new Size(mDisplayWidth, mDisplayHeight);
     		
     		if (SaveInputPreference)
@@ -269,8 +307,18 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		            
     		            if (os != null)
     		            {
-    		            	// ToDo: not enough memory error reporting
-    			            os.write(compressed_frame.get(i));
+    		            	if(!isYUV)
+    		            	{
+	    		            	// ToDo: not enough memory error reporting
+	    			            os.write(mJpegBufferList.get(i));
+    		            	}
+    		            	else
+    		            	{
+    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
+    		            		//to avoid problems with SKIA
+    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+    		            	}
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -295,7 +343,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			            ei.saveAttributes();
     		            }
     		            
-    		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
     		            values = new ContentValues(9);
     	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
     	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
@@ -310,15 +357,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     			            
     			            if (l != null)
     			            {	     
-//    			            	Exiv2.writeGeoDataIntoImage(
-//    			            		file.getAbsolutePath(), 
-//    			            		true,
-//    			            		l.getLatitude(), 
-//    			            		l.getLongitude(), 
-//    			            		dateString, 
-//    			            		android.os.Build.MANUFACTURER != null ? android.os.Build.MANUFACTURER : "Google",
-//    			            		android.os.Build.MODEL != null ? android.os.Build.MODEL : "Android device");
-
     			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
     				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
@@ -342,7 +380,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	        }
     	        catch (Exception e)
     	        {
-    	        	//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
     	        	e.printStackTrace();
     	        }
     		}
@@ -360,7 +397,10 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             }
             
      		//frames!!! should be taken from heap
-     		mAlmaCLRShot.addInputFrame(compressed_frame, input);
+            if(!isYUV)
+            	mAlmaCLRShot.addJPEGInputFrame(mJpegBufferList, input);
+            else
+            	mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
 
      		mAlmaCLRShot.initialize(preview,
      				mAngle,
@@ -384,19 +424,14 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
  					 */
  					Integer.parseInt(mGhosting),
  					indexes);
-     		compressed_frame.clear();
+     		
+     		//compressed_frame.clear();
  		} 
      	catch (Exception e) 
  		{
  			e.printStackTrace();
  		}
      		}
-		
-//	public void FreeMemory()
-//	{
-//		mAlmaCLRShot.release();
-//	}
-
 /************************************************
  * 		POST PROCESSING
  ************************************************/
@@ -412,13 +447,14 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private static final int MSG_LEAVING = 3;
 	private static final int MSG_END_OF_LOADING = 4;
 	private final Handler mHandler = new Handler(this);
-	private boolean[] mObjStatus;
 	private int mLayoutOrientationCurrent;
 	private int mDisplayOrientationCurrent;
 	private Bitmap PreviewBmp = null;
 	public static int mDisplayWidth;
 	public static int mDisplayHeight;
-	public static ArrayList<byte[]> mJpegBufferList;
+	public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
+	public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
+	public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
 	Paint paint=null;
 	
 	private boolean postProcessingRun = false;
@@ -431,9 +467,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		
 		mImgView = ((ImageView)postProcessingView.findViewById(R.id.sequenceImageHolder));
 		
-//		mObjStatus = new boolean[mAlmaCLRShot.getTotalObjNum()];
-//        Arrays.fill(mObjStatus, true);
-
         if (PreviewBmp != null) {
         	PreviewBmp.recycle();
         }
@@ -444,7 +477,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		paint.setPathEffect(new DashPathEffect(new float[] {5,5},0));
 
     	PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-//    	drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
 
         if (PreviewBmp != null)  
         {
@@ -453,7 +485,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	//mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
         	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
@@ -466,8 +497,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	matrix.postRotate(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270 : 90) : 90);
         	Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(),
         	        matrix, true);
-//        	mImgView.setImageBitmap(rotated);
-//        	mImgView.setRotation(MainScreen.getCameraMirrored()?180:0);
     		thumbnailsArray[i] = rotated;
     	}
     	sequenceView.setContent(thumbnailsArray, this);
@@ -637,8 +666,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		sequenceView.setEnabled(false);
 
 		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-        //int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-        //ArrayList<byte []> compressed_frame = new ArrayList<byte []>();
  		int minSize = 1000;
  		if (mMinSize == 0) {
  			minSize = 0;
@@ -688,7 +715,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         mSensitivity = prefs.getInt("Sensitivity", 19);
         mMinSize = prefs.getInt("MinSize", 1000);
         mGhosting = prefs.getString("Ghosting", "2");
-        SaveInputPreference = prefs.getBoolean("saveInputPrefSequence", false);
+        SaveInputPreference = prefs.getBoolean(MainScreen.thiz.getResources().getString(R.string.saveInputPrefSequence), false);
     }
 
 /************************************************

@@ -79,12 +79,9 @@ public final class Util {
     private static final float DEFAULT_CAMERA_BRIGHTNESS = 0.7f;
 
     // Orientation hysteresis amount used in rounding, in degrees
-    public static final int ORIENTATION_HYSTERESIS = 5;
+    private static final int ORIENTATION_HYSTERESIS = 5;
 
-    public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
-
-    public static final String DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-    public static final String DIRECTORY = DCIM + "/Camera";
+    private static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
 
     private static boolean sIsTabletUI;
     private static float sPixelDensity = 1;
@@ -259,7 +256,6 @@ public final class Util {
         try {
             c.close();
         } catch (Exception t) {
-            // do nothing
         }
     }
 
@@ -272,10 +268,6 @@ public final class Util {
     public static <T> T checkNotNull(T object) {
         if (object == null) throw new NullPointerException();
         return object;
-    }
-
-    public static boolean equals(Object a, Object b) {
-        return (a == b) || (a == null ? false : a.equals(b));
     }
 
     public static int nextPowerOf2(int n) {
@@ -589,7 +581,6 @@ public final class Util {
     public static void enterLightsOutMode(Window window) 
     {
         WindowManager.LayoutParams params = window.getAttributes();
-        //params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
         window.setAttributes(params);
     }
 
@@ -704,14 +695,6 @@ public final class Util {
     }
     public static Rect convertToDriverCoordinates(Rect rect)
     {
-//        int areaWidth = (int)(focusWidth * areaMultiple);
-//        int areaHeight = (int)(focusHeight * areaMultiple);
-//        int left = Util.clamp(x - areaWidth / 2, 0, previewWidth - areaWidth);
-//        int top = Util.clamp(y - areaHeight / 2, 0, previewHeight - areaHeight);
-//        
-//        int right = Util.clamp(x + areaWidth / 2, areaWidth, previewWidth);
-//        int bottom = Util.clamp(y + areaHeight / 2, areaHeight, previewHeight);
-//        
         RectF rectF = new RectF(rect.left, rect.top, rect.right, rect.bottom);
         mMeteringMatrix.mapRect(rectF);
         Util.rectFToRect(rectF, rect);

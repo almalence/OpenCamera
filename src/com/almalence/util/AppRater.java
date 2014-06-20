@@ -35,8 +35,8 @@ import com.almalence.opencam.R;
 
 public class AppRater
 {
-	private final static int DAYS_UNTIL_PROMPT = 0;
-	private final static int LAUNCHES_UNTIL_PROMPT = 15;
+	private static final int DAYS_UNTIL_PROMPT = 0;
+	private static final int LAUNCHES_UNTIL_PROMPT = 15;
 
 	public static void app_launched(Activity mContext)
 	{
@@ -113,12 +113,6 @@ public class AppRater
 		b1.setText("Rate " + APP_TITLE);
 		ll.addView(b1);
 
-		/*
-		Button b2 = new Button(mContext);
-		b2.setText("Remind me later");
-		ll.addView(b2);
-		*/
-
 		Button b3 = new Button(mContext);
 		b3.setText("No, thanks");
 		ll.addView(b3);
@@ -151,17 +145,6 @@ public class AppRater
 				dialog.dismiss();
 			}
 		});
-		/*
-		b2.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				dialog.dismiss();
-				
-				mContext.finish();
-			}
-		});
-		*/
 		b3.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)

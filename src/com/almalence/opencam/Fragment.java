@@ -51,7 +51,7 @@ New interface for preferences. Loads sections for Common preferences.
 @TargetApi(11)
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
-	static public PreferenceFragment thiz;
+	public static PreferenceFragment thiz;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -136,11 +136,17 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 						//return true;
 					}
 					
+					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+					{
+						Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+						//return true;
+					}
+					
 					if (v == 2)
 					{
 						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
 						
-						intent.putExtra(MainScreen.SavePathPref, v_old);
+						intent.putExtra(MainScreen.sSavePathPref, v_old);
 						
 						Preferences.thiz.startActivity(intent);
 					}
@@ -173,7 +179,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		setScreenBrightness(MaxScreenBrightnessPreference);
     }
     
-    static public void setScreenBrightness(boolean setMax)
+    public static void setScreenBrightness(boolean setMax)
 	{
     	try{
 			//ContentResolver cResolver = getContentResolver();
@@ -196,7 +202,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 	}
     
-    static public void closePrefs()
+    public static void closePrefs()
 	{
 		thiz.getFragmentManager().popBackStack();
 	}

@@ -6,7 +6,7 @@
 			android:title="@string/Pref_Common_DelayedCapture_Title"
 			android:summary="@string/Pref_Common_DelayedCapture_Summary"
 			android:defaultValue="false" 
-			android:key="showDelayedCapturePrefCommon" />
+			android:key="@string/Preference_ShowDelayedCaptureValue" />
 	    
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"
@@ -39,7 +39,7 @@
 			android:title="@string/Pref_Common_DelayedCapture_Title"
 			android:summary="@string/Pref_Common_DelayedCapture_Summary"
 			android:defaultValue="false" 
-			android:key="showDelayedCapturePrefCommon" />
+			android:key="@string/Preference_ShowDelayedCaptureValue" />
 	    
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"

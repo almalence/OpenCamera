@@ -23,10 +23,16 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
+import java.util.Date;
+
 import android.hardware.Camera;
+import android.media.Image;
 
 public abstract class PluginCapture extends Plugin
 {
+	protected boolean takingAlready=false;
+	protected boolean inCapture;
+	
 	public PluginCapture(String ID,
 						 int preferenceID,
 						 int advancedPreferenceID,
@@ -40,18 +46,47 @@ public abstract class PluginCapture extends Plugin
 	{
 		return false;
 	}
+
+	@Override
+	public void OnShutterClick()
+	{
+		if (inCapture == false)
+        {
+			Date curDate = new Date();
+			SessionID = curDate.getTime();
+			
+			MainScreen.thiz.MuteShutter(true);
+			
+			int focusMode = CameraController.getInstance().getFocusMode();
+			if(focusMode != -1 && takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+					CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+	      				focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
+	    				focusMode == CameraParameters.AF_MODE_INFINITY ||
+	    				focusMode == CameraParameters.AF_MODE_FIXED ||
+	    				focusMode == CameraParameters.AF_MODE_EDOF)
+        			&& !MainScreen.getAutoFocusLock())
+				takingAlready = true;			
+			else if(takingAlready == false)
+			{
+				takePicture();
+			}
+        }
+	}
+	
+	public void takePicture(){}
 	
 	@Override
-	abstract public void OnShutterClick();
+	public abstract void onAutoFocus(boolean paramBoolean);
 	
 	@Override
-	abstract public void onAutoFocus(boolean paramBoolean, Camera paramCamera);
+	public abstract void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
+
+	@Override
+	public abstract void onImageAvailable(Image im);
 	
 	@Override
-	abstract public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
-	
-	@Override
-	abstract public void onPreviewFrame(byte[] data, Camera paramCamera);
+	public abstract void onPreviewFrame(byte[] data, Camera paramCamera);
 	
 	public boolean shouldPreviewToGPU()
 	{

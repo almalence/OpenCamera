@@ -25,7 +25,7 @@
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:hardwareAccelerated="true" android:largeHeap="true">
     <!-- android:debuggable="true"> -->
 
-        <activity android:name=".MainScreen"
+        <activity android:name="com.almalence.opencam.MainScreen"
                   android:label="@string/app_name"
                   android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
                   android:screenOrientation="portrait">
@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
 
-   		<activity android:name=".Processing"
+   		<activity android:name="com.almalence.opencam.Processing"
 		        		android:label="Processing"
         				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
@@ -68,7 +68,7 @@
 		<activity android:name="com.almalence.plugins.processing.hdr.ActivityAdjustments"
 		    						android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
-		<activity android:name=".FolderPicker"
+		<activity android:name="com.almalence.opencam.FolderPicker"
 		        android:label="@string/choose_folder"/>
 
 		<receiver android:name=".HWButtonStart" >

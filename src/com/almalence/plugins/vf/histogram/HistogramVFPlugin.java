@@ -60,9 +60,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 	RotateImageView histogramRIV;
 	RotateImageView histogramRGBRIV;
 
-	private final static int RGB = 0;
-	private final static int LUMA = 1;
-	private final static int NONE = 2;
+	private static final int RGB = 0;
+	private static final int LUMA = 1;
+	private static final int NONE = 2;
 
 	private int[] histFacts;
 	private int[] histFactsR;
@@ -79,7 +79,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	private int histoHeight = 0;
 	private int histoWidth = 0;
 
-	public static int histogramType = RGB;
+	private static int histogramType = RGB;
 
 	public HistogramVFPlugin() {
 		super("com.almalence.plugins.histogramvf",
@@ -366,13 +366,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 		if (frameCounter != 4) {
 			return;
 		}
-
-		Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		if (params == null)
-			return;
-
-		int previewWidth = params.getPreviewSize().width;
-		int previewHeight = params.getPreviewSize().height;
+		int previewWidth = MainScreen.previewWidth;
+		int previewHeight = MainScreen.previewHeight;
 
 		if (histogramType == LUMA) {
 			Histogram.createHistogram(data, histFacts, previewWidth,

@@ -451,6 +451,20 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	else return -1;
 }
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_GetYUVFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	if(yuv[index] != NULL)
+	{
+		return (jint)yuv[index];
+	}
+	else return -1;
+}
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_RotateResult
 (
 	JNIEnv* env,
@@ -470,6 +484,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 (
 	JNIEnv* env,
 	jobject thiz,
+	jint inputYUV,
 	jint sx,
 	jint sy,
 	jfloat max_amplify,
@@ -486,6 +501,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	Uint32 hist[256];
 	Uint32 hist_loc[3][3][256];
 	Int32 lookup_table[3][3][256];
+
+	unsigned char* yuv = (unsigned char*)inputYUV;
 
 	result_yuv = (Uint8*)malloc(sx*sy+sx*((sy+1)/2));
 
@@ -505,7 +522,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 
 	if (result_yuv)
 	{
-		Dro_GetHistogramNV21(yuv[0], hist, local_mapping ? hist_loc:NULL, sx, sy, 1.0f);
+		Dro_GetHistogramNV21(yuv, hist, local_mapping ? hist_loc:NULL, sx, sy, 1.0f);
 
 		for (y=0; y<(local_mapping ? 3:1); ++y)
 			for (x=0; x<(local_mapping ? 3:1); ++x)
@@ -521,7 +538,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 
 
 		int res = Dro_ApplyToneTableFilteredNV21(
-				yuv[0],
+				yuv,
 				result_yuv,
 				local_mapping ? NULL:lookup_table[0][0],
 				local_mapping ? lookup_table:NULL,

@@ -30,8 +30,6 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
@@ -42,6 +40,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginExport;
@@ -60,6 +60,7 @@ import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 import com.almalence.ui.RotateImageView;
+
 import com.almalence.util.MLocation;
 
 /***
@@ -71,8 +72,8 @@ with specified pattern name
 
 public class ExportPlugin extends PluginExport
 {
-	static public String[] filesSavedNames;
-	static public int nFilesSaved;
+	private static String[] filesSavedNames;
+	private static int nFilesSaved;
 
 	boolean should_save= false;
 	private RotateImageView gpsInfoImage;
@@ -80,7 +81,6 @@ public class ExportPlugin extends PluginExport
 	boolean isResultFromProcessingPlugin = false;
 	
 	private int saveOption;
-//	private int exportFormat;
 	private boolean useGeoTaggingPrefExport;
 
 	Thread saving;
@@ -113,7 +113,6 @@ public class ExportPlugin extends PluginExport
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
-//        exportFormat = Integer.parseInt(prefs.getString("exportFormat", "1"));
         useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 	}
 	
@@ -159,10 +158,6 @@ public class ExportPlugin extends PluginExport
 	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_search));
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	        break;
-//	    case GpsStatus.GPS_EVENT_STOPPED:
-//	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
-//	    	gpsInfoImage.setVisibility(View.INVISIBLE);
-//	        break;
 	    case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 	    	if (!isFirstGpsFix)
 	    		return;
@@ -241,10 +236,7 @@ public class ExportPlugin extends PluginExport
 		    		break;
 		    	}
 		    		
-//		    	if (1 == exportFormat)
-		    		fileFormat += idx+".jpg";
-//		    	else
-//		    		fileFormat += idx+".png";
+		    	fileFormat += idx+".jpg";
 		    	
 		    	File file;
 		    	if (MainScreen.ForceFilename == null)
@@ -404,7 +396,6 @@ public class ExportPlugin extends PluginExport
                 values.put(ImageColumns.DISPLAY_NAME, file.getName());
                 values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
                 values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-                //values.put(ImageColumns.ORIENTATION, (!orientationLandscape && writeOrientationTag && !cameraMirrored) ? 90 : ( (!orientationLandscape && writeOrientationTag && cameraMirrored) ? 270 : 0) );
                 values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
                 values.put(ImageColumns.DATA, file.getAbsolutePath());
                 
@@ -450,11 +441,6 @@ public class ExportPlugin extends PluginExport
 			        		exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
 			            }
 	            	}
-	            	else
-	            	{
-	            		//Toast.makeText(MainScreen.mainContext, "Can't get location. Turn on \"use GPS satellites\" setting", Toast.LENGTH_LONG).show();
-	            		
-	            	}
 	            }
     	    	
     	    	String tag_exposure_time = PluginManager.getInstance().getFromSharedMem("exiftag_exposure_time"+Long.toString(sessionID));
@@ -467,7 +453,7 @@ public class ExportPlugin extends PluginExport
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
-	            String tag_metering_mode = PluginManager.getInstance().getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));
+	            String tag_metering_mode = PluginManager.getInstance().getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));	            
 	            	   
 	            if (exifDriver != null) {
 	            	if(tag_exposure_time != null) {
@@ -509,38 +495,34 @@ public class ExportPlugin extends PluginExport
 		            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
 		            	}
 		            }
-		            if(tag_iso != null) {
-		            	try
-		            	{
+		            try{
+			            if(tag_iso != null) {
 			            	if (tag_iso.indexOf("ISO") > 0) {
 			            		tag_iso = tag_iso.substring(0, 2);
 			            	}
 			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
 		            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
-		            	}catch(Exception e){}
-		            }
+			            }
+		            }catch(Exception e){}
 		            if(tag_scene != null) {
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            } else {
-		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		            	String sceneMode = params.getSceneMode();
-		            	if (null != sceneMode)
-		            	{
-			            	int sceneModeVal = 0;
-			            	if (sceneMode.equals(Parameters.SCENE_MODE_LANDSCAPE)) {
-			            		sceneModeVal = 1;
-			            	}
-			            	if (sceneMode.equals(Parameters.SCENE_MODE_PORTRAIT)) {
-			            		sceneModeVal = 2;
-			            	}
-			            	if (sceneMode.equals(Parameters.SCENE_MODE_NIGHT)) {
-			            		sceneModeVal = 3;
-			            	}
-			            	
-			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
+		            	int sceneMode = CameraController.getInstance().getSceneMode();		            	
+		            	
+		            	int sceneModeVal = 0;
+		            	if (sceneMode == CameraParameters.SCENE_MODE_LANDSCAPE) {
+		            		sceneModeVal = 1;
 		            	}
+		            	else if (sceneMode == CameraParameters.SCENE_MODE_PORTRAIT) {
+		            		sceneModeVal = 2;
+		            	}
+		            	else if (sceneMode == CameraParameters.SCENE_MODE_NIGHT) {
+		            		sceneModeVal = 3;
+		            	}
+		            	
+		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 		            }
 		            if(tag_white_balance != null) {
 		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
@@ -551,48 +533,44 @@ public class ExportPlugin extends PluginExport
 		            } else {
 		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
 		            	
-		            	Camera.Parameters params = MainScreen.thiz.getCameraParameters();
-		            	String whiteBalance = params.getWhiteBalance();
-		            	if (null != whiteBalance)
-		            	{
-			            	int whiteBalanceVal;
-			            	int lightSourceVal;
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_AUTO)) {
-			            		whiteBalanceVal = 0;
-			            		lightSourceVal = 0;
-			            	} else {
-			            		whiteBalanceVal = 1;
-			            		lightSourceVal = 0;
-			            	}
-	
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_DAYLIGHT)) {
-			            		lightSourceVal = 1;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_FLUORESCENT)) {
-			            		lightSourceVal = 2;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_WARM_FLUORESCENT)) {
-			            		lightSourceVal = 2;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_INCANDESCENT)) {
-			            		lightSourceVal = 3;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_TWILIGHT)) {
-			            		lightSourceVal = 3;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT)) {
-			            		lightSourceVal = 10;
-			            	}
-			            	if (whiteBalance.equals(Parameters.WHITE_BALANCE_SHADE)) {
-			            		lightSourceVal = 11;
-			            	}
-			            	
-			            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
-		            		
-		            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
+		            	int whiteBalance = CameraController.getInstance().getWBMode();
+		            	int whiteBalanceVal = 0;
+		            	int lightSourceVal = 0;
+		            	if (whiteBalance == CameraParameters.WB_MODE_AUTO) {
+		            		whiteBalanceVal = 0;
+		            		lightSourceVal = 0;
+		            	} else {
+		            		whiteBalanceVal = 1;
+		            		lightSourceVal = 0;
 		            	}
+
+		            	if (whiteBalance == CameraParameters.WB_MODE_DAYLIGHT) {
+		            		lightSourceVal = 1;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_FLUORESCENT) {
+		            		lightSourceVal = 2;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_WARM_FLUORESCENT) {
+		            		lightSourceVal = 2;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_INCANDESCENT) {
+		            		lightSourceVal = 3;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_TWILIGHT) {
+		            		lightSourceVal = 3;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_CLOUDY_DAYLIGHT) {
+		            		lightSourceVal = 10;
+		            	}
+		            	else if (whiteBalance == CameraParameters.WB_MODE_SHADE) {
+		            		lightSourceVal = 11;
+		            	}
+		            	
+		            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
+	            		
+	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
+	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            }
 		            if(tag_make != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
@@ -624,7 +602,7 @@ public class ExportPlugin extends PluginExport
 		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
 	            		exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
-		            }
+		            }		            
 		            
 	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
 	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);

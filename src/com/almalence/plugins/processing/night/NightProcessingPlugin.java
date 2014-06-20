@@ -47,25 +47,18 @@ Implements night processing
 
 public class NightProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener
 {
-	static public boolean preview_computing = false;
-	static public boolean processing_computing = false;
-	static public boolean should_save = true;
-	static public boolean should_unload = true;
-	static public boolean hdr_processing_returned = false;
-	static public Bitmap PreviewBmp;			// on-screen preview
-	public int yuv;						// fused result
-	static public int[] crop = new int[4];
+	// fused result
+	private int yuv;
+	private static int[] crop = new int[4];
 	
-	public static int HI_SPEED_FRAMES = 12;
-
-	public static long PREVIEW_TIME = 3000;
+	private static int HI_SPEED_FRAMES = 12;
 
     private long sessionID=0;
     
     //night preferences
-    public String NoisePreference;
-    public String GhostPreference;
-    public Boolean SaturatedColors;
+    private String NoisePreference;
+    private String GhostPreference;
+    private Boolean SaturatedColors;
     
     private int mDisplayOrientation = 0;
 	private boolean mCameraMirrored = false;
@@ -170,18 +163,24 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     	}
     	else
     	{
-            try
-            {
-        	AlmaShotNight.ConvertFromJpeg(
-        			compressed_frame,
-        			compressed_frame_len,
-        			imagesAmount,
-        			mImageWidth, mImageHeight);
-            }
-            catch(RuntimeException exp)
-            {
-            	Log.e("NIGHT CAMERA DEBUG", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg EXCEPTION = " + exp.getMessage());	
-            }
+            boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		if(!isYUV)
+    		{
+    	    	AlmaShotNight.ConvertFromJpeg(
+    	    			compressed_frame,
+    	    			compressed_frame_len,
+    	    			imagesAmount,
+    	    			mImageWidth, mImageHeight);
+    	    	Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+    		}
+    		else
+    		{
+    			AlmaShotNight.NightAddYUVFrames(
+    	    			compressed_frame,
+    	    			imagesAmount,
+    	    			mImageWidth, mImageHeight);
+    	    	Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+    		}
         	
     		
     		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight,

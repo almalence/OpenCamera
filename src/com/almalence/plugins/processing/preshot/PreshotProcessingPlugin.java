@@ -27,7 +27,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -38,7 +37,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
@@ -91,25 +89,16 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private static int idx=0;
 	private static int imgCnt=0;
 	
-	static public String[] filesSavedNames;
-	static public int nFilesSaved;
-	
 	private Bitmap[] mini_frames;
 	private AtomicBoolean miniframesReady = new AtomicBoolean(false);
 
 	private Button mSaveButton;
 	private Button mSaveAllButton;
 	
-	long ProcTimeSt;
 	//Thread saving;
-	boolean should_save= false;
-	boolean isSaveAll = false;
+	private boolean isSaveAll = false;
 	
-	//private View buttonsPanel = null;
-	
-	private int button_side;
-	
-	DisplayMetrics metrics = null;
+	private DisplayMetrics metrics = null;
 	
 	private int mLayoutOrientationCurrent;
 	private int mDisplayOrientationCurrent;
@@ -120,35 +109,15 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	
 	private boolean postProcessingRun = false;
 	
-    public static boolean AccelerometerPreference;
-    
     private boolean isSlowMode = false;
     
     private long sessionID=0;
     
     private ProgressDialog mSavingDialog;
     
-    private static final int SAVE_DIALOG_SHOW = 0;
-    private static final int SAVE_DIALOG_HIDE = 1;
-    
- // indicates if it's first launch - to show hint layer.
+    //indicates if it's first launch - to show hint layer.
  	private boolean isFirstLaunch = true;
     
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SAVE_DIALOG_SHOW:
-                	mSavingDialog.show();
-                break;
-        
-                case SAVE_DIALOG_HIDE:
-                	mSavingDialog.hide();
-                break;
-        
-            }
-        }
-    };
-
     @Override
     public void onStartProcessing(long SessionID)
 	{
@@ -166,11 +135,12 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
     	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
-    	Log.e("PreShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
     	mCameraMirrored = MainScreen.getCameraMirrored();
 		
     	sessionID=SessionID;
+    	
+    	PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
     	
     	PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
     	
@@ -182,13 +152,11 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
     	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled"+Long.toString(sessionID)));
     	//processing only in fast mode.
-//    	if(!isSlowMode)
-    		ProcessingImages();
+   		ProcessingImages();
+   		
     	imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
     	PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imgCnt));
    		PluginManager.getInstance().addToSharedMem("ResultFromProcessingPlugin"+Long.toString(sessionID), isSlowMode? "true" : "false");
-//		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
-//    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
    		
    		prepareMiniFrames();
    		miniframesReady.set(true);
@@ -245,9 +213,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		    	PluginManager.getInstance().addToSharedMem("resultframeformat"+(i+1)+Long.toString(sessionID), "jpeg");
 	    	}
 	    	
-//	    	int isPortrait = PreShot.isPortraitReserved(i);
 	    	int iOrientation = PreShot.getOrientationReserved(i);
-	    	Log.e("PreShot","Frame orientation: " + iOrientation);
 	    	if(isSlowMode == true)
 	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((iOrientation)));
 	    	else
@@ -287,43 +253,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	@Override
 	public void onStartPostProcessing()
 	{
-		//LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
 		postProcessingView = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_processing_preshot_postprocessing_layout, null);			
 				
 		idx=0;
     	imgCnt=0;
 		
     	setupSaveButton();
-	    
-//	    new OrientationEventListener (MainScreen.mainContext)
-//        {
-//        	private int mDeviceOrientation;
-//
-//			@Override
-//            public void onOrientationChanged(int orientation)
-//            {
-//                if (orientation == ORIENTATION_UNKNOWN || !postProcessingRun)
-//    				return;
-//                
-//                final Display display = ((WindowManager)MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-//                final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;	
-//                final int rotation = display.getRotation();
-//    			
-//                boolean remapOrientation = (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_0) ||
-//        				(orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180) ||
-//        				(orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90) ||
-//        				(orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
-//                
-//        		if (remapOrientation)
-//        			orientation = (orientation - 90 + 360) % 360;
-//    			
-//    			this.mDeviceOrientation = Util.roundOrientation(orientation, this.mDeviceOrientation);
-//    			PreshotProcessingPlugin.this.mSaveButton.setOrientation(this.mDeviceOrientation);
-//    			PreshotProcessingPlugin.this.mSaveAllButton.setOrientation(this.mDeviceOrientation);
-//            }
-//        };
-        
-        
+
         ((ImageView)postProcessingView.findViewById(R.id.imageHolder)).setOnTouchListener(this);
 		        
 		isResultFromProcessingPlugin = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("ResultFromProcessingPlugin" + sessionID));
@@ -331,7 +267,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		MainScreen.thiz.getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		
-		Log.e("MultishotExportPlugin", "onExportActive");
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
         if (0!=imgCnt)
         	idx = imgCnt-1;
@@ -340,9 +275,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
         idx/=2;
         
         Show(true);
-        Log.e("MultishotExportPlugin", "Show() success");
         
-     // if first launch - show layout with hints
+        // if first launch - show layout with hints
  		SharedPreferences prefs = PreferenceManager
  				.getDefaultSharedPreferences(MainScreen.mainContext);
  		if (true == prefs.contains("isFirstPreShotLaunch")) {
@@ -406,15 +340,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	
 	public void saveTask()
 	{
-		//mSavingDialog.show();
-//		mHandler.sendEmptyMessage(SAVE_DIALOG_SHOW);
-		
 		if(isSaveAll)
 			saveAll();
 		else
 			saveThis();
-		
-//		mHandler.sendEmptyMessage(SAVE_DIALOG_HIDE);
 		
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
@@ -454,9 +383,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
-//			if (saving.isAlive())
-//    			saving.interrupt();
-    		
     		Message msg2 = new Message();
     		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     		msg2.what = PluginManager.MSG_BROADCAST;
@@ -497,45 +423,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     			mSaveAllButton.invalidate();
     			Show(false);
     		}
-//	    	new Thread(new Runnable() {
-//                public void run() {
-//                	mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-//                	updateBitmap();
-//                    mHandler.post(new Runnable() {
-//                        public void run() {
-//                        	if (PreviewBmp != null) {
-//                        		mImgView.setImageBitmap(PreviewBmp);
-//                        		mSaveButton.setRotation(mDisplayOrientationCurrent? 90 : 0);
-//                        		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mGallery.getLayoutParams();
-//                        		int[] rules = lp.getRules();
-//                        		if(mDisplayOrientationCurrent)
-//                        		{
-//                        			lp.addRule(RelativeLayout.CENTER_VERTICAL);
-//                        			lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//
-//                        			mGallery.setRotation(90);
-//                        			mGallery.setPivotX(mGallery.getHeight());
-//                        		}
-//                        		else
-//                        		{
-//                        			rules[RelativeLayout.ALIGN_PARENT_BOTTOM] = 1;
-//                        			rules[RelativeLayout.CENTER_VERTICAL] = 0;
-//                        			rules[RelativeLayout.ALIGN_PARENT_LEFT] = 0;	                        			
-//                        			
-//                        			mGallery.setLayoutParams(lp);
-//                        			mGallery.requestLayout();
-//                        			
-//                        			mGallery.setRotation(0);
-//                        		}
-//                        	}
-//                        }
-//                    });
-//                    
-//                    // Probably this should be called from mSeamless ? 
-//                    // mSeamless.fillLayoutwithStitchingflag(mFaceRect);
-//                    mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
-//                }
-//            }).start();
     	}
     }
     
@@ -548,8 +435,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	if (imgCnt==1 || mini_frames.length==1)
     		idx = 0;
     	
-    	Bitmap photo = mini_frames[idx];//getMultishotBitmap(idx);
-    	//Log.e("MultishotExportPlugin", "Show getMultishotBitmap success");
+    	Bitmap photo = mini_frames[idx];
     	if(photo != null)
     	{    		
     		if(initial)
@@ -581,6 +467,66 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	}
     }
     
+    static boolean isFlipping = false;
+    private void flipPhoto(boolean toLeft, float XtoVisible)
+	{
+    	isFlipping = true;
+    	ImageView imgView = (ImageView)MainScreen.thiz.findViewById(R.id.imageHolder);
+		
+		float[] f = new float[9];
+        imgView.getImageMatrix().getValues(f);
+
+        // Extract the scale values using the constants (if aspect ratio maintained, scaleX == scaleY)
+        final float scaleX = f[Matrix.MSCALE_X];
+        final float scaleY = f[Matrix.MSCALE_Y];
+
+        // Get the drawable (could also get the bitmap behind the drawable and getWidth/getHeight)
+        final Drawable d = imgView.getDrawable();
+        final int origW = d.getIntrinsicWidth();
+        final int origH = d.getIntrinsicHeight();
+
+        // Calculate the actual dimensions
+        final int actW = Math.round(origW * scaleX);
+        final int actH = Math.round(origH * scaleY);
+		
+		AnimationSet visible = new AnimationSet(true);
+		visible.setInterpolator(new DecelerateInterpolator());
+		
+		int duration_visible = 0;
+		
+		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
+			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actH)), 250, 500);
+		else
+			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actW)), 250, 500);
+		
+		Animation visible_translate;
+		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
+			visible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
+		else
+			visible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
+		visible_translate.setDuration(duration_visible);		
+		visible_translate.setFillAfter(true);
+		
+		visible.addAnimation(visible_translate);
+		
+		postProcessingView.findViewById(R.id.imageListed).startAnimation(visible);
+		
+		visible.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				postProcessingView.findViewById(R.id.imageListed).clearAnimation();
+				postProcessingView.findViewById(R.id.imageListed).setVisibility(View.GONE);
+				Show(false);
+				isFlipping = false;
+			}
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+			@Override
+			public void onAnimationStart(Animation animation) {}
+		});
+	}
+    
+    @Override
     public Bitmap getMultishotBitmap(int index)
 	{
     	if(isSlowMode == false)
@@ -589,12 +535,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    	
 	    	if (data.length == 0)
 	    	{
-				//Toast.makeText(MainScreen.thiz, "No images", Toast.LENGTH_SHORT).show();	
 	    		return null;
 	    	}
 	
 	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
-	    	//if (1 == PreShot.isPortrait(index))// && !mCameraMirrored)
 	    	int or = PreShot.getOrientation(index);
 	    	Log.e("PreShot", "getMultishotBitmap orientation: " + or);
 	    	if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
@@ -618,26 +562,19 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    }
     	else
     	{//slow mode
-    		//Log.e("PreshotProcessingPlugin", "getMultishotBitmap slowMode. START");
     		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, MainScreen.getCameraMirrored());
-    		//Log.e("PreshotProcessingPlugin", "getMultishotBitmap slowMode. Get from Heap success");
 	    	
 	    	if (data.length == 0)
 	    	{
-	    		//Toast.makeText(MainScreen.thiz, "No images", Toast.LENGTH_SHORT).show();	
 	    		return null;
 	    	}
 	
-	    	//int H_Source = MainScreen.getImageHeight(), W_Source = MainScreen.getImageWidth();
 	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
     		
 	        Bitmap photo = null ;
-	        //photo = Bitmap.createBitmap(data, W, H, Bitmap.Config.ARGB_8888);
 	        photo = BitmapFactory.decodeByteArray(data, 0, data.length);
-	        //photo = Bitmap.createBitmap(data, W_Source, H_Source, Bitmap.Config.ARGB_8888);
 	        photo = Bitmap.createScaledBitmap(photo, W, H, false);
 	        
-	        //if(1 == PreShot.isPortrait(index))
 	        if(90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
 			{
 				Matrix matrix = new Matrix();
@@ -645,106 +582,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    		photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			}
 	        
-	        //Log.e("PreshotProcessingPlugin", "getMultishotBitmap slowMode. Bitmap created!");
-
 	        return photo;
     	}
-	}
-
-    static boolean isFlipping = false;
-    private void flipPhoto(boolean toLeft, float XtoVisible)
-	{
-    	isFlipping = true;
-    	ImageView imgView = (ImageView)MainScreen.thiz.findViewById(R.id.imageHolder);
-		int screenWidth = imgView.getWidth();
-		int screenHeight = imgView.getHeight();
-		
-		float[] f = new float[9];
-        imgView.getImageMatrix().getValues(f);
-
-        // Extract the scale values using the constants (if aspect ratio maintained, scaleX == scaleY)
-        final float scaleX = f[Matrix.MSCALE_X];
-        final float scaleY = f[Matrix.MSCALE_Y];
-
-        // Get the drawable (could also get the bitmap behind the drawable and getWidth/getHeight)
-        final Drawable d = imgView.getDrawable();
-        final int origW = d.getIntrinsicWidth();
-        final int origH = d.getIntrinsicHeight();
-
-        // Calculate the actual dimensions
-        final int actW = Math.round(origW * scaleX);
-        final int actH = Math.round(origH * scaleY);
-		
-		AnimationSet rlvisible = new AnimationSet(true);
-		rlvisible.setInterpolator(new DecelerateInterpolator());
-		
-		AnimationSet lrvisible = new AnimationSet(true);
-		lrvisible.setInterpolator(new DecelerateInterpolator());
-		
-		int duration_visible = 0;
-		
-		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actH)), 250, 500);
-		else
-			duration_visible = com.almalence.util.Util.clamp(Math.abs(Math.round((XtoVisible*500)/actW)), 250, 500);
-		
-		Animation visible_alpha = new AlphaAnimation(0, 1);		
-		visible_alpha.setDuration(duration_visible);
-		visible_alpha.setRepeatCount(0);
-		
-		Animation rlvisible_translate;
-		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			rlvisible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
-		else
-			rlvisible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
-		rlvisible_translate.setDuration(duration_visible);		
-		rlvisible_translate.setFillAfter(true);
-		
-		Animation lrvisible_translate;
-		if(mLayoutOrientationCurrent == 90 || mLayoutOrientationCurrent == 270)
-			lrvisible_translate = new TranslateAnimation(0, 0 , XtoVisible, 0);
-		else
-			lrvisible_translate = new TranslateAnimation(XtoVisible, 0 , 0, 0);
-		lrvisible_translate.setDuration(duration_visible);		
-		lrvisible_translate.setFillAfter(true);
-		
-		//rlvisible.addAnimation(visible_alpha);
-		rlvisible.addAnimation(rlvisible_translate);
-		
-		//lrvisible.addAnimation(visible_alpha);
-		lrvisible.addAnimation(lrvisible_translate);
-		
-		
-		
-		postProcessingView.findViewById(R.id.imageListed).startAnimation(toLeft?rlvisible:lrvisible);
-		
-		rlvisible.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				postProcessingView.findViewById(R.id.imageListed).clearAnimation();
-				postProcessingView.findViewById(R.id.imageListed).setVisibility(View.GONE);
-				Show(false);
-				isFlipping = false;
-			}
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-			@Override
-			public void onAnimationStart(Animation animation) {}
-		});
-		
-		lrvisible.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				postProcessingView.findViewById(R.id.imageListed).clearAnimation();
-				postProcessingView.findViewById(R.id.imageListed).setVisibility(View.GONE);
-				Show(false);
-				isFlipping = false;
-			}
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-			@Override
-			public void onAnimationStart(Animation animation) {}
-		});
 	}
     
     private static float X=0;
@@ -759,8 +598,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	
     public boolean onTouch(View v, MotionEvent event) 
     {
-//    	if (saving.isAlive())
-//			saving.interrupt();
     	if(postProcessingView != null && postProcessingView.findViewById(R.id.preShotHintLayout).getVisibility() == View.VISIBLE)
     		postProcessingView.findViewById(R.id.preShotHintLayout).setVisibility(View.GONE);
     	
@@ -853,8 +690,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				Animation in_animation;
 				Animation out_animation;
 				Animation reverseout_animation;
-				//Animation in_scale_animation;
-				//Animation reverseout_scale_animation;
 				
 				AnimationSet in_animation_set = new AnimationSet(true);
 				in_animation_set.setInterpolator(new DecelerateInterpolator());
@@ -896,22 +731,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 					
 					scale_from = com.almalence.util.Util.clamp(scale_from, 1, 2);
 					scale_to = com.almalence.util.Util.clamp(scale_to, 1, 2);
-					
-//					in_scale_animation = new ScaleAnimation(scale_from, scale_to, scale_from, scale_to, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
-//					in_scale_animation.setDuration(10);
-//					in_scale_animation.setInterpolator(new LinearInterpolator());
-//					in_scale_animation.setFillAfter(true);
-//					
-//					reverseout_scale_animation = new ScaleAnimation(scale_to, scale_from, scale_to, scale_from, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
-//					reverseout_scale_animation.setDuration(10);
-//					reverseout_scale_animation.setInterpolator(new LinearInterpolator());
-//					reverseout_scale_animation.setFillAfter(true);
-					
 					in_animation_set.addAnimation(in_animation);
-//					in_animation_set.addAnimation(in_scale_animation);
 					
 					reverseout_animation_set.addAnimation(reverseout_animation);
-//					reverseout_animation_set.addAnimation(reverseout_scale_animation);
 					
 					toLeft = false;
 					
@@ -948,22 +770,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 					
 					scale_from = com.almalence.util.Util.clamp(scale_from, 1, 2);
 					scale_to = com.almalence.util.Util.clamp(scale_to, 1, 2);
-					
-//					in_scale_animation = new ScaleAnimation(scale_from, scale_to, scale_from, scale_to, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
-//					in_scale_animation.setDuration(10);
-//					in_scale_animation.setInterpolator(new LinearInterpolator());
-//					in_scale_animation.setFillAfter(true);
-					
-//					reverseout_scale_animation = new ScaleAnimation(scale_to, scale_from, scale_to, scale_from, Animation.RELATIVE_TO_SELF, (float)0.5, Animation.RELATIVE_TO_SELF, (float)0.5);
-//					reverseout_scale_animation.setDuration(10);
-//					reverseout_scale_animation.setInterpolator(new LinearInterpolator());
-//					reverseout_scale_animation.setFillAfter(true);
-					
 					in_animation_set.addAnimation(in_animation);
-//					in_animation_set.addAnimation(in_scale_animation);
-					
 					reverseout_animation_set.addAnimation(reverseout_animation);
-//					reverseout_animation_set.addAnimation(reverseout_scale_animation);
 					
 					toLeft = true;
 					
@@ -978,8 +786,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			    	{
 			    		Matrix matrix = new Matrix();
 			    		matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
-						//matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent)%360 : mLayoutOrientationCurrent);
-			    		//matrix.postRotate(mLayoutOrientationCurrent);
 						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			    		((ImageView)postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
 			    	}
@@ -993,8 +799,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			    		Matrix matrix = new Matrix();
 			    		
 			    		matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
-						//matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent)%360 : mLayoutOrientationCurrent);
-						//matrix.postRotate(mLayoutOrientationCurrent);
 						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			    		((ImageView)postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
 			    	}

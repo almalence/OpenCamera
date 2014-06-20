@@ -18,24 +18,28 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.bestshot;
 
-import java.util.Date;
-
+import java.nio.ByteBuffer;
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
+import android.hardware.camera2.CaptureResult;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -43,6 +47,7 @@ import com.almalence.opencam.R;
 //-+- -->
 
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /***
 Implements burst capture plugin - captures predefined number of images
@@ -50,13 +55,12 @@ Implements burst capture plugin - captures predefined number of images
 
 public class BestShotCapturePlugin extends PluginCapture
 {
-	private boolean takingAlready=false;
-		
     //defaul val. value should come from config
 	private int imageAmount = 5;
 
-    private boolean inCapture;
     private int imagesTaken=0;
+    
+    private static String sImagesAmountPref;
 	
 	public BestShotCapturePlugin()
 	{
@@ -65,8 +69,12 @@ public class BestShotCapturePlugin extends PluginCapture
 			  0,
 			  R.drawable.gui_almalence_mode_bestshot,
 			  "Best Shot images");
-
-		//refreshPreferences();
+	}
+	
+	@Override
+	public void onCreate()
+	{
+		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_BestShotImagesAmount);
 	}
 	
 	@Override
@@ -83,7 +91,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-			imageAmount = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
+			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
 		}
 		catch (Exception e)
 		{
@@ -108,7 +116,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onQuickControlClick()
 	{        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-        int val = Integer.parseInt(prefs.getString("BestshotImagesAmount", "5"));
+        int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
         int selected = 0;
         switch (val)
         {
@@ -150,60 +158,34 @@ public class BestShotCapturePlugin extends PluginCapture
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
-	
-	@Override
-	public void OnShutterClick()
-	{
-		if (inCapture == false)
-        {
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
-			
-			MainScreen.thiz.MuteShutter(true);
-			
-			String fm = MainScreen.thiz.getFocusMode();
-			if(takingAlready == false && (MainScreen.getFocusState() == MainScreen.FOCUS_STATE_IDLE ||
-					MainScreen.getFocusState() == MainScreen.FOCUS_STATE_FOCUSING)
-					&& fm != null
-					&& !(fm.equals(Parameters.FOCUS_MODE_INFINITY)
-	        				|| fm.equals(Parameters.FOCUS_MODE_FIXED)
-	        				|| fm.equals(Parameters.FOCUS_MODE_EDOF)
-	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-	        				|| fm.equals(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
-	        				&& !MainScreen.getAutoFocusLock())
-				takingAlready = true;			
-			else if(takingAlready == false)
-			{
-				takePicture();
-			}
-        }
-	}
-	
-	
+		
 	public void takePicture()
 	{
-		inCapture = true;
-		refreshPreferences();
-		takingAlready = true;
-		if (imagesTaken==0)
+		if(inCapture == false)
 		{
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);		
-		}
-		else
-		{
+			inCapture = true;
+			refreshPreferences();
+			takingAlready = true;
+			if (imagesTaken==0)
+			{
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);		
+			}
+			else
+			{
 			new CountDownTimer(50, 50) {
 			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() 
+			     public void onFinish()
 			     {
 					Message msg = new Message();
 					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);					
+					MainScreen.H.sendMessage(msg);
 			     }
 			  }.start();
+			}
 		}
 	}
 
@@ -271,11 +253,112 @@ public class BestShotCapturePlugin extends PluginCapture
 			imagesTaken=0;
 			inCapture = false;
 		}
+		inCapture = false;
 		takingAlready = false;
 	}
 	
+	
+	@TargetApi(19)
 	@Override
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera)
+	public void onImageAvailable(Image im)
+	{
+		imagesTaken++;
+		int frame = 0;
+		int frame_len = 0;
+		boolean isYUV = false;
+		
+		if(im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+	
+			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+			{
+				Log.e("BestShotCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				return;
+			}
+			
+			
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			//   So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V,
+					im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(),
+					im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(),
+					im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(),
+					MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+			
+			if (status != 0)
+				Log.e("BestShotCapturePlugin", "Error while cropping: "+status);
+			
+			
+			frame = YuvImage.GetFrame(0);
+			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			
+			isYUV = true;
+		}
+		else if(im.getFormat() == ImageFormat.JPEG)
+		{
+			Log.e("BestShotCapturePlugin", "JPEG Image received");
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+			
+			frame_len = jpeg.limit();
+			byte[] jpegByteArray = new byte[frame_len];
+			jpeg.get(jpegByteArray, 0, frame_len);
+			
+			frame = SwapHeap.SwapToHeap(jpegByteArray);
+			
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+		}
+    	
+		String frameName = "frame" + imagesTaken;
+    	String frameLengthName = "framelen" + imagesTaken;
+    	
+    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
+    	
+    	
+    	if (imagesTaken < imageAmount)
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		else
+		{
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			
+			Message message = new Message();
+			message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+			imagesTaken=0;
+			inCapture = false;
+		}
+    	inCapture = false;
+		takingAlready = false;	
+	}
+	
+	@TargetApi(19)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		{
+			if(imagesTaken == 1)
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+		}
+	}
+	
+	@Override
+	public void onAutoFocus(boolean paramBoolean)
 	{
 		if(takingAlready == true)
 			takePicture();
@@ -286,39 +369,26 @@ public class BestShotCapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Camera camera = MainScreen.thiz.getCamera();
-			if (camera != null)
-			{
-				// play tick sound
-				MainScreen.guiManager.showCaptureIndication();
-        		MainScreen.thiz.PlayShutter();
-        		
-        		try {
-        			camera.setPreviewCallback(null);
-        			camera.takePicture(null, null, null, MainScreen.thiz);
-				}catch (Exception e) {
-					e.printStackTrace();
-					Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
-					inCapture = false;
-					takingAlready = false;
-					Message msg = new Message();
-	    			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-	    			msg.what = PluginManager.MSG_BROADCAST;
-	    			MainScreen.H.sendMessage(msg);	    			
-	    			MainScreen.guiManager.lockControls = false;
-				}
+			// play tick sound
+			MainScreen.guiManager.showCaptureIndication();
+    		MainScreen.thiz.PlayShutter();
+    		
+    		try 
+    		{
+    			requestID = CameraController.captureImage(1, CameraController.YUV);
 			}
-			else
+    		catch (Exception e)
 			{
+				e.printStackTrace();
+				Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
     			MainScreen.H.sendMessage(msg);
-    			
     			MainScreen.guiManager.lockControls = false;
-			}			
+			}
     		return true;
 		}
 		return false;

@@ -31,8 +31,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -55,7 +55,6 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -75,6 +74,7 @@ import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
 
+import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
 
 
@@ -96,14 +96,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     
 	static final int img2lay = 8; // 16		// image-to-layout subsampling factor
 	
-	static public int nFrames;						// number of input images
-	static public int imgWidthFD;
-	static public int imgHeightFD;
-	static public int layWidth; 
-	static public int layHeight;
+	private static int nFrames;						// number of input images
+	private static int imgWidthFD;
+	private static int imgHeightFD;
 	
-	static public int previewBmpRealWidth;
-	static public int previewBmpRealHeight;
+	private static int previewBmpRealWidth;
+	private static int previewBmpRealHeight;
 	
 	static Bitmap PreviewBmpInitial;
 	static Bitmap PreviewBmp;
@@ -126,13 +124,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	static int[] mPixelsforPreview = null;
 	
 	static int mBaseFrame = 0;  // temporary
-    static public byte[] manualLayout;
-    static public int[] mArraryofFaceIndex;
 
 	static int[] crop = new int[5];			// crop parameters and base image are stored here
-	
-	static public String[] filesSavedNames;
-	static public int nFilesSaved;
 	
 	private ImageView mImgView;
 	private Button mSaveButton;
@@ -152,20 +145,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	/*
      * Group shot testing start
      */
-	public static final int MAX_GS_FRAMES = 8; // 8 - is the same as in almashot-seamless.cpp
-    public static int compressed_frame[] = new int[MAX_GS_FRAMES];
-    public static int compressed_frame_len[] = new int[MAX_GS_FRAMES];
-    public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
-    public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
+	private static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
+	private static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
     ArrayList<ArrayList <Rect>> mFaceList;
     
-    public static final int MAX_FACE_DETECTED = 20;
-    public static final float FACE_CONFIDENCE_LEVEL = 0.4f;
+    private static int mFrameCount = 0;
+    
+    private static final int MAX_FACE_DETECTED = 20;
+    private static final float FACE_CONFIDENCE_LEVEL = 0.4f;
 	
     private final Object syncObject = new Object();
-	
 
-    public static boolean SaveInputPreference;
+    private static boolean SaveInputPreference;
     
     private boolean postProcessingRun = false;
 
@@ -173,9 +164,15 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
   	private boolean finishing = false;
   	private boolean changingFace = false;
   	
+  	private static boolean isYUV = false;
+  	
 	public GroupShotProcessingPlugin()
 	{
-		super("com.almalence.plugins.groupshotprocessing", 0, 0, 0, null);
+		super("com.almalence.plugins.groupshotprocessing", 
+			  R.xml.preferences_processing_groupshot,
+			  0,
+			  0,
+			  null);
 	}
 
 	@Override
@@ -219,6 +216,9 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     	
     	int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
+		int iImageWidth = MainScreen.getImageWidth();
+		int iImageHeight = MainScreen.getImageHeight();
         
         if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
         {
@@ -239,17 +239,39 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		
     		nFrames = imagesAmount;
     		
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		
+    		mYUVBufferList.clear();
+    		mJpegBufferList.clear();
+    		
     		for (int i=1; i<=imagesAmount; i++)
     		{
-    			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
-    	        		);
-    			
-    			mJpegBufferList.add(i-1, in);
+    			if(isYUV)
+    			{
+    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+    				mYUVBufferList.add(i-1, yuv);    				 
+    			}
+    			else
+    			{
+    				byte[] in = SwapHeap.CopyFromHeap(
+        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
+        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+        	        		);
+    				mJpegBufferList.add(i-1, in);
+    			}
     		}
     		
-    		PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+    		if(!isYUV)
+    		{
+    			mFrameCount = mJpegBufferList.size();
+    			PreviewBmp  = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
+    		}
+    		else
+    		{
+    			mFrameCount = mYUVBufferList.size();
+    			PreviewBmp  = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
+    		}
+    		
     		if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
     		{
 	    		Matrix matrix = new Matrix();
@@ -310,8 +332,18 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            
     		            if (os != null)
     		            {
-    		            	// ToDo: not enough memory error reporting
-    			            os.write(mJpegBufferList.get(i));
+    		            	if(!isYUV)
+    		            	{
+	    		            	// ToDo: not enough memory error reporting
+	    			            os.write(mJpegBufferList.get(i));
+    		            	}
+    		            	else
+    		            	{
+    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
+    		            		//to avoid problems with SKIA
+    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
+    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+    		            	}
     			            os.close();
     			        
     			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
@@ -333,8 +365,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		            		break;
     		            	}
     		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-    			            ei.saveAttributes();    		            
-		            	}
+    			            ei.saveAttributes();
+    		            }
     	            }
     	        }
     			catch(IOException e) {
@@ -364,7 +396,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
      	catch (Exception e) 
  		{
      		//make notifier in main thread
-     		//Toast.makeText(MainScreen.mainContext, "Low memory. Can't finish processing.", Toast.LENGTH_LONG).show();
  			e.printStackTrace();
  		}
 		
@@ -384,22 +415,14 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	private void getFaceRects()
 	{
-    	mFaceList = new ArrayList<ArrayList <Rect>>(mJpegBufferList.size());
+    	mFaceList = new ArrayList<ArrayList <Rect>>(mFrameCount);
     	
 	    Face[] mFaces = new Face[MAX_FACE_DETECTED];
 		for (int i=0; i<MAX_FACE_DETECTED; ++i)
 			mFaces[i] = new Face();	
 	    
-        for(int index = 0; index < mJpegBufferList.size(); index++)
+        for(int index = 0; index < mFrameCount; index++)
         {
-			Size srcSize;
-			if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-	        	srcSize = new Size(MainScreen.getImageHeight(), MainScreen.getImageWidth());
-	        else
-	        	srcSize = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-			
-			//Log.e("Seamless", "fd size: "+dstSize.getWidth()+"x"+dstSize.getHeight());
-			
 			int numberOfFacesDetected = AlmaShotSeamless.GetFaces(index, mFaces);
 			
 			int Scale;
@@ -441,9 +464,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;//mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270 || mDisplayOrientationOnStartProcessing == 180;
 	    		//boolean mirrored = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? false: mCameraMirrored;
 		        // Note: DecodeJpegs doing free() to jpeg data!
-	    		int rotation = mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360 : mDisplayOrientationOnStartProcessing;
-	        	mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
-	    		//mSeamless.addInputFrames(mJpegBufferList, inputSize, fdSize, false, mCameraMirrored, 0);
+	    		int rotation = mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360 : mDisplayOrientationOnStartProcessing;	    		
+	    		if(!isYUV)
+	    			mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
+	    		else
+	    			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
 	        	getFaceRects();	
 		        
 		        sortFaceList();		        
@@ -458,8 +483,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    
 	    private void sortFaceList()
 	    {    	
-	    	ArrayList<ArrayList <Rect>> newFaceList = new ArrayList<ArrayList <Rect>>(mJpegBufferList.size());
-	    	for(int i = 0; i < mJpegBufferList.size(); i++)
+	    	ArrayList<ArrayList <Rect>> newFaceList = new ArrayList<ArrayList <Rect>>(mFrameCount);
+	    	for(int i = 0; i < mFrameCount; i++)
 	        {
 	    		newFaceList.add(new ArrayList<Rect>());
 	        }   	
@@ -504,8 +529,8 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    	float bestMaxDistance = -1;
 	    	
 	    	int candidateIndex, currIndex;
-	    	ArrayList<Integer> candidateList = new ArrayList<Integer>(mJpegBufferList.size());
-	    	ArrayList<Integer> bestCandidateList = new ArrayList<Integer>(mJpegBufferList.size()); 
+	    	ArrayList<Integer> candidateList = new ArrayList<Integer>(mFrameCount);
+	    	ArrayList<Integer> bestCandidateList = new ArrayList<Integer>(mFrameCount); 
 	    	
 	    	int i = 0;
 	    	for(ArrayList<Rect> faceFrame : mFaceList)
@@ -610,46 +635,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		private int getDistance(int x, int y, int x0, int y0) {
 			return (int)Math.round(Math.sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
 		}
-
-		public Bitmap decodeJPEGfromBuffer(byte[] data) {
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Config.ARGB_8888;
-			options.inJustDecodeBounds = true;
-			BitmapFactory.decodeByteArray(data, 0, data.length, options);
-
-			float widthScale = (float)options.outWidth / (float)mDisplayWidth;
-			float heightScale = (float)options.outHeight / (float)mDisplayHeight;
-			float scale = widthScale > heightScale ? widthScale : heightScale;
-			float imageRatio = (float)options.outWidth / (float)options.outHeight;
-			float displayRatio = (float)mDisplayWidth / (float)mDisplayHeight;
-			
-			Bitmap bitmap = null;
-
-			if (scale >= 8) {
-				options.inSampleSize = 8;
-			} else if (scale >= 4) {
-				options.inSampleSize = 4;
-			} else if (scale >= 2) {
-				options.inSampleSize = 2;
-			} else {
-				options.inSampleSize = 1;
-			}
-
-			options.inJustDecodeBounds = false;
-			
-			Bitmap tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
-			
-			if (imageRatio > displayRatio) {
-				bitmap = Bitmap.createScaledBitmap(tempBitmap, mDisplayWidth, (int)(mDisplayWidth / displayRatio), true);
-			} else {
-				bitmap = Bitmap.createScaledBitmap(tempBitmap, (int)(mDisplayHeight * imageRatio), mDisplayHeight, true);
-			}
-
-			if(bitmap != tempBitmap)
-				tempBitmap.recycle();
-			return bitmap;
-		}
-		
 		
 		
 /************************************************
@@ -668,7 +653,10 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 			postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 			
 			mImgView = ((ImageView)postProcessingView.findViewById(R.id.groupshotImageHolder));
-	        PreviewBmp = decodeJPEGfromBuffer(mJpegBufferList.get(0));
+			if(!isYUV)
+				PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
+			else
+				PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(), MainScreen.getImageHeight());
 	        if (PreviewBmp != null)  
 	        {
 	        	Matrix matrix = new Matrix();
@@ -695,8 +683,12 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	        
 		}
 				
-	    private void setupImageSelector() {
-			mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
+	    private void setupImageSelector()
+	    {
+	    	if(!isYUV)
+	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
+	    	else
+	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mYUVBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored, true);
 	        mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 	        mGallery.setAdapter(mImageAdapter);
 	        mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -735,42 +727,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				public void onNothingSelected(AdapterView<?> arg0) {
 				}
 			});
-	        
-	        
-//	        new Thread(new Runnable() {
-//                public void run() {
-//                    mHandler.post(new Runnable() {
-//                        public void run() {
-//                        	RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mGallery.getLayoutParams();
-//    			    		int[] rules = lp.getRules();
-//    			    		if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-//    			    		{    		
-//    			    			//rules[RelativeLayout.ALIGN_PARENT_BOTTOM] = 0;
-//    			    			lp.addRule(RelativeLayout.CENTER_VERTICAL);
-//                    			lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                    			
-//                    			mGallery.setLayoutParams(lp);
-//                    			mGallery.requestLayout();
-//                    			
-//                    			mGallery.setPivotX(mGallery.getHeight());
-//                    			mGallery.setRotation(mDisplayOrientationOnStartProcessing);
-//                    			
-//    			    		}
-//    			    		else
-//    			    		{
-//    			    			rules[RelativeLayout.ALIGN_PARENT_BOTTOM] = 1;
-//                    			rules[RelativeLayout.CENTER_VERTICAL] = 0;
-//                    			rules[RelativeLayout.ALIGN_PARENT_LEFT] = 0;
-//                    			
-//                    			mGallery.setLayoutParams(lp);
-//                    			mGallery.requestLayout();
-//                    			
-//                    			mGallery.setRotation(mDisplayOrientationOnStartProcessing);
-//    			    		}
-//                        }
-//                    });                   
-//                }
-//            }).start();
 	    	return;
 	    }
 		
@@ -849,23 +805,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				y = mDisplayWidth - y;
 				Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 			}
-//			if(mDisplayOrientationOnStartProcessing != mDisplayOrientationCurrent)
-//			{				
-//				if(mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-//				{
-//					float previewScaleFactor = (float)previewBmpRealHeight/v.getWidth();
-//					x = (float)(x - (mDisplayWidth - (float)v.getWidth()/previewScaleFactor)/2)*previewScaleFactor;
-//					y = (float)y*previewScaleFactor;
-//				}
-//				else
-//				{
-//					float previewScaleFactor = (float)previewBmpRealWidth/v.getHeight();
-//					x = (float)x*previewScaleFactor;
-//					y = (float)(y - (mDisplayWidth - (float)v.getHeight()/previewScaleFactor)/2)*previewScaleFactor;
-//				}
-//			}
-			
-			
 			//Have to correct touch coordinates coz ImageView centered on the screen
 			//and it's coordinate system not aligned with screen coordinate system.
 			if((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))				
@@ -954,10 +893,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				                        public void run() {
 				                        	if (PreviewBmp != null)
 				                        	{				                        		
-//			                                	Matrix matrix = new Matrix();
-//			                                	matrix.postRotate(90);
-//			                                	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-//			                                	        matrix, true);
 			                                	mImgView.setImageBitmap(PreviewBmp);
 			                                	mImgView.setRotation(mCameraMirrored? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0 : 180) : 0);				                        		
 				                        	}
@@ -1031,6 +966,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		if(mSeamless != null)
 	    			mSeamless.release();
 	    		mJpegBufferList.clear();
+	    		mYUVBufferList.clear();
 	    		
 	    		Message msg2 = new Message();
 	    		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
@@ -1086,55 +1022,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	    		mDisplayOrientationCurrent = orientation;
 	    		if(postProcessingRun)
 	    			mSaveButton.setRotation(mLayoutOrientationCurrent);
-//	    		if(postProcessingRun)
-//		    	new Thread(new Runnable() {
-//	                public void run() {
-//	                	mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-//	                	updateBitmap();
-//	                    mHandler.post(new Runnable() {
-//	                        public void run() {
-//	                        	if (PreviewBmp != null) {
-//	                        		mImgView.setImageBitmap(PreviewBmp);
-//	                        		mSaveButton.setRotation(mLayoutOrientationCurrent);
-//	                        		mSaveButton.invalidate();
-//	                        		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mGallery.getLayoutParams();
-//	                        		int[] rules = lp.getRules();
-//	                        		if(mDisplayOrientationCurrent == 90 || mDisplayOrientationCurrent == 180)
-//	                        		{
-//	                        			//lp.addRule(RelativeLayout.CENTER_VERTICAL);
-//	                        			lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//	                        			lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//	                        			
-//	                        			lp.leftMargin = -mGallery.getHeight();
-//	                        			
-//	                        			mGallery.setLayoutParams(lp);
-//	                        			mGallery.requestLayout();
-//
-//	                        			mGallery.setPivotX(mGallery.getHeight());
-//	                        			mGallery.setRotation((mDisplayOrientationCurrent+180)%360);
-//	                        			
-//	                        			
-//	                        		}
-//	                        		else
-//	                        		{
-//	                        			rules[RelativeLayout.ALIGN_PARENT_BOTTOM] = 1;
-//	                        			rules[RelativeLayout.CENTER_VERTICAL] = 0;
-//	                        			rules[RelativeLayout.ALIGN_PARENT_LEFT] = 0;	                        			
-//	                        			
-//	                        			mGallery.setLayoutParams(lp);
-//	                        			mGallery.requestLayout();
-//	                        			
-//	                        			mGallery.setRotation(mDisplayOrientationCurrent);
-//	                        		}
-//	                        	}
-//	                        }
-//	                    });
-//	                    
-//	                    // Probably this should be called from mSeamless ? 
-//	                    // mSeamless.fillLayoutwithStitchingflag(mFaceRect);
-//	                    mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
-//	                }
-//	            }).start();
 	    	}
 	    }
 
@@ -1162,41 +1049,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				matrix.postRotate(180);
 	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
 			}
-//			
-//			if(mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270))
-//			{
-//				Matrix matrix = new Matrix();
-//				matrix.postRotate(180);
-//				//matrix.postRotate(this.mLayoutOrientationCurrent);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//			}
-			
-//			if(mDisplayOrientationCurrent == 0 || mDisplayOrientationCurrent == 180) //Device in landscape
-//			{
-////				Log.e("GroupShot", "Layout orientation from Main= " + MainScreen.guiManager.getLayoutOrientation());
-////		        Log.e("GroupShot", "Layout orientation current= " + this.mLayoutOrientationCurrent);
-////		        Log.e("GroupShot", "Display orientation current= " + this.mDisplayOrientationCurrent);
-////		        Log.e("GroupShot", "Bitmap rotated to = " + (mDisplayOrientationCurrent+90)%360);
-//				Matrix matrix = new Matrix();
-//				matrix.postRotate((mDisplayOrientationCurrent+90)%360);
-//				//matrix.postRotate(this.mLayoutOrientationCurrent);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//	    		
-////	    		boolean isGuffyOrientation = mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270;
-////    			
-////    			Matrix matrix = new Matrix();
-////	    		
-////				matrix.postRotate(isGuffyOrientation? (mLayoutOrientationCurrent + 180)%360 : mLayoutOrientationCurrent);
-////				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);
-//			}
-//			else if(mDisplayOrientationCurrent == 270)
-//			{
-//				Matrix matrix = new Matrix();
-//				matrix.postRotate(180);
-//				//matrix.postRotate(this.mLayoutOrientationCurrent);
-//	    		PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix, true);	
-//			}
-			
 			return;
 		}
 		
@@ -1211,70 +1063,15 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	        
 			int frame_len = result.length;
 			int frame = SwapHeap.SwapToHeap(result);
-    		//boolean wantLandscape = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
-    		//boolean cameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("framemirrored1" + Long.toString(sessionID)));
     		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 			PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
 	    	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
 	    	
 	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID),
 	    			String.valueOf(0));
-//	    	String.valueOf((mDisplayOrientationOnStartProcessing == 180 ||
-//	    					(mDisplayOrientationOnStartProcessing == 270 && !mCameraMirrored) ||
-//	    					(mDisplayOrientationOnStartProcessing == 90 && mCameraMirrored))? 180: 0));
-	    	//PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(0));
 	    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(false));
 			
-			
 			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
-			
 			PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-//			try
-//	        {	
-//				String[] filesSavedNames = new String[1];
-//				
-//				Calendar d = Calendar.getInstance();
-//				File saveDir = PluginManager.getInstance().GetSaveDir();
-//				String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-//	            		d.get(Calendar.YEAR),
-//	            		d.get(Calendar.MONTH)+1,
-//	            		d.get(Calendar.DAY_OF_MONTH),
-//	            		d.get(Calendar.HOUR_OF_DAY),
-//	            		d.get(Calendar.MINUTE),
-//	            		d.get(Calendar.SECOND));
-//				
-//				fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeName + ".jpg";
-//				
-//				File file = new File(
-//	            		saveDir, 
-//	            		fileFormat);				
-//	            
-//	            filesSavedNames[0] = file.toString();
-//
-//	            FileOutputStream os = new FileOutputStream(file);
-//	            
-//	            os.write(mSeamless.processingSaveData());
-//	            
-//	            os.close();
-//
-//	           	ContentValues values = new ContentValues(9);
-//                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-//                values.put(ImageColumns.DISPLAY_NAME, file.getName());
-//                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-//                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-//                values.put(ImageColumns.ORIENTATION, 0);
-//                values.put(ImageColumns.DATA, file.getAbsolutePath());
-//                
-//                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-//                MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-//	        }
-//	        catch (Exception e)
-//	        {
-//
-//	        	Toast toast = Toast.makeText(context, R.string.cannot_create_jpeg, Toast.LENGTH_LONG);
-//	        	toast.show();
-//	        	e.printStackTrace();
-//	        }
-			
 	    }
 }

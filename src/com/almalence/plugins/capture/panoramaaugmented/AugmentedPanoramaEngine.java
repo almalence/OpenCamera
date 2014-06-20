@@ -31,6 +31,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -44,6 +45,9 @@ import com.almalence.util.Util;
 
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
+import android.annotation.TargetApi;
+import android.graphics.ImageFormat;
+import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
@@ -246,8 +250,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	{
 		this.width = width;
 		this.height = height;
-
-		//Log.i("CameraTest", "reset w: "+width+" h: "+height+" FOV: "+verticalViewAngle);
 		
 		this.halfWidth = this.width / 2;
 		this.halfHeight = this.height / 2;
@@ -267,13 +269,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		// ToDo: check why
 		this.radiusGL = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
-
 		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width, this.radius);
 
 		// this is the radius to the intersection of neighbor frames
 		// somehow setting it to the same value as radius to the center gives a more precise results
 		this.radiusEdge = this.radius;
-		//this.radiusEdge = (float)(this.radius / Math.cos(HalfTileShiftAngle));
 		
 		final int circle_frames = (int)Math.ceil(2.0f * Math.PI / (2.0f*HalfTileShiftAngle));
 		this.angleShift = (float)(2.0f * Math.PI / circle_frames);
@@ -360,14 +360,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				throw new RuntimeException();
 			}
 			
-			/*
-			Log.d("ALMAP", "MATRIX");
-			Log.d("ALMAP", this.transform[0] + " " + this.transform[1] + " " + this.transform[2] + " " +this.transform[3]);
-			Log.d("ALMAP", this.transform[4] + " " + this.transform[5] + " " + this.transform[6] + " " +this.transform[7]);
-			Log.d("ALMAP", this.transform[8] + " " + this.transform[9] + " " + this.transform[10] + " " +this.transform[11]);
-			Log.d("ALMAP", this.transform[12] + " " + this.transform[13] + " " + this.transform[14] + " " +this.transform[15]);
-			//*/
-
 			synchronized (this.topVector)
 			{
 				this.topVector.x = this.transform[1];
@@ -563,8 +555,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					}	
 					
 					AugmentedPanoramaEngine.this.capturing.set(false);
-					//AugmentedPanoramaEngine.this.activated.set(false);
-					
 				}
 			});
 			
@@ -795,11 +785,113 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 			final byte[] jpeg_copy = new byte[jpeg.length];
 			System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
-			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, jpeg_copy);
+			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, jpeg_copy , 0, false);
 		
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
 				AugmentedPanoramaEngine.this.frames.add(frame);
+			}
+		}
+			
+		synchronized (AugmentedPanoramaEngine.this.stateSynch)
+		{	
+			AugmentedPanoramaEngine.this.state = STATE_STANDBY;
+			AugmentedPanoramaEngine.this.stateSynch.notify();
+		}
+
+		return goodPlace;
+	}
+	
+	
+	@TargetApi(19)
+	public boolean onImageAvailable(Image im)
+	{		
+		final boolean goodPlace;
+		final int framesCount;
+		synchronized (this.frames)
+		{
+			framesCount = this.frames.size();
+		}
+		
+		final AugmentedFrameTarget targetFrame = this.targetFrames[this.addToBeginning ? 0 : 1];
+		
+		synchronized (this.stateSynch)
+		{
+			goodPlace = (framesCount == 0)
+					|| (this.state == STATE_TAKINGPICTURE
+						&& targetFrame.distance() < 0.2f);
+		}
+
+		if (goodPlace)
+		{
+			this.angleTotal += this.angleShift;
+			
+			if (framesCount > 0)
+			{
+				this.targetFrames[this.currentlyTargetedTarget].move();
+			}
+			
+			final Vector3d position = new Vector3d(this.last_position);
+			final Vector3d topVec = new Vector3d(this.last_topVec);
+			final float[] transform = new float[16];
+			System.arraycopy(this.last_transform, 0, transform, 0, 16);
+			
+			
+			
+			if(im.getFormat() == ImageFormat.YUV_420_888)
+			{
+				ByteBuffer Y = im.getPlanes()[0].getBuffer();
+				ByteBuffer U = im.getPlanes()[1].getBuffer();
+				ByteBuffer V = im.getPlanes()[2].getBuffer();
+		
+				if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+				{
+					Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+					return false;
+				}
+				
+				
+				// Note: android documentation guarantee that:
+				// - Y pixel stride is always 1
+				// - U and V strides are the same
+				//   So, passing all these parameters is a bit overkill
+				int status = YuvImage.CreateYUVImage(Y, U, V,
+						im.getPlanes()[0].getPixelStride(),
+						im.getPlanes()[0].getRowStride(),
+						im.getPlanes()[1].getPixelStride(),
+						im.getPlanes()[1].getRowStride(),
+						im.getPlanes()[2].getPixelStride(),
+						im.getPlanes()[2].getRowStride(),
+						MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+				
+				if (status != 0)
+					Log.e("Panorama", "Error while cropping: "+status);
+				
+				
+				byte yuv[] = YuvImage.GetByteFrame(0);
+				int yuv_address = YuvImage.GetFrame(0);
+				
+				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, yuv, yuv_address, true);
+				
+				synchronized (AugmentedPanoramaEngine.this.frames)
+				{
+					AugmentedPanoramaEngine.this.frames.add(frame);
+				}
+			}
+			else if(im.getFormat() == ImageFormat.JPEG)
+			{
+				ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+				
+				int frame_len = jpeg.limit();
+				byte[] jpegByteArray = new byte[frame_len];
+				jpeg.get(jpegByteArray, 0, frame_len);
+				
+				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, jpegByteArray, 0, false);
+				
+				synchronized (AugmentedPanoramaEngine.this.frames)
+				{
+					AugmentedPanoramaEngine.this.frames.add(frame);
+				}
 			}
 		}
 			
@@ -1075,9 +1167,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				GLES10.glBindTexture(GL10.GL_TEXTURE_2D, this.texture);
 				
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-				//GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-				//GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
 
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 				GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
@@ -1125,8 +1215,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					this.colorBuffer.position(0);
 					//*/
 				}
-
-				//part = Math.min((System.currentTimeMillis() - AugmentedSurfaceView.this.capture_time) / (float)FRAME_WHITE_FADE_IN, 1.0f);
 			}
 			
 			gl.glPushMatrix();
@@ -1179,7 +1267,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				gl.glColor4f(0.75f+part/4, 0.75f+part/4, 0.75f+part/4, 0.75f+part/4);
 			
 			gl.glDrawElements(GL10.GL_TRIANGLES, 6, GL10.GL_UNSIGNED_BYTE,	AugmentedPanoramaEngine.FRAME_INDICES_BUFFER);
-			//gl.glDrawElements(GL10.GL_LINE_LOOP, 5, GL10.GL_UNSIGNED_BYTE,	AugmentedSurfaceView.FRAME_LINE_INDICES_BUFFER);
 			
 			gl.glDisable(GLES10.GL_BLEND);
 			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1254,14 +1341,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			this.move(-(int)Math.signum(this.angle));
 		}
-		
-		// Not used as target frame is kept as long as GL context remains
-		/*
-		public void destroy()
-		{
-			GLES10.glDeleteTextures(1, new int[] { this.texture }, 0);
-		}
-		*/
 	}
 	
 	public class AugmentedFrameTaken
@@ -1296,7 +1375,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 		
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final byte[] jpeg)
+				final Vector3d topVec, final float[] rotation, final byte[] img_data, final int yuv_address, final boolean isYUV)
 		{	
 			this.angleShift = angleShift;
 			
@@ -1323,14 +1402,25 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    			AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
 			    						AugmentedPanoramaEngine.this.textureWidth * AugmentedPanoramaEngine.this.textureHeight * 4);
 			    				
+				    			if(!isYUV)
 			    				ImageConversion.resizeJpeg2RGBA(
-			    						jpeg,
+			    						img_data,
 			    						AugmentedFrameTaken.this.rgba_buffer.array(),
 			    						AugmentedPanoramaEngine.this.width,
 			    						AugmentedPanoramaEngine.this.height,
 			    						AugmentedPanoramaEngine.this.textureWidth,
 			    						AugmentedPanoramaEngine.this.textureHeight,
 			    						MainScreen.getCameraMirrored());
+				    			else
+				    			{
+				    				ImageConversion.convertNV21toGL(
+				    						img_data,
+				    						AugmentedFrameTaken.this.rgba_buffer.array(),
+				    						AugmentedPanoramaEngine.this.width,
+				    						AugmentedPanoramaEngine.this.height,
+				    						AugmentedPanoramaEngine.this.textureWidth,
+				    						AugmentedPanoramaEngine.this.textureHeight);
+				    			}
 			    				
 			    				MainScreen.thiz.queueGLEvent(new Runnable()
 			    				{
@@ -1342,13 +1432,24 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			    				});
 							}
 		    		    	
-		    				AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(
-		    						jpeg,
-		    						AugmentedPanoramaEngine.this.height,
-		    						AugmentedPanoramaEngine.this.width,
-		    						true, MainScreen.getCameraMirrored(),
-		    						90);
-						}
+		            		if(!isYUV)
+		            		{
+			    				AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(
+			    						img_data,
+			    						AugmentedPanoramaEngine.this.height,
+			    						AugmentedPanoramaEngine.this.width,
+			    						true, MainScreen.getCameraMirrored(),
+			    						90);
+		            		}
+		            		else
+		            		{
+		            			int yuv_rotated = YuvImage.AllocateMemoryForYUV(AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width);
+		            			ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
+		            										   AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width,
+		            										   0, 0, 1);
+		            			AugmentedFrameTaken.this.nv21address = yuv_rotated;
+		            		}
+	            		}
 		            }
 				}).start();
 				
@@ -1389,7 +1490,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, this.texture[0]);
 					
-					//GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_NEAREST);
 					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
 					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
 	
@@ -1472,7 +1572,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			gl.glMultMatrixf(this.transform, 0);
 			
-			//float scale = Math.max(0.2f, 1.0f - Math.max(0.1f, this.distance-0.1f));
 			float scale = Math.max(0.20f, 1.0f - this.distance);
 			gl.glScalef(scale, scale, scale);	
 			

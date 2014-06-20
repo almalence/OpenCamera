@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
-import android.hardware.Camera;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -42,11 +43,11 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
 +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
-//-+- -->
 
 
 /***
@@ -57,20 +58,6 @@ Extend GUI class to implement new GUI.
 
 public abstract class GUI
 {
-	public final static String sEvPref = "EvCompensationValue";
-	public final static String sSceneModePref = "SceneModeValue";
-	public final static String sWBModePref = "WBModeValue";
-	public final static String sFrontFocusModePref = "FrontFocusModeValue";
-	public final static String sRearFocusModePref = "RearFocusModeValue";
-	public final static String sFlashModePref = "FlashModeValue";
-	public final static String sISOPref = "ISOValue";
-	public final static String sMeteringModePref = "MeteringModeValue";
-	public final static String sDefaultValue = MainScreen.thiz.getResources().getString(R.string.sceneAutoSystem);
-	public final static String sDefaultFocusValue = MainScreen.thiz.getResources().getString(R.string.focusAutoSystem);//MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureSystem);
-
-	public final static String isoParam = "iso";
-	public final static String isoParam2 = "iso-speed";
-	
 	// Flags to know which camera feature supported at current device
 	public boolean mEVSupported = false;	
 	public boolean mSceneModeSupported = false;
@@ -146,6 +133,27 @@ public abstract class GUI
 	//onGUICreate called when main layout is rendered and size's variables is available
 	abstract public void onGUICreate();
 	
+	public void removeViews(View viewElement, int layoutId)
+	{
+		List<View> specialView = new ArrayList<View>();
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(layoutId);
+		for(int i = 0; i < specialLayout.getChildCount(); i++)
+			specialView.add(specialLayout.getChildAt(i));
+
+		for(int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			int viewElement_id = viewElement.getId();
+			if(view_id == viewElement_id)
+			{
+				if(view.getParent() != null)
+					((ViewGroup)view.getParent()).removeView(view);
+				specialLayout.removeView(view);
+			}
+		}
+	}
+	
 	abstract public void onCaptureFinished();
 	
 	//called to set any indication when export plugin work finished.
@@ -165,7 +173,7 @@ public abstract class GUI
 	
 	abstract public void onCameraSetup();
 	
-	abstract public void setupViewfinderPreviewSize(Camera.Parameters cp);
+	abstract public void setupViewfinderPreviewSize(CameraController.Size previewSize);
 
 	abstract public void menuButtonPressed();
 	
@@ -222,15 +230,15 @@ public abstract class GUI
 	 * Supplementary methods for those plugins that need an icons of supported camera parameters (scene, iso, wb, flash, focus)
 	 * Methods return id of drawable icon 
 	*/
-	abstract public int getSceneIcon(String sceneMode);
+	abstract public int getSceneIcon(int sceneMode);
 	
-	abstract public int getWBIcon(String wb);
+	abstract public int getWBIcon(int wb);
 	
-	abstract public int getFocusIcon(String focusMode);
+	abstract public int getFocusIcon(int focusMode);
 	
-	abstract public int getFlashIcon(String flashMode);
+	abstract public int getFlashIcon(int flashMode);
 	
-	abstract public int getISOIcon(String isoMode);
+	abstract public int getISOIcon(int isoMode);
 
 	
 	/*FOCUS MANAGER SECTION*/

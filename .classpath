@@ -6,5 +6,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="libs/xzing-2.1/core.jar"/>
+	<classpathentry kind="lib" path="camera2libs/core_dex2jar.jar"/>
+	<classpathentry kind="lib" path="camera2libs/framework_dex2jar.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

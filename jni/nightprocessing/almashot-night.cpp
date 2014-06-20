@@ -104,6 +104,77 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 	return env->NewStringUTF(status);
 }
 
+extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_NightAddYUVFrames
+(
+	JNIEnv* env,
+	jobject thiz,
+	jintArray in,
+	jint nFrames,
+	jint sx,
+	jint sy
+)
+{
+	int i;
+	unsigned char * *yuvIn;
+	char status[1024];
+
+	Uint8 *inp[4];
+	int x, y;
+	int x0_out, y0_out, w_out, h_out;
+
+	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
+
+//	for (int i=0; i<nFrames; ++i)
+//	{
+//		char str[256];
+//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+//		FILE *f = fopen (str, "wb");
+//		fwrite(yuvIn[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//		fclose(f);
+//	}
+
+	// pre-allocate uncompressed yuv buffers
+	for (i=0; i<nFrames; ++i)
+	{
+		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+
+		if (yuv[i]==NULL)
+		{
+			i--;
+			for (;i>=0;--i)
+			{
+				free(yuv[i]);
+				yuv[i] = NULL;
+			}
+			break;
+		}
+
+		//		yuv[i] = yuvIn[i];
+		for (y=0; y<sy; y+=2)
+		{
+			// Y
+			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
+			memcpy (&yuv[i][(y+1)*sx], &yuvIn[i][(y+1)*sx], sx);
+
+			// UV - no direct memcpy as swap may be needed
+			for (x=0; x<sx/2; ++x)
+			{
+				// U
+				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
+
+				// V
+				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
+			}
+		}
+	}
+
+	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
+
+	//sprintf (status, "frames total: %d\nsize0: %d\nsize1: %d\nsize2: %d\n", (int)nFrames, jpeg_length[0], jpeg_length[1], jpeg_length[2]);
+	sprintf (status, "frames total: %d\n", (int)nFrames);
+	return env->NewStringUTF(status);
+}
+
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_BlurLessPreview
 (
@@ -119,12 +190,28 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 )
 {
 	int i;
-	Uint8 *pview_yuv;
+	Uint8 *pview_rgb;
 	Uint32 *pview;
 	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
+	//pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
+
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
+
+//	FILE * pFile;
+//	pFile = fopen ("/sdcard/DCIM/blurlessparams.txt","wb");
+//    fprintf (pFile, "Blurless_Preview params:\ndeghTable[DeGhostPref] %d\nnImages %d\nSX %d\nSY %d\n64*nTable[sensorGainPref] %d\nlumaEnh %d\nchromaEnh %d",deghTable[DeGhostPref],nImages,sx,sy,64*nTable[sensorGainPref],lumaEnh,chromaEnh);
+//    fclose (pFile);
+
+//	for (int i=0; i<nImages; ++i)
+//	{
+//		char str[256];
+//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+//		FILE *f = fopen (str, "wb");
+//		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//		fclose(f);
+//	}
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
@@ -132,6 +219,12 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
+
+//	char s[1024];
+//	sprintf(s, "/sdcard/DCIM/blurless_preview.bin");
+//	FILE *f=fopen(s, "wb");
+//	fwrite (pview_rgb, (sx/4)*(sy/4)*3, 1, f);
+//	fclose(f);
 
 	return env->NewStringUTF("ok");
 }
@@ -156,6 +249,12 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	crop[0]=crop[1]=crop[2]=crop[3]=-1;
 	BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
 
+//	char s[1024];
+//
+//	sprintf(s, "/sdcard/DCIM/night_result.bin");
+//	FILE *f=fopen(s, "wb");
+//	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+//	fclose(f);
 
 	OutNV21 = OutPic;
 	if (jrot)

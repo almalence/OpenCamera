@@ -24,20 +24,11 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 +++ --> */
 // <!-- -+-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import android.util.Log;
-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 //-+- -->
-import com.almalence.SwapHeap;
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
-import com.almalence.util.ImageConversion;
 
 /***
 Implements simple processing plugin - just translate shared memory values 
@@ -57,6 +48,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	public void onStartProcessing(long SessionID)
 	{
 		sessionID=SessionID;
+		
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
@@ -86,15 +79,27 @@ public class BestshotProcessingPlugin extends PluginProcessing
 			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
 			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
 		}
+        
+        boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+        
+        if(!isYUV)
+		{
+        	AlmaShotBestShot.ConvertFromJpeg(
+        			compressed_frame,
+        			compressed_frame_len,
+        			imagesAmount,
+        			mImageWidth, mImageHeight);
+		}
+		else
+		{
+			AlmaShotBestShot.AddYUVFrames(
+	    			compressed_frame,
+	    			imagesAmount,
+	    			mImageWidth, mImageHeight);
+		}
 
-		AlmaShotBestShot.ConvertFromJpeg(
-    			compressed_frame,
-    			compressed_frame_len,
-    			imagesAmount,
-    			mImageWidth, mImageHeight);
+		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight);				
 
-		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight, compressed_frame);				
-		//Log.e("BESTSHOT", "best is " + idxResult);
 		AlmaShotBestShot.Release();
 
 		if(orientation == 90 || orientation == 270)
@@ -108,49 +113,11 @@ public class BestshotProcessingPlugin extends PluginProcessing
 	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 		}
 		
-		/**/
-//		File saveDir = PluginManager.getInstance().GetSaveDir(false);
-//		String fileFormat;
-//		for (int i =0;i<imagesAmount;i++)
-//		{
-//			File file;
-//	    	if (MainScreen.ForceFilename == null)
-//	        {
-//	    		fileFormat = "IMG_" + i+".jpg";
-//	    		file = new File(
-//	            		saveDir, 
-//	            		fileFormat);
-//	        }
-//	        else
-//	        {
-//	        	file = MainScreen.ForceFilename;
-//	        	MainScreen.ForceFilename = null;
-//	        }
-//	    	FileOutputStream os = null;
-//			try {
-//				os = new FileOutputStream(file);
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			byte[] frame1 = SwapHeap.CopyFromHeap(
-//					compressed_frame[i],
-//					compressed_frame_len[i]);
-//			try {
-//				os.write(frame1);
-//				os.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
-		/**/
 		int frame = compressed_frame[idxResult];
 		int len = compressed_frame_len[idxResult];
 		
-		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
+		if(!isYUV)
+			PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(len));
 		

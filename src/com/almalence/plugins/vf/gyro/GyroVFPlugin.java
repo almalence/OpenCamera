@@ -1,7 +1,5 @@
 package com.almalence.plugins.vf.gyro;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -14,26 +12,25 @@ import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
+import com.almalence.opencam.CameraController;
 //-+- -->
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener;
 import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
@@ -41,8 +38,8 @@ import com.almalence.ui.RotateImageView;
 
 public class GyroVFPlugin extends PluginViewfinder {
     
-	private final static Boolean ON = true;
-	private final static Boolean OFF = false;
+	private static final Boolean ON = true;
+	private static final Boolean OFF = false;
 	
 	private int mOrientation;
 	private Boolean mGyroState;
@@ -96,7 +93,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	public void onCameraParametersSetup() {
 		this.checkCoordinatesRemapRequired();
 		
-		final Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (cp == null) {
 			return;
 		}
@@ -437,25 +434,8 @@ public class GyroVFPlugin extends PluginViewfinder {
 		mHorizonLayout = inflator.inflate(R.layout.plugin_vf_gyro_layout, null, false);
 		mHorizonLayout.setVisibility(View.VISIBLE);
 		
-		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout);
-		for(int i = 0; i < specialLayout.getChildCount(); i++)
-			specialView.add(specialLayout.getChildAt(i));
-
-		for(int j = 0; j < specialView.size(); j++)
-		{
-			View view = specialView.get(j);
-			int view_id = view.getId();
-			int layout_id = mHorizonLayout.getId();
-			if(view_id == layout_id)
-			{
-				if(view.getParent() != null)
-					((ViewGroup)view.getParent()).removeView(view);
+		MainScreen.guiManager.removeViews(mHorizonLayout, R.id.specialPluginsLayout);
 				
-				specialLayout.removeView(view);
-			}
-		}
-		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout, params);
 		mHorizonLayout.requestLayout();

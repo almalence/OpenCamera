@@ -37,7 +37,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
+import android.hardware.camera2.CaptureResult;
+import android.media.Image;
 import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -82,6 +83,8 @@ public abstract class Plugin
 	protected static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
 
 	protected long SessionID=0;
+	
+	protected int requestID = -1;
 	
 	public enum ViewfinderZone {
 		
@@ -140,9 +143,6 @@ public abstract class Plugin
 		}
 		
 		setAdvancedPreferenceName(advancedPreferenceID);
-		//for dynamic preference generation. Header text and preferences xml
-		//title = preferenceTitle;
-		//summary = preferenceSummary;
 		
 		quickControlIconID = quickControlID;
 		quickControlTitle = quickControlInitTitle;
@@ -189,36 +189,27 @@ public abstract class Plugin
 /******************************************************************************************************
 	VF/Capture Interfaces
 ******************************************************************************************************/
-	public void onAutoFocus(boolean paramBoolean, Camera paramCamera){}
+	public void onAutoFocus(boolean paramBoolean){}
 	
 	public void takePicture(){}
 	
-	public void onShutter(){};
+	public void onShutter(){}
 	
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera){}
+	
+	public void onImageAvailable(Image im){}
+	
+	@TargetApi(19)
+	public void onCaptureCompleted(CaptureResult result){}
+	
+	public void onPreviewAvailable(Image im){}
 
 	public void onPreviewFrame(byte[] data, Camera paramCamera){}
 	
 	private int MIN_MPIX_SUPPORTED = 1280 * 960;
-	
-	@TargetApi(9)
-	protected void openCameraFrontOrRear()
+		
+	public void SelectImageDimension()
 	{
-		if (Camera.getNumberOfCameras() > 0) {
-			MainScreen.thiz.setCamera(Camera.open(MainScreen.CameraIndex));
-		}
-
-		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-		Camera.getCameraInfo(MainScreen.CameraIndex,
-				cameraInfo);
-
-		if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-			MainScreen.setCameraMirrored(true);
-		else
-			MainScreen.setCameraMirrored(false);		
-	}
-	
-	public void SelectImageDimension() {
 		// ----- Figure how much memory do we have and possibly limit resolution
 		long maxMem = Runtime.getRuntime().maxMemory();// -
 														// Debug.getNativeHeapAllocatedSize();
@@ -237,21 +228,16 @@ public abstract class Plugin
     		prefIdx = -1;
     	}
 
-		// ----- Find max-resolution capture dimensions
-    	Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
-		List<Camera.Size> cs = cp.getSupportedPictureSizes();
+    	List<CameraController.Size> cs = CameraController.ResolutionsSizeList;
 		//add 8 Mpix for rear camera for HTC One X
 		if(Build.MODEL.contains("HTC One X"))
 		{
 			if (MainScreen.getCameraMirrored() == false)
 			{
-				Camera.Size additional= null;
-				additional= MainScreen.thiz.getCamera().new Size(3264, 2448);
-				additional.width = 3264;
-				additional.height = 2448;
+				CameraController.Size additional= null;
+				additional= CameraController.getInstance().new Size(3264, 2448);
+				additional.setWidth(3264);
+				additional.setHeight(2448);
 				cs.add(additional);
 			}
 		}
@@ -266,40 +252,46 @@ public abstract class Plugin
 		boolean prefFound = false;
 
 		// figure default resolution
-		for (int ii = 0; ii < cs.size(); ++ii) {
-			Size s = cs.get(ii);
-			long mpix = (long) s.width * s.height;
+		int ii = 0;
+		for(CameraController.Size s : cs)
+		{
+			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((mpix >= MIN_MPIX_SUPPORTED)
 					&& (mpix < maxMpix)) {
 				if (mpix > Capture5mMpix) {
 					Capture5mIdx = ii;
 					Capture5mMpix = mpix;
-					Capture5mWidth = s.width;
-					Capture5mHeight = s.height;
+					Capture5mWidth = s.getWidth();
+					Capture5mHeight = s.getHeight();
 				}
 			}
+			
+			ii++;
 		}
 
-		for (int ii = 0; ii < cs.size(); ++ii) {
-			Size s = cs.get(ii);
-			long mpix = (long) s.width * s.height;
+		ii = 0;
+		for(CameraController.Size s : cs)
+		{
+			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((ii == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
+			if ((Integer.parseInt(CameraController.ResolutionsIdxesList.get(ii)) == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
 				prefFound = true;
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.width;
-				CaptureHeight = s.height;
+				CaptureWidth = s.getWidth();
+				CaptureHeight = s.getHeight();
 				break;
 			}
 
 			if (mpix > CaptureMpix) {
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
-				CaptureWidth = s.width;
-				CaptureHeight = s.height;
+				CaptureWidth = s.getWidth();
+				CaptureHeight = s.getHeight();
 			}
+			
+			ii++;
 		}
 
 		// default to about 5Mpix if nothing is set in preferences or maximum
@@ -314,28 +306,23 @@ public abstract class Plugin
 			}
 		}
 
-		MainScreen.CapIdx = CaptureIdx;
+		CameraController.CapIdx = CaptureIdx;
 		MainScreen.setImageWidth(CaptureWidth);
 		MainScreen.setImageHeight(CaptureHeight);
 		
 		MainScreen.setSaveImageWidth(CaptureWidth);
 		MainScreen.setSaveImageHeight(CaptureHeight);
-//		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(SessionID), String.valueOf(CaptureWidth));
-//    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(SessionID), String.valueOf(CaptureHeight));
 	}
 	
 	public void SetCameraPreviewSize(Camera.Parameters cp) {
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		List<Camera.Size> cs = cp.getSupportedPreviewSizes();
+		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
-		Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
+		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
 				MainScreen.getImageHeight());
-		cp.setPreviewSize(os.width, os.height);
+		cp.setPreviewSize(os.getWidth(), os.getHeight());
 		try
         {
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {
@@ -343,20 +330,21 @@ public abstract class Plugin
 	    }
 	}
 	
+	//Used only in old camera interface (HALv3 don't use it)
 	public void SetCameraPictureSize() {
-		Camera camera = MainScreen.thiz.getCamera();
+		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+    	int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
     	
-		Camera.Parameters cp = MainScreen.thiz.getCameraParameters();
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setJpegQuality(jpegQuality);
 		try
         {
-			MainScreen.thiz.setCameraParameters(cp);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		catch(RuntimeException e)
 	    {
@@ -365,35 +353,35 @@ public abstract class Plugin
 	}
 	
 	// from google example
-	protected Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
+	protected CameraController.Size getOptimalPreviewSize(List<CameraController.Size> sizes, int w, int h) {
 		final double ASPECT_TOLERANCE = 0.05;
 		double targetRatio = (double) w / h;
 		if (sizes == null)
 			return null;
 
-		Size optimalSize = null;
+		CameraController.Size optimalSize = null;
 		double minDiff = Double.MAX_VALUE;
 
 		int targetHeight = h;
 
 		// Try to find an size match aspect ratio and size
-		for (Size size : sizes) {
-			double ratio = (double) size.width / size.height;
+		for (CameraController.Size size : sizes) {
+			double ratio = (double) size.getWidth() / size.getHeight();
 			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
 				continue;
-			if (Math.abs(size.height - targetHeight) < minDiff) {
+			if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
 				optimalSize = size;
-				minDiff = Math.abs(size.height - targetHeight);
+				minDiff = Math.abs(size.getHeight() - targetHeight);
 			}
 		}
 
 		// Cannot find the one match the aspect ratio, ignore the requirement
 		if (optimalSize == null) {
 			minDiff = Double.MAX_VALUE;
-			for (Size size : sizes) {
-				if (Math.abs(size.height - targetHeight) < minDiff) {
+			for (CameraController.Size size : sizes) {
+				if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
 					optimalSize = size;
-					minDiff = Math.abs(size.height - targetHeight);
+					minDiff = Math.abs(size.getHeight() - targetHeight);
 				}
 			}
 		}

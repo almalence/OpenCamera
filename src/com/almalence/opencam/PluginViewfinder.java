@@ -36,5 +36,5 @@ public abstract class PluginViewfinder extends Plugin
 	}
 	
 	@Override
-	abstract public void onGUICreate();
+	public abstract void onGUICreate();
 }

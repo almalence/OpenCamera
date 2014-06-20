@@ -24,8 +24,6 @@ public final class PreShot
     public static native int AllocateBuffer(int imgW, int imgH, int fps, int secondsToAllocate, int isJPG);
     public static native int[] GetFromBufferRGBA(int idx, boolean manualOrientation,	boolean orientation);
     public static native byte[] GetFromBufferToShowInSlow(int idx, int previewW, int previewH, boolean cameraMirrored);
-//    public static native int isPortrait(int idx);
-//    public static native int isPortraitReserved(int idx);
     public static native int getOrientation(int idx);
     public static native int getOrientationReserved(int idx);
     public static native int GetImageCount();

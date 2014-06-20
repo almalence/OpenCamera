@@ -39,9 +39,15 @@
 		    android:title="@string/Pref_Common_Shutter_Title" 
 		    android:summary="@string/Pref_Common_Shutter_Summary" 
 		    android:defaultValue="false" 
-		    android:key="shutterPrefCommon" />
+		    android:key="@string/Preference_ShutterCommonValue" />
 		<CheckBoxPreference 
 		    android:title="@string/Pref_Common_HWShutter_Title" 
 		    android:defaultValue="false" 
 		    android:key="useHWShutterButtonLauncher" />
+		<CheckBoxPreference 
+		    android:title="@string/Pref_Common_UseHALv3_Title" 
+		    android:summary="@string/Pref_Common_UseHALv3_Summary" 
+		    android:defaultValue="false"
+		    android:enabled="false" 
+		    android:key="@string/Preference_UseHALv3Key" />
 </PreferenceScreen>

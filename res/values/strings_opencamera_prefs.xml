@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Preference_ImageSizeFrontValue">imageSizePrefCommonFront</string>
+    <string name="Preference_ImageSizeRearValue">imageSizePrefCommonBack</string>
+    
+    <string name="Preference_JPEGQualityCommonValue">commonJPEGQuality</string>
+    
+    <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>
+    <string name="Preference_SceneModeValue">Preference_SceneModeValue</string>
+    <string name="Preference_WBModeValue">Preference_WBModeValue</string>
+    <string name="Preference_FrontFocusModeValue">Preference_FrontFocusModeValue</string>
+    <string name="Preference_RearFocusModeValue">Preference_RearFocusModeValue</string>
+    <string name="Preference_FlashModeValue">Preference_FlashModeValue</string>
+    <string name="Preference_ISOValue">Preference_ISOValue</string>
+    <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
+    
+    <string name="Preference_DelayedCaptureValue">Preference_DelayedCaptureValue</string>
+    <string name="Preference_ShowDelayedCaptureValue">Preference_ShowDelayedCaptureValue</string>
+    <string name="Preference_DelayedSoundValue">Preference_DelayedSoundValue</string>
+    <string name="Preference_DelayedFlashValue">Preference_DelayedFlashValue</string>
+    <string name="Preference_DelayedCaptureIntervalValue">Preference_DelayedCaptureIntervalValue</string>
+    
+    <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
+    <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>
+    <string name="Preference_ShotOnTapValue">Preference_ShotOnTapValue</string>
+    <string name="Preference_VolumeButtonValue">volumeButtonPrefCommon</string>
+    
+    <string name="Preference_DefaultInfoSetValue">Preference_DefaultInfoSetValue</string>    
+    <string name="Preference_SWCheckedValue">Preference_SWChekedValue</string>
+    
+    <string name="Preference_SavePathValue">Preference_SavePathValue</string>
+    <string name="Preference_SaveToValue">Preference_SaveToValue</string>
+    <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
+    
+    <string name="Preference_UseHALv3Key">useHALv3Pref</string>
+    
+</resources>

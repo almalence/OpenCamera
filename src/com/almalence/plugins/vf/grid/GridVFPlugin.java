@@ -20,8 +20,6 @@ package com.almalence.plugins.vf.grid;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -29,17 +27,18 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.Plugin;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
-//-+- -->
 
 /***
 Implements viewfinder plugin - adds different grids on VF
@@ -49,7 +48,7 @@ public class GridVFPlugin extends PluginViewfinder
 {
 	ImageView grid = null;
 
-	public int gridType = 1;
+	private int gridType = 1;
 	
 	public GridVFPlugin()
 	{
@@ -91,9 +90,6 @@ public class GridVFPlugin extends PluginViewfinder
 	@Override
 	public void onGUICreate()
 	{
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
 		refreshPreferences();
 		
 		if (grid == null)
@@ -105,14 +101,7 @@ public class GridVFPlugin extends PluginViewfinder
 		clearViews();
 		addView(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 		
-		
-//		if (gridType == 3)
-//		{
-//			grid.setVisibility(View.GONE);
-//		}
-//		else {
-			grid.setVisibility(View.VISIBLE);
-		//}
+		grid.setVisibility(View.VISIBLE);
 	}
 	
 	@Override
@@ -164,12 +153,9 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 		
-		Camera camera = MainScreen.thiz.getCamera();
-    	if (null==camera)
-    		return;
-		Size previewSize = MainScreen.thiz.getCameraParameters().getPreviewSize();
+		CameraController.Size previewSize = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
 		
-		float ratio = (float)previewSize.width/previewSize.height;
+		float ratio = (float)previewSize.getWidth()/previewSize.getHeight();
 
 		int ri=1;
 		if (Math.abs(ratio - 4/3.f)  < 0.1f) ri = 1;

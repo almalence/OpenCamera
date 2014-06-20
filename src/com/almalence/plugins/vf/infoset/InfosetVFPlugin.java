@@ -38,12 +38,16 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraController;
+import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
@@ -73,7 +77,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private TextView memoryInfoText = null;
 	private TextView evInfoText = null;
 	
-	static private int mDeviceOrientation;
+	private static int mDeviceOrientation;
 	private OrientationEventListener orientListener;
 	
 	private boolean useBatteryMonitor;
@@ -112,16 +116,12 @@ public class InfosetVFPlugin extends PluginViewfinder
 	        {
 	        	batteryInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.battery_charging));
 	        	currentBatteryStatus = status;
-	        	//Toast.makeText(MainScreen.mainContext, "Battery: Charging", Toast.LENGTH_LONG).show();
 	        }	        
 	        else if(status ==  BatteryManager.BATTERY_STATUS_DISCHARGING || status ==  BatteryManager.BATTERY_STATUS_NOT_CHARGING)
 	        {
-	        	//Toast.makeText(MainScreen.mainContext, "Battery: DISCHARGE OR NOT CHARGING", Toast.LENGTH_SHORT).show();
 	        	if(currentBatteryLevel != batteryPct || currentBatteryStatus != status)
 	        	{
 	        		currentBatteryLevel = batteryPct;
-	        		
-	        		//Toast.makeText(MainScreen.mainContext, "Battery Level: " + String.valueOf(currentBatteryLevel), Toast.LENGTH_SHORT).show();
 	        		
 	        		if(currentBatteryLevel > 0.8f)
 	        			batteryInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.battery_full));
@@ -179,32 +179,32 @@ public class InfosetVFPlugin extends PluginViewfinder
 		Preference flashPref = preferenceFragment.findPreference("useFlashMonitorPrefInfoset");
 		Preference isoPref = preferenceFragment.findPreference("useISOMonitorPrefInfoset");
 		
-		if(MainScreen.thiz.mEVSupported)
+		if(MainScreen.cameraController.isExposureCompensationSupported())
 			evPref.setEnabled(true);
 		else
 			evPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mSceneModeSupported)
+		if(MainScreen.cameraController.isSceneModeSupported())
 			scenePref.setEnabled(true);
 		else
 			scenePref.setEnabled(false);
 		
-		if(MainScreen.thiz.mWBSupported)
+		if(MainScreen.cameraController.isWhiteBalanceSupported())
 			wbPref.setEnabled(true);
 		else
 			wbPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mFocusModeSupported)
+		if(MainScreen.cameraController.isFocusModeSupported())
 			focusPref.setEnabled(true);
 		else
 			focusPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mFlashModeSupported)
+		if(MainScreen.cameraController.isFlashModeSupported())
 			flashPref.setEnabled(true);
 		else
 			flashPref.setEnabled(false);
 		
-		if(MainScreen.thiz.mISOSupported)
+		if(MainScreen.cameraController.isISOSupported())
 			isoPref.setEnabled(true);
 		else
 			isoPref.setEnabled(false);		
@@ -278,7 +278,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			sceneInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon("auto")));
+			sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(CameraParameters.SCENE_MODE_AUTO)));
 			sceneInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(sceneInfoImage);
@@ -288,7 +288,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			wbInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon("auto")));
+			wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(CameraParameters.WB_MODE_AUTO)));
 			wbInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(wbInfoImage);
@@ -298,7 +298,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			focusInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon("auto")));
+			focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(CameraParameters.AF_MODE_AUTO)));
 			focusInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(focusInfoImage);
@@ -308,7 +308,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			flashInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon("auto")));
+			flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(CameraParameters.FLASH_MODE_SINGLE)));
 			flashInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(flashInfoImage);
@@ -318,7 +318,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_icon, null);
 			isoInfoImage = (RotateImageView)v.findViewById(R.id.infoImage);
-			isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon("auto")));
+			isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon(CameraParameters.ISO_AUTO)));
 			isoInfoImage.setRotation(mDeviceOrientation);
 			
 			addInfoView(isoInfoImage);
@@ -337,7 +337,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useEVMonitor)
 		{
-			float iEV = MainScreen.thiz.getExposureCompensation();
+			float iEV = CameraController.getInstance().getExposureCompensation();
 			String evString = (iEV > 0? "+" : "") + String.format("%.1f",iEV) + "EV";
 			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_infoset_text, null);
 			evInfoText = (TextView)v.findViewById(R.id.infoText);
@@ -399,10 +399,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useEVMonitor && evInfoText != null)
 		{
-			float iEV = MainScreen.thiz.getExposureCompensation();
+			float iEV = CameraController.getInstance().getExposureCompensation();
 			String evString = (iEV > 0? "+" : "") + String.format("%.1f",iEV) + "EV";			
 			evInfoText.setText(evString);
-			if(MainScreen.thiz.isExposureCompensationSupported())
+			if(CameraController.getInstance().isExposureCompensationSupported())
 				evInfoText.setVisibility(View.VISIBLE);
 			else
 				evInfoText.setVisibility(View.GONE);
@@ -410,8 +410,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useSceneMonitor && sceneInfoImage != null)
 		{
-			String scene = MainScreen.thiz.getSceneMode();
-			if(scene != null && scene != "" && sceneInfoImage != null && MainScreen.thiz.isSceneModeSupported())
+			int scene = CameraController.getInstance().getSceneMode();
+			if(scene != -1 && sceneInfoImage != null && CameraController.getInstance().isSceneModeSupported())
 			{
 				int scene_id = MainScreen.thiz.getSceneIcon(scene);
 				if(scene_id != -1)
@@ -428,8 +428,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useWBMonitor && wbInfoImage != null)
 		{
-			String wb = MainScreen.thiz.getWBMode();
-			if(wb != null && wb != "" && wbInfoImage != null && MainScreen.thiz.isWhiteBalanceSupported())
+			int wb = CameraController.getInstance().getWBMode();
+			if(wb != -1 && wbInfoImage != null && CameraController.getInstance().isWhiteBalanceSupported())
 			{
 				int wb_id = MainScreen.thiz.getWBIcon(wb);
 				if(wb_id != -1)
@@ -446,8 +446,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useFocusMonitor && focusInfoImage != null)
 		{
-			String focus = MainScreen.thiz.getFocusMode();
-			if(focus != null && focus != "" && focusInfoImage != null && MainScreen.thiz.isFocusModeSupported())
+			int focus = CameraController.getInstance().getFocusMode();
+			if(focus != -1 && focusInfoImage != null && CameraController.getInstance().isFocusModeSupported())
 			{
 				int focus_id = MainScreen.thiz.getFocusIcon(focus);
 				if(focus_id != -1)
@@ -464,8 +464,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useFlashMonitor && flashInfoImage != null)
 		{
-			String flash = MainScreen.thiz.getFlashMode();
-			if(flash != null && flash != "" && flashInfoImage != null && MainScreen.thiz.isFlashModeSupported())
+			int flash = CameraController.getInstance().getFlashMode();
+			if(flash != -1 && flashInfoImage != null && CameraController.getInstance().isFlashModeSupported())
 			{
 				int flash_id = MainScreen.thiz.getFlashIcon(flash);
 				if(flash_id != -1)
@@ -482,8 +482,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		
 		if(useISOMonitor && isoInfoImage != null)
 		{
-			String iso = MainScreen.thiz.getISOMode();
-			if(iso != null && iso != "" && isoInfoImage != null && MainScreen.thiz.isISOSupported())
+			int iso = CameraController.getInstance().getISOMode();
+			if(iso != -1 && isoInfoImage != null && CameraController.getInstance().isISOSupported())
 			{
 				int iso_id = MainScreen.thiz.getISOIcon(iso);
 				if(iso_id != -1)
@@ -517,7 +517,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			if(this.useEVMonitor && evInfoText != null)
 			{
 				try {
-					float iEV = MainScreen.thiz.getExposureCompensation();
+					float iEV = CameraController.getInstance().getExposureCompensation();
 					String evString = (iEV > 0? "+" : "") + String.format("%.1f",iEV) + "EV";
 					evInfoText.setText(evString);
 				}
@@ -531,70 +531,69 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if(this.useSceneMonitor && sceneInfoImage != null)
 			{
-				String scene = MainScreen.thiz.getSceneMode();
-				if(scene != null && scene != "" && sceneInfoImage != null)
+				int scene = CameraController.getInstance().getSceneMode();
+				if(scene != -1 && sceneInfoImage != null)
 				{
 					int scene_id = MainScreen.thiz.getSceneIcon(scene);
 					if(scene_id != -1)
 						sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(scene_id));
 				}
-//					sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(scene)));
+					sceneInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getSceneIcon(scene)));
 			}			
 		}
 		else if (arg1 == PluginManager.MSG_WB_CHANGED) 
 		{
 			if(this.useWBMonitor && wbInfoImage != null)
 			{
-				String wb = MainScreen.thiz.getWBMode();
-				if(wb != null && wb != "" && wbInfoImage != null)
+				int wb = CameraController.getInstance().getWBMode();
+				if(wb != -1 && wbInfoImage != null)
 				{
 					int wb_id = MainScreen.thiz.getWBIcon(wb);
 					if(wb_id != -1)
 						wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(wb_id));
 				}
-//					wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(wb)));
+					wbInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getWBIcon(wb)));
 			}			
 		}
 		else if (arg1 == PluginManager.MSG_FOCUS_CHANGED) 
 		{
 			if(this.useFocusMonitor && focusInfoImage != null)
 			{
-				String focus = MainScreen.thiz.getFocusMode();
-				if(focus != null && focus != "" && focusInfoImage != null)
+				int focus = CameraController.getInstance().getFocusMode();
+				if(focus != -1 && focusInfoImage != null)
 				{
 					int focus_id = MainScreen.thiz.getFocusIcon(focus);
 					if(focus_id != -1)
 						focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(focus_id));
 				}
-//					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(focus)));
+					focusInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFocusIcon(focus)));
 			}			
 		}
 		else if (arg1 == PluginManager.MSG_FLASH_CHANGED) 
 		{
 			if(this.useFlashMonitor && flashInfoImage != null)
 			{
-				String flash = MainScreen.thiz.getFlashMode();
-				if(flash != null && flash != "" && flashInfoImage != null)
+				int flash = CameraController.getInstance().getFlashMode();
+				if(flash != -1 && flashInfoImage != null)
 				{
 					int flash_id = MainScreen.thiz.getFlashIcon(flash);
 					if(flash_id != -1)
 						flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(flash_id));
 				}
-				//flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(flash)));
+				flashInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getFlashIcon(flash)));
 			}			
 		}
 		else if (arg1 == PluginManager.MSG_ISO_CHANGED) 
 		{
 			if(this.useISOMonitor && isoInfoImage != null)
 			{
-				String iso = MainScreen.thiz.getISOMode();
-				if(iso != null && iso != "" && isoInfoImage != null)
+				int iso = CameraController.getInstance().getISOMode();
+				if(iso != -1 && isoInfoImage != null)
 				{
 					int iso_id = MainScreen.thiz.getISOIcon(iso);
 					if(iso_id != -1)
 						isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(iso_id));
 				}
-				//isoInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(MainScreen.thiz.getISOIcon(iso)));				
 			}			
 		}
 		

@@ -27,7 +27,7 @@ package com.almalence.util.exifreader.imaging;
  */
 public final class PhotographicConversions
 {
-    public final static double ROOT_TWO = Math.sqrt(2);
+    public static final double ROOT_TWO = Math.sqrt(2);
 
     private PhotographicConversions() throws Exception
     {

@@ -24,14 +24,10 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 +++ --> */
 // <!-- -+-
-import android.util.Log;
-
-import com.almalence.SwapHeap;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 //-+- -->
-import com.almalence.util.ImageConversion;
 
 /***
 Implements simple processing plugin - just translate shared memory values 
@@ -42,9 +38,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 {
 	private long sessionID=0;
 	
-	public static boolean DROLocalTMPreference = true;
-	public static int prefStrongFilter = 0;
-	public static int prefPullYUV = 0;
+	private static boolean DROLocalTMPreference = true;
+	private static int prefStrongFilter = 0;
+	private static int prefPullYUV = 0;
 	
 	public SimpleProcessingPlugin()
 	{
@@ -64,7 +60,6 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int mImageWidth = MainScreen.getImageWidth();
 		int mImageHeight = MainScreen.getImageHeight();
 		
-//		Log.v("!!!!!!!!!!!!", "SessionID " + sessionID + " shared size " + PluginManager.getInstance().sizeOfSharedMemory());
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID));
 		if (num == null)
 			return;
@@ -77,23 +72,34 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		{
 			int orientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation" + i+Long.toString(sessionID)));
 			String isDRO = PluginManager.getInstance().getFromSharedMem("isdroprocessing"+Long.toString(sessionID));
+			boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+			
 			if(isDRO != null && isDRO.equals("0"))
 			{
 				AlmaShotDRO.Initialize();
 				
-				int compressed_frame[] = new int[1];
-		        int compressed_frame_len[] = new int[1];
-
-				compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
-				compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i +Long.toString(sessionID)));
-				
-				AlmaShotDRO.ConvertFromJpeg(
-		    			compressed_frame,
-		    			compressed_frame_len,
-		    			1,
-		    			mImageWidth, mImageHeight);
+				int inputYUV = 0;				
+				if(!isYUV)
+				{
+					int compressed_frame[] = new int[1];
+			        int compressed_frame_len[] = new int[1];
+	
+					compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
+					compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i +Long.toString(sessionID)));
+					
+					AlmaShotDRO.ConvertFromJpeg(
+			    			compressed_frame,
+			    			compressed_frame_len,
+			    			1,
+			    			mImageWidth, mImageHeight);
+					
+					inputYUV = AlmaShotDRO.GetYUVFrame(0);
+				}
+				else				
+					inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
 		        
-				int yuv = AlmaShotDRO.DroProcess(mImageWidth, mImageHeight, 
+				int yuv = AlmaShotDRO.DroProcess(inputYUV,
+						mImageWidth, mImageHeight, 
 						1.5f,
 						DROLocalTMPreference,
 						0,
@@ -120,7 +126,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
 	    		int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)));
 	    		
-	    		PluginManager.getInstance().addToSharedMem("resultframeformat"+i+Long.toString(sessionID), "jpeg");
+	    		PluginManager.getInstance().addToSharedMem("resultframeformat"+i+Long.toString(sessionID), isYUV? "" : "jpeg");
 				PluginManager.getInstance().addToSharedMem("resultframe"+i+Long.toString(sessionID), String.valueOf(frame));
 		    	PluginManager.getInstance().addToSharedMem("resultframelen"+i+Long.toString(sessionID), String.valueOf(len));
 		    	

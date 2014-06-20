@@ -73,7 +73,7 @@ public class Panel extends LinearLayout
 	private final int mDuration;
 	private final float downSpace;
 	private final boolean mLinearFlying;
-	public View mHandle;
+	private View mHandle;
 	private View mContent;
 	private final Drawable mOpenedHandle;
 	private boolean mOpened;
@@ -88,14 +88,14 @@ public class Panel extends LinearLayout
 	private float mTrackY;
 	private float mVelocity;
 
-	public boolean outsideControl = false;
+	private boolean outsideControl = false;
 	
 	private OnPanelListener panelListener;
 
-	public static final int TOP = 0;
-	public static final int BOTTOM = 1;
-	public static final int LEFT = 2;
-	public static final int RIGHT = 3;
+	private static final int TOP = 0;
+	private static final int BOTTOM = 1;
+	private static final int LEFT = 2;
+	private static final int RIGHT = 3;
 
 	private enum State {
 		ABOUT_TO_ANIMATE, ANIMATING, READY, TRACKING, FLYING,
@@ -335,7 +335,6 @@ public class Panel extends LinearLayout
 				if (!mOpened)
 				{
 					handle=false;
-					//Log.d(TAG, "action: " + action + " Y=" +event.getY());
 					if (action == MotionEvent.ACTION_DOWN)
 					{
 						if ( event.getRawY() > ((20 +(toTheTop?0:65))*MainScreen.mainContext.getResources().getDisplayMetrics().density)) 
