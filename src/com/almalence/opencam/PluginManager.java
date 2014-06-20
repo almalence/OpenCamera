@@ -1916,7 +1916,7 @@ public class PluginManager implements PluginManagerInterface {
 					addToSharedMem("imageHeight"+SessionID, String.valueOf(MainScreen.getImageHeight()));
 					addToSharedMem("imageWidth"+SessionID, String.valueOf(MainScreen.getImageWidth()));
 					addToSharedMem("wantLandscapePhoto"+SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
-					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(MainScreen.getCameraMirrored()));
+					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(CameraController.isFrontCamera()));
 				}
 
 

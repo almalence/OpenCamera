@@ -62,6 +62,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.plugins.capture.preshot.PreShot;
@@ -136,7 +137,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
     	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
-    	mCameraMirrored = MainScreen.getCameraMirrored();
+    	mCameraMirrored = CameraController.isFrontCamera();
 		
     	sessionID=SessionID;
     	
@@ -562,7 +563,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    }
     	else
     	{//slow mode
-    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, MainScreen.getCameraMirrored());
+    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, CameraController.isFrontCamera());
 	    	
 	    	if (data.length == 0)
 	    	{

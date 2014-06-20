@@ -231,7 +231,7 @@ public class NightCapturePlugin extends PluginCapture
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
-        preferenceFocusMode = prefs.getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+        preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
         preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_SINGLE);
 	}
 	
@@ -240,7 +240,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
         prefs.edit().putInt(MainScreen.sSceneModePref, preferenceSceneMode).commit();
-        prefs.edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+        prefs.edit().putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
         prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
 	}
 	
@@ -334,7 +334,7 @@ public class NightCapturePlugin extends PluginCapture
         // Get the xml/preferences.xml preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
-        ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
+        ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
         OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
     }
@@ -347,7 +347,7 @@ public class NightCapturePlugin extends PluginCapture
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
-		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
+		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		SelectImageDimensionNight();
 	}
@@ -360,7 +360,7 @@ public class NightCapturePlugin extends PluginCapture
 		
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
-		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
+		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		SelectImageDimension();		
 	}
@@ -409,7 +409,7 @@ public class NightCapturePlugin extends PluginCapture
         	cs = CameraController.getInstance().getSupportedPictureSizes();
         	if(Build.MODEL.contains("HTC One X"))
     		{
-    			if (MainScreen.getCameraMirrored() == false)
+    			if (CameraController.isFrontCamera() == false)
     			{
     				CameraController.Size additional= null;
     				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -599,18 +599,18 @@ public class NightCapturePlugin extends PluginCapture
 		        	if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
 		        	{
 		        		CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED);	// should set to hyperfocal distance as per android doc
-		        		editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
+		        		editor.putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
 		        	}
 			        else if(CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 			        {
 			        	CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-			        	editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+			        	editor.putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 			        }
 		        }
 		        else if(CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 		        {
 		        	CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-		        	editor.putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+		        	editor.putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 		        }
 				
 				PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sSceneModePref, CameraController.getInstance().getSceneMode()).commit();
@@ -720,7 +720,7 @@ public class NightCapturePlugin extends PluginCapture
         	cs = CameraController.getInstance().getSupportedPictureSizes();
         	if(Build.MODEL.contains("HTC One X"))
     		{
-    			if (MainScreen.getCameraMirrored() == false)
+    			if (CameraController.isFrontCamera() == false)
     			{
     				CameraController.Size additional= null;
     				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -795,7 +795,7 @@ public class NightCapturePlugin extends PluginCapture
 	        ListPreference lp = (ListPreference)prefActivity.findPreference("imageSizePrefNightBack");
 	        ListPreference lp2 = (ListPreference)prefActivity.findPreference("imageSizePrefNightFront");
 	        
-	        if(CameraController.CameraIndex == 0 && lp2 != null)
+	        if(CameraController.getCameraIndex() == 0 && lp2 != null)
 	        	cat.removePreference(lp2);
 	        else if(lp != null && lp2 != null)
 	        {
@@ -843,7 +843,7 @@ public class NightCapturePlugin extends PluginCapture
 	            {
 	            	int new_value = Integer.parseInt(focus_new.toString());
 	          
-            		if ((new_value == 0) && CameraController.supportedFocusModes != null && !CameraController.isModeAvailable(CameraController.supportedFocusModes, CameraParameters.AF_MODE_FIXED))
+            		if ((new_value == 0) && CameraController.getInstance().getSupportedFocusModes() != null && !CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_FIXED))
 	            	{
 	            		new AlertDialog.Builder(mPref)
 	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
@@ -880,7 +880,7 @@ public class NightCapturePlugin extends PluginCapture
 	        ListPreference lp = (ListPreference)prefActivity.findPreference("imageSizePrefNightBack");
 	        ListPreference lp2 = (ListPreference)prefActivity.findPreference("imageSizePrefNightFront");
 	        
-	        if(CameraController.CameraIndex == 0 && lp2 != null)
+	        if(CameraController.getCameraIndex() == 0 && lp2 != null)
 	        	cat.removePreference(lp2);
 	        else if(lp != null && lp2 != null)
 	        {
@@ -928,7 +928,7 @@ public class NightCapturePlugin extends PluginCapture
 	            {
 	            	int new_value = Integer.parseInt(focus_new.toString());
 	          
-        			if ((new_value == 0) && CameraController.supportedFocusModes != null && !CameraController.isModeAvailable(CameraController.supportedFocusModes, CameraParameters.AF_MODE_FIXED))	            		
+        			if ((new_value == 0) && CameraController.getInstance().getSupportedFocusModes() != null && !CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_FIXED))	            		
 	            	{
 	            		new AlertDialog.Builder(mPref.getActivity())
 	        			.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
@@ -1047,7 +1047,7 @@ public class NightCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
     	
     	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frame_num+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
     	
     	if(frame_num == 0)
@@ -1127,7 +1127,7 @@ public class NightCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
     	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
     	PluginManager.getInstance().addToSharedMem("frameorientation"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored"+(frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored"+(frame_num+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
     	
@@ -1209,7 +1209,7 @@ public class NightCapturePlugin extends PluginCapture
 				int imageHeight = params.getPreviewSize().height;
 				
 				ImageConversion.sumByteArraysNV21(data1,data2,dataS,imageWidth,imageHeight);
-				if(MainScreen.getCameraMirrored())
+				if(CameraController.isFrontCamera())
 				{
 					dataRotated = new byte[dataS.length];
 					ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
@@ -1228,7 +1228,7 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			if (nVFframesToBuffer != 0)
 			{				
-				if(MainScreen.getCameraMirrored())
+				if(CameraController.isFrontCamera())
 				{
 					Camera.Parameters params = CameraController.getInstance().getCameraParameters();			
 					int imageWidth = params.getPreviewSize().width;
@@ -1331,7 +1331,7 @@ public class NightCapturePlugin extends PluginCapture
 				int previewHeight = 720;
 				
 				ImageConversion.sumByteArraysNV21(data1,data2,dataS,previewWidth,previewHeight);
-				if(MainScreen.getCameraMirrored())
+				if(CameraController.isFrontCamera())
 				{
 					dataRotated = new byte[dataS.length];
 					ImageConversion.TransformNV21(dataS, dataRotated, previewWidth, previewHeight, 1, 0, 0);
@@ -1382,7 +1382,7 @@ public class NightCapturePlugin extends PluginCapture
 				
 				byte[] data = YuvImage.GetByteFrame(0);
 				
-				if(MainScreen.getCameraMirrored())
+				if(CameraController.isFrontCamera())
 				{
 					byte[] dataRotated = new byte[data.length];
 					ImageConversion.TransformNV21(data, dataRotated, imageWidth, imageHeight, 1, 0, 0);

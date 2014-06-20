@@ -38,6 +38,7 @@ import com.almalence.opencam_plus.MainScreen;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -1410,7 +1411,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			    						AugmentedPanoramaEngine.this.height,
 			    						AugmentedPanoramaEngine.this.textureWidth,
 			    						AugmentedPanoramaEngine.this.textureHeight,
-			    						MainScreen.getCameraMirrored());
+			    						CameraController.isFrontCamera());
 				    			else
 				    			{
 				    				ImageConversion.convertNV21toGL(
@@ -1438,7 +1439,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			    						img_data,
 			    						AugmentedPanoramaEngine.this.height,
 			    						AugmentedPanoramaEngine.this.width,
-			    						true, MainScreen.getCameraMirrored(),
+			    						true, CameraController.isFrontCamera(),
 			    						90);
 		            		}
 		            		else

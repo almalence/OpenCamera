@@ -90,6 +90,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -168,7 +169,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
     	Log.e("PreShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
-    	mCameraMirrored = MainScreen.getCameraMirrored();
+    	mCameraMirrored = CameraController.isFrontCamera();
 		
 		mImageWidth = MainScreen.getImageWidth();
 		mImageHeight = MainScreen.getImageHeight();

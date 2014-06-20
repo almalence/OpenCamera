@@ -239,7 +239,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
 				
-		final String sizeKey = PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex;
+		final String sizeKey = PREFERENCES_KEY_RESOLUTION + CameraController.getCameraIndex();
 		
 		if (!prefs.contains(sizeKey))
 		{
@@ -388,7 +388,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
 		if(Build.MODEL.contains("HTC One X"))
 		{
-			if (MainScreen.getCameraMirrored() == false)
+			if (CameraController.isFrontCamera() == false)
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -435,7 +435,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
     	if(Build.MODEL.contains("HTC One X"))
 		{
-			if (MainScreen.getCameraMirrored() == false)
+			if (CameraController.isFrontCamera() == false)
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -661,7 +661,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		try
 		{
 			this.prefResolution = Integer.parseInt(prefs.getString(
-					PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex, "0"));
+					PREFERENCES_KEY_RESOLUTION + CameraController.getCameraIndex(), "0"));
 		}
 		catch (final Exception e)
 		{
@@ -702,7 +702,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 
 	        if (lp != null)
 	        {
-	        	lp.setKey(PREFERENCES_KEY_RESOLUTION + CameraController.CameraIndex);
+	        	lp.setKey(PREFERENCES_KEY_RESOLUTION + CameraController.getCameraIndex());
 	        	
 		        lp.setEntries(entries);
 		        lp.setEntryValues(entryValues);
@@ -822,7 +822,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
     	if(Build.MODEL.contains("HTC One X"))
 		{
-			if (MainScreen.getCameraMirrored() == false)
+			if (CameraController.isFrontCamera() == false)
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -1315,7 +1315,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		if (frames.size() > 0)
 		{
 			PluginManager.getInstance().addToSharedMem("frameorientation" + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-			PluginManager.getInstance().addToSharedMem("pano_mirror" + String.valueOf(SessionID), String.valueOf(MainScreen.getCameraMirrored()));
+			PluginManager.getInstance().addToSharedMem("pano_mirror" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("pano_width"+String.valueOf(SessionID), String.valueOf(this.pictureHeight));
 			PluginManager.getInstance().addToSharedMem("pano_height"+String.valueOf(SessionID), String.valueOf(this.pictureWidth));
 			PluginManager.getInstance().addToSharedMem("pano_frames_count"+String.valueOf(SessionID), String.valueOf(frames.size()));

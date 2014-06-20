@@ -2199,7 +2199,7 @@ public class AlmalenceGUI extends GUI implements
 //								preferences
 //								.edit()
 //								.putInt(
-//										MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+//										CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 //												: MainScreen.sFrontFocusModePref, AFMode).commit();
 //							}
 							
@@ -2213,7 +2213,7 @@ public class AlmalenceGUI extends GUI implements
 							
 							CameraController.getInstance().setCameraFocusMode(AFMode);
 							
-							preferences.edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, AFMode).commit();
+							preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, AFMode).commit();
 							
 							Message msg = new Message();
 							msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
@@ -2243,8 +2243,7 @@ public class AlmalenceGUI extends GUI implements
 				//gridview.setNumColumns(activeFocus.size() > 9 ? 4 : 3);
 				gridview.setAdapter(focusmodeAdapter);
 	
-				int initValue = preferences.getInt(MainScreen
-						.getCameraMirrored() ? MainScreen.sRearFocusModePref
+				int initValue = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 				if (!activeFocusNames.contains(initValue)) {
 					if (activeFocusNames.contains(MainScreen.sDefaultValue))
@@ -2252,7 +2251,7 @@ public class AlmalenceGUI extends GUI implements
 					else
 						initValue = activeFocusNames.get(0);
 	
-					// preferences.edit().putString(MainScreen.getCameraMirrored()?
+					// preferences.edit().putString(CameraController.isFrontCamera()?
 					// sRearFocusModePref : sFrontFocusModePref,
 					// initValue).commit();
 				}
@@ -5105,7 +5104,7 @@ public class AlmalenceGUI extends GUI implements
 			preferences
 					.edit()
 					.putInt(
-							MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref
+							CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 									: MainScreen.sFrontFocusModePref, mFocusMode)
 					.commit();
 
@@ -5203,7 +5202,7 @@ public class AlmalenceGUI extends GUI implements
 			mFocusMode = newMode;
 			setButtonSelected(FocusModeButtons, mFocusMode);
 
-			preferences.edit().putInt(MainScreen.getCameraMirrored() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, newMode).commit();
+			preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, newMode).commit();
 		}
 
 		try {

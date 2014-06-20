@@ -595,7 +595,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			ListPreference lp2 = (ListPreference) prefActivity
 					.findPreference("imageSizePrefCommonFront");
 			
-			if(CameraController.CameraIndex == 0 && lp2 != null && lp != null)
+			if(CameraController.getCameraIndex() == 0 && lp2 != null && lp != null)
 			{
 				prefActivity.getPreferenceScreen().removePreference(lp2);
 				lp.setEntries(entries);
@@ -613,23 +613,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			// set currently selected image size
 			int idx;
 			for (idx = 0; idx < CameraController.ResolutionsIdxesList.size(); ++idx) {
-				if (idx == CameraController.CapIdx) {
+				if (idx == CameraController.getCameraImageSizeIndex()) {
 					break;
 				}
 			}
 			if (idx < CameraController.ResolutionsIdxesList.size()) {
-				if(CameraController.CameraIndex == 0)
+				if(CameraController.getCameraIndex() == 0)
 					lp.setValueIndex(idx);
 				else
 					lp2.setValueIndex(idx);
 			}
-			if(CameraController.CameraIndex == 0)
+			if(CameraController.getCameraIndex() == 0)
 			lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 				// @Override
 				public boolean onPreferenceChange(Preference preference,
 						Object newValue) {
 					int value = Integer.parseInt(newValue.toString());
-					CameraController.CapIdx = value;
+					CameraController.setCameraImageSizeIndex(value);
 					return true;
 				}
 			});
@@ -639,7 +639,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
 						int value = Integer.parseInt(newValue.toString());
-						CameraController.CapIdx = value;
+						CameraController.setCameraImageSizeIndex(value);
 						return true;
 					}
 				});
@@ -789,13 +789,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				public void onFinish() {
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
-					CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
-							: 1;
+					CameraController.setCameraImageSizeIndex(prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0 : 1);
 					ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 							false);
 					ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
 							false);
-					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+					ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 							MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
 					Log.e("MainScreen", "ImageSizeIdxPreference = " + ImageSizeIdxPreference);
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
@@ -961,13 +960,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				public void onFinish() {
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
-					CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
-							: 1;
+					CameraController.setCameraImageSizeIndex(prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0 : 1);
 					ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 							false);
 					ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
 							false);
-					ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+					ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 							MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
 					// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
@@ -986,11 +984,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		else {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.mainContext);
-			CameraController.CameraIndex = prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0
-					: 1;
+			CameraController.setCameraImageSizeIndex(prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0 : 1);
 			ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref, false);
 			ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,false);
-			ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+			ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 					MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref,
 					"-1");
 			// FullMediaRescan = prefs.getBoolean("mediaPref", true);
@@ -1006,13 +1003,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		CameraController.CameraIndex = prefs.getBoolean("useFrontCamera", false) == false ? 0
-				: 1;
+		CameraController.setCameraImageSizeIndex(prefs.getBoolean("useFrontCamera", false) == false ? 0 : 1);
 		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 				false);
 		ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
 				false);
-		ImageSizeIdxPreference = prefs.getString(CameraController.CameraIndex == 0 ?
+		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
@@ -1612,14 +1608,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setSaveImageHeight(int setSaveImageHeight) {
 		saveImageHeight = setSaveImageHeight;
-	}
-
-	public static boolean getCameraMirrored() {
-		return CameraController.CameraMirrored;
-	}
-
-	public static void setCameraMirrored(boolean setCameraMirrored) {
-		CameraController.CameraMirrored = setCameraMirrored;
 	}
 
 	public static boolean getWantLandscapePhoto() {

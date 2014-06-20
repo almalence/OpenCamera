@@ -179,29 +179,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	protected boolean mVideoStabilizationSupported = false;
 
-	public static byte[] supportedSceneModes;
-	public static byte[] supportedWBModes;
-	public static byte[] supportedFocusModes;
-	public static byte[] supportedFlashModes;
-	public static byte[] supportedISOModes;
+	private static byte[] supportedSceneModes;
+	private static byte[] supportedWBModes;
+	private static byte[] supportedFocusModes;
+	private static byte[] supportedFlashModes;
+	private static byte[] supportedISOModes;
 	
+	private static int maxRegionsSupported;
 	
-	public static int maxRegionsSupported;
-	
-	public static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();	
-	public static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();	
-	public static List<Area> mMeteringAreaMatrix1 = new ArrayList<Area>();	
-	public static List<Area> mMeteringAreaCenter = new ArrayList<Area>();	
-	public static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
-	
-	public static int currentMeteringMode = -1;
-	
-	
-	public static int CameraIndex = 0;
-	public static boolean CameraMirrored = false;
+	protected static int CameraIndex = 0;
+	protected static boolean CameraMirrored = false;
 	
 	//Image size index for capturing
-	public static int CapIdx;
+	private static int CapIdx;
 	
 	public static final int MIN_MPIX_SUPPORTED = 1280 * 960;
 
@@ -965,6 +955,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		supportedFocusModes = getSupportedFocusModesInternal();
 		supportedFlashModes = getSupportedFlashModesInternal();
 		supportedISOModes = getSupportedISOInternal();
+		
+		maxRegionsSupported = CameraController.getInstance().getMaxNumFocusAreas();
 	}
 
 	@Override
@@ -994,7 +986,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	 * 
 	 * For API14 Camera focus areas get/set Camera metering areas get/set
 	 */
-	public boolean isFrontCamera()
+	public static boolean isFrontCamera()
 	{
 		return CameraMirrored;
 	}
@@ -1616,16 +1608,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	
-	public int getMaxNumFocusAreas()
+	private int getMaxNumFocusAreas()
 	{
-//		if(camera != null)
-//		{
-//			Camera.Parameters camParams = MainScreen.cameraParameters;
-//			return camParams.getMaxNumMeteringAreas();
-//		}
-//		
-//		return 0;
-		
 		if(CameraController.isHALv3)
 			return HALv3.getMaxNumFocusAreasHALv3();
 		else if(CameraController.camera != null)
@@ -1637,7 +1621,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return 0;
 	}
 	
+	public static int getMaxAreasSupported()
+	{
+		return maxRegionsSupported;
+	}
 	
+	
+	public static int getCameraIndex()
+	{
+		return CameraIndex;
+	}
+	
+	public static int getCameraImageSizeIndex()
+	{
+		return CapIdx;
+	}
+	
+	public static void setCameraImageSizeIndex(int captureIndex)
+	{
+		CapIdx = captureIndex;
+	}
 	
 	
 	public static boolean isModeAvailable(byte[] modeList, int mode)
