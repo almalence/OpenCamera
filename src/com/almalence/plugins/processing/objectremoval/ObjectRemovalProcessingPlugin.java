@@ -72,6 +72,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.MLocation;
@@ -144,7 +145,7 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
-    	mCameraMirrored = MainScreen.getCameraMirrored();
+    	mCameraMirrored = CameraController.isFrontCamera();
     	
     	int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
@@ -456,7 +457,7 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
+        	mImgView.setRotation(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
 	    mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
@@ -621,7 +622,7 @@ public class ObjectRemovalProcessingPlugin extends PluginProcessing implements O
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
+            	mImgView.setRotation(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             break;
     	}    	

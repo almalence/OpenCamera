@@ -25,6 +25,8 @@ package com.almalence.opencam;
 
 import java.util.Date;
 
+import com.almalence.opencam.cameracontroller.CameraController;
+
 import android.hardware.Camera;
 import android.media.Image;
 

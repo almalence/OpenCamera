@@ -83,6 +83,7 @@ import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -1281,18 +1282,18 @@ public class PluginManager implements PluginManagerInterface {
 					paramCamera);
 	}
 	
-	void onImageAvailable(Image im) {
+	public void onImageAvailable(Image im) {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
 	
 	@TargetApi(19)
-	void onCaptureCompleted(CaptureResult result) {
+	public void onCaptureCompleted(CaptureResult result) {
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
 	
-	void onPreviewAvailable(Image im) {
+	public void onPreviewAvailable(Image im) {
 		if (isRestarting) {
 			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
 					.findViewById(R.id.mainLayout1);
@@ -1915,7 +1916,7 @@ public class PluginManager implements PluginManagerInterface {
 					addToSharedMem("imageHeight"+SessionID, String.valueOf(MainScreen.getImageHeight()));
 					addToSharedMem("imageWidth"+SessionID, String.valueOf(MainScreen.getImageWidth()));
 					addToSharedMem("wantLandscapePhoto"+SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
-					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(MainScreen.getCameraMirrored()));
+					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(CameraController.isFrontCamera()));
 				}
 
 

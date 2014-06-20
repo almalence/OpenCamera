@@ -49,13 +49,13 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.SoundPlayer;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -213,14 +213,14 @@ public class FocusVFPlugin extends PluginViewfinder
 	{
     	//ToDo: replace here with [CF] mode as default.
     	// Also, check if [CF] is available, and if not - set [AF], if [AF] is not available - set first available 
-//    	preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+//    	preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 //    	cancelAutoFocus();
 	}
 	
     @Override
 	public void onPause()
 	{
-    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		releaseSoundPlayer();
 		removeMessages();		
 	}	
@@ -232,7 +232,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
     	initializeParameters();		
 		
-		initialize(MainScreen.getCameraMirrored(), 90);
+		initialize(CameraController.isFrontCamera(), 90);
         initializeSoundPlayers(MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok),
         					  MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_vf_focus_false));
         
@@ -257,10 +257,10 @@ public class FocusVFPlugin extends PluginViewfinder
 	// This has to be initialized before initialize().
     public void initializeParameters()
     {
-        mFocusAreaSupported = (CameraController.maxRegionsSupported > 0
+        mFocusAreaSupported = (CameraController.getMaxAreasSupported() > 0
                 && isSupported(CameraParameters.AF_MODE_AUTO,
-                        CameraController.supportedFocusModes));
-        mMeteringAreaSupported = CameraController.maxRegionsSupported > 0;
+                		CameraController.getInstance().getSupportedFocusModes()));
+        mMeteringAreaSupported = CameraController.getMaxAreasSupported() > 0;
     }
 
     public void initialize(boolean mirror, int displayOrientation)
@@ -637,13 +637,13 @@ public class FocusVFPlugin extends PluginViewfinder
         if (mFocusAreaSupported && mFocusArea != null)
             mFocusMode = CameraParameters.AF_MODE_AUTO;
     	else
-            mFocusMode = mPreferences.getInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mDefaultFocusMode);
+            mFocusMode = mPreferences.getInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mDefaultFocusMode);
         
-        if (!isSupported(mFocusMode, CameraController.supportedFocusModes))
+        if (!isSupported(mFocusMode, CameraController.getInstance().getSupportedFocusModes()))
         {
             // For some reasons, the driver does not support the current
             // focus mode. Fall back to auto.
-            if (isSupported(CameraParameters.AF_MODE_AUTO, CameraController.supportedFocusModes))
+            if (isSupported(CameraParameters.AF_MODE_AUTO, CameraController.getInstance().getSupportedFocusModes()))
             	mFocusMode = CameraParameters.AF_MODE_AUTO;
             else
                 mFocusMode = CameraController.getInstance().getFocusMode();
@@ -653,7 +653,7 @@ public class FocusVFPlugin extends PluginViewfinder
     
     public void setFocusMode(int focus_mode)
     {
-    	mPreferences.edit().putInt(MainScreen.getCameraMirrored()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, focus_mode).commit();
+    	mPreferences.edit().putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, focus_mode).commit();
     	preferenceFocusMode = focus_mode;
     }
 
@@ -850,7 +850,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 		else if (arg1 == PluginManager.MSG_PREVIEW_CHANGED)
 		{
-			initialize(MainScreen.getCameraMirrored(), 90);
+			initialize(CameraController.isFrontCamera(), 90);
 		}
 		
 		return false;

@@ -68,6 +68,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -146,7 +147,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
 		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
-    	mCameraMirrored = MainScreen.getCameraMirrored();
+    	mCameraMirrored = CameraController.isFrontCamera();
         
         if(mDisplayOrientation == 0 || mDisplayOrientation == 180)
         {
@@ -485,7 +486,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
         	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
         	        matrix, true);
         	mImgView.setImageBitmap(rotated);
-        	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
+        	mImgView.setRotation(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         }		
 
         sequenceView = ((OrderControl)postProcessingView.findViewById(R.id.seqView));
@@ -494,7 +495,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	{
     		Bitmap bmp = thumbnails.get(i);
     		Matrix matrix = new Matrix();
-        	matrix.postRotate(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270 : 90) : 90);
+        	matrix.postRotate(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270 : 90) : 90);
         	Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(),
         	        matrix, true);
     		thumbnailsArray[i] = rotated;
@@ -504,7 +505,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     	lp.height = thumbnailsArray[0].getHeight();
     	sequenceView.setLayoutParams(lp);
     	
-    	sequenceView.setRotation(MainScreen.getCameraMirrored()?180:0);
+    	sequenceView.setRotation(CameraController.isFrontCamera()?180:0);
     	
 	    mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}
@@ -633,7 +634,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
             	Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
             	        matrix, true);
             	mImgView.setImageBitmap(rotated);
-            	mImgView.setRotation(MainScreen.getCameraMirrored()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
+            	mImgView.setRotation(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             
             sequenceView.setEnabled(true);

@@ -37,6 +37,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -89,7 +90,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
-		mCameraMirrored = MainScreen.getCameraMirrored();
+		mCameraMirrored = CameraController.isFrontCamera();
 		
 		mImageWidth = MainScreen.getImageWidth();
 		mImageHeight = MainScreen.getImageHeight();

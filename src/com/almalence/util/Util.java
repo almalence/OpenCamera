@@ -65,6 +65,7 @@ import com.almalence.opencam_plus.MainScreen;
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 //-+- -->
+import com.almalence.opencam.cameracontroller.CameraController;
 
 /**
  * Collection of utility functions used in this package.
@@ -689,7 +690,7 @@ public final class Util {
     public static void initializeMeteringMatrix()
     {
         Matrix matrix = new Matrix();
-        Util.prepareMatrix(matrix, MainScreen.getCameraMirrored(), 0,
+        Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0,
         		MainScreen.previewWidth, MainScreen.previewHeight);
         matrix.invert(mMeteringMatrix);
     }

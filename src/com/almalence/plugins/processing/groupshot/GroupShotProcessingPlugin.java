@@ -72,6 +72,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -212,7 +213,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     	int orientation = MainScreen.guiManager.getLayoutOrientation();
     	Log.e("GroupShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
-    	mCameraMirrored = MainScreen.getCameraMirrored();
+    	mCameraMirrored = CameraController.isFrontCamera();
     	
     	int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
