@@ -120,6 +120,8 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.ConfigParser;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.Mode;
@@ -375,96 +377,6 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
-//	private static final Map<String, String> scene_keys = new Hashtable<String, String>()
-//	{
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneAutoKey), sceneAuto);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneActionKey), sceneAction);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneARKey), sceneAR);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneBarcodeKey), sceneBarcode);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneBeachKey), sceneBeach);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneCandlelightKey), sceneCandlelight);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneFireworksKey), sceneFireworks);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneHDRKey), sceneHDR);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneLandscapeKey), sceneLandscape);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneNightKey), sceneNight);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneNightPortraitKey), sceneNightPortrait);
-//			put(MainScreen.thiz.getResources().getString(R.string.scenePartyKey), sceneParty);
-//			put(MainScreen.thiz.getResources().getString(R.string.scenePortraitKey), scenePortrait);		
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneSnowKey), sceneSnow);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneSportsKey), sceneSports);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhotoKey), sceneSteadyPhoto);
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneSunsetKey), sceneSunset);			
-//			put(MainScreen.thiz.getResources().getString(R.string.sceneTheatreKey), sceneTheatre);			
-//		}
-//	};
-	
-//	private static final Map<String, String> wb_keys = new Hashtable<String, String>() {
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.wbAutoKey), wbAuto);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylightKey), wbCloudyDaylight);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbDaylightKey), wbDaylight);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbFluorescentKey), wbFluorescent);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbIncandescentKey), wbIncandescent);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbShadeKey), wbShade);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbTwilightKey), wbTwilight);
-//			put(MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescentKey), wbWarmFluorescent);
-//		}
-//	};
-//	
-//	private static final Map<String, String> focus_keys = new Hashtable<String, String>() {
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.focusAutoKey), focusAuto);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousVideoKey), focusContinuousVideo);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusContinuousPictureKey), focusContinuousPicture);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusNormalKey), focusNormal);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusMacroKey), focusMacro);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusFixedKey), focusFixed);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusInfinityKey), focusInfinity);
-//			put(MainScreen.thiz.getResources().getString(R.string.focusEdofKey), focusEdof);
-//		}
-//	};
-//	
-//	
-//	private static final Map<String, String> flash_keys = new Hashtable<String, String>() {
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.flashAutoKey), flashAuto);
-//			put(MainScreen.thiz.getResources().getString(R.string.flashOnKey), flashOn);
-//			put(MainScreen.thiz.getResources().getString(R.string.flashOffKey), flashOff);
-//			put(MainScreen.thiz.getResources().getString(R.string.flashRedEyeKey), flashRedEye);
-//			put(MainScreen.thiz.getResources().getString(R.string.flashTorchKey), flashTorch);
-//		}
-//	};
-
-	
-//	private static final Map<String, String> iso_keys = new Hashtable<String, String>() {
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), isoAuto);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), iso50);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), iso100);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), iso200);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), iso400);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), iso800);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), iso1600);
-//			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), iso3200);
-//		}
-//	};
-//	
-//	private static final Map<String, String> iso2_keys = new Hashtable<String, String>() {
-//		{
-//			put(MainScreen.thiz.getResources().getString(R.string.isoAutoKey), MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso50Key), MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso100Key), MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso200Key), MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso400Key), MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso800Key), MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso1600Key), MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem));
-//			put(MainScreen.thiz.getResources().getString(R.string.iso3200Key), MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem));
-//		}
-//	};
-	
-	
-
 	// Defining for top menu buttons (camera parameters settings)
 	private final int MODE_EV = R.id.evButton;
 	private final int MODE_SCENE = R.id.sceneButton;
@@ -554,8 +466,7 @@ public class AlmalenceGUI extends GUI implements
 	// indicates if it's first launch - to show hint layer.
 	private boolean isFirstLaunch = true;
 	
-	
-	public static int iScreenType = MainScreen.thiz.getResources().getInteger(R.integer.screen_type);
+	private static int iScreenType = MainScreen.thiz.getResources().getInteger(R.integer.screen_type);
 
 	public AlmalenceGUI() {
 		
@@ -819,7 +730,6 @@ public class AlmalenceGUI extends GUI implements
 				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 					return;
 				
-//				MainScreen.thiz.showUnlock = true;
 				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 				{
 					Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
@@ -827,9 +737,6 @@ public class AlmalenceGUI extends GUI implements
 				}
 				//start store
 				showStore();
-				
-//				Intent intent = new Intent(MainScreen.thiz, Preferences.class);
-//				MainScreen.thiz.startActivity(intent);
 			}
 		});
 		//-+- -->
@@ -855,7 +762,6 @@ public class AlmalenceGUI extends GUI implements
 			hideStore();
 	}
 
-	
 	//<!-- -+-
 	@Override
 	public void showStore()
@@ -882,7 +788,6 @@ public class AlmalenceGUI extends GUI implements
 			}
 			
 		});
-		
 		
 		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
 		store.setVisibility(View.VISIBLE);
@@ -989,58 +894,16 @@ public class AlmalenceGUI extends GUI implements
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					if(event.getAction() == MotionEvent.ACTION_CANCEL)
-					{
-						// get inapp associated with pressed button
-						Integer id = buttonStoreViewAssoc.get(v);
-						String payload = "";
-						switch (id)
-						{
-						case 0:// unlock all
-							MainScreen.thiz.purchaseAll();
-							break;
-						case 1:// HDR
-							MainScreen.thiz.purchaseHDR();
-							break;
-						case 2:// Panorama
-							MainScreen.thiz.purchasePanorama();
-							break;
-						case 3:// Moving
-							MainScreen.thiz.purchaseMoving();
-							break;
-						case 4:// Groupshot
-							MainScreen.thiz.purchaseGroupshot();
-							break;
-						}
-					}
+						purchasePressed(v);
 					return false;
 				}
-				
 			});
 			
 			item.setOnClickListener(new OnClickListener() 
 			{
 				public void onClick(View v) {
 					// get inapp associated with pressed button
-					Integer id = buttonStoreViewAssoc.get(v);
-					String payload = "";
-					switch (id)
-					{
-					case 0:// unlock all
-						MainScreen.thiz.purchaseAll();
-						break;
-					case 1:// HDR
-						MainScreen.thiz.purchaseHDR();
-						break;
-					case 2:// Panorama
-						MainScreen.thiz.purchasePanorama();
-						break;
-					case 3:// Moving
-						MainScreen.thiz.purchaseMoving();
-						break;
-					case 4:// Groupshot
-						MainScreen.thiz.purchaseGroupshot();
-						break;
-					}
+					purchasePressed(v);
 				}
 			});
 			
@@ -1049,6 +912,30 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		storeAdapter.Elements = storeViews;
+	}
+	
+	private void purchasePressed(View v)
+	{
+		// get inapp associated with pressed button
+		Integer id = buttonStoreViewAssoc.get(v);
+		switch (id)
+		{
+		case 0:// unlock all
+			MainScreen.thiz.purchaseAll();
+			break;
+		case 1:// HDR
+			MainScreen.thiz.purchaseHDR();
+			break;
+		case 2:// Panorama
+			MainScreen.thiz.purchasePanorama();
+			break;
+		case 3:// Moving
+			MainScreen.thiz.purchaseMoving();
+			break;
+		case 4:// Groupshot
+			MainScreen.thiz.purchaseGroupshot();
+			break;
+		}
 	}
 	
 	public void ShowUnlockControl()
@@ -1141,53 +1028,7 @@ public class AlmalenceGUI extends GUI implements
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 		
-		// <!-- -+-
-		//manage unlock control
-		if (true == prefs.getBoolean("unlock_all_forever", false))
-			HideUnlockControl();
-		else 
-		{
-			String modeID = PluginManager.getInstance().getActiveMode().modeID;
-			
-			if ("hdrmode".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
-					HideUnlockControl();
-				else
-					ShowGrayUnlockControl();
-			}
-			else if ("movingobjects".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowGrayUnlockControl();
-			}
-			else if ("sequence".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowGrayUnlockControl();
-			}
-			else if ("groupshot".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
-					HideUnlockControl();
-				else
-					ShowGrayUnlockControl();
-			}
-			else if ("panorama_augmented".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
-					HideUnlockControl();
-				else
-					ShowGrayUnlockControl();
-			}
-			else
-				ShowGrayUnlockControl();
-		}
-		//-+- -->
+		manageUnlockControl();
 	}
 	
 	
@@ -1200,34 +1041,6 @@ public class AlmalenceGUI extends GUI implements
 	public void createInitialGUI() {
 		guiView = LayoutInflater.from(MainScreen.mainContext).inflate(
 				R.layout.gui_almalence_layout, null);
-
-//		RotateImageView galleryButton = (RotateImageView) guiView
-//				.findViewById(R.id.buttonGallery);
-//
-//		Bitmap bitmap = Bitmap.createBitmap(96, 96, Config.ARGB_8888);
-//		Canvas canvas = new Canvas(bitmap);
-//		canvas.drawColor(Color.BLACK);
-//		Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
-//				(int) (MainScreen.mainContext.getResources()
-//						.getDimension(R.dimen.mainButtonHeight)),
-//				(int) ((15.0f)));
-//		
-//		FileOutputStream os;
-//		try {
-//			os = new FileOutputStream(new File("/storage/sdcard0/DCIM/Camera","gui_almalence_gallery.jpg"));
-//			bm.compress(CompressFormat.JPEG, 100, os);
-//			os.close();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-//
-//		galleryButton.setImageBitmap(bm);
 		// Add GUI Layout to main layout of OpenCamera
 		((RelativeLayout) MainScreen.thiz.findViewById(R.id.mainLayout1))
 				.addView(guiView);
@@ -1304,6 +1117,12 @@ public class AlmalenceGUI extends GUI implements
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 		
+		manageUnlockControl();
+	}
+
+	
+	private void manageUnlockControl()
+	{
 		// <!-- -+-
 		//manage unlock control
 		SharedPreferences prefs = PreferenceManager
@@ -1354,7 +1173,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 		//-+- -->
 	}
-
+	
 	private Map<Integer, View> initCameraParameterModeButtons(
 			Map<Integer, Integer> icons_map, Map<Integer, String> names_map,
 			Map<Integer, View> paramMap, final int mode) {
@@ -1382,54 +1201,16 @@ public class AlmalenceGUI extends GUI implements
 				public boolean onTouch(View v, MotionEvent event) {
 					if(event.getAction() == MotionEvent.ACTION_CANCEL)
 					{
-						switch (mode) {
-						case MODE_SCENE:
-							setSceneMode(system_name);
-							break;
-						case MODE_WB:
-							setWhiteBalance(system_name);
-							break;
-						case MODE_FOCUS:
-							setFocusMode(system_name);
-							break;
-						case MODE_FLASH:
-							setFlashMode(system_name);
-							break;
-						case MODE_ISO:
-							setISO(system_name);
-							break;
-						case MODE_MET:
-							setMeteringMode(system_name);
-							break;
-						}
+						settingsModeClicked(mode, system_name);
 						return false;
 					}
-						return false;
+					return false;
 				}					
 			});
 
 			paramMode.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					switch (mode) {
-					case MODE_SCENE:
-						setSceneMode(system_name);
-						break;
-					case MODE_WB:
-						setWhiteBalance(system_name);
-						break;
-					case MODE_FOCUS:
-						setFocusMode(system_name);
-						break;
-					case MODE_FLASH:
-						setFlashMode(system_name);
-						break;
-					case MODE_ISO:
-						setISO(system_name);
-						break;
-					case MODE_MET:
-						setMeteringMode(system_name);
-						break;
-					}
+					settingsModeClicked(mode, system_name);
 					guiView.findViewById(R.id.topPanel).setVisibility(
 							View.VISIBLE);
 					quickControlsVisible = false;
@@ -1437,12 +1218,35 @@ public class AlmalenceGUI extends GUI implements
 			});
 
 			paramMap.put(system_name, paramMode);
-			//mode_number++;
 		}
 
 		return paramMap;
 	}
 
+	private void settingsModeClicked(int mode, int system_name)
+	{
+		switch (mode) {
+		case MODE_SCENE:
+			setSceneMode(system_name);
+			break;
+		case MODE_WB:
+			setWhiteBalance(system_name);
+			break;
+		case MODE_FOCUS:
+			setFocusMode(system_name);
+			break;
+		case MODE_FLASH:
+			setFlashMode(system_name);
+			break;
+		case MODE_ISO:
+			setISO(system_name);
+			break;
+		case MODE_MET:
+			setMeteringMode(system_name);
+			break;
+		}
+	}
+	
 	@Override
 	public void onGUICreate() {
 		if (MainScreen.thiz.findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
@@ -1505,127 +1309,9 @@ public class AlmalenceGUI extends GUI implements
 		help.bringToFront();
 	}
 	
-	private RotateImageView timeLapseButton =null;
-	private void AddSelfTimerControl(boolean needToShow)
-	{
-		View selfTimerControl =null;
-		// Calculate right sizes for plugin's controls
-		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
-		float fScreenDensity = metrics.density;
-    			
-    	int iIndicatorSize = (int) (MainScreen.mainContext.getResources()
-				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
-    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
-		int topMargin = MainScreen.thiz.findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.thiz.getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
-		params.setMargins((int)(2*MainScreen.guiManager.getScreenDensity()), topMargin, 0, 0);
-		
-		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		
-		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();		
-		
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
-		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
-		selfTimerControl.setVisibility(View.VISIBLE);
-		
-		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
-		
-		if (needToShow == false || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
-		{
-			return; 
-		}
-		
-		timeLapseButton = (RotateImageView)selfTimerControl.findViewById(R.id.buttonSelftimer);
-		
-		timeLapseButton.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {			
-				SelfTimerDialog();
-			}
-			
-		});
-		
-		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout2.getChildCount(); i++)
-			specialView2.add(specialLayout2.getChildAt(i));
-
-		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.videobuttons_size);
-		
-		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
-		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
-		
-		selfTimerControl.setLayoutParams(params);
-		selfTimerControl.requestLayout();
-		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
-
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
-		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
-		switch (delayInterval)
-        {
-         case 0:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
-        	 break;
-         case 3:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
-        	 break;
-         case 5:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
-        	 break;
-         case 10:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
-        	 break;
-         case 15:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
-        	 break;
-         case 30:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
-        	 break;
-         case 60:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-        	 break;         
-         }
-	}
-
 	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
-//		Camera camera = CameraController.getInstance().getCamera();
-//		if (null == camera)
-//			return;
-//
-//		// ----- Adjust preview size to have proper aspect ratio
-//		Size previewSize = cp.getPreviewSize();
-
 		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
 
 		RelativeLayout ll = (RelativeLayout) MainScreen.thiz
@@ -1719,144 +1405,33 @@ public class AlmalenceGUI extends GUI implements
 	// onGUICreate called when main layout is rendered and size's variables is
 	// available
 	// @Override
-	public void createPluginViews() {
+	public void createPluginViews() 
+	{
+		createPluginViews(PluginType.ViewFinder);
+		createPluginViews(PluginType.Capture);
+		createPluginViews(PluginType.Processing);
+		createPluginViews(PluginType.Filter);
+		createPluginViews(PluginType.Export);
+	}
+
+	private void createPluginViews(PluginType type)
+	{
 		int iInfoControlsRemainingHeight = iInfoViewHeight;
 
 		List<View> info_views = null;
 		Map<View, Plugin.ViewfinderZone> plugin_views = null;
-
-		List<Plugin> vfPlugins = PluginManager.getInstance().getActivePlugins(
-				PluginType.ViewFinder);
-		if (vfPlugins.size() > 0) {
-			for (int i = 0; i < vfPlugins.size(); i++) {
-				Plugin vfPlugin = vfPlugins.get(i);
-				if (vfPlugin != null) {
-					plugin_views = vfPlugin.getPluginViews();
+		
+		List<Plugin> plugins = PluginManager.getInstance().getActivePlugins(
+				type);
+		if (plugins.size() > 0) {
+			for (int i = 0; i < plugins.size(); i++) {
+				Plugin _plugin = plugins.get(i);
+				if (_plugin != null) {
+					plugin_views = _plugin.getPluginViews();
 					addPluginViews(plugin_views);
 
 					// Add info controls
-					info_views = vfPlugin.getInfoViews();
-					for (int j = 0; j < info_views.size(); j++) {
-						View infoView = info_views.get(j);
-
-						// Calculate appropriate size of added plugin's view
-						android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
-								.getLayoutParams();
-						viewLayoutParams = this.getTunedLinearLayoutParams(
-								infoView, viewLayoutParams, iInfoViewMaxWidth,
-								iInfoViewMaxHeight);
-
-						if (iInfoControlsRemainingHeight >= viewLayoutParams.height) {
-							iInfoControlsRemainingHeight -= viewLayoutParams.height;
-							this.addInfoView(infoView, viewLayoutParams);
-						}
-					}
-				}
-			}
-		}
-
-		// Always check whether view is suitable to remaining space
-		List<Plugin> capturePlugins = PluginManager.getInstance()
-				.getActivePlugins(PluginType.Capture);
-		if (capturePlugins.size() > 0) {
-			for (int i = 0; i < capturePlugins.size(); i++) {
-				Plugin capturePlugin = capturePlugins.get(i);
-				if (capturePlugin != null) {
-					plugin_views = capturePlugin.getPluginViews();
-					addPluginViews(plugin_views);
-
-					// Add info controls
-					info_views = capturePlugin.getInfoViews();
-					for (int j = 0; j < info_views.size(); j++) {
-						View infoView = info_views.get(j);
-
-						// Calculate appropriate size of added plugin's view
-						android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
-								.getLayoutParams();
-						viewLayoutParams = this.getTunedLinearLayoutParams(
-								infoView, viewLayoutParams, iInfoViewMaxWidth,
-								iInfoViewMaxHeight);
-
-						if (iInfoControlsRemainingHeight >= viewLayoutParams.height) {
-							iInfoControlsRemainingHeight -= viewLayoutParams.height;
-							this.addInfoView(infoView, viewLayoutParams);
-						}
-					}
-				}
-			}
-		}
-
-		List<Plugin> processingPlugins = PluginManager.getInstance()
-				.getActivePlugins(PluginType.Processing);
-		if (processingPlugins.size() > 0) {
-			for (int i = 0; i < processingPlugins.size(); i++) {
-				Plugin processingPlugin = processingPlugins.get(i);
-				if (processingPlugin != null) {
-					plugin_views = processingPlugin.getPluginViews();
-					addPluginViews(plugin_views);
-
-					// Add info controls
-					info_views = processingPlugin.getInfoViews();
-					for (int j = 0; j < info_views.size(); j++) {
-						View infoView = info_views.get(j);
-
-						// Calculate appropriate size of added plugin's view
-						android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
-								.getLayoutParams();
-						viewLayoutParams = this.getTunedLinearLayoutParams(
-								infoView, viewLayoutParams, iInfoViewMaxWidth,
-								iInfoViewMaxHeight);
-
-						if (iInfoControlsRemainingHeight >= viewLayoutParams.height) {
-							iInfoControlsRemainingHeight -= viewLayoutParams.height;
-							this.addInfoView(infoView, viewLayoutParams);
-						}
-					}
-				}
-			}
-		}
-
-		List<Plugin> filterPlugins = PluginManager.getInstance()
-				.getActivePlugins(PluginType.Filter);
-		if (filterPlugins.size() > 0) {
-			for (int i = 0; i < filterPlugins.size(); i++) {
-				Plugin filterPlugin = filterPlugins.get(i);
-				if (filterPlugin != null) {
-					plugin_views = filterPlugin.getPluginViews();
-					addPluginViews(plugin_views);
-
-					// Add info controls
-					info_views = filterPlugin.getInfoViews();
-					for (int j = 0; j < info_views.size(); j++) {
-						View infoView = info_views.get(j);
-
-						// Calculate appropriate size of added plugin's view
-						android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
-								.getLayoutParams();
-						viewLayoutParams = this.getTunedLinearLayoutParams(
-								infoView, viewLayoutParams, iInfoViewMaxWidth,
-								iInfoViewMaxHeight);
-
-						if (iInfoControlsRemainingHeight >= viewLayoutParams.height) {
-							iInfoControlsRemainingHeight -= viewLayoutParams.height;
-							this.addInfoView(infoView, viewLayoutParams);
-						}
-					}
-				}
-			}
-		}
-
-		List<Plugin> exportPlugins = PluginManager.getInstance()
-				.getActivePlugins(PluginType.Export);
-		if (exportPlugins.size() > 0) {
-			for (int i = 0; i < exportPlugins.size(); i++) {
-				Plugin exportPlugin = exportPlugins.get(i);
-				if (exportPlugin != null) {
-					plugin_views = exportPlugin.getPluginViews();
-					addPluginViews(plugin_views);
-
-					// Add info controls
-					info_views = exportPlugin.getInfoViews();
+					info_views = _plugin.getInfoViews();
 					for (int j = 0; j < info_views.size(); j++) {
 						View infoView = info_views.get(j);
 
@@ -1876,35 +1451,25 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 	}
-
+	
 	//
 	private void initDefaultQuickControls() {
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
-
-		quickControl1 = inflator.inflate(
-				R.layout.gui_almalence_invisible_button,
-				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
-		quickControl2 = inflator.inflate(
-				R.layout.gui_almalence_invisible_button,
-				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
-		quickControl3 = inflator.inflate(
-				R.layout.gui_almalence_invisible_button,
-				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
-		quickControl4 = inflator.inflate(
-				R.layout.gui_almalence_invisible_button,
-				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
-
-		quickControl1.setOnLongClickListener(this);
-		quickControl2.setOnLongClickListener(this);
-		quickControl3.setOnLongClickListener(this);
-		quickControl4.setOnLongClickListener(this);
-
-		quickControl1.setOnClickListener(this);
-		quickControl2.setOnClickListener(this);
-		quickControl3.setOnClickListener(this);
-		quickControl4.setOnClickListener(this);
+		initDefaultQuickControls(quickControl1);
+		initDefaultQuickControls(quickControl2);
+		initDefaultQuickControls(quickControl3);
+		initDefaultQuickControls(quickControl4);
 	}
 
+	private void initDefaultQuickControls(View quickControl) 
+	{
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		quickControl = inflator.inflate(
+				R.layout.gui_almalence_invisible_button,
+				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
+		quickControl.setOnLongClickListener(this);
+		quickControl.setOnClickListener(this);
+	}
+	
 	// Called when camera object created in MainScreen.
 	// After camera creation it is possibly to obtain
 	// all camera possibilities such as supported scene mode, flash mode and
@@ -1950,33 +1515,15 @@ public class AlmalenceGUI extends GUI implements
 		removeAllQuickViews();
 		initDefaultQuickControls();
 		
-//		ViewParent p = quickControl3.getParent();
+		//ViewParent p = quickControl3.getParent();
 
 		createPluginTopMenuButtons();
 		
-		//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		
 		if(CameraController.getInstance().isExposureLockSupported())
-		{
 			mEVLockSupported = true;
-			//AeUnlock();
-		}
 		if(CameraController.getInstance().isWhiteBalanceLockSupported())
-		{
 			mWBLockSupported = true;
-			//AwUnlock();
-		}
 		
-//		if(mEVLockSupported || mWBLockSupported)
-//		{
-//			showAEAWLock = preferences.getBoolean("showAEAWLockPref", false);
-//			LinearLayout aeawlock_layout = (LinearLayout)this.guiView.findViewById(R.id.utilityButtons);
-//			if(showAEAWLock)
-//				aeawlock_layout.setVisibility(View.VISIBLE);
-//			else
-//				aeawlock_layout.setVisibility(View.GONE);
-//		}
-
 		// Create Exposure compensation button and slider with supported values
 		if (CameraController.getInstance().isExposureCompensationSupported()) {
 			mEVSupported = true;
@@ -2092,7 +1639,6 @@ public class AlmalenceGUI extends GUI implements
 				
 				wbmodeAdapter.Elements = activeWB;
 				GridView gridview = (GridView) guiView.findViewById(R.id.wbGrid);
-//				gridview.setNumColumns(activeWB.size() > 9 ? 4 : 3);
 				gridview.setAdapter(wbmodeAdapter);
 	
 				int initValue = preferences.getInt(MainScreen.sWBModePref, MainScreen.sDefaultValue);
@@ -2172,37 +1718,6 @@ public class AlmalenceGUI extends GUI implements
 							
 							mFocusMode = focusAfLock;
 							
-//							Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//							Camera camera = CameraController.getInstance().getCamera();
-//							if (null != camera && params != null)
-//							{
-//								int AFMode = -1;
-//								if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
-//									AFMode = CameraParameters.AF_MODE_AUTO;
-//								else if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
-//									AFMode = CameraParameters.AF_MODE_MACRO;
-//								else
-//									AFMode = supported_focus[0];
-//								
-//								
-//								CameraController.getInstance().setCameraFocusMode(AFMode);
-////								params.setFocusMode(AFMode);
-////								try {
-////									CameraController.getInstance().setCameraParameters(params);
-////								} catch (Exception e) {
-////									e.printStackTrace();
-////									Log.e("AF-L Click", "set focus mode exception: " + e.getMessage());
-////								}
-//								
-////								int focusMode = CameraController.getInstance().getFocusMode();
-//								
-//								preferences
-//								.edit()
-//								.putInt(
-//										CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-//												: MainScreen.sFrontFocusModePref, AFMode).commit();
-//							}
-							
 							int AFMode = -1;
 							if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
 								AFMode = CameraParameters.AF_MODE_AUTO;
@@ -2224,8 +1739,6 @@ public class AlmalenceGUI extends GUI implements
 							hideSecondaryMenus();
 							unselectPrimaryTopMenuButtons(-1);
 							
-//							int focusMode = CameraController.getInstance().getFocusMode();
-							
 							guiView.findViewById(R.id.topPanel).setVisibility(
 									View.VISIBLE);
 							quickControlsVisible = false;
@@ -2240,7 +1753,6 @@ public class AlmalenceGUI extends GUI implements
 				focusmodeAdapter.Elements = activeFocus;
 				GridView gridview = (GridView) guiView
 						.findViewById(R.id.focusmodeGrid);
-				//gridview.setNumColumns(activeFocus.size() > 9 ? 4 : 3);
 				gridview.setAdapter(focusmodeAdapter);
 	
 				int initValue = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
@@ -2250,10 +1762,6 @@ public class AlmalenceGUI extends GUI implements
 						initValue = MainScreen.sDefaultValue;
 					else
 						initValue = activeFocusNames.get(0);
-	
-					// preferences.edit().putString(CameraController.isFrontCamera()?
-					// sRearFocusModePref : sFrontFocusModePref,
-					// initValue).commit();
 				}
 				
 				setButtonSelected(FocusModeButtons, initValue);
@@ -2271,7 +1779,6 @@ public class AlmalenceGUI extends GUI implements
 						Log.e("onCameraCreate", "icons_focus.get exception: " + e.getMessage());
 					}
 				}
-
 				
 				if(mFocusMode == focusAfLock)
 				{
@@ -2361,26 +1868,6 @@ public class AlmalenceGUI extends GUI implements
 		if ((supported_iso != null && supported_iso.length > 0 && activeISO != null) ||
 				(CameraController.getInstance().isISOSupported() && activeISO != null))
 		{
-
-			//Collection<String> unsorted_keys = ISOButtons.keySet();
-			//List<String> keys = Util.asSortedList(unsorted_keys);
-//			Collection<String> unsorted_keys = iso_keys.keySet();
-//			List<String> keys = Util.asSortedList(unsorted_keys);
-//			Iterator<String> it = keys.iterator();
-//			while (it.hasNext()) {
-//				String iso_key = it.next();
-//				String iso_name = iso_keys.get(iso_key);
-//				String iso2_name = iso2_keys.get(iso_key);
-//				if (supported_iso != null && supported_iso.size() > 0 && (supported_iso.contains(iso_name) || supported_iso.contains(iso2_name))) {
-//					activeISO.add(ISOButtons.get(iso_name));
-//					activeISONames.add(iso_name);
-//				}
-//				else if(supported_iso == null && iso_default.contains(iso_name))
-//				{
-//					activeISO.add(ISOButtons.get(iso_name));
-//					activeISONames.add(iso_name);
-//				}
-//			}
 			if(supported_iso != null)
 				for(byte iso_name : supported_iso)
 				{				
@@ -2424,22 +1911,6 @@ public class AlmalenceGUI extends GUI implements
 					int icon_id = icons_iso.get(initValue);
 					but.setImageResource(icon_id);
 				}
-	
-//				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//				Camera camera = CameraController.getInstance().getCamera();
-//				if (null != camera && params != null)
-//				{
-//					if(params.get(MainScreen.isoParam) != null)
-//						params.set(MainScreen.isoParam, mISO);
-//					else if(params.get(MainScreen.isoParam2) != null)
-//						params.set(MainScreen.isoParam2, mISO);
-////					try {
-////						CameraController.getInstance().setCameraParameters(params);
-////					} catch (Exception e) {
-////						e.printStackTrace();
-////						Log.e("onCameraCreate", "ISO exception: " + e.getMessage());
-////					}
-//				}
 				CameraController.getInstance().setCameraISO(mISO);
 			}
 			else
@@ -2453,8 +1924,6 @@ public class AlmalenceGUI extends GUI implements
 			mISOSupported = false;
 			mISO = -1;
 		}
-//		mISOSupported = false;
-		
 		
 		int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
 		if(iMeteringAreasSupported > 0)
@@ -2476,7 +1945,6 @@ public class AlmalenceGUI extends GUI implements
 				meteringmodeAdapter.Elements = activeMetering;
 				GridView gridview = (GridView) guiView
 						.findViewById(R.id.meteringmodeGrid);
-				//gridview.setNumColumns(activeMetering.size() > 9 ? 4 : 3);
 				gridview.setAdapter(meteringmodeAdapter);
 	
 				int initValue = preferences.getInt(MainScreen.sMeteringModePref,
@@ -2496,12 +1964,6 @@ public class AlmalenceGUI extends GUI implements
 				}
 				
 				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
-				//Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//				Camera camera = CameraController.getInstance().getCamera();
-//				if (null != camera && params != null)
-//				{
-//					params.setFlashMode(mFlashMode);
-//				}
 			}
 			else
 			{
@@ -2521,16 +1983,6 @@ public class AlmalenceGUI extends GUI implements
 		} else
 			mCameraChangeSupported = false;
 		
-//		try
-//		{
-//			CameraController.getInstance().setCameraParameters(params);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("AlmalenceGUI", "setCameraParameters exception(in onCameraCreate method): " + e.getMessage());
-//		}
-			
-
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		String qc1 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1),
@@ -7602,7 +7054,6 @@ public class AlmalenceGUI extends GUI implements
              prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
              prefsEditor.commit();
 
-             RotateImageView timeLapseButton = (RotateImageView)guiView.findViewById(R.id.buttonSelftimer);
              switch (real_int)
              {
              case 0:
@@ -7651,5 +7102,116 @@ public class AlmalenceGUI extends GUI implements
           }    
          });
       d.show();
+	}
+	
+	private RotateImageView timeLapseButton =null;
+	private void AddSelfTimerControl(boolean needToShow)
+	{
+		View selfTimerControl =null;
+		// Calculate right sizes for plugin's controls
+		DisplayMetrics metrics = new DisplayMetrics();
+		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+				.getMetrics(metrics);
+		float fScreenDensity = metrics.density;
+    			
+    	int iIndicatorSize = (int) (MainScreen.mainContext.getResources()
+				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
+    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
+		int topMargin = MainScreen.thiz.findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.thiz.getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+		params.setMargins((int)(2*MainScreen.guiManager.getScreenDensity()), topMargin, 0, 0);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();		
+		
+		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
+		selfTimerControl.setVisibility(View.VISIBLE);
+		
+		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
+		
+		if (needToShow == false || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
+		{
+			return; 
+		}
+		
+		timeLapseButton = (RotateImageView)selfTimerControl.findViewById(R.id.buttonSelftimer);
+		
+		timeLapseButton.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {			
+				SelfTimerDialog();
+			}
+			
+		});
+		
+		List<View> specialView2 = new ArrayList<View>();
+		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
+		for(int i = 0; i < specialLayout2.getChildCount(); i++)
+			specialView2.add(specialLayout2.getChildAt(i));
+
+		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.videobuttons_size);
+		
+		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
+		
+		selfTimerControl.setLayoutParams(params);
+		selfTimerControl.requestLayout();
+		
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.mainContext);
+		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		switch (delayInterval)
+        {
+         case 0:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+        	 break;
+         case 3:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
+        	 break;
+         case 5:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
+        	 break;
+         case 10:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
+        	 break;
+         case 15:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
+        	 break;
+         case 30:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
+        	 break;
+         case 60:
+        	 if (swChecked)
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
+        	 else
+        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
+        	 break;         
+         }
 	}
 }
