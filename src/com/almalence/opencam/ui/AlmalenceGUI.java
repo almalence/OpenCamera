@@ -107,7 +107,6 @@ import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.googsharing.Thumbnail;
 
 //<!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
@@ -117,6 +116,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 /* <!-- +++

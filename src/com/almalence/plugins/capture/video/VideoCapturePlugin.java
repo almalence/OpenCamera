@@ -95,12 +95,12 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
@@ -118,8 +118,6 @@ Implements basic functionality of Video capture.
 public class VideoCapturePlugin extends PluginCapture
 {
 	private static final String TAG = "Almalence";
-	
-	private boolean takingAlready=false;
 	
     private volatile boolean isRecording;
     private boolean onPause;
@@ -1964,7 +1962,7 @@ public class VideoCapturePlugin extends PluginCapture
 			}
     	}
 		
-		if (pf!=null && !MainScreen.cameraController.mVideoStabilizationSupported)
+		if (pf!=null && !MainScreen.cameraController.isVideoStabilizationSupported())
     	{
 			PreferenceCategory cat = (PreferenceCategory)pf.findPreference("Pref_VideoCapture_Category");
 			CheckBoxPreference cp = (CheckBoxPreference) pf.findPreference("videoStabilizationPref");

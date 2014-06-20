@@ -47,12 +47,12 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.ui.Switch.Switch;
 
@@ -63,9 +63,6 @@ Implements standard capture plugin - capture single image and save it in shared 
 
 public class CapturePlugin extends PluginCapture
 {
-	private boolean takingAlready=false;
-	private boolean aboutToTakePicture=false;
-	
 	private static String ModePreference;	// 0=DRO On 1=DRO Off
 	private Switch modeSwitcher;
 	
@@ -180,34 +177,6 @@ public class CapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void OnShutterClick()
-	{
-		if(takingAlready == false)
-		{
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
-			
-			MainScreen.thiz.MuteShutter(false);
-			
-			int focusMode = CameraController.getInstance().getFocusMode();
-			int fs = CameraController.getFocusState();
-			if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
-					fs == CameraController.FOCUS_STATE_FOCUSING)
-					&& focusMode != -1
-					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-		      				  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
-		    				  focusMode == CameraParameters.AF_MODE_INFINITY ||
-		    				  focusMode == CameraParameters.AF_MODE_FIXED ||
-		    				  focusMode == CameraParameters.AF_MODE_EDOF)
-					&& !MainScreen.getAutoFocusLock())			
-					aboutToTakePicture = true;			
-			else if(takingAlready == false)
-				takePicture();
-		}
-	}
-	
-	
-	@Override
 	public void onDefaultsSelect()
 	{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
@@ -225,18 +194,16 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-		if(takingAlready)
+		if(inCapture == false)
 		{
-			aboutToTakePicture = false;
-			return;
+			inCapture = true;
+			takingAlready = true;
+			
+			Message msg = new Message();
+			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+			msg.what = PluginManager.MSG_BROADCAST;
+			MainScreen.H.sendMessage(msg);
 		}
-		
-		takingAlready = true;
-		
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
 
 	}
 	
@@ -310,7 +277,7 @@ public class CapturePlugin extends PluginCapture
 		MainScreen.H.sendMessage(message);
 
 		takingAlready = false;
-		aboutToTakePicture = false;
+		inCapture = false;
 	}
 	
 	@TargetApi(19)
@@ -388,7 +355,6 @@ public class CapturePlugin extends PluginCapture
 		MainScreen.H.sendMessage(message);
 
 		takingAlready = false;
-		aboutToTakePicture = false;
 	}
 	
 	@TargetApi(19)
@@ -404,8 +370,8 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		if(aboutToTakePicture == true)
-				takePicture();
+		if(takingAlready == true)
+			takePicture();
 	}
 	
 	@Override

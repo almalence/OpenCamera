@@ -20,12 +20,15 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.opencam_plus;
 +++ --> */
 // <!-- -+-
-package com.almalence.opencam;
+package com.almalence.opencam.cameracontroller;
 //-+- -->
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.util.Util;
 
 import android.annotation.TargetApi;

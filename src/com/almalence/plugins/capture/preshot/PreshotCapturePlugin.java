@@ -45,12 +45,12 @@ import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.ui.Switch.Switch;
@@ -64,10 +64,6 @@ Stops capturing when shutter button pressed.
 
 public class PreshotCapturePlugin extends PluginCapture
 {
-	private static boolean inCapture = false;
-
-	private boolean takingAlready = false;
-
     // preferences
 	private static String PreShotInterval;
 	private static String FPS;

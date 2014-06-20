@@ -66,11 +66,11 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
 //-+- -->
@@ -93,11 +93,9 @@ public class NightCapturePlugin extends PluginCapture
 	private static final int MIN_MPIX_PREVIEW = 600*400;
 	
     private static Toast capturingDialog;
-    private static boolean inCapture = false;
 
     //almashot - related
     private int frame_num;
-	private boolean takingAlready;
 	private boolean aboutToTakePicture=false;
 	private int nVFframesToBuffer;
 

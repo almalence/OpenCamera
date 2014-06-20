@@ -42,11 +42,11 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
 //-+- -->
@@ -62,8 +62,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 {
 	private static final int MAX_HDR_FRAMES = 4;
 	
-    private boolean inCapture;
-    
     private int preferenceEVCompensationValue;
 
     // almashot - related
@@ -72,7 +70,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     private int cur_ev, frame_num;
     public static float ev_step;
     private int evRequested, evLatency;
-	private boolean takingAlready = false;
 	private boolean aboutToTakePicture=false;
 	private boolean cm7_crap;
 	

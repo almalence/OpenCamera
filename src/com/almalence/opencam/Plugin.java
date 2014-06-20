@@ -54,6 +54,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
+import com.almalence.opencam.cameracontroller.CameraController;
 
 /***
 Abstract class for plugins

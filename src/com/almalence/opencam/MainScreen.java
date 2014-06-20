@@ -88,6 +88,8 @@ import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.HeapUtil;
 import com.almalence.util.Util;
 
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.HALv3;
 //<!-- -+-
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
@@ -146,10 +148,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static ImageReader mImageReaderPreviewYUV;
 	public static ImageReader mImageReaderYUV;
 	public static ImageReader mImageReaderJPEG;
-//	String[] cameraIdList={""};
-//	
-//	public static boolean cameraConfigured = false;
-	
 
 	public static GUI guiManager = null;
 
@@ -892,7 +890,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onPause() {
 		super.onPause();
 		mApplicationStarted = false;
-		CameraController.cameraConfigured = false;
 
 		MainScreen.guiManager.onPause();
 		PluginManager.getInstance().onPause(true);
@@ -1141,7 +1138,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
 				MainScreen.mApplicationStarted = true;
-				CameraController.cameraConfigured = true;
 			}
 
 			@Override

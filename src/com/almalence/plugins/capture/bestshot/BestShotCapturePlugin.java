@@ -19,8 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.bestshot;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
-
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -34,14 +32,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -57,12 +55,9 @@ Implements burst capture plugin - captures predefined number of images
 
 public class BestShotCapturePlugin extends PluginCapture
 {
-	private boolean takingAlready=false;
-		
     //defaul val. value should come from config
 	private int imageAmount = 5;
 
-    private boolean inCapture;
     private int imagesTaken=0;
     
     private static String sImagesAmountPref;
@@ -163,36 +158,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
-	
-	@Override
-	public void OnShutterClick()
-	{
-		if (inCapture == false)
-        {
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
-			
-			MainScreen.thiz.MuteShutter(true);
-			
-			int focusMode = CameraController.getInstance().getFocusMode();
-			if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-					CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					&& focusMode != -1
-					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-	      				 focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
-	    				 focusMode == CameraParameters.AF_MODE_INFINITY ||
-	    				 focusMode == CameraParameters.AF_MODE_FIXED ||
-	    				 focusMode == CameraParameters.AF_MODE_EDOF)
-	        				&& !MainScreen.getAutoFocusLock())
-				takingAlready = true;			
-			else if(takingAlready == false)
-			{
-				takePicture();
-			}
-        }
-	}
-	
-	
+		
 	public void takePicture()
 	{
 		if(inCapture == false)

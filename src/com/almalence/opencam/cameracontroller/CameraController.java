@@ -20,7 +20,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.opencam_plus;
 +++ --> */
 // <!-- -+-
-package com.almalence.opencam;
+package com.almalence.opencam.cameracontroller;
 //-+- -->
 
 import java.io.IOException;
@@ -29,6 +29,14 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginManagerInterface;
+import com.almalence.opencam.R;
+import com.almalence.opencam.R.string;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -155,10 +163,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean isHALv3 = false;
 	private static boolean isHALv3Supported = false;
 	
-	public String[] cameraIdList={""};
-	
-	public static boolean cameraConfigured = false;
-	
+	protected String[] cameraIdList={""};
 	
 	// Flags to know which camera feature supported at current device
 	private boolean mEVSupported = false;
@@ -167,13 +172,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private boolean mFocusModeSupported = false;
 	private boolean mFlashModeSupported = false;
 	private boolean mISOSupported = false;
-	private boolean mCameraChangeSupported = false;
 	
 	private int minExpoCompensation = 0;
 	private int maxExpoCompensation = 0;
 	private float expoCompensationStep = 0;
 	
-	public boolean mVideoStabilizationSupported = false;
+	protected boolean mVideoStabilizationSupported = false;
 
 	public static byte[] supportedSceneModes;
 	public static byte[] supportedWBModes;
@@ -702,7 +706,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.cameraParameters = CameraController.camera.getParameters(); //Initialize of camera parameters variable
 			
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-				cameraController.mVideoStabilizationSupported = isVideoStabilizationSupported();
+				cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
 			
 			pluginManager.SelectDefaults();
 
@@ -1024,7 +1028,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				Log.e("MainScreen", "setCameraParameters exception: " + e.getMessage());
+				Log.e(TAG, "setCameraParameters exception: " + e.getMessage());
 				return false;
 			}
 			
@@ -1044,7 +1048,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				Log.e("MainScreen", "applyCameraParameters exception: " + e.getMessage());
+				Log.e(TAG, "applyCameraParameters exception: " + e.getMessage());
 				return false;
 			}
 			
@@ -1089,12 +1093,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	@TargetApi(15)
-	public boolean isVideoStabilizationSupported()
+	public boolean getVideoStabilizationSupported()
 	{
 		if(CameraController.cameraParameters != null)
 			return CameraController.cameraParameters.isVideoStabilizationSupported();
 		
 		return false;
+	}
+	
+	public boolean isVideoStabilizationSupported()
+	{
+		return mVideoStabilizationSupported;
 	}
 	
 	public boolean isExposureLockSupported()
@@ -1662,7 +1671,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				catch(Exception e)
 				{
 					e.printStackTrace();
-					Log.e("MainScreen", "getSceneMode exception: " + e.getMessage());
+					Log.e(TAG, "getSceneMode exception: " + e.getMessage());
 				}
 			}
 		}
@@ -1687,7 +1696,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				catch(Exception e)
 				{
 					e.printStackTrace();
-					Log.e("MainScreen", "getWBMode exception: " + e.getMessage());
+					Log.e(TAG, "getWBMode exception: " + e.getMessage());
 				}
 			}
 		}
@@ -1714,7 +1723,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			catch (Exception e)
 			{
 				e.printStackTrace();
-				Log.e("MainScreen", "getFocusMode exception: " + e.getMessage());
+				Log.e(TAG, "getFocusMode exception: " + e.getMessage());
 			}
 		}
 		else
@@ -1738,7 +1747,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				catch (Exception e)
 				{
 					e.printStackTrace();
-					Log.e("MainScreen", "getFlashMode exception: " + e.getMessage());
+					Log.e(TAG, "getFlashMode exception: " + e.getMessage());
 				}
 			}
 		}
@@ -1927,7 +1936,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				catch (RuntimeException e)
 				{
-					Log.e("SetFocusArea", e.getMessage());
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		}
@@ -1957,7 +1966,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} 
 				catch (RuntimeException e)
 				{
-					Log.e("SetMeteringArea", e.getMessage());
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		}
@@ -2062,7 +2071,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //			if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
 //			{
 //				mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-//				// Log.e("", "mFocusState = " + getFocusState());
+//				// Log.e(TAG, "mFocusState = " + getFocusState());
 //				camera.setPreviewCallback(null);
 //				camera.takePicture(null, null, null, mainContext);
 //				return true;
@@ -2082,7 +2091,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
 				{
 					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-					// Log.e("", "mFocusState = " + getFocusState());
+					// Log.e(TAG, "mFocusState = " + getFocusState());
 					camera.setPreviewCallback(null);
 					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
 					return 0;
@@ -2112,7 +2121,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						CameraController.getCamera().autoFocus(listener);
 					}catch (Exception e) {
 						e.printStackTrace();
-						Log.e("MainScreen autoFocus(listener) failed", "autoFocus: " + e.getMessage());
+						Log.e(TAG, "autoFocus: " + e.getMessage());
 						return false;
 					}
 					return true;
@@ -2139,13 +2148,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (CameraController.mCaptureState != CameraController.CAPTURE_STATE_CAPTURING)
 					{
 						//int fm = thiz.getFocusMode();
-						// Log.e("", "mCaptureState = " + mCaptureState);
+						// Log.e(TAG, "mCaptureState = " + mCaptureState);
 						CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
 						try {
 							CameraController.getCamera().autoFocus(CameraController.getInstance());
 						}catch (Exception e) {
 							e.printStackTrace();
-							Log.e("MainScreen autoFocus() failed", "autoFocus: " + e.getMessage());
+							Log.e(TAG, "autoFocus: " + e.getMessage());
 							return false;
 						}					
 						return true;
@@ -2173,7 +2182,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				catch(RuntimeException exp)
 				{
-					Log.e("MainScreen", "cancelAutoFocus failed. Message: " + exp.getMessage());
+					Log.e(TAG, "cancelAutoFocus failed. Message: " + exp.getMessage());
 				}
 			}
 		}

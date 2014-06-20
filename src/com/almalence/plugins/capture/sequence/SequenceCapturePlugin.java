@@ -19,8 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.sequence;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
-
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
@@ -30,20 +28,18 @@ import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
 
 /* <!-- +++
+import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
 +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraController;
-import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -55,14 +51,11 @@ Implements sequence capture plugin - captures predefined number of images
 
 public class SequenceCapturePlugin extends PluginCapture
 {
-	private boolean takingAlready=false;
-		
     //defaul val. value should come from config
 	private int imageAmount = 1;
     private int pauseBetweenShots = 0;
     
     private int imagesTaken=0;
-    private boolean inCapture;
 	
 	public SequenceCapturePlugin()
 	{
@@ -96,40 +89,6 @@ public class SequenceCapturePlugin extends PluginCapture
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
-	
-	@Override
-	public void OnShutterClick()
-	{
-		if (inCapture == false)
-        {
-			if (PluginManager.getInstance().getProcessingCounter()!=0)
-			{
-				Toast.makeText(MainScreen.thiz, "Processing in progress. Please wait.", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
-			
-			MainScreen.thiz.MuteShutter(true);
-			
-			int focusMode = CameraController.getInstance().getFocusMode();
-			if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-					CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					&& focusMode != -1
-					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-	      				  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
-	    				  focusMode == CameraParameters.AF_MODE_INFINITY ||
-	    				  focusMode == CameraParameters.AF_MODE_FIXED ||
-	    				  focusMode == CameraParameters.AF_MODE_EDOF)
-	        				&& !MainScreen.getAutoFocusLock())
-				takingAlready = true;			
-			else if(takingAlready == false)
-			{
-				takePicture();
-			}
-        }
-	}
 	
 	public void takePicture()
 	{

@@ -38,7 +38,7 @@ import com.almalence.opencam_plus.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.plugins.capture.video.EglEncoder;
