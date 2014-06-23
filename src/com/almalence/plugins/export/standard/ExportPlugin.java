@@ -406,8 +406,10 @@ public class ExportPlugin extends PluginExport
                 // Can't figure out why, other Exif tools work fine. 
                 ExifInterface ei = new ExifInterface(file.getAbsolutePath());
                 String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+                String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
                 if(tag_model != null) {
 	        		ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+	        		ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
 	            }
                 ei.saveAttributes();
                 
@@ -449,7 +451,6 @@ public class ExportPlugin extends PluginExport
 	            String tag_focal_length = PluginManager.getInstance().getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
 	            String tag_iso = PluginManager.getInstance().getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
 	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
-	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));	            
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
@@ -572,11 +573,11 @@ public class ExportPlugin extends PluginExport
 	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            }
-		            if(tag_make != null) {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(tag_make.getBytes());
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
-		            }
+//		            if(tag_make != null) {
+//		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+//		        		value.setBytes(tag_make.getBytes());
+//		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
+//		            }
 		            if(tag_spectral_sensitivity != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());
