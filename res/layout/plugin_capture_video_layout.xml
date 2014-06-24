@@ -29,20 +29,6 @@
 			   		android:layout_gravity="left"		   		
 			   		android:onClick="onButtonClick">
 			 	</com.almalence.ui.RotateImageView>
-			 	<com.almalence.ui.RotateImageView
-					android:id="@+id/buttonPauseVideo"
-					android:src="@drawable/plugin_capture_video_timelapse_inactive"
-					android:background="@android:color/transparent"			
-					android:layout_height="@dimen/videobuttons_size"
-					android:layout_width="@dimen/videobuttons_size"								
-					android:scaleType="fitCenter"
-					android:paddingLeft="0dp"
-					android:paddingRight="0dp"
-					android:paddingBottom="0dp"
-					android:paddingTop="0dp"
-					android:layout_marginLeft="10dp"				
-			   		android:layout_gravity="left"		   		
-			   		android:onClick="onButtonClick" />
 		 	</LinearLayout>
 		 	
 	    	<LinearLayout

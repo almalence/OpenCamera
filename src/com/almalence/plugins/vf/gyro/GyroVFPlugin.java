@@ -65,6 +65,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	
 	private RelativeLayout mHorizonIndicatorContainer;
 	private RelativeLayout mHorizonIndicatorMarkContainer;
+	private RotateImageView mHorizonIndicatorMarkRotation;
 	private RotateImageView mHorizonIndicatorMarkHorizontal;
 	private RotateImageView mHorizonIndicatorMarkTopDown;
 	private RotateImageView mHorizonIndicatorAim;
@@ -297,7 +298,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			
 			int color = 255;
 			mHorizonIndicatorMarkTopDown.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
-			mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
+			mHorizonIndicatorMarkRotation.setColorFilter(Color.rgb(color, color, 0), Mode.MULTIPLY);
 			
 			horizon_updating.set(false);
 			return;
@@ -305,6 +306,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 		
 		if ((Math.abs(horizontalError) > 1.0f && (mOrientation == 0 || mOrientation == 180 || flat)) || (Math.abs(verticalError) > 1.0f && (mOrientation == 90 || mOrientation == 270 || flat))) {
 			flat = true;
+			mHorizonIndicatorMarkRotation.setVisibility(View.GONE);
 			mHorizonIndicatorMarkHorizontal.setVisibility(View.GONE);
 			mHorizonIndicatorMarkTopDown.setVisibility(View.VISIBLE);
 			mHorizonIndicatorAim.setVisibility(View.GONE);
@@ -357,6 +359,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			horizon_updating.set(false);
 		} else {
 			flat = false;
+			mHorizonIndicatorMarkRotation.setVisibility(View.VISIBLE);
 			mHorizonIndicatorMarkHorizontal.setVisibility(View.VISIBLE);
 			mHorizonIndicatorMarkTopDown.setVisibility(View.GONE);
 			mHorizonIndicatorAim.setVisibility(View.VISIBLE);
@@ -394,35 +397,35 @@ public class GyroVFPlugin extends PluginViewfinder {
 		
 		if(mOrientation == 90 || mOrientation == 270) {
 			if (colorVert > 100) {
-				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorVert, colorVert, 0), Mode.MULTIPLY); 
+				mHorizonIndicatorMarkRotation.setColorFilter(Color.rgb(colorVert, colorVert, 0), Mode.MULTIPLY); 
 			}
 			else {
-				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+				mHorizonIndicatorMarkRotation.clearColorFilter();
 			}
 		}
 		else {
 			if (colorHorz > 100) {
-				mHorizonIndicatorMarkHorizontal.setColorFilter(Color.rgb(colorHorz, colorHorz, 0), Mode.MULTIPLY); 
+				mHorizonIndicatorMarkRotation.setColorFilter(Color.rgb(colorHorz, colorHorz, 0), Mode.MULTIPLY); 
 			}
 			else {
-				mHorizonIndicatorMarkHorizontal.clearColorFilter();
+				mHorizonIndicatorMarkRotation.clearColorFilter();
 			}	
 		}
 		
 		if (mOrientation == 90) {
-			mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideErrorVertical) + 180 + mOrientation);
+			mHorizonIndicatorMarkRotation.setOrientation((int)Math.toDegrees(sideErrorVertical) + 180 + mOrientation);
 		} 	
 		
 		if (mOrientation == 270) {
-			mHorizonIndicatorMarkHorizontal.setOrientation(- (int)Math.toDegrees(sideErrorVertical) + mOrientation);
+			mHorizonIndicatorMarkRotation.setOrientation(- (int)Math.toDegrees(sideErrorVertical) + mOrientation);
 		}
 		
 		if (mOrientation == 180) {
-			mHorizonIndicatorMarkHorizontal.setOrientation((int)Math.toDegrees(sideErrorHorizontal) + 180 + mOrientation);
+			mHorizonIndicatorMarkRotation.setOrientation((int)Math.toDegrees(sideErrorHorizontal) + 180 + mOrientation);
 		}
 		
 		if (mOrientation == 0) {
-			mHorizonIndicatorMarkHorizontal.setOrientation(- (int)Math.toDegrees(sideErrorHorizontal) + mOrientation);
+			mHorizonIndicatorMarkRotation.setOrientation(- (int)Math.toDegrees(sideErrorHorizontal) + mOrientation);
 		}
 	} 
 	
@@ -440,6 +443,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 		
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim_top_down);
+		mHorizonIndicatorMarkRotation = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_rotation);
 		mHorizonIndicatorMarkHorizontal = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_horizontal);
 		mHorizonIndicatorMarkTopDown = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_mark_top_down);
 		mHorizonIndicatorContainer = (RelativeLayout) mHorizonLayout.findViewById(R.id.horizon_indicator_container);

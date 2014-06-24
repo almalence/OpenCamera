@@ -22,12 +22,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Build;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.almalence.opencam.MainScreen;
@@ -36,7 +44,7 @@ import com.almalence.opencam.R;
 public class AppRater
 {
 	private static final int DAYS_UNTIL_PROMPT = 0;
-	private static final int LAUNCHES_UNTIL_PROMPT = 15;
+	private static final int LAUNCHES_UNTIL_PROMPT = 1;//15
 
 	public static void app_launched(Activity mContext)
 	{
@@ -94,8 +102,6 @@ public class AppRater
 
 	private static void showRateDialog(final Activity mContext, final SharedPreferences prefs)
 	{
-		final String APP_TITLE = mContext.getResources().getString(R.string.app_name);
-		
 		final float density = mContext.getResources().getDisplayMetrics().density;
 
 		LinearLayout ll = new LinearLayout(mContext);
@@ -103,18 +109,28 @@ public class AppRater
 		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
 		
 		TextView tv = new TextView(mContext);
-		tv.setText("If you enjoy using "
-				+ APP_TITLE + ", please take a moment to rate it.\n\nThanks for your support!");
+		tv.setText(mContext.getResources().getString(R.string.raterMain));
 		tv.setWidth((int)(250 * density));
 		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
 		ll.addView(tv);
 
-		Button b1 = new Button(mContext);
-		b1.setText("Rate " + APP_TITLE);
-		ll.addView(b1);
+		//rating bar
+		final RatingBar ratingBar = new RatingBar(mContext);
+		ratingBar.setNumStars(5);
+		ratingBar.setStepSize(1);
+		LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+		stars.getDrawable(0).setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+		stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+		
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.gravity=Gravity.CENTER_HORIZONTAL;
+		params.setMargins(0, 5, 0, 10);
+		ratingBar.setLayoutParams(params);
+		ll.addView(ratingBar);
+
 
 		Button b3 = new Button(mContext);
-		b3.setText("No, thanks");
+		b3.setText(mContext.getResources().getString(R.string.raterNo));
 		ll.addView(b3);
 		
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -129,22 +145,28 @@ public class AppRater
 			}
 		});
 		
-		b1.setOnClickListener(new OnClickListener()
+		
+		ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener()
 		{
-			public void onClick(View v)
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+                    boolean fromUser)
 			{
-				MainScreen.CallStoreFree(mContext);
-				
 				if (prefs != null)
 				{
 					prefs.edit().putBoolean("dontshowagain", true).commit();
-					
-					mContext.finish();
 				}
-				
 				dialog.dismiss();
+				
+				if (rating>= 4)
+				{
+					mContext.finish();
+					MainScreen.CallStoreFree(mContext);
+				}
+				else
+					contactSupport();
 			}
 		});
+
 		b3.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -152,7 +174,6 @@ public class AppRater
 				if (prefs != null)
 				{
 					prefs.edit().putBoolean("dontshowagain", true).commit();
-					
 					mContext.finish();
 				}
 				
@@ -162,4 +183,64 @@ public class AppRater
 		
 		dialog.show();
 	}
+	
+	private static void contactSupport()
+	{
+		final float density = MainScreen.thiz.getResources().getDisplayMetrics().density;
+
+		LinearLayout ll = new LinearLayout(MainScreen.thiz);
+		ll.setOrientation(LinearLayout.VERTICAL);
+		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
+		
+		TextView tv = new TextView(MainScreen.thiz);
+		tv.setText(MainScreen.thiz.getResources().getString(R.string.raterSendReview));
+		tv.setWidth((int)(250 * density));
+		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
+		ll.addView(tv);
+
+		Button b1 = new Button(MainScreen.thiz);
+		b1.setText(MainScreen.thiz.getResources().getString(R.string.raterSend));
+		ll.addView(b1);
+
+		Button b2 = new Button(MainScreen.thiz);
+		b2.setText(MainScreen.thiz.getResources().getString(R.string.raterNo));
+		ll.addView(b2);
+		
+		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.thiz);
+		builder.setView(ll);
+		final AlertDialog dialog = builder.create();
+		dialog.setOnCancelListener(new OnCancelListener()
+		{
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				MainScreen.thiz.finish();
+			}
+		});
+		
+		b1.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				Intent intent = new Intent(Intent.ACTION_SENDTO);
+				intent.setType("message/rfc822");
+				intent.putExtra(Intent.EXTRA_SUBJECT, "A Better Camera inapp review");
+				intent.setData(Uri.parse("mailto:support@abc.almalence.com"));
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				MainScreen.thiz.startActivity(intent);
+				dialog.dismiss();
+				MainScreen.thiz.finish();
+			}
+		});
+		b2.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				dialog.dismiss();
+				MainScreen.thiz.finish();
+			}
+		});
+		dialog.show();
+	}
+	
 }

@@ -150,7 +150,7 @@ public class AlmalenceGUI extends GUI implements
 	private int infoSet = INFO_PARAMS;
 
 	public enum ShutterButton {
-		DEFAULT, RECORDER_START, RECORDER_STOP, RECORDER_RECORDING
+		DEFAULT, RECORDER_START, RECORDER_STOP, RECORDER_RECORDING, RECORDER_PAUSED
 	};
 
 	public enum SettingsType {
@@ -6358,19 +6358,49 @@ public class AlmalenceGUI extends GUI implements
 
 	// shutter icons setter
 	public void setShutterIcon(ShutterButton id) {
-		if (id == ShutterButton.DEFAULT)
-			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.button_shutter);
-		else if (id == ShutterButton.RECORDER_START)
-			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-		else if (id == ShutterButton.RECORDER_STOP)
-			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-		else if (id == ShutterButton.RECORDER_RECORDING)
-			((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-					.setImageResource(R.drawable.gui_almalence_shutter_pressed_video);
-	}
+		RotateImageView mainButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
+		RotateImageView additionalButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional));
+		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
+		
+		// photo
+		if (id == ShutterButton.DEFAULT) {
+			buttonShutterContainer.setOrientation(LinearLayout.VERTICAL);
+			buttonShutterContainer.setPadding(0, 0, 0, 0);
+			
+			additionalButton.setVisibility(View.GONE);
+			
+			mainButton.setImageResource(R.drawable.button_shutter);
+			int dp = (int) MainScreen.thiz.getResources().getDimension(R.dimen.shutterHeight);
+			mainButton.getLayoutParams().width = dp;
+			mainButton.getLayoutParams().height = dp;
+		} 
+		// video
+		else {
+			buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
+			buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
+			
+			additionalButton.setVisibility(View.VISIBLE);
+
+			int dp = (int) MainScreen.thiz.getResources().getDimension(R.dimen.videoShutterHeight);
+			mainButton.getLayoutParams().width = dp;
+			mainButton.getLayoutParams().height = dp;
+			
+			if (id == ShutterButton.RECORDER_START) {
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+			}
+			else if (id == ShutterButton.RECORDER_STOP) {
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+			} else if (id == ShutterButton.RECORDER_PAUSED) {
+				// paused
+				//additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+			}
+			else if (id == ShutterButton.RECORDER_RECORDING) {
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_stop_video);
+			}
+		}
+	}	
 
 	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event) {
 		// hide hint screen
