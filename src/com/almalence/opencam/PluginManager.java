@@ -846,6 +846,16 @@ public class PluginManager implements PluginManagerInterface {
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
 		}
+		else if ("vf_inactive_settings".equals(settings)) 
+		{
+			for (int i = 0; i < listVF.size(); i++) 
+			{				
+				Plugin pg = listVF.get(i);
+				if (!activeVF.contains(pg.getID()))
+					inactivePlugins.add(pg);
+			}
+			addHeadersContent(pf, inactivePlugins, false);
+		}
 		else if ("save_configuration".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
