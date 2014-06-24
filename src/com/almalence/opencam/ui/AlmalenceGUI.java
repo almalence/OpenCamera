@@ -1894,7 +1894,7 @@ public class AlmalenceGUI extends GUI implements
 	
 				int initValue = preferences.getInt(MainScreen.sISOPref, MainScreen.sDefaultValue);
 				if (!activeISONames.contains(initValue)) {
-					if (CameraController.getInstance().isFrontCamera())
+					if (CameraController.isFrontCamera())
 						initValue = activeISONames.get(0);
 					else
 						initValue = MainScreen.sDefaultValue;

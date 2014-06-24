@@ -95,15 +95,15 @@ public class NightCapturePlugin extends PluginCapture
     private static Toast capturingDialog;
 
     //almashot - related
-    private int frame_num;
+    private int frameNumber;
 	private boolean aboutToTakePicture=false;
 	private int nVFframesToBuffer;
 
 	// shared between activities 
 	private static int CapIdx;
 	private static int total_frames;
-	private static int compressed_frame[] = new int[HI_SPEED_FRAMES];
-	private static int compressed_frame_len[] = new int[HI_SPEED_FRAMES];
+	private static int[] compressed_frame = new int[HI_SPEED_FRAMES];
+	private static int[] compressed_frame_len = new int[HI_SPEED_FRAMES];
     
     //Night vision variables
     private GLCameraPreview cameraPreview;
@@ -118,8 +118,8 @@ public class NightCapturePlugin extends PluginCapture
 	FloatBuffer cubeBuff;
 	FloatBuffer texBuff;
 	
-	byte[] yuv_data;
-	byte[] rgb_data;
+	byte[] yuvData;
+	byte[] rgbData;
 	
 	float currHalfWidth;
 	float currHalfHeight;
@@ -253,7 +253,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onExportFinished()
 	{
-		if(modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && inCapture == false)
+		if(modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && !inCapture)
 			modeSwitcher.setEnabled(true);
 	}
 	
@@ -304,8 +304,8 @@ public class NightCapturePlugin extends PluginCapture
 	    	data2 = null;
 	    	dataS = null;
 	    	dataRotated = null;
-	    	yuv_data = null;
-	    	rgb_data = null;
+	    	yuvData = null;
+	    	rgbData = null;
 	    	
 	    	msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
 		}
@@ -349,7 +349,7 @@ public class NightCapturePlugin extends PluginCapture
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
 		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		SelectImageDimensionNight();
+		selectImageDimensionNight();
 	}
 	
 	@Override
@@ -365,7 +365,7 @@ public class NightCapturePlugin extends PluginCapture
 		SelectImageDimension();		
 	}
 	
-	private void SelectImageDimensionNight()
+	private void selectImageDimensionNight()
 	{
 		int mode = Integer.parseInt(ModePreference);
 
@@ -398,36 +398,33 @@ public class NightCapturePlugin extends PluginCapture
 
         // ----- Find max-resolution capture dimensions
         List<CameraController.Size> cs;
-    	int MinMPIX = MIN_MPIX_SUPPORTED;
+    	int minMPIX = MIN_MPIX_SUPPORTED;
         if (mode == 1)	// super mode
         {
         	cs = RemoveDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
-        	MinMPIX = MIN_MPIX_PREVIEW;
+        	minMPIX = MIN_MPIX_PREVIEW;
         }
         else
         {
         	cs = CameraController.getInstance().getSupportedPictureSizes();
-        	if(Build.MODEL.contains("HTC One X"))
+        	if(Build.MODEL.contains("HTC One X") && !CameraController.isFrontCamera())
     		{
-    			if (CameraController.isFrontCamera() == false)
-    			{
     				CameraController.Size additional= null;
     				additional= CameraController.getInstance().new Size(3264, 2448);
     				additional.setWidth(3264);
     				additional.setHeight(2448);
     				cs.add(additional);
-    			}
     		}
         }
 
-        int Capture5mIdx = -1;
-        long Capture5mMpix = 0;
-        int Capture5mWidth = 0;
-        int Capture5mHeight = 0;
-        int CaptureIdx = -1;
-        long CaptureMpix = 0;
-        int CaptureWidth = 0;
-        int CaptureHeight = 0;
+        int сapture5mIdx = -1;
+        long сapture5mMpix = 0;
+        int сapture5mWidth = 0;
+        int сapture5mHeight = 0;
+        int сaptureIdx = -1;
+        long сaptureMpix = 0;
+        int сaptureWidth = 0;
+        int сaptureHeight = 0;
 		boolean prefFound = false;
         
 		// figure default resolution
@@ -436,15 +433,12 @@ public class NightCapturePlugin extends PluginCapture
             CameraController.Size s = cs.get(ii); 
             long mpix = (long)s.getWidth()*s.getHeight();
             
-    		if ((mpix >= MinMPIX) && (mpix < maxMpix))
+    		if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > сapture5mMpix))
     		{
-            	if (mpix > Capture5mMpix)
-            	{
-                    Capture5mIdx = ii;
-            		Capture5mMpix = mpix;
-            		Capture5mWidth = s.getWidth();
-            		Capture5mHeight = s.getHeight();
-            	}
+                сapture5mIdx = ii;
+        		сapture5mMpix = mpix;
+        		сapture5mWidth = s.getWidth();
+        		сapture5mHeight = s.getHeight();
     		}
     	}
     	
@@ -453,46 +447,43 @@ public class NightCapturePlugin extends PluginCapture
             CameraController.Size s = cs.get(ii); 
             long mpix = (long)s.getWidth()*s.getHeight();
             
-        	if ((ii==prefIdx) && (mpix >= MinMPIX))
+        	if ((ii==prefIdx) && (mpix >= minMPIX))
         	{
         		prefFound = true;
-                CaptureIdx = ii;
-        		CaptureMpix = mpix;
-        		CaptureWidth = s.getWidth();
-        		CaptureHeight = s.getHeight();
+                сaptureIdx = ii;
+        		сaptureMpix = mpix;
+        		сaptureWidth = s.getWidth();
+        		сaptureHeight = s.getHeight();
         		break;
         	}
         	
-        	if (mpix > CaptureMpix)
+        	if (mpix > сaptureMpix)
         	{
-                CaptureIdx = ii;
-        		CaptureMpix = mpix;
-        		CaptureWidth = s.getWidth();
-        		CaptureHeight = s.getHeight();
+                сaptureIdx = ii;
+        		сaptureMpix = mpix;
+        		сaptureWidth = s.getWidth();
+        		сaptureHeight = s.getHeight();
         	}
         }
 
     	// default to about 5Mpix if nothing is set in preferences or maximum resolution is above memory limits
-    	if (Capture5mMpix>0)
+    	if (сapture5mMpix>0 && !prefFound)
     	{
-	    	if (!prefFound)
-	    	{
-                CaptureIdx = Capture5mIdx;
-	    		CaptureMpix = Capture5mMpix;
-	    		CaptureWidth = Capture5mWidth;
-	    		CaptureHeight = Capture5mHeight;
-	    	}
+            сaptureIdx = сapture5mIdx;
+    		сaptureMpix = сapture5mMpix;
+    		сaptureWidth = сapture5mWidth;
+    		сaptureHeight = сapture5mHeight;
     	}
     	
-    	captureIndex = CaptureIdx;
-    	imgCaptureWidth = CaptureWidth;
-        imgCaptureHeight = CaptureHeight;
+    	captureIndex = сaptureIdx;
+    	imgCaptureWidth = сaptureWidth;
+        imgCaptureHeight = сaptureHeight;
 	}
 	
 	@Override
 	public void SelectImageDimension()
     {
-		SelectImageDimensionNight();
+		selectImageDimensionNight();
 		setCameraImageSize();
     }
 	
@@ -653,12 +644,12 @@ public class NightCapturePlugin extends PluginCapture
 	// leave only top-most resolution for each aspect ratio for super mode
     private static List<CameraController.Size> RemoveDuplicateResolutions(List<CameraController.Size> cs)
     {
-    	List<Long> MPix = new ArrayList<Long>();
-    	List<Integer> RatIdx = new ArrayList<Integer>();
-    	long ri_max_mpix[] = new long [4];
+    	List<Long> mpix = new ArrayList<Long>();
+    	List<Integer> ratIdx = new ArrayList<Integer>();
+    	long riMaxMpix[] = new long [4];
     	
     	for (int i=0; i<4; ++i)
-    		ri_max_mpix[i] = 0;
+    		riMaxMpix[i] = 0;
     	
     	for (int ii=0; ii<cs.size(); ++ii)
     	{
@@ -668,15 +659,18 @@ public class NightCapturePlugin extends PluginCapture
         	float ratio = (float)s.getWidth()/s.getHeight();
 
         	int ri = 0;
-            if (Math.abs(ratio - 4/3.f)  < 0.1f) ri = 1;
-            if (Math.abs(ratio - 3/2.f)  < 0.12f) ri = 2;
-            if (Math.abs(ratio - 16/9.f) < 0.15f) ri = 3;
+            if (Math.abs(ratio - 4/3.f)  < 0.1f)
+            	ri = 1;
+            if (Math.abs(ratio - 3/2.f)  < 0.12f)
+            	ri = 2;
+            if (Math.abs(ratio - 16/9.f) < 0.15f)
+            	ri = 3;
 
-            if (lmpix > ri_max_mpix[ri])
-            	ri_max_mpix[ri] = lmpix;
+            if (lmpix > riMaxMpix[ri])
+            	riMaxMpix[ri] = lmpix;
             
-        	MPix.add(lmpix);
-        	RatIdx.add(ri);
+        	mpix.add(lmpix);
+        	ratIdx.add(ri);
     	}
     	
     	// remove lower-than-maximum resolutions
@@ -692,7 +686,7 @@ public class NightCapturePlugin extends PluginCapture
             if (Math.abs(ratio - 3/2.f)  < 0.12f) ri = 2;
             if (Math.abs(ratio - 16/9.f) < 0.15f) ri = 3;
 
-            if (lmpix < ri_max_mpix[ri])
+            if (lmpix < riMaxMpix[ri])
             	cs.remove(ii);
             else
             	++ii;
@@ -990,7 +984,7 @@ public class NightCapturePlugin extends PluginCapture
         	capturingDialog.show();
     		
             // reiniting for every shutter press 
-            frame_num = 0;
+            frameNumber = 0;
     		total_frames = HI_RES_FRAMES;
     		
             PluginManager.getInstance().addToSharedMem("nightmode"+String.valueOf(SessionID), ModePreference);
@@ -1040,22 +1034,22 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-    	compressed_frame[frame_num] = SwapHeap.SwapToHeap(paramArrayOfByte);
-    	compressed_frame_len[frame_num] = paramArrayOfByte.length;
+    	compressed_frame[frameNumber] = SwapHeap.SwapToHeap(paramArrayOfByte);
+    	compressed_frame_len[frameNumber] = paramArrayOfByte.length;
     	
-    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
+    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frameNumber]));
     	
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frame_num+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frameNumber+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frameNumber+1));
     	
-    	if(frame_num == 0)
+    	if(frameNumber == 0)
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
     	
     	String message = MainScreen.thiz.getResources().getString(R.string.capturing);
 		message += " ";
-		message += frame_num+1 + "/";
+		message += frameNumber+1 + "/";
 		message +=  total_frames;
 		capturingDialog.setText(message);
 		capturingDialog.show();
@@ -1104,8 +1098,8 @@ public class NightCapturePlugin extends PluginCapture
 				Log.e("CapturePlugin", "Error while cropping: "+status);
 			
 			
-			compressed_frame[frame_num] = YuvImage.GetFrame(0);
-			compressed_frame_len[frame_num] = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+			compressed_frame[frameNumber] = YuvImage.GetFrame(0);
+			compressed_frame_len[frameNumber] = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
 			isYUV = true;
 		}
 		else if(im.getFormat() == ImageFormat.JPEG)
@@ -1117,26 +1111,26 @@ public class NightCapturePlugin extends PluginCapture
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
 			
-			compressed_frame[frame_num] = SwapHeap.SwapToHeap(jpegByteArray);
-			compressed_frame_len[frame_num] = frame_len;
+			compressed_frame[frameNumber] = SwapHeap.SwapToHeap(jpegByteArray);
+			compressed_frame_len[frameNumber] = frame_len;
 			
-			if(frame_num == 0)
+			if(frameNumber == 0)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
 		}
     	
-    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored"+(frame_num+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored"+(frameNumber+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frameNumber+1));
     	
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
     	
     	
     	String message = MainScreen.thiz.getResources().getString(R.string.capturing);
 		message += " ";
-		message += frame_num+1 + "/";
+		message += frameNumber+1 + "/";
 		message +=  total_frames;
 		capturingDialog.setText(message);
 		capturingDialog.show();
@@ -1153,7 +1147,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if(result.get(CaptureResult.REQUEST_ID) == requestID)
 		{
-			if(frame_num == 0)
+			if(frameNumber == 0)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
@@ -1214,10 +1208,10 @@ public class NightCapturePlugin extends PluginCapture
 					dataRotated = new byte[dataS.length];
 					ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
 					
-					yuv_data = dataRotated;
+					yuvData = dataRotated;
 				}
 				else
-				 yuv_data = dataS;
+				 yuvData = dataS;
 				
 				data1 = data2;
 				data2 = null;
@@ -1245,16 +1239,16 @@ public class NightCapturePlugin extends PluginCapture
 		    	compressed_frame[HI_SPEED_FRAMES-nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
 		    	compressed_frame_len[HI_SPEED_FRAMES-nVFframesToBuffer] = data.length;
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
-		    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
+		    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
+		    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frameNumber]));
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frameNumber+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frameNumber+1));
 				
-		    	if(frame_num == 0)
+		    	if(frameNumber == 0)
 		    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
 		    	
-		    	++frame_num;
+		    	++frameNumber;
 				--nVFframesToBuffer;
 				
 				// all frames captured - initiate processing
@@ -1336,10 +1330,10 @@ public class NightCapturePlugin extends PluginCapture
 					dataRotated = new byte[dataS.length];
 					ImageConversion.TransformNV21(dataS, dataRotated, previewWidth, previewHeight, 1, 0, 0);
 					
-					yuv_data = dataRotated;
+					yuvData = dataRotated;
 				}
 				else
-				 yuv_data = dataS;
+				 yuvData = dataS;
 				
 				data1 = data2;
 				data2 = null;
@@ -1395,13 +1389,13 @@ public class NightCapturePlugin extends PluginCapture
 		    	compressed_frame[HI_SPEED_FRAMES-nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
 		    	compressed_frame_len[HI_SPEED_FRAMES-nVFframesToBuffer] = imageWidth*2*imageHeight*2+2*((imageWidth*2+1)/2)*((imageHeight*2+1)/2);
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frame"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frame_num]));
-		    	PluginManager.getInstance().addToSharedMem("framelen"+(frame_num+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frame_num]));
+		    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
+		    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frameNumber]));
 		    	
-		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frame_num+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
-		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frame_num+1));
+		    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frameNumber+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+		    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frameNumber+1));
 				
-		    	if(frame_num == 0)
+		    	if(frameNumber == 0)
 		    	{
 		    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
 		    		MainScreen.setImageWidth(imageWidth);
@@ -1410,7 +1404,7 @@ public class NightCapturePlugin extends PluginCapture
 		    		MainScreen.setSaveImageHeight(imageHeight*2);
 		    	}
 		    	
-		    	++frame_num;
+		    	++frameNumber;
 				--nVFframesToBuffer;
 				
 				// all frames captured - initiate processing
@@ -1506,7 +1500,7 @@ public class NightCapturePlugin extends PluginCapture
 			synchronized(this)
 			{
 				try {
-					cameraPreview.draw(gl, yuv_data, MainScreen.mainContext);		//Draw the square
+					cameraPreview.draw(gl, yuvData, MainScreen.mainContext);		//Draw the square
 				} catch (RuntimeException e) {
 					Log.e("onGLDrawFrame", "onGLDrawFrame in Night some exception" + e.getMessage());
 				}
@@ -1537,7 +1531,7 @@ public class NightCapturePlugin extends PluginCapture
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			CameraController.startCameraPreview();
-            if (++frame_num < total_frames)
+            if (++frameNumber < total_frames)
             {
             	// re-open preview (closed once frame is captured)
 				try
@@ -1560,7 +1554,7 @@ public class NightCapturePlugin extends PluginCapture
 					// motorola's sometimes fail to restart preview after onPictureTaken (fixed),
 					// especially on night scene
 					// just repost our request and try once more (takePicture latency issues?)
-					--frame_num;
+					--frameNumber;
 					Message msg = new Message();
 					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 					msg.what = PluginManager.MSG_BROADCAST;
