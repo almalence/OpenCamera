@@ -417,14 +417,14 @@ public class NightCapturePlugin extends PluginCapture
     		}
         }
 
-        int сapture5mIdx = -1;
-        long сapture5mMpix = 0;
-        int сapture5mWidth = 0;
-        int сapture5mHeight = 0;
-        int сaptureIdx = -1;
-        long сaptureMpix = 0;
-        int сaptureWidth = 0;
-        int сaptureHeight = 0;
+        int capture5mIdx = -1;
+        long capture5mMpix = 0;
+        int capture5mWidth = 0;
+        int capture5mHeight = 0;
+        int captureIdx = -1;
+        long captureMpix = 0;
+        int captureWidth = 0;
+        int captureHeight = 0;
 		boolean prefFound = false;
         
 		// figure default resolution
@@ -433,12 +433,12 @@ public class NightCapturePlugin extends PluginCapture
             CameraController.Size s = cs.get(ii); 
             long mpix = (long)s.getWidth()*s.getHeight();
             
-    		if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > сapture5mMpix))
+    		if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > capture5mMpix))
     		{
-                сapture5mIdx = ii;
-        		сapture5mMpix = mpix;
-        		сapture5mWidth = s.getWidth();
-        		сapture5mHeight = s.getHeight();
+                capture5mIdx = ii;
+        		capture5mMpix = mpix;
+        		capture5mWidth = s.getWidth();
+        		capture5mHeight = s.getHeight();
     		}
     	}
     	
@@ -450,34 +450,34 @@ public class NightCapturePlugin extends PluginCapture
         	if ((ii==prefIdx) && (mpix >= minMPIX))
         	{
         		prefFound = true;
-                сaptureIdx = ii;
-        		сaptureMpix = mpix;
-        		сaptureWidth = s.getWidth();
-        		сaptureHeight = s.getHeight();
+                captureIdx = ii;
+        		captureMpix = mpix;
+        		captureWidth = s.getWidth();
+        		captureHeight = s.getHeight();
         		break;
         	}
         	
-        	if (mpix > сaptureMpix)
+        	if (mpix > captureMpix)
         	{
-                сaptureIdx = ii;
-        		сaptureMpix = mpix;
-        		сaptureWidth = s.getWidth();
-        		сaptureHeight = s.getHeight();
+                captureIdx = ii;
+        		captureMpix = mpix;
+        		captureWidth = s.getWidth();
+        		captureHeight = s.getHeight();
         	}
         }
 
     	// default to about 5Mpix if nothing is set in preferences or maximum resolution is above memory limits
-    	if (сapture5mMpix>0 && !prefFound)
+    	if (capture5mMpix>0 && !prefFound)
     	{
-            сaptureIdx = сapture5mIdx;
-    		сaptureMpix = сapture5mMpix;
-    		сaptureWidth = сapture5mWidth;
-    		сaptureHeight = сapture5mHeight;
+            captureIdx = capture5mIdx;
+    		captureMpix = capture5mMpix;
+    		captureWidth = capture5mWidth;
+    		captureHeight = capture5mHeight;
     	}
     	
-    	captureIndex = сaptureIdx;
-    	imgCaptureWidth = сaptureWidth;
-        imgCaptureHeight = сaptureHeight;
+    	captureIndex = captureIdx;
+    	imgCaptureWidth = captureWidth;
+        imgCaptureHeight = captureHeight;
 	}
 	
 	@Override
