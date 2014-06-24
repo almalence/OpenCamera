@@ -51,4 +51,11 @@
     <string name="volumeBtnExpoCorrection">Exposure correction</string>
     <string name="volumeBtnNone">None</string>
     
+    <string name="raterMain">If you enjoy using A Better Camera, please take a moment to rate it.\n\nThanks for your support!</string>
+    <string name="raterRate">Rate A Better Camera</string>
+    <string name="raterNo">No, thanks</string>
+    
+    <string name="raterSendReview"> We care about your opinion and want to make ABC better. Send your review directly to support.</string>
+    <string name="raterSend">Send</string>
+    
 </resources>

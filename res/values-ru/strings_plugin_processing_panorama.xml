@@ -21,7 +21,7 @@
 	<string name="Panorama_Help_Header">Панорама</string>
     <string name="Panorama_Help">Важно: Необходимо вращать вращать вокруг его оси!\n\n1. Держите устройство ровно\n2. Нажмите кнопку затвора ждя начала съемки\n3. Вращайте устройство, чтобы совместить экран с подсказкой. Когда подсказка станет зеленой - остановитесь для съемки.\n4. Поверните устройство до следующей подсказки.\n5. Для окончания съемки нажмите кнопку затвора.</string>
     
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Сохранять исходные кадры</string>
+	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Сохранять оригиналы</string>
 	
 	<string name="pref_plugin_capture_panoramaaugmented_frameoverlap_title">Пересечение кадров</string>
     

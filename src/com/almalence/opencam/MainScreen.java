@@ -545,11 +545,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CharSequence[] entries;
 		CharSequence[] entryValues;
 
-		if (CameraController.ResolutionsIdxesList != null) {
-			entries = CameraController.ResolutionsNamesList
-					.toArray(new CharSequence[CameraController.ResolutionsNamesList.size()]);
-			entryValues = CameraController.ResolutionsIdxesList
-					.toArray(new CharSequence[CameraController.ResolutionsIdxesList.size()]);
+		if (CameraController.getResolutionsIdxesList() != null) {
+			entries = CameraController.getResolutionsNamesList()
+					.toArray(new CharSequence[CameraController.getResolutionsNamesList().size()]);
+			entryValues = CameraController.getResolutionsIdxesList()
+					.toArray(new CharSequence[CameraController.getResolutionsIdxesList().size()]);
 
 			
 			ListPreference lp = (ListPreference) prefActivity
@@ -574,12 +574,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			// set currently selected image size
 			int idx;
-			for (idx = 0; idx < CameraController.ResolutionsIdxesList.size(); ++idx) {
+			for (idx = 0; idx < CameraController.getResolutionsIdxesList().size(); ++idx) {
 				if (idx == CameraController.getCameraImageSizeIndex()) {
 					break;
 				}
 			}
-			if (idx < CameraController.ResolutionsIdxesList.size()) {
+			if (idx < CameraController.getResolutionsIdxesList().size()) {
 				if(CameraController.getCameraIndex() == 0)
 					lp.setValueIndex(idx);
 				else
@@ -1092,7 +1092,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		// configure camera with all the surfaces to be ever used
 		try {
-			HALv3.getInstance().camDevice.configureOutputs(sfl);
+			HALv3.getCamera2().configureOutputs(sfl);
 		} catch (Exception e)	{
 			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
 			e.printStackTrace();
@@ -1440,7 +1440,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 					// if both surface is created and camera device is opened
 					// - ready to set up preview and other things
-					if (surfaceCreated && (HALv3.getInstance().camDevice != null))
+					if (surfaceCreated && (HALv3.getCamera2() != null))
 					{
 						configureCamera();
 						PluginManager.getInstance().onGUICreate();

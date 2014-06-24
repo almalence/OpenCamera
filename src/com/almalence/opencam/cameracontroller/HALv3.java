@@ -63,8 +63,8 @@ public class HALv3
 	private static Rect zoomCropPreview = null;
 	private static Rect zoomCropCapture = null;
 	private static float zoomLevel = 1f;
-	private static int af_regions[];
-	private static int ae_regions[];
+	private static int[] af_regions;
+	private static int[] ae_regions;
 	
 	public static HALv3 getInstance()
 	{
@@ -75,13 +75,13 @@ public class HALv3
 		return instance;
 	}
 	
-	public CameraManager manager = null;
-	public CameraCharacteristics camCharacter=null;
-	public cameraAvailableListener availListener = null;
-	public CameraDevice camDevice = null;
-	public CaptureRequest.Builder previewRequestBuilder = null;
+	private CameraManager manager = null;
+	private CameraCharacteristics camCharacter=null;
+	private cameraAvailableListener availListener = null;
+	protected CameraDevice camDevice = null;
+	private CaptureRequest.Builder previewRequestBuilder = null;
 	
-	public static boolean autoFocusTriggered = false;
+	private static boolean autoFocusTriggered = false;
 	
 	
 	public static void onCreateHALv3()
@@ -179,7 +179,7 @@ public class HALv3
 	}
 	
 	
-	public static void PopulateCameraDimensionsHALv3()
+	public static void populateCameraDimensionsHALv3()
 	{
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
 		CameraController.ResolutionsSizeList = new ArrayList<CameraController.Size>();
@@ -262,6 +262,7 @@ public class HALv3
 
 		return;
 	}
+	
 	
 	public static void fillPreviewSizeList(List<CameraController.Size> previewSizes)
 	{
