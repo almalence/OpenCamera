@@ -19,10 +19,10 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.video;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,11 +49,11 @@ import android.media.MediaScannerConnection;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.os.SystemClock;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
@@ -82,9 +82,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.ui.RotateImageView;
-import com.almalence.ui.Switch.Switch;
-import com.almalence.util.Util;
 /* <!-- +++
 import com.almalence.opencam_plus.CameraController;
 import com.almalence.opencam_plus.CameraParameters;
@@ -101,9 +98,12 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
-
+import com.almalence.ui.RotateImageView;
+import com.almalence.ui.Switch.Switch;
+import com.almalence.util.Util;
 import com.coremedia.iso.IsoFile;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
@@ -503,7 +503,7 @@ public class VideoCapturePlugin extends PluginCapture
 		buttonsLayout.setVisibility(View.VISIBLE);
 		
 		timeLapseButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonTimeLapse);
-		pauseVideoButton = (RotateImageView)buttonsLayout.findViewById(R.id.buttonPauseVideo);
+		pauseVideoButton = (RotateImageView) MainScreen.thiz.findViewById(R.id.buttonShutterAdditional);
 		Camera camera = CameraController.getCamera();
 	    if (camera != null)
 	    {
