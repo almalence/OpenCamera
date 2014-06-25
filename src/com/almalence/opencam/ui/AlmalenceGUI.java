@@ -377,6 +377,17 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
+	
+	private static final Map<String, String> unlockModePreference = new Hashtable<String, String>() {
+		{
+			put("hdrmode", "plugin_almalence_hdr");
+			put("movingobjects", "plugin_almalence_moving_burst");
+			put("sequence", "plugin_almalence_hdr");
+			put("groupshot", "plugin_almalence_groupshot");
+			put("panorama_augmented", "plugin_almalence_panorama");
+		}
+	};
+	
 	// Defining for top menu buttons (camera parameters settings)
 	private final int MODE_EV = R.id.evButton;
 	private final int MODE_SCENE = R.id.sceneButton;
@@ -1132,46 +1143,19 @@ public class AlmalenceGUI extends GUI implements
 		else 
 		{
 			String modeID = PluginManager.getInstance().getActiveMode().modeID;
-			
-			if ("hdrmode".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("movingobjects".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("sequence".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("groupshot".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("panorama_augmented".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else
-				ShowUnlockControl();
+			visibilityUnlockControl(unlockModePreference.get(modeID));
 		}
 		//-+- -->
+	}
+	
+	private void visibilityUnlockControl(String prefName)
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		
+		if (prefs.getBoolean(prefName, false))
+			HideUnlockControl();
+		else
+			ShowUnlockControl();
 	}
 	
 	private Map<Integer, View> initCameraParameterModeButtons(
@@ -3851,10 +3835,7 @@ public class AlmalenceGUI extends GUI implements
 		rlinvisible.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				guiView.findViewById(R.id.paramsLayout).clearAnimation();
-				guiView.findViewById(R.id.pluginsLayout).clearAnimation();
-				guiView.findViewById(R.id.fullscreenLayout).clearAnimation();
-				guiView.findViewById(R.id.infoLayout).clearAnimation();
+				clearLayoutsAnimation();
 			}
 
 			@Override
@@ -3869,10 +3850,7 @@ public class AlmalenceGUI extends GUI implements
 		lrinvisible.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				guiView.findViewById(R.id.paramsLayout).clearAnimation();
-				guiView.findViewById(R.id.pluginsLayout).clearAnimation();
-				guiView.findViewById(R.id.fullscreenLayout).clearAnimation();
-				guiView.findViewById(R.id.infoLayout).clearAnimation();
+				clearLayoutsAnimation();
 			}
 
 			@Override
@@ -3890,6 +3868,14 @@ public class AlmalenceGUI extends GUI implements
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putInt(MainScreen.sDefaultInfoSetPref, infoSet);
 		prefsEditor.commit();
+	}
+	
+	private void clearLayoutsAnimation()
+	{
+		guiView.findViewById(R.id.paramsLayout).clearAnimation();
+		guiView.findViewById(R.id.pluginsLayout).clearAnimation();
+		guiView.findViewById(R.id.fullscreenLayout).clearAnimation();
+		guiView.findViewById(R.id.infoLayout).clearAnimation();
 	}
 
 	// Method used by quick controls customization feature. Swaps current quick
@@ -4775,6 +4761,23 @@ public class AlmalenceGUI extends GUI implements
 			pressed_button.setSelected(true);
 		}
 	}
+	
+	private int findTopMenuButtonIndex(View view)
+	{
+		Set<Integer> keys = topMenuButtons.keySet();
+		Iterator<Integer> it = keys.iterator();
+		Integer pressed_button = -1;
+		while (it.hasNext()) {
+			Integer it_button = it.next();
+			View v = topMenuButtons.get(it_button);
+			if (v == view) {
+				pressed_button = it_button;
+				break;
+			}
+		}
+		
+		return pressed_button;
+	}
 
 	private void topMenuButtonPressed(int iTopMenuButtonPressed)
 	{
@@ -5171,203 +5174,24 @@ public class AlmalenceGUI extends GUI implements
 			//final boolean isFirstMode = mode_number == 0? true : false;
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			if (mode_number==0)
-			mode.setOnTouchListener(new OnTouchListener(){
-
+			mode.setOnTouchListener(new OnTouchListener()
+			{
 				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					//Log.e("AlmalenceGUI", "Mode onTouch! Action " + event.getAction());
+				public boolean onTouch(View v, MotionEvent event)
+				{
 					if(event.getAction() == MotionEvent.ACTION_CANCEL)// && isFirstMode)
 					{
-						hideModeList();
-
-						// get mode associated with pressed button
-						String key = buttonModeViewAssoc.get(v);
-						Mode mode = ConfigParser.getInstance().getMode(key);
-						// if selected the same mode - do not reinitialize camera
-						// and other objects.
-						if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
-							return false;
-
-						tmpActiveMode = mode;
-
-						if (mode.modeID.equals("video"))
-						{
-							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-							if (prefs.getBoolean("videoStartStandardPref", false))
-							{
-								PluginManager.getInstance().onPause(true);
-								Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-							    //MainScreen.thiz.startActivityForResult(intent, 111);
-								MainScreen.thiz.startActivity(intent);
-							    return true;
-							}
-						}
-						
-						// <!-- -+-
-						if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
-							return false;
-						//-+- -->
-						
-						new CountDownTimer(100, 100) {
-							public void onTick(long millisUntilFinished) {
-							}
-
-							public void onFinish() {
-								PluginManager.getInstance().switchMode(
-										tmpActiveMode);
-							}
-						}.start();
-
-						// set modes icon inside mode selection icon
-						Bitmap bm = null;
-						Bitmap iconBase = BitmapFactory.decodeResource(
-								MainScreen.mainContext.getResources(),
-								R.drawable.gui_almalence_select_mode);
-						int id = MainScreen.thiz.getResources().getIdentifier(
-								mode.icon, "drawable",
-								MainScreen.thiz.getPackageName());
-						Bitmap iconOverlay = BitmapFactory.decodeResource(
-								MainScreen.mainContext.getResources(),
-								MainScreen.thiz.getResources().getIdentifier(
-										mode.icon, "drawable",
-										MainScreen.thiz.getPackageName()));
-						iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-								(int) (iconBase.getWidth() / 1.8),
-								(int) (iconBase.getWidth() / 1.8), false);
-
-						bm = mergeImage(iconBase, iconOverlay);
-						bm = Bitmap
-								.createScaledBitmap(
-										bm,
-										(int) (MainScreen.mainContext
-												.getResources()
-												.getDimension(R.dimen.mainButtonHeightSelect)),
-										(int) (MainScreen.mainContext
-												.getResources()
-												.getDimension(R.dimen.mainButtonHeightSelect)),
-										false);
-						((RotateImageView) guiView
-								.findViewById(R.id.buttonSelectMode))
-								.setImageBitmap(bm);
-
-						int rid = MainScreen.thiz.getResources().getIdentifier(
-								tmpActiveMode.howtoText, "string",
-								MainScreen.thiz.getPackageName());
-						String howto = "";
-						if (rid != 0)
-							howto = MainScreen.thiz.getResources().getString(rid);
-						// show toast on mode changed
-						showToast(
-								v,
-								Toast.LENGTH_SHORT,
-								Gravity.CENTER,
-								((TextView) v.findViewById(R.id.modeText))
-										.getText()
-										+ " "
-										+ MainScreen.thiz.getResources().getString(
-												R.string.almalence_gui_selected)
-										+ (tmpActiveMode.howtoText.isEmpty() ? ""
-												: "\n") + howto, false, true);
-						//return true;
+						return changeMode(v);
 					}
-					//else
 						return false;
 				}
 				
 			});
-			mode.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					//Log.e("AlmalenceGUI", "Mode onClick!");
-					hideModeList();
-
-					// get mode associated with pressed button
-					String key = buttonModeViewAssoc.get(v);
-					Mode mode = ConfigParser.getInstance().getMode(key);
-					// if selected the same mode - do not reinitialize camera
-					// and other objects.
-					if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
-						return;
-
-					tmpActiveMode = mode;
-
-					if (mode.modeID.equals("video"))
-					{
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-						if (prefs.getBoolean("videoStartStandardPref", false))
-						{
-							PluginManager.getInstance().onPause(true);
-							Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-						    //MainScreen.thiz.startActivityForResult(intent, 111);
-						    MainScreen.thiz.startActivity(intent);
-						    return;
-						}
-					}
-					
-					// <!-- -+-
-					if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
-						return;
-					//-+- -->
-					
-					new CountDownTimer(100, 100) {
-						public void onTick(long millisUntilFinished) {
-						}
-
-						public void onFinish() {
-							PluginManager.getInstance().switchMode(
-									tmpActiveMode);
-						}
-					}.start();
-
-					// set modes icon inside mode selection icon
-					Bitmap bm = null;
-					Bitmap iconBase = BitmapFactory.decodeResource(
-							MainScreen.mainContext.getResources(),
-							R.drawable.gui_almalence_select_mode);
-					int id = MainScreen.thiz.getResources().getIdentifier(
-							mode.icon, "drawable",
-							MainScreen.thiz.getPackageName());
-					Bitmap iconOverlay = BitmapFactory.decodeResource(
-							MainScreen.mainContext.getResources(),
-							MainScreen.thiz.getResources().getIdentifier(
-									mode.icon, "drawable",
-									MainScreen.thiz.getPackageName()));
-					iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
-							(int) (iconBase.getWidth() / 1.8),
-							(int) (iconBase.getWidth() / 1.8), false);
-
-					bm = mergeImage(iconBase, iconOverlay);
-					bm = Bitmap
-							.createScaledBitmap(
-									bm,
-									(int) (MainScreen.mainContext
-											.getResources()
-											.getDimension(R.dimen.mainButtonHeightSelect)),
-									(int) (MainScreen.mainContext
-											.getResources()
-											.getDimension(R.dimen.mainButtonHeightSelect)),
-									false);
-					((RotateImageView) guiView
-							.findViewById(R.id.buttonSelectMode))
-							.setImageBitmap(bm);
-
-					int rid = MainScreen.thiz.getResources().getIdentifier(
-							tmpActiveMode.howtoText, "string",
-							MainScreen.thiz.getPackageName());
-					String howto = "";
-					if (rid != 0)
-						howto = MainScreen.thiz.getResources().getString(rid);
-					// show toast on mode changed
-					showToast(
-							v,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							((TextView) v.findViewById(R.id.modeText))
-									.getText()
-									+ " "
-									+ MainScreen.thiz.getResources().getString(
-											R.string.almalence_gui_selected)
-									+ (tmpActiveMode.howtoText.isEmpty() ? ""
-											: "\n") + howto, false, true);
+			mode.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					changeMode(v);
 				}
 			});
 			buttonModeViewAssoc.put(mode, tmp.modeID);
@@ -5384,6 +5208,102 @@ public class AlmalenceGUI extends GUI implements
 
 		modeAdapter.Elements = modeViews;
 	}
+	
+	private boolean changeMode(View v)
+	{
+		hideModeList();
+
+		// get mode associated with pressed button
+		String key = buttonModeViewAssoc.get(v);
+		Mode mode = ConfigParser.getInstance().getMode(key);
+		// if selected the same mode - do not reinitialize camera
+		// and other objects.
+		if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
+			return false;
+
+		tmpActiveMode = mode;
+
+		if (mode.modeID.equals("video"))
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			if (prefs.getBoolean("videoStartStandardPref", false))
+			{
+				PluginManager.getInstance().onPause(true);
+				Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
+			    //MainScreen.thiz.startActivityForResult(intent, 111);
+				MainScreen.thiz.startActivity(intent);
+			    return true;
+			}
+		}
+		
+		// <!-- -+-
+		if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
+			return false;
+		//-+- -->
+		
+		new CountDownTimer(100, 100) {
+			public void onTick(long millisUntilFinished) {
+			}
+
+			public void onFinish() {
+				PluginManager.getInstance().switchMode(
+						tmpActiveMode);
+			}
+		}.start();
+
+		// set modes icon inside mode selection icon
+		Bitmap bm = null;
+		Bitmap iconBase = BitmapFactory.decodeResource(
+				MainScreen.mainContext.getResources(),
+				R.drawable.gui_almalence_select_mode);
+		int id = MainScreen.thiz.getResources().getIdentifier(
+				mode.icon, "drawable",
+				MainScreen.thiz.getPackageName());
+		Bitmap iconOverlay = BitmapFactory.decodeResource(
+				MainScreen.mainContext.getResources(),
+				MainScreen.thiz.getResources().getIdentifier(
+						mode.icon, "drawable",
+						MainScreen.thiz.getPackageName()));
+		iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
+				(int) (iconBase.getWidth() / 1.8),
+				(int) (iconBase.getWidth() / 1.8), false);
+
+		bm = mergeImage(iconBase, iconOverlay);
+		bm = Bitmap
+				.createScaledBitmap(
+						bm,
+						(int) (MainScreen.mainContext
+								.getResources()
+								.getDimension(R.dimen.mainButtonHeightSelect)),
+						(int) (MainScreen.mainContext
+								.getResources()
+								.getDimension(R.dimen.mainButtonHeightSelect)),
+						false);
+		((RotateImageView) guiView
+				.findViewById(R.id.buttonSelectMode))
+				.setImageBitmap(bm);
+
+		int rid = MainScreen.thiz.getResources().getIdentifier(
+				tmpActiveMode.howtoText, "string",
+				MainScreen.thiz.getPackageName());
+		String howto = "";
+		if (rid != 0)
+			howto = MainScreen.thiz.getResources().getString(rid);
+		// show toast on mode changed
+		showToast(
+				v,
+				Toast.LENGTH_SHORT,
+				Gravity.CENTER,
+				((TextView) v.findViewById(R.id.modeText))
+						.getText()
+						+ " "
+						+ MainScreen.thiz.getResources().getString(
+								R.string.almalence_gui_selected)
+						+ (tmpActiveMode.howtoText.isEmpty() ? ""
+								: "\n") + howto, false, true);
+		return false;
+	}
+	
 
 	public void showToast(final View v, final int showLength,
 			final int gravity, final String toastText,
@@ -5975,18 +5895,7 @@ public class AlmalenceGUI extends GUI implements
 				prevEvent = MotionEvent.obtain(event);
 				scrolling = false;
 
-				Set<Integer> keys = topMenuButtons.keySet();
-				Iterator<Integer> it = keys.iterator();
-				Integer pressed_button = -1;
-				while (it.hasNext()) {
-					Integer it_button = it.next();
-					View v = topMenuButtons.get(it_button);
-					if (v == view) {
-						pressed_button = it_button;
-						break;
-					}
-				}
-				topMenuButtonPressed(pressed_button);
+				topMenuButtonPressed(findTopMenuButtonIndex(view));
 
 				return false;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -6067,18 +5976,7 @@ public class AlmalenceGUI extends GUI implements
 			paramsLayout.clearAnimation();
 			infoLayout.clearAnimation();
 
-			Set<Integer> keys = topMenuButtons.keySet();
-			Iterator<Integer> it = keys.iterator();
-			Integer pressed_button = -1;
-			while (it.hasNext()) {
-				Integer it_button = it.next();
-				View v = topMenuButtons.get(it_button);
-				if (v == view) {
-					pressed_button = it_button;
-					break;
-				}
-			}
-			topMenuButtonPressed(pressed_button);
+			topMenuButtonPressed(findTopMenuButtonIndex(view));
 
 			return true;
 		}
@@ -7083,51 +6981,7 @@ public class AlmalenceGUI extends GUI implements
              prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
              prefsEditor.commit();
 
-             switch (real_int)
-             {
-             case 0:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
-            	 break;
-             case 3:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
-            	 break;
-             case 5:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
-            	 break;
-             case 10:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
-            	 break;
-             case 15:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
-            	 break;
-             case 30:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
-            	 break;
-             case 60:
-            	 if (swChecked)
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
-            	 else
-            		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-            	 break;
-             }
+             updateTimelapseButton(real_int);
           }    
          });
       d.show();
@@ -7197,6 +7051,11 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		updateTimelapseButton(delayInterval);
+	}
+	
+	private void updateTimelapseButton(int delayInterval)
+	{
 		switch (delayInterval)
         {
          case 0:

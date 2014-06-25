@@ -207,6 +207,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<Long> ResolutionsMPixListVF;
 	protected static List<String> ResolutionsIdxesListVF;
 	protected static List<String> ResolutionsNamesListVF;
+	
+	protected static final CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
 
 	//States of focus and capture
 	public static final int FOCUS_STATE_IDLE = 0;
@@ -810,8 +812,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		Camera.Parameters cp = getCameraParameters();
 		List<Camera.Size> cs = cp.getSupportedPictureSizes();
-
-		CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
+		
+		if(cs == null)
+			return;		
 
 		int iHighestIndex = 0;
 		Camera.Size sHighest = cs.get(0);
@@ -820,69 +823,65 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		for (int ii = 0; ii < cs.size(); ++ii)
 		{
 			Camera.Size s = cs.get(ii);
+			
+			int currSizeWidth = s.width;
+			int currSizeHeight = s.height;
+			int highestSizeWidth = sHighest.width;
+			int highestSizeHeight = sHighest.height;
 
-			if ((long) s.width * s.height > (long) sHighest.width * sHighest.height)
+			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
 			{
 				sHighest = s;
 				iHighestIndex = ii;
 			}
 
-			if ((long) s.width * s.height < minMPIX)
+			if ((long) currSizeWidth * currSizeHeight < minMPIX)
 				continue;
-
-			Long lmpix = (long) s.width * s.height;
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.width / s.height;
-
-			// find good location in a list
-			int loc;
-			for (loc = 0; loc < CameraController.ResolutionsMPixList.size(); ++loc)
-				if (CameraController.ResolutionsMPixList.get(loc) < lmpix)
-					break;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(loc,
-					String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
-			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(s.width, s.height));
+			
+			fillResolutionsList(ii, currSizeWidth, currSizeHeight);
 		}
 
 		if (CameraController.ResolutionsNamesList.isEmpty()) {
 			Camera.Size s = cs.get(iHighestIndex);
-
-			Long lmpix = (long) s.width * s.height;
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.width / s.height;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(0,
-					String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(0, String.format("%d", 0));
-			CameraController.ResolutionsMPixList.add(0, lmpix);
-			CameraController.ResolutionsSizeList.add(0, CameraController.getInstance().new Size(s.width, s.height));
+			
+			int currSizeWidth = s.width;
+			int currSizeHeight = s.height;
+			
+			fillResolutionsList(0, currSizeWidth, currSizeHeight);
 		}
 
 		return;
 	}
+	
+	private void fillResolutionsList(int ii, int currSizeWidth, int currSizeHeight)
+	{
+		Long lmpix = (long) currSizeWidth * currSizeHeight;
+		float mpix = (float) lmpix / 1000000.f;
+		float ratio = (float) currSizeWidth / currSizeHeight;
+
+		// find good location in a list
+		int loc;
+		for (loc = 0; loc < CameraController.ResolutionsMPixList.size(); ++loc)
+			if (CameraController.ResolutionsMPixList.get(loc) < lmpix)
+				break;
+
+		int ri = 0;
+		if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+			ri = 1;
+		if (Math.abs(ratio - 3 / 2.f) < 0.12f)
+			ri = 2;
+		if (Math.abs(ratio - 16 / 9.f) < 0.15f)
+			ri = 3;
+		if (Math.abs(ratio - 1) == 0)
+			ri = 4;
+
+		CameraController.ResolutionsNamesList.add(loc,
+				String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
+		CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
+		CameraController.ResolutionsMPixList.add(loc, lmpix);
+		CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(currSizeWidth, currSizeHeight));		
+	}
+	
 	
 	public List<CameraController.Size> getSupportedPreviewSizes()
 	{
@@ -906,9 +905,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		List<CameraController.Size> pictureSizes = new ArrayList<CameraController.Size>();
 		if(!CameraController.isHALv3)
 		{
-			List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
-			for(Camera.Size sz : sizes)
-				pictureSizes.add(this.new Size(sz.width, sz.height));
+			if(cameraParameters != null)
+			{
+				List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
+				for(Camera.Size sz : sizes)
+					pictureSizes.add(this.new Size(sz.width, sz.height));
+			}
+			else
+			{
+				Log.e(TAG, "cameraParameters == null");
+			}
 		}
 		else
 			HALv3.fillPictureSizeList(pictureSizes);
