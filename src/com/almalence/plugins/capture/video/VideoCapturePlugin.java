@@ -52,6 +52,7 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
@@ -98,7 +99,6 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 import com.almalence.ui.RotateImageView;
@@ -163,6 +163,7 @@ public class VideoCapturePlugin extends PluginCapture
     private View rotatorLayout;
     
     private boolean displayTakePicture;
+    private ContentValues values;
     
     private static Hashtable<Integer, Boolean> previewSizes = new Hashtable<Integer, Boolean>()
 	{
@@ -912,7 +913,7 @@ public class VideoCapturePlugin extends PluginCapture
     	
     	if (this.isRecording)
     	{
-    		this.stopRecording();
+        	 stopRecording();
     	}
 		
 		if(camera != null)
@@ -1271,7 +1272,14 @@ public class VideoCapturePlugin extends PluginCapture
     	
 		if (isRecording) 
 		{
-			this.stopRecording();
+			long now = SystemClock.uptimeMillis();
+			long delta = now - mRecordingStartTime;
+			Handler handler = new Handler(); 
+		    handler.postDelayed(new Runnable() { 
+		         public void run() { 
+		        	 stopRecording(); 
+		         } 
+		    }, 2500 - delta);
         }
 		else 
         {
@@ -1281,7 +1289,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void stopRecording()
 	{
-		MainScreen.guiManager.startProcessingAnimation();
 		if (shutterOff)
 			return;		
     	
@@ -1303,7 +1310,14 @@ public class VideoCapturePlugin extends PluginCapture
             //change shutter icon
             MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
             
-            new VideoExportAsyncTask().execute();
+            onPreExportVideo();
+            Runnable runnable = new Runnable() {
+            	@Override
+            	public void run() {
+        			doExportVideo();
+            	}
+            };
+            new Thread(runnable).start();
 		}
 		else
 		{
@@ -1311,6 +1325,57 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 	
+	protected void onPreExportVideo() {
+		MainScreen.guiManager.startProcessingAnimation();
+
+		values=new ContentValues(7);
+		values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+		values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(ImageColumns.MIME_TYPE, "video/mp4");
+		values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+	}
+
+	protected void doExportVideo() {
+		if (filesList.size() > 0) {
+			File firstFile = filesList.get(0);
+			for (int i = 1; i < filesList.size(); i++) {
+				File currentFile = filesList.get(i);
+				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+			}
+			// if not onPause, then last video isn't added to list.
+			if (!onPause) {
+				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+			}
+
+			if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
+				fileSaved.delete();
+				firstFile.renameTo(fileSaved);
+			}
+		}
+		
+		onPause = false;
+
+		String[] filesSavedNames= new String[1];
+		filesSavedNames[0] = fileSaved.toString();
+		filesList.clear();
+		mRecordingTimeView.setText("00:00");
+		mRecorded = 0;
+
+		MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+		MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+		shutterOff = false;
+		showRecording=false;
+	}
+
 	private void startRecording()
 	{
 		if (shutterOff)
@@ -1397,7 +1462,14 @@ public class VideoCapturePlugin extends PluginCapture
         //change shutter icon
         MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_START);
         
-        new VideoExportAsyncTask().execute();
+        onPreExportVideo();
+        Runnable runnable = new Runnable() {
+        	@Override
+        	public void run() {
+    			doExportVideo();
+        	}
+        };
+        new Thread(runnable).start();
 	}
   
 	private void startVideoRecording() {
@@ -2078,8 +2150,14 @@ public class VideoCapturePlugin extends PluginCapture
     	
 		// Continue video recording
     	if (this.modeDRO()) {
-    		this.onPause = !this.onPause;
-    		this.droEngine.setPaused(this.onPause);
+    		long now = SystemClock.uptimeMillis();
+			long delta = now - mRecordingStartTime;
+			Handler handler = new Handler(); 
+		    handler.postDelayed(new Runnable() { 
+		         public void run() { 
+		        	 pauseDRORecording(); 
+		         } 
+		    }, 2500 - delta);
     	}
     	else {
     		if (onPause) {
@@ -2088,31 +2166,47 @@ public class VideoCapturePlugin extends PluginCapture
     		}
     		// Pause video recording, merge files and remove last.
     		else {
-    			onPause = true;
-    			try {
-    				// stop recording and release camera
-    				mMediaRecorder.stop();  // stop the recording
-    				
-    				ContentValues values=null;
-    				values = new ContentValues(7);
-    				values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-    				values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-    				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-    				values.put(ImageColumns.MIME_TYPE, "video/mp4");
-    				values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-    				
-    				filesList.add(fileSaved);
-    			} catch (RuntimeException e) {
-    				// Note that a RuntimeException is intentionally thrown to the application, 
-    				// if no valid audio/video data has been received when stop() is called. 
-    				// This happens if stop() is called immediately after start().
-    				// The failure lets the application take action accordingly to clean up the output file (delete the output file, 
-    				// for instance), since the output file is not properly constructed when this happens.
-    				fileSaved.delete();
-    				e.printStackTrace();
-    			}
+    			long now = SystemClock.uptimeMillis();
+    			long delta = now - mRecordingStartTime;
+    			Handler handler = new Handler(); 
+    		    handler.postDelayed(new Runnable() { 
+    		         public void run() { 
+    		        	 pauseRecording(); 
+    		         } 
+    		    }, 2500 - delta);
     		}
     	}
+	}
+	
+	private void pauseDRORecording() {
+		this.onPause = !this.onPause;
+		this.droEngine.setPaused(this.onPause);
+	}
+	
+	private void pauseRecording() {
+		onPause = true;
+		try {
+			// stop recording and release camera
+			mMediaRecorder.stop();  // stop the recording
+			
+			ContentValues values=null;
+			values = new ContentValues(7);
+			values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+			values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
+			values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+			values.put(ImageColumns.MIME_TYPE, "video/mp4");
+			values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+			
+			filesList.add(fileSaved);
+		} catch (RuntimeException e) {
+			// Note that a RuntimeException is intentionally thrown to the application, 
+			// if no valid audio/video data has been received when stop() is called. 
+			// This happens if stop() is called immediately after start().
+			// The failure lets the application take action accordingly to clean up the output file (delete the output file, 
+			// for instance), since the output file is not properly constructed when this happens.
+			fileSaved.delete();
+			e.printStackTrace();
+		}
 	}
 	
 	 /**
@@ -2437,63 +2531,5 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLDrawFrame(final GL10 gl)
 	{
 		this.droEngine.onDrawFrame(gl);
-	}
-	
-	private class VideoExportAsyncTask extends AsyncTask<Void, Void, Void> {
-		private ContentValues values;
-		@Override
-		protected void onPreExecute() {
-			values=new ContentValues(7);
-	        values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-	        values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-	        values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-	        values.put(ImageColumns.MIME_TYPE, "video/mp4");
-	        values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
-		}
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			if (filesList.size() > 0) {
-				File firstFile = filesList.get(0);
-				for (int i = 1; i < filesList.size(); i++) {
-					File currentFile = filesList.get(i);
-					append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
-				}
-				// if not onPause, then last video isn't added to list.
-				if (!onPause) {
-					append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
-				}
-				
-				if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile())) {
-					fileSaved.delete();
-					firstFile.renameTo(fileSaved);
-				}
-			}
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			onPause = false;
-	        
-	        String[] filesSavedNames= new String[1];
-	        filesSavedNames[0] = fileSaved.toString();
-	        filesList.clear();
-	        mRecordingTimeView.setText("00:00");
-	        mRecorded = 0;
-	           
-			MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-	        MediaScannerConnection.scanFile(MainScreen.thiz, filesSavedNames, null, null);
-	        
-	        new CountDownTimer(500, 500) {			 
-			     	public void onTick(long millisUntilFinished) {}
-
-	   		     public void onFinish() {
-	   		    	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-	   		    	shutterOff = false;
-	   				showRecording=false;
-	   		     }
-			  	}.start();
-		}
 	}
 }
