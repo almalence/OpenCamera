@@ -6387,17 +6387,16 @@ public class AlmalenceGUI extends GUI implements
 			
 			if (id == ShutterButton.RECORDER_START) {
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
 			}
 			else if (id == ShutterButton.RECORDER_STOP) {
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
 			} else if (id == ShutterButton.RECORDER_PAUSED) {
-				// paused
-				//additionalButton.setImageResource(R.drawable.gui_almalence_shutter_additional_video);
+				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
 			}
 			else if (id == ShutterButton.RECORDER_RECORDING) {
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_stop_video);
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
 			}
 		}
 	}	
