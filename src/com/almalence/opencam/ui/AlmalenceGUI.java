@@ -377,6 +377,17 @@ public class AlmalenceGUI extends GUI implements
 		}
 	};
 	
+	
+	private static final Map<String, String> unlockModePreference = new Hashtable<String, String>() {
+		{
+			put("hdrmode", "plugin_almalence_hdr");
+			put("movingobjects", "plugin_almalence_moving_burst");
+			put("sequence", "plugin_almalence_hdr");
+			put("groupshot", "plugin_almalence_groupshot");
+			put("panorama_augmented", "plugin_almalence_panorama");
+		}
+	};
+	
 	// Defining for top menu buttons (camera parameters settings)
 	private final int MODE_EV = R.id.evButton;
 	private final int MODE_SCENE = R.id.sceneButton;
@@ -1132,46 +1143,19 @@ public class AlmalenceGUI extends GUI implements
 		else 
 		{
 			String modeID = PluginManager.getInstance().getActiveMode().modeID;
-			
-			if ("hdrmode".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_hdr", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("movingobjects".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("sequence".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_moving_burst", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("groupshot".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_groupshot", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else if ("panorama_augmented".equals(modeID))
-			{
-				if (true == prefs.getBoolean("plugin_almalence_panorama", false))
-					HideUnlockControl();
-				else
-					ShowUnlockControl();
-			}
-			else
-				ShowUnlockControl();
+			visibilityUnlockControl(unlockModePreference.get(modeID));
 		}
 		//-+- -->
+	}
+	
+	private void visibilityUnlockControl(String prefName)
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		
+		if (prefs.getBoolean(prefName, false))
+			HideUnlockControl();
+		else
+			ShowUnlockControl();
 	}
 	
 	private Map<Integer, View> initCameraParameterModeButtons(

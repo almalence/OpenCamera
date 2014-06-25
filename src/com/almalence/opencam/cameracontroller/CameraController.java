@@ -906,9 +906,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		List<CameraController.Size> pictureSizes = new ArrayList<CameraController.Size>();
 		if(!CameraController.isHALv3)
 		{
-			List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
-			for(Camera.Size sz : sizes)
-				pictureSizes.add(this.new Size(sz.width, sz.height));
+			if(cameraParameters != null)
+			{
+				List<Camera.Size> sizes = cameraParameters.getSupportedPictureSizes();
+				for(Camera.Size sz : sizes)
+					pictureSizes.add(this.new Size(sz.width, sz.height));
+			}
 		}
 		else
 			HALv3.fillPictureSizeList(pictureSizes);
