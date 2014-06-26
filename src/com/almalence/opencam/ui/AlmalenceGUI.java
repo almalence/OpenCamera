@@ -527,10 +527,6 @@ public class AlmalenceGUI extends GUI implements
 		storeViews = new ArrayList<View>();
 		buttonStoreViewAssoc = new Hashtable<View, Integer>();
 		
-		storeAdapter = new ElementAdapter();
-		storeViews = new ArrayList<View>();
-		buttonStoreViewAssoc = new Hashtable<View, Integer>();
-		
 		mMeteringMatrix = new Matrix();
 	}
 
@@ -829,7 +825,7 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		
-		for (int i =0; i<5; i++) {
+		for (int i =0; i<6; i++) {
 
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 			View item = inflator.inflate(
@@ -898,6 +894,15 @@ public class AlmalenceGUI extends GUI implements
 					else
 						price.setText(MainScreen.thiz.titleUnlockGroup);
 					break;
+				case 5:
+					// Promo code
+					icon.setImageResource(R.drawable.store_groupshot);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
+					if(MainScreen.thiz.isPurchasedAll())
+						price.setText(R.string.already_unlocked);
+					else
+						price.setText("");
+					break;
 			}
 
 			item.setOnTouchListener(new OnTouchListener()
@@ -945,6 +950,9 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case 4:// Groupshot
 			MainScreen.thiz.purchaseGroupshot();
+			break;
+		case 5:// Promo
+			MainScreen.thiz.enterPromo();
 			break;
 		}
 	}
@@ -4102,10 +4110,6 @@ public class AlmalenceGUI extends GUI implements
 
 		if (guiView.findViewById(R.id.mode_help).getVisibility() ==  View.VISIBLE)
 			guiView.findViewById(R.id.mode_help).setVisibility(View.INVISIBLE);
-		
-		//hideStore();
-		
-		//hideStore();
 		
 		int id = button.getId();
 		if (lockControls && ((R.id.buttonShutter != id)))

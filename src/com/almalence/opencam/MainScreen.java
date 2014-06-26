@@ -36,16 +36,22 @@ import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.LayerDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
@@ -77,10 +83,16 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.util.AppWidgetNotifier;
@@ -2136,6 +2148,70 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		} else {
 			Log.v("Main billing", "onActivityResult handled by IABUtil.");
 		}
+	}
+	
+	//enter promo code to get smth
+	public void enterPromo()
+	{
+		final float density = getResources().getDisplayMetrics().density;
+
+		LinearLayout ll = new LinearLayout(this);
+		ll.setOrientation(LinearLayout.VERTICAL);
+		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
+		
+//		TextView tv = new TextView(this);
+//		tv.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_Text));
+//		tv.setWidth((int)(250 * density));
+//		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
+//		ll.addView(tv);
+//		
+		//rating bar
+		final EditText editText = new EditText(this);
+		editText.setHint(R.string.Pref_Upgrde_PromoCode_Text);
+		editText.setHintTextColor(Color.WHITE);
+		
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.gravity=Gravity.CENTER_HORIZONTAL;
+		params.setMargins(0, 20, 0, 30);
+		editText.setLayoutParams(params);
+		ll.addView(editText);
+
+
+		Button b3 = new Button(this);
+		b3.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_DoneText));
+		ll.addView(b3);
+		
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(ll);
+		final AlertDialog dialog = builder.create();
+		
+
+		b3.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				String promo = editText.getText().toString();
+				if (promo.equals("qwerty"))
+				{
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+					unlockAllPurchased = true;
+					
+					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean("unlock_all_forever", true);
+					prefsEditor.commit();
+					dialog.dismiss();
+					guiManager.hideStore();
+					guiManager.showStore();
+				}
+				else
+				{
+					editText.setText("");
+					editText.setHint(R.string.Pref_Upgrde_PromoCode_IncorrectText);
+				}
+			}
+		});
+		
+		dialog.show();
 	}
 	
 	// next methods used to store number of free launches.
