@@ -147,11 +147,12 @@
 		 	 	   <com.almalence.ui.RotateImageView
 						android:id="@+id/buttonShutterAdditional"
 						android:visibility="gone"
-						android:src="@drawable/gui_almalence_shutter_additional_video"				
+						android:src="@drawable/gui_almalence_shutter_video_pause"				
 						android:background="@android:color/transparent"			
 						android:layout_height="@dimen/videoAdditionalShutterHeight"
 						android:layout_width="@dimen/videoAdditionalShutterHeight"
 						android:scaleType="fitXY"
+						android:layout_marginLeft="5dp"
 						android:paddingLeft="0dp"
 						android:paddingRight="0dp"
 						android:paddingBottom="0dp"
