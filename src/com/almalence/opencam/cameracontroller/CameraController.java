@@ -1,19 +1,19 @@
 /*
-The contents of this file are subject to the Mozilla Public License
-Version 1.1 (the "License"); you may not use this file except in
-compliance with the License. You may obtain a copy of the License at
-http://www.mozilla.org/MPL/
+	CameraController for OpenCamera project - interface to camera device
+    Copyright (C) 2014  Almalence Inc.
 
-Software distributed under the License is distributed on an "AS IS"
-basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-License for the specific language governing rights and limitations
-under the License.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-The Original Code is collection of files collectively known as Open Camera.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-The Initial Developer of the Original Code is Almalence Inc.
-Portions created by Initial Developer are Copyright (C) 2013 
-by Almalence Inc. All Rights Reserved.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* <!-- +++
@@ -759,7 +759,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		appInterface.addSurfaceCallback();
 		
 		if(!CameraController.isHALv3)
-			appInterface.configureCamera();
+		{
+			Message msg = new Message();
+			msg.what = PluginManager.MSG_CAMERA_READY;
+			MainScreen.H.sendMessage(msg);
+			
+//			appInterface.configureCamera();
+		}
 	}
 	
 	
@@ -1262,7 +1268,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			return prefs.getInt(MainScreen.sEvPref, 0);
 		}
 	}
@@ -1641,7 +1647,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sSceneModePref, -1);
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sSceneModePref, -1);
 
 		return -1;
 	}
@@ -1666,7 +1672,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sWBModePref, -1);
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sWBModePref, -1);
 
 		return -1;
 	}
@@ -1692,7 +1698,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraMirrored? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraMirrored? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 
 		return -1;
 	}
@@ -1717,7 +1723,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sFlashModePref, -1);
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sFlashModePref, -1);
 
 		return -1;
 	}
@@ -1741,7 +1747,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 		else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(MainScreen.sISOPref, -1);
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sISOPref, -1);
 
 		return -1;
 	}
