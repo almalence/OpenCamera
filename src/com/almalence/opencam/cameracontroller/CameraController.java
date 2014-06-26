@@ -853,7 +853,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return;
 	}
 	
-	private void fillResolutionsList(int ii, int currSizeWidth, int currSizeHeight)
+	protected static void fillResolutionsList(int ii, int currSizeWidth, int currSizeHeight)
 	{
 		Long lmpix = (long) currSizeWidth * currSizeHeight;
 		float mpix = (float) lmpix / 1000000.f;
