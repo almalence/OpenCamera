@@ -2181,10 +2181,14 @@ public class VideoCapturePlugin extends PluginCapture
 	private void pauseDRORecording() {
 		this.onPause = !this.onPause;
 		this.droEngine.setPaused(this.onPause);
+		if (onPause) {
+			MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_PAUSED);
+		}
 	}
 	
 	private void pauseRecording() {
 		onPause = true;
+		MainScreen.guiManager.setShutterIcon(ShutterButton.RECORDER_PAUSED);
 		try {
 			// stop recording and release camera
 			mMediaRecorder.stop();  // stop the recording
