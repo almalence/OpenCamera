@@ -234,7 +234,7 @@ public class BurstCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
     	if(imagesTaken == 1)
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 		
 		try
 		{
@@ -331,7 +331,7 @@ public class BurstCapturePlugin extends PluginCapture
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 			
 			if(imagesTaken == 1)
-	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
     	
 		PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));

@@ -1178,7 +1178,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			
 			if (this.isFirstFrame)
 			{
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 				this.isFirstFrame = false;
 			}
 		}
