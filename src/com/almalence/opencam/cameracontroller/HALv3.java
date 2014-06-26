@@ -198,66 +198,32 @@ public class HALv3
 		int ii = 0;
 		for(android.hardware.camera2.Size s : cs)
 		{
-			if ((long) s.getWidth() * s.getHeight() > (long) sHighest.getWidth()
-					* sHighest.getHeight()) {
+			int currSizeWidth = s.getWidth();
+			int currSizeHeight = s.getHeight();
+			int highestSizeWidth = sHighest.getWidth();
+			int highestSizeHeight = sHighest.getHeight();
+			
+			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
+			{
 				sHighest = s;
 				iHighestIndex = ii;
 			}
 
-			if ((long) s.getWidth() * s.getHeight() < MinMPIX)
+			if ((long) currSizeWidth * currSizeHeight < MinMPIX)
 				continue;
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			// find good location in a list
-			int loc;
-			for (loc = 0; loc < CameraController.ResolutionsMPixList.size(); ++loc)
-				if (CameraController.ResolutionsMPixList.get(loc) < lmpix)
-					break;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(loc,
-					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
-			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(s.getWidth(), s.getHeight()));
+			
+			CameraController.fillResolutionsList(ii, currSizeWidth, currSizeHeight);		
 			
 			ii++;
 		}
 
 		if (CameraController.ResolutionsNamesList.size() == 0) {
 			android.hardware.camera2.Size s = cs[iHighestIndex];
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			CameraController.ResolutionsNamesList.add(0,
-					String.format("%3.1f Mpix  " + RatioStrings[ri], mpix));
-			CameraController.ResolutionsIdxesList.add(0, String.format("%d", 0));
-			CameraController.ResolutionsMPixList.add(0, lmpix);
-			CameraController.ResolutionsSizeList.add(0, CameraController.getInstance().new Size(s.getWidth(), s.getHeight()));
+			
+			int currSizeWidth = s.getWidth();
+			int currSizeHeight = s.getHeight();
+			
+			CameraController.fillResolutionsList(0, currSizeWidth, currSizeHeight);
 		}
 
 		return;
