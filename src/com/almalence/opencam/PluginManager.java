@@ -188,6 +188,8 @@ public class PluginManager implements PluginManagerInterface {
 	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
 	public static final int MSG_CAPTURE_FINISHED_NORESULT = 15;
 	
+	public static final int MSG_CAMERA_READY = 161;
+	
 	//For HALv3 code version
 	public static final int MSG_CAMERA_OPENED = 16;
 	public static final int MSG_SURFACE_READY = 17;

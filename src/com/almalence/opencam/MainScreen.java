@@ -977,8 +977,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			else
 			{
 				cameraController.setupCamera(holder);
-				PluginManager.getInstance().onGUICreate();
-				MainScreen.guiManager.onGUICreate();
+//				PluginManager.getInstance().onGUICreate();
+//				MainScreen.guiManager.onGUICreate();
 			}
 		}
 	}	
@@ -1446,7 +1446,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			case MSG_RETURN_CAPTURED:
 				this.setResult(RESULT_OK);
 				this.finish();
-				break;		
+				break;	
+			case PluginManager.MSG_CAMERA_READY:
+				configureCamera();
+				PluginManager.getInstance().onGUICreate();
+				MainScreen.guiManager.onGUICreate();
+				break;
 			case PluginManager.MSG_CAMERA_OPENED:
 			case PluginManager.MSG_SURFACE_READY:
 	
