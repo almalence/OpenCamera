@@ -75,7 +75,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewParent;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -799,6 +798,14 @@ public class AlmalenceGUI extends GUI implements
 		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
 		store.setVisibility(View.VISIBLE);
 		store.bringToFront();
+		
+		ImageView whatsNew = (ImageView) guiView.findViewById(R.id.storeWhatsNew);
+		whatsNew.setOnClickListener(new OnClickListener() 
+		{
+			public void onClick(View v) {
+				showWhatsNew();
+			}
+		});
 	}
 	
 	@Override
@@ -955,6 +962,11 @@ public class AlmalenceGUI extends GUI implements
 			MainScreen.thiz.enterPromo();
 			break;
 		}
+	}
+	
+	private void showWhatsNew()
+	{
+		
 	}
 	
 	public void ShowUnlockControl()
