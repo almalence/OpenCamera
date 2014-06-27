@@ -1087,7 +1087,7 @@ public class PluginManager implements PluginManagerInterface {
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
-			new CountDownTimer(250, 250) {
+			new CountDownTimer(800, 800) {
 				public void onTick(long millisUntilFinished) {
 				}
 	

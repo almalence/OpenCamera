@@ -795,10 +795,6 @@ public class AlmalenceGUI extends GUI implements
 			
 		});
 		
-		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
-		store.setVisibility(View.VISIBLE);
-		store.bringToFront();
-		
 		ImageView whatsNew = (ImageView) guiView.findViewById(R.id.storeWhatsNew);
 		whatsNew.setOnClickListener(new OnClickListener() 
 		{
@@ -806,6 +802,17 @@ public class AlmalenceGUI extends GUI implements
 				showWhatsNew();
 			}
 		});
+		
+		
+		if (MainScreen.thiz.showPromoRedeemed == true)
+		{
+			Toast.makeText(MainScreen.thiz, "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
+			MainScreen.thiz.showPromoRedeemed = false;
+		}
+		
+		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
+		store.setVisibility(View.VISIBLE);
+		store.bringToFront();
 	}
 	
 	@Override

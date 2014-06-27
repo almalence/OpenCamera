@@ -2155,6 +2155,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 	
+	public boolean showPromoRedeemed = false;
 	//enter promo code to get smth
 	public void enterPromo()
 	{
@@ -2196,7 +2197,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			public void onClick(View v)
 			{
 				String promo = editText.getText().toString();
-				if (promo.equals("qwerty"))
+				if (promo.equalsIgnoreCase("appoftheday"))
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 					unlockAllPurchased = true;
@@ -2206,6 +2207,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					prefsEditor.commit();
 					dialog.dismiss();
 					guiManager.hideStore();
+					showPromoRedeemed = true;
 					guiManager.showStore();
 				}
 				else
