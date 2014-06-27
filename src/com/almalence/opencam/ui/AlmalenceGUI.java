@@ -3695,150 +3695,42 @@ public class AlmalenceGUI extends GUI implements
 		// lrvisible.addAnimation(visible_alpha);
 		lrvisible.addAnimation(lrvisible_translate);
 
-		switch (infoSet) {
-			case INFO_ALL: {
-				hideSecondaryMenus();
-				unselectPrimaryTopMenuButtons(-1);
-	
-				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.paramsLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.paramsLayout).setVisibility(
-							View.VISIBLE);
-					((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
-							true);
-				}
-	
-				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.GONE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.pluginsLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.pluginsLayout).setVisibility(
-							View.VISIBLE);
-	
-					if (isAnimate)
-						guiView.findViewById(R.id.infoLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.infoLayout).setVisibility(
-							View.VISIBLE);
-				}
-	
-				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.GONE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-							View.VISIBLE);
-				}
+		int[] zonesVisibility = new int[3];
+		switch (infoSet)
+		{
+			case INFO_ALL:
+			{
+				zonesVisibility[0] = View.VISIBLE;
+				zonesVisibility[1] = View.VISIBLE;
+				zonesVisibility[2] = View.VISIBLE;
 				break;
 			}
 	
-			case INFO_NO: {
-				hideSecondaryMenus();
-				unselectPrimaryTopMenuButtons(-1);
-	
-				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.paramsLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.paramsLayout)
-							.setVisibility(View.GONE);
-					((Panel) guiView.findViewById(R.id.topPanel)).reorder(true,
-							true);
-				}
-				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.pluginsLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.pluginsLayout).setVisibility(
-							View.GONE);
-	
-					if (isAnimate)
-						guiView.findViewById(R.id.infoLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
-				}
-				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-							View.GONE);
-				}
+			case INFO_NO:
+			{
+				zonesVisibility[0] = View.GONE;
+				zonesVisibility[1] = View.GONE;
+				zonesVisibility[2] = View.GONE;				
 				break;
 			}
 	
-			case INFO_GRID: {
-				hideSecondaryMenus();
-				unselectPrimaryTopMenuButtons(-1);
-	
-				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.paramsLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.paramsLayout)
-							.setVisibility(View.GONE);
-					((Panel) guiView.findViewById(R.id.topPanel)).reorder(true,
-							true);
-				}
-				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.pluginsLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.pluginsLayout).setVisibility(
-							View.GONE);
-	
-					if (isAnimate)
-						guiView.findViewById(R.id.infoLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
-				}
-				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.GONE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-							View.VISIBLE);
-				}
+			case INFO_GRID:
+			{
+				zonesVisibility[0] = View.GONE;
+				zonesVisibility[1] = View.GONE;
+				zonesVisibility[2] = View.VISIBLE;
 				break;
 			}
 			
-			case INFO_PARAMS: {
-				hideSecondaryMenus();
-				unselectPrimaryTopMenuButtons(-1);
-	
-				if (guiView.findViewById(R.id.paramsLayout).getVisibility() == View.GONE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.paramsLayout).startAnimation(
-								toLeft ? rlvisible : lrvisible);
-					guiView.findViewById(R.id.paramsLayout).setVisibility(
-							View.VISIBLE);
-					((Panel) guiView.findViewById(R.id.topPanel)).reorder(false,
-							true);
-				}
-				if (guiView.findViewById(R.id.pluginsLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.pluginsLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.pluginsLayout).setVisibility(
-							View.GONE);
-	
-					if (isAnimate)
-						guiView.findViewById(R.id.infoLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.infoLayout).setVisibility(View.GONE);
-				}
-				if (guiView.findViewById(R.id.fullscreenLayout).getVisibility() == View.VISIBLE) {
-					if (isAnimate)
-						guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-								toLeft ? rlinvisible : lrinvisible);
-					guiView.findViewById(R.id.fullscreenLayout).setVisibility(
-							View.GONE);
-				}
+			case INFO_PARAMS:
+			{
+				zonesVisibility[0] = View.VISIBLE;
+				zonesVisibility[1] = View.GONE;
+				zonesVisibility[2] = View.GONE;
 				break;
 			}
 		}
+		applyZonesVisibility(zonesVisibility, isAnimate, toLeft, rlvisible, lrvisible, rlinvisible, lrinvisible);
 
 		rlinvisible.setAnimationListener(new AnimationListener() {
 			@Override
@@ -3876,6 +3768,43 @@ public class AlmalenceGUI extends GUI implements
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putInt(MainScreen.sDefaultInfoSetPref, infoSet);
 		prefsEditor.commit();
+	}
+	
+	private void applyZonesVisibility(int[] zonesVisibility, boolean isAnimate, boolean toLeft, AnimationSet rlvisible, AnimationSet lrvisible, AnimationSet rlinvisible, AnimationSet lrinvisible)
+	{
+		hideSecondaryMenus();
+		unselectPrimaryTopMenuButtons(-1);
+
+		if(guiView.findViewById(R.id.paramsLayout).getVisibility() != zonesVisibility[0])
+		{
+			if (isAnimate)
+				guiView.findViewById(R.id.paramsLayout).startAnimation(
+						toLeft ? (zonesVisibility[0] == View.VISIBLE? rlvisible : rlinvisible) : (zonesVisibility[0] == View.VISIBLE? lrvisible : lrinvisible));
+			guiView.findViewById(R.id.paramsLayout).setVisibility(zonesVisibility[0]);
+			((Panel) guiView.findViewById(R.id.topPanel)).reorder(zonesVisibility[0] == View.GONE,
+					true);
+		}
+		
+		if(guiView.findViewById(R.id.pluginsLayout).getVisibility() != zonesVisibility[1])
+		{
+			if (isAnimate)
+				guiView.findViewById(R.id.pluginsLayout).startAnimation(
+						toLeft ? (zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible) : (zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible));
+			guiView.findViewById(R.id.pluginsLayout).setVisibility(zonesVisibility[1]);
+	
+			if (isAnimate)
+				guiView.findViewById(R.id.infoLayout).startAnimation(
+						toLeft ? (zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible) : (zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible));
+			guiView.findViewById(R.id.infoLayout).setVisibility(zonesVisibility[1]);
+		}
+		
+		if(guiView.findViewById(R.id.fullscreenLayout).getVisibility() != zonesVisibility[2])
+		{
+			if (isAnimate)
+				guiView.findViewById(R.id.fullscreenLayout).startAnimation(
+						toLeft ? (zonesVisibility[2] == View.VISIBLE? rlvisible : rlinvisible) : (zonesVisibility[2] == View.VISIBLE? lrvisible : lrinvisible));
+			guiView.findViewById(R.id.fullscreenLayout).setVisibility(zonesVisibility[2]);
+		}
 	}
 	
 	private void clearLayoutsAnimation()
