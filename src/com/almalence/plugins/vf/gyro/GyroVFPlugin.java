@@ -78,7 +78,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 		super("com.almalence.plugins.gyrovf",
 			  R.xml.preferences_vf_gyro,
 			  0,
-			  R.drawable.gui_almalence_settings_scene_barcode_on,
+			  R.drawable.almalence_plugin_vf_level_on,
 			  "Gyrovertical");
 		
 		mSensorManager = (SensorManager) MainScreen.thiz.getSystemService(Context.SENSOR_SERVICE);
@@ -166,7 +166,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 		mPrefHardwareGyroscope = prefs.getBoolean("PrefGyroTypeVF", true);
 		
 		if (mGyroState == ON) {
-			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
+			quickControlIconID = R.drawable.almalence_plugin_vf_level_on;
 			if (mHorizonIndicatorContainer != null) {
 				mHorizonIndicatorContainer.setVisibility(View.VISIBLE);
 			}
@@ -209,7 +209,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
         	editor.putBoolean("PrefGyroVF", false);
 		} else {
-			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
+			quickControlIconID = R.drawable.almalence_plugin_vf_level_on;
         	editor.putBoolean("PrefGyroVF", true);
 		}
         editor.commit();

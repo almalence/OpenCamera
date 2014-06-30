@@ -489,7 +489,7 @@ public class PreshotCapturePlugin extends PluginCapture
     	inCapture = false;
     	
     	if (0 == PreShot.GetImageCount())
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 			
     	PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.guiManager.getDisplayOrientation());
     	
@@ -527,7 +527,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		jpeg.get(jpegByteArray, 0, frame_len);
 		
     	if (0 == PreShot.GetImageCount())
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID);
+    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 			
     	PreShot.InsertToBuffer(jpegByteArray, MainScreen.guiManager.getDisplayOrientation());
     	
