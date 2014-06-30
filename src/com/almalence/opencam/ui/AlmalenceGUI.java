@@ -6244,6 +6244,7 @@ public class AlmalenceGUI extends GUI implements
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
 			} else if (id == ShutterButton.RECORDER_PAUSED) {
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
 			}
 			else if (id == ShutterButton.RECORDER_RECORDING) {
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
