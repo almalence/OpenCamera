@@ -21,10 +21,13 @@ package com.almalence.plugins.processing.groupshot;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -37,10 +40,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -75,7 +81,9 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.util.ImageConversion;
+import com.almalence.util.MLocation;
 import com.almalence.util.Size;
 
 
@@ -83,9 +91,10 @@ import com.almalence.util.Size;
 Implements group shot processing
 ***/
 @SuppressWarnings("deprecation")
-public class GroupShotProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener,
-																 Handler.Callback, OnClickListener
+public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListener
 {
+	private View postProcessingView;
+	
 	private long sessionID=0;
 	
 	private static final int MSG_PROGRESS_BAR_INVISIBLE = 1;
@@ -146,8 +155,16 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	/*
      * Group shot testing start
      */
-	private static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
-	private static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
+	private static ArrayList<byte[]> mJpegBufferList;
+	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList) {
+		GroupShotProcessingPlugin.mJpegBufferList = mJpegBufferList;
+	}
+
+	private static ArrayList<Integer> mYUVBufferList;
+	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList) {
+		GroupShotProcessingPlugin.mYUVBufferList = mYUVBufferList;
+	}
+	
     ArrayList<ArrayList <Rect>> mFaceList;
     
     private static int mFrameCount = 0;
@@ -157,8 +174,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 	
     private final Object syncObject = new Object();
 
-    private static boolean SaveInputPreference;
-    
     private boolean postProcessingRun = false;
 
     //indicates that no more user interaction needed
@@ -167,24 +182,17 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
   	
   	private static boolean isYUV = false;
   	
-	public GroupShotProcessingPlugin()
-	{
-		super("com.almalence.plugins.groupshotprocessing", 
-			  R.xml.preferences_processing_groupshot,
-			  0,
-			  0,
-			  null);
+	public GroupShotProcessingPlugin() {
 	}
 
-	@Override
-	public void onStart()
-	{
-		getPrefs();
+	public View getPostProcessingView() {
+		return postProcessingView;
 	}
 	
-	@Override
-	public void onStartProcessing(long SessionID) 
-	{
+	public void onStart() {
+	}
+	
+	public void onStartProcessing(long SessionID) {
 		finishing = false;
 		changingFace = false;
 		Message msg = new Message();
@@ -201,8 +209,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		sessionID=SessionID;
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
-		
-        getPrefs();
         
         Display display = ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
     	mDisplayWidth = display.getHeight();
@@ -242,26 +248,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		
     		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     		
-    		mYUVBufferList.clear();
-    		mJpegBufferList.clear();
-    		
-    		for (int i=1; i<=imagesAmount; i++)
-    		{
-    			if(isYUV)
-    			{
-    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
-    				mYUVBufferList.add(i-1, yuv);    				 
-    			}
-    			else
-    			{
-    				byte[] in = SwapHeap.CopyFromHeap(
-        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-        	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
-        	        		);
-    				mJpegBufferList.add(i-1, in);
-    			}
-    		}
-    		
     		if(!isYUV)
     		{
     			mFrameCount = mJpegBufferList.size();
@@ -290,97 +276,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
     		previewBmpRealWidth = PreviewBmp.getWidth();
     		previewBmpRealHeight = PreviewBmp.getHeight();
     		
-    		if (SaveInputPreference)
-    		{
-    			try
-    	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
-    	
-    	            for (int i = 0; i<imagesAmount; ++i)
-    	            {
-    			    	Calendar d = Calendar.getInstance();
-
-    		            File file = new File(
-    		            		saveDir, 
-    		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_GROUP.jpg",
-    		            		d.get(Calendar.YEAR),
-    		            		d.get(Calendar.MONTH)+1,
-    		            		d.get(Calendar.DAY_OF_MONTH),
-    		            		d.get(Calendar.HOUR_OF_DAY),
-    		            		d.get(Calendar.MINUTE),
-    		            		d.get(Calendar.SECOND)));
-    	                
-    		            FileOutputStream os = null;
-    		            try
-    			    	{
-    		            	os = new FileOutputStream(file);
-    			    	}
-    			    	catch (Exception e)
-    			        {
-    			    		//save always if not working saving to sdcard
-    			        	e.printStackTrace();
-    			        	file = new File(
-        		            		saveDir, 
-        		            		String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM.jpg",
-        		            		d.get(Calendar.YEAR),
-        		            		d.get(Calendar.MONTH)+1,
-        		            		d.get(Calendar.DAY_OF_MONTH),
-        		            		d.get(Calendar.HOUR_OF_DAY),
-        		            		d.get(Calendar.MINUTE),
-        		            		d.get(Calendar.SECOND)));
-    			        	os = new FileOutputStream(file);
-    			        }
-    		            
-    		            if (os != null)
-    		            {
-    		            	if(!isYUV)
-    		            	{
-	    		            	// ToDo: not enough memory error reporting
-	    			            os.write(mJpegBufferList.get(i));
-    		            	}
-    		            	else
-    		            	{
-    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
-    		            		//to avoid problems with SKIA
-    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
-    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
-    		            	}
-    			            os.close();
-    			        
-    			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-    		            	switch(mDisplayOrientationOnStartProcessing)
-    		            	{
-    		            	default:
-    		            	case 0:
-    		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-    		            		break;
-    		            	case 90:
-    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-    		            		break;
-    		            	case 180:
-    		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-    		            		break;
-    		            	case 270:
-    		            		exif_orientation = mCameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-    		            		break;
-    		            	}
-    		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-    			            ei.saveAttributes();
-    		            }
-    	            }
-    	        }
-    			catch(IOException e) {
-    	            e.printStackTrace();
-    	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-    	            return;
-    	        }
-    	        catch (Exception e)
-    	        {
-    	        	e.printStackTrace();
-    	        }
-    		}
-    		
     		loadingSeamless();
 
 			int max = 0;
@@ -406,13 +301,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
     	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
 	}    	
-	
-	private void getPrefs()
-    {
-		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
-        SaveInputPreference = prefs.getBoolean("saveInputPrefGroupShot", false);
-    }
 	
 	private void getFaceRects()
 	{
@@ -641,13 +529,11 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 /************************************************
  * 		POST PROCESSING
  ************************************************/
-		@Override
 		public boolean isPostProcessingNeeded()
 		{
 			return true;
 		}
 		
-		@Override
 		public void onStartPostProcessing()
 		{
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
@@ -985,7 +871,6 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 		}
 		
 		
-		@Override
 		public boolean onKeyDown(int keyCode, KeyEvent event)
 		{
 			if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
@@ -997,7 +882,7 @@ public class GroupShotProcessingPlugin extends PluginProcessing implements OnTas
 				return true;
 			}
 			
-			return super.onKeyDown(keyCode, event);
+			return false;
 		}
 
 		

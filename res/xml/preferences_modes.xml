@@ -39,6 +39,12 @@
 		
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_MultiShot_Title">
+			 <extra android:name="type" android:value="multishot"/>
+		</PreferenceScreen>
+		
+		<!-- <PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_ObjectRemoval_Title">
 			 <extra android:name="type" android:value="objectremoval"/>
 		</PreferenceScreen>
@@ -53,7 +59,7 @@
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_Sequence_Title">
 			 <extra android:name="type" android:value="sequence"/>
-		</PreferenceScreen>
+		</PreferenceScreen> -->
 		
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"

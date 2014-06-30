@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/utilityButtons"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"			       
+	    android:orientation="horizontal"	        
+	    android:background="@android:color/transparent"
+	    android:gravity="center"  
+	    android:layout_gravity="center"   
+	    android:visibility="gone">
+				<com.almalence.ui.RotateImageView
+					android:id="@+id/buttonObjectRemoval"
+					android:src="@drawable/gui_almalence_mode_moving"				
+					android:background="@android:color/transparent"			
+					android:layout_height="50dp"
+					android:layout_width="50dp"								
+					android:scaleType="fitCenter" />
+				<com.almalence.ui.RotateImageView
+					android:id="@+id/buttonGroupShot"
+					android:src="@drawable/gui_almalence_mode_groupshot"				
+					android:background="@android:color/transparent"			
+					android:layout_height="50dp"
+					android:layout_width="50dp"
+					android:layout_marginLeft="20dp"								
+					android:scaleType="fitCenter" />
+				<com.almalence.ui.RotateImageView
+					android:id="@+id/buttonSequence"
+					android:src="@drawable/gui_almalence_mode_sequence"				
+					android:background="@android:color/transparent"			
+					android:layout_height="50dp"
+					android:layout_width="50dp"
+					android:layout_marginLeft="20dp"								
+					android:scaleType="fitCenter" />
+</LinearLayout>

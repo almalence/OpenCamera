@@ -16,9 +16,10 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
-package com.almalence.plugins.capture.sequence;
+package com.almalence.plugins.capture.multishot;
 
 import java.nio.ByteBuffer;
+
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
@@ -28,8 +29,7 @@ import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
+
 
 /* <!-- +++
 import com.almalence.opencam_plus.CameraController;
@@ -44,65 +44,73 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+//-+- -->
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 
 /***
-Implements sequence capture plugin - captures predefined number of images
+Implements group shot capture plugin - captures predefined number of images
 ***/
 
-public class SequenceCapturePlugin extends PluginCapture
-{
+public class MultiShotCapturePlugin extends PluginCapture {
+		
+	private String TAG = "MultiShotCapturePlugin";
+
     //defaul val. value should come from config
 	private int imageAmount = 1;
     private int pauseBetweenShots = 0;
-    
     private int imagesTaken=0;
-	
-	public SequenceCapturePlugin()
-	{
-		super("com.almalence.plugins.sequencecapture",
-			  R.xml.preferences_capture_sequence,
+    
+	public MultiShotCapturePlugin() {
+		super("com.almalence.plugins.multishotcapture",
+			  R.xml.preferences_capture_multishot,
 			  0,
 			  0,
 			  null);
 	}
 	
 	@Override
-	public void onResume()
-	{
+	public void onCreate() {
+	}
+	
+	@Override
+	public void onResume() {
 		takingAlready = false;
-		inCapture = false;
 		imagesTaken=0;
+		inCapture = false;
+		
 		refreshPreferences();
 	}
 	
 	@Override
-	public void onGUICreate()
-	{
-		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Sequence_Help_Header), MainScreen.thiz.getResources().getString(R.string.Sequence_Help), R.drawable.plugin_help_sequence, "sequenceRemovalShowHelp");
+	public void onGUICreate() {
+		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.MultiShot_Help_Header), MainScreen.thiz.getResources().getString(R.string.MultiShot_Help), R.drawable.plugin_help_object, "multiShotShowHelp");
 	}
 	
-	private void refreshPreferences()
-	{
+	private void refreshPreferences() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-		imageAmount = Integer.parseInt(prefs.getString("sequenceImagesAmount", "7"));
-		pauseBetweenShots = Integer.parseInt(prefs.getString("sequencePauseBetweenShots", "750"));
+		imageAmount = Integer.parseInt(prefs.getString("multiShotImagesAmount", "7"));
+		pauseBetweenShots = Integer.parseInt(prefs.getString("multiShotPauseBetweenShots", "750"));
 	}
 	
 	public boolean delayedCaptureSupported(){return true;}
-	
-	public void takePicture()
-	{
-		if(inCapture == false)
-		{
-			refreshPreferences();
-			takingAlready = true;
+		
+	public void takePicture() {
+		if(inCapture == false) {
 			inCapture = true;
-			if (imagesTaken==0 || pauseBetweenShots==0)
-			{
-				new CountDownTimer(50, 50) {
+			takingAlready = true;			
+			refreshPreferences();
+			
+			if (imagesTaken==0 || pauseBetweenShots==0) {
+				Message msg = new Message();
+				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+			}
+			else {
+				new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
 				     public void onTick(long millisUntilFinished) {}
-				     public void onFinish() 
-				     {
+				     public void onFinish() {
 				    	Message msg = new Message();
 						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 						msg.what = PluginManager.MSG_BROADCAST;
@@ -110,32 +118,17 @@ public class SequenceCapturePlugin extends PluginCapture
 				     }
 				  }.start();
 			}
-			else
-			{
-				new CountDownTimer(pauseBetweenShots, pauseBetweenShots) {
-				     public void onTick(long millisUntilFinished) {}
-				     public void onFinish() 
-				     {
-				    	 Message msg = new Message();
-				    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-				    	 msg.what = PluginManager.MSG_BROADCAST;
-				    	 MainScreen.H.sendMessage(msg);
-				     }
-				  }.start();
-			}
 		}
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
-	{
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
 		imagesTaken++;
 		int frame_len = paramArrayOfByte.length;
 		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
     	
-    	if (frame == 0)
-    	{
-    		Log.i("Sequence", "Load to heap failed");
+    	if (frame == 0) {
+    		Log.i(TAG, "Load to heap failed");
     		
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
@@ -146,7 +139,6 @@ public class SequenceCapturePlugin extends PluginCapture
 			MainScreen.thiz.MuteShutter(false);
 			inCapture = false;
 			return;
-    		//NotEnoughMemory();
     	}
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
@@ -156,16 +148,15 @@ public class SequenceCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(false));
+    	
     	if(imagesTaken == 1)
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID);
-		
-		try
-		{
+		try {
 			paramCamera.startPreview();
 		}
-		catch (RuntimeException e)
-		{
-			Log.i("Sequence", "StartPreview fail");
+		catch (RuntimeException e) {
+			Log.i(TAG, "StartPreview fail");
 			
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
@@ -177,13 +168,11 @@ public class SequenceCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		if (imagesTaken < imageAmount)
-		{
+		if (imagesTaken < imageAmount) {
 			inCapture = false;
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
-		else
-		{
+		else {
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
 			
 			Message message = new Message();
@@ -192,14 +181,13 @@ public class SequenceCapturePlugin extends PluginCapture
 			MainScreen.H.sendMessage(message);
 			
 			imagesTaken=0;
-			
-			//call timer to reset inCapture 
 			new CountDownTimer(5000, 5000) {
 			     public void onTick(long millisUntilFinished) {}
-			     public void onFinish() {
-			    	inCapture = false;
+			     public void onFinish() 
+			     {
+			    	 inCapture = false;
 			     }
-			 }.start();
+			  }.start();
 		}
 		takingAlready = false;
 	}
@@ -215,8 +203,7 @@ public class SequenceCapturePlugin extends PluginCapture
 		ByteBuffer U = im.getPlanes()[1].getBuffer();
 		ByteBuffer V = im.getPlanes()[2].getBuffer();
 
-		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
-		{
+		if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) ) {
 			Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
 			return;
 		}
@@ -239,13 +226,11 @@ public class SequenceCapturePlugin extends PluginCapture
 			Log.e("CapturePlugin", "Error while cropping: "+status);
 		
 		
-		byte byte_frame[] = YuvImage.GetByteFrame(0);
-		int frame_len = byte_frame.length;
-		int frame = SwapHeap.SwapToHeap(byte_frame);
-    	
-    	if (frame == 0)
-    	{
-    		Log.i("Sequence Shot", "Load to heap failed");
+		int frame = YuvImage.GetFrame(0);
+		int frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+		
+    	if (frame == 0) {
+    		Log.e(TAG, "Load to heap failed");
     		
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
@@ -265,15 +250,13 @@ public class SequenceCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));	
-
-		try
-		{
+    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
+    	
+		try {
 			CameraController.startCameraPreview();
 		}
-		catch (RuntimeException e)
-		{
-			Log.i("Group Shot", "StartPreview fail");
+		catch (RuntimeException e) {
+			Log.e(TAG, "StartPreview fail");
 			
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
@@ -285,13 +268,11 @@ public class SequenceCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		if (imagesTaken < imageAmount)
-		{
+		if (imagesTaken < imageAmount) {
 			inCapture = false;
 			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
-		else
-		{
+		else {
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
 			
 			Message message = new Message();
@@ -300,18 +281,16 @@ public class SequenceCapturePlugin extends PluginCapture
 			MainScreen.H.sendMessage(message);
 			
 			imagesTaken=0;
-			
-			inCapture = false;			
+			inCapture = false;
 		}
-		takingAlready = false;			
+		
+		takingAlready = false;
 	}
 	
 	@TargetApi(19)
 	@Override
-	public void onCaptureCompleted(CaptureResult result)
-	{
-		if(result.get(CaptureResult.REQUEST_ID) == requestID)
-		{
+	public void onCaptureCompleted(CaptureResult result) {
+		if(result.get(CaptureResult.REQUEST_ID) == requestID) {
 			if(imagesTaken == 1)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
 		}
@@ -319,40 +298,38 @@ public class SequenceCapturePlugin extends PluginCapture
 	
 	
 	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
+	public void onAutoFocus(boolean paramBoolean) {
 		if(takingAlready == true)
 			takePicture();
 	}
 
 	@Override
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
+	public boolean onBroadcast(int arg1, int arg2) {
+		if (arg1 == PluginManager.MSG_NEXT_FRAME) {
 			// play tick sound
 			MainScreen.guiManager.showCaptureIndication();
-    		MainScreen.thiz.PlayShutter();
-    		
-    		try {
-    			requestID = CameraController.captureImage(1, CameraController.YUV);
-			}catch (Exception e) {
+			MainScreen.thiz.PlayShutter();
+			
+			try {
+				requestID = CameraController.captureImage(1, CameraController.YUV);
+			}
+			catch (Exception e) {
 				e.printStackTrace();
-				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
 				Message msg = new Message();
-    			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-    			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);
-    			MainScreen.guiManager.lockControls = false;
+				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
+				msg.what = PluginManager.MSG_BROADCAST;
+				MainScreen.H.sendMessage(msg);
+				MainScreen.guiManager.lockControls = false;
 			}
-			
-			return true;
+
+    		return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera){}	
+	public void onPreviewFrame(byte[] data, Camera paramCamera) {}
 }

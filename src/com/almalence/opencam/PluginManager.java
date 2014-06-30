@@ -68,7 +68,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -77,17 +76,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.asynctaskmanager.Task;
-import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
-import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
-import com.almalence.util.exifreader.metadata.Directory;
-import com.almalence.util.exifreader.metadata.Metadata;
-import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
-import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
+import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
+import com.almalence.plugins.capture.multishot.MultiShotCapturePlugin;
 import com.almalence.plugins.capture.night.NightCapturePlugin;
 import com.almalence.plugins.capture.objectremoval.ObjectRemovalCapturePlugin;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
@@ -96,23 +90,30 @@ import com.almalence.plugins.capture.sequence.SequenceCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
+import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
 import com.almalence.plugins.processing.preshot.PreshotProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
-import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
+import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
-import com.almalence.plugins.vf.gyro.GyroVFPlugin;
+import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
+import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
+import com.almalence.util.exifreader.metadata.Directory;
+import com.almalence.util.exifreader.metadata.Metadata;
+import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
+import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 
 /***
@@ -329,17 +330,21 @@ public class PluginManager implements PluginManagerInterface {
 		pluginList.put(bestShotCapturePlugin.getID(), bestShotCapturePlugin);
 		listCapture.add(bestShotCapturePlugin);
 
-		ObjectRemovalCapturePlugin objectRemovalCapturePlugin = new ObjectRemovalCapturePlugin();
-		pluginList.put(objectRemovalCapturePlugin.getID(), objectRemovalCapturePlugin);
-		listCapture.add(objectRemovalCapturePlugin);
+		MultiShotCapturePlugin multiShotCapturePlugin = new MultiShotCapturePlugin();
+		pluginList.put(multiShotCapturePlugin.getID(), multiShotCapturePlugin);
+		listCapture.add(multiShotCapturePlugin);
+		
+//		ObjectRemovalCapturePlugin objectRemovalCapturePlugin = new ObjectRemovalCapturePlugin();
+//		pluginList.put(objectRemovalCapturePlugin.getID(), objectRemovalCapturePlugin);
+//		listCapture.add(objectRemovalCapturePlugin);
+//
+//		SequenceCapturePlugin sequenceCapturePlugin = new SequenceCapturePlugin();
+//		pluginList.put(sequenceCapturePlugin.getID(), sequenceCapturePlugin);
+//		listCapture.add(sequenceCapturePlugin);
 
-		SequenceCapturePlugin sequenceCapturePlugin = new SequenceCapturePlugin();
-		pluginList.put(sequenceCapturePlugin.getID(), sequenceCapturePlugin);
-		listCapture.add(sequenceCapturePlugin);
-
-		GroupShotCapturePlugin groupShotCapturePlugin = new GroupShotCapturePlugin();
-		pluginList.put(groupShotCapturePlugin.getID(), groupShotCapturePlugin);
-		listCapture.add(groupShotCapturePlugin);
+//		GroupShotCapturePlugin groupShotCapturePlugin = new GroupShotCapturePlugin();
+//		pluginList.put(groupShotCapturePlugin.getID(), groupShotCapturePlugin);
+//		listCapture.add(groupShotCapturePlugin);
 
 		VideoCapturePlugin videoCapturePlugin = new VideoCapturePlugin();
 		pluginList.put(videoCapturePlugin.getID(), videoCapturePlugin);
@@ -373,17 +378,21 @@ public class PluginManager implements PluginManagerInterface {
 		pluginList.put(hdrProcessingPlugin.getID(), hdrProcessingPlugin);
 		listProcessing.add(hdrProcessingPlugin);
 
-		ObjectRemovalProcessingPlugin movingObjectsProcessingPlugin = new ObjectRemovalProcessingPlugin();
-		pluginList.put(movingObjectsProcessingPlugin.getID(), movingObjectsProcessingPlugin);
-		listProcessing.add(movingObjectsProcessingPlugin);
+		MultiShotProcessingPlugin multiShotProcessingPlugin = new MultiShotProcessingPlugin();
+		pluginList.put(multiShotProcessingPlugin.getID(), multiShotProcessingPlugin);
+		listProcessing.add(multiShotProcessingPlugin);
+		
+//		ObjectRemovalProcessingPlugin movingObjectsProcessingPlugin = new ObjectRemovalProcessingPlugin();
+//		pluginList.put(movingObjectsProcessingPlugin.getID(), movingObjectsProcessingPlugin);
+//		listProcessing.add(movingObjectsProcessingPlugin);
 
-		SequenceProcessingPlugin sequenceProcessingPlugin = new SequenceProcessingPlugin();
-		pluginList.put(sequenceProcessingPlugin.getID(), sequenceProcessingPlugin);
-		listProcessing.add(sequenceProcessingPlugin);
+//		SequenceProcessingPlugin sequenceProcessingPlugin = new SequenceProcessingPlugin();
+//		pluginList.put(sequenceProcessingPlugin.getID(), sequenceProcessingPlugin);
+//		listProcessing.add(sequenceProcessingPlugin);
 
-		GroupShotProcessingPlugin groupShotProcessingPlugin = new GroupShotProcessingPlugin();
-		pluginList.put(groupShotProcessingPlugin.getID(), groupShotProcessingPlugin);
-		listProcessing.add(groupShotProcessingPlugin);
+//		GroupShotProcessingPlugin groupShotProcessingPlugin = new GroupShotProcessingPlugin();
+//		pluginList.put(groupShotProcessingPlugin.getID(), groupShotProcessingPlugin);
+//		listProcessing.add(groupShotProcessingPlugin);
 
 		PanoramaProcessingPlugin panoramaProcessingPlugin = new PanoramaProcessingPlugin();
 		pluginList.put(panoramaProcessingPlugin.getID(), panoramaProcessingPlugin);
@@ -916,18 +925,22 @@ public class PluginManager implements PluginManagerInterface {
 		{
 			AddModeSettings("pixfix", pf);
 		}
-		else if ("objectremoval".equals(settings))
+		else if ("multishot".equals(settings))
 		{
-			AddModeSettings("movingobjects", pf);
+			AddModeSettings("multishot", pf);
 		}
-		else if ("groupshot".equals(settings))
-		{
-			AddModeSettings("groupshot", pf);
-		}
-		else if ("sequence".equals(settings))
-		{
-			AddModeSettings("sequence", pf);
-		}
+//		else if ("objectremoval".equals(settings))
+//		{
+//			AddModeSettings("movingobjects", pf);
+//		}
+//		else if ("groupshot".equals(settings))
+//		{
+//			AddModeSettings("groupshot", pf);
+//		}
+//		else if ("sequence".equals(settings))
+//		{
+//			AddModeSettings("sequence", pf);
+//		}
 		else if ("panorama_augmented".equals(settings))
 		{
 			AddModeSettings("panorama_augmented", pf);
