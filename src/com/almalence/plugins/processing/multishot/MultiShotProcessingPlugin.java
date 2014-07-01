@@ -26,8 +26,6 @@ import java.util.Calendar;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.location.Location;
@@ -38,6 +36,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +50,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
 import com.almalence.plugins.export.standard.GPSTagsConverter;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -65,9 +63,7 @@ import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateImageView;
-import com.almalence.util.ImageConversion;
 import com.almalence.util.MLocation;
-import com.almalence.util.Size;
 
 /***
 Implements multishot processing
@@ -78,12 +74,13 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private static int GROUP_SHOT = 0;
 	private static int SEQUENCE = 1;
 	private static int OBJECT_REMOVAL = 2;
+	private static int CANCELLED = -2;
 	
 	private View mButtonsLayout;
 	
-	private GroupShotProcessingPlugin groupShotProcessingPlugin;
-	private SequenceProcessingPlugin sequenceProcessingPlugin;
-	private ObjectRemovalProcessingPlugin objectRemovalProcessingPlugin;
+	private static GroupShotProcessingPlugin groupShotProcessingPlugin =  new GroupShotProcessingPlugin();
+	private static SequenceProcessingPlugin sequenceProcessingPlugin = new SequenceProcessingPlugin();
+	private static ObjectRemovalProcessingPlugin objectRemovalProcessingPlugin = new ObjectRemovalProcessingPlugin();
 	
 	private int selectedPlugin;
 	private long SessionID;
@@ -150,13 +147,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	}
 	
 	@Override
-	public void onCreate() {
-		groupShotProcessingPlugin =  new GroupShotProcessingPlugin();
-		sequenceProcessingPlugin = new SequenceProcessingPlugin();
-		objectRemovalProcessingPlugin = new ObjectRemovalProcessingPlugin();
-	}
-	
-	@Override
 	public View getPostProcessingView() {
 		if (selectedPlugin == GROUP_SHOT) {
 			return groupShotProcessingPlugin.getPostProcessingView();
@@ -188,7 +178,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		selectedPlugin = -1;
 		
 		MainScreen.thiz.runOnUiThread(new Runnable() {
-		    public void run() {   
+		    public void run() {  
+		    	Log.e("", "set visible");
 		    	mButtonsLayout.setVisibility(View.VISIBLE);
 		    }
 		});
@@ -402,6 +393,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
  ************************************************/
 	@Override
 	public boolean isPostProcessingNeeded() {
+		if (selectedPlugin == CANCELLED) {
+			return false;
+		}
 		return true;
 	}
 	
@@ -442,7 +436,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			return ((Callback) objectRemovalProcessingPlugin).handleMessage(msg);
 		}
 
-    	return false;
+    	return true;
 	}
 	
 	@Override
@@ -467,4 +461,13 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 /************************************************
  * 		POST PROCESSING END
  ************************************************/
+	
+	@Override
+	public void onPause() {
+		if(mButtonsLayout != null) {
+			MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+		}
+
+		selectedPlugin = CANCELLED;
+	}
 }
