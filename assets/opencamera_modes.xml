@@ -32,7 +32,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.capture" />    
 	
@@ -83,7 +82,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.burstcapture" />    
 	
@@ -108,7 +106,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
 	
@@ -133,7 +130,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
 	
@@ -158,7 +154,6 @@
 		<vf 		id="com.almalence.plugins.focusvf"/>
 		<vf 		id="com.almalence.plugins.infosetvf"/>
 		<vf 		id="com.almalence.plugins.aeawlockvf"/>
-		<vf 		id="com.almalence.plugins.gyrovf"/>
 		
 	    <capture 	id="com.almalence.plugins.nightcapture" />    
 	
@@ -182,7 +177,6 @@
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.videocapture" />    
 	
@@ -209,7 +203,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.preshotcapture" />    
 	
@@ -235,7 +228,6 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.objectremovalcapture" />    
 	
@@ -261,8 +253,7 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
-	
+	    
 	    <capture 	id="com.almalence.plugins.groupshotcapture" />
 	
 	    <processing id="com.almalence.plugins.groupshotprocessing"/>    
@@ -287,8 +278,7 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
-	
+	    
 	    <capture 	id="com.almalence.plugins.sequencecapture" />
 	
 	    <processing id="com.almalence.plugins.sequenceprocessing"/>    
@@ -312,8 +302,7 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
-	
+	    
 	    <capture 	id="com.almalence.plugins.panoramacapture_augmented" />
 	
 	    <processing id="com.almalence.plugins.panoramaprocessing"/>    
@@ -360,8 +349,7 @@
 	    <vf 		id="com.almalence.plugins.focusvf"/>
 	    <vf 		id="com.almalence.plugins.infosetvf"/>
 	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
-	
+	    
 	    <capture 	id="com.almalence.plugins.bestshotcapture" />    
 	
 	    <processing	id="com.almalence.plugins.bestshotprocessing" />    

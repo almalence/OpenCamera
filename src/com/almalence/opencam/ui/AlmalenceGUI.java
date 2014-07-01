@@ -1109,10 +1109,15 @@ public class AlmalenceGUI extends GUI implements
 			
 		});
 		
-		
 		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
 		store.setVisibility(View.VISIBLE);
 		store.bringToFront();
+		
+		if (MainScreen.thiz.showPromoRedeemed == true)
+		{
+			Toast.makeText(MainScreen.thiz, "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
+			MainScreen.thiz.showPromoRedeemed = false;
+		}
 	}
 	
 	@Override
@@ -1139,7 +1144,7 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		
-		for (int i =0; i<5; i++) {
+		for (int i =0; i<6; i++) {
 
 			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 			View item = inflator.inflate(
@@ -1208,6 +1213,15 @@ public class AlmalenceGUI extends GUI implements
 					else
 						price.setText(MainScreen.thiz.titleUnlockGroup);
 					break;
+				case 5:
+					// Promo code
+					icon.setImageResource(R.drawable.store_promo);
+					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
+					//if(MainScreen.thiz.isPurchasedAll())
+						//price.setText(R.string.already_unlocked);
+					//else
+						price.setText("");
+					break;
 			}
 
 			item.setOnTouchListener(new OnTouchListener()
@@ -1215,58 +1229,16 @@ public class AlmalenceGUI extends GUI implements
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					if(event.getAction() == MotionEvent.ACTION_CANCEL)
-					{
-						// get inapp associated with pressed button
-						Integer id = buttonStoreViewAssoc.get(v);
-						String payload = "";
-						switch (id)
-						{
-						case 0:// unlock all
-							MainScreen.thiz.purchaseAll();
-							break;
-						case 1:// HDR
-							MainScreen.thiz.purchaseHDR();
-							break;
-						case 2:// Panorama
-							MainScreen.thiz.purchasePanorama();
-							break;
-						case 3:// Moving
-							MainScreen.thiz.purchaseMoving();
-							break;
-						case 4:// Groupshot
-							MainScreen.thiz.purchaseGroupshot();
-							break;
-						}
-					}
+						purchasePressed(v);
 					return false;
 				}
-				
 			});
 			
 			item.setOnClickListener(new OnClickListener() 
 			{
 				public void onClick(View v) {
 					// get inapp associated with pressed button
-					Integer id = buttonStoreViewAssoc.get(v);
-					String payload = "";
-					switch (id)
-					{
-					case 0:// unlock all
-						MainScreen.thiz.purchaseAll();
-						break;
-					case 1:// HDR
-						MainScreen.thiz.purchaseHDR();
-						break;
-					case 2:// Panorama
-						MainScreen.thiz.purchasePanorama();
-						break;
-					case 3:// Moving
-						MainScreen.thiz.purchaseMoving();
-						break;
-					case 4:// Groupshot
-						MainScreen.thiz.purchaseGroupshot();
-						break;
-					}
+					purchasePressed(v);
 				}
 			});
 			
@@ -1277,6 +1249,33 @@ public class AlmalenceGUI extends GUI implements
 		storeAdapter.Elements = storeViews;
 	}
 	
+	private void purchasePressed(View v)
+	{
+		// get inapp associated with pressed button
+		Integer id = buttonStoreViewAssoc.get(v);
+		switch (id)
+		{
+		case 0:// unlock all
+			MainScreen.thiz.purchaseAll();
+			break;
+		case 1:// HDR
+			MainScreen.thiz.purchaseHDR();
+			break;
+		case 2:// Panorama
+			MainScreen.thiz.purchasePanorama();
+			break;
+		case 3:// Moving
+			MainScreen.thiz.purchaseMoving();
+			break;
+		case 4:// Groupshot
+			MainScreen.thiz.purchaseGroupshot();
+			break;
+		case 5:// Promo
+			MainScreen.thiz.enterPromo();
+			break;
+		}
+	}
+
 	public void ShowUnlockControl()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);

@@ -21,6 +21,7 @@ package com.almalence.plugins.export.standard;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +36,7 @@ import android.hardware.Camera.Parameters;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
@@ -258,28 +260,36 @@ public class ExportPlugin extends PluginExport
 	            	file = MainScreen.ForceFilename;
 	            }
 	
-		    	FileOutputStream os = null;
-		    	try
-		    	{
-		    		os = new FileOutputStream(file);
+		    	OutputStream os = null;
+		    	if (MainScreen.ForceFilename != null)
+	    		{
+		    		os = MainScreen.thiz.getContentResolver().openOutputStream(MainScreen.ForceFilenameUri);
 		    	}
-		    	catch (Exception e)
-		        {
-		    		//save always if not working saving to sdcard
-		        	e.printStackTrace();
-		        	saveDir = PluginManager.getInstance().GetSaveDir(true);
-		        	if (MainScreen.ForceFilename == null)
-		            {
-			    		file = new File(
-			            		saveDir, 
-			            		fileFormat);
-		            }
-		            else
-		            {
-		            	file = MainScreen.ForceFilename;
-		            }
-		        	os = new FileOutputStream(file);
-		        }	            
+		    	else
+		    	{
+		    		try
+			    	{
+			    		os = new FileOutputStream(file);
+			    	}
+			    	catch (Exception e)
+			        {
+			    		//save always if not working saving to sdcard
+			        	e.printStackTrace();
+			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+			        	if (MainScreen.ForceFilename == null)
+			            {
+				    		file = new File(
+				            		saveDir, 
+				            		fileFormat);
+			            }
+			            else
+			            {
+			            	file = MainScreen.ForceFilename;
+			            }
+			        	os = new FileOutputStream(file);
+			        }
+		    	}
+	    		
 		    	MainScreen.ForceFilename = null;
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
@@ -415,8 +425,10 @@ public class ExportPlugin extends PluginExport
                 // Can't figure out why, other Exif tools work fine. 
                 ExifInterface ei = new ExifInterface(file.getAbsolutePath());
                 String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+                String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
                 if(tag_model != null) {
 	        		ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+	        		ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
 	            }
                 ei.saveAttributes();
                 
@@ -463,7 +475,6 @@ public class ExportPlugin extends PluginExport
 	            String tag_focal_length = PluginManager.getInstance().getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
 	            String tag_iso = PluginManager.getInstance().getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
 	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
-	            String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));	            
 	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
 	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
 	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
@@ -594,11 +605,11 @@ public class ExportPlugin extends PluginExport
 		            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            	}
 		            }
-		            if(tag_make != null) {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(tag_make.getBytes());
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
-		            }
+//		            if(tag_make != null) {
+//		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+//		        		value.setBytes(tag_make.getBytes());
+//		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
+//		            }
 		            if(tag_spectral_sensitivity != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());
@@ -635,7 +646,15 @@ public class ExportPlugin extends PluginExport
 		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
 		            if (dateString != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(dateString.getBytes());
+		            	// Date string length is 19 bytes. But exif tag specification length is 20 bytes.
+		            	// That's why we add "empty" byte (0x00) in the end.
+		            	byte[] bytes = dateString.getBytes();
+		            	byte[] res = new byte[20];
+		            	for (int ii = 0; ii < bytes.length; ii++) {
+		            		res[ii] = bytes[ii];
+		            	}
+		            	res[19] = 0x00;
+		        		value.setBytes(res);
 		        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
 		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
 		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);

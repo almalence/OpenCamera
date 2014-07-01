@@ -104,7 +104,6 @@ import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
 import com.almalence.plugins.vf.focus.FocusVFPlugin;
 import com.almalence.plugins.vf.grid.GridVFPlugin;
-import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
@@ -268,9 +267,6 @@ public class PluginManager {
 		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
 		listVF.add(barcodeScannerVFPlugin);
 		
-		GyroVFPlugin gyroVFPlugin = new GyroVFPlugin();
-		pluginList.put(gyroVFPlugin.getID(), gyroVFPlugin);
-		listVF.add(gyroVFPlugin);
 		
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
@@ -863,14 +859,16 @@ public class PluginManager {
 					&& isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
 		}
-//		else if ("vf_inactive_settings".equals(settings)) {
-//			for (int i = 0; i < listVF.size(); i++) {
-//				Plugin pg = listVF.get(i);
-//				if (!activeVF.contains(pg.getID()))
-//					inactivePlugins.add(pg);
-//			}
-//			addHeadersContent(pf, inactivePlugins, false);
-//		}
+		else if ("vf_inactive_settings".equals(settings)) 
+		{
+			for (int i = 0; i < listVF.size(); i++) 
+			{				
+				Plugin pg = listVF.get(i);
+				if (!activeVF.contains(pg.getID()))
+					inactivePlugins.add(pg);
+			}
+			addHeadersContent(pf, inactivePlugins, false);
+		}
 		else if ("save_configuration".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
@@ -1650,15 +1648,15 @@ public class PluginManager {
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
 
-//			if (MainScreen.thiz.getIntent().getAction() != null)
-//	        {
-//		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
-//		    			&& MainScreen.ForceFilename == null)
-//		    	{
-//		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
-//		    	}
-//	        }
-			Toast.makeText(MainScreen.mainContext, "Can't save data.", Toast.LENGTH_LONG).show();
+			if (MainScreen.thiz.getIntent().getAction() != null)
+	        {
+		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+		    			&& MainScreen.ForceFilename == null)
+		    	{
+		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+		    	}
+	        }
+			//Toast.makeText(MainScreen.mainContext, "Can't save data.", Toast.LENGTH_LONG).show();
 			break;
 
 		case MSG_DELAYED_CAPTURE: 
@@ -2003,38 +2001,47 @@ public class PluginManager {
 		                }					
 			            else
 			            {
-			            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
+			            	memcardDir = new File("/storage", "emulated");		//Huawei honor 2
 				            if (memcardDir.exists())
 				            {
-					            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
+					            saveDir = new File("/storage", "emulated/0/DCIM/" + abcDir);
 				            	usePhoneMem = false;
 				            }
-			                else
-			                {
-								memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
+				            else
+				            {
+				            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
 					            if (memcardDir.exists())
 					            {
-						            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
+						            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
 					            	usePhoneMem = false;
 					            }
-					            else
-					            {
-									memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
+				                else
+				                {
+									memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
 						            if (memcardDir.exists())
 						            {
-							            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
+							            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
 						            	usePhoneMem = false;
 						            }
 						            else
 						            {
-										memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+										memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
 							            if (memcardDir.exists())
 							            {
-								            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+								            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
 							            	usePhoneMem = false;
 							            }
+							            else
+							            {
+											memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
+								            if (memcardDir.exists())
+								            {
+									            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
+								            	usePhoneMem = false;
+								            }
+							            }
 						            }
-					            }
+				                }
 			                }
 			            }
 		            }
