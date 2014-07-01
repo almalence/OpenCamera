@@ -142,6 +142,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static final int MSG_RETURN_CAPTURED = -1;
 
 	public static File ForceFilename = null;
+	public static Uri ForceFilenameUri;
 
 	//Interface to HALv3 camera and Old style camera
 	public static CameraController cameraController = null;
@@ -515,11 +516,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)) 
 			{
-				try {
+				try 
+				{
+					ForceFilenameUri = this.getIntent().getExtras()
+							.getParcelable(MediaStore.EXTRA_OUTPUT);
 					MainScreen.ForceFilename = new File(
-							((Uri) this.getIntent().getExtras()
-									.getParcelable(MediaStore.EXTRA_OUTPUT))
-									.getPath());
+							((Uri) ForceFilenameUri).getPath());
 					if (MainScreen.ForceFilename.getAbsolutePath().equals("/scrapSpace")) 
 					{
 						MainScreen.ForceFilename = new File(Environment
@@ -528,10 +530,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 								+ "/mms/scrapSpace/.temp.jpg");
 						new File(MainScreen.ForceFilename.getParent()).mkdirs();
 					}
-				} catch (Exception e) {
+				} 
+				catch (Exception e) 
+				{
 					MainScreen.ForceFilename = null;
 				}
-			} else {
+			} 
+			else 
+			{
 				MainScreen.ForceFilename = null;
 			}
 		} else {

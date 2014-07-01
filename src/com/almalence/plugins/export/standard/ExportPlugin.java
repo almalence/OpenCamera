@@ -21,6 +21,7 @@ package com.almalence.plugins.export.standard;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -250,28 +251,35 @@ public class ExportPlugin extends PluginExport
 	            	file = MainScreen.ForceFilename;
 	            }
 	
-		    	FileOutputStream os = null;
-		    	try
-		    	{
-		    		os = new FileOutputStream(file);
+		    	OutputStream os = null;
+		    	if (MainScreen.ForceFilename != null)
+	    		{
+		    		os = MainScreen.thiz.getContentResolver().openOutputStream(MainScreen.ForceFilenameUri);
 		    	}
-		    	catch (Exception e)
-		        {
-		    		//save always if not working saving to sdcard
-		        	e.printStackTrace();
-		        	saveDir = PluginManager.getInstance().GetSaveDir(true);
-		        	if (MainScreen.ForceFilename == null)
-		            {
-			    		file = new File(
-			            		saveDir, 
-			            		fileFormat);
-		            }
-		            else
-		            {
-		            	file = MainScreen.ForceFilename;
-		            }
-		        	os = new FileOutputStream(file);
-		        }	            
+		    	else
+		    	{
+		    		try
+			    	{
+			    		os = new FileOutputStream(file);
+			    	}
+			    	catch (Exception e)
+			        {
+			    		//save always if not working saving to sdcard
+			        	e.printStackTrace();
+			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+			        	if (MainScreen.ForceFilename == null)
+			            {
+				    		file = new File(
+				            		saveDir, 
+				            		fileFormat);
+			            }
+			            else
+			            {
+			            	file = MainScreen.ForceFilename;
+			            }
+			        	os = new FileOutputStream(file);
+			        }
+		    	}        
 		    	MainScreen.ForceFilename = null;
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save

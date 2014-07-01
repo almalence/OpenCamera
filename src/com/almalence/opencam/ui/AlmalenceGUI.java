@@ -910,7 +910,7 @@ public class AlmalenceGUI extends GUI implements
 					break;
 				case 5:
 					// Promo code
-					icon.setImageResource(R.drawable.store_groupshot);
+					icon.setImageResource(R.drawable.store_promo);
 					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
 					if(MainScreen.thiz.isPurchasedAll())
 						price.setText(R.string.already_unlocked);
