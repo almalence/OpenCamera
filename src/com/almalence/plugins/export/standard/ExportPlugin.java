@@ -19,8 +19,10 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.export.standard;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,6 +39,7 @@ import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -61,7 +64,6 @@ import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
 import com.almalence.ui.RotateImageView;
-
 import com.almalence.util.MLocation;
 
 /***
@@ -178,6 +180,34 @@ public class ExportPlugin extends PluginExport
         }
     }
 	
+	public void copyFromForceFileName(File dst) throws IOException {
+	    InputStream in = MainScreen.thiz.getContentResolver().openInputStream(MainScreen.ForceFilenameUri);
+	    OutputStream out = new FileOutputStream(dst);
+
+	    // Transfer bytes from in to out
+	    byte[] buf = new byte[1024];
+	    int len;
+	    while ((len = in.read(buf)) > 0) {
+	        out.write(buf, 0, len);
+	    }
+	    in.close();
+	    out.close();
+	}
+	
+	public void copyToForceFileName(File src) throws IOException {
+	    InputStream in = new FileInputStream(src);
+	    OutputStream out = MainScreen.thiz.getContentResolver().openOutputStream(MainScreen.ForceFilenameUri);
+
+	    // Transfer bytes from in to out
+	    byte[] buf = new byte[1024];
+	    int len;
+	    while ((len = in.read(buf)) > 0) {
+	        out.write(buf, 0, len);
+	    }
+	    in.close();
+	    out.close();
+	}
+	
 	private void savePicture() 
 	{
 		// save fused result
@@ -280,7 +310,7 @@ public class ExportPlugin extends PluginExport
 			        	os = new FileOutputStream(file);
 			        }
 		    	}        
-		    	MainScreen.ForceFilename = null;
+		    	
 	            //Take only one result frame from several results
 	            //Used for PreShot plugin that may decide which result to save
 	            if(imagesAmount == 1 && imageIndex != 0)
@@ -400,7 +430,7 @@ public class ExportPlugin extends PluginExport
 	            
 	            
 	            values = new ContentValues(9);
-                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName().length()));
                 values.put(ImageColumns.DISPLAY_NAME, file.getName());
                 values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
                 values.put(ImageColumns.MIME_TYPE, "image/jpeg");
@@ -409,10 +439,21 @@ public class ExportPlugin extends PluginExport
                 
                 filesSavedNames[nFilesSaved++] = file.toString();
                 
+                File tmpFile;
+                if (MainScreen.ForceFilename == null) {
+                	tmpFile = file;
+                }
+                else {
+                	tmpFile = new File(saveDir, "external.tmp");
+                	tmpFile.createNewFile();
+                	copyFromForceFileName(tmpFile);
+                }
+                
                 // Set tag_model using ExifInterface. 
                 // If we try set tag_model using ExifDriver, then standard gallery of android (Nexus 4) will crash on this file.
-                // Can't figure out why, other Exif tools work fine. 
-                ExifInterface ei = new ExifInterface(file.getAbsolutePath());
+                // Can't figure out why, other Exif tools work fine.
+                ExifInterface ei = new ExifInterface(tmpFile.getAbsolutePath());
+                
                 String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
                 String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
                 if(tag_model != null) {
@@ -421,7 +462,8 @@ public class ExportPlugin extends PluginExport
 	            }
                 ei.saveAttributes();
                 
-                ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
+                // Open ExifDriver.
+            	ExifDriver exifDriver = ExifDriver.getInstance(tmpFile.getAbsolutePath());
 		    	ExifManager exifManager = null;
 		    	if (exifDriver != null) {
 	            	exifManager = new ExifManager(exifDriver, MainScreen.thiz);
@@ -673,10 +715,17 @@ public class ExportPlugin extends PluginExport
 		            }
 		            
 		            // Save exif info to new file, and replace old file with new one.
-	            	File modifiedFile = new File(saveDir, fileFormat + ".tmp");
-	            	exifDriver.save(modifiedFile.getAbsolutePath());
-	            	file.delete();
-	            	modifiedFile.renameTo(file);
+		            File modifiedFile = new File(tmpFile.getAbsolutePath() + ".tmp");
+		            exifDriver.save(modifiedFile.getAbsolutePath());
+		            if (MainScreen.ForceFilename == null) {
+		            	file.delete();
+		            	modifiedFile.renameTo(file);
+		            }
+		            else {
+		            	copyToForceFileName(modifiedFile);
+		            	tmpFile.delete();
+		            	modifiedFile.delete();
+		            }
 	            }
 	            
 		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
@@ -694,5 +743,9 @@ public class ExportPlugin extends PluginExport
         	e.printStackTrace();
         	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
         }
+		finally
+		{
+			MainScreen.ForceFilename = null;
+		}
 	}
 }
