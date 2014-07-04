@@ -45,6 +45,9 @@
    
    <dimen name="blockingTitleSize">24sp</dimen>
    
+   <dimen name="multishotOptionsImageSize">60dp</dimen>
+   <dimen name="multishotOptionsTitle">20sp</dimen>
+   
    <dimen name="hintUpArrowTop">40sp</dimen>
    <dimen name="hintUpArrowText">10sp</dimen>
    

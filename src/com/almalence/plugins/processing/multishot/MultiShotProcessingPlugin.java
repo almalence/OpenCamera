@@ -63,6 +63,7 @@ import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.RotateLayout;
 import com.almalence.util.MLocation;
 
 /***
@@ -108,7 +109,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		RotateImageView buttonGroupShot = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonGroupShot);
 		RotateImageView buttonSequence = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonSequence);
 	
-		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.blockingLayout);
 				
 		buttonObjectRemoval.setOnClickListener(new OnClickListener() {
 			@Override
@@ -134,16 +135,14 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		});
 		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout, params);
+		((RelativeLayout)MainScreen.thiz.findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
 		
 		buttonObjectRemoval.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		buttonGroupShot.setOrientation(MainScreen.guiManager.getLayoutOrientation());
 		buttonSequence.setOrientation(MainScreen.guiManager.getLayoutOrientation());
-		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 	
 	@Override
@@ -179,8 +178,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		
 		MainScreen.thiz.runOnUiThread(new Runnable() {
 		    public void run() {  
-		    	Log.e("", "set visible");
 		    	mButtonsLayout.setVisibility(View.VISIBLE);
+		    	MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.GONE);
+		    	Message msg = new Message();
+				msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+				MainScreen.H.sendMessage(msg);
 		    }
 		});
 		
@@ -193,6 +195,12 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				e.printStackTrace();
 			}
 		}
+		
+		MainScreen.thiz.runOnUiThread(new Runnable() {
+		    public void run() {  
+		    	MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+		    }
+		});
 		        
 		if (selectedPlugin == GROUP_SHOT) {
 			GroupShotProcessingPlugin.setmJpegBufferList(mJpegBufferList);
@@ -206,7 +214,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		}
 		else if (selectedPlugin == OBJECT_REMOVAL) {
 			ObjectRemovalProcessingPlugin.setmJpegBufferList(mJpegBufferList);
-//			ObjectRemovalProcessingPlugin.setmYUVBufferList(mYUVBufferList);
 			objectRemovalProcessingPlugin.onStartProcessing(SessionID);
 		}
 	}
@@ -453,6 +460,17 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			res = objectRemovalProcessingPlugin.onKeyDown(keyCode, event);
 		}
 		
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+    		mButtonsLayout.setVisibility(View.GONE);
+    		
+			MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+    		selectedPlugin = CANCELLED;
+    		MainScreen.guiManager.lockControls = false;
+
+    		return true;
+	    }
+		
 		if (res) {
 			return res;
 		}
@@ -469,5 +487,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		}
 
 		selectedPlugin = CANCELLED;
+	}
+	
+	@Override
+	public void onOrientationChanged(int orientation) {
+		((RotateLayout) MainScreen.thiz.findViewById(R.id.rotateLayout)).setAngle(orientation - 90);
+		MainScreen.thiz.findViewById(R.id.rotateLayout).requestLayout();
 	}
 }
