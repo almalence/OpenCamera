@@ -2171,12 +2171,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		ll.setOrientation(LinearLayout.VERTICAL);
 		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
 		
-//		TextView tv = new TextView(this);
-//		tv.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_Text));
-//		tv.setWidth((int)(250 * density));
-//		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
-//		ll.addView(tv);
-//		
 		//rating bar
 		final EditText editText = new EditText(this);
 		editText.setHint(R.string.Pref_Upgrde_PromoCode_Text);
@@ -2188,7 +2182,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		editText.setLayoutParams(params);
 		ll.addView(editText);
 
-
 		Button b3 = new Button(this);
 		b3.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_DoneText));
 		ll.addView(b3);
@@ -2197,7 +2190,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
 		
-
 		b3.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
