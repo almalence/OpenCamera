@@ -31,6 +31,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.util.Util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
 import android.graphics.ImageFormat;
@@ -48,10 +49,12 @@ import android.hardware.camera2.CameraAccessException;
 
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 //HALv3 camera's objects
+@SuppressLint("NewApi")
 @TargetApi(19)
 public class HALv3
 {
@@ -77,7 +80,7 @@ public class HALv3
 	
 	private CameraManager manager = null;
 	private CameraCharacteristics camCharacter=null;
-	private cameraAvailableListener availListener = null;
+//	private cameraAvailableListener availListener = null;
 	protected CameraDevice camDevice = null;
 	private CaptureRequest.Builder previewRequestBuilder = null;
 	
@@ -101,36 +104,60 @@ public class HALv3
 	
 	public static void onPauseHALv3()
 	{
+		Log.e(TAG, "onPause");
 		// HALv3 code -----------------------------------------
-		if ((HALv3.getInstance().availListener != null) && (HALv3.getInstance().manager != null))
-			HALv3.getInstance().manager.removeAvailabilityListener(HALv3.getInstance().availListener);
+//		if ((HALv3.getInstance().availListener != null) && (HALv3.getInstance().manager != null))
+//			HALv3.getInstance().manager.removeAvailabilityListener(HALv3.getInstance().availListener);
 		
-		if (HALv3.getInstance().camDevice != null)
+		if (null != HALv3.getInstance().camDevice)
 		{
 			HALv3.getInstance().camDevice.close();
 			HALv3.getInstance().camDevice = null;
-		}
+        }
+		
+//		if (HALv3.getInstance().camDevice != null)
+//		{
+//			try
+//			{
+//				HALv3.getInstance().camDevice.stopRepeating();
+//				HALv3.getInstance().camDevice.waitUntilIdle();
+//				HALv3.getInstance().camDevice.flush();
+//				HALv3.getInstance().camDevice.close();
+//				HALv3.getInstance().camDevice = null;
+//			}
+//			catch(CameraAccessException e)	
+//			{
+//				HALv3.getInstance().camDevice = null;
+//				Log.e(TAG, "close camera device failed: " + e.getMessage());
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	
 	public static void openCameraHALv3()
 	{
+		Log.e(TAG, "openCameraHALv3()");
 		// HALv3 open camera -----------------------------------------------------------------
-		try
+		if(HALv3.getCamera2() == null)
 		{
-			HALv3.getInstance().manager.openCamera (CameraController.getInstance().cameraIdList[CameraController.CameraIndex], HALv3.getInstance().new openListener(), null);
-		}
-		catch (CameraAccessException e)
-		{
-			Log.d("MainScreen", "manager.openCamera failed");
-			e.printStackTrace();
+			try
+			{
+				onCreateHALv3();
+				Log.e(TAG, "try to manager.openCamera");
+				HALv3.getInstance().manager.openCamera (CameraController.getInstance().cameraIdList[CameraController.CameraIndex], HALv3.getInstance().new openListener(), null);
+			}
+			catch (CameraAccessException e)
+			{
+				Log.e(TAG, "manager.openCamera failed: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		
-		// find suitable image sizes for preview and capture
 		try	{
 			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController.getInstance().cameraIdList[CameraController.CameraIndex]);
 		} catch (CameraAccessException e) {
-			Log.d("MainScreen", "getCameraCharacteristics failed");
+			Log.e(TAG, "getCameraCharacteristics failed: " + e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -140,8 +167,8 @@ public class HALv3
 			CameraController.CameraMirrored = false;
 		
 		// Add an Availability Listener as Cameras become available or unavailable
-		HALv3.getInstance().availListener = HALv3.getInstance().new cameraAvailableListener();
-		HALv3.getInstance().manager.addAvailabilityListener(HALv3.getInstance().availListener, null);
+//		HALv3.getInstance().availListener = HALv3.getInstance().new cameraAvailableListener();
+//		HALv3.getInstance().manager.addAvailabilityListener(HALv3.getInstance().availListener, null);
 		
 		CameraController.getInstance().mVideoStabilizationSupported = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null? false : true;
 		
@@ -157,6 +184,7 @@ public class HALv3
 	
 	public static void setupImageReadersHALv3()
 	{
+		Log.e(TAG, "setupImageReadersHALv3()");
 		//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
 		
 		MainScreen.thiz.surfaceHolder.setFixedSize(1280, 720);
@@ -604,7 +632,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();	
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
 	}
 	
 	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
@@ -807,6 +835,108 @@ public class HALv3
 	}
 	
 	
+	public static int captureImageWithParamsHALv3(int nFrames, final int format, final int pause, final int[] evRequested)
+	{
+		int requestID = -1;
+		final CaptureRequest.Builder stillRequestBuilder;
+		try
+		{
+			stillRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if(zoomLevel >= 1.0f)
+			{
+				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
+				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+			}
+			
+			// no re-focus needed, already focused in preview, so keeping the same focusing mode for snapshot
+			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
+			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+	//					Log.e("CameraController", "captureImage 2");
+			if(format == CameraController.JPEG)
+			{
+				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
+				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
+	//						Log.e("CameraController", "captureImage 3.1");
+			}
+			else
+			{
+				Log.e("HALv3", "Capture " + nFrames + " YUVs");
+				stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
+	//						Log.e("CameraController", "captureImage 3.2");
+			}
+	
+			// Google: throw: "Burst capture implemented yet", when to expect implementation?
+			/*
+			List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
+			for (int n=0; n<NUM_FRAMES; ++n)
+				requests.add(stillRequestBuilder.build());
+			
+			camDevice.captureBurst(requests, new captureListener() , null);
+			*/
+			
+			// requests for SZ input frames
+			for (int n=0; n<nFrames; ++n)
+			{
+				if(evRequested != null && evRequested.length > n)
+				{
+					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[n]);
+					setCameraExposureCompensationHALv3(evRequested[n]);
+				}
+				
+				if(pause > 0)
+				{
+					new CountDownTimer(pause, pause) {
+					     public void onTick(long millisUntilFinished) {}
+					     public void onFinish()
+					     {
+							try
+							{
+								HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);
+							}
+							catch (CameraAccessException e)
+							{
+								e.printStackTrace();
+							}
+					     }
+					  }.start();
+				
+				}
+				else
+				{
+					if(evRequested != null && evRequested.length > n)
+					{
+						stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[n]);
+						setCameraExposureCompensationHALv3(evRequested[n]);
+					}
+					requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);					
+				}
+			}
+			
+//			requestID = HALv3.getInstance().camDevice.captureBurst(requestList, HALv3.getInstance().new captureListener() , null);
+				//requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);
+	//					Log.e("CameraController", "captureImage 4");				
+			// One more capture for comparison with a standard frame
+	//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+	//			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+	//			// set crop area for the scaler to have interpolation applied by camera HW
+	//			stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCrop);
+	//			camDevice.capture(stillRequestBuilder.build(), new captureListener() , null);
+		}
+		catch (CameraAccessException e)
+		{
+			Log.e(TAG, "setting up still image capture request failed");
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+		
+		return requestID;
+	}
+	
+	
 	public static boolean autoFocusHALv3()
 	{
 		if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
@@ -853,6 +983,7 @@ public class HALv3
 	
 	public void configurePreviewRequest() throws CameraAccessException
 	{
+		Log.e(TAG, "configurePreviewRequest()");
 		HALv3.getInstance().previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
@@ -865,6 +996,7 @@ public class HALv3
 	// HALv3 ------------------------------------------------ camera-related listeners
 
 		// Note: never received onCameraAvailable notifications, only onCameraUnavailable
+		@SuppressLint("Override")
 		@TargetApi(19)
 		public class cameraAvailableListener extends CameraManager.AvailabilityListener
 		{
@@ -887,23 +1019,41 @@ public class HALv3
 			}
 		}
 
+		@SuppressLint("Override")
 		@TargetApi(19)
 		public class openListener extends CameraDevice.StateListener
 		{
 			@Override
 			public void onDisconnected(CameraDevice arg0) {
-				Log.d(TAG, "CameraDevice.StateListener.onDisconnected");
+				Log.e(TAG, "CameraDevice.StateListener.onDisconnected");
+				if (HALv3.getInstance().camDevice != null)
+				{
+					try
+					{
+						HALv3.getInstance().camDevice.stopRepeating();
+						HALv3.getInstance().camDevice.waitUntilIdle();
+						HALv3.getInstance().camDevice.flush();
+						HALv3.getInstance().camDevice.close();
+						HALv3.getInstance().camDevice = null;
+					}
+					catch(CameraAccessException e)	
+					{
+						HALv3.getInstance().camDevice = null;
+						Log.e(TAG, "close camera device failed: " + e.getMessage());
+						e.printStackTrace();
+					}
+				}
 			}
 
 			@Override
 			public void onError(CameraDevice arg0, int arg1) {
-				Log.d(TAG, "CameraDevice.StateListener.onError: "+arg1);
+				Log.e(TAG, "CameraDevice.StateListener.onError: "+arg1);
 			}
 
 			@Override
 			public void onOpened(CameraDevice arg0)
 			{
-				Log.d(TAG, "CameraDevice.StateListener.onOpened");
+				Log.e(TAG, "CameraDevice.StateListener.onOpened");
 
 				HALv3.getInstance().camDevice = arg0;
 				
@@ -925,7 +1075,7 @@ public class HALv3
 				{
 					if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
-						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(true);
 						HALv3.autoFocusTriggered = false;
@@ -933,14 +1083,14 @@ public class HALv3
 					}				
 					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
-						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(false);
 						HALv3.autoFocusTriggered = false;
 					}
 					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN && HALv3.autoFocusTriggered)
 					{
-						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
+//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
 //						resetCaptureListener();
 //						CameraController.getInstance().onAutoFocus(false);
 //						HALv3.autoFocusTriggered = false;
@@ -948,7 +1098,7 @@ public class HALv3
 				}
 				catch(Exception e)
 				{
-					Log.e(TAG, "Exception");					
+					Log.e(TAG, "Exception: " + e.getMessage());					
 				}
 				
 //				if(result.get(CaptureResult.REQUEST_ID) == iCaptureID)
@@ -992,7 +1142,7 @@ public class HALv3
 		{
 			@Override
 			public void onImageAvailable(ImageReader ir)
-			{
+			{			
 				// Contrary to what is written in Aptina presentation acquireLatestImage is not working as described
 				// Google: Also, not working as described in android docs (should work the same as acquireNextImage in our case, but it is not)
 				//Image im = ir.acquireLatestImage();
@@ -1001,8 +1151,11 @@ public class HALv3
 				//if(iPreviewFrameID == im.getTimestamp())
 				if(ir.getSurface() == CameraController.mPreviewSurface)
 					PluginManager.getInstance().onPreviewAvailable(im);
-				else			
+				else
+				{
+					Log.e("HALv3", "onImageAvailable");
 					PluginManager.getInstance().onImageAvailable(im);
+				}
 
 				// Image should be closed after we are done with it
 				im.close();

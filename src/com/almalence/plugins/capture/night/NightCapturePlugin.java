@@ -1131,10 +1131,21 @@ public class NightCapturePlugin extends PluginCapture
 		capturingDialog.setText(message);
 		capturingDialog.show();
 		
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
+		
+		if (++frameNumber == total_frames)
+		{
+        	Message sys_message = new Message();
+        	sys_message.obj = String.valueOf(SessionID);
+        	sys_message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(sys_message);
+        	
+        	takingAlready = false;
+        	inCapture = false;
+        }
 	}
 	
 	@TargetApi(19)
@@ -1163,7 +1174,7 @@ public class NightCapturePlugin extends PluginCapture
 	    		// play tick sound
 	    		MainScreen.guiManager.showCaptureIndication();
         		MainScreen.thiz.PlayShutter();
-        		requestID = CameraController.captureImage(1, CameraController.YUV);
+        		requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, 0, new int[0]);
 	    	}
 	    	catch (RuntimeException e)
 	    	{

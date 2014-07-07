@@ -152,7 +152,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	private PluginManagerInterface pluginManager = null;
 	private ApplicationInterface appInterface= null;
-	private Context mainContext = null;
+	protected Context mainContext = null;
 	
 	//Old camera interface
 	private static Camera camera = null;
@@ -560,6 +560,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.onCreateHALv3();
 	}
 	
+	public void createHALv3Manager()
+	{
+		if(CameraController.isHALv3Supported)
+			HALv3.onCreateHALv3();
+	}
+	
 	
 	
 	public void onStart()
@@ -756,7 +762,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if(CameraController.isHALv3)
 			HALv3.setupImageReadersHALv3();
 			
-		appInterface.addSurfaceCallback();
+//		appInterface.addSurfaceCallback();
 		
 		if(!CameraController.isHALv3)
 		{
@@ -2055,6 +2061,45 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		else
 			return HALv3.captureImageHALv3(nFrames, format);
+	}
+	
+	
+	//Experimental code to take multiple images. Works only with HALv3 interface in API 19	
+	protected static int pauseBetweenShots = 0;
+	
+	protected static final int MAX_HDR_FRAMES = 4;	
+    protected static int evValues[] = new int[MAX_HDR_FRAMES];
+    
+    protected static int total_frames;
+    protected static int frame_num;
+	
+	public static int captureImagesWithParams(int nFrames, int format, int pause, int[] evRequested)
+	{
+		if(!CameraController.isHALv3)
+		{
+			synchronized (syncObject)
+			{
+				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
+				{
+					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+					camera.setPreviewCallback(null);
+					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					return 0;
+				}
+
+				return -1;
+			}
+		}
+		else
+		{			
+			pauseBetweenShots = pause;
+			evValues = evRequested;
+			
+			total_frames = nFrames;
+			frame_num = 0;
+			
+			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested);
+		}
 	}
 	
 	

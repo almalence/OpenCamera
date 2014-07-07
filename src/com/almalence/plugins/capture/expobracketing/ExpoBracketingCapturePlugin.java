@@ -379,7 +379,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	try
 	    	{
 	    		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-	    			requestID = CameraController.captureImage(1, CameraController.YUV);
+	    			requestID = CameraController.captureImagesWithParams(3, CameraController.YUV, 0, evValues);
 	    		else
 	    			requestID = CameraController.captureImage(1, CameraController.JPEG);
 			}
@@ -504,7 +504,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		int frame_len = 0;
 		boolean isYUV = false;
 		
-		int n = evIdx[frame_num]; 
+		int n = evIdx[frame_num];
     	if (cm7_crap && (total_frames==3))
     	{
    			if (frame_num == 0)      n = evIdx[0];
@@ -569,6 +569,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("frameorientation"+(n+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored"+(n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
+    	Log.e("ExpoBracketing", "amountofcapturedframes = " + (n+1));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));    	
@@ -597,10 +598,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			return;
 		}
     	
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+//		Message msg = new Message();
+//		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
+//		msg.what = PluginManager.MSG_BROADCAST;
+//		MainScreen.H.sendMessage(msg);
+    	
 		
 		//if preview not working
 		if (previewMode==false)
@@ -629,6 +631,26 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			}
 		};
 		cdt.start();
+		
+		
+		if (++frame_num >= total_frames)
+        {        	
+        	takingAlready = false;
+        	inCapture = false;
+        	previewWorking = true;
+        	if (cdt!=null)
+        	{
+        		cdt.cancel();
+        		cdt = null;
+        	}
+        	
+        	Message message = new Message();
+        	message.obj = String.valueOf(SessionID);
+			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			MainScreen.H.sendMessage(message);
+			
+        	CameraController.getInstance().resetExposureCompensation();
+        }
 	}
 	
 	@TargetApi(19)

@@ -359,10 +359,12 @@ public class BurstCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		if (imagesTaken < imageAmount)
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-		else
+//		if (imagesTaken < imageAmount)
+//			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+//		else
+		if (imagesTaken == imageAmount)	
 		{
+			Log.e("Burst", "CAPTURE FINISHED");
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
 			
 			Message message = new Message();
@@ -406,11 +408,11 @@ public class BurstCapturePlugin extends PluginCapture
     		
     		try
     		{
-    			requestID = CameraController.captureImage(1, CameraController.JPEG);
+    			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, 0, new int[0]);
 			}catch (Exception e)
 			{
 				e.printStackTrace();
-				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
+				Log.e("CameraController.captureImagesWithParams failed", "takePicture: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
 				Message msg = new Message();

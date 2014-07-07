@@ -328,9 +328,10 @@ public class BestShotCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
     	
     	
-    	if (imagesTaken < imageAmount)
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-		else
+//    	if (imagesTaken < imageAmount)
+//			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+//		else
+		if (imagesTaken == imageAmount)	
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
 			
@@ -375,7 +376,7 @@ public class BestShotCapturePlugin extends PluginCapture
     		
     		try 
     		{
-    			requestID = CameraController.captureImage(1, CameraController.YUV);
+    			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 50, new int[0]);
 			}
     		catch (Exception e)
 			{

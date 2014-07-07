@@ -114,27 +114,52 @@
 				</LinearLayout>
 			</RelativeLayout>
 		
-          	<LinearLayout android:layout_height="@dimen/shutterHeight"
+          	<LinearLayout 
+          	    android:layout_height="@dimen/shutterHeight"
 	 	 	    android:layout_width="match_parent"
 	 	 	    android:orientation="vertical"
-	 	 	    android:gravity="bottom"	    			 	 	    
+	 	 	    android:gravity="center"	
+	 	 	    android:layout_gravity="bottom"	    			 	 	    
 				android:layout_weight="1">
 				
-	 	 	<com.almalence.ui.RotateImageView
-				android:id="@+id/buttonShutter"
-				android:src="@drawable/button_shutter"				
-				android:background="@android:color/transparent"			
-				android:layout_height="@dimen/shutterHeight"
-				android:layout_width="@dimen/shutterHeight"
-				android:scaleType="fitXY"
-				android:paddingLeft="0dp"
-				android:paddingRight="0dp"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-		   		android:layout_gravity="center_horizontal"
-		   		android:onClick="onButtonClick">
-		 	</com.almalence.ui.RotateImageView>
-		 	</LinearLayout>	 	
+          	    <LinearLayout 
+	          	    android:id="@+id/buttonShutterContainer"
+	          	    android:layout_height="@dimen/shutterHeight"
+		 	 	    android:layout_width="wrap_content"
+		 	 	    android:orientation="vertical"
+		 	 	    android:gravity="bottom"	
+		 	 	    android:layout_gravity="center">
+          	    
+			 	 	<com.almalence.ui.RotateImageView
+						android:id="@+id/buttonShutter"
+						android:src="@drawable/button_shutter"				
+						android:background="@android:color/transparent"			
+						android:layout_height="@dimen/shutterHeight"
+						android:layout_width="@dimen/shutterHeight"
+						android:scaleType="fitXY"
+						android:paddingLeft="0dp"
+						android:paddingRight="0dp"
+						android:paddingBottom="0dp"
+						android:paddingTop="0dp"
+				   		android:layout_gravity="bottom"
+				   		android:onClick="onButtonClick"/>
+					
+		 	 	   <com.almalence.ui.RotateImageView
+						android:id="@+id/buttonShutterAdditional"
+						android:visibility="gone"
+						android:src="@drawable/gui_almalence_shutter_video_pause"				
+						android:background="@android:color/transparent"			
+						android:layout_height="@dimen/videoAdditionalShutterHeight"
+						android:layout_width="@dimen/videoAdditionalShutterHeight"
+						android:scaleType="fitXY"
+						android:layout_marginLeft="5dp"
+						android:paddingLeft="0dp"
+						android:paddingRight="0dp"
+						android:paddingBottom="0dp"
+						android:paddingTop="0dp"
+				   		android:layout_gravity="center_horizontal"/>
+	 	 	   </LinearLayout>	 	
+		 	</LinearLayout> 	
 		 	
 	 	 	<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 	 	 	    android:layout_width="match_parent"

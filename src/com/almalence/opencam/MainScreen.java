@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -142,6 +143,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static final int MSG_RETURN_CAPTURED = -1;
 
 	public static File ForceFilename = null;
+	public static Uri ForceFilenameUri;
 
 	//Interface to HALv3 camera and Old style camera
 	public static CameraController cameraController = null;
@@ -358,7 +360,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// set to fullscreen
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
@@ -411,8 +413,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		AppWidgetNotifier.app_launched(this);
 
-		try{
-		cameraController = CameraController.getInstance();
+		try
+		{
+			cameraController = CameraController.getInstance();
 		}
 		catch(VerifyError exp)
 		{
@@ -429,11 +432,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		preview.setKeepScreenOn(true);
 
 		surfaceHolder = preview.getHolder();
-		if(!CameraController.isUseHALv3())
-		{
-			surfaceHolder.addCallback(this);
-			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		}
+		surfaceHolder.addCallback(this);
+//		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//		if(!CameraController.isUseHALv3())
+//		{
+//			surfaceHolder.addCallback(this);
+//			surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//		}
 
 		orientListener = new OrientationEventListener(this) {
 			@Override
@@ -515,11 +520,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)) 
 			{
-				try {
+				try 
+				{
+					ForceFilenameUri = this.getIntent().getExtras()
+							.getParcelable(MediaStore.EXTRA_OUTPUT);
 					MainScreen.ForceFilename = new File(
-							((Uri) this.getIntent().getExtras()
-									.getParcelable(MediaStore.EXTRA_OUTPUT))
-									.getPath());
+							((Uri) ForceFilenameUri).getPath());
 					if (MainScreen.ForceFilename.getAbsolutePath().equals("/scrapSpace")) 
 					{
 						MainScreen.ForceFilename = new File(Environment
@@ -528,10 +534,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 								+ "/mms/scrapSpace/.temp.jpg");
 						new File(MainScreen.ForceFilename.getParent()).mkdirs();
 					}
-				} catch (Exception e) {
+				} 
+				catch (Exception e) 
+				{
 					MainScreen.ForceFilename = null;
 				}
-			} else {
+			} 
+			else 
+			{
 				MainScreen.ForceFilename = null;
 			}
 		} else {
@@ -783,7 +793,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					
 					if(CameraController.isUseHALv3())
 					{
+//						cameraController.createHALv3Manager();
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						Log.e("MainScreen", "onResume: cameraController.setupCamera(null)");
 						cameraController.setupCamera(null);
 						
 						if (glView != null)
@@ -936,9 +948,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						surfaceHeight = height;
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
 								.setVisibility(View.VISIBLE);
-						cameraController.setupCamera(holder);
-						PluginManager.getInstance().onGUICreate();
-						MainScreen.guiManager.onGUICreate();
+						Log.e("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
+						if(!CameraController.isUseHALv3())
+						{
+							cameraController.setupCamera(holder);
+							PluginManager.getInstance().onGUICreate();
+							MainScreen.guiManager.onGUICreate();
+						}
+						else
+						{
+							H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+						}						
 					}
 				}
 			}.start();
@@ -976,6 +996,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 			else
 			{
+				Log.e("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
 				cameraController.setupCamera(holder);
 //				PluginManager.getInstance().onGUICreate();
 //				MainScreen.guiManager.onGUICreate();
@@ -1049,9 +1070,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		prepareMeteringAreas();
 
-		guiManager.onCameraCreate();
-		PluginManager.getInstance().onCameraParametersSetup();
-		guiManager.onPluginsInitialized();
+		if(!CameraController.isUseHALv3())
+		{
+			guiManager.onCameraCreate();
+			PluginManager.getInstance().onCameraParametersSetup();
+			guiManager.onPluginsInitialized();
+		}
 
 		// ----- Start preview and setup frame buffer if needed
 
@@ -1075,6 +1099,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 					CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().getPreviewBuffer());
 				}
+				else
+				{
+					guiManager.onCameraCreate();
+					PluginManager.getInstance().onCameraParametersSetup();
+					guiManager.onPluginsInitialized();
+				}
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
@@ -1089,6 +1119,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	
 	
+	@SuppressLint("NewApi")
 	@TargetApi(19)
 	private void configureHALv3Camera()
 	{
@@ -1097,6 +1128,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sfl.add(mCameraSurface);				// surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
 		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+		//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
 		
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
@@ -1104,6 +1136,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		// configure camera with all the surfaces to be ever used
 		try {
+			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
 			HALv3.getCamera2().configureOutputs(sfl);
 		} catch (Exception e)	{
 			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
@@ -1175,6 +1208,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		surfaceJustCreated = true;
 		
 		mCameraSurface = surfaceHolder.getSurface();
+		
+		Log.e("MainScreen", "SURFACE CREATED");
 	}
 
 	@Override
@@ -1459,6 +1494,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					// - ready to set up preview and other things
 					if (surfaceCreated && (HALv3.getCamera2() != null))
 					{
+						Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
 						configureCamera();
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.guiManager.onGUICreate();
@@ -2165,12 +2201,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		ll.setOrientation(LinearLayout.VERTICAL);
 		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
 		
-//		TextView tv = new TextView(this);
-//		tv.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_Text));
-//		tv.setWidth((int)(250 * density));
-//		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
-//		ll.addView(tv);
-//		
 		//rating bar
 		final EditText editText = new EditText(this);
 		editText.setHint(R.string.Pref_Upgrde_PromoCode_Text);
@@ -2182,7 +2212,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		editText.setLayoutParams(params);
 		ll.addView(editText);
 
-
 		Button b3 = new Button(this);
 		b3.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_DoneText));
 		ll.addView(b3);
@@ -2191,7 +2220,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
 		
-
 		b3.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
