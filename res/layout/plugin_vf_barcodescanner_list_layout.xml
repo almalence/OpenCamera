@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
 
-    <com.almalence.plugins.vf.barcodescanner.RotateLayout
+    <com.almalence.ui.RotateLayout
         android:id="@+id/rotateLayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -66,5 +66,5 @@
 		        android:gravity="center_horizontal"
 		        android:text="@string/Empty_Barcodes_List" />
 	    </LinearLayout>
-	</com.almalence.plugins.vf.barcodescanner.RotateLayout>
+	</com.almalence.ui.RotateLayout>
 </LinearLayout>

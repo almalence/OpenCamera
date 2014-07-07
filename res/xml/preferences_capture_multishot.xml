@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/Pref_MultiShot_Capture_Category_Title">   
+    	<ListPreference android:key="multiShotImagesAmount" 
+    	    			android:title="@string/Pref_MultiShot_Capture_ImagesAmount_Title" 
+    	    			android:entries="@array/multiShotArray" 
+    	    			android:defaultValue="7" 
+    	    			android:entryValues="@array/multiShotValues" />
+    	
+    	<ListPreference android:key="multiShotPauseBetweenShots"
+    	    			android:title="@string/Pref_MultiShot_Capture_PauseBetweenShots_Title" 
+    	    			android:entries="@array/multiShotPauseArray" 
+    	    			android:defaultValue="750" 
+    	    			android:entryValues="@array/multiShotPauseValues" />
+	</PreferenceCategory>
+</PreferenceScreen>

@@ -22,7 +22,7 @@
    <dimen name="mainButtonHeightSelect">55dp</dimen>
    <dimen name="shutterHeight">90dp</dimen>
    <dimen name="videoShutterHeight">70dp</dimen>
-   <dimen name="videoAdditionalShutterHeight">35dp</dimen>
+   <dimen name="videoAdditionalShutterHeight">30dp</dimen>
    <dimen name="scanerWidth">5dp</dimen>
    <dimen name="scanerHeight">55dp</dimen>
    
@@ -44,6 +44,9 @@
    <dimen name="exposureTitleSize">16sp</dimen>
    
    <dimen name="blockingTitleSize">24sp</dimen>
+   
+   <dimen name="multishotOptionsImageSize">60dp</dimen>
+   <dimen name="multishotOptionsTitle">20sp</dimen>
    
    <dimen name="hintUpArrowTop">40sp</dimen>
    <dimen name="hintUpArrowText">10sp</dimen>

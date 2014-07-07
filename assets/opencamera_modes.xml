@@ -225,7 +225,7 @@
 			
 	</mode>
 	
-	<mode id="movingobjects" name="objectremoval_mode_name"  savename="OR">
+	<!-- <mode id="movingobjects" name="objectremoval_mode_name"  savename="OR">
 	
 	    <icon		id="gui_almalence_mode_moving"/>
 	    
@@ -249,9 +249,35 @@
 		
 		<howtotext  id=""/>
 			
+	</mode> -->
+	
+	<mode id="multishot" name="multishot_mode_name"  savename="OR">
+	
+	    <icon		id="gui_almalence_mode_moving"/>
+	    
+	    <vf 		id="com.almalence.plugins.gridvf"/>
+	    <vf 		id="com.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.almalence.plugins.focusvf"/>
+	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.almalence.plugins.gyrovf"/>
+	
+	    <capture 	id="com.almalence.plugins.multishotcapture" />    
+	
+	    <processing id="com.almalence.plugins.multishotprocessing"/>    
+	
+	    <filter/>    
+	
+	    <export 	id="com.almalence.plugins.export"/>
+
+		<sku		id="plugin_almalence_multishot"/>
+		
+		<howtotext  id=""/>
+			
 	</mode>
 	
-	<mode id="groupshot" name="groupshot_mode_name"  savename="GS">
+	<!-- <mode id="groupshot" name="groupshot_mode_name"  savename="GS">
 	
 	    <icon		id="gui_almalence_mode_groupshot"/>
 	    
@@ -275,9 +301,9 @@
 		
 		<howtotext  id=""/>
 			
-	</mode>
+	</mode> -->
 	
-	<mode id="sequence" name="sequence_mode_name"  savename="SEQ">
+	<!-- <mode id="sequence" name="sequence_mode_name"  savename="SEQ">
 	
 	    <icon		id="gui_almalence_mode_sequence"/>
 	    
@@ -301,7 +327,7 @@
 		
 		<howtotext  id=""/>
 			
-	</mode>
+	</mode> -->
 	
 	<mode id="panorama_augmented" name="panorama_mode_name"  savename="PANO">
 	

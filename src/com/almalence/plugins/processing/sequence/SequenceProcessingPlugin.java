@@ -56,7 +56,7 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-
+import com.almalence.asynctaskmanager.Task;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -74,16 +74,18 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.util.ImageConversion;
 import com.almalence.util.MLocation;
 import com.almalence.util.Size;
-
 import com.almalence.plugins.export.standard.GPSTagsConverter;
+import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
 Implements night processing
 ***/
 
-public class SequenceProcessingPlugin extends PluginProcessing implements OnTaskCompleteListener, Handler.Callback, OnClickListener, SequenceListener
-{
+public class SequenceProcessingPlugin implements Handler.Callback, OnClickListener, SequenceListener {
+	
+	private View postProcessingView;
+	
 	private long sessionID=0;
 	private static int mSensitivity = 15;
 	private static int mMinSize = 1000;
@@ -91,8 +93,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     
 	private static int mAngle = 0;
 
-	private static boolean SaveInputPreference;
-    
     private AlmaCLRShot mAlmaCLRShot;
 
     public static int imgWidthOR;
@@ -109,25 +109,16 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private boolean finishing = false;
 	
 	private static boolean isYUV = false;
-		
-	public SequenceProcessingPlugin()
-	{
-		super("com.almalence.plugins.sequenceprocessing",
-			  R.xml.preferences_processing_sequence,
-			  0,
-			  0,
-			  null);
+	
+	public View getPostProcessingView() {
+		return postProcessingView;
 	}
-		
-	@Override
-	public void onStart()
-	{
+	
+	public void onStart() {
 		getPrefs();
 	}
 	
-	@Override
-	public void onStartProcessing(long SessionID) 
-	{
+	public void onStartProcessing(long SessionID) {
 		finishing = false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
@@ -186,27 +177,18 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
     
     		thumbnails.clear();
-    		for (int i=1; i<=imagesAmount; i++)
-    		{
-    			if(isYUV)
-    			{
-    				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
-    				mYUVBufferList.add(i-1, yuv);
-    				
+    		for (int i=1; i<=imagesAmount; i++) {
+    			if(isYUV) {
     				thumbnails.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(i-1), iImageWidth, iImageHeight),
 	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
 	    	    			(int)(iImageHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
 	    	    			false));
     			}
-    			else
-    			{
+    			else {
 	    			byte[] in = SwapHeap.CopyFromHeap(
 	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
 	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
 	    	        		);
-	    			
-	    			mJpegBufferList.add(i-1, in);
-	    			
 	    			
 	    			BitmapFactory.Options opts = new BitmapFactory.Options();
 	    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
@@ -237,154 +219,6 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
     		}
     		
     		Size preview = new Size(mDisplayWidth, mDisplayHeight);
-    		
-    		if (SaveInputPreference)
-    		{
-    			try
-    	        {
-    	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
-
-    	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-    	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-    	        	Calendar d = Calendar.getInstance();
-    	        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-    	            		d.get(Calendar.YEAR),
-    	            		d.get(Calendar.MONTH)+1,
-    	            		d.get(Calendar.DAY_OF_MONTH),
-    	            		d.get(Calendar.HOUR_OF_DAY),
-    	            		d.get(Calendar.MINUTE),
-    	            		d.get(Calendar.SECOND));
-    	        	switch (saveOption)
-    	        	{
-    	        	case 1://YEARMMDD_HHMMSS
-    	        		break;
-    	        		
-    	        	case 2://YEARMMDD_HHMMSS_MODE
-    	        		fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-    	        		break;
-    	        		
-    	        	case 3://IMG_YEARMMDD_HHMMSS
-    	        		fileFormat = "IMG_" + fileFormat;
-    	        		break;
-    	        		
-    	        	case 4://IMG_YEARMMDD_HHMMSS_MODE
-    	        		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-    	        		break;
-    	        	}
-    	        	
-    	        	ContentValues values=null;
-    	        	
-    	            for (int i = 0; i<imagesAmount; ++i)
-    	            {
-    	            	
-    	            	String index = String.format("_%02d", i);
-    		            File file = new File(saveDir, fileFormat+index+".jpg");
-    		            
-    		            FileOutputStream os = null;
-    		            try
-    			    	{
-    		            	os = new FileOutputStream(file);
-    			    	}
-    			    	catch (Exception e)
-    			        {
-    			    		//save always if not working saving to sdcard
-    			        	e.printStackTrace();
-    			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
-    			        	file = new File(saveDir, fileFormat+index+".jpg");
-    			        	os = new FileOutputStream(file);
-    			        }	   
-    		                		            
-    		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
-    		            Boolean orientationLandscape = false;
-    		            if (resultOrientation == null)
-    			            orientationLandscape = true;
-    		            else
-    		            	orientationLandscape = Boolean.parseBoolean(resultOrientation);
-    		            
-    		            String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(sessionID));
-    		            Boolean cameraMirrored = false;
-    		            if (resultMirrored != null)
-    		            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
-    		            
-    		            if (os != null)
-    		            {
-    		            	if(!isYUV)
-    		            	{
-	    		            	// ToDo: not enough memory error reporting
-	    			            os.write(mJpegBufferList.get(i));
-    		            	}
-    		            	else
-    		            	{
-    		            		com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
-    		            		//to avoid problems with SKIA
-    		            		int cropHeight = image.getHeight()-image.getHeight()%16;
-    					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
-    		            	}
-    			            os.close();
-    			        
-    			            ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-    		            	switch(mDisplayOrientation)
-    		            	{
-    		            	default:
-    		            	case 0:
-    		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-    		            		break;
-    		            	case 90:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-    		            		break;
-    		            	case 180:
-    		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-    		            		break;
-    		            	case 270:
-    		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-    		            		break;
-    		            	}
-    		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-    			            ei.saveAttributes();
-    		            }
-    		            
-    		            values = new ContentValues(9);
-    	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-    	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
-    	                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-    	                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-    	                values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
-    	                values.put(ImageColumns.DATA, file.getAbsolutePath());
-    	                
-    	                if (prefs.getBoolean("useGeoTaggingPrefExport", false))
-    		            {
-    		            	Location l = MLocation.getLocation(MainScreen.mainContext);
-    			            
-    			            if (l != null)
-    			            {	     
-    			            	ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-    				            ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-
-    			            	ei.saveAttributes();
-    			            	
-    				            values.put(ImageColumns.LATITUDE, l.getLatitude());
-    				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-    		            	}
-    		            }
-    	                
-    	                MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-    	            }
-    	        }
-    			catch(IOException e) {
-    	            e.printStackTrace();
-    	            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-    	            return;
-    	        }
-    	        catch (Exception e)
-    	        {
-    	        	e.printStackTrace();
-    	        }
-    		}
-    		
     		
     		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
     		
@@ -436,9 +270,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 /************************************************
  * 		POST PROCESSING
  ************************************************/
-	@Override
-	public boolean isPostProcessingNeeded()
-	{
+	public boolean isPostProcessingNeeded() {
 		return true;
 	}
 	
@@ -453,16 +285,23 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	private Bitmap PreviewBmp = null;
 	public static int mDisplayWidth;
 	public static int mDisplayHeight;
-	public static ArrayList<byte[]> mJpegBufferList = new ArrayList<byte []>();
-	public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
+	
+	private static ArrayList<byte[]> mJpegBufferList;
+	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList) {
+		SequenceProcessingPlugin.mJpegBufferList = mJpegBufferList;
+	}
+
+	private static ArrayList<Integer> mYUVBufferList;
+	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList) {
+		SequenceProcessingPlugin.mYUVBufferList = mYUVBufferList;
+	}
+	
 	public static ArrayList<Bitmap> mInputBitmapList = new ArrayList<Bitmap>();
 	Paint paint=null;
 	
 	private boolean postProcessingRun = false;
 	
-	@Override
-	public void onStartPostProcessing()
-	{	
+	public void onStartPostProcessing() {	
 		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_sequence_postprocessing, null, false);
 		
@@ -644,9 +483,7 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 	}
 	
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
-	{
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
 			if (finishing == true)
@@ -657,13 +494,11 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 			return true;
 		}
 		
-		return super.onKeyDown(keyCode, event);
+		return false;
 	}
 		
 
-	@Override
-	public void onSequenceChanged(final int[] idx)
-	{
+	public void onSequenceChanged(final int[] idx) {
 		sequenceView.setEnabled(false);
 
 		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
@@ -709,16 +544,13 @@ public class SequenceProcessingPlugin extends PluginProcessing implements OnTask
 		mHandler.sendEmptyMessage(MSG_REDRAW);
 	}
 	
-	private void getPrefs()
-    {
+	private void getPrefs() {
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
         mSensitivity = prefs.getInt("Sensitivity", 19);
         mMinSize = prefs.getInt("MinSize", 1000);
         mGhosting = prefs.getString("Ghosting", "2");
-        SaveInputPreference = prefs.getBoolean(MainScreen.thiz.getResources().getString(R.string.saveInputPrefSequence), false);
     }
-
 /************************************************
  * 		POST PROCESSING END
  ************************************************/

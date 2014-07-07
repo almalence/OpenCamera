@@ -15,7 +15,7 @@
 	<string name="Pref_Upgrde_Groupshot_Preference_Title">Group Shot</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Select best faces on your photo</string>
 	
-	<string name="Pref_Upgrde_PromoCode_Preference_Title">Promo</string>
+	<string name="Pref_Upgrde_PromoCode_Preference_Title">Promo code</string>
 	<string name="Pref_Upgrde_PromoCode_Text">Enter promo code</string>
 	<string name="Pref_Upgrde_PromoCode_DoneText">Done!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Incorrect promo code</string>

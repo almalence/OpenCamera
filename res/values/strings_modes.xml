@@ -27,6 +27,9 @@
     <string name="objectremoval_mode_name">Object removal</string>
     <string name="objectremoval_mode_howto"></string>
     
+    <string name="multishot_mode_name">Multi shot</string>
+	<string name="multishot_mode_howto"></string>
+    
     <string name="groupshot_mode_name">Group shot</string>
     <string name="groupshot_mode_howto"></string>
     

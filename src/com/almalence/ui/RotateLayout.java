@@ -1,4 +1,4 @@
-package com.almalence.plugins.vf.barcodescanner;
+package com.almalence.ui;
 
 
 import android.content.Context;
