@@ -200,6 +200,76 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 	return 0;
 }
 
+
+extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_CreateSingleYUVImage
+(
+		JNIEnv* env,
+		jobject thiz,
+		jobject bufY,
+		jobject bufU,
+		jobject bufV,
+		jint pixelStrideY,
+		jint rowStrideY,
+		jint pixelStrideU,
+		jint rowStrideU,
+		jint pixelStrideV,
+		jint rowStrideV,
+		jint sx,
+		jint sy
+)
+{
+	int i, x, y;
+	unsigned char *Y, *U, *V;
+	unsigned char *UV;
+
+	// All Buffer objects have an effectiveDirectAddress field
+	Y = (unsigned char*)env->GetDirectBufferAddress(bufY);
+	U = (unsigned char*)env->GetDirectBufferAddress(bufU);
+	V = (unsigned char*)env->GetDirectBufferAddress(bufV);
+
+	if ((Y == NULL) || (U == NULL) || (V == NULL))
+		return NULL;
+
+	SX = sx;
+	SY = sy;
+
+	// extract crop as NV21 image
+	jbyteArray jpixels = NULL;
+	unsigned char * single_yuv;
+
+	jpixels = env->NewByteArray(SX*SY+SX*((SY+1)/2));
+
+	single_yuv = (unsigned char *)env->GetByteArrayElements(jpixels, NULL);
+	if (single_yuv == NULL)
+		return NULL;
+
+	// Note: assumption of:
+	// - even w, h, x0 here (guaranteed by SZ requirements)
+	// - pixelStrideY=1 (guaranteed by android doc)
+	// - U,V being sub-sampled 2x horizontally and vertically
+	for (y=0; y<sy; y+=2)
+	{
+		// Y
+		memcpy (&single_yuv[y*sx],     &Y[y*rowStrideY],   sx);
+		memcpy (&single_yuv[(y+1)*sx], &Y[(y+1)*rowStrideY], sx);
+
+		// UV - no direct memcpy as swap may be needed
+		for (x=0; x<sx/2; ++x)
+		{
+			// U
+			single_yuv[sx*sy+(y/2)*sx+x*2+1] = U[x*pixelStrideU + (y/2)*rowStrideU];
+
+			// V
+			single_yuv[sx*sy+(y/2)*sx+x*2]   = V[x*pixelStrideV + (y/2)*rowStrideV];
+		}
+	}
+
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)single_yuv, JNI_ABORT);
+
+	return (jbyte *)jpixels;
+}
+
+
 extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_AllocateMemoryForYUV
 (
 		JNIEnv* env,

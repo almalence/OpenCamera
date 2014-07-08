@@ -247,6 +247,11 @@ public class YuvImage {
     		int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
     		int sx, int sy, int nFrame);
     
+    public static synchronized native byte[] CreateSingleYUVImage(
+    		ByteBuffer Y, ByteBuffer U, ByteBuffer V,
+    		int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
+    		int sx, int sy);
+    
     // Return pointer to heap with size for one yuv image
     public static synchronized native int AllocateMemoryForYUV(int sx, int sy);
     

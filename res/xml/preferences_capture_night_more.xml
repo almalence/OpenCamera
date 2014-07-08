@@ -4,7 +4,7 @@
 		        android:title="@string/Pref_NightCapture_FocusMode_Title" 
 		        android:defaultValue="0" 
 		        android:summary="@string/Pref_NightCapture_FocusMode_Summary" 
-		        android:key="focusPref" 
+		        android:key="@string/NightCaptureFocusPref"
 		        android:entries="@array/focusArray" 
 		        android:entryValues="@array/focusValues" />
 </PreferenceScreen>

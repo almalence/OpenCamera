@@ -157,7 +157,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		super("com.almalence.plugins.nightcapture",
 			  R.xml.preferences_capture_night,
-			  R.xml.preferences_capture_night,
+			  R.xml.preferences_capture_night_more,
 			  R.drawable.plugin_capture_night_nightvision_on,
 			  MainScreen.thiz.getResources().getString(R.string.NightVisionOn));
 	}
@@ -830,7 +830,7 @@ public class NightCapturePlugin extends PluginCapture
 	        }
         }
 		
-		ListPreference fp = (ListPreference) (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
+		ListPreference fp = (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
 		if(fp != null)
 		{
 	        fp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -912,7 +912,7 @@ public class NightCapturePlugin extends PluginCapture
 	        }
         }
 		
-		ListPreference fp = (ListPreference) (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
+		ListPreference fp = (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
 		if(fp != null)
 		{
 	        fp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -1285,7 +1285,7 @@ public class NightCapturePlugin extends PluginCapture
 	
 			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
 			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+				Log.e("NightCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
 				return;
 			}
 			
@@ -1295,20 +1295,35 @@ public class NightCapturePlugin extends PluginCapture
 			// - Y pixel stride is always 1
 			// - U and V strides are the same
 			//   So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V,
+			
+//			int status = YuvImage.CreateYUVImage(Y, U, V,
+//					im.getPlanes()[0].getPixelStride(),
+//					im.getPlanes()[0].getRowStride(),
+//					im.getPlanes()[1].getPixelStride(),
+//					im.getPlanes()[1].getRowStride(),
+//					im.getPlanes()[2].getPixelStride(),
+//					im.getPlanes()[2].getRowStride(),
+//					imageWidth, imageHeight, 0);
+//			
+//			
+//			if (status != 0)
+//				Log.e("CapturePlugin", "Error while cropping: "+status);
+//			
+//			
+//			
+//			byte[] data = YuvImage.GetByteFrame(0);
+			
+//			Log.e("NightCapturePlugin", "BEFORE");			
+			byte[] data =  YuvImage.CreateSingleYUVImage(Y, U, V,
 					im.getPlanes()[0].getPixelStride(),
 					im.getPlanes()[0].getRowStride(),
 					im.getPlanes()[1].getPixelStride(),
 					im.getPlanes()[1].getRowStride(),
 					im.getPlanes()[2].getPixelStride(),
 					im.getPlanes()[2].getRowStride(),
-					imageWidth, imageHeight, 0);
+					imageWidth, imageHeight);
+//			Log.e("NightCapturePlugin", "SUCCESS");
 			
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: "+status);
-			
-			
-			byte[] data = YuvImage.GetByteFrame(0);
 			
 			if(data1 == null)		
 				data1 = data;
@@ -1321,14 +1336,14 @@ public class NightCapturePlugin extends PluginCapture
 				else if (dataS.length<data2.length)
 					dataS = new byte[data2.length];
 				
-				int previewWidth = 1280;
-				int previewHeight = 720;
+//				int previewWidth = 1280;
+//				int previewHeight = 720;
 				
-				ImageConversion.sumByteArraysNV21(data1,data2,dataS,previewWidth,previewHeight);
+				ImageConversion.sumByteArraysNV21(data1,data2,dataS,imageWidth,imageHeight);
 				if(CameraController.isFrontCamera())
 				{
 					dataRotated = new byte[dataS.length];
-					ImageConversion.TransformNV21(dataS, dataRotated, previewWidth, previewHeight, 1, 0, 0);
+					ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
 					
 					yuvData = dataRotated;
 				}
@@ -1468,15 +1483,15 @@ public class NightCapturePlugin extends PluginCapture
 		gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
 		gl.glLoadIdentity(); 					//Reset The Modelview Matrix
 		
-		Camera camera = CameraController.getCamera();
-    	if (null==camera)
-    		return;
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if(params == null)
-		{
-			Log.e("NIGHT CAMERA DEBUG", "GLLayer.onSurfaceChanged params = null");
-			return;
-		}
+//		Camera camera = CameraController.getCamera();
+//    	if (null==camera)
+//    		return;
+//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//		if(params == null)
+//		{
+//			Log.e("NIGHT CAMERA DEBUG", "GLLayer.onSurfaceChanged params = null");
+//			return;
+//		}
 		
 		cameraPreview.setSurfaceSize(width, height);
 	}
@@ -1492,7 +1507,7 @@ public class NightCapturePlugin extends PluginCapture
 		gl.glTranslatef(0.0f, 0.0f, -(cameraDist));		//Move 5 units into the screen
 		gl.glRotatef(-90, 0.0f, 0.0f, 1.0f);	//Z
 		
-		if(OpenGLPreference && !inCapture)
+		if(OpenGLPreference && !inCapture && yuvData != null)
 			synchronized(this)
 			{
 				try {
