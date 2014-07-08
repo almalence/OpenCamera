@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pagerTips"
+	android:background="@drawable/store_background"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"        		
+	>
+	<ImageView
+		android:id="@+id/tipsHeader"
+		android:src="@drawable/store_header"
+		android:background="@android:color/transparent"
+		android:layout_height="@dimen/headerStoreImageSize"
+		android:layout_width="match_parent"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+   		>
+	</ImageView>
+	<TextView
+        android:id="@+id/text_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="30dip"/>
+	<ImageView
+		android:id="@+id/storeFeatures"
+		android:src="@drawable/almalence_upgrade_whatsnew"
+		android:background="@android:color/transparent"
+		android:layout_height="@dimen/paramsLayoutHeight"
+		android:layout_width="@dimen/paramsLayoutHeight"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+   		>
+	</ImageView>
+</RelativeLayout>

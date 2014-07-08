@@ -105,6 +105,14 @@ import com.almalence.ui.Panel.OnPanelListener;
 
 import com.almalence.googsharing.Thumbnail;
 
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+
+
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
@@ -764,7 +772,7 @@ public class AlmalenceGUI extends GUI implements
 			hideModeList();
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,true);
-		if (((RelativeLayout) guiView.findViewById(R.id.storeLayout)).getVisibility() == View.VISIBLE)
+		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
 			hideStore();
 	}
 
@@ -772,6 +780,67 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	public void showStore()
 	{
+		LayoutInflater inflater = LayoutInflater.from(MainScreen.thiz);
+        List<RelativeLayout> pages = new ArrayList<RelativeLayout>();
+        
+        //page 1
+        RelativeLayout page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+		initStoreList();
+		RelativeLayout store = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_store, null);
+		GridView gridview = (GridView) store.findViewById(R.id.storeGrid);
+		gridview.setAdapter(storeAdapter);
+		
+		gridview.setOnTouchListener(new OnTouchListener(){
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return false;
+			}
+			
+		});
+		page.addView(store);
+        pages.add(page);
+        
+        //page 2
+        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+        RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
+		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
+		text_whatsnew.setText("version 3.24"+
+							  "\n- exif tags fixed"+
+							  "\n- auto backup/sharing fixed"+
+							  "\n- fixed work from 3rd party apps"+
+							  "\n- UI corrections"+
+							  "\n- video on some devices improved"+
+							  "\n- stability fixes");
+
+		page.addView(whatsnew);
+        pages.add(page);
+        
+        //page 3
+        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+        RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
+		TextView text_features= (TextView) features.findViewById(R.id.text_features);
+		text_features.setText("BLA BLA BLA BLA");
+
+		page.addView(features);
+        pages.add(page);
+        
+        //page 4
+        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+        RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
+		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
+		text_tips.setText("ABC tips and tricks"+
+						  "\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you'd like."+
+						  "\n\nSwipe left/write on main scree to see more/less info on the screen - histogram, grids, info controls, top quick settings menu."+
+						  "\n\nPull down top menu to see all quick settings.");
+
+		page.addView(tips);
+        pages.add(page);
+        
+        SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
+        ViewPager viewPager = new ViewPager(MainScreen.thiz);
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(0);   
+		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
@@ -783,42 +852,22 @@ public class AlmalenceGUI extends GUI implements
 		
 		MainScreen.guiManager.lockControls = true;
 		
-		initStoreList();
-		GridView gridview = (GridView) guiView.findViewById(R.id.storeGrid);
-		gridview.setAdapter(storeAdapter);
-		
-		gridview.setOnTouchListener(new OnTouchListener(){
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return false;
-			}
-			
-		});
-		
-		ImageView whatsNew = (ImageView) guiView.findViewById(R.id.storeWhatsNew);
-		whatsNew.setOnClickListener(new OnClickListener() 
-		{
-			public void onClick(View v) {
-				showWhatsNew();
-			}
-		});
-		
-		
 		if (MainScreen.thiz.showPromoRedeemed == true)
 		{
 			Toast.makeText(MainScreen.thiz, "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
 			MainScreen.thiz.showPromoRedeemed = false;
 		}
 		
-		final RelativeLayout store = ((RelativeLayout) guiView.findViewById(R.id.storeLayout));
-		store.setVisibility(View.VISIBLE);
-		store.bringToFront();
+		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
+		pagerLayout.addView(viewPager);
+		pagerLayout.setVisibility(View.VISIBLE);
+		pagerLayout.bringToFront();
 	}
 	
 	@Override
 	public void hideStore()
 	{
-		((RelativeLayout) guiView.findViewById(R.id.storeLayout)).setVisibility(View.INVISIBLE);
+		((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).setVisibility(View.INVISIBLE);
 		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
@@ -6283,7 +6332,7 @@ public class AlmalenceGUI extends GUI implements
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
 			}
-			if (((RelativeLayout) guiView.findViewById(R.id.storeLayout)).getVisibility() == View.VISIBLE)
+			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
 			{
 				hideStore();
 				res++;
