@@ -604,33 +604,34 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //		MainScreen.H.sendMessage(msg);
     	
 		
+    	//in HALv3 plugin already have ordered 3 frames, there is no need to check whether or not preview is working
 		//if preview not working
-		if (previewMode==false)
-			return;
-		previewWorking = false;
-		//start timer to check if onpreviewframe working
-		cdt = new CountDownTimer(5000, 5000) {
-			public void onTick(long millisUntilFinished) {
-			}
-
-			public void onFinish() {
-				if (previewWorking == false)
-				{
-					Log.e("ExpoBracketing", "previewMode DISABLED!");
-					previewMode=false;
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean(sExpoPreviewModePref, false);
-					prefsEditor.commit();
-					evLatency=0;
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
-				}
-			}
-		};
-		cdt.start();
+//		if (previewMode==false)
+//			return;
+//		previewWorking = false;
+//		//start timer to check if onpreviewframe working
+//		cdt = new CountDownTimer(5000, 5000) {
+//			public void onTick(long millisUntilFinished) {
+//			}
+//
+//			public void onFinish() {
+//				if (previewWorking == false)
+//				{
+//					Log.e("ExpoBracketing", "previewMode DISABLED!");
+//					previewMode=false;
+//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+//					Editor prefsEditor = prefs.edit();
+//					prefsEditor.putBoolean(sExpoPreviewModePref, false);
+//					prefsEditor.commit();
+//					evLatency=0;
+//					Message msg = new Message();
+//					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
+//					msg.what = PluginManager.MSG_BROADCAST;
+//					MainScreen.H.sendMessage(msg);
+//				}
+//			}
+//		};
+//		cdt.start();
 		
 		
 		if (++frame_num >= total_frames)
