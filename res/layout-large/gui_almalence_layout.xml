@@ -818,7 +818,7 @@
 			</ImageView>
 			
             <TextView
-				android:id="@+id/textDown"
+				android:id="@+id/textDownHintBottom"
 				android:text="@string/layout_hint_bottom"
 				android:textSize="18sp"
 				android:textColor="#00B6E8"

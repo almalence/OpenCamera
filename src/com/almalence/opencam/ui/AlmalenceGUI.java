@@ -787,6 +787,7 @@ public class AlmalenceGUI extends GUI implements
         RelativeLayout page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
 		initStoreList();
 		RelativeLayout store = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_store, null);
+		final ImageView imgStoreNext = (ImageView) store.findViewById(R.id.storeWhatsNew);
 		GridView gridview = (GridView) store.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
 		
@@ -803,7 +804,11 @@ public class AlmalenceGUI extends GUI implements
         //page 2
         page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
         RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
-		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
+        final ImageView imgWhatNewNext = (ImageView) whatsnew.findViewById(R.id.storeFeatures);
+        final ImageView imgWhatNewPrev = (ImageView) whatsnew.findViewById(R.id.storeStore);
+        imgWhatNewNext.setVisibility(View.INVISIBLE);
+		imgWhatNewPrev.setVisibility(View.INVISIBLE);
+        TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
 		text_whatsnew.setText("version 3.24"+
 							  "\n- exif tags fixed"+
 							  "\n- auto backup/sharing fixed"+
@@ -818,6 +823,8 @@ public class AlmalenceGUI extends GUI implements
         //page 3
         page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
         RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
+        final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
+        final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
 		TextView text_features= (TextView) features.findViewById(R.id.text_features);
 		text_features.setText("BLA BLA BLA BLA");
 
@@ -827,6 +834,7 @@ public class AlmalenceGUI extends GUI implements
         //page 4
         page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
         RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
+        final ImageView imgTipsPrev = (ImageView) tips.findViewById(R.id.storeTips);
 		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
 		text_tips.setText("ABC tips and tricks"+
 						  "\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you'd like."+
@@ -839,7 +847,51 @@ public class AlmalenceGUI extends GUI implements
         SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
         ViewPager viewPager = new ViewPager(MainScreen.thiz);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);   
+        viewPager.setCurrentItem(0);
+        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
+        {
+        	@Override
+            public void onPageSelected(int position) 
+        	{
+        		switch (position)
+        		{
+        		case 0:
+        			//0
+        			imgStoreNext.setVisibility(View.VISIBLE);
+        			//1
+        			imgWhatNewNext.setVisibility(View.INVISIBLE);
+        			imgWhatNewPrev.setVisibility(View.INVISIBLE);
+        			break;
+        		case 1:
+        			//0
+        			imgStoreNext.setVisibility(View.INVISIBLE);
+        			//1
+        			imgWhatNewNext.setVisibility(View.VISIBLE);
+        			imgWhatNewPrev.setVisibility(View.VISIBLE);
+        			//2
+        			imgFeaturesNext.setVisibility(View.INVISIBLE);
+        			imgFeaturesPrev.setVisibility(View.INVISIBLE);
+        			break;
+        		case 2:
+        			//1
+        			imgWhatNewNext.setVisibility(View.INVISIBLE);
+        			imgWhatNewPrev.setVisibility(View.INVISIBLE);
+        			//2
+        			imgFeaturesNext.setVisibility(View.VISIBLE);
+        			imgFeaturesPrev.setVisibility(View.VISIBLE);
+        			//3
+        			imgTipsPrev.setVisibility(View.INVISIBLE);
+        			break;
+        		case 3:
+        			//2
+        			imgFeaturesNext.setVisibility(View.INVISIBLE);
+        			imgFeaturesPrev.setVisibility(View.INVISIBLE);
+        			//3
+        			imgTipsPrev.setVisibility(View.VISIBLE);
+        			break;
+        		}
+            }
+        });
 		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);

@@ -16,15 +16,24 @@
 		android:layout_centerHorizontal="true"
    		>
 	</ImageView>
-	<TextView
-        android:id="@+id/text_features"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:textSize="30dip"/>
+	<ScrollView 
+		    android:id="@+id/featuresScroll"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/featuresHeader"
+		    android:layout_marginBottom="5dip"
+		    android:layout_above="@+id/storeTips"
+		    >
+		<TextView
+	        android:id="@+id/text_features"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:textSize="24sp"
+	        android:textColor="@android:color/black"/>
+	</ScrollView>
 	<ImageView
-		android:id="@+id/storeFeatures"
+		android:id="@+id/storeTips"
 		android:src="@drawable/almalence_upgrade_whatsnew"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
