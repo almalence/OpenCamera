@@ -40,7 +40,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	
 	private static boolean DROLocalTMPreference = true;
 	private static int prefStrongFilter = 0;
-	private static int prefPullYUV = 0;
+	private static int prefPullYUV = 9;
 	
 	public SimpleProcessingPlugin()
 	{
