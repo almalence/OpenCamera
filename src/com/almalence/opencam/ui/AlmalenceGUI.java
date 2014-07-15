@@ -3580,8 +3580,8 @@ public class AlmalenceGUI extends GUI implements
 			return;
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		boolean isFrontCamera = prefs.getBoolean("useFrontCamera", false);
-		prefs.edit().putBoolean("useFrontCamera", !isFrontCamera).commit();
+		boolean isFrontCamera = prefs.getBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), false);
+		prefs.edit().putBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
 
 		if (restart == true) {
 			MainScreen.thiz.PauseMain();

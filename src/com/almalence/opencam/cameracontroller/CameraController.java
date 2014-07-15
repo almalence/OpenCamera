@@ -687,7 +687,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try 
 				{
-					CameraController.camera = Camera.open();
+					if (Camera.getNumberOfCameras() > 0) 
+						camera = Camera.open(CameraController.CameraIndex);
+					else
+						camera = Camera.open();
+					
+					Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+					Camera.getCameraInfo(CameraIndex, cameraInfo);
+					if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
+						CameraMirrored = true;
+					else
+						CameraMirrored = false;
 					
 				}
 				catch (RuntimeException e)
