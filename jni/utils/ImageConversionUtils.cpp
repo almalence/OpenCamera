@@ -166,7 +166,7 @@ int JPEG2NV21(Uint8 *yuv, Uint8 *jpegdata, int jpeglen, int sx, int sy, bool nee
 		if(rotationDegree == 90 || rotationDegree == 270)
 			nRotate = 1; //used to support 4-side rotation
 
-		// ToDo: not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
+		// not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
 		TransformNV21(dst, yuv, sx, sy, NULL, cameraMirrored, flipUD, nRotate);
 		free(dst);
 	}

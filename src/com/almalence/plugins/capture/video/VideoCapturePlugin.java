@@ -47,7 +47,6 @@ import android.media.Image;
 import android.media.MediaRecorder;
 import android.media.MediaScannerConnection;
 import android.opengl.GLSurfaceView;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -292,7 +291,7 @@ public class VideoCapturePlugin extends PluginCapture
 			        Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			        if (cp!=null)
 			        {
-			        	SetCameraPreviewSize(cp);
+			        	setCameraPreviewSize(cp);
 			        	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
 			        	MainScreen.guiManager.setupViewfinderPreviewSize(sz);
 			        }
@@ -696,7 +695,7 @@ public class VideoCapturePlugin extends PluginCapture
     	Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
     	if(cp != null)
     	{
-    		SetCameraPreviewSize(cp);
+    		setCameraPreviewSize(cp);
     		Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
     		MainScreen.guiManager.setupViewfinderPreviewSize(CameraController.getInstance().new Size(sz.width, sz.height));
     	}
@@ -980,13 +979,13 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SetCameraPreviewSize(Camera.Parameters cp)
+	public void setCameraPreviewSize(Camera.Parameters cp)
 	{
 		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
     	if(cp == null)
-        	Log.e("VideoCapturePlugin", "MainScreen.SetCameraPreviewSize CameraController.getInstance().getCameraParameters returned null!");    	
+        	Log.e("VideoCapturePlugin", "MainScreen.setCameraPreviewSize CameraController.getInstance().getCameraParameters returned null!");    	
     	
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
 	    int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
@@ -1135,7 +1134,7 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SetCameraPictureSize() 
+	public void setCameraPictureSize() 
 	{
 		Camera camera = CameraController.getCamera();
     	if (null==camera)
@@ -1179,7 +1178,7 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void OnShutterClick()
+	public void onShutterClick()
 	{		
 		if (shutterOff)
 			return;
@@ -1282,7 +1281,6 @@ public class VideoCapturePlugin extends PluginCapture
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
@@ -1350,7 +1348,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			Log.e("video OnShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
+			Log.e("video onShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 		}
         releaseMediaRecorder(); // release the MediaRecorder object
 //        camera.lock();         // take camera access back from MediaRecorder
@@ -1359,7 +1357,7 @@ public class VideoCapturePlugin extends PluginCapture
         Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
         if (cp!=null)
         {
-        	SetCameraPreviewSize(cp);
+        	setCameraPreviewSize(cp);
         	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
         	MainScreen.guiManager.setupViewfinderPreviewSize(sz);	        	
    	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)

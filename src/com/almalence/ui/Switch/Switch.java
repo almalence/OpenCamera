@@ -189,7 +189,7 @@ public class Switch extends CompoundButton
 		refreshDrawableState();
 		setChecked(isChecked());
 
-		// TODO I don't know why, but in order for the OnCheckedChangeListener to work this switch has to have an OnClickListener
+		// I don't know why, but in order for the OnCheckedChangeListener to work this switch has to have an OnClickListener
 		this.setOnClickListener(new View.OnClickListener()
 		{
 
@@ -715,7 +715,6 @@ public class Switch extends CompoundButton
 
 	private void animateThumbToCheckedState(boolean newCheckedState)
 	{
-		// TODO animate!
 		setChecked(newCheckedState);
 	}
 

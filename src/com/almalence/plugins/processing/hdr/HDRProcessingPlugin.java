@@ -21,12 +21,9 @@ package com.almalence.plugins.processing.hdr;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -84,6 +81,7 @@ import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -316,7 +314,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		            {
 		            	if(!isYUV)
 		            	{
-			            	// ToDo: not enough memory error reporting
 				            os.write(SwapHeap.CopyFromHeap(
 				            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 				            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));

@@ -81,7 +81,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_hdr_Alma
 }
 
 
-// ToDo: this is a very common operation - use ImageConversion jni interface instead (? - need to avoid global yuv array then?)
+// this is a very common operation - use ImageConversion jni interface instead (? - need to avoid global yuv array then?)
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_AlmaShotHDR_HDRConvertFromJpeg
 (
 	JNIEnv* env,

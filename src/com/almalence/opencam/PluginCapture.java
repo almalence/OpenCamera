@@ -50,7 +50,7 @@ public abstract class PluginCapture extends Plugin
 	}
 
 	@Override
-	public void OnShutterClick()
+	public void onShutterClick()
 	{
 		if (inCapture == false)
         {

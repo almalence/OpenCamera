@@ -717,7 +717,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 				cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
 			
-			pluginManager.SelectDefaults();
+			pluginManager.selectDefaults();
 
 			// screen rotation
 			if (!pluginManager.shouldPreviewToGPU())
@@ -740,7 +740,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 
 
-		pluginManager.SelectDefaults();
+		pluginManager.selectDefaults();
 
 		if(!CameraController.isHALv3)
 		{
@@ -767,7 +767,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
 		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
 
-		pluginManager.SelectImageDimension(); // updates SX, SY values
+		pluginManager.selectImageDimension(); // updates SX, SY values
 		
 		if(CameraController.isHALv3)
 			HALv3.setupImageReadersHALv3();
@@ -1006,8 +1006,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onError(int arg0, Camera arg1)
 	{
-		// TODO Auto-generated method stub
-		
 	}	
 	
 	//------------ CAMERA PARAMETERS AND CAPABILITIES SECTION-------------------------------------------
@@ -2245,11 +2243,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	//^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 	
-	
-	
-	
-	
-	
 	public class Size
 	{
 		private int mWidth;
@@ -2282,14 +2275,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-
-
-
-
-
 	@Override
 	public void onShutter()
 	{
-		// TODO Auto-generated method stub
 	}
 }

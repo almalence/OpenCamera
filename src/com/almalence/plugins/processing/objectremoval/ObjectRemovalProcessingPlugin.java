@@ -18,34 +18,22 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.objectremoval;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -59,8 +47,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.asynctaskmanager.Task;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -70,15 +56,11 @@ import com.almalence.opencam_plus.R;
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-import com.almalence.util.MLocation;
 import com.almalence.util.Size;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
-import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
@@ -568,8 +550,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	private void getPrefs() {
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
-        mSensitivity = prefs.getInt("Sensitivity", 19); //TODO: Should we manage this parameter or it's final value of 19?
-        mMinSize = prefs.getInt("MinSize", 1000); //TODO: Should we manage this parameter or it's final value of 1000?
-        mGhosting = prefs.getString("Ghosting", "2"); //TODO: Should we manage this parameter or it's final value of 2?
+        mSensitivity = prefs.getInt("Sensitivity", 19); //Should we manage this parameter or it's final value of 19?
+        mMinSize = prefs.getInt("MinSize", 1000); //Should we manage this parameter or it's final value of 1000?
+        mGhosting = prefs.getString("Ghosting", "2"); //Should we manage this parameter or it's final value of 2?
     }
 }

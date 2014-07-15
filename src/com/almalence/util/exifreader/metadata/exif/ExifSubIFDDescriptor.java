@@ -842,7 +842,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
 //        float apexValue = _directory.getFloat(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
 //        int apexPower = (int)Math.pow(2.0, apexValue);
 //        return "1/" + apexPower + " sec";
-        // TODO test this method
+        //  test this method
         // thanks to Mark Edwards for spotting and patching a bug in the calculation of this
         // description (spotted bug using a Canon EOS 300D)
         // thanks also to Gli Blr for spotting this bug
@@ -861,7 +861,7 @@ public class ExifSubIFDDescriptor extends TagDescriptor<ExifSubIFDDirectory>
 
 /*
         // This alternative implementation offered by Bill Richards
-        // TODO determine which is the correct / more-correct implementation
+        //  determine which is the correct / more-correct implementation
         double apexValue = _directory.getDouble(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
         double apexPower = Math.pow(2.0, apexValue);
 

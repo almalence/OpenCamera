@@ -211,10 +211,8 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onResume()
 	{
-    	//ToDo: replace here with [CF] mode as default.
+    	//replace here with [CF] mode as default.
     	// Also, check if [CF] is available, and if not - set [AF], if [AF] is not available - set first available 
-//    	preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
-//    	cancelAutoFocus();
 	}
 	
     @Override
@@ -280,7 +278,7 @@ public class FocusVFPlugin extends PluginViewfinder
     }
     
     @Override
-    public void OnShutterClick()
+    public void onShutterClick()
     {
         if (needAutoFocusCall() && !focusOnShutterDisabled())
         { 
@@ -321,9 +319,9 @@ public class FocusVFPlugin extends PluginViewfinder
     }
     
     @Override
-    public void OnFocusButtonClick()
+    public void onFocusButtonClick()
     {
-    	OnShutterClick();
+    	onShutterClick();
     }
     
     public void setFocusParameters()

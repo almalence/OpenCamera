@@ -264,7 +264,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		this.radius = (float)(this.halfWidth / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 		
 		// but for GL we need radius to be calculated like that to properly fit the frame on screen
-		// ToDo: check why
 		this.radiusGL = (float)(this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
 		final float HalfTileShiftAngle = (float)Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width, this.radius);

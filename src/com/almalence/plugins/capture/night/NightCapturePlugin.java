@@ -365,7 +365,7 @@ public class NightCapturePlugin extends PluginCapture
         ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
 		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0? "imageSizePrefNightBack" : "imageSizePrefNightFront", "-1");
         FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		SelectImageDimension();		
+        selectImageDimension();		
 	}
 	
 	private void selectImageDimensionNight()
@@ -380,8 +380,8 @@ public class NightCapturePlugin extends PluginCapture
     	if (maxMpix < MIN_MPIX_SUPPORTED)
     	{
     		String msg;
-    		msg = "MainScreen.SelectImageDimension maxMem = " + maxMem;
-    		Log.e("NightCapturePlugin", "MainScreen.SelectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+    		msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
+    		Log.e("NightCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
     		Log.e("NightCapturePlugin", msg);
     	}
     	
@@ -484,7 +484,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SelectImageDimension()
+	public void selectImageDimension()
     {
 		selectImageDimensionNight();
 		setCameraImageSize();
@@ -516,7 +516,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SetCameraPreviewSize(Camera.Parameters cp)
+	public void setCameraPreviewSize(Camera.Parameters cp)
 	{		
 		// for super mode
         nVFframesToBuffer = 0;
@@ -559,7 +559,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
     
 	@Override
-	public void SetCameraPictureSize()
+	public void setCameraPictureSize()
 	{		
 		if (Integer.parseInt(ModePreference) != 1)
 		{
@@ -942,7 +942,7 @@ public class NightCapturePlugin extends PluginCapture
 	public boolean delayedCaptureSupported(){return true;}
 	
 	@Override
-	public void OnShutterClick()
+	public void onShutterClick()
 	{
 		if (!takingAlready)
 			startCaptureSequence();

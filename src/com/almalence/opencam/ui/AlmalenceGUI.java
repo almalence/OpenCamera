@@ -105,13 +105,7 @@ import com.almalence.ui.Panel.OnPanelListener;
 
 import com.almalence.googsharing.Thumbnail;
 
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-
 
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -150,10 +144,10 @@ public class AlmalenceGUI extends GUI implements
 		View.OnClickListener {
 	private SharedPreferences preferences;
 
-	private final int INFO_ALL = 0;
-	private final int INFO_NO = 1;
-	private final int INFO_GRID = 2;
-	private final int INFO_PARAMS = 3;
+	private static final int INFO_ALL = 0;
+	private static final int INFO_NO = 1;
+	private static final int INFO_GRID = 2;
+	private static final int INFO_PARAMS = 3;
 	private int infoSet = INFO_PARAMS;
 
 	public enum ShutterButton {
@@ -2497,20 +2491,15 @@ public class AlmalenceGUI extends GUI implements
 
 					@Override
 					public void onAnimationEnd(Animation animation) {
-						// TODO Auto-generated method stub
-						//view.setRotation(endDegree);
-						//view.clearAnimation();						
 					}
 
 					@Override
 					public void onAnimationRepeat(Animation animation) {
-						// TODO Auto-generated method stub
 
 					}
 
 					@Override
 					public void onAnimationStart(Animation animation) {
-						// TODO Auto-generated method stub
 
 					}
 
@@ -3684,21 +3673,21 @@ public class AlmalenceGUI extends GUI implements
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		lockControls = true;
-		PluginManager.getInstance().OnShutterClick();
+		PluginManager.getInstance().onShutterClick();
 	}
 
 	@Override
 	public void onHardwareFocusButtonPressed() {
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
-		PluginManager.getInstance().OnFocusButtonClick();
+		PluginManager.getInstance().onFocusButtonClick();
 	}
 
 	private void shutterButtonPressed() {
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		lockControls = true;
-		PluginManager.getInstance().OnShutterClick();
+		PluginManager.getInstance().onShutterClick();
 	}
 
 	private void infoSlide(boolean toLeft, float XtoVisible, float XtoInvisible) {

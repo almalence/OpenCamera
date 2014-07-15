@@ -383,7 +383,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 
 	@Override
-	public void SelectImageDimension()
+	public void selectImageDimension()
     {
 		this.init();
 		
@@ -412,7 +412,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     }
 	
 	@Override
-	public void SetCameraPreviewSize(Camera.Parameters params)
+	public void setCameraPreviewSize(Camera.Parameters params)
 	{
 		final Camera camera = CameraController.getCamera();
     	if (camera == null)
@@ -431,7 +431,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	}
 	
 	@Override
-	public void SetCameraPictureSize()
+	public void setCameraPictureSize()
 	{
     	final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
 		
@@ -546,7 +546,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	}
 	
 	@Override
-	public void OnShutterClick()
+	public void onShutterClick()
 	{
 		synchronized (this.engine)
 		{

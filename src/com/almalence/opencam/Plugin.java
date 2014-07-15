@@ -177,9 +177,9 @@ public abstract class Plugin
 
 	public void onShowPreferences(){}
 	
-	public void OnShutterClick(){}
+	public void onShutterClick(){}
 	
-	public void OnFocusButtonClick(){}
+	public void onFocusButtonClick(){}
 	
 	public boolean onTouch(View view, MotionEvent e){return false;}
 	
@@ -209,7 +209,7 @@ public abstract class Plugin
 	
 	private int MIN_MPIX_SUPPORTED = 1280 * 960;
 		
-	public void SelectImageDimension()
+	public void selectImageDimension()
 	{
 		// ----- Figure how much memory do we have and possibly limit resolution
 		long maxMem = Runtime.getRuntime().maxMemory();// -
@@ -315,7 +315,7 @@ public abstract class Plugin
 		MainScreen.setSaveImageHeight(CaptureHeight);
 	}
 	
-	public void SetCameraPreviewSize(Camera.Parameters cp) {
+	public void setCameraPreviewSize(Camera.Parameters cp) {
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
 		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
@@ -332,7 +332,7 @@ public abstract class Plugin
 	}
 	
 	//Used only in old camera interface (HALv3 don't use it)
-	public void SetCameraPictureSize() {
+	public void setCameraPictureSize() {
 		Camera camera = CameraController.getCamera();
     	if (null==camera)
     		return;
@@ -393,7 +393,7 @@ public abstract class Plugin
 	public void onCameraSetup(){}
 	
 	//called to set specific plugin's camera parameters
-	public void SetupCameraParameters(){}	
+	public void setupCameraParameters(){}	
 		
 	//called before camera parameters setup - to set plugin specific options
 	public void onCameraParametersSetup(){}	
@@ -403,13 +403,13 @@ public abstract class Plugin
 	
 	public void onCaptureFinished() { }
 
-	//return true in implementation of plugin if plugin can call OnShutterClick with delay, specified in general settings.
+	//return true in implementation of plugin if plugin can call onShutterClick with delay, specified in general settings.
 	public boolean delayedCaptureSupported(){return false;}
 	
 /******************************************************************************************************
 	Processing Interfaces
 ******************************************************************************************************/
-	public void StartProcessing(){}
+	public void startProcessing(){}
 	
 	//called on task complete
 	public void onTaskComplete(Task task){}
@@ -535,7 +535,7 @@ Export Interface
 	{}
 	
 	//called when export finished to clean all allocated memory
-	public void FreeMemory()
+	public void freeMemory()
 	{}
 	
 	public void onExportFinished()

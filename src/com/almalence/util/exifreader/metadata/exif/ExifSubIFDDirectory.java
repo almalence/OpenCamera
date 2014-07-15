@@ -427,7 +427,7 @@ public class ExifSubIFDDirectory extends Directory
      */
     public static final int TAG_SHARPNESS = 0xA40A;
 
-    // TODO support this tag (I haven't seen a camera's actual implementation of this yet)
+    // support this tag (I haven't seen a camera's actual implementation of this yet)
 
     /**
      * This tag indicates information on the picture-taking conditions of a particular
@@ -504,7 +504,7 @@ public class ExifSubIFDDirectory extends Directory
     {
         _tagNameMap.put(TAG_FILL_ORDER, "Fill Order");
         _tagNameMap.put(TAG_DOCUMENT_NAME, "Document Name");
-        // TODO why don't these tags have fields associated with them?
+        //  why don't these tags have fields associated with them?
         _tagNameMap.put(0x1000, "Related Image File Format");
         _tagNameMap.put(0x1001, "Related Image Width");
         _tagNameMap.put(0x1002, "Related Image Length");

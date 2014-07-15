@@ -39,7 +39,7 @@ import java.util.Set;
  */
 public class ExifReader implements MetadataReader
 {
-    // TODO extract a reusable TiffReader from this class with hooks for special tag handling and subdir following
+    //  extract a reusable TiffReader from this class with hooks for special tag handling and subdir following
     
     /** The number of bytes used per format descriptor. */
     @NotNull
@@ -49,7 +49,7 @@ public class ExifReader implements MetadataReader
     private static final int MAX_FORMAT_CODE = 12;
 
     // Format types
-    // TODO use an enum for these?
+    //  use an enum for these?
     /** An 8-bit unsigned integer. */
     private static final int FMT_BYTE = 1;
     /** A fixed-length character string. */

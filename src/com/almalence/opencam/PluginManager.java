@@ -156,8 +156,6 @@ public class PluginManager implements PluginManagerInterface {
 	// string value
 	// file SharedMemory.txt contains data keys and formats for currently used
 	// data
-	// TODO!!! release data!!!
-	// synchronize data??
 	private Hashtable<String, String> sharedMemory;
 
 	// message codes
@@ -489,10 +487,8 @@ public class PluginManager implements PluginManagerInterface {
 		try {
 			ConfigParser.getInstance().parse(MainScreen.mainContext);
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -690,7 +686,7 @@ public class PluginManager implements PluginManagerInterface {
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 	}
 
-	public void OnShutterClick() 
+	public void onShutterClick() 
 	{
 		//<!-- -+-
 		// check if plugin payed
@@ -711,9 +707,9 @@ public class PluginManager implements PluginManagerInterface {
 		if (showDelayedCapturePrefCommon == false ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
 		{	
 			for (int i = 0; i < activeVF.size(); i++)
-				pluginList.get(activeVF.get(i)).OnShutterClick();
+				pluginList.get(activeVF.get(i)).onShutterClick();
 			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
-				pluginList.get(activeCapture).OnShutterClick();
+				pluginList.get(activeCapture).onShutterClick();
 		}
 		else
 		{
@@ -722,7 +718,7 @@ public class PluginManager implements PluginManagerInterface {
 		}
 	}
 
-	public void OnFocusButtonClick() 
+	public void onFocusButtonClick() 
 	{
 		//<!-- -+-
 		// check if plugin payed
@@ -733,9 +729,9 @@ public class PluginManager implements PluginManagerInterface {
 		}
 		//-+- -->
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).OnFocusButtonClick();
+			pluginList.get(activeVF.get(i)).onFocusButtonClick();
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).OnFocusButtonClick();
+			pluginList.get(activeCapture).onFocusButtonClick();
 	}
 
 	public boolean onTouch(View view, MotionEvent e) {
@@ -1194,7 +1190,7 @@ public class PluginManager implements PluginManagerInterface {
 	 ******************************************************************************************************/
 
 	@Override
-	public void SelectDefaults()
+	public void selectDefaults()
 	{
 		if(!isDefaultsSelected)
 			for (final Entry<String, Plugin> entry : this.pluginList.entrySet())
@@ -1206,19 +1202,19 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	@Override
-	public void SelectImageDimension() {
+	public void selectImageDimension() {
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).SelectImageDimension();
+			pluginList.get(activeCapture).selectImageDimension();
 	}
 
-	public void SetCameraPreviewSize(Camera.Parameters cp) {
+	public void setCameraPreviewSize(Camera.Parameters cp) {
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).SetCameraPreviewSize(cp);
+			pluginList.get(activeCapture).setCameraPreviewSize(cp);
 	}
 
-	public void SetCameraPictureSize() {
+	public void setCameraPictureSize() {
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).SetCameraPictureSize();
+			pluginList.get(activeCapture).setCameraPictureSize();
 	}
 
 	@Override
@@ -1301,12 +1297,11 @@ public class PluginManager implements PluginManagerInterface {
 		}
 	}
 
-	public void SetupCameraParameters() {
-//		CameraController.getInstance().updateCameraFeatures();
+	public void setupCameraParameters() {
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).SetupCameraParameters();
+			pluginList.get(activeVF.get(i)).setupCameraParameters();
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).SetupCameraParameters();
+			pluginList.get(activeCapture).setupCameraParameters();
 	}
 
 	public void onCameraParametersSetup() {
@@ -1329,7 +1324,7 @@ public class PluginManager implements PluginManagerInterface {
 	void startProcessingActivity() {
 	}
 
-	void StartProcessing() {
+	void startProcessing() {
 	}
 
 	public void processingOnClick(View v) {
@@ -1522,7 +1517,7 @@ public class PluginManager implements PluginManagerInterface {
 				cntProcessing--;
 			// free memory in processing
 			if (null != pluginList.get(activeProcessing))
-				pluginList.get(activeProcessing).FreeMemory();
+				pluginList.get(activeProcessing).freeMemory();
 
 			// notify GUI about saved images
 			MainScreen.guiManager.onExportFinished();
@@ -1549,7 +1544,7 @@ public class PluginManager implements PluginManagerInterface {
 					cntProcessing--;
 				// free memory in processing
 				if (null != pluginList.get(activeProcessing))
-					pluginList.get(activeProcessing).FreeMemory();
+					pluginList.get(activeProcessing).freeMemory();
 
 				// notify GUI about saved images
 				MainScreen.guiManager.onExportFinished();
@@ -1565,9 +1560,9 @@ public class PluginManager implements PluginManagerInterface {
 
 		case MSG_DELAYED_CAPTURE: 
 			for (int i = 0; i < activeVF.size(); i++)
-				pluginList.get(activeVF.get(i)).OnShutterClick();
+				pluginList.get(activeVF.get(i)).onShutterClick();
 			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
-				pluginList.get(activeCapture).OnShutterClick();
+				pluginList.get(activeCapture).onShutterClick();
 			break;
 
 		case MSG_RETURN_CAPTURED:
@@ -1576,7 +1571,7 @@ public class PluginManager implements PluginManagerInterface {
 			break;
 
 		case MSG_START_FULLSIZE_PROCESSING:
-			PluginManager.getInstance().StartProcessing();
+			PluginManager.getInstance().startProcessing();
 			break;
 
 		case MSG_RESTART_MAIN_SCREEN:

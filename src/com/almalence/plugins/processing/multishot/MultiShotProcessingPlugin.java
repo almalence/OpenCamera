@@ -36,7 +36,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -319,7 +318,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					{
 						if(!isYUV)
 						{
-							// ToDo: not enough memory error reporting
 							os.write(mJpegBufferList.get(i));
 						}
 						else

@@ -18,31 +18,20 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.sequence;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.DashPathEffect;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -55,27 +44,22 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.asynctaskmanager.Task;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
-import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
+import com.almalence.opencam.cameracontroller.CameraController;
+
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
-import com.almalence.util.MLocation;
 import com.almalence.util.Size;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
-import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
@@ -534,10 +518,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 						Integer.parseInt(mGhosting),
 						idx);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

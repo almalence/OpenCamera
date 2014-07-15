@@ -40,7 +40,6 @@ import java.util.*;
  */
 public abstract class Directory
 {
-    // TODO get Array methods need to return cloned data, to maintain this directory's integrity
 
     /** Map of values hashed by type identifiers. */
     @NotNull

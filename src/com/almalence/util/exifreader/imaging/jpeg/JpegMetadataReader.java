@@ -39,11 +39,7 @@ import java.io.InputStream;
  */
 public class JpegMetadataReader
 {
-    // TODO investigate supporting javax.imageio
-//    public static Metadata readMetadata(IIOMetadata metadata) throws JpegProcessingException {}
-//    public static Metadata readMetadata(ImageInputStream in) throws JpegProcessingException{}
-//    public static Metadata readMetadata(IIOImage image) throws JpegProcessingException{}
-//    public static Metadata readMetadata(ImageReader reader) throws JpegProcessingException{}
+    // investigate supporting javax.imageio
 
     @NotNull
     public static Metadata readMetadata(@NotNull InputStream inputStream) throws JpegProcessingException

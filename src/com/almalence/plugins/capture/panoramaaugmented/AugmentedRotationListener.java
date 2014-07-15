@@ -44,7 +44,7 @@ public class AugmentedRotationListener implements SensorEventListener
 	private final Object receiverSynchObject = new Object();
 	private AugmentedRotationReceiver receiver;
 	
-	// ToDo: filter state should be pre-filled with zeros (where to put initialization??)
+	//  filter state should be pre-filled with zeros (where to put initialization??)
 	private static final int ACC_FILT_LEN = 8;
 	private final float[][] acc_filter = new float[ACC_FILT_LEN][3];	// filter state for acceleration filter
 	private int acc_filt_idx = 0;

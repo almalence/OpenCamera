@@ -308,7 +308,7 @@ void bim_ToneDownBGSupp_BGGreyLevelContour( struct bim_UInt8Image* imgA,
 void bim_ToneDownBGSupp_suppress( struct bim_UInt8Image* imgA,
 								  struct bts_Int16Rect* rectA,
 								  int16 rectShrinkageA,
-								  int32 toneDownFactorA,	/* ToDo: change to int16, bpb=[0.16] */
+								  int32 toneDownFactorA,	/* change to int16, bpb=[0.16] */
 								  int32 cutOffAccuracyA )
 {
 	/* ((( variable declarations begin ))) */
@@ -331,7 +331,7 @@ void bim_ToneDownBGSupp_suppress( struct bim_UInt8Image* imgA,
 	int16  ridgeIxLeftL, ridgeIxRightL;
 
 	/* tone down table */
-	struct bbs_Int32Arr toneDownFactorsL;	/* ToDo: change int32 bpb=[16.16] to uint bpb=[0.16] */
+	struct bbs_Int32Arr toneDownFactorsL;	/* change int32 bpb=[16.16] to uint bpb=[0.16] */
 	int32 toneDownFactorPowA;
 	int32* toneDownFactorsPtrL;
 	int32 ctrL;
@@ -381,7 +381,6 @@ void bim_ToneDownBGSupp_suppress( struct bim_UInt8Image* imgA,
 	meanBGGreyLevelL = ( 128 << meanBGGreyBBPL );
 	meanBGGreyLevelByteL = meanBGGreyLevelL >> meanBGGreyBBPL;
 	meanBGGreyLevelLongL = ( 128 << meanBGGreyBBPL );
-	/* ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo ToDo */
 	
 	/* this function computes an image that moving away from the ROI gradually fades to
 	 * the background grey level BG according to the formula

@@ -474,33 +474,28 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 		};
 
-		//pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
-//		if (!keepScreenOn)
-		{
-			ScreenTimer = new CountDownTimer(180000, 180000) {
-				public void onTick(long millisUntilFinished) {
+		ScreenTimer = new CountDownTimer(180000, 180000) {
+			public void onTick(long millisUntilFinished) {
+			}
+
+			public void onFinish() {
+				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+				if (isVideoRecording || keepScreenOn)
+				{
+					//restart timer
+					ScreenTimer.start();
+					isScreenTimerRunning = true;
+					preview.setKeepScreenOn(true);
+					return;
 				}
-	
-				public void onFinish() {
-					boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
-					if (isVideoRecording || keepScreenOn)
-					{
-						//restart timer
-						ScreenTimer.start();
-						isScreenTimerRunning = true;
-						preview.setKeepScreenOn(true);
-						return;
-					}
-					preview.setKeepScreenOn(false);
-					isScreenTimerRunning = false;
-				}
-			};
-			ScreenTimer.start();
-			isScreenTimerRunning = true;
-		}
+				preview.setKeepScreenOn(false);
+				isScreenTimerRunning = false;
+			}
+		};
+		ScreenTimer.start();
+		isScreenTimerRunning = true;
 
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
@@ -606,7 +601,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 			if(CameraController.getCameraIndex() == 0)
 			lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-				// @Override
 				public boolean onPreferenceChange(Preference preference,
 						Object newValue) {
 					int value = Integer.parseInt(newValue.toString());
@@ -616,7 +610,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			});
 			else
 				lp2.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-					// @Override
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
 						int value = Integer.parseInt(newValue.toString());
@@ -771,7 +764,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.mainContext);
 				
-					UpdatePreferences();
+					updatePreferences();
 					
 					captureYUVFrames = false;
 					
@@ -792,7 +785,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					
 					if(CameraController.isUseHALv3())
 					{
-//						cameraController.createHALv3Manager();
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						Log.e("MainScreen", "onResume: cameraController.setupCamera(null)");
 						cameraController.setupCamera(null);
@@ -880,7 +872,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return availableBlocks * blockSize / 1048576;
 	}
 	
-	private void UpdatePreferences()
+	private void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -956,7 +948,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				}
 
 				public void onFinish() {
-					UpdatePreferences();
+					updatePreferences();
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
 							&& (!CameraController.isCameraCreated())) {
@@ -979,7 +971,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				}
 			}.start();
 		else {
-			UpdatePreferences();
+			updatePreferences();
 
 			if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated())) {
 				surfaceWidth = width;
@@ -999,7 +991,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				false);
 		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
-		// FullMediaRescan = prefs.getBoolean("mediaPref", true);
 
 		if (!MainScreen.thiz.mPausing && surfaceCreated
 				&& (!CameraController.isCameraCreated())) {
@@ -1039,7 +1030,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		else
 		{
 			// ----- Select preview dimensions with ratio correspondent to full-size image
-			PluginManager.getInstance().SetCameraPreviewSize(CameraController.getInstance().getCameraParameters());
+			PluginManager.getInstance().setCameraPreviewSize(CameraController.getInstance().getCameraParameters());
 	
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 			
@@ -1052,8 +1043,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
 		
-		PluginManager.getInstance().SetCameraPictureSize();
-		PluginManager.getInstance().SetupCameraParameters();
+		PluginManager.getInstance().setCameraPictureSize();
+		PluginManager.getInstance().setupCameraParameters();
 
 		if(!CameraController.isUseHALv3())
 		{
@@ -1095,7 +1086,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// ----- Start preview and setup frame buffer if needed
 
-		// ToDo: call camera release sequence from onPause somewhere ???
+		// call camera release sequence from onPause somewhere ???
 		new CountDownTimer(10, 10)
 		{
 			@Override

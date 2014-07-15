@@ -268,7 +268,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 				if(rotationDegree == 90 || rotationDegree == 270)
 					nRotate = 1; //used to support 4-side rotation
 
-				// ToDo: not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
+				// not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
 				TransformNV21(yuv[i], inputFrame[i], sx, sy, NULL, cameraMirrored, flipUD, nRotate);
 //				free(dst);
 			}

@@ -237,7 +237,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	}
     
     @Override
-    public void FreeMemory()
+    public void freeMemory()
     {
     	PreShot.FreeBufferReserved();
     }

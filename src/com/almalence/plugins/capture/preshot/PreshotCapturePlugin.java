@@ -213,7 +213,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SetupCameraParameters()
+	public void setupCameraParameters()
 	{
 		if (isSlowMode==false)//fast mode
 		{
@@ -263,7 +263,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void OnShutterClick()
+	public void onShutterClick()
 	{
 		if (captureStarted || AutostartPreference)
 		{

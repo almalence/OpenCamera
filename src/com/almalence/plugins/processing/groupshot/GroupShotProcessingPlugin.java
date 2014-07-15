@@ -18,35 +18,21 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.groupshot;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -65,25 +51,21 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.almalence.SwapHeap;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
-import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.util.ImageConversion;
-import com.almalence.util.MLocation;
 import com.almalence.util.Size;
 
 
@@ -344,7 +326,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	   private void loadingSeamless() {
 	    	mSeamless = Seamless.getInstance();
 	        Size preview = new Size(PreviewBmp.getWidth(), PreviewBmp.getHeight());
-	    	// ToDo: correctness of w/h here depends on orientation while taking image,
+	    	// correctness of w/h here depends on orientation while taking image,
 	        // only product of inputSize is used later - this is why code still works  
 	        Size inputSize = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 	        Size fdSize = new Size(imgWidthFD, imgHeightFD);
@@ -364,7 +346,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 				mSeamless.initialize(mBaseFrame, mFaceList, preview);				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    	return;

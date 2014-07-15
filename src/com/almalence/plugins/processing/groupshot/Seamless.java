@@ -356,7 +356,6 @@ public class Seamless
 		try {
 			this.finalize();
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return;

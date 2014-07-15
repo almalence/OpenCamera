@@ -170,7 +170,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void SetupCameraParameters()
+	public void setupCameraParameters()
 	{
 		CameraController.getInstance().resetExposureCompensation();
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
@@ -179,7 +179,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public boolean delayedCaptureSupported(){return true;}
 	
 	@Override
-	public void SetCameraPictureSize()
+	public void setCameraPictureSize()
 	{
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
     	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
@@ -207,7 +207,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         }
 	}
 	
-	public void OnShutterClick()
+	public void onShutterClick()
 	{
 		if (takingAlready == false)
 		{

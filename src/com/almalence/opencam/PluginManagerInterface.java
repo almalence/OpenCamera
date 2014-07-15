@@ -27,8 +27,8 @@ import android.hardware.Camera;
 
 public interface PluginManagerInterface
 {
-	public void SelectImageDimension();
-	public void SelectDefaults();	
+	public void selectImageDimension();
+	public void selectDefaults();	
 	public boolean shouldPreviewToGPU();
 	
 	

@@ -153,7 +153,7 @@ JNIEXPORT int JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPort
 // Note:
 // input: NV21 data from VF
 // return: distance in percentages of frame half-width (0=perfect alignment, 100=displaced half-way
-// ToDo: return confidence measure
+// return confidence measure
 JNIEXPORT int JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_CheckRearAlignment
 (
 	JNIEnv* env,

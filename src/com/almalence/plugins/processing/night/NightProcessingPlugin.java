@@ -19,7 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.night;
 
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
 

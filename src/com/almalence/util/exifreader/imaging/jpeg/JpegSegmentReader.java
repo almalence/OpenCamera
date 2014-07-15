@@ -31,9 +31,9 @@ import java.io.*;
  */
 public class JpegSegmentReader
 {
-    // TODO add a findAvailableSegments() method
-    // TODO add more segment identifiers
-    // TODO add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
+    // add a findAvailableSegments() method
+    // add more segment identifiers
+    // add a getSegmentDescription() method, returning for example 'App1 application data segment, commonly containing Exif data'
 
     @NotNull
     private final JpegSegmentData _segmentData;
