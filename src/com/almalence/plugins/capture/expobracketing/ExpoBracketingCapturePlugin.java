@@ -603,42 +603,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			return;
 		}
     	
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
-    	
-		
-    	//in HALv3 plugin already have ordered 3 frames, there is no need to check whether or not preview is working
-		//if preview not working
-//		if (previewMode==false)
-//			return;
-//		previewWorking = false;
-//		//start timer to check if onpreviewframe working
-//		cdt = new CountDownTimer(5000, 5000) {
-//			public void onTick(long millisUntilFinished) {
-//			}
-//
-//			public void onFinish() {
-//				if (previewWorking == false)
-//				{
-//					Log.e("ExpoBracketing", "previewMode DISABLED!");
-//					previewMode=false;
-//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
-//					Editor prefsEditor = prefs.edit();
-//					prefsEditor.putBoolean(sExpoPreviewModePref, false);
-//					prefsEditor.commit();
-//					evLatency=0;
-//					Message msg = new Message();
-//					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-//					msg.what = PluginManager.MSG_BROADCAST;
-//					MainScreen.H.sendMessage(msg);
-//				}
-//			}
-//		};
-//		cdt.start();
-		
-		
 		if (++frame_num >= total_frames)
         {        	
         	takingAlready = false;
@@ -845,20 +809,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void NotEnoughMemory()
     {
 //		// warn user of low memory
-//		AlertDialog ad = new AlertDialog.Builder(MainScreen.thiz)
-//			.setIcon(R.drawable.alert_dialog_icon)
-//			.setTitle(R.string.too_little_mem_title)
-//			.setMessage(R.string.too_little_mem_msg)
-//			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-//			{
-//				public void onClick(DialogInterface dialog, int whichButton)
-//				{
-//					MainScreen.thiz.finish();
-//				}
-//			})
-//			.create();
-//		
-//		ad.show();
     }
 	
 	public void CaptureFrame()

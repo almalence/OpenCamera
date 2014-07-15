@@ -35,12 +35,9 @@ public class AugmentedRotationListener implements SensorEventListener
 	}
 	
 	private static final float NS2S = 1.0f / 1000000000.0f;
-	//private static final float MOVING_AVERAGE = 0.1f;
 
 	private static final float VF_GYRO_SPEED_LIMIT = 5.f;	// radians/sec
-	//private static final float MAGNETIC_RELIABLE_MIN = 1.f;	// radians/sec
 	
-	//private static final float MAGNETO_FUSION_CF = 0.05f;
 	private static final float GYRO_FUSION_CF = 0.02f; // 0.05f;
 	private static final float GRAVITY_FILTER_CF = 0.1f;
 
@@ -63,10 +60,7 @@ public class AugmentedRotationListener implements SensorEventListener
 	
 	private final boolean[] dataSynchObject = new boolean[2];
     
-    //private final float[] gyro_drift = new float[3];
-    //private final float[] drift_correction = new float[3];
-    
-	private boolean accelerometerValueIsFresh = true;//false;
+	private boolean accelerometerValueIsFresh = true;
 	
 	private int magneticDataValid = 0;
 	private long timestamp_magnetic;
@@ -75,7 +69,6 @@ public class AugmentedRotationListener implements SensorEventListener
     private final float[] gyroOrientation = new float[3];
     private float[] accMagOrientation = null;
     private float[] fusedOrientation = new float[3]; 
-    //private float magCompensationAngle = 0; 
     private float[] gyroMatrix = null;
     
     private final boolean remap;
@@ -86,28 +79,17 @@ public class AugmentedRotationListener implements SensorEventListener
 		this.remap = remap;
 		this.softGyro = softGyro;
 		this.filt_magnetic[0] = this.filt_magnetic[1] = this.filt_magnetic[2] = 0;
-		//this.gyro_drift[0] = this.gyro_drift[1] = this.gyro_drift[2] = 0;
-		//this.drift_correction[0] = this.drift_correction[1] = this.drift_correction[2] = 0;
 	}
 	
 	@Override
 	public void onAccuracyChanged(final Sensor sensor, final int accuracy)
 	{
-		//if (sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-		//	Log.i("CameraTest", "Sensor.TYPE_ACCELEROMETER accuracy "+accuracy);
-		//else
-		//	Log.i("CameraTest", "sensor:" + sensor.getType() + "accuracy "+accuracy);
 	}
 	
 	@Override
 	public void onSensorChanged(final SensorEvent event)
 	{
 		final AugmentedRotationReceiver receiver;
-		
-		//if (event.sensor.getType() == Sensor.TYPE_GRAVITY) Log.i("CameraTest", "GRAVITY: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
-		//else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) Log.i("CameraTest", "ACCELEROMETER: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
-		//else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) Log.i("CameraTest", "GYROSCOPE: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
-		//else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) Log.i("CameraTest", "MAGNETIC_FIELD: "+event.values[0]+" "+event.values[1]+" "+event.values[2]);
 		
 		synchronized (this.receiverSynchObject)
 		{
@@ -132,40 +114,6 @@ public class AugmentedRotationListener implements SensorEventListener
 				        this.magnetoFixLarge(event);
 						this.gyroFunction(event);
 					}
-					/*else
-					{
-						// use as a hw gyro drift stabilizer
-						// i.e. if camera is stable - include readings from gyroscope
-						// into drift compensator
-						// we assuming here that rate of readout from hw gyro is
-						// somewhat higher than fps from camera
-						if (event.values[0] > 0)
-						{
-							//Log.i("CameraTest", "camera stable");
-							
-							// discard correction if amplitude is well above possible drift range
-							// +- 0.2 rad/s
-							boolean drift2high = false;
-					    	for (int i=0; i<3; ++i)
-					    	{
-					    		if (Math.abs(drift_correction[i]) > 0.2f)
-					    		{
-					    			drift2high = true;
-					    			break;
-					    		}
-					    	}
-					    	
-					    	if (!drift2high)
-					    	{
-						    	for (int i=0; i<3; ++i)
-						    	{
-						    		gyro_drift[i] = (gyro_drift[i]*15+drift_correction[i])/16; 
-						    	}
-					    	}
-						}
-						//else
-						//	Log.i("CameraTest", "camera unstable");
-					}*/
 				}
 				else
 				{
@@ -180,23 +128,6 @@ public class AugmentedRotationListener implements SensorEventListener
 				 
 				    case Sensor.TYPE_GYROSCOPE:
 				    	VfGyroSensor.FixDrift(event.values);
-				    	/*
-				    	// drift prevention
-				    	for (int i=0; i<3; ++i)
-				    	{
-				    		event.values[i] -= gyro_drift[i];
-					    	drift_correction[i] = event.values[i];
-				    		//float magnitude = Math.abs(event.values[i]); 
-				    		//if ( magnitude<0.1f )
-					    	//{
-				    		//	magnitude = (magnitude-0.05f)*2;
-				    		//	if (magnitude<0) magnitude=0;
-				    		//	event.values[i] = magnitude * Math.signum(event.values[i]);
-					    	//}
-				    	}
-				    	*/
-				    	
-					    //Log.i("CameraTest", "Gyro: "+event.values[0]+" "+event.values[1]+" "+event.values[2]+" "+this.rate_magnetic[0]+" "+this.rate_magnetic[1]+" "+this.rate_magnetic[2]);
 				        this.gyroFunction(event);
 				        accelerometerValueIsFresh = false;
 				        break;
@@ -294,7 +225,7 @@ public class AugmentedRotationListener implements SensorEventListener
 		float[] accMatrix = new float[9];
 		boolean accMatrixGood = SensorManager.getRotationMatrix(accMatrix, null, gravity, fakeMagneto);
 		
-		if (accMatrixGood) // && worldMatrixGood)
+		if (accMatrixGood)
 	    {
 	    	float[] accOrientation = new float[3];
 	    	
@@ -320,10 +251,6 @@ public class AugmentedRotationListener implements SensorEventListener
 			//   (magnetometer seem reasonably stable at rates around 1 radian/sec)
 			if ((float)Math.abs(event.values[i]) > VF_GYRO_SPEED_LIMIT)
 				event.values[i] = this.rate_magnetic[i];
-		    //Log.e("CameraTest", "Gyro: "+event.values[0]+" "+event.values[1]+" "+event.values[2]+" "+this.rate_magnetic[0]+" "+this.rate_magnetic[1]+" "+this.rate_magnetic[2]);
-			// magnetometer is too unreliable on intel phone, likely on others too
-			//if ((float)Math.abs(this.rate_magnetic[i]) > MAGNETIC_RELIABLE_MIN )
-			//	event.values[i] = this.rate_magnetic[i];
 		}
 	}
 	
@@ -422,9 +349,6 @@ public class AugmentedRotationListener implements SensorEventListener
 		{
 			this.gyroMatrix = getRotationMatrixFromOrientation(this.accMagOrientation);
 			System.arraycopy(this.accMagOrientation, 0, this.gyroOrientation, 0, 3);
-			
-			// speed-up convergence between accelerometer and gyro in the first 5 readings
-			//quickConverge = N_QUICK_CONV_FRAMES;
 		}
 
 		float[] deltaVector = new float[4];
@@ -444,12 +368,7 @@ public class AugmentedRotationListener implements SensorEventListener
 
 		SensorManager.getOrientation(this.gyroMatrix, this.gyroOrientation);
 		
-		//if (System.currentTimeMillis() - this.lastFusion >= 30)
-		{
-			this.calculateFusion(accelerometerValueIsFresh);
-			
-			//this.lastFusion = System.currentTimeMillis();
-		}
+		this.calculateFusion(accelerometerValueIsFresh);
 		
 		final AugmentedRotationReceiver receiver;
 		synchronized (this.receiverSynchObject)
@@ -458,23 +377,6 @@ public class AugmentedRotationListener implements SensorEventListener
 		}	
 		receiver.onRotationChanged(this.gyroMatrix);
 	}
-
-	/*
-	private float updateCompensation(float a1, float a2, float compensation)
-	{
-		if (a1-a2 > Math.PI) a2 += 2*Math.PI;
-		else if (a1-a2 < -Math.PI) a2 -= 2*Math.PI;
-
-		// compensation should not change for slow varying changes to catch gyro drift
-		// but it should be updated if sudden deviation is detected
-		// assume 1 degree is the threshold
-		if (Math.abs(a1-a2+compensation) > Math.PI*1/180)
-			compensation = a2-a1;
-
-		return compensation;
-	}
-	*/
-	
 	
 	private float fuseAngles(float nice, float dirty, final float compensation, float filtCf)
 	{
@@ -505,15 +407,6 @@ public class AugmentedRotationListener implements SensorEventListener
 			else
 				this.fusedOrientation[i] = fuseAngles(this.gyroOrientation[i], this.accMagOrientation[i], 0, 0);
 		
-			// magnetometer adds too much breathing
-			// possibly could still be applied if compensation in direction
-			// non-parallel to earth is not applied
-			//if (magneticDataValid >= 2)
-			//{
-			//	//Log.i("CameraTest", "magnetic angle: "+this.angle_magnetic[0]+" "+this.angle_magnetic[1]+" "+this.angle_magnetic[2]);
-			//	this.angle_initial[i] = updateCompensation(this.angleLF_magnetic[i], this.fusedOrientation[i], this.angle_initial[i]);
-			//	this.fusedOrientation[i] = fuseAngles(this.fusedOrientation[i], this.angleLF_magnetic[i], this.angle_initial[i], MAGNETO_FUSION_CF);
-			//}
 		}
 
 		// overwrite gyro matrix and orientation with fused orientation to compensate gyro drift

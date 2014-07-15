@@ -96,7 +96,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private Button mSaveButton;
 	private Button mSaveAllButton;
 	
-	//Thread saving;
 	private boolean isSaveAll = false;
 	
 	private DisplayMetrics metrics = null;
@@ -633,7 +632,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				if ((X>difX) && (X -difX > 100))
 				{					
 					int new_idx = isGuffyOrientation? --idx : ++idx;
-					//++idx;
 					if(new_idx <= imgCnt - 1 && new_idx >= 0)
 						flipPhoto(true, XtoLeftVisible);
 					else
@@ -642,7 +640,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				else if(X<difX && (difX - X > 100))
 				{
 					int new_idx = isGuffyOrientation? ++idx : --idx;
-					//--idx;
 					if(new_idx >= 0 && new_idx <= imgCnt - 1)
 						flipPhoto(false, XtoRightVisible);
 					else

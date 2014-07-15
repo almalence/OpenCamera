@@ -199,9 +199,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	
 	private final AtomicBoolean capturing = new AtomicBoolean(false);
 	
-	// debug
-	//public final Vector3d currentVector = new Vector3d();
-	//public final Vector3d topVector = new Vector3d(0.0f, 0.0f, 1.0f);
 	// access to both currentVector and topVector are synchronized through currentVector
 	private final Vector3d currentVector = new Vector3d();
 	private final Vector3d topVector = new Vector3d(0.0f, 0.0f, 1.0f);

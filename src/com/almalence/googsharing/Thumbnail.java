@@ -252,9 +252,6 @@ public class Thumbnail {
             return null;
         }
         
-        // Ensure database and storage are in sync.
-//        if (Util.isUriValid(lastMedia.uri, resolver))
-//        {
         try
         {
             return createThumbnail(lastMedia.uri, bitmap, null, lastMedia.orientation);
@@ -264,9 +261,6 @@ public class Thumbnail {
         	Log.e("getLastThumbnail", "createThumbnail exception " + ex.getMessage());
             return null;
         }
-//        }
-        
-//        return null;
     }
 
 
@@ -450,7 +444,7 @@ public class Thumbnail {
         Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
         String[] projection = new String[] {VideoColumns._ID, MediaColumns.DATA,
                 VideoColumns.DATE_TAKEN};
-        String selection = ImageColumns.MIME_TYPE + "='video/mp4'";//VideoColumns.BUCKET_ID + '=' + BUCKET_ID;
+        String selection = ImageColumns.MIME_TYPE + "='video/mp4'";
         String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
 
         Cursor cursor = null;

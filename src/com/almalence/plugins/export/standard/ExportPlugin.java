@@ -39,7 +39,6 @@ import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -248,7 +247,7 @@ public class ExportPlugin extends PluginExport
 	            		d.get(Calendar.HOUR_OF_DAY),
 	            		d.get(Calendar.MINUTE),
 	            		d.get(Calendar.SECOND));
-		    	String modeName = PluginManager.getInstance().getFromSharedMem("modeSaveName"+Long.toString(sessionID));//PluginManager.getInstance().getActiveMode().modeSaveName;
+		    	String modeName = PluginManager.getInstance().getFromSharedMem("modeSaveName"+Long.toString(sessionID));
 		    	switch (saveOption)
 		    	{
 		    	case 1://YEARMMDD_HHMMSS
@@ -415,13 +414,13 @@ public class ExportPlugin extends PluginExport
             	{
             	default:
             	case 0:
-            		orientation_tag = String.valueOf(0);//cameraMirrored ? String.valueOf(180) : String.valueOf(0);
+            		orientation_tag = String.valueOf(0);
             		break;
             	case 90:
             		orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
             		break;
             	case 180:
-            		orientation_tag = String.valueOf(180);//cameraMirrored ? String.valueOf(0) : String.valueOf(180);
+            		orientation_tag = String.valueOf(180);
             		break;
             	case 270:
             		orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
@@ -623,11 +622,6 @@ public class ExportPlugin extends PluginExport
 	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
 	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
 		            }
-//		            if(tag_make != null) {
-//		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-//		        		value.setBytes(tag_make.getBytes());
-//		        		exifDriver.getIfd0().put(ExifDriver.TAG_MAKE, value);
-//		            }
 		            if(tag_spectral_sensitivity != null) {
 		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		        		value.setBytes(tag_spectral_sensitivity.getBytes());
@@ -694,13 +688,13 @@ public class ExportPlugin extends PluginExport
 		            	{
 		            	default:
 		            	case 0:
-		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
+		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 		            		break;
 		            	case 90:
 		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
 		            		break;
 		            	case 180:
-		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
+		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 		            		break;
 		            	case 270:
 		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;

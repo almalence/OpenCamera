@@ -902,7 +902,6 @@ public class NightCapturePlugin extends PluginCapture
 					lp.setSummary(entries[idx]);
 			        lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			        {
-						//@Override
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
 							int value = Integer.parseInt(newValue.toString());
@@ -988,7 +987,7 @@ public class NightCapturePlugin extends PluginCapture
             PluginManager.getInstance().addToSharedMem("nightmode" + SessionID, ModePreference);
             
             if (FocusPreference.compareTo("0") == 0)
-            {	// if FOCUS_MODE_FIXED
+            {	
 	        	if (!takingAlready)
 	        	{
 		        	captureFrame();
@@ -1132,11 +1131,6 @@ public class NightCapturePlugin extends PluginCapture
 		message +=  total_frames;
 		capturingDialog.setText(message);
 		capturingDialog.show();
-		
-//		Message msg = new Message();
-//		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-//		msg.what = PluginManager.MSG_BROADCAST;
-//		MainScreen.H.sendMessage(msg);
 		
 		if (++frameNumber == total_frames)
 		{

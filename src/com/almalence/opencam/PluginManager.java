@@ -81,25 +81,19 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
-import com.almalence.plugins.capture.groupshot.GroupShotCapturePlugin;
 import com.almalence.plugins.capture.multishot.MultiShotCapturePlugin;
 import com.almalence.plugins.capture.night.NightCapturePlugin;
-import com.almalence.plugins.capture.objectremoval.ObjectRemovalCapturePlugin;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.preshot.PreshotCapturePlugin;
-import com.almalence.plugins.capture.sequence.SequenceCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
-import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
-import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
 import com.almalence.plugins.processing.preshot.PreshotProcessingPlugin;
-import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
 import com.almalence.plugins.vf.aeawlock.AeAwLockVFPlugin;
 import com.almalence.plugins.vf.barcodescanner.BarcodeScannerVFPlugin;
@@ -128,8 +122,6 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  ***/
 
 public class PluginManager implements PluginManagerInterface {
-	private static final String PREFERENCE_KEY_DEFAULTS_SELECTED  = "DEFAULTS_SELECTED_";
-
 	private static PluginManager pluginManager;
 
 	// we need some selection of active plugins by type.
@@ -158,11 +150,6 @@ public class PluginManager implements PluginManagerInterface {
 
 	// counter indicating amout of processing tasks running
 	private int cntProcessing = 0;
-
-	// session ID used to identify capture session. Created on start and
-	// updated each time when capture finished and processing/filter/export
-	// sequence started
-	//private long SessionID = 0;
 
 	// table for sharing plugin's data
 	// hashtable for storing shared data - assoc massive for string key and
@@ -337,18 +324,6 @@ public class PluginManager implements PluginManagerInterface {
 		pluginList.put(multiShotCapturePlugin.getID(), multiShotCapturePlugin);
 		listCapture.add(multiShotCapturePlugin);
 		
-//		ObjectRemovalCapturePlugin objectRemovalCapturePlugin = new ObjectRemovalCapturePlugin();
-//		pluginList.put(objectRemovalCapturePlugin.getID(), objectRemovalCapturePlugin);
-//		listCapture.add(objectRemovalCapturePlugin);
-//
-//		SequenceCapturePlugin sequenceCapturePlugin = new SequenceCapturePlugin();
-//		pluginList.put(sequenceCapturePlugin.getID(), sequenceCapturePlugin);
-//		listCapture.add(sequenceCapturePlugin);
-
-//		GroupShotCapturePlugin groupShotCapturePlugin = new GroupShotCapturePlugin();
-//		pluginList.put(groupShotCapturePlugin.getID(), groupShotCapturePlugin);
-//		listCapture.add(groupShotCapturePlugin);
-
 		VideoCapturePlugin videoCapturePlugin = new VideoCapturePlugin();
 		pluginList.put(videoCapturePlugin.getID(), videoCapturePlugin);
 		listCapture.add(videoCapturePlugin);
@@ -367,8 +342,6 @@ public class PluginManager implements PluginManagerInterface {
 		listCapture.add(backInTimeProcessingPlugin);
 
 		// Processing
-		// or move this to onCreate from processing??!??!!??!
-
 		SimpleProcessingPlugin simpleProcessingPlugin = new SimpleProcessingPlugin();
 		pluginList.put(simpleProcessingPlugin.getID(), simpleProcessingPlugin);
 		listProcessing.add(simpleProcessingPlugin);
@@ -385,18 +358,6 @@ public class PluginManager implements PluginManagerInterface {
 		pluginList.put(multiShotProcessingPlugin.getID(), multiShotProcessingPlugin);
 		listProcessing.add(multiShotProcessingPlugin);
 		
-//		ObjectRemovalProcessingPlugin movingObjectsProcessingPlugin = new ObjectRemovalProcessingPlugin();
-//		pluginList.put(movingObjectsProcessingPlugin.getID(), movingObjectsProcessingPlugin);
-//		listProcessing.add(movingObjectsProcessingPlugin);
-
-//		SequenceProcessingPlugin sequenceProcessingPlugin = new SequenceProcessingPlugin();
-//		pluginList.put(sequenceProcessingPlugin.getID(), sequenceProcessingPlugin);
-//		listProcessing.add(sequenceProcessingPlugin);
-
-//		GroupShotProcessingPlugin groupShotProcessingPlugin = new GroupShotProcessingPlugin();
-//		pluginList.put(groupShotProcessingPlugin.getID(), groupShotProcessingPlugin);
-//		listProcessing.add(groupShotProcessingPlugin);
-
 		PanoramaProcessingPlugin panoramaProcessingPlugin = new PanoramaProcessingPlugin();
 		pluginList.put(panoramaProcessingPlugin.getID(), panoramaProcessingPlugin);
 		listProcessing.add(panoramaProcessingPlugin);
@@ -923,18 +884,6 @@ public class PluginManager implements PluginManagerInterface {
 		{
 			AddModeSettings("multishot", pf);
 		}
-//		else if ("objectremoval".equals(settings))
-//		{
-//			AddModeSettings("movingobjects", pf);
-//		}
-//		else if ("groupshot".equals(settings))
-//		{
-//			AddModeSettings("groupshot", pf);
-//		}
-//		else if ("sequence".equals(settings))
-//		{
-//			AddModeSettings("sequence", pf);
-//		}
 		else if ("panorama_augmented".equals(settings))
 		{
 			AddModeSettings("panorama_augmented", pf);
@@ -1461,22 +1410,6 @@ public class PluginManager implements PluginManagerInterface {
 	public boolean handleMessage(Message msg) {
 		switch (msg.what) {
 		case MSG_NO_CAMERA:
-			// gracefully exit if camera is not available
-			// AlertDialog ad = new AlertDialog.Builder(this)
-			// .setIcon(R.drawable.alert_dialog_icon)
-			// .setTitle(R.string.no_camera_title)
-			// .setMessage(R.string.no_camera_msg)
-			// .setPositiveButton(android.R.string.ok, new
-			// DialogInterface.OnClickListener()
-			// {
-			// public void onClick(DialogInterface dialog, int whichButton)
-			// {
-			// finish();
-			// }
-			// })
-			// .create();
-			//
-			// ad.show();
 			break;
 
 		case MSG_TAKE_PICTURE:
@@ -1697,20 +1630,20 @@ public class PluginManager implements PluginManagerInterface {
     		InputStream is = new ByteArrayInputStream(paramArrayOfByte);
 			Metadata metadata = JpegMetadataReader.readMetadata(is);
 			Directory exifDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);		
-			String s1 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME); //ExifInterface.TAG_EXPOSURE_TIME (String)
-			String s2 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER); //ExifInterface.TAG_APERTURE (String)
-			String s3 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FLASH); //ExifInterface.TAG_FLASH (int)
-			String s4 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH); //ExifInterface.TAG_FOCAL_LENGTH (rational)
-			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT); //ExifInterface.TAG_ISO (String)			
-			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE); //ExifInterface.TAG_WHITE_BALANCE (String)
+			String s1 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+			String s2 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER);
+			String s3 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FLASH);
+			String s4 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
+			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);			
+			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE);
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
 			String s11 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SCENE_CAPTURE_TYPE);
 			String s12 = exifDirectory.getString(ExifSubIFDDirectory.TAG_METERING_MODE);
 
 			Directory exif2Directory = metadata.getDirectory(ExifIFD0Directory.class);
-			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE); //ExifInterface.TAG_MAKE (String)
-			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL); //ExifInterface.TAG_MODEL (String)
+			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE);
+			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL);
 
 			if(num != -1 && s1 != null)
 				PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
@@ -2049,7 +1982,7 @@ public class PluginManager implements PluginManagerInterface {
         if (usePhoneMem || forceSaveToInternalMemory)		// phone memory (internal sd card)
 		{
         	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, abcDir); // "HDR");
+            saveDir = new File(dcimDir, abcDir);
 		}
         if (!saveDir.exists())
             saveDir.mkdirs();
@@ -2058,7 +1991,7 @@ public class PluginManager implements PluginManagerInterface {
         if (!saveDir.exists())
         {
         	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, abcDir); // "HDR");
+            saveDir = new File(dcimDir, abcDir);
             
             if (!saveDir.exists())
                 saveDir.mkdirs();

@@ -87,7 +87,6 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
         else
         	mInputFrameSize = size;
-		//mInputFrameSize = size;
 		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 		
 		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
@@ -129,7 +128,6 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
         else
         	mInputFrameSize = size;
-		//mInputFrameSize = size;
 		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 		
 		if (mNumOfFrame < 1 && mNumOfFrame > 8) {
@@ -143,7 +141,7 @@ public class Seamless
 		
 		int data_lenght = mInputFrameSize.getWidth()*mInputFrameSize.getHeight()+2*((mInputFrameSize.getWidth()+1)/2)*((mInputFrameSize.getHeight()+1)/2);
 		for (int i = 0;i < mNumOfFrame;i++) {
-			PointOfYUVData[i] = inputFrame.get(i);//SwapHeap.SwapYuvToHeap(inputFrame.get(i), data_lenght);
+			PointOfYUVData[i] = inputFrame.get(i);
 			LengthOfYUVData[i] = data_lenght;
 	    	if (PointOfYUVData[i] == 0) {
 	    		Log.d(TAG, "Out of Memory in Native");

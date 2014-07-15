@@ -534,7 +534,7 @@ Export Interface
 	public void onExportActive(long SessionID)
 	{}
 	
-//	//called when export finished to clean all allocated memory
+	//called when export finished to clean all allocated memory
 	public void FreeMemory()
 	{}
 	
