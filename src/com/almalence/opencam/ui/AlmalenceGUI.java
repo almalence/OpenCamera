@@ -6765,13 +6765,6 @@ public class AlmalenceGUI extends GUI implements
         boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
         soundCheckbox.setChecked(sound);
         
-//        final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
-//        np2.setMaxValue(2);
-//        np2.setMinValue(0);
-//        np2.setValue(measurementVal);
-//        np2.setWrapSelectorWheel(false);
-//        np2.setDisplayedValues(stringMeasurement);
-        
         final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
         
         //disable/enable controls in dialog
@@ -6781,16 +6774,13 @@ public class AlmalenceGUI extends GUI implements
 			{
 				if (false == sw.isChecked())
 		        {
-//		        	np2.setEnabled(false);
 		        	np.setEnabled(false);
 		        	flashCheckbox.setEnabled(false);
 		        	soundCheckbox.setEnabled(false);
 		        	swChecked = false;
-//		        	bSet.setEnabled(false);
 		        }
 				else
 				{
-//					np2.setEnabled(true);
 		        	np.setEnabled(true);
 		        	flashCheckbox.setEnabled(true);
 		        	soundCheckbox.setEnabled(true);
@@ -6806,13 +6796,11 @@ public class AlmalenceGUI extends GUI implements
         	sw.setChecked(false);
         	flashCheckbox.setEnabled(false);
         	soundCheckbox.setEnabled(false);
-//        	np2.setEnabled(false);
         	np.setEnabled(false);
         	bSet.setEnabled(false);
         }
         else
         {
-//        	np2.setEnabled(true);
         	np.setEnabled(true);
         	flashCheckbox.setEnabled(true);
         	soundCheckbox.setEnabled(true);
@@ -6830,16 +6818,9 @@ public class AlmalenceGUI extends GUI implements
              Editor prefsEditor = prefs.edit();
  			
              if (swChecked == true)
-             {
-//            	 measurementVal = np2.getValue();
             	 interval  = np.getValue();
-//            	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
-             }
              else
-             {
             	 interval = 0;
-//            	 timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
-             }
              int real_int = Integer.parseInt(stringInterval[np.getValue()]);
              prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swChecked);
              if (swChecked)
