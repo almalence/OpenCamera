@@ -147,7 +147,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         
         previewWorking=false;
         cdt = null;
-	}
+        
+        if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
+        	MainScreen.captureYUVFrames = true;
+        else
+        	MainScreen.captureYUVFrames = false;
+}
 	
 	@Override
 	public void onPause()

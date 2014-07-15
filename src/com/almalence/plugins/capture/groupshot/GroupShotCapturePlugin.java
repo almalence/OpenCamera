@@ -84,6 +84,8 @@ public class GroupShotCapturePlugin extends PluginCapture
 		imagesTaken=0;
 		inCapture = false;
 		refreshPreferences();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	@Override

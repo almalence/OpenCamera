@@ -40,19 +40,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.drawable.LayerDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
@@ -91,9 +87,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.util.AppWidgetNotifier;
@@ -152,6 +146,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static ImageReader mImageReaderPreviewYUV;
 	public static ImageReader mImageReaderYUV;
 	public static ImageReader mImageReaderJPEG;
+	
+	public static boolean captureYUVFrames = false; //Used for HALv3 to init YUV or JPEG surfaces for capturing.
+													//Both type of surfaces are not supported in current version of HALv3
 
 	public static GUI guiManager = null;
 
@@ -776,6 +773,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				
 					UpdatePreferences();
 					
+					captureYUVFrames = false;
+					
 					SaveToPath = prefs.getString(sSavePathPref, Environment
 							.getExternalStorageDirectory().getAbsolutePath());
 					SaveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
@@ -853,6 +852,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		long Free = getAvailableInternalMemory();
 		if (Free<30)
 			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
+	}
+	
+	
+	public void relaunchCamera()
+	{
+		if(CameraController.isUseHALv3())
+		{
+			new CountDownTimer(100, 100) {
+				public void onTick(long millisUntilFinished) {
+				}
+
+				public void onFinish() {
+					PluginManager.getInstance().switchMode(
+							ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
+				}
+			}.start();
+		}
 	}
 
 	private long getAvailableInternalMemory()
@@ -1019,7 +1035,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CameraController.getInstance().updateCameraFeatures();
 		// prepare list of surfaces to be used in capture requests
 		if(CameraController.isUseHALv3())
-			configureHALv3Camera();
+			configureHALv3Camera(captureYUVFrames);
 		else
 		{
 			// ----- Select preview dimensions with ratio correspondent to full-size image
@@ -1121,14 +1137,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	@SuppressLint("NewApi")
 	@TargetApi(19)
-	private void configureHALv3Camera()
+	private void configureHALv3Camera(boolean captureYUVFrames)
 	{
 		List<Surface> sfl = new ArrayList<Surface>();
 		
 		sfl.add(mCameraSurface);				// surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface());	// surface for preview yuv images
-		sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
-		//sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+		if(captureYUVFrames)
+		{
+			Log.e("MainScreen", "add mImageReaderYUV");
+			sfl.add(mImageReaderYUV.getSurface());		// surface for yuv image capture
+		}
+		else
+		{
+			Log.e("MainScreen", "add mImageReaderJPEG");
+			sfl.add(mImageReaderJPEG.getSurface());		// surface for jpeg image capture
+		}
 		
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
@@ -1139,7 +1163,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
 			HALv3.getCamera2().configureOutputs(sfl);
 		} catch (Exception e)	{
-			Log.e("MainScreen", "configureOutputs failed. CameraAccessException");
+			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
 			e.printStackTrace();
 		}		
 		

@@ -80,6 +80,8 @@ public class MultiShotCapturePlugin extends PluginCapture {
 		inCapture = false;
 		
 		refreshPreferences();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	@Override

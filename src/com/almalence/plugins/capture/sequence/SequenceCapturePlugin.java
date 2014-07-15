@@ -73,6 +73,8 @@ public class SequenceCapturePlugin extends PluginCapture
 		inCapture = false;
 		imagesTaken=0;
 		refreshPreferences();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	@Override

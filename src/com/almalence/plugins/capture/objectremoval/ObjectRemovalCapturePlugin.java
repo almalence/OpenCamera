@@ -78,6 +78,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		inCapture = false;
 		
 		refreshPreferences();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	@Override

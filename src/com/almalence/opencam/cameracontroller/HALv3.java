@@ -69,6 +69,8 @@ public class HALv3
 	private static int[] af_regions;
 	private static int[] ae_regions;
 	
+	private static long exposureTime = 0;
+	
 	public static HALv3 getInstance()
 	{
 		if (instance == null)
@@ -793,13 +795,13 @@ public class HALv3
 	//					Log.e("CameraController", "captureImage 2");
 			if(format == CameraController.JPEG)
 			{
-				Log.e("HALv3", "Capture JPEG");
+				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
 				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
 	//						Log.e("CameraController", "captureImage 3.1");
 			}
 			else
 			{
-				Log.e("HALv3", "Capture YUV");
+				Log.e("HALv3", "Capture " + nFrames + " YUV");
 				stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
 	//						Log.e("CameraController", "captureImage 3.2");
 			}
@@ -814,8 +816,10 @@ public class HALv3
 			*/
 			
 			// requests for SZ input frames
-			for (int n=0; n<nFrames; ++n)
+			for (int n=0; n< nFrames; ++n)
+			{
 				requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);
+			}
 	//					Log.e("CameraController", "captureImage 4");				
 			// One more capture for comparison with a standard frame
 	//			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
@@ -835,7 +839,7 @@ public class HALv3
 	}
 	
 	
-	public static int captureImageWithParamsHALv3(int nFrames, final int format, final int pause, final int[] evRequested)
+	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int pause, final int[] evRequested)
 	{
 		int requestID = -1;
 		final CaptureRequest.Builder stillRequestBuilder;
@@ -878,6 +882,7 @@ public class HALv3
 			camDevice.captureBurst(requests, new captureListener() , null);
 			*/
 			
+			HALv3.getInstance().camDevice.stopRepeating();
 			// requests for SZ input frames
 			if(pause > 0)
 			{
@@ -890,7 +895,7 @@ public class HALv3
 						if(evRequested != null && evRequested.length > index)
 						{
 							stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-							setCameraExposureCompensationHALv3(evRequested[index]);
+//							setCameraExposureCompensationHALv3(evRequested[index]);
 						}
 					 
 						try
@@ -911,7 +916,7 @@ public class HALv3
 						if(evRequested != null && evRequested.length > index)
 						{
 							stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-							setCameraExposureCompensationHALv3(evRequested[index]);
+//							setCameraExposureCompensationHALv3(evRequested[index]);
 						}
 					 
 						try
@@ -930,19 +935,40 @@ public class HALv3
 			{
 				if(evRequested != null && evRequested.length >= nFrames)
 				{
+//					for (int n=0; n<nFrames; ++n)
+//					{
+//						//stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[n]);
+//						long expTime = n == 1 ? exposureTime/10 : n == 2 ? exposureTime*10 : exposureTime;
+////						Log.e(TAG, "Exposure time = " + expTime);
+//						stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
+//						stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expTime);
+//						requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(), HALv3.getInstance().new captureListener() , null);					
+//					}
+					
 					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[0]);
-					setCameraExposureCompensationHALv3(evRequested[0]);
+//					setCameraExposureCompensationHALv3(evRequested[0]);
+//					final long expt = exposureTime;
+//					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
+//					stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expt);
 					Log.e(TAG, "evRequested != null");
 					new CountDownTimer(500*nFrames, 500)
 					{
 						int index = 1;
 						public void onTick(long millisUntilFinished)
 						{
+							if(index >= nFrames)
+								return;
+							
 							Log.e(TAG, "onTick " + index + " millisUntilFinished =  " + millisUntilFinished);
 							if(evRequested != null && evRequested.length > index)
 							{
+//								long expTime = index == 2 ? expt/2 : index == 3 ? expt*2 : expt;
+//								Log.e(TAG, "Exp Time = " + expTime);
+//								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
+//								stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expTime);
+								
 								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-								setCameraExposureCompensationHALv3(evRequested[index]);
+//								setCameraExposureCompensationHALv3(evRequested[index]);
 							}
 						 
 							try
@@ -958,12 +984,22 @@ public class HALv3
 						}
 						 
 						public void onFinish()
-						{					    	
+						{
+							if(index > nFrames)
+								return;
+							
 							Log.e(TAG, "onFinish index = " + index);
 							if(evRequested != null && evRequested.length > index)
 							{
+//								long expTime = index == 2 ? expt/2 : index == 3 ? expt*2 : expt;
+//								
+//								Log.e(TAG, "Exp Time = " + expTime);
+//								
+//								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AE_MODE_OFF);
+//								stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expTime);
+								
 								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-								setCameraExposureCompensationHALv3(evRequested[index]);
+//								setCameraExposureCompensationHALv3(evRequested[index]);
 							}
 						 
 							try
@@ -1149,6 +1185,8 @@ public class HALv3
 				PluginManager.getInstance().onCaptureCompleted(result);
 				try
 				{
+//					HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+//					Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 					if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
 //						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");

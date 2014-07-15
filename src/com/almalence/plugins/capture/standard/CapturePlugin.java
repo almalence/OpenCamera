@@ -99,10 +99,12 @@ public class CapturePlugin extends PluginCapture
 						diff = 1;
 					newEv -= diff;
 					ModePreference = "0";
+					MainScreen.captureYUVFrames = true;
 				}
 				else
 				{
 					ModePreference = "1";
+					MainScreen.captureYUVFrames = false;
 				}
 				
 				if(newEv >= minValue)
@@ -112,6 +114,8 @@ public class CapturePlugin extends PluginCapture
 				SharedPreferences.Editor editor = prefs.edit();		        	
 	        	editor.putString("modeStandardPref", ModePreference);
 	        	editor.commit();
+	        	
+	        	MainScreen.thiz.relaunchCamera();
 	        	
 	        	if (ModePreference.compareTo("0") == 0)
 	    			MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Dro_Help_Header), MainScreen.thiz.getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
@@ -145,6 +149,16 @@ public class CapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString("modeStandardPref", "1");
+	}
+	
+	
+	@Override
+	public void onResume()
+	{
+		if (ModePreference.compareTo("0") == 0)
+			MainScreen.captureYUVFrames = true;
+		else
+			MainScreen.captureYUVFrames = false;
 	}
 	
 	
@@ -194,8 +208,10 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
+		Log.e("CapturePlugin", "takePicture");
 		if(inCapture == false)
 		{
+			Log.e("CapturePlugin", "send next frame message");
 			inCapture = true;
 			takingAlready = true;
 			
@@ -212,6 +228,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
+			Log.e("CapturePlugin", "next frame message received");
 			// play tick sound
 			MainScreen.guiManager.showCaptureIndication();
     		MainScreen.thiz.PlayShutter();
@@ -370,6 +387,7 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
+		Log.e("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
 		if(takingAlready == true)
 			takePicture();
 	}

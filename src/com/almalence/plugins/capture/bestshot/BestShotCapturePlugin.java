@@ -84,6 +84,8 @@ public class BestShotCapturePlugin extends PluginCapture
 		imagesTaken=0;
 		inCapture = false;
 		refreshPreferences();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	private void refreshPreferences()

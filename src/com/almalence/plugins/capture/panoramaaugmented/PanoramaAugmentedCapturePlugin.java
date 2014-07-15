@@ -318,6 +318,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		showGyroWarnOnce = false;
 		aewbLockedByPanorama = false;
 		this.getPrefs();
+		
+		MainScreen.captureYUVFrames = true;
 	}
 	
 	@Override

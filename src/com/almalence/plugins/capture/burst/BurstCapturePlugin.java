@@ -408,7 +408,7 @@ public class BurstCapturePlugin extends PluginCapture
     		
     		try
     		{
-    			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, 0, new int[0]);
+    			requestID = CameraController.captureImage(imageAmount, CameraController.JPEG);
 			}catch (Exception e)
 			{
 				e.printStackTrace();
