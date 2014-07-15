@@ -203,7 +203,7 @@ public class CapturePlugin extends PluginCapture
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);        
         ModePreference = prefs.getString("modeStandardPref", "1");
 	}
-	
+
 	
 	@Override
 	public void takePicture()

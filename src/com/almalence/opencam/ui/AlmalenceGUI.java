@@ -1671,7 +1671,7 @@ public class AlmalenceGUI extends GUI implements
 				rightText.setText(maxString);
 
 				mEV = initValue;
-//				CameraController.getInstance().setCameraExposureCompensation(mEV);
+				CameraController.getInstance().setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -1704,7 +1704,7 @@ public class AlmalenceGUI extends GUI implements
 				int initValue = preferences.getInt(MainScreen.sSceneModePref,
 						MainScreen.sDefaultValue);
 				if (!activeSceneNames.contains(initValue)) {
-					if (CameraController.getInstance().isFrontCamera())
+					if (CameraController.isFrontCamera())
 						initValue = activeSceneNames.get(0);
 					else
 						initValue = CameraParameters.SCENE_MODE_AUTO;
@@ -1721,7 +1721,7 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
-//				CameraController.getInstance().setCameraSceneMode(mSceneMode);
+				CameraController.getInstance().setCameraSceneMode(mSceneMode);
 			}
 			else
 			{
@@ -1756,7 +1756,7 @@ public class AlmalenceGUI extends GUI implements
 				int initValue = preferences.getInt(MainScreen.sWBModePref, MainScreen.sDefaultValue);
 				if (!activeWBNames.contains(initValue))
 				{
-					if (CameraController.getInstance().isFrontCamera())
+					if (CameraController.isFrontCamera())
 						initValue = activeWBNames.get(0);
 					else
 						initValue = MainScreen.sDefaultValue;
@@ -1771,7 +1771,7 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 	
-//				CameraController.getInstance().setCameraWhiteBalance(mWB);
+				CameraController.getInstance().setCameraWhiteBalance(mWB);
 			}
 			else
 			{
@@ -1902,10 +1902,10 @@ public class AlmalenceGUI extends GUI implements
 					else
 						AFMode = supported_focus[0];
 					
-//					CameraController.getInstance().setCameraFocusMode(AFMode);
+					CameraController.getInstance().setCameraFocusMode(AFMode);
 				}
-//				else					
-//					CameraController.getInstance().setCameraFocusMode(mFocusMode);
+				else					
+					CameraController.getInstance().setCameraFocusMode(mFocusMode);
 			}
 			else
 			{
@@ -1961,7 +1961,7 @@ public class AlmalenceGUI extends GUI implements
 				}
 	
 				
-//				CameraController.getInstance().setCameraFlashMode(mFlashMode);
+				CameraController.getInstance().setCameraFlashMode(mFlashMode);
 			}
 			else
 			{
@@ -2023,7 +2023,7 @@ public class AlmalenceGUI extends GUI implements
 					int icon_id = icons_iso.get(initValue);
 					but.setImageResource(icon_id);
 				}
-//				CameraController.getInstance().setCameraISO(mISO);
+				CameraController.getInstance().setCameraISO(mISO);
 			}
 			else
 			{
@@ -2075,7 +2075,7 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 				
-//				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
+				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
 			}
 			else
 			{

@@ -564,8 +564,10 @@ public class HALv3
 
 	public static void setCameraFocusModeHALv3(int mode)
 	{
+		Log.e(TAG, "setCameraFocusModeHALv3 start = " + mode);
 		if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
-		{		
+		{	
+			Log.e(TAG, "setCameraFocusModeHALv3 = " + mode);
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
 			try 
 			{
@@ -1059,7 +1061,7 @@ public class HALv3
 			try 
 			{	
 				Log.e(TAG, "autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);
+				CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new focusListener(), null);
 			}
 			catch (CameraAccessException e)
 			{
@@ -1088,6 +1090,8 @@ public class HALv3
 			{
 				e.printStackTrace();
 			}
+			
+			HALv3.autoFocusTriggered = false;
 		}	
 	}
 	
@@ -1177,6 +1181,87 @@ public class HALv3
 
 		// Note: there other onCaptureXxxx methods in this listener which we do not implement
 		@TargetApi(19)
+		public class focusListener extends CameraDevice.CaptureListener
+		{
+			@Override
+			public void onCapturePartial(CameraDevice camera, CaptureRequest request, CaptureResult result)
+			{
+				Log.e(TAG, "onFocusPartial. AF State = " + result.get(CaptureResult.CONTROL_AF_STATE));
+			}
+			@Override
+			public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
+			{
+				PluginManager.getInstance().onCaptureCompleted(result);
+				try
+				{
+//					HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+//					Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
+					Log.e(TAG, "onFocusCompleted. AF State = " + result.get(CaptureResult.CONTROL_AF_STATE));
+					if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
+					{
+						Log.e(TAG, "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+						resetCaptureListener();
+						CameraController.getInstance().onAutoFocus(true);
+						HALv3.autoFocusTriggered = false;
+						
+					}				
+					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
+					{
+						Log.e(TAG, "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+						resetCaptureListener();
+						CameraController.getInstance().onAutoFocus(false);
+						HALv3.autoFocusTriggered = false;
+					}
+					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN && HALv3.autoFocusTriggered)
+					{
+						Log.e(TAG, "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
+//						resetCaptureListener();
+//						CameraController.getInstance().onAutoFocus(false);
+//						HALv3.autoFocusTriggered = false;
+					}
+				}
+				catch(Exception e)
+				{
+					Log.e(TAG, "Exception: " + e.getMessage());					
+				}
+				
+//				if(result.get(CaptureResult.REQUEST_ID) == iCaptureID)
+//				{
+//					//Log.e(TAG, "Image metadata received. Capture timestamp = " + result.get(CaptureResult.SENSOR_TIMESTAMP));
+//					iPreviewFrameID = result.get(CaptureResult.SENSOR_TIMESTAMP);
+//				}
+				
+				// Note: result arriving here is just image metadata, not the image itself
+				// good place to extract sensor gain and other parameters
+
+				// Note: not sure which units are used for exposure time (ms?)
+//						currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+//						currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+				
+				//dumpCaptureResult(result);
+			}
+			
+			private void resetCaptureListener()
+			{
+				if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+				{
+					int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+					try 
+					{
+						//HALv3.getInstance().camDevice.stopRepeating();
+						CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(HALv3.getInstance().previewRequestBuilder.build(), null, null);
+					}
+					catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		@TargetApi(19)
 		public class captureListener extends CameraDevice.CaptureListener
 		{
 			@Override
@@ -1189,7 +1274,7 @@ public class HALv3
 //					Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 					if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
-//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(true);
 						HALv3.autoFocusTriggered = false;
@@ -1197,14 +1282,14 @@ public class HALv3
 					}				
 					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED && HALv3.autoFocusTriggered)
 					{
-//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 						resetCaptureListener();
 						CameraController.getInstance().onAutoFocus(false);
 						HALv3.autoFocusTriggered = false;
 					}
 					else if(result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN && HALv3.autoFocusTriggered)
 					{
-//						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
+						Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
 //						resetCaptureListener();
 //						CameraController.getInstance().onAutoFocus(false);
 //						HALv3.autoFocusTriggered = false;

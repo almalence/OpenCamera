@@ -1800,6 +1800,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraFocusMode(int mode)
 	{
+		Log.e(TAG, "SET CAMERA FOCUS MODE");
 		if(!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
