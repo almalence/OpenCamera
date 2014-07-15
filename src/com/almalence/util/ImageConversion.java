@@ -121,7 +121,7 @@ public class ImageConversion
 		Size mInputFrameSize = new Size(width, height);
 
 		Rect rect = new Rect(0, 0, width, height);
-		int ARGBBuffer[] = AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize);
+		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize);
 		bitmap.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
 		
 		

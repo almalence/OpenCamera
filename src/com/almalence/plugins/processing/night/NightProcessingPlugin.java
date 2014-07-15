@@ -143,8 +143,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
     	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
     	
-    	int compressed_frame[] = new int[imagesAmount];
-        int compressed_frame_len[] = new int[imagesAmount];
+    	int[] compressed_frame = new int[imagesAmount];
+        int[] compressed_frame_len = new int[imagesAmount];
 
 		for (int i=0; i<imagesAmount; i++)
 		{

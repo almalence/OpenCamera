@@ -215,7 +215,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void setupCameraParameters()
 	{
-		if (isSlowMode==false)//fast mode
+		if (!isSlowMode)//fast mode
 		{
 			try 
 			{				 
@@ -304,7 +304,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		MainScreen.thiz.MuteShutter(true);
 		
 		isBuffering = true;
-		if (isSlowMode==false)
+		if (!isSlowMode)
 		{
 			MainScreen.guiManager.startContinuousCaptureIndication();
 			preview_fps = CameraController.getInstance().getPreviewFrameRate();
@@ -363,7 +363,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(PreShot.GetImageCount()));
 		
-		if (isSlowMode==false)
+		if (!isSlowMode)
 		{
 			frmCnt = 1;
 		}
@@ -372,7 +372,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] _data, Camera _camera)
 	{
-		if (isSlowMode==true || !isBuffering)
+		if (isSlowMode || !isBuffering)
 			return;
 		
 		if (0==frmCnt%(preview_fps/Integer.parseInt(FPS)))
@@ -391,7 +391,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewAvailable(Image im)
 	{
-		if (isSlowMode==true || !isBuffering)
+		if (isSlowMode || !isBuffering)
 			return;
 		
 		if (0==frmCnt%(preview_fps/Integer.parseInt(FPS)))
@@ -439,7 +439,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	
 	void StartCaptureSequence()
     {
-        if (inCapture == false)
+        if (!inCapture)
         {
     		inCapture = true;
     		takingAlready = false;

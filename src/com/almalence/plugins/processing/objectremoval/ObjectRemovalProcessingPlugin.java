@@ -311,7 +311,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN)
 				{
-					if (finishing == true)
+					if (finishing)
 						return true;
 			        float x = event.getY();
 					float y = mDisplayHeight-1-event.getX();
@@ -367,7 +367,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	{
     	if (v == mSaveButton)
     	{
-    		if (finishing == true)
+    		if (finishing)
 				return;
     		finishing = true;
     		mHandler.sendEmptyMessage(MSG_SAVE);
@@ -433,7 +433,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
     	case MSG_REDRAW:
             if (PreviewBmp != null)
             	PreviewBmp.recycle();
-            if (finishing == true)
+            if (finishing)
 				return true;
     		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
     		drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
@@ -455,7 +455,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
-			if (finishing == true)
+			if (finishing)
 				return true;
 			finishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);
@@ -506,7 +506,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 			Rect newRect = new Rect((int)Math.round(left), (int)Math.round(top), (int)Math.round(right), (int)Math.round(bottom));
 
-			if (mObjStatus[i] == false) { 
+			if (!mObjStatus[i]) { 
 				c.drawBitmap(obj.getThumbnail(), null, newRect, paint);
 			}
 			i++;

@@ -2077,7 +2077,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static int pauseBetweenShots = 0;
 	
 	protected static final int MAX_HDR_FRAMES = 4;	
-    protected static int evValues[] = new int[MAX_HDR_FRAMES];
+    protected static int[] evValues = new int[MAX_HDR_FRAMES];
     
     protected static int total_frames;
     protected static int frame_num;

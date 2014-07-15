@@ -81,8 +81,8 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				int inputYUV = 0;				
 				if(!isYUV)
 				{
-					int compressed_frame[] = new int[1];
-			        int compressed_frame_len[] = new int[1];
+					int[] compressed_frame = new int[1];
+			        int[] compressed_frame_len = new int[1];
 	
 					compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i +Long.toString(sessionID)));
 					compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i +Long.toString(sessionID)));

@@ -105,7 +105,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		if(inCapture == false)
+		if(!inCapture)
 		{
 			refreshPreferences();
 			inCapture = true;
@@ -245,7 +245,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 			Log.e("CapturePlugin", "Error while cropping: "+status);
 		
 		
-		byte byte_frame[] = YuvImage.GetByteFrame(0);
+		byte[] byte_frame = YuvImage.GetByteFrame(0);
 		int frame_len = byte_frame.length;
 		int frame = SwapHeap.SwapToHeap(byte_frame);
 		

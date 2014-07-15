@@ -744,7 +744,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				public boolean onTouch(final View v, final MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN)
 					{
-						if (finishing == true)
+						if (finishing)
 							return true;
 						if (mGallery.getVisibility() == Gallery.VISIBLE) {
 							mGallery.setVisibility(Gallery.INVISIBLE);
@@ -754,7 +754,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				            new Thread(new Runnable() {
 				                public void run() {
 			                	synchronized (syncObject) {
-				                	if (eventContainsFace(event.getX(), event.getY(), mFaceList.get(mBaseFrame), v) == true) {
+				                	if (eventContainsFace(event.getX(), event.getY(), mFaceList.get(mBaseFrame), v)) {
 				                	updateBitmap();
 				                	// Update screen
 				                    mHandler.post(new Runnable() {
@@ -856,7 +856,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		{
 			if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 			{
-				if (finishing == true || changingFace == true)
+				if (finishing || changingFace)
 					return true;
 				finishing = true;
 				mHandler.sendEmptyMessage(MSG_LEAVING);
@@ -872,7 +872,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		{
 	    	if (v == mSaveButton)
 	    	{
-	    		if (finishing == true || changingFace == true)
+	    		if (finishing || changingFace )
 					return;
 	    		finishing = true;
 	    		savePicture(MainScreen.mainContext);
@@ -892,7 +892,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    	}
 	    }
 
-		synchronized public void updateBitmap()
+		public synchronized void updateBitmap()
 		{	
 			PreviewBmp = mSeamless.getPreviewBitmap();
 			Log.e("GroupShot","updateBitmap. PreviewBmp WxH: " + PreviewBmp.getWidth() + " x " + PreviewBmp.getHeight());			

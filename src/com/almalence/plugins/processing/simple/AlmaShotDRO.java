@@ -24,7 +24,7 @@ public final class AlmaShotDRO
     public static synchronized native int Release();
     
     public static synchronized native String ConvertFromJpeg(
-    		int frame[], int frame_len[], int nFrames, int sx, int sy);
+    		int[] frame, int[] frame_len, int nFrames, int sx, int sy);
     public static synchronized native int GetYUVFrame(int index);
 
     public static synchronized native int DroProcess(int yuv, int sx, int sy, float max_amplify,

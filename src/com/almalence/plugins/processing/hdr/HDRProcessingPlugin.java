@@ -226,8 +226,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
     	
     	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
     	
-    	int compressed_frame[] = new int[imagesAmount];
-        int compressed_frame_len[] = new int[imagesAmount];
+    	int[] compressed_frame = new int[imagesAmount];
+        int[] compressed_frame_len = new int[imagesAmount];
 
 		for (int i=0; i<imagesAmount; i++)
 		{
@@ -774,7 +774,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	    	    @Override
 	    	    public Shader resize(int width, int height) 
 	    	    {
-	    	    	RadialGradient rg = new RadialGradient(
+	    	    	return new RadialGradient(
 	    	    			width / 2, 
 	    	    			-0.75f * height, 
 	    	    			1.25f * height, 
@@ -789,7 +789,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		    	    	    }, 
 	    	    			Shader.TileMode.CLAMP);
 	    	    	
-	    	    	return rg;
 	    	    }
 	    	};
 	    	this.gradientDrawable = new PaintDrawable();

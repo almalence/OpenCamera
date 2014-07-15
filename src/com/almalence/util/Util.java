@@ -382,7 +382,7 @@ public final class Util {
         }
     }    
 
-    private static int mLocation[] = new int[2];
+    private static int[] mLocation = new int[2];
 
     // This method is not thread-safe.
     public static boolean pointInView(float x, float y, View v) {
@@ -652,8 +652,7 @@ public final class Util {
         StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());   
         long Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
         long Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
-        long Busy  = Total - Free;
-        return Busy;
+        return (Total - Free);
     }
     
     public static long BusyExternalMemory()
@@ -661,8 +660,7 @@ public final class Util {
         StatFs statFs = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());   
         long Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
         long Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
-        long Busy  = Total - Free;
-        return Busy;
+        return (Total - Free);
     }
     
     public static long AvailablePictureCount()

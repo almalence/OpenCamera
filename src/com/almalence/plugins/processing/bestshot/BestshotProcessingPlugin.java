@@ -71,8 +71,8 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		AlmaShotBestShot.Initialize();
 		
 		
-		int compressed_frame[] = new int[imagesAmount];
-        int compressed_frame_len[] = new int[imagesAmount];
+		int[] compressed_frame = new int[imagesAmount];
+        int[] compressed_frame_len = new int[imagesAmount];
         
         for (int i=0; i<imagesAmount; i++)
 		{

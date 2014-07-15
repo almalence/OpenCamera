@@ -865,7 +865,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					Log.e("Panorama", "Error while cropping: "+status);
 				
 				
-				byte yuv[] = YuvImage.GetByteFrame(0);
+				byte[] yuv = YuvImage.GetByteFrame(0);
 				int yuv_address = YuvImage.GetFrame(0);
 				
 				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform, yuv, yuv_address, true);

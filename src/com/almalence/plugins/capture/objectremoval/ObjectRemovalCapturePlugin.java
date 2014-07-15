@@ -99,7 +99,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		
 	public void takePicture()
 	{
-		if(inCapture == false)
+		if(!inCapture)
 		{
 			inCapture = true;
 			takingAlready = true;			

@@ -233,7 +233,7 @@ public abstract class Plugin
 		//add 8 Mpix for rear camera for HTC One X
 		if(Build.MODEL.contains("HTC One X"))
 		{
-			if (CameraController.isFrontCamera() == false)
+			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);

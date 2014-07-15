@@ -196,7 +196,7 @@ public class ImageAdapter extends BaseAdapter {
 		Size mInputFrameSize = new Size(width, height);
 
 		Rect rect = new Rect(0, 0, width, height);
-		int ARGBBuffer[] = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
+		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
 		bm.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
 		
 		float imageRatio = (float)width / (float)height;

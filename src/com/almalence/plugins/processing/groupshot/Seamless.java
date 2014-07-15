@@ -201,7 +201,7 @@ public class Seamless
 	}
 	
 	public Bitmap getPreviewBitmap() {
-		if (ARGBBuffer == null || mIsBaseFrameChanged == true) {
+		if (ARGBBuffer == null || mIsBaseFrameChanged) {
 			makePreview(mRectList.get(mBasebaseFrameIndex));
 			mIsBaseFrameChanged = false;
 		}
@@ -250,7 +250,7 @@ public class Seamless
             
             Rect r = new Rect(mCrop[0], mCrop[1], mCrop[0] + mCrop[2], mCrop[1] + mCrop[3]);
 
-            if (out.compressToJpeg(r, 95, os) == false)
+            if (!out.compressToJpeg(r, 95, os))
             {
             	Log.d(TAG, "the compression is not successful");
             }
@@ -404,7 +404,7 @@ public class Seamless
 			int frameIndex = mChosenFace[mBasebaseFrameIndex][i];
 			Rect dst = mRectList.get(frameIndex).get(i);
 			Rect newRect = null;
-			if (isFarDistance(rect, dst) == true) {
+			if (isFarDistance(rect, dst)) {
 				newRect = new Rect((int)(dst.left / IMAGE_TO_LAYOUT),
 						(int)(dst.top/ IMAGE_TO_LAYOUT), 
 						(int)(dst.right/ IMAGE_TO_LAYOUT), 
@@ -433,7 +433,7 @@ public class Seamless
 			for(int yy=top; yy<bottom; ++yy) {
 				for(int xx=left; xx<right; ++xx) {
 					int xy = xx+yy*width;
-					if (checkDistance(radius, xx, yy, newRect.centerX(), newRect.centerY()) == true) {
+					if (checkDistance(radius, xx, yy, newRect.centerX(), newRect.centerY())) {
 						mLayout[xy] = (byte)0xFF;
 					}
 				}
@@ -451,7 +451,7 @@ public class Seamless
 			int frameIndex = mChosenFace[mBasebaseFrameIndex][i];
 			Rect dst = mRectList.get(frameIndex).get(i);
 			Rect newRect = null;
-			if (isFarDistance(rect, dst) == true) {
+			if (isFarDistance(rect, dst)) {
 				newRect = new Rect((int)(dst.left / IMAGE_TO_LAYOUT),
 						(int)(dst.top/ IMAGE_TO_LAYOUT), 
 						(int)(dst.right/ IMAGE_TO_LAYOUT), 
@@ -480,7 +480,7 @@ public class Seamless
 			for(int yy=top; yy<bottom; ++yy) {
 				for(int xx=left; xx<right; ++xx) {
 					int xy = xx+yy*width;
-					if (checkDistance(radius, xx, yy, newRect.centerX(), newRect.centerY()) == true) {
+					if (checkDistance(radius, xx, yy, newRect.centerX(), newRect.centerY())) {
 						mLayout[xy] = (byte)frameIndex;
 					}
 				}

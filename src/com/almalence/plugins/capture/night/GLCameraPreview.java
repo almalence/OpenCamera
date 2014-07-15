@@ -54,7 +54,7 @@ public class GLCameraPreview {
 	private FloatBuffer vertexBuffer;
 	
 	/** The initial vertex definition */	
-	private float vertices[] = { 
+	private float[] vertices = { 
 								-1.0f, -1.0f, 0.0f, //Bottom Left
 								1.0f, -1.0f, 0.0f, 	//Bottom Right
 								-1.0f, 0.5f, 0.0f, 	//Top Left
@@ -66,7 +66,7 @@ public class GLCameraPreview {
 	private FloatBuffer textureBuffer;
 	
 	/** Our texture pointer */
-	private float texture[] = {
+	private float[] texture = {
 								// Mapping coordinates for the vertices			
 						        0.0f, 0.0f,     // top left     (V2)			
 						        0.0f, 1.0f,     // bottom left  (V1)			

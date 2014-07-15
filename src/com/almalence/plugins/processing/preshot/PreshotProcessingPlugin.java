@@ -175,7 +175,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		
 		for (int i=0; i<imagesAmount; i++)
 		{
-	    	if(isSlowMode == false)
+	    	if(!isSlowMode)
 	    	{
 		    	byte[] data = null;
 		    	
@@ -197,7 +197,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		    	PluginManager.getInstance().addToSharedMem("resultframelen"+(i+1)+Long.toString(sessionID), String.valueOf(data.length));
 		    	
 	    	}
-	    	else if(isSlowMode == true)
+	    	else if(isSlowMode)
 		    {
 		    	byte[] data = PreShot.GetFromBufferSimpleReservedNV21(i, MainScreen.getImageHeight(), MainScreen.getImageWidth());
 		    	
@@ -214,7 +214,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    	}
 	    	
 	    	int iOrientation = PreShot.getOrientationReserved(i);
-	    	if(isSlowMode == true)
+	    	if(isSlowMode)
 	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((iOrientation)));
 	    	else
 	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((0)));
@@ -529,7 +529,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     @Override
     public Bitmap getMultishotBitmap(int index)
 	{
-    	if(isSlowMode == false)
+    	if(!isSlowMode)
     	{
 	    	int[] data = PreShot.GetFromBufferRGBA(index, false, false);
 	    	

@@ -732,7 +732,7 @@ public abstract class Directory
         if (o instanceof String) {
             // This seems to cover all known Exif date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
-            String datePatterns[] = {
+            String[] datePatterns = {
                     "yyyy:MM:dd HH:mm:ss",
                     "yyyy:MM:dd HH:mm",
                     "yyyy-MM-dd HH:mm:ss",

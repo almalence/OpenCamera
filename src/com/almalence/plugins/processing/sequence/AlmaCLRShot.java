@@ -73,7 +73,7 @@ public class AlmaCLRShot
     		throw new Exception("Too Many Input Frame");
 		}
 		
-		if (mInputFrameSize.isValid() == false) {
+		if (!mInputFrameSize.isValid()) {
     		Log.d(TAG, "Input frame size is wrong ");
     		throw new Exception("Too Many Input Frame");
 		}
@@ -164,7 +164,7 @@ public class AlmaCLRShot
     		throw new Exception("Angle is invalid");
 		}
 		
-		if (mPreviewSize.isValid() == false) {
+		if (!mPreviewSize.isValid()) {
     		Log.d(TAG, "Preview size is wrong");
     		throw new Exception("Too Many Input Frame");
 		}
@@ -230,7 +230,7 @@ public class AlmaCLRShot
             
             Rect r = new Rect(mCrop[0], mCrop[1], mCrop[0] + mCrop[2], mCrop[1] + mCrop[3]);
 
-            if (out.compressToJpeg(r, 95, os) == false)
+            if (!out.compressToJpeg(r, 95, os))
             {
             	Log.d(TAG, "the compression is not successful");
             }
@@ -291,8 +291,8 @@ public class AlmaCLRShot
 	
     private static native String Initialize();
     private static native int Release(int nFrames);
-    private static native int ConvertFromJpeg(int frame[], int frame_len[], int nFrames, int sx, int sy);
-    private static native int addYUVFrames(int frame[], int frame_len[], int nFrames, int sx, int sy);
+    private static native int ConvertFromJpeg(int[] frame, int[] frame_len, int nFrames, int sx, int sy);
+    private static native int addYUVFrames(int[] frame, int[] frame_len, int nFrames, int sx, int sy);
     private static native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
     private static native int MovObjProcess(int nFrames, Size size,	int sensitivity, int minSize, int[] crop, int ghosting, int ratio, int[] sports_order);
     

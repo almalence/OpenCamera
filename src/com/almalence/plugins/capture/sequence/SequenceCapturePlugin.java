@@ -94,7 +94,7 @@ public class SequenceCapturePlugin extends PluginCapture
 	
 	public void takePicture()
 	{
-		if(inCapture == false)
+		if(!inCapture)
 		{
 			refreshPreferences();
 			takingAlready = true;

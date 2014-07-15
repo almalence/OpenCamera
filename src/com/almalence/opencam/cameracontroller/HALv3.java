@@ -69,8 +69,6 @@ public class HALv3
 	private static int[] af_regions;
 	private static int[] ae_regions;
 	
-	private static long exposureTime = 0;
-	
 	public static HALv3 getInstance()
 	{
 		if (instance == null)
@@ -350,7 +348,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			int expRange[] = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange[1] == expRange[0] ? false : true;
 		}
 		
@@ -361,7 +359,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			int expRange[] = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange[0];
 		}
 		
@@ -372,7 +370,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			int expRange[] = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange[1];
 		}
 		
@@ -383,11 +381,7 @@ public class HALv3
 	public static float getExposureCompensationStepHALv3()
 	{
 		if(HALv3.getInstance().camCharacter != null)
-		{
-			float step = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
-			return step;
-		}
-		
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
 		return 0;	
 	}
 
@@ -413,7 +407,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			byte scenes[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+			byte[] scenes  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
 			if(scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
 				return scenes;				
 		}
@@ -426,7 +420,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			byte wb[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+			byte[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			if(wb.length > 0 )
 				return wb;				
 		}
@@ -439,7 +433,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			byte focus[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+			byte[] focus  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
 			if(focus.length > 0 )
 				return focus;				
 		}
@@ -463,8 +457,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			int iso[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-			int max_analog_iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_MAX_ANALOG_SENSITIVITY);
+			int[] iso  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 			int max_iso = iso[1];
 			
 			int index = 0;
@@ -491,7 +484,7 @@ public class HALv3
 	{
 		if(HALv3.getInstance().camCharacter != null)
 		{
-			int iso[]  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			int[] iso  = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 			if(iso[0] == iso[1])
 				return false;
 			return true;
@@ -754,7 +747,7 @@ public class HALv3
 	
 	public static int getPreviewFrameRateHALv3()
 	{
-		int range[] = {0 , 0};
+		int[] range = {0 , 0};
 		range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
 		return range[range.length-1]; 
 	}
@@ -766,16 +759,6 @@ public class HALv3
 	
 	public static int captureImageHALv3(int nFrames, int format)
 	{
-	// stop preview
-	//		try {
-	//			HALv3.getInstance().camDevice.stopRepeating();
-	//		} catch (CameraAccessException e1) {
-	//			Log.e("MainScreen", "Can't stop preview");
-	//			e1.printStackTrace();
-	//		}
-			
-		// create capture requests for the burst of still images
-		//Log.e("CameraController", "captureImage 1");
 		int requestID = -1;
 		CaptureRequest.Builder stillRequestBuilder = null;
 		try

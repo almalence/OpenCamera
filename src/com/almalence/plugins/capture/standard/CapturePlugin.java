@@ -209,7 +209,7 @@ public class CapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 		Log.e("CapturePlugin", "takePicture");
-		if(inCapture == false)
+		if(!inCapture)
 		{
 			Log.e("CapturePlugin", "send next frame message");
 			inCapture = true;

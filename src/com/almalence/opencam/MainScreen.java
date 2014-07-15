@@ -448,11 +448,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				if ((orientation < 45)
 						|| (orientation > 315 && orientation < 405)
 						|| ((orientation > 135) && (orientation < 225))) {
-					if (MainScreen.wantLandscapePhoto == true) {
+					if (MainScreen.wantLandscapePhoto) {
 						MainScreen.wantLandscapePhoto = false;
 					}
 				} else {
-					if (MainScreen.wantLandscapePhoto == false) {
+					if (!MainScreen.wantLandscapePhoto) {
 						MainScreen.wantLandscapePhoto = true;
 					}
 				}
@@ -876,7 +876,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		CameraController.setCameraIndex(prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) == false ? 0 : 1);
+		CameraController.setCameraIndex(!prefs.getBoolean(MainScreen.sUseFrontCameraPref, false)? 0 : 1);
 		ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 				false);
 		ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
@@ -984,7 +984,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.mainContext);
-		CameraController.setCameraImageSizeIndex(prefs.getBoolean("useFrontCamera", false) == false ? 0 : 1);
+		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
 		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 				false);
 		ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
@@ -2333,21 +2333,21 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return true;
 
 		// if all unlocked
-		if (unlockAllPurchased == true)
+		if (unlockAllPurchased)
 			return true;
 
 		// if current mode unlocked
 		if (mode.SKU.equals("plugin_almalence_hdr")) {
-			if (hdrPurchased == true)
+			if (hdrPurchased)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented")) {
-			if (panoramaPurchased == true)
+			if (panoramaPurchased)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_moving_burst")) {
-			if (objectRemovalBurstPurchased == true)
+			if (objectRemovalBurstPurchased)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_groupshot")) {
-			if (groupShotPurchased == true)
+			if (groupShotPurchased)
 				return true;
 		}
 

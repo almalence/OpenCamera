@@ -65,8 +65,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     private int preferenceEVCompensationValue;
 
     // almashot - related
-    public static int evValues[] = new int[MAX_HDR_FRAMES];
-    public static int evIdx[] = new int[MAX_HDR_FRAMES];
+    public static int[] evValues = new int[MAX_HDR_FRAMES];
+    public static int[] evIdx = new int[MAX_HDR_FRAMES];
     private int cur_ev, frame_num;
     public static float ev_step;
     private int evRequested, evLatency;
@@ -76,8 +76,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     // shared between activities 
     public static int CapIdx;
     public static int total_frames;
-    public static int compressed_frame[] = new int[MAX_HDR_FRAMES];
-    public static int compressed_frame_len[] = new int[MAX_HDR_FRAMES];
+    public static int[] compressed_frame = new int[MAX_HDR_FRAMES];
+    public static int[] compressed_frame_len = new int[MAX_HDR_FRAMES];
 	public static boolean LumaAdaptationAvailable = false;
 
     // preferences
@@ -209,7 +209,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 	public void onShutterClick()
 	{
-		if (takingAlready == false)
+		if (!takingAlready)
 		{
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
@@ -224,7 +224,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		MainScreen.thiz.MuteShutter(true);
     	
-        if (inCapture == false)
+        if (!inCapture)
         {
     		inCapture = true;
     		takingAlready = false;
@@ -234,7 +234,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             frame_num = 0;
 
             int focusMode = CameraController.getInstance().getFocusMode();
-    		if(takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+    		if(!takingAlready && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
     				CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
     				&& focusMode != -1
     				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
@@ -244,7 +244,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
    	    				 focusMode == CameraParameters.AF_MODE_EDOF)
    	    			&& !MainScreen.getAutoFocusLock())
     			aboutToTakePicture = true;
-    		else if(takingAlready == false || (focusMode != -1
+    		else if(!takingAlready || (focusMode != -1
     									   && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
 							      			   focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
 							    			   focusMode == CameraParameters.AF_MODE_INFINITY ||
@@ -480,7 +480,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			}
 
 			public void onFinish() {
-				if (previewWorking == false)
+				if (!previewWorking)
 				{
 					Log.e("ExpoBracketing", "previewMode DISABLED!");
 					previewMode=false;
@@ -786,7 +786,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	}
 
     	// sort frame idx'es in descending order of Ev's
-		boolean skip_idx[] = new boolean[MAX_HDR_FRAMES];
+		boolean[] skip_idx = new boolean[MAX_HDR_FRAMES];
     	for (int i=0; i<total_frames; ++i)
     		skip_idx[i] = false;
     	
@@ -829,7 +829,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	// on motorola xt5 cm7 this function is called twice!
     		// on motorola droid's onAutoFocus seem to be called at every startPreview,
     		// causing additional frame(s) taken after sequence is finished 
-        	if(aboutToTakePicture == true)
+        	if(aboutToTakePicture)
         	{
     			CaptureFrame();
     			takingAlready = true;

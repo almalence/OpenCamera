@@ -205,12 +205,6 @@ public class RotateImageView extends ImageView
         setVisibility(VISIBLE);
     }
 
-    @Override
-    public void setEnabled(boolean enabled) 
-    {
-        super.setEnabled(enabled);
-    }
-
     public void enableFilter(boolean enabled) 
     {
         mFilterEnabled = enabled;

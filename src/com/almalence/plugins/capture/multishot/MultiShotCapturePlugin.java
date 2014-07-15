@@ -98,7 +98,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 	public boolean delayedCaptureSupported(){return true;}
 		
 	public void takePicture() {
-		if(inCapture == false) {
+		if(!inCapture) {
 			inCapture = true;
 			takingAlready = true;			
 			refreshPreferences();

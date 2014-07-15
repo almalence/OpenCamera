@@ -52,7 +52,7 @@ public abstract class PluginCapture extends Plugin
 	@Override
 	public void onShutterClick()
 	{
-		if (inCapture == false)
+		if (!inCapture)
         {
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
@@ -60,7 +60,7 @@ public abstract class PluginCapture extends Plugin
 			MainScreen.thiz.MuteShutter(true);
 			
 			int focusMode = CameraController.getInstance().getFocusMode();
-			if(focusMode != -1 && takingAlready == false && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
+			if(focusMode != -1 && !takingAlready && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
 					CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
 	      				focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO ||
@@ -69,7 +69,7 @@ public abstract class PluginCapture extends Plugin
 	    				focusMode == CameraParameters.AF_MODE_EDOF)
         			&& !MainScreen.getAutoFocusLock())
 				takingAlready = true;			
-			else if(takingAlready == false)
+			else if(!takingAlready)
 			{
 				takePicture();
 			}

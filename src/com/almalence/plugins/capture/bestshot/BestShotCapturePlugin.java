@@ -163,7 +163,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		
 	public void takePicture()
 	{
-		if(inCapture == false)
+		if(!inCapture)
 		{
 			inCapture = true;
 			refreshPreferences();

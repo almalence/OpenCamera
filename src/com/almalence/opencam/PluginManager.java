@@ -696,7 +696,7 @@ public class PluginManager implements PluginManagerInterface {
 			return;
 		}
 		//-+- -->
-		if (shutterRelease == false)
+		if (!shutterRelease)
 			return;
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
@@ -704,7 +704,7 @@ public class PluginManager implements PluginManagerInterface {
 		delayedCaptureSoundPrefCommon = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
-		if (showDelayedCapturePrefCommon == false ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
+		if (!showDelayedCapturePrefCommon ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
 		{	
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
@@ -1169,18 +1169,18 @@ public class PluginManager implements PluginManagerInterface {
 	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event) {
 		int res = 0;
 		for (int i = 0; i < activeVF.size(); i++)
-			res += pluginList.get(activeVF.get(i)).onKeyDown(keyCode, event) == true ? 1
+			res += pluginList.get(activeVF.get(i)).onKeyDown(keyCode, event) ? 1
 					: 0;
 		if (null != pluginList.get(activeCapture))
-			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) == true ? 1
+			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) ? 1
 					: 0;
 		if (null != pluginList.get(activeProcessing))
-			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) == true ? 1
+			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) ? 1
 					: 0;
 		for (int i = 0; i < activeFilter.size(); i++)
-			res += pluginList.get(i).onKeyDown(keyCode, event) == true ? 1 : 0;
+			res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeExport))
-			res += pluginList.get(activeExport).onKeyDown(keyCode, event) == true ? 1
+			res += pluginList.get(activeExport).onKeyDown(keyCode, event) ? 1
 					: 0;
 		return (res > 0 ? true : false);
 	}

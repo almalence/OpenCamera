@@ -896,7 +896,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		MainScreen.guiManager.lockControls = true;
 		
-		if (MainScreen.thiz.showPromoRedeemed == true)
+		if (MainScreen.thiz.showPromoRedeemed)
 		{
 			Toast.makeText(MainScreen.thiz, "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
 			MainScreen.thiz.showPromoRedeemed = false;
@@ -2576,7 +2576,7 @@ public class AlmalenceGUI extends GUI implements
 			break;			
 		case CAMERA: {
 			icon_id = icon_cam;
-			if (preferences.getBoolean("useFrontCamera", false) == false)
+			if (!preferences.getBoolean("useFrontCamera", false))
 				icon_text = MainScreen.thiz.getResources().getString(
 						R.string.settings_mode_rear);
 			else
@@ -3572,7 +3572,7 @@ public class AlmalenceGUI extends GUI implements
 		boolean isFrontCamera = prefs.getBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), false);
 		prefs.edit().putBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
 
-		if (restart == true) {
+		if (restart) {
 			MainScreen.thiz.PauseMain();
 			MainScreen.thiz.ResumeMain();
 		}
@@ -5495,7 +5495,7 @@ public class AlmalenceGUI extends GUI implements
 	 * >>>>>>>>> BEGIN
 	 ***********************************************************************************************/
 
-	protected Plugin.ViewfinderZone zones[] = {
+	protected Plugin.ViewfinderZone[] zones = {
 			Plugin.ViewfinderZone.VIEWFINDER_ZONE_TOP_LEFT,
 			Plugin.ViewfinderZone.VIEWFINDER_ZONE_TOP_RIGHT,
 			Plugin.ViewfinderZone.VIEWFINDER_ZONE_CENTER_RIGHT,
@@ -5631,7 +5631,7 @@ public class AlmalenceGUI extends GUI implements
 				if (currZone == zones[j]) // Current zone is free
 					return currParams;
 				else {
-					int rules[] = currParams.getRules();
+					int[] rules = currParams.getRules();
 					for (int i = 0; i < rules.length; i++)
 						currParams.addRule(i, 0);
 
@@ -5756,7 +5756,7 @@ public class AlmalenceGUI extends GUI implements
 				.findViewById(R.id.pluginsLayout);
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view
 				.getLayoutParams();
-		int rules[] = lp.getRules();
+		int[] rules = lp.getRules();
 
 		int viewWidth = lp.width;
 		int viewHeight = lp.height;
@@ -5871,7 +5871,7 @@ public class AlmalenceGUI extends GUI implements
 				return false;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				topMenuButtonPressed(-1);
-				if (scrolling == true)
+				if (scrolling)
 					((Panel) guiView.findViewById(R.id.topPanel)).touchListener
 							.onTouch(view, event);
 				scrolling = false;
@@ -5884,7 +5884,7 @@ public class AlmalenceGUI extends GUI implements
 						return false;
 				}
 			} else if (event.getAction() == MotionEvent.ACTION_MOVE
-					&& scrolling == false) {
+					&& !scrolling) {
 				if (downEvent == null)
 					return false;
 				if ((event.getY() - downEvent.getY()) < 50)
@@ -6680,7 +6680,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		//check show help settings
 		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", true);
-		if (false == needToShow || MainScreen.showHelp == false)
+		if (false == needToShow || !MainScreen.showHelp)
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
@@ -6806,7 +6806,7 @@ public class AlmalenceGUI extends GUI implements
              int interval = 0;
              Editor prefsEditor = prefs.edit();
  			
-             if (swChecked == true)
+             if (swChecked)
             	 interval  = np.getValue();
              else
             	 interval = 0;
@@ -6858,7 +6858,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
 		
-		if (needToShow == false || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
+		if (!needToShow || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
 		{
 			return; 
 		}

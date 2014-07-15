@@ -390,7 +390,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
 		if(Build.MODEL.contains("HTC One X"))
 		{
-			if (CameraController.isFrontCamera() == false)
+			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -437,7 +437,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
     	if(Build.MODEL.contains("HTC One X"))
 		{
-			if (CameraController.isFrontCamera() == false)
+			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -562,7 +562,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 					this.capturing = true;
 					int fm =CameraController.getInstance().getFocusMode();
 					int fs = CameraController.getFocusState();
-					if(takingAlready == false && (fs == CameraController.FOCUS_STATE_IDLE ||
+					if(!takingAlready && (fs == CameraController.FOCUS_STATE_IDLE ||
 							fs == CameraController.FOCUS_STATE_FOCUSING)							
 							&& !(fm == CameraParameters.AF_MODE_INFINITY
 							|| fm == CameraParameters.AF_MODE_FIXED
@@ -571,7 +571,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 							|| fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 							&& !MainScreen.getAutoFocusLock())			
 							aboutToTakePicture = true;			
-					else if(takingAlready == false)
+					else if(!takingAlready)
 					{
 						this.startCapture();
 					}
@@ -786,7 +786,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		    			})
 		    			.create();
 				
-						if (showGyroWarnOnce == true)
+						if (showGyroWarnOnce)
 							return false;
 						showGyroWarnOnce = true;
 						ad.show();
@@ -824,7 +824,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
     	final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
     	if(Build.MODEL.contains("HTC One X"))
 		{
-			if (CameraController.isFrontCamera() == false)
+			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional= null;
 				additional= CameraController.getInstance().new Size(3264, 2448);
@@ -1042,7 +1042,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void onAutoFocus(final boolean success)
 	{
-		if(aboutToTakePicture == true)
+		if(aboutToTakePicture)
 			startCapture();
 	}
 	
