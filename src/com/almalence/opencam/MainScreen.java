@@ -95,6 +95,7 @@ import com.almalence.util.Util;
 
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
+import com.almalence.opencam.cameracontroller.HALv3.imageAvailableListener;
 //<!-- -+-
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
@@ -130,33 +131,34 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	// Global defines and others
 	//
 	// Description<<
-	public static MainScreen thiz;
-	public static Context mainContext;
-	public static Handler H;
-
+	
 	private static final int MSG_RETURN_CAPTURED = -1;
-
-	public static File ForceFilename = null;
-	public static Uri ForceFilenameUri;
+	
+	private static MainScreen thiz;
+	private Context mainContext;
+	private Handler H;
 
 	//Interface to HALv3 camera and Old style camera
-	public static CameraController cameraController = null;
+	private CameraController cameraController = null;
 	
 	//HALv3 camera's objects
-	public static ImageReader mImageReaderPreviewYUV;
-	public static ImageReader mImageReaderYUV;
-	public static ImageReader mImageReaderJPEG;
+	private ImageReader mImageReaderPreviewYUV;
+	private ImageReader mImageReaderYUV;
+	private ImageReader mImageReaderJPEG;
 	
-	public static boolean captureYUVFrames = false; //Used for HALv3 to init YUV or JPEG surfaces for capturing.
+	private boolean captureYUVFrames = false; //Used for HALv3 to init YUV or JPEG surfaces for capturing.
 													//Both type of surfaces are not supported in current version of HALv3
 
-	public static GUI guiManager = null;
+	private GUI guiManager = null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
-	private static GLLayer glView;
+	private GLLayer glView;
 
 	private boolean mPausing = false;
+	
+	private File ForceFilename = null;
+	private Uri ForceFilenameUri;
 
 	Bundle msavedInstanceState;
 	public SurfaceHolder surfaceHolder;
@@ -365,7 +367,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		//reset or save settings
 		ResetOrSaveSettings();
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
 		if(null != mode)
 			prefs.edit().putString("defaultModeName", mode).commit();
@@ -481,7 +483,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 
 			public void onFinish() {
-				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("videorecording", false);
 				if (isVideoRecording || keepScreenOn)
 				{
 					//restart timer
@@ -516,28 +518,27 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				{
 					ForceFilenameUri = this.getIntent().getExtras()
 							.getParcelable(MediaStore.EXTRA_OUTPUT);
-					MainScreen.ForceFilename = new File(
-							((Uri) ForceFilenameUri).getPath());
-					if (MainScreen.ForceFilename.getAbsolutePath().equals("/scrapSpace")) 
+					MainScreen.setForceFilename(new File(((Uri) ForceFilenameUri).getPath()));
+					if (MainScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace")) 
 					{
-						MainScreen.ForceFilename = new File(Environment
+						MainScreen.setForceFilename(new File(Environment
 								.getExternalStorageDirectory()
 								.getAbsolutePath()
-								+ "/mms/scrapSpace/.temp.jpg");
-						new File(MainScreen.ForceFilename.getParent()).mkdirs();
+								+ "/mms/scrapSpace/.temp.jpg"));
+						new File(MainScreen.getForceFilename().getParent()).mkdirs();
 					}
 				} 
 				catch (Exception e) 
 				{
-					MainScreen.ForceFilename = null;
+					MainScreen.setForceFilename(null);
 				}
 			} 
 			else 
 			{
-				MainScreen.ForceFilename = null;
+				MainScreen.setForceFilename(null);
 			}
 		} else {
-			MainScreen.ForceFilename = null;
+			MainScreen.setForceFilename(null);
 		}
 		
 		// <!-- -+-
@@ -545,13 +546,95 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
 			{
-				Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+				Toast.makeText(MainScreen.getMainContext(), "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
 				return;
 			}
 			guiManager.showStore();
 		}
 		//-+- -->
 	}
+	
+	
+	
+	
+	/*
+	 *	Get/Set method for private variables 
+	 */
+	public static MainScreen getInstance()
+	{
+		return thiz;
+	}
+	
+	public static Context getMainContext()
+	{
+		return thiz.mainContext;
+	}
+	
+	public static Handler getMessageHandler()
+	{
+		return thiz.H;
+	}
+	
+	public static CameraController getCameraController()
+	{
+		return thiz.cameraController;
+	}
+	
+	public static GUI getGUIManager()
+	{
+		return thiz.guiManager;
+	}
+	
+	@TargetApi(19)
+	public static void createImageReaders()
+	{
+		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 1);
+	}
+	
+	public static ImageReader getPreviewYUVImageReader()
+	{
+		return thiz.mImageReaderPreviewYUV;
+	}
+	
+	public static ImageReader getYUVImageReader()
+	{
+		return thiz.mImageReaderYUV;
+	}
+	
+	public static ImageReader getJPEGImageReader()
+	{
+		return thiz.mImageReaderJPEG;
+	}
+	
+	public static boolean isCaptureYUVFrames()
+	{
+		return thiz.captureYUVFrames;
+	}
+	
+	public static void setCaptureYUVFrames(boolean captureYUV)
+	{
+		thiz.captureYUVFrames = captureYUV;
+	}
+	
+	public static File getForceFilename()
+	{
+		return thiz.ForceFilename;
+	}
+	
+	public static void setForceFilename(File fileName)
+	{
+		thiz.ForceFilename = fileName;
+	}
+	
+	public static Uri getForceFilenameURI()
+	{
+		return thiz.ForceFilenameUri;
+	}
+	/*	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	 *	Get/Set method for private variables 
+	 */
 
 	
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
@@ -680,8 +763,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStart()
 	{
 		super.onStart();
-		MainScreen.cameraController.onStart();
-		MainScreen.guiManager.onStart();
+		MainScreen.getCameraController().onStart();
+		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
 	}
 
@@ -693,9 +776,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mApplicationStarted = false;
 		orientationMain = 0;
 		orientationMainPrevious = 0;
-		MainScreen.guiManager.onStop();
+		MainScreen.getGUIManager().onStop();
 		PluginManager.getInstance().onStop();
-		MainScreen.cameraController.onStop();
+		MainScreen.getCameraController().onStop();
 		
 		if(CameraController.isUseHALv3())
 			stopImageReaders();
@@ -727,7 +810,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onDestroy()
 	{	
 		super.onDestroy();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if(launchTorch && prefs.getInt(sFlashModePref, -1) == CameraParameters.FLASH_MODE_TORCH)
 		{
 			prefs.edit().putInt(sFlashModePref, prefFlash).commit();
@@ -736,9 +819,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			prefs.edit().putBoolean("PrefBarcodescannerVF", prefBarcode).commit();
 		}
-		MainScreen.guiManager.onDestroy();
+		MainScreen.getGUIManager().onDestroy();
 		PluginManager.getInstance().onDestroy();
-		MainScreen.cameraController.onDestroy();
+		MainScreen.getCameraController().onDestroy();
 
 		// <!-- -+-
 		/**** Billing *****/
@@ -762,7 +845,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 				public void onFinish() {
 					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.mainContext);
+							.getDefaultSharedPreferences(MainScreen.getMainContext());
 				
 					updatePreferences();
 					
@@ -779,7 +862,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					
 					CameraController.useHALv3(prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false));
 			
-					MainScreen.guiManager.onResume();
+					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
 					MainScreen.thiz.mPausing = false;
 					
@@ -796,7 +879,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 						
 						PluginManager.getInstance().onGUICreate();
-						MainScreen.guiManager.onGUICreate();
+						MainScreen.getGUIManager().onGUICreate();
 
 						if (showStore)
 						{
@@ -816,7 +899,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 						
 						PluginManager.getInstance().onGUICreate();
-						MainScreen.guiManager.onGUICreate();
+						MainScreen.getGUIManager().onGUICreate();
 
 						if (showStore)
 						{
@@ -843,7 +926,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		long Free = getAvailableInternalMemory();
 		if (Free<30)
-			Toast.makeText(MainScreen.mainContext, "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 	
 	
@@ -875,7 +958,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraIndex(!prefs.getBoolean(MainScreen.sUseFrontCameraPref, false)? 0 : 1);
 		ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 				false);
@@ -890,14 +973,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		super.onPause();
 		mApplicationStarted = false;
 
-		MainScreen.guiManager.onPause();
+		MainScreen.getGUIManager().onPause();
 		PluginManager.getInstance().onPause(true);
 
 		orientListener.disable();
 
 		if (ShutterPreference) {
 			AudioManager mgr = (AudioManager) MainScreen.thiz
-					.getSystemService(MainScreen.mainContext.AUDIO_SERVICE);
+					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
 		}
 
@@ -961,7 +1044,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						{
 							cameraController.setupCamera(holder);
 							PluginManager.getInstance().onGUICreate();
-							MainScreen.guiManager.onGUICreate();
+							MainScreen.getGUIManager().onGUICreate();
 						}
 						else
 						{
@@ -983,7 +1066,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
 	{
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
 		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
 				false);
@@ -1006,7 +1089,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				Log.e("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
 				cameraController.setupCamera(holder);
 //				PluginManager.getInstance().onGUICreate();
-//				MainScreen.guiManager.onGUICreate();
+//				MainScreen.getGUIManager().onGUICreate();
 			}
 		}
 	}	
@@ -1382,12 +1465,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		//shutter/camera button processing
 		if (keyCode == KeyEvent.KEYCODE_CAMERA
 				|| keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-			MainScreen.guiManager.onHardwareShutterButtonPressed();
+			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 			return true;
 		}
 		//focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS) {
-			MainScreen.guiManager.onHardwareFocusButtonPressed();
+			MainScreen.getGUIManager().onHardwareFocusButtonPressed();
 			return true;
 		}
 		
@@ -1395,12 +1478,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if ( keyCode == KeyEvent.KEYCODE_HEADSETHOOK )
 		{
 			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.mainContext);
+					.getDefaultSharedPreferences(MainScreen.getMainContext());
 			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
 			if (headsetFunc)
 			{
-				MainScreen.guiManager.onHardwareFocusButtonPressed();
-				MainScreen.guiManager.onHardwareShutterButtonPressed();
+				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 				return true;
 			}
 		}
@@ -1409,17 +1492,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if ( keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP )
 		{
 			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.mainContext);
+					.getDefaultSharedPreferences(MainScreen.getMainContext());
 			int buttonFunc = Integer.parseInt(prefs.getString(MainScreen.sVolumeButtonPref, "0"));
 			if (buttonFunc == VOLUME_FUNC_SHUTTER)
 			{
-				MainScreen.guiManager.onHardwareFocusButtonPressed();
-				MainScreen.guiManager.onHardwareShutterButtonPressed();
+				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 				return true;
 			}
 			else if (buttonFunc == VOLUME_FUNC_EXPO)
 			{
-				MainScreen.guiManager.onVolumeBtnExpo(keyCode);
+				MainScreen.getGUIManager().onVolumeBtnExpo(keyCode);
 				return true;
 			}
 			else if (buttonFunc == VOLUME_FUNC_NONE)
@@ -1454,13 +1537,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	public void onClick(View v) {
 		if (mApplicationStarted)
-			MainScreen.guiManager.onClick(v);
+			MainScreen.getGUIManager().onClick(v);
 	}
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
 		if (mApplicationStarted)
-			return MainScreen.guiManager.onTouch(view, event);
+			return MainScreen.getGUIManager().onTouch(view, event);
 		return true;
 	}
 
@@ -1469,7 +1552,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	public void onButtonClick(View v) {
-		MainScreen.guiManager.onButtonClick(v);
+		MainScreen.getGUIManager().onButtonClick(v);
 	}
 	
 	@Override
@@ -1500,7 +1583,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			case PluginManager.MSG_CAMERA_READY:
 				configureCamera();
 				PluginManager.getInstance().onGUICreate();
-				MainScreen.guiManager.onGUICreate();
+				MainScreen.getGUIManager().onGUICreate();
 				break;
 			case PluginManager.MSG_CAMERA_OPENED:
 			case PluginManager.MSG_SURFACE_READY:
@@ -1512,7 +1595,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
 						configureCamera();
 						PluginManager.getInstance().onGUICreate();
-						MainScreen.guiManager.onGUICreate();
+						MainScreen.getGUIManager().onGUICreate();
 					}
 					break;			
 			default:
@@ -1535,7 +1618,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if (glView == null)
 		{
-			glView = new GLLayer(MainScreen.mainContext, version);// (GLLayer)findViewById(R.id.SurfaceView02);
+			glView = new GLLayer(MainScreen.getMainContext(), version);// (GLLayer)findViewById(R.id.SurfaceView02);
 			glView.setLayoutParams(new LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
@@ -1572,7 +1655,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void MuteShutter(boolean mute) {
 		if (MainScreen.ShutterPreference) {
 			AudioManager mgr = (AudioManager) MainScreen.thiz
-					.getSystemService(MainScreen.mainContext.AUDIO_SERVICE);
+					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
 		}
 	}
@@ -1715,7 +1798,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private void createBillingHandler() 
 	{
 		try {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
 			{
 				hdrPurchased = true;
@@ -1820,7 +1903,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 
 			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.mainContext);
+					.getDefaultSharedPreferences(MainScreen.getMainContext());
 			
 			if (inventory.hasPurchase(SKU_HDR)) {
 				hdrPurchased = true;
@@ -2052,7 +2135,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 
 			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.mainContext);
+					.getDefaultSharedPreferences(MainScreen.getMainContext());
 			
 			Log.v("Main billing", "Purchase successful.");
 
@@ -2137,7 +2220,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			Log.v("Main billing", "Purchase successful.");
 
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			
 			if (purchase.getSku().equals(SKU_HDR)) {
 				Log.v("Main billing", "Purchase HDR.");
@@ -2242,7 +2325,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				String promo = editText.getText().toString();
 				if (promo.equalsIgnoreCase("appoftheday"))
 				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					unlockAllPurchased = true;
 					
 					Editor prefsEditor = prefs.edit();
@@ -2429,7 +2512,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	private void ResetOrSaveSettings()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		boolean isSaving = prefs.getBoolean("SaveConfiguration_Mode", true);
 		if (false == isSaving)

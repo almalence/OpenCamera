@@ -86,7 +86,7 @@ public class AppWidgetNotifier
 	public static boolean showNotifierDialogIfNeeded(final Activity mContext)
 	{
 		//check if installed
-		if (isABCWidgetInstalled(MainScreen.thiz))
+		if (isABCWidgetInstalled(MainScreen.getInstance()))
 		{
 			return false;
 		}

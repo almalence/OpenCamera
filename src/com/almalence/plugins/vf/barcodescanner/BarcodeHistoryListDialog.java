@@ -38,7 +38,7 @@ public class BarcodeHistoryListDialog extends RotateDialog implements android.vi
 	    
 	    // Set dialog size
 	    Rect displayRectangle = new Rect();
-		Window window = MainScreen.thiz.getWindow();
+		Window window = MainScreen.getInstance().getWindow();
     	window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
 	    layoutView.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
     	layoutView.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
@@ -46,7 +46,7 @@ public class BarcodeHistoryListDialog extends RotateDialog implements android.vi
 	    setContentView(layoutView);
 	    
 	    list = (ListView) findViewById(R.id.barcodesHistoryList);
-	    BarcodeArrayAdapter adapter = new BarcodeArrayAdapter(MainScreen.thiz, BarcodeStorageHelper.getBarcodesList());
+	    BarcodeArrayAdapter adapter = new BarcodeArrayAdapter(MainScreen.getInstance(), BarcodeStorageHelper.getBarcodesList());
 	    list.setAdapter(adapter);
 
 	    Button clearBarcodesButton = (Button) findViewById(R.id.clearBarcodesButton);

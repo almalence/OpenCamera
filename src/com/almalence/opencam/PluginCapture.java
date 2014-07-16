@@ -57,7 +57,7 @@ public abstract class PluginCapture extends Plugin
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 			
-			MainScreen.thiz.MuteShutter(true);
+			MainScreen.getInstance().MuteShutter(true);
 			
 			int focusMode = CameraController.getInstance().getFocusMode();
 			if(focusMode != -1 && !takingAlready && (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||

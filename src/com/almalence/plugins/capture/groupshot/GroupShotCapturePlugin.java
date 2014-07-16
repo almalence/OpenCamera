@@ -73,8 +73,8 @@ public class GroupShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_GroupShotImagesAmountPref);
-		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_GroupShotPauseBetweenShotsPref);
+		sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_GroupShotImagesAmountPref);
+		sPauseBetweenShotsPref = MainScreen.getInstance().getResources().getString(R.string.Preference_GroupShotPauseBetweenShotsPref);
 	}
 	
 	@Override
@@ -85,18 +85,18 @@ public class GroupShotCapturePlugin extends PluginCapture
 		inCapture = false;
 		refreshPreferences();
 		
-		MainScreen.captureYUVFrames = true;
+		MainScreen.setCaptureYUVFrames(true);
 	}
 	
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.GroupShot_Help_Header), MainScreen.thiz.getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
+		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.GroupShot_Help_Header), MainScreen.getInstance().getResources().getString(R.string.GroupShot_Help), R.drawable.plugin_help_groupshot, "groupshotRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "7"));
 		pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "750"));
 	}
@@ -116,7 +116,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
+				MainScreen.getMessageHandler().sendMessage(msg);
 			}
 			else
 			{
@@ -127,7 +127,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 				    	 Message msg = new Message();
 				    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 				    	 msg.what = PluginManager.MSG_BROADCAST;
-				    	 MainScreen.H.sendMessage(msg);
+				    	 MainScreen.getMessageHandler().sendMessage(msg);
 				     }
 				  }.start();
 			}
@@ -148,10 +148,10 @@ public class GroupShotCapturePlugin extends PluginCapture
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -175,17 +175,17 @@ public class GroupShotCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 		if (imagesTaken < imageAmount)
 		{
 			inCapture = false;
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
 		else
 		{
@@ -194,7 +194,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			
@@ -256,10 +256,10 @@ public class GroupShotCapturePlugin extends PluginCapture
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -282,17 +282,17 @@ public class GroupShotCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 		if (imagesTaken < imageAmount)
 		{
 			inCapture = false;
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
 		else
 		{
@@ -301,7 +301,7 @@ public class GroupShotCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			
@@ -335,8 +335,8 @@ public class GroupShotCapturePlugin extends PluginCapture
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			// play tick sound
-			MainScreen.guiManager.showCaptureIndication();
-    		MainScreen.thiz.PlayShutter();
+			MainScreen.getGUIManager().showCaptureIndication();
+    		MainScreen.getInstance().PlayShutter();
     		try
     		{
     			requestID = CameraController.captureImage(1, CameraController.YUV);
@@ -348,9 +348,9 @@ public class GroupShotCapturePlugin extends PluginCapture
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);
+    			MainScreen.getMessageHandler().sendMessage(msg);
     			
-    			MainScreen.guiManager.lockControls = false;
+    			MainScreen.getGUIManager().lockControls = false;
     		}
 			
 			return true;

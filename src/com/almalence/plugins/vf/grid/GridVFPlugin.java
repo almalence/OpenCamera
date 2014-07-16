@@ -67,7 +67,7 @@ public class GridVFPlugin extends PluginViewfinder
 	
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
 		
         switch (gridType)
@@ -93,7 +93,7 @@ public class GridVFPlugin extends PluginViewfinder
 		refreshPreferences();
 		
 		if (grid == null)
-			grid = new ImageView(MainScreen.mainContext);
+			grid = new ImageView(MainScreen.getMainContext());
 	
 		setProperGrid();
 		
@@ -107,7 +107,7 @@ public class GridVFPlugin extends PluginViewfinder
 	@Override
 	public void onQuickControlClick()
 	{        
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
 		
 		if (gridType == 4)
@@ -137,13 +137,13 @@ public class GridVFPlugin extends PluginViewfinder
         }
     	editor.commit();
     	
-    	MainScreen.guiManager.removeViewQuick(grid);
+    	MainScreen.getGUIManager().removeViewQuick(grid);
 
     	try {
 	    	setProperGrid();
 			grid.setScaleType(ScaleType.FIT_XY);
 			clearViews();
-	    	MainScreen.guiManager.addViewQuick(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
+	    	MainScreen.getGUIManager().addViewQuick(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e("Histogram", "onQuickControlClick exception: " + e.getMessage());
@@ -172,7 +172,7 @@ public class GridVFPlugin extends PluginViewfinder
 			case 3:resID=R.drawable.plugin_vf_grid_golden16x9;break;
 			default:resID=R.drawable.plugin_vf_grid_golden4x3;			
 			}
-			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
 		}
 		else if (1 == gridType)
 		{
@@ -183,7 +183,7 @@ public class GridVFPlugin extends PluginViewfinder
 			case 3:resID=R.drawable.plugin_vf_grid_thirds16x9;break;
 			default:resID=R.drawable.plugin_vf_grid_thirds4x3;			
 			}
-			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
 		}
 		else if (2 == gridType)
 		{
@@ -194,11 +194,11 @@ public class GridVFPlugin extends PluginViewfinder
 			case 3:resID=R.drawable.plugin_vf_grid_trisec16x9;break;
 			default:resID=R.drawable.plugin_vf_grid_trisec4x3;			
 			}
-			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
 		}
 		else if (3 == gridType)
 		{
-			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(R.drawable.plugin_vf_grid_none_img));
+			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(R.drawable.plugin_vf_grid_none_img));
 		}
 		else
 		{
@@ -209,7 +209,7 @@ public class GridVFPlugin extends PluginViewfinder
 			case 3:resID=R.drawable.plugin_vf_grid_thirds16x9;break;
 			default:resID=R.drawable.plugin_vf_grid_thirds4x3;			
 			}
-			grid.setImageDrawable(MainScreen.thiz.getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
 		}
 		
 		grid.requestLayout();

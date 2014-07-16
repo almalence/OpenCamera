@@ -136,7 +136,7 @@ public abstract class GUI
 	public void removeViews(View viewElement, int layoutId)
 	{
 		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout)MainScreen.thiz.findViewById(layoutId);
+		RelativeLayout specialLayout = (RelativeLayout)MainScreen.getInstance().findViewById(layoutId);
 		for(int i = 0; i < specialLayout.getChildCount(); i++)
 			specialView.add(specialLayout.getChildAt(i));
 

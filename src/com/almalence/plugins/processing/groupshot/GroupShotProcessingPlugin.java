@@ -179,26 +179,26 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		changingFace = false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-		MainScreen.H.sendMessage(msg);	
+		MainScreen.getMessageHandler().sendMessage(msg);	
 		
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = true;
+		MainScreen.getGUIManager().lockControls = true;
 		
 		sessionID=SessionID;
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
         
-        Display display = ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
     	mDisplayWidth = display.getHeight();
     	mDisplayHeight = display.getWidth();
     	
-    	mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
-    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-    	int orientation = MainScreen.guiManager.getLayoutOrientation();
+    	mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
+    	mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
+    	int orientation = MainScreen.getGUIManager().getLayoutOrientation();
     	Log.e("GroupShot", "onStartProcessing layout orientation: " + orientation);
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
     	mCameraMirrored = CameraController.isFrontCamera();
@@ -517,7 +517,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		
 		public void onStartPostProcessing()
 		{
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 			
 			mImgView = ((ImageView)postProcessingView.findViewById(R.id.groupshotImageHolder));
@@ -554,9 +554,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    private void setupImageSelector()
 	    {
 	    	if(!isYUV)
-	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
+	    		mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mJpegBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored);
 	    	else
-	    		mImageAdapter = new ImageAdapter(MainScreen.mainContext, mYUVBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored, true);
+	    		mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mYUVBufferList, mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180, mCameraMirrored, true);
 	        mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 	        mGallery.setAdapter(mImageAdapter);
 	        mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -787,17 +787,17 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    
 	    public void setupSaveButton() {
 	    	// put save button on screen
-	        mSaveButton = new Button(MainScreen.thiz);
+	        mSaveButton = new Button(MainScreen.getInstance());
 	        mSaveButton .setBackgroundResource(R.drawable.button_save_background);
 	        mSaveButton .setOnClickListener(this);
 	        LayoutParams saveLayoutParams = new LayoutParams(
-	        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
-	        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
+	        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
+	        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 	        saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 	        saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 	        saveLayoutParams.setMargins(
-	        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-	        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
+	        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
+	        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
 	        		0, 
 	        		0);
 			((RelativeLayout)postProcessingView.findViewById(R.id.groupshotLayout)).addView(mSaveButton, saveLayoutParams);
@@ -830,7 +830,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    		mGallery.setVisibility(View.GONE);
 	            break; 
 	    	case MSG_LEAVING:
-	    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+	    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 	    		if(mSeamless != null)
 	    			mSeamless.release();
 	    		mJpegBufferList.clear();
@@ -839,9 +839,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    		Message msg2 = new Message();
 	    		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 	    		msg2.what = PluginManager.MSG_BROADCAST;
-	    		MainScreen.H.sendMessage(msg2);
+	    		MainScreen.getMessageHandler().sendMessage(msg2);
 	    		
-	    		MainScreen.guiManager.lockControls = false;
+	    		MainScreen.getGUIManager().lockControls = false;
 	    		
 	    		postProcessingRun = false;
 	        	return false;
@@ -854,7 +854,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		
 		public boolean onKeyDown(int keyCode, KeyEvent event)
 		{
-			if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+			if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 			{
 				if (finishing || changingFace)
 					return true;
@@ -875,7 +875,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	    		if (finishing || changingFace )
 					return;
 	    		finishing = true;
-	    		savePicture(MainScreen.mainContext);
+	    		savePicture(MainScreen.getMainContext());
 	    		
 	    		mHandler.sendEmptyMessage(MSG_LEAVING);
 	    	}

@@ -81,7 +81,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			  0,
 			  null);
 		
-		this.mSavingDialog = new ProgressDialog(MainScreen.thiz);
+		this.mSavingDialog = new ProgressDialog(MainScreen.getInstance());
     	this.mSavingDialog.setIndeterminate(true);
     	this.mSavingDialog.setCancelable(false);
     	this.mSavingDialog.setMessage("Saving");
@@ -123,18 +123,18 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	{
     	Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-		MainScreen.H.sendMessage(msg);	
+		MainScreen.getMessageHandler().sendMessage(msg);	
 		
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = true;
+		MainScreen.getGUIManager().lockControls = true;
 		
-		mDisplayOrientationOnStartProcessing = MainScreen.guiManager.getDisplayOrientation();
-    	mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-    	int orientation = MainScreen.guiManager.getLayoutOrientation();
+		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
+    	mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
+    	int orientation = MainScreen.getGUIManager().getLayoutOrientation();
     	mLayoutOrientationCurrent = orientation == 0 || orientation == 180? orientation: (orientation + 180)%360;
     	mCameraMirrored = CameraController.isFrontCamera();
 		
@@ -253,7 +253,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	@Override
 	public void onStartPostProcessing()
 	{
-		postProcessingView = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_processing_preshot_postprocessing_layout, null);			
+		postProcessingView = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_processing_preshot_postprocessing_layout, null);			
 				
 		idx=0;
     	imgCnt=0;
@@ -264,7 +264,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		        
 		isResultFromProcessingPlugin = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("ResultFromProcessingPlugin" + sessionID));
 		metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
@@ -278,7 +278,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
         
         // if first launch - show layout with hints
  		SharedPreferences prefs = PreferenceManager
- 				.getDefaultSharedPreferences(MainScreen.mainContext);
+ 				.getDefaultSharedPreferences(MainScreen.getMainContext());
  		if (true == prefs.contains("isFirstPreShotLaunch")) {
  			isFirstLaunch = prefs.getBoolean("isFirstPreShotLaunch", true);
  		} else {
@@ -302,17 +302,17 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	
 	public void setupSaveButton() {
     	// put save button on screen
-        mSaveButton = new Button(MainScreen.thiz);
+        mSaveButton = new Button(MainScreen.getInstance());
         mSaveButton.setBackgroundResource(R.drawable.plugin_processing_preshot_savethis_background);
         mSaveButton.setOnClickListener(this);
         LayoutParams saveLayoutParams = new LayoutParams(
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         saveLayoutParams.setMargins(
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.preshot_processingLayout2)).addView(mSaveButton, saveLayoutParams);
@@ -320,17 +320,17 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		mSaveButton.invalidate();
 		
 		// put save button on screen
-        mSaveAllButton = new Button(MainScreen.thiz);
+        mSaveAllButton = new Button(MainScreen.getInstance());
         mSaveAllButton.setBackgroundResource(R.drawable.plugin_processing_preshot_saveall_background);
         mSaveAllButton.setOnClickListener(this);
         LayoutParams saveLayoutParams2 = new LayoutParams(
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
         saveLayoutParams2.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         saveLayoutParams2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         saveLayoutParams2.setMargins(
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.preshot_processingLayout2)).addView(mSaveAllButton, saveLayoutParams2);
@@ -348,13 +348,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = false;
+		MainScreen.getGUIManager().lockControls = false;
 		
 		postProcessingRun = false;
 		
-		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 	}
 	
 	@Override
@@ -381,18 +381,18 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		if(postProcessingView != null && postProcessingView.findViewById(R.id.preShotHintLayout).getVisibility() == View.VISIBLE)
     		postProcessingView.findViewById(R.id.preShotHintLayout).setVisibility(View.GONE);
 		
-		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
     		Message msg2 = new Message();
     		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     		msg2.what = PluginManager.MSG_BROADCAST;
-    		MainScreen.H.sendMessage(msg2);
+    		MainScreen.getMessageHandler().sendMessage(msg2);
     		
-    		MainScreen.guiManager.lockControls = false;
+    		MainScreen.getGUIManager().lockControls = false;
     		
     		postProcessingRun = false;
     		
-    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 			return true;
 		}
 		
@@ -471,7 +471,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     private void flipPhoto(boolean toLeft, float XtoVisible)
 	{
     	isFlipping = true;
-    	ImageView imgView = (ImageView)MainScreen.thiz.findViewById(R.id.imageHolder);
+    	ImageView imgView = (ImageView)MainScreen.getInstance().findViewById(R.id.imageHolder);
 		
 		float[] f = new float[9];
         imgView.getImageMatrix().getValues(f);
@@ -658,7 +658,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				if((X>difX && isGuffyOrientation? idx == 0 : idx == imgCnt - 1) || (X<difX && isGuffyOrientation? idx == imgCnt - 1 : idx == 0))
 					break;
 
-				ImageView imgView = (ImageView)MainScreen.thiz.findViewById(R.id.imageHolder);
+				ImageView imgView = (ImageView)MainScreen.getInstance().findViewById(R.id.imageHolder);
 				
 				int screenWidth = imgView.getWidth();
 				int screenHeight = imgView.getHeight();

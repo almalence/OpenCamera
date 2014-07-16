@@ -38,11 +38,11 @@ public class BarcodeViewDialog extends RotateDialog {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		Rect displayRectangle = new Rect();
-		Window window = MainScreen.thiz.getWindow();
+		Window window = MainScreen.getInstance().getWindow();
     	window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
 
     	// inflate and adjust layout
-    	LayoutInflater inflater = (LayoutInflater)MainScreen.thiz.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    	LayoutInflater inflater = (LayoutInflater)MainScreen.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     	layoutView = inflater.inflate(R.layout.plugin_vf_barcodescanner_view_layout, null);
     	layoutView.setMinimumWidth((int)(displayRectangle.width() * 0.7f));
     	layoutView.setMinimumHeight((int)(displayRectangle.height() * 0.7f));
@@ -53,7 +53,7 @@ public class BarcodeViewDialog extends RotateDialog {
 	
 	private void initControls() {
 		Result result = new Result(barcode.getData(), null, null, BarcodeFormat.valueOf(barcode.getFormat()), barcode.getDate().getTime());
-		ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(MainScreen.thiz, result);
+		ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(MainScreen.getInstance(), result);
 
 		// set the custom dialog components - text, image and button
 		TextView dataTextView = (TextView) findViewById(R.id.decodedDataTextView);
@@ -104,7 +104,7 @@ public class BarcodeViewDialog extends RotateDialog {
         }
         currentOrientation = degree;
         
-        LayoutInflater inflater = (LayoutInflater)MainScreen.thiz.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater)MainScreen.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (degree == 90 || degree == 270) {
         	layoutView = inflater.inflate(R.layout.plugin_vf_barcodescanner_view_layout_landscape, null);
     		setContentView(layoutView);
@@ -114,7 +114,7 @@ public class BarcodeViewDialog extends RotateDialog {
     		r.invalidate();	
         } else {
         	Rect displayRectangle = new Rect();
-    		Window window = MainScreen.thiz.getWindow();
+    		Window window = MainScreen.getInstance().getWindow();
         	window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
         	
         	layoutView = inflater.inflate(R.layout.plugin_vf_barcodescanner_view_layout, null);

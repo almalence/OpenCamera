@@ -77,8 +77,8 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sImagesAmountPref = MainScreen.thiz.getResources().getString(R.string.Preference_BurstImagesAmount);
-		sPauseBetweenShotsPref = MainScreen.thiz.getResources().getString(R.string.Preference_BurstPauseBetweenShots);
+		sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BurstImagesAmount);
+		sPauseBetweenShotsPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BurstPauseBetweenShots);
 	}
 	
 	@Override
@@ -94,7 +94,7 @@ public class BurstCapturePlugin extends PluginCapture
 	{
 		try
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "3"));
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
 		}
@@ -126,7 +126,7 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onQuickControlClick()
 	{        
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "1"));
         int selected = 0;
         switch (val)
@@ -188,7 +188,7 @@ public class BurstCapturePlugin extends PluginCapture
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);					
+			MainScreen.getMessageHandler().sendMessage(msg);					
 		}
 		else
 		{
@@ -199,7 +199,7 @@ public class BurstCapturePlugin extends PluginCapture
 			    	 Message msg = new Message();
 			    	 msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 			    	 msg.what = PluginManager.MSG_BROADCAST;
-			    	 MainScreen.H.sendMessage(msg);
+			    	 MainScreen.getMessageHandler().sendMessage(msg);
 			     }
 			  }.start();
 		}
@@ -218,10 +218,10 @@ public class BurstCapturePlugin extends PluginCapture
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -230,7 +230,7 @@ public class BurstCapturePlugin extends PluginCapture
     	
     	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
     	if(imagesTaken == 1)
@@ -246,15 +246,15 @@ public class BurstCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 		if (imagesTaken < imageAmount)
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		else
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
@@ -262,7 +262,7 @@ public class BurstCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			inCapture = false;
@@ -336,7 +336,7 @@ public class BurstCapturePlugin extends PluginCapture
     	
 		PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));	
@@ -352,15 +352,15 @@ public class BurstCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 //		if (imagesTaken < imageAmount)
-//			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+//			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 //		else
 		if (imagesTaken == imageAmount)	
 		{
@@ -370,7 +370,7 @@ public class BurstCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			inCapture = false;
@@ -403,8 +403,8 @@ public class BurstCapturePlugin extends PluginCapture
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			// play tick sound
-			MainScreen.guiManager.showCaptureIndication();
-    		MainScreen.thiz.PlayShutter();
+			MainScreen.getGUIManager().showCaptureIndication();
+    		MainScreen.getInstance().PlayShutter();
     		
     		try
     		{
@@ -418,8 +418,8 @@ public class BurstCapturePlugin extends PluginCapture
 				Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);
-    			MainScreen.guiManager.lockControls = false;
+    			MainScreen.getMessageHandler().sendMessage(msg);
+    			MainScreen.getGUIManager().lockControls = false;
 			}
 				
     		return true;

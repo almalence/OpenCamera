@@ -91,7 +91,7 @@ public class HALv3
 	{
 		// HALv3 code ---------------------------------------------------------
 		// get manager for camera devices
-		HALv3.getInstance().manager = (CameraManager)MainScreen.mainContext.getSystemService("camera"); // = Context.CAMERA_SERVICE;
+		HALv3.getInstance().manager = (CameraManager)MainScreen.getMainContext().getSystemService("camera"); // = Context.CAMERA_SERVICE;
 		
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try {
@@ -174,7 +174,7 @@ public class HALv3
 		
 		// check that full hw level is supported
 		if (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) != CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) 
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_NOT_LEVEL_FULL);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_NOT_LEVEL_FULL);
 		
 		//Get sensor size for zoom and focus/metering areas.
 		activeRect = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
@@ -187,23 +187,21 @@ public class HALv3
 		Log.e(TAG, "setupImageReadersHALv3()");
 		//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
 		
-		MainScreen.thiz.surfaceHolder.setFixedSize(1280, 720);
+		MainScreen.getInstance().surfaceHolder.setFixedSize(1280, 720);
 		MainScreen.previewWidth = 1280;
 		MainScreen.previewHeight = 720;
 		
-		//MainScreen.thiz.surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
+		//MainScreen.getInstance().surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
 //		MainScreen.previewWidth = MainScreen.imageWidth;
 //		MainScreen.previewHeight = MainScreen.imageHeight;
 		
 		// HALv3 code -------------------------------------------------------------------
-		MainScreen.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 1);
-		MainScreen.mImageReaderPreviewYUV.setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
+		MainScreen.createImageReaders();
+		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
 		
-		MainScreen.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 1);
-		MainScreen.mImageReaderYUV.setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
+		MainScreen.getYUVImageReader().setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
 		
-		MainScreen.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 1);
-		MainScreen.mImageReaderJPEG.setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
+		MainScreen.getJPEGImageReader().setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(), null);
 	}
 	
 	
@@ -533,7 +531,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sSceneModePref, mode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(MainScreen.sSceneModePref, mode).commit();
 	}
 	
 	public static void setCameraWhiteBalanceHALv3(int mode)
@@ -551,7 +549,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sWBModePref, mode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(MainScreen.sWBModePref, mode).commit();
 	}
 	
 
@@ -572,7 +570,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, mode).commit();
 	}
 	
 	
@@ -591,7 +589,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sFlashModePref, mode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(MainScreen.sFlashModePref, mode).commit();
 	}
 	
 	public static void setCameraISOModeHALv3(int mode)
@@ -610,7 +608,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sISOPref, mode).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(MainScreen.sISOPref, mode).commit();
 	}
 	
 	
@@ -629,7 +627,7 @@ public class HALv3
 			}
 		}
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(MainScreen.sEvPref, iEV).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(MainScreen.sEvPref, iEV).commit();
 	}
 	
 	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
@@ -781,13 +779,13 @@ public class HALv3
 			if(format == CameraController.JPEG)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
-				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 	//						Log.e("CameraController", "captureImage 3.1");
 			}
 			else
 			{
 				Log.e("HALv3", "Capture " + nFrames + " YUV");
-				stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
 	//						Log.e("CameraController", "captureImage 3.2");
 			}
 	
@@ -848,13 +846,13 @@ public class HALv3
 			if(format == CameraController.JPEG)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
-				stillRequestBuilder.addTarget(MainScreen.mImageReaderJPEG.getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 	//						Log.e("CameraController", "captureImage 3.1");
 			}
 			else
 			{
 				Log.e("HALv3", "Capture " + nFrames + " YUVs");
-				stillRequestBuilder.addTarget(MainScreen.mImageReaderYUV.getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
 	//						Log.e("CameraController", "captureImage 3.2");
 			}
 	
@@ -1086,8 +1084,8 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
-		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.thiz.getCameraSurface());
-		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.thiz.getPreviewYUVSurface());
+		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().camDevice.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);		
 	}
 	
@@ -1156,7 +1154,7 @@ public class HALv3
 
 				HALv3.getInstance().camDevice = arg0;
 				
-				MainScreen.H.sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
+				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
 				//dumpCameraCharacteristics();
 			}
@@ -1228,7 +1226,7 @@ public class HALv3
 			{
 				if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 				{
-					int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+					int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 					try 
@@ -1303,7 +1301,7 @@ public class HALv3
 			{
 				if(HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 				{
-					int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+					int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 					HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 					try 

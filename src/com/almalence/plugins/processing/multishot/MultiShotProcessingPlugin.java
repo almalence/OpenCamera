@@ -101,14 +101,14 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	@Override
 	public void onGUICreate() {
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
 		
 		RotateImageView buttonObjectRemoval = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
 		RotateImageView buttonGroupShot = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonGroupShot);
 		RotateImageView buttonSequence = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonSequence);
 	
-		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.blockingLayout);
+		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.blockingLayout);
 				
 		buttonObjectRemoval.setOnClickListener(new OnClickListener() {
 			@Override
@@ -137,11 +137,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
 		
-		buttonObjectRemoval.setOrientation(MainScreen.guiManager.getLayoutOrientation());
-		buttonGroupShot.setOrientation(MainScreen.guiManager.getLayoutOrientation());
-		buttonSequence.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+		buttonObjectRemoval.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+		buttonGroupShot.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+		buttonSequence.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 	}
 	
 	@Override
@@ -161,7 +161,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	@Override
 	public void onStart() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance().getBaseContext());
 		mSaveInputPreference = prefs.getBoolean("saveInputPrefMultiShot", false);
 		
 		groupShotProcessingPlugin.onStart();
@@ -175,13 +175,13 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		
 		selectedPlugin = -1;
 		
-		MainScreen.thiz.runOnUiThread(new Runnable() {
+		MainScreen.getInstance().runOnUiThread(new Runnable() {
 		    public void run() {  
 		    	mButtonsLayout.setVisibility(View.VISIBLE);
-		    	MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.GONE);
+		    	MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.GONE);
 		    	Message msg = new Message();
 				msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-				MainScreen.H.sendMessage(msg);
+				MainScreen.getMessageHandler().sendMessage(msg);
 		    }
 		});
 		
@@ -195,9 +195,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		}
 		
-		MainScreen.thiz.runOnUiThread(new Runnable() {
+		MainScreen.getInstance().runOnUiThread(new Runnable() {
 		    public void run() {  
-		    	MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+		    	MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 		    }
 		});
 		        
@@ -246,13 +246,13 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		}
 		
-		int mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
+		int mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
 		
 		if (mSaveInputPreference) {
 			try {
 				File saveDir = PluginManager.getInstance().GetSaveDir(false);
 				
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
 				Calendar d = Calendar.getInstance();
 				String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
@@ -361,7 +361,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					
 					if (prefs.getBoolean("useGeoTaggingPrefExport", false))
 					{
-						Location l = MLocation.getLocation(MainScreen.mainContext);
+						Location l = MLocation.getLocation(MainScreen.getMainContext());
 						
 						if (l != null)
 						{	     
@@ -378,12 +378,12 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 						}
 					}
 					
-					MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+					MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 				}
 			}
 			catch(IOException e) {
 				e.printStackTrace();
-				MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 				return;
 			}
 			catch (Exception e)
@@ -459,12 +459,12 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		}
 		
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-    		MainScreen.thiz.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+    		MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
     		mButtonsLayout.setVisibility(View.GONE);
     		
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
     		selectedPlugin = CANCELLED;
-    		MainScreen.guiManager.lockControls = false;
+    		MainScreen.getGUIManager().lockControls = false;
 
     		return true;
 	    }
@@ -481,7 +481,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	@Override
 	public void onPause() {
 		if(mButtonsLayout != null) {
-			MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+			MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 		}
 
 		selectedPlugin = CANCELLED;
@@ -489,7 +489,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	@Override
 	public void onOrientationChanged(int orientation) {
-		((RotateLayout) MainScreen.thiz.findViewById(R.id.rotateLayout)).setAngle(orientation - 90);
-		MainScreen.thiz.findViewById(R.id.rotateLayout).requestLayout();
+		((RotateLayout) MainScreen.getInstance().findViewById(R.id.rotateLayout)).setAngle(orientation - 90);
+		MainScreen.getInstance().findViewById(R.id.rotateLayout).requestLayout();
 	}
 }

@@ -144,7 +144,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.capturing = false;
 		
-		this.sensorManager = (SensorManager)MainScreen.mainContext.getSystemService(Context.SENSOR_SERVICE);
+		this.sensorManager = (SensorManager)MainScreen.getMainContext().getSystemService(Context.SENSOR_SERVICE);
 		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -237,7 +237,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	{	
 		this.scanResolutions();
 		
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance());
 				
 		final String sizeKey = PREFERENCES_KEY_RESOLUTION + CameraController.getCameraIndex();
 		
@@ -299,9 +299,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void onCreate()
 	{
-		sMemoryPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaMemory);
-		sFrameOverlapPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaFrameOverlap);
-		sAELockPref = MainScreen.thiz.getResources().getString(R.string.Preference_PanoramaAELock);
+		sMemoryPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaMemory);
+		sFrameOverlapPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaFrameOverlap);
+		sAELockPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaAELock);
 
 		this.engine = new AugmentedPanoramaEngine();
 	}
@@ -309,17 +309,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void onResume()
 	{		
-		MainScreen.thiz.MuteShutter(false);
+		MainScreen.getInstance().MuteShutter(false);
 		
         final Message msg = new Message();
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 		
 		showGyroWarnOnce = false;
 		aewbLockedByPanorama = false;
 		this.getPrefs();
 		
-		MainScreen.captureYUVFrames = true;
+		MainScreen.setCaptureYUVFrames(true);
 	}
 	
 	@Override
@@ -358,7 +358,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 							Message message = new Message();
 							message.obj = String.valueOf(SessionID);
 							message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
-							MainScreen.H.sendMessage(message);
+							MainScreen.getMessageHandler().sendMessage(message);
 						}
 						
 						return true;
@@ -372,12 +372,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		
 		this.clearViews();
 		
-		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.Panorama_Help_Header),
-				MainScreen.thiz.getResources().getString(R.string.Panorama_Help),
+		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Panorama_Help_Header),
+				MainScreen.getInstance().getResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 	}
 	
@@ -631,24 +631,24 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		else if (command == PluginManager.MSG_BAD_FRAME)
 		{
 			Toast.makeText(
-					MainScreen.thiz,
-					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_badframe),
+					MainScreen.getInstance(),
+					MainScreen.getInstance().getResources().getString(R.string.plugin_capture_panoramaaugmented_badframe),
 					Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		else if (command == PluginManager.MSG_OUT_OF_MEMORY)
 		{
 			Toast.makeText(
-					MainScreen.thiz,
-					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_outofmemory),
+					MainScreen.getInstance(),
+					MainScreen.getInstance().getResources().getString(R.string.plugin_capture_panoramaaugmented_outofmemory),
 					Toast.LENGTH_LONG).show();
 			return true;
 		}
 		else if (command == PluginManager.MSG_NOTIFY_LIMIT_REACHED)
 		{
 			Toast.makeText(
-					MainScreen.thiz,
-					MainScreen.thiz.getResources().getString(R.string.plugin_capture_panoramaaugmented_stopcapture),
+					MainScreen.getInstance(),
+					MainScreen.getInstance().getResources().getString(R.string.plugin_capture_panoramaaugmented_stopcapture),
 					Toast.LENGTH_LONG).show();
 			return true;
 		}
@@ -658,7 +658,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void getPrefs()
     {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         
 		try
 		{
@@ -745,8 +745,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 													/ getFrameSizeInBytes(point.x, point.y));
 									
 									{
-										Toast.makeText(	MainScreen.thiz, String.format(
-												MainScreen.thiz.getString(
+										Toast.makeText(	MainScreen.getInstance(), String.format(
+												MainScreen.getInstance().getString(
 														R.string.pref_plugin_capture_panoramaaugmented_imageheight_warning),
 														frames_fit_count), Toast.LENGTH_SHORT).show();
 										
@@ -773,7 +773,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 					getPrefs();
 					if (!PanoramaAugmentedCapturePlugin.this.prefHardwareGyroscope && !((Boolean)newValue))
 					{					
-						final AlertDialog ad = new AlertDialog.Builder(MainScreen.thiz)
+						final AlertDialog ad = new AlertDialog.Builder(MainScreen.getInstance())
 		    			.setIcon(R.drawable.alert_dialog_icon)
 		    			.setTitle(R.string.pref_plugin_capture_panoramaaugmented_nogyro_dialog_title)
 		    			.setMessage(R.string.pref_plugin_capture_panoramaaugmented_nogyro_dialog_text)
@@ -926,7 +926,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	
 	private void checkCoordinatesRemapRequired()
 	{
-		final Display display = ((WindowManager)MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		final Display display = ((WindowManager)MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		// This is proved way of checking it so we better use deprecated methods.
         @SuppressWarnings("deprecation")
 		final int orientation = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;	
@@ -950,7 +950,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		this.engine.ViewportCreationTime();
 		
-		MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 	}
 	
 	@Override
@@ -973,7 +973,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
 					this.takingAlready = true;
-					MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 				}
 			}
 		}
@@ -1033,7 +1033,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				{					
 					this.takingAlready = true;
 					Log.e(TAG, "MSG_TAKE_PICTURE onPreviewAvailable");
-					MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 				}
 			}
 		}
@@ -1075,7 +1075,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				lock = false;
 				break;
 			case 1:
-				if(MainScreen.guiManager.getDisplayOrientation() == 90 || MainScreen.guiManager.getDisplayOrientation() == 180 )
+				if(MainScreen.getGUIManager().getDisplayOrientation() == 90 || MainScreen.getGUIManager().getDisplayOrientation() == 180 )
 					lock = true;
 				break;
 			case 2:
@@ -1146,7 +1146,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			takingAlready = false;
 			capturing = false;
@@ -1193,21 +1193,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		else if (done)
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NOTIFY_LIMIT_REACHED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessageDelayed(msg, 300);
+			MainScreen.getMessageHandler().sendMessageDelayed(msg, 300);
 		}
 		
 		if (!goodPlace)
@@ -1215,7 +1215,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_BAD_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		
 		if (done || oom)
@@ -1223,7 +1223,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 	}
 	
@@ -1254,21 +1254,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		else if (done)
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NOTIFY_LIMIT_REACHED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 
 		{
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessageDelayed(msg, 300);
+			MainScreen.getMessageHandler().sendMessageDelayed(msg, 300);
 		}
 		
 		if (!goodPlace)
@@ -1276,7 +1276,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_BAD_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		
 		if (done || oom)
@@ -1284,7 +1284,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			final Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 	}
 	
@@ -1316,7 +1316,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		if (frames.size() > 0)
 		{
-			PluginManager.getInstance().addToSharedMem("frameorientation" + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+			PluginManager.getInstance().addToSharedMem("frameorientation" + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("pano_mirror" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("pano_width"+String.valueOf(SessionID), String.valueOf(this.pictureHeight));
 			PluginManager.getInstance().addToSharedMem("pano_height"+String.valueOf(SessionID), String.valueOf(this.pictureWidth));
@@ -1405,7 +1405,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 		}
 	}	

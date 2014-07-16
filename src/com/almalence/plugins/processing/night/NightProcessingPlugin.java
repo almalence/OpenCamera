@@ -210,7 +210,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	private void getPrefs()
     {
         // Get the xml/preferences.xml preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance().getBaseContext());
         NoisePreference = prefs.getString("noisePrefNight", "0");
         GhostPreference = prefs.getString("ghostPrefNight", "1");
         SaturatedColors = prefs.getBoolean("keepcolorsPref", true);

@@ -154,7 +154,7 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onCreate()
 	{		
-		View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_vf_focus_layout, null);		
+		View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_vf_focus_layout, null);		
 		focusLayout = (RelativeLayout)v.findViewById(R.id.focus_layout);
 		
 		RelativeLayout.LayoutParams viewLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
@@ -168,7 +168,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		resetTouchFocus();
 		
 		
-		mPreferences = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		mPreferences = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		mDefaultFocusMode = CameraParameters.AF_MODE_AUTO;
 	}
     
@@ -191,18 +191,18 @@ public class FocusVFPlugin extends PluginViewfinder
 		
 		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 		
-		MainScreen.guiManager.removeViews(focusLayout, R.id.specialPluginsLayout);
+		MainScreen.getGUIManager().removeViews(focusLayout, R.id.specialPluginsLayout);
 	}
 	
     @Override
 	public void onGUICreate()
 	{
-    	MainScreen.guiManager.removeViews(focusLayout, R.id.specialPluginsLayout);
+    	MainScreen.getGUIManager().removeViews(focusLayout, R.id.specialPluginsLayout);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);		
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.focusLayout, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(this.focusLayout, params);
 		
 		this.focusLayout.setLayoutParams(params);
 		this.focusLayout.requestLayout();
@@ -218,7 +218,7 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onPause()
 	{
-    	PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+    	PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		releaseSoundPlayer();
 		removeMessages();		
 	}	
@@ -226,21 +226,21 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onCameraParametersSetup()
 	{
-    	preferenceFocusMode = CameraController.getInstance().getFocusMode();//PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("FocusModeValue", Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+    	preferenceFocusMode = CameraController.getInstance().getFocusMode();//PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString("FocusModeValue", Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
     	initializeParameters();		
 		
 		initialize(CameraController.isFrontCamera(), 90);
-        initializeSoundPlayers(MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok),
-        					  MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_vf_focus_false));
+        initializeSoundPlayers(MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok),
+        					  MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_vf_focus_false));
         
         cancelAutoFocus();
         
      // Set the length of focus indicator according to preview frame size.
         int len = Math.min(mPreviewWidth, mPreviewHeight) / 25;
         ViewGroup.LayoutParams layout = mFocusIndicator.getLayoutParams();
-        layout.width = (int) (len * MainScreen.thiz.getResources().getInteger(R.integer.focusIndicator_cropFactor));
-        layout.height = (int) (len * MainScreen.thiz.getResources().getInteger(R.integer.focusIndicator_cropFactor));
+        layout.width = (int) (len * MainScreen.getInstance().getResources().getInteger(R.integer.focusIndicator_cropFactor));
+        layout.height = (int) (len * MainScreen.getInstance().getResources().getInteger(R.integer.focusIndicator_cropFactor));
         mFocusIndicator.requestLayout();
 	}
 
@@ -263,8 +263,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
     public void initialize(boolean mirror, int displayOrientation)
     {        
-        mPreviewWidth = MainScreen.thiz.getPreviewWidth();
-        mPreviewHeight = MainScreen.thiz.getPreviewHeight();
+        mPreviewWidth = MainScreen.getInstance().getPreviewWidth();
+        mPreviewHeight = MainScreen.getInstance().getPreviewHeight();
         
         Matrix matrix = new Matrix();
         Util.prepareMatrix(matrix, mirror, 90,
@@ -314,7 +314,7 @@ public class FocusVFPlugin extends PluginViewfinder
         		CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
             }
             else if(mState == STATE_FAIL)
-            	MainScreen.guiManager.lockControls = false;
+            	MainScreen.getGUIManager().lockControls = false;
         }
     }
     
@@ -354,7 +354,7 @@ public class FocusVFPlugin extends PluginViewfinder
             else
             {
                 mState = STATE_FAIL;
-                MainScreen.guiManager.lockControls = false;
+                MainScreen.getGUIManager().lockControls = false;
             }
             updateFocusUI();            
         }
@@ -382,7 +382,7 @@ public class FocusVFPlugin extends PluginViewfinder
                 //With enabled preference 'Shot on tap' perform shutter button click after success focusing.
                 String modeID = PluginManager.getInstance().getActiveMode().modeID;
                 if(MainScreen.ShotOnTapPreference && !modeID.equals("video"))
-                	MainScreen.guiManager.onHardwareShutterButtonPressed();
+                	MainScreen.getGUIManager().onHardwareShutterButtonPressed();
             }
             else
             {
@@ -480,7 +480,7 @@ public class FocusVFPlugin extends PluginViewfinder
         int focusHeight = mFocusIndicatorRotateLayout.getHeight();
         int previewWidth = mPreviewWidth;
         int previewHeight = mPreviewHeight;
-        int displayWidth = MainScreen.thiz.getResources().getDisplayMetrics().widthPixels;
+        int displayWidth = MainScreen.getInstance().getResources().getDisplayMetrics().widthPixels;
         int diffWidth = displayWidth - previewWidth;        
         
         int paramsLayoutHeight = 0;
@@ -498,10 +498,10 @@ public class FocusVFPlugin extends PluginViewfinder
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
-        calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
+        calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getInstance().preview.getWidth(), MainScreen.getInstance().preview.getHeight(),
                 mFocusArea.get(0).rect);
         if(MainScreen.currentMeteringMode != -1 && MainScreen.currentMeteringMode == CameraParameters.meteringModeSpot)
-        	calculateTapArea(20, 20, 1f, x, y, MainScreen.thiz.preview.getWidth(), MainScreen.thiz.preview.getHeight(),
+        	calculateTapArea(20, 20, 1f, x, y, MainScreen.getInstance().preview.getWidth(), MainScreen.getInstance().preview.getHeight(),
                     mMeteringArea.get(0).rect);
         else
         	mMeteringArea = null;
@@ -527,7 +527,7 @@ public class FocusVFPlugin extends PluginViewfinder
             setFocusParameters();
             autoFocus();
         } else if(e.getAction() == MotionEvent.ACTION_UP && MainScreen.ShotOnTapPreference && !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
-            	MainScreen.guiManager.onHardwareShutterButtonPressed();        
+            	MainScreen.getGUIManager().onHardwareShutterButtonPressed();        
         else {  // Just show the indicator in all other cases.
             updateFocusUI();
             // Reset the metering area in 3 seconds.
@@ -577,8 +577,8 @@ public class FocusVFPlugin extends PluginViewfinder
         {
         	if(fm == CameraParameters.AF_MODE_INFINITY)
         	{
-        		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("defaultModeName", null);
-        		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+        		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString("defaultModeName", null);
+        		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("videorecording", false);
     			if(!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording
     			   && (Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
     	    				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -607,8 +607,8 @@ public class FocusVFPlugin extends PluginViewfinder
  
     public void initializeSoundPlayers(AssetFileDescriptor fd_ok, AssetFileDescriptor fd_false)
     {
-        mSoundPlayerOK = new SoundPlayer(MainScreen.mainContext, fd_ok);
-        mSoundPlayerFalse = new SoundPlayer(MainScreen.mainContext, fd_false);
+        mSoundPlayerOK = new SoundPlayer(MainScreen.getMainContext(), fd_ok);
+        mSoundPlayerFalse = new SoundPlayer(MainScreen.getMainContext(), fd_false);
     }
 
     public void releaseSoundPlayer()
@@ -717,8 +717,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		    focusMode == CameraParameters.AF_MODE_MACRO) &&
 		    mFocusAreaSupported)
     	{
-    		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getString("defaultModeName", null);
-    		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("videorecording", false);
+    		String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString("defaultModeName", null);
+    		boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("videorecording", false);
 			if(!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording
 			   && (Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
 	    				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
@@ -810,7 +810,7 @@ public class FocusVFPlugin extends PluginViewfinder
     private boolean needAutoFocusCall()
     {
         int focusMode = getFocusMode();
-        boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("UseFocus", true);
+        boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("UseFocus", true);
         return !(focusMode == CameraParameters.AF_MODE_INFINITY
                 || focusMode == CameraParameters.AF_MODE_FIXED
                 || focusMode == CameraParameters.AF_MODE_EDOF		// FixMe: EDOF likely needs auto-focus call 
@@ -820,7 +820,7 @@ public class FocusVFPlugin extends PluginViewfinder
     
     private boolean focusOnShutterDisabled()
     {
-    	return PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).getBoolean("ContinuousCapturing", false);
+    	return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("ContinuousCapturing", false);
     }
     
     public boolean onBroadcast(int arg1, int arg2)

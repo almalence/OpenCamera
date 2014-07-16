@@ -778,7 +778,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			Message msg = new Message();
 			msg.what = PluginManager.MSG_CAMERA_READY;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 			
 //			appInterface.configureCamera();
 		}
@@ -1973,7 +1973,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_BROADCAST;
 		msg.arg1 = PluginManager.MSG_FOCUS_STATE_CHANGED;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	public static int getFocusState()

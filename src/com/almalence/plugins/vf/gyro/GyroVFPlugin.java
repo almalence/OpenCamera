@@ -81,7 +81,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 			  R.drawable.almalence_plugin_vf_level_on,
 			  "Gyrovertical");
 		
-		mSensorManager = (SensorManager) MainScreen.thiz.getSystemService(Context.SENSOR_SERVICE);
+		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -143,7 +143,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	}
 
 	private void checkCoordinatesRemapRequired() {
-		final Display display = ((WindowManager)MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		final Display display = ((WindowManager)MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		// This is proved way of checking it so we better use deprecated methods.
         @SuppressWarnings("deprecation")
 		final int orientation = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;	
@@ -161,7 +161,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	
 	void updatePreferences() {
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		mGyroState = prefs.getBoolean("PrefGyroVF", false);
 		mPrefHardwareGyroscope = prefs.getBoolean("PrefGyroTypeVF", true);
 		
@@ -202,7 +202,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	@Override
 	public void onQuickControlClick() {
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor editor = prefs.edit();
 		
 		if (mGyroState == ON) {
@@ -279,7 +279,7 @@ public class GyroVFPlugin extends PluginViewfinder {
 	
 	private AtomicBoolean horizon_updating = new AtomicBoolean(false);
 	public void updateHorizonIndicator(float verticalError, float horizontalError, final float sideErrorVertical, final float sideErrorHorizontal) {
-		if (MainScreen.guiManager.lockControls) {
+		if (MainScreen.getGUIManager().lockControls) {
 			mHorizonIndicatorContainer.setVisibility(View.GONE);
 			return;
 		}
@@ -328,8 +328,8 @@ public class GyroVFPlugin extends PluginViewfinder {
 				}
 			}
 			
-			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
-			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
+			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.getInstance().getResources().getDisplayMetrics().density);
+			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.getInstance().getResources().getDisplayMetrics().density);
 
 			int color = (255 - (marginVerticalValue + marginHorizontalValue) * 4);
 			if (color > 50) {
@@ -364,8 +364,8 @@ public class GyroVFPlugin extends PluginViewfinder {
 			mHorizonIndicatorMarkTopDown.setVisibility(View.GONE);
 			mHorizonIndicatorAim.setVisibility(View.VISIBLE);
 			mHorizonIndicatorAimTopDown.setVisibility(View.GONE);
-			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
-			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.thiz.getResources().getDisplayMetrics().density);
+			final int marginVerticalValue = (int)(300.0f * Math.abs(verticalError) * MainScreen.getInstance().getResources().getDisplayMetrics().density);
+			final int marginHorizontalValue = (int)(300.0f * Math.abs(horizontalError) * MainScreen.getInstance().getResources().getDisplayMetrics().density);
 
 			rotateHorizonIndicator(sideErrorVertical, sideErrorHorizontal);
 				
@@ -430,16 +430,16 @@ public class GyroVFPlugin extends PluginViewfinder {
 	} 
 	
 	private void createGyroUI() {
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		mHorizonLayout = inflator.inflate(R.layout.plugin_vf_gyro_layout, null, false);
 		mHorizonLayout.setVisibility(View.VISIBLE);
 		
-		MainScreen.guiManager.removeViews(mHorizonLayout, R.id.specialPluginsLayout);
+		MainScreen.getGUIManager().removeViews(mHorizonLayout, R.id.specialPluginsLayout);
 				
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout, params);
 		mHorizonLayout.requestLayout();
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 		
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim_top_down);

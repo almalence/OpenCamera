@@ -186,27 +186,27 @@ public class AppRater
 	
 	private static void contactSupport()
 	{
-		final float density = MainScreen.thiz.getResources().getDisplayMetrics().density;
+		final float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
 
-		LinearLayout ll = new LinearLayout(MainScreen.thiz);
+		LinearLayout ll = new LinearLayout(MainScreen.getInstance());
 		ll.setOrientation(LinearLayout.VERTICAL);
 		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
 		
-		TextView tv = new TextView(MainScreen.thiz);
-		tv.setText(MainScreen.thiz.getResources().getString(R.string.raterSendReview));
+		TextView tv = new TextView(MainScreen.getInstance());
+		tv.setText(MainScreen.getInstance().getResources().getString(R.string.raterSendReview));
 		tv.setWidth((int)(250 * density));
 		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
 		ll.addView(tv);
 
-		Button b1 = new Button(MainScreen.thiz);
-		b1.setText(MainScreen.thiz.getResources().getString(R.string.raterSend));
+		Button b1 = new Button(MainScreen.getInstance());
+		b1.setText(MainScreen.getInstance().getResources().getString(R.string.raterSend));
 		ll.addView(b1);
 
-		Button b2 = new Button(MainScreen.thiz);
-		b2.setText(MainScreen.thiz.getResources().getString(R.string.raterNo));
+		Button b2 = new Button(MainScreen.getInstance());
+		b2.setText(MainScreen.getInstance().getResources().getString(R.string.raterNo));
 		ll.addView(b2);
 		
-		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.thiz);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
 		dialog.setOnCancelListener(new OnCancelListener()
@@ -214,7 +214,7 @@ public class AppRater
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				MainScreen.thiz.finish();
+				MainScreen.getInstance().finish();
 			}
 		});
 		
@@ -227,9 +227,9 @@ public class AppRater
 				intent.putExtra(Intent.EXTRA_SUBJECT, "A Better Camera inapp review");
 				intent.setData(Uri.parse("mailto:support@abc.almalence.com"));
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				MainScreen.thiz.startActivity(intent);
+				MainScreen.getInstance().startActivity(intent);
 				dialog.dismiss();
-				MainScreen.thiz.finish();
+				MainScreen.getInstance().finish();
 			}
 		});
 		b2.setOnClickListener(new OnClickListener()
@@ -237,7 +237,7 @@ public class AppRater
 			public void onClick(View v)
 			{
 				dialog.dismiss();
-				MainScreen.thiz.finish();
+				MainScreen.getInstance().finish();
 			}
 		});
 		dialog.show();

@@ -220,7 +220,7 @@ public class RotateImageView extends ImageView
             } 
             else 
             {
-                setColorFilter(MainScreen.mainContext.getResources().getColor(R.color.buttonDisabled));
+                setColorFilter(MainScreen.getMainContext().getResources().getColor(R.color.buttonDisabled));
             }
         }
     }

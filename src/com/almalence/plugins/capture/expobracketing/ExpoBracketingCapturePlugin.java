@@ -110,11 +110,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sEvPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingPref);
-		sRefocusPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
-		sUseLumaPref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
+		sEvPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingPref);
+		sRefocusPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
+		sUseLumaPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
 		
-		sExpoPreviewModePref = MainScreen.thiz.getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
+		sExpoPreviewModePref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 	}
 	
 	@Override
@@ -131,9 +131,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         evRequested = 0;
         evLatency=0;
         
-        MainScreen.thiz.MuteShutter(false);
+        MainScreen.getInstance().MuteShutter(false);
         
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
         preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
         
@@ -149,15 +149,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         cdt = null;
         
         if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-        	MainScreen.captureYUVFrames = true;
+        	MainScreen.setCaptureYUVFrames(true);
         else
-        	MainScreen.captureYUVFrames = false;
+        	MainScreen.setCaptureYUVFrames(false);
 }
 	
 	@Override
 	public void onPause()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
         prefs.edit().putInt("SceneModeValue", preferenceSceneMode).commit();
 	}
@@ -165,15 +165,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false);
-		MainScreen.thiz.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);		
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);		
 	}
 	
 	@Override
 	public void setupCameraParameters()
 	{
 		CameraController.getInstance().resetExposureCompensation();
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext).edit().putInt("EvCompensationValue", 0).commit();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putInt("EvCompensationValue", 0).commit();
 	}
 
 	public boolean delayedCaptureSupported(){return true;}
@@ -181,7 +181,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void setCameraPictureSize()
 	{
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
     	int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
     	
 		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
@@ -222,7 +222,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	private void startCaptureSequence()
 	{
-		MainScreen.thiz.MuteShutter(true);
+		MainScreen.getInstance().MuteShutter(true);
     	
         if (!inCapture)
         {
@@ -260,9 +260,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     			Message msg = new Message();
     			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     			msg.what = PluginManager.MSG_BROADCAST;
-    			MainScreen.H.sendMessage(msg);
+    			MainScreen.getMessageHandler().sendMessage(msg);
     			
-    			MainScreen.guiManager.lockControls = false;
+    			MainScreen.getGUIManager().lockControls = false;
     		}
         }
 	}
@@ -302,7 +302,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 						Message msg = new Message();
 						msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
 						msg.what = PluginManager.MSG_BROADCAST;
-						MainScreen.H.sendMessage(msg);
+						MainScreen.getMessageHandler().sendMessage(msg);
 					}
 				}.start();
 	    	}
@@ -336,7 +336,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					Message msg = new Message();
 					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
+					MainScreen.getMessageHandler().sendMessage(msg);
 				}
             }
             else
@@ -353,7 +353,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             	Message message = new Message();
             	message.obj = String.valueOf(SessionID);
     			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-    			MainScreen.H.sendMessage(message);
+    			MainScreen.getMessageHandler().sendMessage(message);
     			
             	CameraController.getInstance().resetExposureCompensation();
             }
@@ -378,8 +378,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    		Log.i("ExpoBracketing", "setExpo fail before takePicture");
 	    	}
 
-	    	MainScreen.guiManager.showCaptureIndication();
-	    	MainScreen.thiz.PlayShutter();
+	    	MainScreen.getGUIManager().showCaptureIndication();
+	    	MainScreen.getInstance().PlayShutter();
 	    	
 	    	try
 	    	{
@@ -404,7 +404,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
             	Message message = new Message();
             	message.obj = String.valueOf(SessionID);
     			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-    			MainScreen.H.sendMessage(message);
+    			MainScreen.getMessageHandler().sendMessage(message);
     			
             	CameraController.getInstance().resetExposureCompensation();
 			}
@@ -430,7 +430,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
     	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[n]));
     	
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
     	
@@ -459,7 +459,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	Message message = new Message();
         	message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
         	CameraController.getInstance().resetExposureCompensation();
 			return;
@@ -468,7 +468,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 		
 		//if preview not working
 		if (previewMode==false)
@@ -484,7 +484,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				{
 					Log.e("ExpoBracketing", "previewMode DISABLED!");
 					previewMode=false;
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					Editor prefsEditor = prefs.edit();
 					prefsEditor.putBoolean(sExpoPreviewModePref, false);
 					prefsEditor.commit();
@@ -492,7 +492,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					Message msg = new Message();
 					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
 					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.H.sendMessage(msg);
+					MainScreen.getMessageHandler().sendMessage(msg);
 				}
 			}
 		};
@@ -571,7 +571,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	
     	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
     	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[n]));
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+(n+1)+String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+(n+1)+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored"+(n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
     	Log.e("ExpoBracketing", "amountofcapturedframes = " + (n+1));
@@ -597,7 +597,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	Message message = new Message();
         	message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
         	CameraController.getInstance().resetExposureCompensation();
 			return;
@@ -617,7 +617,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         	Message message = new Message();
         	message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
         	CameraController.getInstance().resetExposureCompensation();
         }
@@ -637,7 +637,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 	private void getPrefs()
     {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
         RefocusPreference = prefs.getBoolean(sRefocusPref, false);
         UseLumaAdaptation = prefs.getBoolean(sUseLumaPref, false);
@@ -819,7 +819,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_SET_EXPOSURE;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
     }
 
 	public void onAutoFocus(boolean paramBoolean)
@@ -856,7 +856,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);					
+				MainScreen.getMessageHandler().sendMessage(msg);					
 			}
 			return;
 		}
@@ -879,7 +879,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);					
+				MainScreen.getMessageHandler().sendMessage(msg);					
 			}
 			return;
 		}

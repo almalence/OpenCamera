@@ -78,7 +78,7 @@ public class ImageConversion
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		
-		Display display = ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
     	int mDisplayWidth = display.getHeight();
     	int mDisplayHeight = display.getWidth();
 

@@ -76,7 +76,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		Log.e(TAG, "onStartProcessing");
 		
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(
-				MainScreen.thiz).getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
+				MainScreen.getInstance()).getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 		
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
@@ -178,7 +178,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	{
 		File saveDir = PluginManager.getInstance().GetSaveDir(false);
 		
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
         final Calendar d = Calendar.getInstance();
         String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",

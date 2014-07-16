@@ -383,7 +383,7 @@ public class PluginManager implements PluginManagerInterface {
 		Mode mode = getMode();
 
 		//when old mode removed for example
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (mode == null)
 		{
 			// set default mode - get this val from mode.xml and later control
@@ -423,7 +423,7 @@ public class PluginManager implements PluginManagerInterface {
 		Mode mode = null;
 
 		// checks preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (true == prefs.contains(MainScreen.sDefaultModeName))
 		{
 			String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
@@ -459,24 +459,24 @@ public class PluginManager implements PluginManagerInterface {
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
 
-		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.thiz, R.anim.plugin_capture_selftimer_countdown);
+		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.getInstance(), R.anim.plugin_capture_selftimer_countdown);
 		countdownAnimation.setFillAfter(true);
 
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
 		countdownLayout = (RelativeLayout)inflator.inflate(R.layout.plugin_capture_selftimer_layout, null, false);
 		countdownView = (TextView)countdownLayout.findViewById(R.id.countdown_text);
 	}
 
 	private void restartMainScreen() {
 		// disable old plugins
-		MainScreen.guiManager.onStop();
-		MainScreen.thiz.PauseMain();
+		MainScreen.getGUIManager().onStop();
+		MainScreen.getInstance().PauseMain();
 		onStop();
 
 		// create correct workflow for plugins
 		onCreate();
 		onStart();
-		MainScreen.thiz.ResumeMain();
+		MainScreen.getInstance().ResumeMain();
 
 		countdownView.clearAnimation();
         countdownLayout.setVisibility(View.GONE);
@@ -485,7 +485,7 @@ public class PluginManager implements PluginManagerInterface {
 	// parse config to get camera and modes configurations
 	void ParseConfig() {
 		try {
-			ConfigParser.getInstance().parse(MainScreen.mainContext);
+			ConfigParser.getInstance().parse(MainScreen.getMainContext());
 		} catch (XmlPullParserException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -495,8 +495,8 @@ public class PluginManager implements PluginManagerInterface {
 
 	public void switchMode(Mode mode) {
 		// disable old plugins
-		MainScreen.guiManager.onStop();
-		MainScreen.thiz.PauseMain();
+		MainScreen.getGUIManager().onStop();
+		MainScreen.getInstance().PauseMain();
 		onStop();
 		onDestroy();
 
@@ -513,14 +513,14 @@ public class PluginManager implements PluginManagerInterface {
 
 		// set mode as default for future starts
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
 		prefsEditor.commit();
 
 		onCreate();
 		onStart();
-		MainScreen.thiz.ResumeMain();
+		MainScreen.getInstance().ResumeMain();
 	}
 
 	public List<Plugin> getActivePlugins(PluginType type) {
@@ -640,9 +640,9 @@ public class PluginManager implements PluginManagerInterface {
 
 	public void menuButtonPressed() {
 		onShowPreferences();
-		Intent settingsActivity = new Intent(MainScreen.mainContext,
+		Intent settingsActivity = new Intent(MainScreen.getMainContext(),
 				Preferences.class);
-		MainScreen.thiz.startActivity(settingsActivity);
+		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 
 	// Called before preferences activity started
@@ -673,13 +673,13 @@ public class PluginManager implements PluginManagerInterface {
 
 		isRestarting = true;
 
-		MainScreen.guiManager.removeViews(countdownLayout, R.id.specialPluginsLayout);
+		MainScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);		
 
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);		
 
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(this.countdownLayout, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(this.countdownLayout, params);
 
 		this.countdownLayout.setLayoutParams(params);
 		this.countdownLayout.requestLayout();
@@ -690,16 +690,16 @@ public class PluginManager implements PluginManagerInterface {
 	{
 		//<!-- -+-
 		// check if plugin payed
-		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
+		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
 		{
-			MainScreen.guiManager.lockControls = false;
+			MainScreen.getGUIManager().lockControls = false;
 			return;
 		}
 		//-+- -->
 		if (!shutterRelease)
 			return;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		delayedCaptureFlashPrefCommon = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
 		delayedCaptureSoundPrefCommon = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
@@ -708,7 +708,7 @@ public class PluginManager implements PluginManagerInterface {
 		{	
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
-			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+			if (null != pluginList.get(activeCapture) && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
 		}
 		else
@@ -722,9 +722,9 @@ public class PluginManager implements PluginManagerInterface {
 	{
 		//<!-- -+-
 		// check if plugin payed
-		if (!MainScreen.thiz.checkLaunches(getActiveMode()))
+		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
 		{
-			MainScreen.guiManager.lockControls = false;
+			MainScreen.getGUIManager().lockControls = false;
 			return;
 		}
 		//-+- -->
@@ -784,7 +784,7 @@ public class PluginManager implements PluginManagerInterface {
 		else if ("general_more".equals(settings)) 
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_more);
-			MainScreen.thiz.onAdvancePreferenceCreate(pf);
+			MainScreen.getInstance().onAdvancePreferenceCreate(pf);
 		}
 		else if ("vf_settings".equals(settings)) 
 		{
@@ -1051,7 +1051,7 @@ public class PluginManager implements PluginManagerInterface {
 				}
 	
 				public void onFinish() {
-					MainScreen.guiManager.showStore();
+					MainScreen.getGUIManager().showStore();
 				}
 			}.start();
 			//-+- -->
@@ -1093,7 +1093,7 @@ public class PluginManager implements PluginManagerInterface {
 			String settings) {
 		if ("general_settings".equals(settings)) {
 			pf.addPreferencesFromResource(R.xml.preferences);
-			MainScreen.thiz.onPreferenceCreate(pf);
+			MainScreen.getInstance().onPreferenceCreate(pf);
 		}
 	}
 
@@ -1257,7 +1257,7 @@ public class PluginManager implements PluginManagerInterface {
 	
 	public void onPreviewAvailable(Image im) {
 		if (isRestarting) {
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
 					.findViewById(R.id.mainLayout1);
 			pluginsLayout.requestLayout();
 			isRestarting = false;
@@ -1274,7 +1274,7 @@ public class PluginManager implements PluginManagerInterface {
 	public void onPreviewFrame(byte[] data, Camera paramCamera) {
 		// prevents plugin's views to disappear
 		if (isRestarting) {
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
 					.findViewById(R.id.mainLayout1);
 			pluginsLayout.requestLayout();
 			isRestarting = false;
@@ -1417,35 +1417,35 @@ public class PluginManager implements PluginManagerInterface {
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
-			MainScreen.guiManager.onCaptureFinished();
-			MainScreen.guiManager.startProcessingAnimation();
+			MainScreen.getGUIManager().onCaptureFinished();
+			MainScreen.getGUIManager().startProcessingAnimation();
 
-			int id = MainScreen.thiz.getResources().getIdentifier(getActiveMode().modeName,
-					"string", MainScreen.thiz.getPackageName());
-			String modeName = MainScreen.thiz.getResources().getString(id);
+			int id = MainScreen.getInstance().getResources().getIdentifier(getActiveMode().modeName,
+					"string", MainScreen.getInstance().getPackageName());
+			String modeName = MainScreen.getInstance().getResources().getString(id);
 			PluginManager.getInstance().addToSharedMem("mode_name"+(String)msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
-			ProcessingTask task = new ProcessingTask(MainScreen.thiz);
+			ProcessingTask task = new ProcessingTask(MainScreen.getInstance());
 			task.SessionID = Long.valueOf((String)msg.obj);
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 
 			// <!-- -+-
 			//if mode free
 			Mode mode = getActiveMode();
 	    	if (mode.SKU != null)
 	    		if (!mode.SKU.isEmpty())
-	    			MainScreen.thiz.decrementLeftLaunches(mode.modeID);
+	    			MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	    	//-+- -->
 
-	    	MainScreen.guiManager.lockControls = false;
+	    	MainScreen.getGUIManager().lockControls = false;
 			Message message = new Message();
 			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
@@ -1454,18 +1454,18 @@ public class PluginManager implements PluginManagerInterface {
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
-			MainScreen.guiManager.onCaptureFinished();
-			MainScreen.guiManager.startProcessingAnimation();
+			MainScreen.getGUIManager().onCaptureFinished();
+			MainScreen.getGUIManager().startProcessingAnimation();
 
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 
-	    	MainScreen.guiManager.lockControls = false;
+	    	MainScreen.getGUIManager().lockControls = false;
 			Message messageNoResult = new Message();
 			messageNoResult.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			messageNoResult.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(messageNoResult);
+			MainScreen.getMessageHandler().sendMessage(messageNoResult);
 			
-			MainScreen.guiManager.onExportFinished();
+			MainScreen.getGUIManager().onExportFinished();
 
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
@@ -1475,14 +1475,14 @@ public class PluginManager implements PluginManagerInterface {
 		case MSG_START_POSTPROCESSING:
 			if (null != pluginList.get(activeProcessing))
 			{
-				MainScreen.guiManager.lockControls = true;
+				MainScreen.getGUIManager().lockControls = true;
 				Message message2 = new Message();
 				message2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 				message2.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(message2);
+				MainScreen.getMessageHandler().sendMessage(message2);
 
 				pluginList.get(activeProcessing).onStartPostProcessing();
-				MainScreen.guiManager.onPostProcessingStarted();
+				MainScreen.getGUIManager().onPostProcessingStarted();
 			}
 			break;
 
@@ -1497,17 +1497,17 @@ public class PluginManager implements PluginManagerInterface {
 				sessionID = Long.parseLong(PluginManager.getInstance().getFromSharedMem("sessionID"));
 
 			// notify GUI about saved images			
-			MainScreen.guiManager.lockControls = false;
+			MainScreen.getGUIManager().lockControls = false;
 			Message message3 = new Message();
 			message3.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message3.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(message3);
+			MainScreen.getMessageHandler().sendMessage(message3);
 
-			MainScreen.guiManager.onPostProcessingFinished();
+			MainScreen.getGUIManager().onPostProcessingFinished();
 			if (null != pluginList.get(activeExport) && 0 != sessionID)
 				pluginList.get(activeExport).onExportActive(sessionID);
 			else
-				MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
 
 			clearSharedMemory(sessionID);
 			break;
@@ -1520,7 +1520,7 @@ public class PluginManager implements PluginManagerInterface {
 				pluginList.get(activeProcessing).freeMemory();
 
 			// notify GUI about saved images
-			MainScreen.guiManager.onExportFinished();
+			MainScreen.getGUIManager().onExportFinished();
 
 			// notify capture plugins that saving finished
 			if (null != pluginList.get(activeCapture))
@@ -1528,12 +1528,12 @@ public class PluginManager implements PluginManagerInterface {
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
 
-			if (MainScreen.thiz.getIntent().getAction() != null)
+			if (MainScreen.getInstance().getIntent().getAction() != null)
 	        {
-		    	if (MainScreen.thiz.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
-		    			&& MainScreen.ForceFilename == null)
+		    	if (MainScreen.getInstance().getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+		    			&& MainScreen.getForceFilename() == null)
 		    	{
-		    		MainScreen.thiz.H.sendEmptyMessage(MSG_RETURN_CAPTURED);
+		    		MainScreen.getMessageHandler().sendEmptyMessage(MSG_RETURN_CAPTURED);
 		    	}
 	        }
 			break;
@@ -1547,7 +1547,7 @@ public class PluginManager implements PluginManagerInterface {
 					pluginList.get(activeProcessing).freeMemory();
 
 				// notify GUI about saved images
-				MainScreen.guiManager.onExportFinished();
+				MainScreen.getGUIManager().onExportFinished();
 
 				// notify capture plugins that saving finished
 				if (null != pluginList.get(activeCapture))
@@ -1555,19 +1555,19 @@ public class PluginManager implements PluginManagerInterface {
 				for (int i = 0; i < activeVF.size(); i++)
 					pluginList.get(activeVF.get(i)).onExportFinished();
 
-				Toast.makeText(MainScreen.mainContext, "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
+				Toast.makeText(MainScreen.getMainContext(), "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
 				break;
 
 		case MSG_DELAYED_CAPTURE: 
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
-			if (null != pluginList.get(activeCapture) && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+			if (null != pluginList.get(activeCapture) && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
 			break;
 
 		case MSG_RETURN_CAPTURED:
-			MainScreen.thiz.setResult(Activity.RESULT_OK);
-			MainScreen.thiz.finish();
+			MainScreen.getInstance().setResult(Activity.RESULT_OK);
+			MainScreen.getInstance().finish();
 			break;
 
 		case MSG_START_FULLSIZE_PROCESSING:
@@ -1579,27 +1579,27 @@ public class PluginManager implements PluginManagerInterface {
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW:
-			MainScreen.thiz.showOpenGLLayer(1);
+			MainScreen.getInstance().showOpenGLLayer(1);
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW_V2:
-			MainScreen.thiz.showOpenGLLayer(2);
+			MainScreen.getInstance().showOpenGLLayer(2);
 			break;
 
 		case MSG_OPENGL_LAYER_HIDE:
-			MainScreen.thiz.hideOpenGLLayer();
+			MainScreen.getInstance().hideOpenGLLayer();
 			break;
 
 		case MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS:
-			MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+			MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 			break;
 
 		case MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY:
-			MainScreen.thiz.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+			MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 			break;
 
 		case MSG_PROCESSING_BLOCK_UI:
-			MainScreen.guiManager.processingBlockUI();
+			MainScreen.getGUIManager().processingBlockUI();
 			break;
 
 		case MSG_BROADCAST:
@@ -1693,12 +1693,12 @@ public class PluginManager implements PluginManagerInterface {
 
 		String s1 = null;
 		if(params.getSupportedWhiteBalance() != null)
-			s1 = params.getWhiteBalance().compareTo(MainScreen.thiz.getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
+			s1 = params.getWhiteBalance().compareTo(MainScreen.getInstance().getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;
 
 		String s4 = null;
-		if(MainScreen.guiManager.mISOSupported)
+		if(MainScreen.getGUIManager().mISOSupported)
 			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
 		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
@@ -1834,7 +1834,7 @@ public class PluginManager implements PluginManagerInterface {
 				processing.onStartProcessing(SessionID);
 				if(processing.isPostProcessingNeeded())
 				{
-					MainScreen.H.sendEmptyMessage(PluginManager.MSG_START_POSTPROCESSING);					
+					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_START_POSTPROCESSING);					
 					return null;
 				}
 			}
@@ -1842,7 +1842,7 @@ public class PluginManager implements PluginManagerInterface {
 			if (null != export)
 				export.onExportActive(SessionID);
 			else
-				MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
 
 			clearSharedMemory(SessionID);
 			return null;
@@ -2016,8 +2016,8 @@ public class PluginManager implements PluginManagerInterface {
 	private boolean shutterRelease = true;
 	private void delayedCapture(int delayInterval)
 	{
-		initializeSoundPlayers(MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
-		MainScreen.thiz.getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
+		initializeSoundPlayers(MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
+		MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
 		countdownHandler.removeCallbacks(FlashOff);	 
 		finalcountdownHandler.removeCallbacks(FlashBlink);		
 
@@ -2065,7 +2065,7 @@ public class PluginManager implements PluginManagerInterface {
 				
 				 Message msg = new Message();
 				 msg.what = PluginManager.MSG_DELAYED_CAPTURE;
-				 MainScreen.H.sendMessage(msg);
+				 MainScreen.getMessageHandler().sendMessage(msg);
 				
 				 timer=null;
 		     }
@@ -2093,8 +2093,8 @@ public class PluginManager implements PluginManagerInterface {
  	}
 
 	public void initializeSoundPlayers(AssetFileDescriptor fd_countdown, AssetFileDescriptor fd_finalcountdown) {
-		countdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_countdown);
-		finalcountdownPlayer = new SoundPlayer(MainScreen.mainContext, fd_finalcountdown);
+		countdownPlayer = new SoundPlayer(MainScreen.getMainContext(), fd_countdown);
+		finalcountdownPlayer = new SoundPlayer(MainScreen.getMainContext(), fd_finalcountdown);
     }
 
     public void releaseSoundPlayers() {

@@ -35,7 +35,7 @@ public class HWButtonStart extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) 
     {
     	try{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         boolean useHWShutterButtonLauncher = prefs.getBoolean("useHWShutterButtonLauncher", false);
     	
         if (!useHWShutterButtonLauncher)

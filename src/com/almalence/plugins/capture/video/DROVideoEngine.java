@@ -153,7 +153,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.thiz.queueGLEvent(new Runnable()
+			MainScreen.getInstance().queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -171,7 +171,7 @@ public class DROVideoEngine
 									DROVideoEngine.this.previewHeight,
 									24,
 									20000000,
-									(MainScreen.guiManager.getDisplayOrientation()) % 360);
+									(MainScreen.getGUIManager().getDisplayOrientation()) % 360);
 						}
 					}
 					
@@ -198,7 +198,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.thiz.queueGLEvent(new Runnable()
+			MainScreen.getInstance().queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -213,7 +213,7 @@ public class DROVideoEngine
 							DROVideoEngine.this.encoder = null;
 							
 				            MediaScannerConnection.scanFile(
-				            		MainScreen.thiz, 
+				            		MainScreen.getInstance(), 
 				            		new String[] { path }, 
 				            		null, 
 				            		null);
@@ -247,7 +247,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.thiz.queueGLEvent(new Runnable()
+			MainScreen.getInstance().queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -289,12 +289,12 @@ public class DROVideoEngine
 	public void onFrameAvailable()
 	{
 		this.filled = true;
-		MainScreen.thiz.glRequestRender();
+		MainScreen.getInstance().glRequestRender();
 	}
 	
 	public void setPaused(final boolean paused)
 	{
-		MainScreen.thiz.queueGLEvent(new Runnable()
+		MainScreen.getInstance().queueGLEvent(new Runnable()
 		{
 			@Override
 			public void run()
@@ -374,7 +374,7 @@ public class DROVideoEngine
 			
 			try
 			{
-				final SurfaceTexture surfaceTexture = MainScreen.thiz.glGetSurfaceTexture();
+				final SurfaceTexture surfaceTexture = MainScreen.getInstance().glGetSurfaceTexture();
 				surfaceTexture.updateTexImage();
 				surfaceTexture.getTransformMatrix(this.transform);
 			}
@@ -420,7 +420,7 @@ public class DROVideoEngine
 				
 				RealtimeDRO.render(
 						this.instance,
-						MainScreen.thiz.glGetPreviewTexture(),
+						MainScreen.getInstance().glGetPreviewTexture(),
 						this.transform,
 						this.previewWidth,
 						this.previewHeight,

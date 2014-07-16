@@ -113,7 +113,7 @@ public class ExportPlugin extends PluginExport
 	
 	private void getPrefs()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
         useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 	}
@@ -129,13 +129,13 @@ public class ExportPlugin extends PluginExport
 		
 		if (useGeoTaggingPrefExport)
         {
-			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_export_gps, null);
+			View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_export_gps, null);
 			gpsInfoImage = (RotateImageView)v.findViewById(R.id.gpsInfoImage);
-			gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_off));
+			gpsInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.gps_off));
 			
 			addInfoView(gpsInfoImage);
 			
-        	MLocation.subsribe(MainScreen.thiz);
+        	MLocation.subsribe(MainScreen.getInstance());
         	MLocation.lm.addGpsStatusListener(new GpsStatus.Listener() {
 				
         		@Override
@@ -147,7 +147,7 @@ public class ExportPlugin extends PluginExport
 		}
 		else
 		{
-			View v = LayoutInflater.from(MainScreen.mainContext).inflate(R.layout.plugin_export_gps, null);
+			View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_export_gps, null);
 			gpsInfoImage = (RotateImageView)v.findViewById(R.id.gpsInfoImage);
 			gpsInfoImage.setVisibility(View.INVISIBLE);
 		}
@@ -157,13 +157,13 @@ public class ExportPlugin extends PluginExport
 	{
 		switch(event) {
 	    case GpsStatus.GPS_EVENT_STARTED:
-	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_search));
+	    	gpsInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.gps_search));
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	        break;
 	    case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 	    	if (!isFirstGpsFix)
 	    		return;
-	    	gpsInfoImage.setImageDrawable(MainScreen.mainContext.getResources().getDrawable(R.drawable.gps_found));
+	    	gpsInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.gps_found));
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	    	isFirstGpsFix=false;
 	        break;
@@ -180,7 +180,7 @@ public class ExportPlugin extends PluginExport
     }
 	
 	public void copyFromForceFileName(File dst) throws IOException {
-	    InputStream in = MainScreen.thiz.getContentResolver().openInputStream(MainScreen.ForceFilenameUri);
+	    InputStream in = MainScreen.getInstance().getContentResolver().openInputStream(MainScreen.getForceFilenameURI());
 	    OutputStream out = new FileOutputStream(dst);
 
 	    // Transfer bytes from in to out
@@ -195,7 +195,7 @@ public class ExportPlugin extends PluginExport
 	
 	public void copyToForceFileName(File src) throws IOException {
 	    InputStream in = new FileInputStream(src);
-	    OutputStream out = MainScreen.thiz.getContentResolver().openOutputStream(MainScreen.ForceFilenameUri);
+	    OutputStream out = MainScreen.getInstance().getContentResolver().openOutputStream(MainScreen.getForceFilenameURI());
 
 	    // Transfer bytes from in to out
 	    byte[] buf = new byte[1024];
@@ -269,7 +269,7 @@ public class ExportPlugin extends PluginExport
 		    	fileFormat += idx+".jpg";
 		    	
 		    	File file;
-		    	if (MainScreen.ForceFilename == null)
+		    	if (MainScreen.getForceFilename() == null)
 	            {
 		    		file = new File(
 		            		saveDir, 
@@ -277,13 +277,13 @@ public class ExportPlugin extends PluginExport
 	            }
 	            else
 	            {
-	            	file = MainScreen.ForceFilename;
+	            	file = MainScreen.getForceFilename();
 	            }
 	
 		    	OutputStream os = null;
-		    	if (MainScreen.ForceFilename != null)
+		    	if (MainScreen.getForceFilename() != null)
 	    		{
-		    		os = MainScreen.thiz.getContentResolver().openOutputStream(MainScreen.ForceFilenameUri);
+		    		os = MainScreen.getInstance().getContentResolver().openOutputStream(MainScreen.getForceFilenameURI());
 		    	}
 		    	else
 		    	{
@@ -296,7 +296,7 @@ public class ExportPlugin extends PluginExport
 			    		//save always if not working saving to sdcard
 			        	e.printStackTrace();
 			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
-			        	if (MainScreen.ForceFilename == null)
+			        	if (MainScreen.getForceFilename() == null)
 			            {
 				    		file = new File(
 				            		saveDir, 
@@ -304,7 +304,7 @@ public class ExportPlugin extends PluginExport
 			            }
 			            else
 			            {
-			            	file = MainScreen.ForceFilename;
+			            	file = MainScreen.getForceFilename();
 			            }
 			        	os = new FileOutputStream(file);
 			        }
@@ -371,7 +371,7 @@ public class ExportPlugin extends PluginExport
 			            	int cropHeight = image.getHeight()-image.getHeight()%16;
 					    	if (false == image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
 					    	{
-					    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+					    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 					            return;
 					    	}
 					    	SwapHeap.FreeFromHeap(ptr);
@@ -385,7 +385,7 @@ public class ExportPlugin extends PluginExport
 			    	    	{
 			    	    		if (false == out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
 						    	{
-						    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						            return;
 						    	}
 			    	    	}
@@ -399,7 +399,7 @@ public class ExportPlugin extends PluginExport
 					    		
 					    		if (false == out.compressToJpeg(r, 95, os))
 						    	{
-						    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						            return;
 						    	}
 		    	    		} 	    	
@@ -439,7 +439,7 @@ public class ExportPlugin extends PluginExport
                 filesSavedNames[nFilesSaved++] = file.toString();
                 
                 File tmpFile;
-                if (MainScreen.ForceFilename == null) {
+                if (MainScreen.getForceFilename() == null) {
                 	tmpFile = file;
                 }
                 else {
@@ -465,12 +465,12 @@ public class ExportPlugin extends PluginExport
             	ExifDriver exifDriver = ExifDriver.getInstance(tmpFile.getAbsolutePath());
 		    	ExifManager exifManager = null;
 		    	if (exifDriver != null) {
-	            	exifManager = new ExifManager(exifDriver, MainScreen.thiz);
+	            	exifManager = new ExifManager(exifDriver, MainScreen.getInstance());
 		    	}
 	
 		    	if (useGeoTaggingPrefExport)
 	            {
-	            	Location l = MLocation.getLocation(MainScreen.mainContext);
+	            	Location l = MLocation.getLocation(MainScreen.getMainContext());
 		            
 		            if (l != null)
 		            {
@@ -676,7 +676,7 @@ public class ExportPlugin extends PluginExport
 		            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
 		            if (tag_modename == null)
 		            	tag_modename = "";
-		            String softwareString = MainScreen.thiz.getResources().getString(R.string.app_name) + ", " + tag_modename;
+		            String softwareString = MainScreen.getInstance().getResources().getString(R.string.app_name) + ", " + tag_modename;
 		            ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 		            softwareValue.setBytes(softwareString.getBytes());
 	        		exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
@@ -711,7 +711,7 @@ public class ExportPlugin extends PluginExport
 		            // Save exif info to new file, and replace old file with new one.
 		            File modifiedFile = new File(tmpFile.getAbsolutePath() + ".tmp");
 		            exifDriver.save(modifiedFile.getAbsolutePath());
-		            if (MainScreen.ForceFilename == null) {
+		            if (MainScreen.getForceFilename() == null) {
 		            	file.delete();
 		            	modifiedFile.renameTo(file);
 		            }
@@ -722,24 +722,24 @@ public class ExportPlugin extends PluginExport
 		            }
 	            }
 	            
-		    	MainScreen.thiz.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+		    	MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 			}
             
-            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+            MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
         }
 		catch(IOException e) {
             e.printStackTrace();
-            MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+            MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
             return;
         }
         catch (Exception e)
         {
         	e.printStackTrace();
-        	MainScreen.H.sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+        	MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
         }
 		finally
 		{
-			MainScreen.ForceFilename = null;
+			MainScreen.setForceFilename(null);
 		}
 	}
 }

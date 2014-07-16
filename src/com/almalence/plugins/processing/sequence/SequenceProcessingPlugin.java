@@ -106,21 +106,21 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		finishing = false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-		MainScreen.H.sendMessage(msg);	
+		MainScreen.getMessageHandler().sendMessage(msg);	
 		
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = true;
+		MainScreen.getGUIManager().lockControls = true;
 		
 		sessionID=SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
-		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
-		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
+		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+		int orientation = MainScreen.getGUIManager().getLayoutOrientation();    	
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
     	mCameraMirrored = CameraController.isFrontCamera();
         
@@ -164,8 +164,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     		for (int i=1; i<=imagesAmount; i++) {
     			if(isYUV) {
     				thumbnails.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(i-1), iImageWidth, iImageHeight),
-	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
-	    	    			(int)(iImageHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
+	    	    			MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(iImageHeight * (((float)MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
 	    	    			false));
     			}
     			else {
@@ -176,8 +176,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	    			
 	    			BitmapFactory.Options opts = new BitmapFactory.Options();
 	    			thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-	    	    			MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount,
-	    	    			(int)(opts.outHeight * (((float)MainScreen.thiz.getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
+	    	    			MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels / imagesAmount,
+	    	    			(int)(opts.outHeight * (((float)MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)),
 	    	    			false));
     			}
     		}
@@ -186,7 +186,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     			getDisplaySize(mJpegBufferList.get(0));
     		else
     		{
-    			Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();    			
+    			Display display= ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();    			
     			Point dis = new Point();
     			display.getSize(dis);
     			
@@ -286,7 +286,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private boolean postProcessingRun = false;
 	
 	public void onStartPostProcessing() {	
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_sequence_postprocessing, null, false);
 		
 		mImgView = ((ImageView)postProcessingView.findViewById(R.id.sequenceImageHolder));
@@ -335,7 +335,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	
 	public void getDisplaySize(byte[] data) 
 	{
-		Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		Display display= ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPreferredConfig = Config.ARGB_8888;
 		options.inJustDecodeBounds = true;
@@ -359,17 +359,17 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	
     public void setupSaveButton() {
     	// put save button on screen
-        mSaveButton = new Button(MainScreen.thiz);
+        mSaveButton = new Button(MainScreen.getInstance());
         mSaveButton .setBackgroundResource(R.drawable.button_save_background);
         mSaveButton .setOnClickListener(this);
         LayoutParams saveLayoutParams = new LayoutParams(
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         saveLayoutParams.setMargins(
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
@@ -395,7 +395,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     		if (finishing == true)
 				return;
     		finishing = true;
-    		savePicture(MainScreen.mainContext);
+    		savePicture(MainScreen.getMainContext());
     		
     		mHandler.sendEmptyMessage(MSG_LEAVING);
     	}
@@ -431,15 +431,15 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			postProcessingRun = true;
     		break;
     	case MSG_LEAVING:
-    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
     		mJpegBufferList.clear();
     		
     		Message msg2 = new Message();
     		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     		msg2.what = PluginManager.MSG_BROADCAST;
-    		MainScreen.H.sendMessage(msg2);
+    		MainScreen.getMessageHandler().sendMessage(msg2);
     		
-    		MainScreen.guiManager.lockControls = false;   		
+    		MainScreen.getGUIManager().lockControls = false;   		
 
     		postProcessingRun = false;
         	return false;
@@ -468,7 +468,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
 			if (finishing == true)
 				return true;
@@ -528,7 +528,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	
 	private void getPrefs() {
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance().getBaseContext());
         mSensitivity = prefs.getInt("Sensitivity", 19);
         mMinSize = prefs.getInt("MinSize", 1000);
         mGhosting = prefs.getString("Ghosting", "2");

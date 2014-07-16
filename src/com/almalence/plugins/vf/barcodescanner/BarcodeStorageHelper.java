@@ -138,7 +138,7 @@ public class BarcodeStorageHelper {
 	
 	private static void writeToFile(String data) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(MainScreen.mainContext.openFileOutput(FILENAME, Context.MODE_PRIVATE)));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(MainScreen.getMainContext().openFileOutput(FILENAME, Context.MODE_PRIVATE)));
 			bw.write(data);
 			bw.close();
 	    } catch (FileNotFoundException e) {
@@ -153,7 +153,7 @@ public class BarcodeStorageHelper {
 		
 		FileInputStream fis = null;
 	    try {
-	        fis = MainScreen.mainContext.openFileInput(FILENAME);
+	        fis = MainScreen.getMainContext().openFileInput(FILENAME);
 	        InputStreamReader isr = new InputStreamReader(fis);
 	        StringBuilder sb = new StringBuilder();
 	        char[] inputBuffer = new char[2048];

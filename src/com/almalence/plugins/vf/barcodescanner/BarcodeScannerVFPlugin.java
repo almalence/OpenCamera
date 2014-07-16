@@ -90,7 +90,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		mBarcodeScannerState = prefs.getBoolean("PrefBarcodescannerVF", false);
 		
 		if (mBarcodeScannerState == ON) {
@@ -106,15 +106,15 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     public void onOrientationChanged(int orientation) {
 		mOrientation = orientation;
 		if (mBarcodesListButton != null) {
-			mBarcodesListButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+			mBarcodesListButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 			mBarcodesListButton.invalidate();
 			mBarcodesListButton.requestLayout();    			
 		}
 		if (barcodeHistoryDialog != null) {
-			barcodeHistoryDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+			barcodeHistoryDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
 		}
 		if (barcodeViewDialog != null) {
-			barcodeViewDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+			barcodeViewDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
 		}
     }
 	
@@ -122,7 +122,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	public void onQuickControlClick()
 	{
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor editor = prefs.edit();
 		
 		if (mBarcodeScannerState == ON) {
@@ -170,7 +170,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	}
 	
 	public void initializeSoundPlayer() {
-        mSoundPlayer = new SoundPlayer(MainScreen.mainContext, MainScreen.mainContext.getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok));
+        mSoundPlayer = new SoundPlayer(MainScreen.getMainContext(), MainScreen.getMainContext().getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok));
     }
 	
 	public void releaseSoundPlayer() {
@@ -214,15 +214,15 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
     		return;
     	}
 		
-		mBound = new BoundingView(MainScreen.mainContext);
+		mBound = new BoundingView(MainScreen.getMainContext());
 		mBound.setVisibility(View.VISIBLE);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).addView(mBound, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mBound, params);
 		
 		mBound.setLayoutParams(params);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout)).requestLayout();
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 	
 	
@@ -231,13 +231,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	 */
 	public void createScreenButton()
 	{
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_vf_barcodescanner_layout, null, false);
 		mButtonsLayout.setVisibility(View.VISIBLE);
 		
 		mBarcodesListButton = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonBarcodesList);
 	
-		MainScreen.guiManager.removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 				
 		mBarcodesListButton.setOnClickListener(new OnClickListener()
 		{
@@ -253,21 +253,21 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout, params);
 		
 		mButtonsLayout.setLayoutParams(params);
 		mButtonsLayout.requestLayout();
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 		
-		mBarcodesListButton.setOrientation(MainScreen.guiManager.getLayoutOrientation());
+		mBarcodesListButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 		mBarcodesListButton.invalidate();
 		mBarcodesListButton.requestLayout();
 	}
 	
 	protected void showBarcodesHistoryDialog() {
-		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.thiz);
-		barcodeHistoryDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.getInstance());
+		barcodeHistoryDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
 
 		barcodeHistoryDialog.list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -318,10 +318,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 		
 		// <!-- -+-
 		//sale hook
-		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.thiz.isUnlockedAll())
+		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.getInstance().isUnlockedAll())
 		{
-			MainScreen.thiz.activateCouponSale();
-			MainScreen.guiManager.showStore();
+			MainScreen.getInstance().activateCouponSale();
+			MainScreen.getGUIManager().showStore();
 			return;
 		}
 		//-+- -->
@@ -337,8 +337,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	
 	protected void showBarcodeViewDialog(Barcode barcode) {
 		try{		
-    	barcodeViewDialog = new BarcodeViewDialog(MainScreen.thiz, barcode);
-    	barcodeViewDialog.setRotate(MainScreen.guiManager.getLayoutOrientation());
+    	barcodeViewDialog = new BarcodeViewDialog(MainScreen.getInstance(), barcode);
+    	barcodeViewDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
     	showGUI();
     	
     	barcodeViewDialog.setOnDismissListener(new OnDismissListener() {

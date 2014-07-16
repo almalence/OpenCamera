@@ -276,14 +276,14 @@ public class AlmalenceGUI extends GUI implements
 	
 	private static final Map<String, Integer> icons_default_iso = new Hashtable<String, Integer>() {
 		{
-			put(MainScreen.thiz.getResources().getString(R.string.isoAutoDefaultSystem), R.drawable.gui_almalence_settings_iso_auto);
-			put(MainScreen.thiz.getResources().getString(R.string.iso50DefaultSystem), R.drawable.gui_almalence_settings_iso_50);
-			put(MainScreen.thiz.getResources().getString(R.string.iso100DefaultSystem), R.drawable.gui_almalence_settings_iso_100);				
-			put(MainScreen.thiz.getResources().getString(R.string.iso200DefaultSystem), R.drawable.gui_almalence_settings_iso_200);
-			put(MainScreen.thiz.getResources().getString(R.string.iso400DefaultSystem), R.drawable.gui_almalence_settings_iso_400);
-			put(MainScreen.thiz.getResources().getString(R.string.iso800DefaultSystem), R.drawable.gui_almalence_settings_iso_800);
-			put(MainScreen.thiz.getResources().getString(R.string.iso1600DefaultSystem), R.drawable.gui_almalence_settings_iso_1600);
-			put(MainScreen.thiz.getResources().getString(R.string.iso3200DefaultSystem), R.drawable.gui_almalence_settings_iso_3200);			
+			put(MainScreen.getInstance().getResources().getString(R.string.isoAutoDefaultSystem), R.drawable.gui_almalence_settings_iso_auto);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso50DefaultSystem), R.drawable.gui_almalence_settings_iso_50);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso100DefaultSystem), R.drawable.gui_almalence_settings_iso_100);				
+			put(MainScreen.getInstance().getResources().getString(R.string.iso200DefaultSystem), R.drawable.gui_almalence_settings_iso_200);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso400DefaultSystem), R.drawable.gui_almalence_settings_iso_400);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso800DefaultSystem), R.drawable.gui_almalence_settings_iso_800);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso1600DefaultSystem), R.drawable.gui_almalence_settings_iso_1600);
+			put(MainScreen.getInstance().getResources().getString(R.string.iso3200DefaultSystem), R.drawable.gui_almalence_settings_iso_3200);			
 		}
 	};
 	
@@ -299,81 +299,81 @@ public class AlmalenceGUI extends GUI implements
 	// List of localized names for camera parameters values	
 	private static final Map<Integer, String> names_scene = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.SCENE_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.sceneAuto));
-			put(CameraParameters.SCENE_MODE_ACTION, MainScreen.thiz.getResources().getString(R.string.sceneAction));
-			put(CameraParameters.SCENE_MODE_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.scenePortrait));
-			put(CameraParameters.SCENE_MODE_LANDSCAPE,	MainScreen.thiz.getResources().getString(R.string.sceneLandscape));
-			put(CameraParameters.SCENE_MODE_NIGHT,	MainScreen.thiz.getResources().getString(R.string.sceneNight));
-			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, MainScreen.thiz.getResources().getString(R.string.sceneNightPortrait));
-			put(CameraParameters.SCENE_MODE_THEATRE, MainScreen.thiz.getResources().getString(R.string.sceneTheatre));
-			put(CameraParameters.SCENE_MODE_BEACH,	MainScreen.thiz.getResources().getString(R.string.sceneBeach));
-			put(CameraParameters.SCENE_MODE_SNOW, MainScreen.thiz.getResources().getString(R.string.sceneSnow));
-			put(CameraParameters.SCENE_MODE_SUNSET, MainScreen.thiz.getResources().getString(R.string.sceneSunset));
-			put(CameraParameters.SCENE_MODE_STEADYPHOTO, MainScreen.thiz.getResources().getString(R.string.sceneSteadyPhoto));
-			put(CameraParameters.SCENE_MODE_FIREWORKS, MainScreen.thiz.getResources().getString(R.string.sceneFireworks));
-			put(CameraParameters.SCENE_MODE_SPORTS, MainScreen.thiz.getResources().getString(R.string.sceneSports));
-			put(CameraParameters.SCENE_MODE_PARTY, MainScreen.thiz.getResources().getString(R.string.sceneParty));
-			put(CameraParameters.SCENE_MODE_CANDLELIGHT, MainScreen.thiz.getResources().getString(R.string.sceneCandlelight));
-			put(CameraParameters.SCENE_MODE_BARCODE, MainScreen.thiz.getResources().getString(R.string.sceneBarcode));
+			put(CameraParameters.SCENE_MODE_AUTO, MainScreen.getInstance().getResources().getString(R.string.sceneAuto));
+			put(CameraParameters.SCENE_MODE_ACTION, MainScreen.getInstance().getResources().getString(R.string.sceneAction));
+			put(CameraParameters.SCENE_MODE_PORTRAIT, MainScreen.getInstance().getResources().getString(R.string.scenePortrait));
+			put(CameraParameters.SCENE_MODE_LANDSCAPE,	MainScreen.getInstance().getResources().getString(R.string.sceneLandscape));
+			put(CameraParameters.SCENE_MODE_NIGHT,	MainScreen.getInstance().getResources().getString(R.string.sceneNight));
+			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, MainScreen.getInstance().getResources().getString(R.string.sceneNightPortrait));
+			put(CameraParameters.SCENE_MODE_THEATRE, MainScreen.getInstance().getResources().getString(R.string.sceneTheatre));
+			put(CameraParameters.SCENE_MODE_BEACH,	MainScreen.getInstance().getResources().getString(R.string.sceneBeach));
+			put(CameraParameters.SCENE_MODE_SNOW, MainScreen.getInstance().getResources().getString(R.string.sceneSnow));
+			put(CameraParameters.SCENE_MODE_SUNSET, MainScreen.getInstance().getResources().getString(R.string.sceneSunset));
+			put(CameraParameters.SCENE_MODE_STEADYPHOTO, MainScreen.getInstance().getResources().getString(R.string.sceneSteadyPhoto));
+			put(CameraParameters.SCENE_MODE_FIREWORKS, MainScreen.getInstance().getResources().getString(R.string.sceneFireworks));
+			put(CameraParameters.SCENE_MODE_SPORTS, MainScreen.getInstance().getResources().getString(R.string.sceneSports));
+			put(CameraParameters.SCENE_MODE_PARTY, MainScreen.getInstance().getResources().getString(R.string.sceneParty));
+			put(CameraParameters.SCENE_MODE_CANDLELIGHT, MainScreen.getInstance().getResources().getString(R.string.sceneCandlelight));
+			put(CameraParameters.SCENE_MODE_BARCODE, MainScreen.getInstance().getResources().getString(R.string.sceneBarcode));
 		}
 	};
 
 	private static final Map<Integer, String> names_wb = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.WB_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.wbAuto));
-			put(CameraParameters.WB_MODE_INCANDESCENT, MainScreen.thiz.getResources().getString(R.string.wbIncandescent));
-			put(CameraParameters.WB_MODE_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbFluorescent));
-			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, MainScreen.thiz.getResources().getString(R.string.wbWarmFluorescent));
-			put(CameraParameters.WB_MODE_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbDaylight));
-			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT, MainScreen.thiz.getResources().getString(R.string.wbCloudyDaylight));
-			put(CameraParameters.WB_MODE_TWILIGHT, MainScreen.thiz.getResources().getString(R.string.wbTwilight));
-			put(CameraParameters.WB_MODE_SHADE, MainScreen.thiz.getResources().getString(R.string.wbShade));
+			put(CameraParameters.WB_MODE_AUTO, MainScreen.getInstance().getResources().getString(R.string.wbAuto));
+			put(CameraParameters.WB_MODE_INCANDESCENT, MainScreen.getInstance().getResources().getString(R.string.wbIncandescent));
+			put(CameraParameters.WB_MODE_FLUORESCENT, MainScreen.getInstance().getResources().getString(R.string.wbFluorescent));
+			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, MainScreen.getInstance().getResources().getString(R.string.wbWarmFluorescent));
+			put(CameraParameters.WB_MODE_DAYLIGHT, MainScreen.getInstance().getResources().getString(R.string.wbDaylight));
+			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT, MainScreen.getInstance().getResources().getString(R.string.wbCloudyDaylight));
+			put(CameraParameters.WB_MODE_TWILIGHT, MainScreen.getInstance().getResources().getString(R.string.wbTwilight));
+			put(CameraParameters.WB_MODE_SHADE, MainScreen.getInstance().getResources().getString(R.string.wbShade));
 		}
 	};
 
 
 	private static final Map<Integer, String> names_focus = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.AF_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.focusAuto));
-			put(CameraParameters.AF_MODE_INFINITY, MainScreen.thiz.getResources().getString(R.string.focusInfinity));
-			put(CameraParameters.AF_MODE_NORMAL, MainScreen.thiz.getResources().getString(R.string.focusNormal));
-			put(CameraParameters.AF_MODE_MACRO, MainScreen.thiz.getResources().getString(R.string.focusMacro));
-			put(CameraParameters.AF_MODE_FIXED, MainScreen.thiz.getResources().getString(R.string.focusFixed));
-			put(CameraParameters.AF_MODE_EDOF, MainScreen.thiz.getResources().getString(R.string.focusEdof));
-			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, MainScreen.thiz.getResources().getString(R.string.focusContinuousVideo));
-			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, MainScreen.thiz.getResources().getString(R.string.focusContinuousPicture));
+			put(CameraParameters.AF_MODE_AUTO, MainScreen.getInstance().getResources().getString(R.string.focusAuto));
+			put(CameraParameters.AF_MODE_INFINITY, MainScreen.getInstance().getResources().getString(R.string.focusInfinity));
+			put(CameraParameters.AF_MODE_NORMAL, MainScreen.getInstance().getResources().getString(R.string.focusNormal));
+			put(CameraParameters.AF_MODE_MACRO, MainScreen.getInstance().getResources().getString(R.string.focusMacro));
+			put(CameraParameters.AF_MODE_FIXED, MainScreen.getInstance().getResources().getString(R.string.focusFixed));
+			put(CameraParameters.AF_MODE_EDOF, MainScreen.getInstance().getResources().getString(R.string.focusEdof));
+			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO, MainScreen.getInstance().getResources().getString(R.string.focusContinuousVideo));
+			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, MainScreen.getInstance().getResources().getString(R.string.focusContinuousPicture));
 		}
 	};
 
 	private static final Map<Integer, String> names_flash = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.FLASH_MODE_OFF, MainScreen.thiz.getResources().getString(R.string.flashOff));
-			put(CameraParameters.FLASH_MODE_AUTO, MainScreen.thiz.getResources().getString(R.string.flashAuto));
-			put(CameraParameters.FLASH_MODE_SINGLE, MainScreen.thiz.getResources().getString(R.string.flashOn));
-			put(CameraParameters.FLASH_MODE_REDEYE, MainScreen.thiz.getResources().getString(R.string.flashRedEye));
-			put(CameraParameters.FLASH_MODE_TORCH, MainScreen.thiz.getResources().getString(R.string.flashTorch));
+			put(CameraParameters.FLASH_MODE_OFF, MainScreen.getInstance().getResources().getString(R.string.flashOff));
+			put(CameraParameters.FLASH_MODE_AUTO, MainScreen.getInstance().getResources().getString(R.string.flashAuto));
+			put(CameraParameters.FLASH_MODE_SINGLE, MainScreen.getInstance().getResources().getString(R.string.flashOn));
+			put(CameraParameters.FLASH_MODE_REDEYE, MainScreen.getInstance().getResources().getString(R.string.flashRedEye));
+			put(CameraParameters.FLASH_MODE_TORCH, MainScreen.getInstance().getResources().getString(R.string.flashTorch));
 		}
 	};
 
 	private static final Map<Integer, String> names_iso = new Hashtable<Integer, String>() {
 		{
-			put(CameraParameters.ISO_AUTO, MainScreen.thiz.getResources().getString(R.string.isoAuto));
-			put(CameraParameters.ISO_50, MainScreen.thiz.getResources().getString(R.string.iso50));
-			put(CameraParameters.ISO_100, MainScreen.thiz.getResources().getString(R.string.iso100));
-			put(CameraParameters.ISO_200, MainScreen.thiz.getResources().getString(R.string.iso200));
-			put(CameraParameters.ISO_400, MainScreen.thiz.getResources().getString(R.string.iso400));
-			put(CameraParameters.ISO_800, MainScreen.thiz.getResources().getString(R.string.iso800));
-			put(CameraParameters.ISO_1600, MainScreen.thiz.getResources().getString(R.string.iso1600));
-			put(CameraParameters.ISO_3200, MainScreen.thiz.getResources().getString(R.string.iso3200));
+			put(CameraParameters.ISO_AUTO, MainScreen.getInstance().getResources().getString(R.string.isoAuto));
+			put(CameraParameters.ISO_50, MainScreen.getInstance().getResources().getString(R.string.iso50));
+			put(CameraParameters.ISO_100, MainScreen.getInstance().getResources().getString(R.string.iso100));
+			put(CameraParameters.ISO_200, MainScreen.getInstance().getResources().getString(R.string.iso200));
+			put(CameraParameters.ISO_400, MainScreen.getInstance().getResources().getString(R.string.iso400));
+			put(CameraParameters.ISO_800, MainScreen.getInstance().getResources().getString(R.string.iso800));
+			put(CameraParameters.ISO_1600, MainScreen.getInstance().getResources().getString(R.string.iso1600));
+			put(CameraParameters.ISO_3200, MainScreen.getInstance().getResources().getString(R.string.iso3200));
 		}
 	};
 	
 	private static final Map<Integer, String> names_metering = new Hashtable<Integer, String>() {
 		{
-			put(0, MainScreen.thiz.getResources().getString(R.string.meteringAutoSystem));
-			put(1, MainScreen.thiz.getResources().getString(R.string.meteringMatrixSystem));
-			put(2, MainScreen.thiz.getResources().getString(R.string.meteringCenterSystem));
-			put(3, MainScreen.thiz.getResources().getString(R.string.meteringSpotSystem));
+			put(0, MainScreen.getInstance().getResources().getString(R.string.meteringAutoSystem));
+			put(1, MainScreen.getInstance().getResources().getString(R.string.meteringMatrixSystem));
+			put(2, MainScreen.getInstance().getResources().getString(R.string.meteringCenterSystem));
+			put(3, MainScreen.getInstance().getResources().getString(R.string.meteringSpotSystem));
 		}
 	};
 	
@@ -476,7 +476,7 @@ public class AlmalenceGUI extends GUI implements
 	// indicates if it's first launch - to show hint layer.
 	private boolean isFirstLaunch = true;
 	
-	private static int iScreenType = MainScreen.thiz.getResources().getInteger(R.integer.screen_type);
+	private static int iScreenType = MainScreen.getInstance().getResources().getInteger(R.integer.screen_type);
 
 	public AlmalenceGUI() {
 		
@@ -602,29 +602,29 @@ public class AlmalenceGUI extends GUI implements
 
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		fScreenDensity = metrics.density;
 
-		iInfoViewMaxHeight = (int) (MainScreen.mainContext.getResources()
+		iInfoViewMaxHeight = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
-		iInfoViewMaxWidth = (int) (MainScreen.mainContext.getResources()
+		iInfoViewMaxWidth = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.infoControlWidth) * fScreenDensity);
 
-		iCenterViewMaxHeight = (int) (MainScreen.mainContext.getResources()
+		iCenterViewMaxHeight = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.centerViewHeight) * fScreenDensity);
-		iCenterViewMaxWidth = (int) (MainScreen.mainContext.getResources()
+		iCenterViewMaxWidth = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.centerViewWidth) * fScreenDensity);
 
 		// set orientation listener to rotate controls
 		this.orientListener = new OrientationEventListener(
-				MainScreen.mainContext) {
+				MainScreen.getMainContext()) {
 			@Override
 			public void onOrientationChanged(int orientation) {
 				if (orientation == ORIENTATION_UNKNOWN)
 					return;
 
-				final Display display = ((WindowManager) MainScreen.thiz
+				final Display display = ((WindowManager) MainScreen.getInstance()
 						.getSystemService(Context.WINDOW_SERVICE))
 						.getDefaultDisplay();
 				final int orientationProc = (display.getWidth() <= display
@@ -703,26 +703,26 @@ public class AlmalenceGUI extends GUI implements
 
 		// create merged image for select mode button
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
 		try{
 			Bitmap bm = null;
 			Bitmap iconBase = BitmapFactory.decodeResource(
-					MainScreen.mainContext.getResources(),
+					MainScreen.getMainContext().getResources(),
 					R.drawable.gui_almalence_select_mode);
 			Bitmap iconOverlay = BitmapFactory.decodeResource(
-					MainScreen.mainContext.getResources(),
-					MainScreen.thiz.getResources().getIdentifier(mode.icon,
-							"drawable", MainScreen.thiz.getPackageName()));
+					MainScreen.getMainContext().getResources(),
+					MainScreen.getInstance().getResources().getIdentifier(mode.icon,
+							"drawable", MainScreen.getInstance().getPackageName()));
 			iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
 					(int) (iconBase.getWidth() / 1.8),
 					(int) (iconBase.getWidth() / 1.8), false);
 	
 			bm = mergeImage(iconBase, iconOverlay);
-			bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.mainContext
+			bm = Bitmap.createScaledBitmap(bm, (int) (MainScreen.getMainContext()
 					.getResources().getDimension(R.dimen.paramsLayoutHeight)),
-					(int) (MainScreen.mainContext.getResources()
+					(int) (MainScreen.getMainContext().getResources()
 							.getDimension(R.dimen.paramsLayoutHeight)), false);
 			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode))
 					.setImageBitmap(bm);
@@ -736,9 +736,9 @@ public class AlmalenceGUI extends GUI implements
 				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 					return;
 				
-				if (MainScreen.thiz.titleUnlockAll == null || MainScreen.thiz.titleUnlockAll.endsWith("check for sale"))
+				if (MainScreen.getInstance().titleUnlockAll == null || MainScreen.getInstance().titleUnlockAll.endsWith("check for sale"))
 				{
-					Toast.makeText(MainScreen.mainContext, "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+					Toast.makeText(MainScreen.getMainContext(), "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
 					return;
 				}
 				//start store
@@ -772,7 +772,7 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	public void showStore()
 	{
-		LayoutInflater inflater = LayoutInflater.from(MainScreen.thiz);
+		LayoutInflater inflater = LayoutInflater.from(MainScreen.getInstance());
         List<RelativeLayout> pages = new ArrayList<RelativeLayout>();
         
         //page 1
@@ -837,7 +837,7 @@ public class AlmalenceGUI extends GUI implements
         pages.add(page);
         
         SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
-        ViewPager viewPager = new ViewPager(MainScreen.thiz);
+        ViewPager viewPager = new ViewPager(MainScreen.getInstance());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
         viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
@@ -892,14 +892,14 @@ public class AlmalenceGUI extends GUI implements
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = true;
+		MainScreen.getGUIManager().lockControls = true;
 		
-		if (MainScreen.thiz.showPromoRedeemed)
+		if (MainScreen.getInstance().showPromoRedeemed)
 		{
-			Toast.makeText(MainScreen.thiz, "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
-			MainScreen.thiz.showPromoRedeemed = false;
+			Toast.makeText(MainScreen.getInstance(), "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
+			MainScreen.getInstance().showPromoRedeemed = false;
 		}
 		
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
@@ -920,21 +920,21 @@ public class AlmalenceGUI extends GUI implements
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = false;
+		MainScreen.getGUIManager().lockControls = false;
 	}
 	
 	private void initStoreList() {
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		
 		for (int i =0; i<6; i++) {
 
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			View item = inflator.inflate(
 					R.layout.gui_almalence_store_grid_element, null,
 					false);
@@ -946,20 +946,20 @@ public class AlmalenceGUI extends GUI implements
 				case 0:
 					// unlock all
 					icon.setImageResource(R.drawable.store_all);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_All_Preference_Title));
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_All_Preference_Title));
 					
-					if(MainScreen.thiz.isPurchasedAll())
+					if(MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
 					{
-						if (MainScreen.thiz.isCouponSale())
+						if (MainScreen.getInstance().isCouponSale())
 						{
-							price.setText(MainScreen.thiz.titleUnlockAllCoupon);
+							price.setText(MainScreen.getInstance().titleUnlockAllCoupon);
 							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
 						}
 						else
 						{
-							price.setText(MainScreen.thiz.titleUnlockAll);
+							price.setText(MainScreen.getInstance().titleUnlockAll);
 							if (bOnSale)
 								((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
 						}
@@ -968,44 +968,44 @@ public class AlmalenceGUI extends GUI implements
 				case 1:
 					// HDR
 					icon.setImageResource(R.drawable.store_hdr);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title));
-					if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title));
+					if(MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
-						price.setText(MainScreen.thiz.titleUnlockHDR);
+						price.setText(MainScreen.getInstance().titleUnlockHDR);
 					break;
 				case 2:
 					// Panorama
 					icon.setImageResource(R.drawable.store_panorama);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
-					if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
+					if(MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
-						price.setText(MainScreen.thiz.titleUnlockPano);
+						price.setText(MainScreen.getInstance().titleUnlockPano);
 					break;
 				case 3:
 					// Moving
 					icon.setImageResource(R.drawable.store_moving);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title));
-					if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title));
+					if(MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
-						price.setText(MainScreen.thiz.titleUnlockMoving);
+						price.setText(MainScreen.getInstance().titleUnlockMoving);
 					break;
 				case 4:
 					// Groupshot
 					icon.setImageResource(R.drawable.store_groupshot);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
-					if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
+					if(MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
-						price.setText(MainScreen.thiz.titleUnlockGroup);
+						price.setText(MainScreen.getInstance().titleUnlockGroup);
 					break;
 				case 5:
 					// Promo code
 					icon.setImageResource(R.drawable.store_promo);
-					description.setText(MainScreen.thiz.getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
-					if(MainScreen.thiz.isPurchasedAll())
+					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
+					if(MainScreen.getInstance().isPurchasedAll())
 						price.setText(R.string.already_unlocked);
 					else
 						price.setText("");
@@ -1044,22 +1044,22 @@ public class AlmalenceGUI extends GUI implements
 		switch (id)
 		{
 		case 0:// unlock all
-			MainScreen.thiz.purchaseAll();
+			MainScreen.getInstance().purchaseAll();
 			break;
 		case 1:// HDR
-			MainScreen.thiz.purchaseHDR();
+			MainScreen.getInstance().purchaseHDR();
 			break;
 		case 2:// Panorama
-			MainScreen.thiz.purchasePanorama();
+			MainScreen.getInstance().purchasePanorama();
 			break;
 		case 3:// Moving
-			MainScreen.thiz.purchaseMoving();
+			MainScreen.getInstance().purchaseMoving();
 			break;
 		case 4:// Groupshot
-			MainScreen.thiz.purchaseGroupshot();
+			MainScreen.getInstance().purchaseGroupshot();
 			break;
 		case 5:// Promo
-			MainScreen.thiz.enterPromo();
+			MainScreen.getInstance().enterPromo();
 			break;
 		}
 	}
@@ -1071,7 +1071,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	public void ShowUnlockControl()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		unlock.setImageResource(bOnSale?R.drawable.unlock_sale:R.drawable.unlock);
@@ -1120,7 +1120,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	@Override
 	public void onResume() {
-		MainScreen.thiz.runOnUiThread(new Runnable() {
+		MainScreen.getInstance().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlmalenceGUI.this.updateThumbnailButton();
@@ -1143,7 +1143,7 @@ public class AlmalenceGUI extends GUI implements
 
 		// if first launch - show layout with hints
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (true == prefs.contains("isFirstLaunch")) {
 			isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
 		} else {
@@ -1170,10 +1170,10 @@ public class AlmalenceGUI extends GUI implements
 
 	@Override
 	public void createInitialGUI() {
-		guiView = LayoutInflater.from(MainScreen.mainContext).inflate(
+		guiView = LayoutInflater.from(MainScreen.getMainContext()).inflate(
 				R.layout.gui_almalence_layout, null);
 		// Add GUI Layout to main layout of OpenCamera
-		((RelativeLayout) MainScreen.thiz.findViewById(R.id.mainLayout1))
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1))
 				.addView(guiView);
 	}
 
@@ -1182,22 +1182,22 @@ public class AlmalenceGUI extends GUI implements
 	public void onCreate() {
 		// Get application preferences object
 		preferences = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-		guiView.findViewById(R.id.evButton).setOnTouchListener(MainScreen.thiz);
+		guiView.findViewById(R.id.evButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.sceneButton).setOnTouchListener(
-				MainScreen.thiz);
-		guiView.findViewById(R.id.wbButton).setOnTouchListener(MainScreen.thiz);
+				MainScreen.getInstance());
+		guiView.findViewById(R.id.wbButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.focusButton).setOnTouchListener(
-				MainScreen.thiz);
+				MainScreen.getInstance());
 		guiView.findViewById(R.id.flashButton).setOnTouchListener(
-				MainScreen.thiz);
+				MainScreen.getInstance());
 		guiView.findViewById(R.id.isoButton)
-				.setOnTouchListener(MainScreen.thiz);
+				.setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.meteringButton)
-				.setOnTouchListener(MainScreen.thiz);
+				.setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.camerachangeButton).setOnTouchListener(
-				MainScreen.thiz);
+				MainScreen.getInstance());
 
 		// Long clicks are needed to open quick controls customization layout
 		guiView.findViewById(R.id.evButton).setOnLongClickListener(this);
@@ -1240,10 +1240,10 @@ public class AlmalenceGUI extends GUI implements
 		thumbnailView = (RotateImageView) guiView
 				.findViewById(R.id.buttonGallery);
 
-		((RelativeLayout) MainScreen.thiz.findViewById(R.id.mainLayout1))
-				.setOnTouchListener(MainScreen.thiz);
-		((LinearLayout) MainScreen.thiz.findViewById(R.id.evLayout))
-				.setOnTouchListener(MainScreen.thiz);
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1))
+				.setOnTouchListener(MainScreen.getInstance());
+		((LinearLayout) MainScreen.getInstance().findViewById(R.id.evLayout))
+				.setOnTouchListener(MainScreen.getInstance());
 		
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
@@ -1257,7 +1257,7 @@ public class AlmalenceGUI extends GUI implements
 		// <!-- -+-
 		//manage unlock control
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (true == prefs.getBoolean("unlock_all_forever", false))
 			HideUnlockControl();
 		else 
@@ -1270,7 +1270,7 @@ public class AlmalenceGUI extends GUI implements
 	
 	private void visibilityUnlockControl(String prefName)
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
 		if (prefs.getBoolean(prefName, false))
 			HideUnlockControl();
@@ -1287,7 +1287,7 @@ public class AlmalenceGUI extends GUI implements
 		while (it.hasNext()) {
 			final int system_name = it.next();
 			final String value_name = names_map.get(system_name);
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			View paramMode = inflator.inflate(
 					R.layout.gui_almalence_quick_control_grid_element, null,
 					false);
@@ -1353,8 +1353,8 @@ public class AlmalenceGUI extends GUI implements
 	
 	@Override
 	public void onGUICreate() {
-		if (MainScreen.thiz.findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
-			iInfoViewHeight = MainScreen.thiz.findViewById(R.id.infoLayout)
+		if (MainScreen.getInstance().findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
+			iInfoViewHeight = MainScreen.getInstance().findViewById(R.id.infoLayout)
 					.getHeight();
 		// Recreate plugin views
 		removePluginViews();
@@ -1362,7 +1362,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		//add self-timer control
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
 		AddSelfTimerControl(showDelayedCapturePrefCommon);
 
@@ -1387,7 +1387,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 		setInfo(false, 0, 0, false);
 
-		MainScreen.thiz.runOnUiThread(new Runnable() {
+		MainScreen.getInstance().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				AlmalenceGUI.this.updateThumbnailButton();
@@ -1418,7 +1418,7 @@ public class AlmalenceGUI extends GUI implements
 	{
 		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
 
-		RelativeLayout ll = (RelativeLayout) MainScreen.thiz
+		RelativeLayout ll = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.mainLayout1);
 
 		int previewSurfaceWidth = ll.getWidth();
@@ -1431,7 +1431,7 @@ public class AlmalenceGUI extends GUI implements
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
 
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		int screen_height = metrics.heightPixels;
 
@@ -1440,7 +1440,7 @@ public class AlmalenceGUI extends GUI implements
 		if (Math.abs(surfaceAspect - cameraAspect) > 0.05d) {
 			if (surfaceAspect > cameraAspect
 					&& (Math.abs(1 - cameraAspect) > 0.05d)) {
-				int paramsLayoutHeight = (int) MainScreen.thiz.getResources()
+				int paramsLayoutHeight = (int) MainScreen.getInstance().getResources()
 						.getDimension(R.dimen.paramsLayoutHeight);
 				// if wide-screen - decrease width of surface
 				lp.width = previewSurfaceWidth;
@@ -1448,7 +1448,7 @@ public class AlmalenceGUI extends GUI implements
 				lp.height = (int) (screen_height - 2 * paramsLayoutHeight);
 				lp.topMargin = (int) (paramsLayoutHeight);
 			} else if (surfaceAspect > cameraAspect) {
-				int paramsLayoutHeight = (int) MainScreen.thiz.getResources()
+				int paramsLayoutHeight = (int) MainScreen.getInstance().getResources()
 						.getDimension(R.dimen.paramsLayoutHeight);
 				// if wide-screen - decrease width of surface
 				lp.width = previewSurfaceWidth;
@@ -1458,7 +1458,7 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 
-		MainScreen.thiz.preview.setLayoutParams(lp);
+		MainScreen.getInstance().preview.setLayoutParams(lp);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 
@@ -1491,13 +1491,13 @@ public class AlmalenceGUI extends GUI implements
 				if (Plugin == null || Plugin.getQuickControlIconID() <= 0)
 					continue;
 
-				LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+				LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 				ImageView qcView = (ImageView) inflator.inflate(
 						R.layout.gui_almalence_quick_control_button,
 						(ViewGroup) guiView.findViewById(R.id.paramsLayout),
 						false);
 
-				qcView.setOnTouchListener(MainScreen.thiz);
+				qcView.setOnTouchListener(MainScreen.getInstance());
 				qcView.setOnClickListener(this);
 				qcView.setOnLongClickListener(this);
 
@@ -1566,7 +1566,7 @@ public class AlmalenceGUI extends GUI implements
 
 	private void initDefaultQuickControls(View quickControl) 
 	{
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		quickControl = inflator.inflate(
 				R.layout.gui_almalence_invisible_button,
 				(ViewGroup) guiView.findViewById(R.id.paramsLayout), false);
@@ -1793,12 +1793,12 @@ public class AlmalenceGUI extends GUI implements
 				if(CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO) || 
 				   CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
 				{
-					LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+					LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 					View paramMode = inflator.inflate(
 							R.layout.gui_almalence_quick_control_grid_element, null,
 							false);
 
-					String aflock_name = MainScreen.thiz.getResources().getString(R.string.focusAFLock);
+					String aflock_name = MainScreen.getInstance().getResources().getString(R.string.focusAFLock);
 					((ImageView) paramMode.findViewById(R.id.imageView))
 							.setImageResource(R.drawable.gui_almalence_settings_focus_aflock);
 					((TextView) paramMode.findViewById(R.id.textView))
@@ -1835,7 +1835,7 @@ public class AlmalenceGUI extends GUI implements
 							Message msg = new Message();
 							msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 							msg.what = PluginManager.MSG_BROADCAST;
-							MainScreen.H.sendMessage(msg);
+							MainScreen.getMessageHandler().sendMessage(msg);
 							
 							initSettingsMenu();
 							hideSecondaryMenus();
@@ -2064,7 +2064,7 @@ public class AlmalenceGUI extends GUI implements
 					but.setImageResource(icon_id);
 				}
 				
-				MainScreen.thiz.setCameraMeteringMode(mMeteringMode);
+				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
 			}
 			else
 			{
@@ -2085,14 +2085,14 @@ public class AlmalenceGUI extends GUI implements
 			mCameraChangeSupported = false;
 		
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
-		String qc1 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1),
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		String qc1 = prefs.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1),
 				defaultQuickControl1);
-		String qc2 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton2),
+		String qc2 = prefs.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2),
 				defaultQuickControl2);
-		String qc3 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton3),
+		String qc3 = prefs.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3),
 				defaultQuickControl3);
-		String qc4 = prefs.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton4),
+		String qc4 = prefs.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4),
 				defaultQuickControl4);
 
 		quickControl1 = isCameraParameterSupported(qc1) ? getQuickControlButton(
@@ -2152,7 +2152,7 @@ public class AlmalenceGUI extends GUI implements
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_EV_CHANGED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 
 		
@@ -2182,7 +2182,7 @@ public class AlmalenceGUI extends GUI implements
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
+				MainScreen.getMessageHandler().sendMessage(msg);
 			}
 
 			public void onPanelClosed(Panel panel) {
@@ -2191,7 +2191,7 @@ public class AlmalenceGUI extends GUI implements
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
+				MainScreen.getMessageHandler().sendMessage(msg);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
 						false);
 			}
@@ -2532,13 +2532,13 @@ public class AlmalenceGUI extends GUI implements
 		switch (type) {
 		case SCENE:
 			icon_id = icons_scene.get(mSceneMode);
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_scene);
 			isEnabled = isSceneEnabled;
 			break;
 		case WB:
 			icon_id = icons_wb.get(mWB);
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_wb);
 			isEnabled = isWBEnabled;
 			break;
@@ -2548,7 +2548,7 @@ public class AlmalenceGUI extends GUI implements
 					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
 				else
 					icon_id = icons_focus.get(mFocusMode);
-				icon_text = MainScreen.thiz.getResources().getString(
+				icon_text = MainScreen.getInstance().getResources().getString(
 						R.string.settings_mode_focus);
 				isEnabled = isFocusEnabled;
 			} catch (Exception e) {
@@ -2558,29 +2558,29 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case FLASH:
 			icon_id = icons_flash.get(mFlashMode);
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_flash);
 			isEnabled = isFlashEnabled;
 			break;
 		case ISO:
 			icon_id = icons_iso.get(mISO);
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_iso);
 			isEnabled = isIsoEnabled;
 			break;
 		case METERING:
 			icon_id = icons_metering.get(mMeteringMode);
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_metering);
 			isEnabled = isMeteringEnabled;
 			break;			
 		case CAMERA: {
 			icon_id = icon_cam;
 			if (!preferences.getBoolean("useFrontCamera", false))
-				icon_text = MainScreen.thiz.getResources().getString(
+				icon_text = MainScreen.getInstance().getResources().getString(
 						R.string.settings_mode_rear);
 			else
-				icon_text = MainScreen.thiz.getResources().getString(
+				icon_text = MainScreen.getInstance().getResources().getString(
 						R.string.settings_mode_front);
 
 			isEnabled = isCameraChangeEnabled;
@@ -2588,19 +2588,19 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case EV:
 			icon_id = icon_ev;
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_exposure);
 			isEnabled = isEVEnabled;
 			break;
 		case MORE:
 			icon_id = icon_settings;
-			icon_text = MainScreen.thiz.getResources().getString(
+			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_moresettings);
 			break;		
 		}
 
 		// Get required size of button
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		View settingView = inflator.inflate(
 				R.layout.gui_almalence_quick_control_grid_element, null, false);
 		ImageView iconView = (ImageView) settingView
@@ -2610,9 +2610,9 @@ public class AlmalenceGUI extends GUI implements
 		textView.setText(icon_text);
 
 		if (!isEnabled && !isQuickControl) {
-			iconView.setColorFilter(MainScreen.mainContext.getResources()
+			iconView.setColorFilter(MainScreen.getMainContext().getResources()
 					.getColor(R.color.buttonDisabled), PorterDuff.Mode.DST_IN);
-			textView.setTextColor(MainScreen.mainContext.getResources()
+			textView.setTextColor(MainScreen.getMainContext().getResources()
 					.getColor(R.color.textDisabled));
 		}
 
@@ -2687,7 +2687,7 @@ public class AlmalenceGUI extends GUI implements
 		if (iconID <= 0)
 			return;
 
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		View qcView = inflator.inflate(
 				R.layout.gui_almalence_quick_control_grid_element, null, false);
 		((ImageView) qcView.findViewById(R.id.imageView))
@@ -2770,7 +2770,7 @@ public class AlmalenceGUI extends GUI implements
 				PluginType.Export));
 
 //		DisplayMetrics metrics = new DisplayMetrics();
-//		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+//		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 //				.getMetrics(metrics);
 //		int width = metrics.widthPixels;
 //		int modeHeight = (int) (width / 3 - 5 * metrics.density);
@@ -2841,7 +2841,7 @@ public class AlmalenceGUI extends GUI implements
 	
 						int icon_id = plugin.getQuickControlIconID();
 						String title = plugin.getQuickControlTitle();
-						Drawable icon = MainScreen.mainContext.getResources()
+						Drawable icon = MainScreen.getMainContext().getResources()
 								.getDrawable(icon_id);
 						((ImageView) v.findViewById(R.id.imageView))
 								.setImageResource(icon_id);
@@ -2865,7 +2865,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView ev = (RotateImageView) topMenuButtons
 						.get(MODE_EV);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icon_ev);
 				ev.setImageDrawable(icon);
 
@@ -2884,7 +2884,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView scene = (RotateImageView) topMenuButtons
 						.get(MODE_SCENE);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icons_scene.get(mSceneMode));
 				scene.setImageDrawable(icon);
 
@@ -2903,7 +2903,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView wb = (RotateImageView) topMenuButtons
 						.get(MODE_WB);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icons_wb.get(mWB));
 				wb.setImageDrawable(icon);
 
@@ -2923,7 +2923,7 @@ public class AlmalenceGUI extends GUI implements
 				RotateImageView focus = (RotateImageView) topMenuButtons
 						.get(MODE_FOCUS);
 				try {
-					Drawable icon = MainScreen.mainContext.getResources()
+					Drawable icon = MainScreen.getMainContext().getResources()
 							.getDrawable(icons_focus.get(mFocusMode));
 					focus.setImageDrawable(icon);
 				} catch (Exception e) {
@@ -2946,7 +2946,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView flash = (RotateImageView) topMenuButtons
 						.get(MODE_FLASH);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icons_flash.get(mFlashMode));
 				flash.setImageDrawable(icon);
 
@@ -2965,7 +2965,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView iso = (RotateImageView) topMenuButtons
 						.get(MODE_ISO);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icons_iso.get(mISO));
 				iso.setImageDrawable(icon);
 
@@ -2984,7 +2984,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView metering = (RotateImageView) topMenuButtons
 						.get(MODE_MET);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icons_metering.get(mMeteringMode));
 				metering.setImageDrawable(icon);
 
@@ -3003,7 +3003,7 @@ public class AlmalenceGUI extends GUI implements
 			public void onClick(View v) {
 				RotateImageView cam = (RotateImageView) topMenuButtons
 						.get(MODE_CAM);
-				Drawable icon = MainScreen.mainContext.getResources()
+				Drawable icon = MainScreen.getMainContext().getResources()
 						.getDrawable(icon_cam);
 				cam.setImageDrawable(icon);
 
@@ -3020,12 +3020,12 @@ public class AlmalenceGUI extends GUI implements
 
 	public void changeCurrentQuickControl(View newCurrent) {
 		if (currentQuickView != null)
-			currentQuickView.setBackgroundDrawable(MainScreen.mainContext
+			currentQuickView.setBackgroundDrawable(MainScreen.getMainContext()
 					.getResources().getDrawable(
 							R.drawable.transparent_background));
 
 		currentQuickView = newCurrent;
-		newCurrent.setBackgroundDrawable(MainScreen.mainContext.getResources()
+		newCurrent.setBackgroundDrawable(MainScreen.getMainContext().getResources()
 				.getDrawable(R.drawable.layout_border_qc_button));
 		((RotateImageView) newCurrent).setBackgroundEnabled(true);
 	}
@@ -3041,7 +3041,7 @@ public class AlmalenceGUI extends GUI implements
 				.setVisibility(View.VISIBLE);
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.setBackgroundDrawable(MainScreen.mainContext.getResources()
+				.setBackgroundDrawable(MainScreen.getMainContext().getResources()
 						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		Set<Integer> topmenu_keys = topMenuButtons.keySet();
@@ -3052,7 +3052,7 @@ public class AlmalenceGUI extends GUI implements
 				((RotateImageView) topMenuButtons.get(key))
 						.setBackgroundEnabled(true);
 				topMenuButtons.get(key).setBackgroundDrawable(
-						MainScreen.mainContext.getResources().getDrawable(
+						MainScreen.getMainContext().getResources().getDrawable(
 								R.drawable.transparent_background));
 			}
 		}
@@ -3066,7 +3066,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void closeQuickControlsSettings() {
@@ -3075,35 +3075,35 @@ public class AlmalenceGUI extends GUI implements
 		gridview.setVisibility(View.INVISIBLE);
 		quickControlsChangeVisible = false;
 
-		currentQuickView.setBackgroundDrawable(MainScreen.mainContext
+		currentQuickView.setBackgroundDrawable(MainScreen.getMainContext()
 				.getResources().getDrawable(R.drawable.transparent_background));
 		currentQuickView = null;
 
 		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.setBackgroundDrawable(MainScreen.mainContext.getResources()
+				.setBackgroundDrawable(MainScreen.getMainContext().getResources()
 						.getDrawable(R.drawable.blacktransparentlayertop));
 
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_EV), isEVEnabled);
+				MainScreen.getInstance().findViewById(MODE_EV), isEVEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_SCENE), isSceneEnabled);
+				MainScreen.getInstance().findViewById(MODE_SCENE), isSceneEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_WB), isWBEnabled);
+				MainScreen.getInstance().findViewById(MODE_WB), isWBEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_FOCUS), isFocusEnabled);
+				MainScreen.getInstance().findViewById(MODE_FOCUS), isFocusEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_FLASH), isFlashEnabled);
+				MainScreen.getInstance().findViewById(MODE_FLASH), isFlashEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_ISO), isIsoEnabled);
+				MainScreen.getInstance().findViewById(MODE_ISO), isIsoEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_MET), isMeteringEnabled);
+				MainScreen.getInstance().findViewById(MODE_MET), isMeteringEnabled);
 		correctTopMenuButtonBackground(
-				MainScreen.thiz.findViewById(MODE_CAM), isCameraChangeEnabled);
+				MainScreen.getInstance().findViewById(MODE_CAM), isCameraChangeEnabled);
 
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 
 		guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 	}
@@ -3190,7 +3190,7 @@ public class AlmalenceGUI extends GUI implements
 		settingsAdapter.Elements = settingsViews;
 
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeight = (int) (width / 3 - 5 * metrics.density);
 
@@ -3214,7 +3214,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.BOTTOM,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3247,7 +3247,7 @@ public class AlmalenceGUI extends GUI implements
 //					else
 //						newSceneMode = supported_scene.get(0);
 //
-//					Drawable icon = MainScreen.mainContext.getResources()
+//					Drawable icon = MainScreen.getMainContext().getResources()
 //							.getDrawable(icons_scene.get(newSceneMode));
 //					((ImageView) v.findViewById(R.id.imageView))
 //							.setImageDrawable(icon);
@@ -3265,7 +3265,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3315,7 +3315,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3349,7 +3349,7 @@ public class AlmalenceGUI extends GUI implements
 //						newFocusMode = supported_focus.get(0);
 //
 //					try {
-//						Drawable icon = MainScreen.mainContext.getResources()
+//						Drawable icon = MainScreen.getMainContext().getResources()
 //								.getDrawable(icons_focus.get(newFocusMode));
 //						((ImageView) v.findViewById(R.id.imageView)).setImageDrawable(icon);
 //					} catch (Exception e) {
@@ -3371,7 +3371,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3404,7 +3404,7 @@ public class AlmalenceGUI extends GUI implements
 //					else
 //						newFlashMode = supported_flash.get(0);
 //
-//					Drawable icon = MainScreen.mainContext.getResources()
+//					Drawable icon = MainScreen.getMainContext().getResources()
 //							.getDrawable(icons_flash.get(newFlashMode));
 //					((ImageView) v.findViewById(R.id.imageView))
 //							.setImageDrawable(icon);
@@ -3422,7 +3422,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3456,7 +3456,7 @@ public class AlmalenceGUI extends GUI implements
 //					else
 //						newISO = supported_iso.get(0);
 //
-//					Drawable icon = MainScreen.mainContext.getResources()
+//					Drawable icon = MainScreen.getMainContext().getResources()
 //							.getDrawable(icons_iso.get(newISO));
 //					((ImageView) v.findViewById(R.id.imageView))
 //							.setImageDrawable(icon);
@@ -3474,7 +3474,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3506,7 +3506,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3525,7 +3525,7 @@ public class AlmalenceGUI extends GUI implements
 							null,
 							Toast.LENGTH_SHORT,
 							Gravity.CENTER,
-							MainScreen.thiz.getResources().getString(
+							MainScreen.getInstance().getResources().getString(
 									R.string.settings_not_available), true,
 							false);
 					return;
@@ -3548,9 +3548,9 @@ public class AlmalenceGUI extends GUI implements
 		settingView.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				PluginManager.getInstance().onShowPreferences();
-				Intent settingsActivity = new Intent(MainScreen.mainContext,
+				Intent settingsActivity = new Intent(MainScreen.getMainContext(),
 						Preferences.class);
-				MainScreen.thiz.startActivity(settingsActivity);
+				MainScreen.getInstance().startActivity(settingsActivity);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
 						false);
 			}
@@ -3568,13 +3568,13 @@ public class AlmalenceGUI extends GUI implements
 		if (PluginManager.getInstance().getProcessingCounter() != 0)
 			return;
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
-		boolean isFrontCamera = prefs.getBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), false);
-		prefs.edit().putBoolean(MainScreen.mainContext.getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean isFrontCamera = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseFrontCameraValue), false);
+		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
 
 		if (restart) {
-			MainScreen.thiz.PauseMain();
-			MainScreen.thiz.ResumeMain();
+			MainScreen.getInstance().PauseMain();
+			MainScreen.getInstance().ResumeMain();
 		}
 	}
 
@@ -3584,13 +3584,13 @@ public class AlmalenceGUI extends GUI implements
 
 		initModeList();
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeightByWidth = (int) (width / 3 - 5 * metrics.density);
-		int modeHeightByDimen = Math.round(MainScreen.thiz.getResources()
+		int modeHeightByDimen = Math.round(MainScreen.getInstance().getResources()
 				.getDimension(R.dimen.gridModeImageSize)
-				+ MainScreen.thiz.getResources().getDimension(
+				+ MainScreen.getInstance().getResources().getDimension(
 						R.dimen.gridModeTextLayoutSize));
 
 		int modeHeight = modeHeightByDimen > modeHeightByWidth ? modeHeightByWidth
@@ -3627,14 +3627,14 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void hideModeList() {
 		RelativeLayout gridview = (RelativeLayout) guiView
 				.findViewById(R.id.modeLayout);
 
-		Animation gone = AnimationUtils.loadAnimation(MainScreen.thiz,
+		Animation gone = AnimationUtils.loadAnimation(MainScreen.getInstance(),
 				R.anim.gui_almalence_modelist_invisible);
 		gone.setFillAfter(true);
 
@@ -3665,7 +3665,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	@Override
@@ -3702,7 +3702,7 @@ public class AlmalenceGUI extends GUI implements
 		setInfo(toLeft, XtoVisible, XtoInvisible, true);
 
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		prefs.edit().putInt(MainScreen.sDefaultInfoSetPref, infoSet).commit();
 	}
 
@@ -3846,7 +3846,7 @@ public class AlmalenceGUI extends GUI implements
 
 		// checks preferences
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putInt(MainScreen.sDefaultInfoSetPref, infoSet);
 		prefsEditor.commit();
@@ -3904,39 +3904,39 @@ public class AlmalenceGUI extends GUI implements
 			return;
 
 		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		int currentQCNumber = -1;
 		String currentViewID = "";
 		if (currentView == quickControl1) {
-			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1), "");
+			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1), "");
 			currentQCNumber = 1;
 		} else if (currentView == quickControl2) {
-			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton2), "");
+			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2), "");
 			currentQCNumber = 2;
 		} else if (currentView == quickControl3) {
-			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton3), "");
+			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3), "");
 			currentQCNumber = 3;
 		} else if (currentView == quickControl4) {
-			currentViewID = pref.getString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton4), "");
+			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4), "");
 			currentQCNumber = 4;
 		}
 
 		if (newView == quickControl1) {
 			quickControl1 = currentView;
-			pref.edit().putString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton1), currentViewID)
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1), currentViewID)
 					.commit();
 		} else if (newView == quickControl2) {
 			quickControl2 = currentView;
-			pref.edit().putString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton2), currentViewID)
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2), currentViewID)
 					.commit();
 		} else if (newView == quickControl3) {
 			quickControl3 = currentView;
-			pref.edit().putString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton3), currentViewID)
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3), currentViewID)
 					.commit();
 		} else if (newView == quickControl4) {
 			quickControl4 = currentView;
-			pref.edit().putString(MainScreen.thiz.getResources().getString(R.string.Preference_QuickControlButton4), currentViewID)
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4), currentViewID)
 					.commit();
 		} else {
 			if (currentView.getParent() != null)
@@ -4001,7 +4001,7 @@ public class AlmalenceGUI extends GUI implements
 
 	private void removePluginViews() {
 		List<View> pluginsView = new ArrayList<View>();
-		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.pluginsLayout);
 		for (int i = 0; i < pluginsLayout.getChildCount(); i++)
 			pluginsView.add(pluginsLayout.getChildAt(i));
@@ -4015,7 +4015,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		List<View> fullscreenView = new ArrayList<View>();
-		RelativeLayout fullscreenLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout fullscreenLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.fullscreenLayout);
 		for (int i = 0; i < fullscreenLayout.getChildCount(); i++)
 			fullscreenView.add(fullscreenLayout.getChildAt(i));
@@ -4029,7 +4029,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		List<View> infoView = new ArrayList<View>();
-		LinearLayout infoLayout = (LinearLayout) MainScreen.thiz
+		LinearLayout infoLayout = (LinearLayout) MainScreen.getInstance()
 				.findViewById(R.id.infoLayout);
 		for (int i = 0; i < infoLayout.getChildCount(); i++)
 			infoView.add(infoLayout.getChildAt(i));
@@ -4079,7 +4079,7 @@ public class AlmalenceGUI extends GUI implements
 						plugin.onQuickControlClick();
 
 						int icon_id = plugin.getQuickControlIconID();
-						Drawable icon = MainScreen.mainContext.getResources()
+						Drawable icon = MainScreen.getMainContext().getResources()
 								.getDrawable(icon_id);
 						((RotateImageView) v).setImageDrawable(icon);
 
@@ -4181,7 +4181,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4213,7 +4213,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4245,7 +4245,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4277,7 +4277,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4309,7 +4309,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4351,7 +4351,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4383,7 +4383,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4418,7 +4418,7 @@ public class AlmalenceGUI extends GUI implements
 						null,
 						Toast.LENGTH_SHORT,
 						Gravity.CENTER,
-						MainScreen.thiz.getResources().getString(
+						MainScreen.getInstance().getResources().getString(
 								R.string.settings_not_available), true, false);
 				break;
 			}
@@ -4524,7 +4524,7 @@ public class AlmalenceGUI extends GUI implements
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_WB_CHANGED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		if (mFocusMode != -1)
 		{				
@@ -4547,7 +4547,7 @@ public class AlmalenceGUI extends GUI implements
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		if (mFlashMode != -1)
 		{
@@ -4560,7 +4560,7 @@ public class AlmalenceGUI extends GUI implements
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		if (mISO != -1)
 		{
@@ -4572,7 +4572,7 @@ public class AlmalenceGUI extends GUI implements
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_ISO_CHANGED;
 			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.H.sendMessage(msg);
+			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		preferences.edit().putInt(MainScreen.sSceneModePref, newMode).commit();
 
@@ -4588,7 +4588,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void setWhiteBalance(int newMode)
@@ -4620,7 +4620,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_WB_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void setFocusMode(int newMode)
@@ -4653,7 +4653,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 
 		initSettingsMenu();
 		hideSecondaryMenus();
@@ -4688,7 +4688,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void setISO(int newMode)
@@ -4717,7 +4717,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 	
 	private void setMeteringMode(int newMode)
@@ -4728,7 +4728,7 @@ public class AlmalenceGUI extends GUI implements
 			setButtonSelected(MeteringModeButtons, mMeteringMode);
 
 			preferences.edit().putInt(MainScreen.sMeteringModePref, newMode).commit();
-			MainScreen.thiz.setCameraMeteringMode(newMode);
+			MainScreen.getInstance().setCameraMeteringMode(newMode);
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
@@ -4785,7 +4785,7 @@ public class AlmalenceGUI extends GUI implements
 			Integer it_button = it.next();
 			if (isTopMenuButtonEnabled(it_button))
 				(topMenuButtons.get(it_button))
-						.setBackgroundDrawable(MainScreen.mainContext
+						.setBackgroundDrawable(MainScreen.getMainContext()
 								.getResources().getDrawable(
 										R.drawable.transparent_background));
 		}
@@ -4796,7 +4796,7 @@ public class AlmalenceGUI extends GUI implements
 					.get(iTopMenuButtonPressed);
 			// pressed_button.setBackgroundEnabled(true);
 			pressed_button
-					.setBackgroundDrawable(MainScreen.mainContext
+					.setBackgroundDrawable(MainScreen.getMainContext()
 							.getResources()
 							.getDrawable(
 									R.drawable.almalence_gui_button_background_pressed));
@@ -4864,7 +4864,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	public boolean isSecondaryMenusVisible() {
@@ -4882,13 +4882,13 @@ public class AlmalenceGUI extends GUI implements
 	// Decide what layout to show when some main's parameters button is clicked
 	private void showParams(int iButton) {
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeightByWidth = (int) (width / 3 - 5 * metrics.density);
-		int modeHeightByDimen = Math.round(MainScreen.thiz.getResources()
+		int modeHeightByDimen = Math.round(MainScreen.getInstance().getResources()
 				.getDimension(R.dimen.gridImageSize)
-				+ MainScreen.thiz.getResources().getDimension(
+				+ MainScreen.getInstance().getResources().getDimension(
 						R.dimen.gridTextLayoutHeight));
 
 		int modeHeight = modeHeightByDimen > modeHeightByWidth ? modeHeightByWidth
@@ -4959,7 +4959,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private void setButtonSelected(Map<Integer, View> buttonsList,
@@ -5123,11 +5123,11 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	protected boolean isAnyViewOnViewfinder() {
-		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.pluginsLayout);
-		LinearLayout infoLayout = (LinearLayout) MainScreen.thiz
+		LinearLayout infoLayout = (LinearLayout) MainScreen.getInstance()
 				.findViewById(R.id.infoLayout);
-		RelativeLayout fullScreenLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout fullScreenLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.fullscreenLayout);
 
 		return pluginsLayout.getChildCount() > 0
@@ -5151,19 +5151,19 @@ public class AlmalenceGUI extends GUI implements
 		while (it.hasNext()) {
 			Mode tmp = it.next();
 
-			LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			View mode = inflator.inflate(
 					R.layout.gui_almalence_select_mode_grid_element, null,
 					false);
 			// set some mode icon
 			((ImageView) mode.findViewById(R.id.modeImage))
-					.setImageResource(MainScreen.thiz.getResources()
+					.setImageResource(MainScreen.getInstance().getResources()
 							.getIdentifier(tmp.icon, "drawable",
-									MainScreen.thiz.getPackageName()));
+									MainScreen.getInstance().getPackageName()));
 
-			int id = MainScreen.thiz.getResources().getIdentifier(tmp.modeName,
-					"string", MainScreen.thiz.getPackageName());
-			String modename = MainScreen.thiz.getResources().getString(id);
+			int id = MainScreen.getInstance().getResources().getIdentifier(tmp.modeName,
+					"string", MainScreen.getInstance().getPackageName());
+			String modename = MainScreen.getInstance().getResources().getString(id);
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			if (mode_number==0)
@@ -5218,18 +5218,18 @@ public class AlmalenceGUI extends GUI implements
 
 		if (mode.modeID.equals("video"))
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			if (prefs.getBoolean("videoStartStandardPref", false))
 			{
 				PluginManager.getInstance().onPause(true);
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-				MainScreen.thiz.startActivity(intent);
+				MainScreen.getInstance().startActivity(intent);
 			    return true;
 			}
 		}
 		
 		// <!-- -+-
-		if (!MainScreen.thiz.checkLaunches(tmpActiveMode))
+		if (!MainScreen.getInstance().checkLaunches(tmpActiveMode))
 			return false;
 		//-+- -->
 		
@@ -5246,16 +5246,16 @@ public class AlmalenceGUI extends GUI implements
 		// set modes icon inside mode selection icon
 		Bitmap bm = null;
 		Bitmap iconBase = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
+				MainScreen.getMainContext().getResources(),
 				R.drawable.gui_almalence_select_mode);
-		int id = MainScreen.thiz.getResources().getIdentifier(
+		int id = MainScreen.getInstance().getResources().getIdentifier(
 				mode.icon, "drawable",
-				MainScreen.thiz.getPackageName());
+				MainScreen.getInstance().getPackageName());
 		Bitmap iconOverlay = BitmapFactory.decodeResource(
-				MainScreen.mainContext.getResources(),
-				MainScreen.thiz.getResources().getIdentifier(
+				MainScreen.getMainContext().getResources(),
+				MainScreen.getInstance().getResources().getIdentifier(
 						mode.icon, "drawable",
-						MainScreen.thiz.getPackageName()));
+						MainScreen.getInstance().getPackageName()));
 		iconOverlay = Bitmap.createScaledBitmap(iconOverlay,
 				(int) (iconBase.getWidth() / 1.8),
 				(int) (iconBase.getWidth() / 1.8), false);
@@ -5264,10 +5264,10 @@ public class AlmalenceGUI extends GUI implements
 		bm = Bitmap
 				.createScaledBitmap(
 						bm,
-						(int) (MainScreen.mainContext
+						(int) (MainScreen.getMainContext()
 								.getResources()
 								.getDimension(R.dimen.mainButtonHeightSelect)),
-						(int) (MainScreen.mainContext
+						(int) (MainScreen.getMainContext()
 								.getResources()
 								.getDimension(R.dimen.mainButtonHeightSelect)),
 						false);
@@ -5275,12 +5275,12 @@ public class AlmalenceGUI extends GUI implements
 				.findViewById(R.id.buttonSelectMode))
 				.setImageBitmap(bm);
 
-		int rid = MainScreen.thiz.getResources().getIdentifier(
+		int rid = MainScreen.getInstance().getResources().getIdentifier(
 				tmpActiveMode.howtoText, "string",
-				MainScreen.thiz.getPackageName());
+				MainScreen.getInstance().getPackageName());
 		String howto = "";
 		if (rid != 0)
-			howto = MainScreen.thiz.getResources().getString(rid);
+			howto = MainScreen.getInstance().getResources().getString(rid);
 		// show toast on mode changed
 		showToast(
 				v,
@@ -5289,7 +5289,7 @@ public class AlmalenceGUI extends GUI implements
 				((TextView) v.findViewById(R.id.modeText))
 						.getText()
 						+ " "
-						+ MainScreen.thiz.getResources().getString(
+						+ MainScreen.getInstance().getResources().getString(
 								R.string.almalence_gui_selected)
 						+ (tmpActiveMode.howtoText.isEmpty() ? ""
 								: "\n") + howto, false, true);
@@ -5300,14 +5300,14 @@ public class AlmalenceGUI extends GUI implements
 	public void showToast(final View v, final int showLength,
 			final int gravity, final String toastText,
 			final boolean withBackground, final boolean startOffset) {
-		MainScreen.thiz.runOnUiThread(new Runnable() {
+		MainScreen.getInstance().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				final RelativeLayout modeLayout = (RelativeLayout) guiView
 						.findViewById(R.id.changeModeToast);
 
 				DisplayMetrics metrics = new DisplayMetrics();
-				MainScreen.thiz.getWindowManager().getDefaultDisplay()
+				MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 						.getMetrics(metrics);
 				int screen_height = metrics.heightPixels;
 				int screen_width = metrics.widthPixels;
@@ -5328,14 +5328,14 @@ public class AlmalenceGUI extends GUI implements
 					lp.setMargins(
 							0,
 							(int) (screen_height
-									- MainScreen.thiz.getResources()
+									- MainScreen.getInstance().getResources()
 											.getDimension(
 													R.dimen.paramsLayoutHeight) - shutter_height),
 							0, shutter_height);
 				}
 
 				if (withBackground)
-					modeLayout.setBackgroundDrawable(MainScreen.thiz
+					modeLayout.setBackgroundDrawable(MainScreen.getInstance()
 							.getResources().getDrawable(
 									R.drawable.almalence_gui_toast_background));
 				else
@@ -5348,9 +5348,9 @@ public class AlmalenceGUI extends GUI implements
 				if (v != null) {
 					RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) imgView
 							.getLayoutParams();
-					pm.width = (int) MainScreen.thiz.getResources()
+					pm.width = (int) MainScreen.getInstance().getResources()
 							.getDimension(R.dimen.mainButtonHeight);
-					pm.height = (int) MainScreen.thiz.getResources()
+					pm.height = (int) MainScreen.getInstance().getResources()
 							.getDimension(R.dimen.mainButtonHeight);
 					imgView.setImageDrawable(((ImageView) v
 							.findViewById(R.id.modeImage)).getDrawable());
@@ -5508,7 +5508,7 @@ public class AlmalenceGUI extends GUI implements
 			android.widget.RelativeLayout.LayoutParams currParams) {
 		int left = 0, right = 0, top = 0, bottom = 0;
 
-		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.pluginsLayout);
 
 		if (currParams == null)
@@ -5578,9 +5578,9 @@ public class AlmalenceGUI extends GUI implements
 		}
 			break;
 		case VIEWFINDER_ZONE_FULLSCREEN: {
-			currParams.width = MainScreen.thiz.getPreviewSize() != null ? MainScreen.thiz
+			currParams.width = MainScreen.getInstance().getPreviewSize() != null ? MainScreen.getInstance()
 					.getPreviewSize().getWidth() : 0;
-			currParams.height = MainScreen.thiz.getPreviewSize() != null ? MainScreen.thiz
+			currParams.height = MainScreen.getInstance().getPreviewSize() != null ? MainScreen.getInstance()
 					.getPreviewSize().getHeight() : 0;
 			currParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			return currParams;
@@ -5608,7 +5608,7 @@ public class AlmalenceGUI extends GUI implements
 		boolean isFree = true;
 		Rect childRect;
 
-		View pluginLayout = MainScreen.thiz.findViewById(R.id.pluginsLayout);
+		View pluginLayout = MainScreen.getInstance().findViewById(R.id.pluginsLayout);
 
 		// Looking in all zones at clockwise direction for free place
 		for (int j = Plugin.ViewfinderZone.getInt(currZone), counter = 0; j < zones.length; j++, counter++) {
@@ -5690,7 +5690,7 @@ public class AlmalenceGUI extends GUI implements
 			RelativeLayout.LayoutParams currParams, Plugin.ViewfinderZone zone) {
 		int left = -1, right = -1, top = -1, bottom = -1;
 
-		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.pluginsLayout);
 
 		int viewWidth = currParams.width;
@@ -5752,7 +5752,7 @@ public class AlmalenceGUI extends GUI implements
 	protected Rect getPluginViewRect(View view) {
 		int left = -1, right = -1, top = -1, bottom = -1;
 
-		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.pluginsLayout);
 		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) view
 				.getLayoutParams();
@@ -5852,13 +5852,13 @@ public class AlmalenceGUI extends GUI implements
 			return true;
 
 		// to possibly slide-out top panel
-		if (view == MainScreen.thiz.preview
-				|| view == (View) MainScreen.thiz
+		if (view == MainScreen.getInstance().preview
+				|| view == (View) MainScreen.getInstance()
 						.findViewById(R.id.mainLayout1))
 			((Panel) guiView.findViewById(R.id.topPanel)).touchListener
 					.onTouch(view, event);
 
-		else if (view.getParent() == (View) MainScreen.thiz
+		else if (view.getParent() == (View) MainScreen.getInstance()
 				.findViewById(R.id.paramsLayout) && !quickControlsChangeVisible) {
 
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -5900,7 +5900,7 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		// to allow quickControl's to process onClick, onLongClick
-		if (view.getParent() == (View) MainScreen.thiz
+		if (view.getParent() == (View) MainScreen.getInstance()
 				.findViewById(R.id.paramsLayout)) {
 			return false;
 		}
@@ -5911,7 +5911,7 @@ public class AlmalenceGUI extends GUI implements
 			isMenuOpened = true;
 
 		if (quickControlsChangeVisible
-				&& view.getParent() != (View) MainScreen.thiz
+				&& view.getParent() != (View) MainScreen.getInstance()
 						.findViewById(R.id.paramsLayout))
 			closeQuickControlsSettings();
 
@@ -6120,7 +6120,7 @@ public class AlmalenceGUI extends GUI implements
 		Message msg = new Message();
 		msg.arg1 = PluginManager.MSG_EV_CHANGED;
 		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg);
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	@Override
@@ -6218,7 +6218,7 @@ public class AlmalenceGUI extends GUI implements
 			additionalButton.setVisibility(View.GONE);
 			
 			mainButton.setImageResource(R.drawable.button_shutter);
-			int dp = (int) MainScreen.thiz.getResources().getDimension(R.dimen.shutterHeight);
+			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
 			mainButton.getLayoutParams().width = dp;
 			mainButton.getLayoutParams().height = dp;
 		} 
@@ -6229,7 +6229,7 @@ public class AlmalenceGUI extends GUI implements
 			
 			additionalButton.setVisibility(View.VISIBLE);
 
-			int dp = (int) MainScreen.thiz.getResources().getDimension(R.dimen.videoShutterHeight);
+			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
 			mainButton.getLayoutParams().width = dp;
 			mainButton.getLayoutParams().height = dp;
 			
@@ -6316,10 +6316,10 @@ public class AlmalenceGUI extends GUI implements
 				if (PluginManager.getInstance().getProcessingCounter() != 0) {
 					// splash screen about processing
 					AlertDialog.Builder builder = new AlertDialog.Builder(
-							MainScreen.thiz)
+							MainScreen.getInstance())
 							.setTitle("Processing...")
 							.setMessage(
-									MainScreen.thiz.getResources().getString(
+									MainScreen.getInstance().getResources().getString(
 											R.string.processing_not_finished))
 							.setPositiveButton("Ok",
 									new DialogInterface.OnClickListener() {
@@ -6347,17 +6347,17 @@ public class AlmalenceGUI extends GUI implements
 		Message message = new Message();
 		message.arg1 = PluginManager.MSG_STOP_CAPTURE;
 		message.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(message);
+		MainScreen.getMessageHandler().sendMessage(message);
 
-		if (!isUriValid(uri, MainScreen.thiz.getContentResolver())) {
+		if (!isUriValid(uri, MainScreen.getInstance().getContentResolver())) {
 		}
 
 		try {
-			MainScreen.thiz.startActivity(new Intent(Intent.ACTION_VIEW,
+			MainScreen.getInstance().startActivity(new Intent(Intent.ACTION_VIEW,
 					uri));
 		} catch (ActivityNotFoundException ex) {
 			try {
-				MainScreen.thiz.startActivity(new Intent(Intent.ACTION_VIEW,
+				MainScreen.getInstance().startActivity(new Intent(Intent.ACTION_VIEW,
 						uri));
 			} catch (ActivityNotFoundException e) {
 				Log.e("AlmalenceGUI", "review image fail. uri=" + uri, e);
@@ -6440,7 +6440,7 @@ public class AlmalenceGUI extends GUI implements
 	@Override
 	public void onPostProcessingFinished() {
 		List<View> postprocessingView = new ArrayList<View>();
-		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.thiz
+		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
 				.findViewById(R.id.postprocessingLayout);
 		for (int i = 0; i < pluginsLayout.getChildCount(); i++)
 			postprocessingView.add(pluginsLayout.getChildAt(i));
@@ -6466,7 +6466,7 @@ public class AlmalenceGUI extends GUI implements
 	private updateThumbnailButtonTask t = null;
 	public void updateThumbnailButton() {
 		
-		t = new updateThumbnailButtonTask(MainScreen.thiz);
+		t = new updateThumbnailButtonTask(MainScreen.getInstance());
         t.execute();
         
         new CountDownTimer(3000, 3000) {
@@ -6501,7 +6501,7 @@ public class AlmalenceGUI extends GUI implements
 		@Override
 		protected Void doInBackground(Void... params) 
 		{
-			mThumbnail = Thumbnail.getLastThumbnail(MainScreen.thiz.getContentResolver());
+			mThumbnail = Thumbnail.getLastThumbnail(MainScreen.getInstance().getContentResolver());
 			return null;
 		}
 
@@ -6519,10 +6519,10 @@ public class AlmalenceGUI extends GUI implements
 							Bitmap bm = Thumbnail
 									.getRoundedCornerBitmap(
 											bitmap,
-											(int) (MainScreen.mainContext
+											(int) (MainScreen.getMainContext()
 													.getResources()
 													.getDimension(R.dimen.mainButtonHeight)*1.2),
-													(int) (MainScreen.mainContext
+													(int) (MainScreen.getMainContext()
 															.getResources()
 															.getDimension(R.dimen.mainButtonHeight)/1.1));
 
@@ -6538,9 +6538,9 @@ public class AlmalenceGUI extends GUI implements
 					Canvas canvas = new Canvas(bitmap);
 					canvas.drawColor(Color.BLACK);
 					Bitmap bm = Thumbnail.getRoundedCornerBitmap(bitmap,
-							(int) (MainScreen.mainContext.getResources()
+							(int) (MainScreen.getMainContext().getResources()
 									.getDimension(R.dimen.mainButtonHeight)*1.2),
-									(int) (MainScreen.mainContext
+									(int) (MainScreen.getMainContext()
 											.getResources()
 											.getDimension(R.dimen.mainButtonHeight)/1.1));
 					thumbnailView.setImageBitmap(bm);
@@ -6561,8 +6561,8 @@ public class AlmalenceGUI extends GUI implements
 				.findViewById(R.id.buttonGallery2));
 		processingAnim.setVisibility(View.VISIBLE);
 
-		int height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
-		int width = (int)MainScreen.thiz.getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
+		int height = (int)MainScreen.getInstance().getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
+		int width = (int)MainScreen.getInstance().getResources().getDimension(R.dimen.paramsLayoutHeightScanner);
 		Animation rotation = new RotateAnimation(0, 360, width/2, height/2);
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());
@@ -6675,7 +6675,7 @@ public class AlmalenceGUI extends GUI implements
 	public void showHelp(String modeName, String text, int imageID, String Prefs)
 	{
 		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean needToShow = prefs.getBoolean(Prefs, true);
 		
 		//check show help settings
@@ -6730,11 +6730,11 @@ public class AlmalenceGUI extends GUI implements
 	String[] stringInterval = {"3", "5", "10", "15", "30", "60"};
 	public void SelfTimerDialog()
 	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int interval = prefs.getInt(MainScreen.sDelayedCaptureIntervalPref, 0);
 		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);		
 		
-		final Dialog d = new Dialog(MainScreen.thiz);
+		final Dialog d = new Dialog(MainScreen.getInstance());
         d.setTitle("Self timer settings");
         d.setContentView(R.layout.selftimer_dialog);
         final Button bSet = (Button) d.findViewById(R.id.button1);
@@ -6836,23 +6836,23 @@ public class AlmalenceGUI extends GUI implements
 		View selfTimerControl =null;
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.thiz.getWindowManager().getDefaultDisplay()
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		float fScreenDensity = metrics.density;
     			
-    	int iIndicatorSize = (int) (MainScreen.mainContext.getResources()
+    	int iIndicatorSize = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
     	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
-		int topMargin = MainScreen.thiz.findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.thiz.getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
-		params.setMargins((int)(2*MainScreen.guiManager.getScreenDensity()), topMargin, 0, 0);
+		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+		params.setMargins((int)(2*MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
 		
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();		
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();		
 		
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();		
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
 		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
 		selfTimerControl.setVisibility(View.VISIBLE);
 		
@@ -6875,24 +6875,24 @@ public class AlmalenceGUI extends GUI implements
 		});
 		
 		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2);
+		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2);
 		for(int i = 0; i < specialLayout2.getChildCount(); i++)
 			specialView2.add(specialLayout2.getChildAt(i));
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int)MainScreen.thiz.getResources().getDimension(R.dimen.videobuttons_size);
+		params.height = (int)MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 		
 		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
 		
 		selfTimerControl.setLayoutParams(params);
 		selfTimerControl.requestLayout();
 		
-		((RelativeLayout)MainScreen.thiz.findViewById(R.id.specialPluginsLayout2)).requestLayout();
+		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.mainContext);
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		updateTimelapseButton(delayInterval);
 	}

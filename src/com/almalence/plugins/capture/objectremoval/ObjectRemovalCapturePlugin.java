@@ -79,18 +79,18 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		
 		refreshPreferences();
 		
-		MainScreen.captureYUVFrames = true;
+		MainScreen.setCaptureYUVFrames(true);
 	}
 	
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.guiManager.showHelp(MainScreen.thiz.getString(R.string.ObjectRemoval_Help_Header), MainScreen.thiz.getResources().getString(R.string.ObjectRemoval_Help), R.drawable.plugin_help_object, "objectRemovalShowHelp");
+		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.ObjectRemoval_Help_Header), MainScreen.getInstance().getResources().getString(R.string.ObjectRemoval_Help), R.drawable.plugin_help_object, "objectRemovalShowHelp");
 	}
 	
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		imageAmount = Integer.parseInt(prefs.getString("objectRemovalImagesAmount", "7"));
 		pauseBetweenShots = Integer.parseInt(prefs.getString("objectRemovalPauseBetweenShots", "750"));
 	}
@@ -110,7 +110,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
+				MainScreen.getMessageHandler().sendMessage(msg);
 			}
 			else
 			{
@@ -121,7 +121,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				    	Message msg = new Message();
 						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 						msg.what = PluginManager.MSG_BROADCAST;
-						MainScreen.H.sendMessage(msg);
+						MainScreen.getMessageHandler().sendMessage(msg);
 				     }
 				  }.start();
 			}
@@ -142,10 +142,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -154,7 +154,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     	
     	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(false));
@@ -173,17 +173,17 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 		if (imagesTaken < imageAmount)
 		{
 			inCapture = false;
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
 		else
 		{
@@ -192,7 +192,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			new CountDownTimer(5000, 5000) {
@@ -251,10 +251,10 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     		Message message = new Message();
     		message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -263,7 +263,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
     	
     	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
     	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.guiManager.getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
     	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
     	
     	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));
@@ -279,17 +279,17 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.thiz.MuteShutter(false);
+			MainScreen.getInstance().MuteShutter(false);
 			inCapture = false;
 			return;
 		}
 		if (imagesTaken < imageAmount)
 		{
 			inCapture = false;
-			MainScreen.H.sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
 		}
 		else
 		{
@@ -298,7 +298,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.H.sendMessage(message);
+			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
 			inCapture = false;
@@ -332,8 +332,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			// play tick sound
-			MainScreen.guiManager.showCaptureIndication();
-			MainScreen.thiz.PlayShutter();
+			MainScreen.getGUIManager().showCaptureIndication();
+			MainScreen.getInstance().PlayShutter();
 			
 			try {
 				requestID = CameraController.captureImage(1, CameraController.YUV);
@@ -345,8 +345,8 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 				Message msg = new Message();
 				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.H.sendMessage(msg);
-				MainScreen.guiManager.lockControls = false;
+				MainScreen.getMessageHandler().sendMessage(msg);
+				MainScreen.getGUIManager().lockControls = false;
 			}
 
     		return true;

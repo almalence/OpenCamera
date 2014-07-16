@@ -76,8 +76,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
         {
             public boolean onPreferenceClick(Preference preference)
             {
-                Toast.makeText(MainScreen.thiz,
-                		MainScreen.thiz.getResources().getString(R.string.Pref_About),
+                Toast.makeText(MainScreen.getInstance(),
+                		MainScreen.getInstance().getResources().getString(R.string.Pref_About),
                         Toast.LENGTH_LONG).show();
 
                 return true;
@@ -94,7 +94,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
                 if (((CheckBoxPreference)preference).isChecked())
                 {
                 	SharedPreferences prefs = PreferenceManager
-            				.getDefaultSharedPreferences(MainScreen.mainContext);
+            				.getDefaultSharedPreferences(MainScreen.getMainContext());
                 	Editor prefsEditor = prefs.edit();
                 	prefsEditor.putBoolean("droShowHelp", true);
 					prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
@@ -132,12 +132,12 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					
 					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 					{
-						Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+						Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
 					}
 					
 					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 					{
-						Toast.makeText(MainScreen.thiz, MainScreen.thiz.getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
+						Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
 					}
 					
 					if (v == 2)

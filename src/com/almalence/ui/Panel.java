@@ -323,21 +323,21 @@ public class Panel extends LinearLayout
 		public boolean onTouch(View v, MotionEvent event)
 		{
 			//if controls locked - skip any events
-			if (MainScreen.thiz.guiManager.lockControls)
+			if (MainScreen.getGUIManager().lockControls)
 				return false;
 			
 			int action = event.getAction();
 		
-			if (v == MainScreen.thiz.preview || 
-				v == ((View)MainScreen.thiz.findViewById(R.id.mainLayout1)) ||
-				v.getParent() == (View)MainScreen.thiz.findViewById(R.id.paramsLayout) ) 
+			if (v == MainScreen.getInstance().preview || 
+				v == ((View)MainScreen.getInstance().findViewById(R.id.mainLayout1)) ||
+				v.getParent() == (View)MainScreen.getInstance().findViewById(R.id.paramsLayout) ) 
 			{
 				if (!mOpened)
 				{
 					handle=false;
 					if (action == MotionEvent.ACTION_DOWN)
 					{
-						if ( event.getRawY() > ((20 +(toTheTop?0:65))*MainScreen.mainContext.getResources().getDisplayMetrics().density)) 
+						if ( event.getRawY() > ((20 +(toTheTop?0:65))*MainScreen.getMainContext().getResources().getDisplayMetrics().density)) 
 							return false;
 						else
 							startScrolling = true;
@@ -347,7 +347,7 @@ public class Panel extends LinearLayout
 					{
 						if (!startScrolling)
 							return false;
-						if ( event.getY() < ((toTheTop?0:65)*MainScreen.mainContext.getResources().getDisplayMetrics().density) )
+						if ( event.getY() < ((toTheTop?0:65)*MainScreen.getMainContext().getResources().getDisplayMetrics().density) )
 							return false;
 						reorder(true, false);
 					}
@@ -697,7 +697,7 @@ public class Panel extends LinearLayout
 			locationTop = toTop;
 		toTheTop = toTop;
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)this.findViewById(R.id.panelHandle).getLayoutParams();
-		float d = MainScreen.mainContext.getResources().getDisplayMetrics().density;
+		float d = MainScreen.getMainContext().getResources().getDisplayMetrics().density;
 		if (toTheTop)
 		{
 			if (!isFromGUI && (moving!=0) && !locationTop && handle)

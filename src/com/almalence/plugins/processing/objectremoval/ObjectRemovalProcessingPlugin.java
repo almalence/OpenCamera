@@ -104,20 +104,20 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		released=false;
 		Message msg = new Message();
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-		MainScreen.H.sendMessage(msg);	
+		MainScreen.getMessageHandler().sendMessage(msg);	
 		
 		Message msg2 = new Message();
 		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
 		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.H.sendMessage(msg2);
+		MainScreen.getMessageHandler().sendMessage(msg2);
 		
-		MainScreen.guiManager.lockControls = true;
+		MainScreen.getGUIManager().lockControls = true;
 		
 		sessionID=SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
 		
-		mDisplayOrientation = MainScreen.guiManager.getDisplayOrientation();
+		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
     	mCameraMirrored = CameraController.isFrontCamera();
     	
     	int iSaveImageWidth = MainScreen.getSaveImageWidth();
@@ -248,11 +248,11 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	private boolean postProcessingRun = false;
 	
 	public void onStartPostProcessing() {	
-		mDisplayOrientationCurrent = MainScreen.guiManager.getDisplayOrientation();
-		int orientation = MainScreen.guiManager.getLayoutOrientation();    	
+		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
+		int orientation = MainScreen.getGUIManager().getLayoutOrientation();    	
     	mLayoutOrientationCurrent = (orientation == 0 || orientation == 180)? orientation: (orientation + 180)%360;
 		
-		LayoutInflater inflator = MainScreen.thiz.getLayoutInflater();
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_objectremoval_postprocessing, null, false);
 		
 		mImgView = ((ImageView)postProcessingView.findViewById(R.id.objectremovalImageHolder));
@@ -287,7 +287,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	
 	public void getDisplaySize(byte[] data) 
 	{
-		Display display= ((WindowManager) MainScreen.thiz.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		Display display= ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		Point dis = new Point();
 		display.getSize(dis);
 
@@ -334,17 +334,17 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	
     public void setupSaveButton() {
     	// put save button on screen
-        mSaveButton = new Button(MainScreen.thiz);
+        mSaveButton = new Button(MainScreen.getInstance());
         mSaveButton .setBackgroundResource(R.drawable.button_save_background);
         mSaveButton .setOnClickListener(this);
         LayoutParams saveLayoutParams = new LayoutParams(
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
-        		(int) (MainScreen.mainContext.getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)), 
+        		(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         saveLayoutParams.setMargins(
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
-        		(int)(MainScreen.thiz.getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
+        		(int)(MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 
         		0, 
         		0);
 		((RelativeLayout)postProcessingView.findViewById(R.id.objectremovalLayout)).addView(mSaveButton, saveLayoutParams);
@@ -408,21 +408,21 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-    		savePicture(MainScreen.mainContext);
+    		savePicture(MainScreen.getMainContext());
     		mHandler.sendEmptyMessage(MSG_LEAVING);
     		break;
     	case MSG_LEAVING:
     		if (released==true)
     			return false;
-    		MainScreen.H.sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
     		mJpegBufferList.clear();
     		
     		Message msg2 = new Message();
     		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
     		msg2.what = PluginManager.MSG_BROADCAST;
-    		MainScreen.H.sendMessage(msg2);
+    		MainScreen.getMessageHandler().sendMessage(msg2);
     		
-    		MainScreen.guiManager.lockControls = false;   		
+    		MainScreen.getGUIManager().lockControls = false;   		
 
     		postProcessingRun = false;
     		
@@ -453,7 +453,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.thiz.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
 			if (finishing)
 				return true;
@@ -549,7 +549,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	
 	private void getPrefs() {
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.thiz.getBaseContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance().getBaseContext());
         mSensitivity = prefs.getInt("Sensitivity", 19); //Should we manage this parameter or it's final value of 19?
         mMinSize = prefs.getInt("MinSize", 1000); //Should we manage this parameter or it's final value of 1000?
         mGhosting = prefs.getString("Ghosting", "2"); //Should we manage this parameter or it's final value of 2?

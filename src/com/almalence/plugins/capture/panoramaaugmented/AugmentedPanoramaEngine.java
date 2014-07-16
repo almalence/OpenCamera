@@ -521,7 +521,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				frames = (LinkedList<AugmentedFrameTaken>)this.frames.clone();
 			}
 			
-			MainScreen.thiz.queueGLEvent(new Runnable()
+			MainScreen.getInstance().queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -611,7 +611,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				@Override
 				public void run()
 				{
-					MainScreen.thiz.queueGLEvent(new Runnable()
+					MainScreen.getInstance().queueGLEvent(new Runnable()
 					{
 						@Override
 						public void run()
@@ -1419,7 +1419,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				    						AugmentedPanoramaEngine.this.textureHeight);
 				    			}
 			    				
-			    				MainScreen.thiz.queueGLEvent(new Runnable()
+			    				MainScreen.getInstance().queueGLEvent(new Runnable()
 			    				{
 			    					@Override
 			    					public void run()

@@ -337,7 +337,7 @@ public abstract class Plugin
     	if (null==camera)
     		return;
     	
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.mainContext);
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
     	int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
     	
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
@@ -573,7 +573,7 @@ Export Interface
 		if (this.quickControlView != null)
 		{
 			int icon_id = this.getQuickControlIconID();
-			Drawable icon = MainScreen.mainContext.getResources().getDrawable(icon_id);
+			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_id);
 			((ImageView)this.quickControlView.findViewById(R.id.imageView)).setImageDrawable(icon);
 		}
 	}

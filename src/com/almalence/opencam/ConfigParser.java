@@ -112,7 +112,7 @@ public class ConfigParser {
 	
     public boolean parse(Context context) throws XmlPullParserException, IOException 
     {
-    	AssetManager assetManager = context.getAssets();//MainScreen.mainContext.getAssets();
+    	AssetManager assetManager = context.getAssets();//MainScreen.getMainContext().getAssets();
     	InputStream in = null;
     	try {
     	    in = assetManager.open("opencamera_modes.xml");
