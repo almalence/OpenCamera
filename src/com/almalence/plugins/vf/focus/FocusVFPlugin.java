@@ -375,19 +375,19 @@ public class FocusVFPlugin extends PluginViewfinder
                         && mSoundPlayerOK != null)
                 */              
                 if (mSoundPlayerOK != null)                
-                	if (!MainScreen.ShutterPreference
+                	if (!MainScreen.isShutterSoundEnabled()
                 			&& !PluginManager.getInstance().muteSounds())
                 		mSoundPlayerOK.play();
                 
                 //With enabled preference 'Shot on tap' perform shutter button click after success focusing.
                 String modeID = PluginManager.getInstance().getActiveMode().modeID;
-                if(MainScreen.ShotOnTapPreference && !modeID.equals("video"))
+                if(MainScreen.isShotOnTap() && !modeID.equals("video"))
                 	MainScreen.getGUIManager().onHardwareShutterButtonPressed();
             }
             else
             {
             	if(mSoundPlayerFalse != null)
-            		if (!MainScreen.ShutterPreference
+            		if (!MainScreen.isShutterSoundEnabled()
                 			&& !PluginManager.getInstance().muteSounds())
             			mSoundPlayerFalse.play();
                 mState = STATE_FAIL;
@@ -413,7 +413,7 @@ public class FocusVFPlugin extends PluginViewfinder
     public boolean onTouch(View view, MotionEvent e)
     {
     	//Not handle touch event if no need of autoFocus and refuse 'shot on tap' in video mode.
-        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH || mState == STATE_INACTIVE || mFocusDisabled || (!needAutoFocusCall() && !(MainScreen.ShotOnTapPreference &&  !PluginManager.getInstance().getActiveMode().modeID.equals("video")))) 
+        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH || mState == STATE_INACTIVE || mFocusDisabled || (!needAutoFocusCall() && !(MainScreen.isShotOnTap() &&  !PluginManager.getInstance().getActiveMode().modeID.equals("video")))) 
         	return false;
 
         // Let users be able to cancel previous touch focus.
@@ -499,10 +499,10 @@ public class FocusVFPlugin extends PluginViewfinder
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
-        calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getInstance().preview.getWidth(), MainScreen.getInstance().preview.getHeight(),
+        calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
                 mFocusArea.get(0).rect);
         if(MainScreen.currentMeteringMode != -1 && MainScreen.currentMeteringMode == CameraParameters.meteringModeSpot)
-        	calculateTapArea(20, 20, 1f, x, y, MainScreen.getInstance().preview.getWidth(), MainScreen.getInstance().preview.getHeight(),
+        	calculateTapArea(20, 20, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
                     mMeteringArea.get(0).rect);
         else
         	mMeteringArea = null;
@@ -527,7 +527,7 @@ public class FocusVFPlugin extends PluginViewfinder
         	        }
             setFocusParameters();
             autoFocus();
-        } else if(e.getAction() == MotionEvent.ACTION_UP && MainScreen.ShotOnTapPreference && !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
+        } else if(e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap() && !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
             	MainScreen.getGUIManager().onHardwareShutterButtonPressed();        
         else {  // Just show the indicator in all other cases.
             updateFocusUI();

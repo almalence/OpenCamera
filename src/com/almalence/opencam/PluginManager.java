@@ -1886,13 +1886,13 @@ public class PluginManager implements PluginManagerInterface {
         boolean usePhoneMem = true;
         
         String abcDir = "Camera";
-        if(MainScreen.SortByDataPreference)
+        if(MainScreen.isSortByData())
         {
         	Calendar rightNow = Calendar.getInstance();
         	abcDir = String.format("%tF", rightNow);
         }
         
-        if ((Integer.parseInt(MainScreen.SaveToPreference) == 1))
+        if ((Integer.parseInt(MainScreen.getSaveTo()) == 1))
         {
 			dcimDir = Environment.getExternalStorageDirectory();
 
@@ -1985,9 +1985,9 @@ public class PluginManager implements PluginManagerInterface {
 	            }
             }
         }
-        else if ((Integer.parseInt(MainScreen.SaveToPreference) == 2))
+        else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
         {
-        	saveDir = new File(MainScreen.SaveToPath);
+        	saveDir = new File(MainScreen.getSaveToPath());
         	usePhoneMem = false;
         }
         
@@ -2042,7 +2042,7 @@ public class PluginManager implements PluginManagerInterface {
 		{			 
 			 public void onTick(long millisUntilFinished) 
 		     {		    	 
-		    	 countdownView.setRotation(90 - MainScreen.orientationMain);
+		    	 countdownView.setRotation(90 - MainScreen.getOrientation());
 		         countdownView.setText(String.valueOf(millisUntilFinished/1000));
 		         countdownView.clearAnimation();
 		         countdownLayout.setVisibility(View.VISIBLE);
@@ -2092,7 +2092,7 @@ public class PluginManager implements PluginManagerInterface {
 
 	public void TickEverySecond(boolean isLastSecond)
 	{
-		if (MainScreen.ShutterPreference)
+		if (MainScreen.isShutterSoundEnabled())
 			return;
 		if (delayedCaptureSoundPrefCommon)
 		{

@@ -392,16 +392,16 @@ public class DROVideoEngine
 		{
 			if (this.instance != 0)
 			{
-				if (MainScreen.previewWidth != this.previewWidth
-						|| MainScreen.previewHeight != this.previewHeight)
+				if (MainScreen.getPreviewWidth() != this.previewWidth
+						|| MainScreen.getPreviewHeight() != this.previewHeight)
 				{
 					RealtimeDRO.release(this.instance);
 					this.instance = 0;
 				}
 			}
 			
-			this.previewWidth = MainScreen.previewWidth;
-			this.previewHeight = MainScreen.previewHeight;
+			this.previewWidth = MainScreen.getPreviewWidth();
+			this.previewHeight = MainScreen.getPreviewHeight();
 			
 			if (this.instance == 0)
 			{

@@ -222,7 +222,7 @@ public abstract class Plugin
     	int prefIdx = -1;
     	try
     	{
-    		prefIdx = Integer.parseInt(MainScreen.ImageSizeIdxPreference);
+    		prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
     	}
     	catch (IndexOutOfBoundsException e)
     	{

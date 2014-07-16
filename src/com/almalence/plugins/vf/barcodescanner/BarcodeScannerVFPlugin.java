@@ -297,7 +297,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 			return;
 		}
 
-      new DecodeAsyncTask(MainScreen.previewWidth, MainScreen.previewHeight).execute(data);
+      new DecodeAsyncTask(MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight()).execute(data);
         
 		mFrameCounter = 0;
 	}
@@ -331,7 +331,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
         showBarcodeViewDialog(barcode);
         
         if (mSoundPlayer != null)                
-        	if (!MainScreen.ShutterPreference)
+        	if (!MainScreen.isShutterSoundEnabled())
         		mSoundPlayer.play();
     }
 	
@@ -361,10 +361,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
             double heightFraction = BOUNDS_FRACTION;
             double widthFraction = BOUNDS_FRACTION;
 
-            int height = (int) (MainScreen.previewHeight * heightFraction);
-            int width = (int) (MainScreen.previewWidth * widthFraction);
-            int left = (int) (MainScreen.previewWidth * ((1 - widthFraction) / 2));
-            int top = (int) (MainScreen.previewHeight * ((1 - heightFraction) / 2));
+            int height = (int) (MainScreen.getPreviewHeight() * heightFraction);
+            int width = (int) (MainScreen.getPreviewWidth() * widthFraction);
+            int left = (int) (MainScreen.getPreviewWidth() * ((1 - widthFraction) / 2));
+            int top = (int) (MainScreen.getPreviewHeight() * ((1 - heightFraction) / 2));
             int right = left + width;
             int bottom = top + height;
 
@@ -448,12 +448,12 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	private synchronized File saveDecodedImageToFile(byte[]... datas) {
 		File file = null;
 		byte[] dataRotated = new byte[datas[0].length];
-		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.previewWidth, MainScreen.previewHeight, 0, 0, 1);
+		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight(), 0, 0, 1);
 		datas[0] = dataRotated;
 		
 		
-		Rect rect = new Rect(0, 0, MainScreen.previewHeight, MainScreen.previewWidth); 
-        YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.previewHeight, MainScreen.previewWidth, null);
+		Rect rect = new Rect(0, 0, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth()); 
+        YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth(), null);
         
         Calendar d = Calendar.getInstance();
         String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
@@ -498,7 +498,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder {
 	            matrix.postRotate(mOrientation - 90);
 
 	            // We rotate the same Bitmap
-	            bitmap = Bitmap.createBitmap(bitmap, 0, 0, MainScreen.previewHeight, MainScreen.previewWidth, matrix, false);
+	            bitmap = Bitmap.createBitmap(bitmap, 0, 0, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth(), matrix, false);
 
 	            // We dump the rotated Bitmap to the stream 
 	            bitmap.compress(CompressFormat.JPEG, 100, os);

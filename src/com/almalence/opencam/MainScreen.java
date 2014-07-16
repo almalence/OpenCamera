@@ -95,7 +95,6 @@ import com.almalence.util.Util;
 
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
-import com.almalence.opencam.cameracontroller.HALv3.imageAvailableListener;
 //<!-- -+-
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
@@ -136,7 +135,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	private static MainScreen thiz;
 	private Context mainContext;
-	private Handler H;
+	private Handler messageHandler;
 
 	//Interface to HALv3 camera and Old style camera
 	private CameraController cameraController = null;
@@ -157,49 +156,47 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private boolean mPausing = false;
 	
-	private File ForceFilename = null;
-	private Uri ForceFilenameUri;
+	private File forceFilename = null;
+	private Uri forceFilenameUri;
 
-	Bundle msavedInstanceState;
-	public SurfaceHolder surfaceHolder;
-	public SurfaceView preview;
+	private SurfaceHolder surfaceHolder;
+	private SurfaceView preview;
 	private Surface mCameraSurface = null;
 	private OrientationEventListener orientListener;
 	private boolean landscapeIsNormal = false;
-	private boolean surfaceJustCreated = false;
 	private boolean surfaceCreated = false;	
 
 	// shared between activities
-	public static int surfaceWidth, surfaceHeight;
-	public static int imageWidth, imageHeight;
-	public static int previewWidth, previewHeight;
-	public static int saveImageWidth, saveImageHeight;
+	private int surfaceWidth, surfaceHeight;
+	private int imageWidth, imageHeight;
+	private int previewWidth, previewHeight;
+	private int saveImageWidth, saveImageHeight;
 
 	private CountDownTimer ScreenTimer = null;
 	private boolean isScreenTimerRunning = false;
 
 	private static boolean wantLandscapePhoto = false;
-	public static int orientationMain = 0;
-	private static int orientationMainPrevious = 0;
+	private int orientationMain = 0;
+	private int orientationMainPrevious = 0;
 
 	private SoundPlayer shutterPlayer = null;
 
 	// Common preferences
-	public static String ImageSizeIdxPreference;
-	public static boolean ShutterPreference = true;
-	public static boolean ShotOnTapPreference = false;
+	private String imageSizeIdxPreference;
+	private boolean shutterPreference = true;
+	private boolean shotOnTapPreference = false;
 	
-	public static boolean showHelp = false;
+	private boolean showHelp = false;
 	
 	private boolean keepScreenOn = false;
 	
-	public static String SaveToPath;
-	public static String SaveToPreference;
-	public static boolean SortByDataPreference;
+	private String saveToPath;
+	private String saveToPreference;
+	private boolean sortByDataPreference;
 	
-	private static boolean MaxScreenBrightnessPreference;
+	private static boolean maxScreenBrightnessPreference;
 	
-	public static boolean mAFLocked = false;
+	private static boolean mAFLocked = false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -348,9 +345,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 		
-		msavedInstanceState = savedInstanceState;
 		mainContext = this.getBaseContext();
-		H = new Handler(this);
+		messageHandler = new Handler(this);
 		thiz = this;
 
 		mApplicationStarted = false;
@@ -516,9 +512,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				try 
 				{
-					ForceFilenameUri = this.getIntent().getExtras()
+					forceFilenameUri = this.getIntent().getExtras()
 							.getParcelable(MediaStore.EXTRA_OUTPUT);
-					MainScreen.setForceFilename(new File(((Uri) ForceFilenameUri).getPath()));
+					MainScreen.setForceFilename(new File(((Uri) forceFilenameUri).getPath()));
 					if (MainScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace")) 
 					{
 						MainScreen.setForceFilename(new File(Environment
@@ -572,7 +568,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public static Handler getMessageHandler()
 	{
-		return thiz.H;
+		return thiz.messageHandler;
 	}
 	
 	public static CameraController getCameraController()
@@ -589,13 +585,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static void createImageReaders()
 	{
 		//ImageReader for preview frames in YUV format
-		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight, ImageFormat.YUV_420_888, 1);
 		
 		//ImageReader for YUV still images
-		thiz.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderYUV = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.YUV_420_888, 1);
 		
 		//ImageReader for JPEG still images
-		thiz.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 1);
+		thiz.mImageReaderJPEG = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.JPEG, 1);
 	}
 	
 	public static ImageReader getPreviewYUVImageReader()
@@ -625,23 +621,76 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public static File getForceFilename()
 	{
-		return thiz.ForceFilename;
+		return thiz.forceFilename;
 	}
 	
 	public static void setForceFilename(File fileName)
 	{
-		thiz.ForceFilename = fileName;
+		thiz.forceFilename = fileName;
 	}
 	
 	public static Uri getForceFilenameURI()
 	{
-		return thiz.ForceFilenameUri;
+		return thiz.forceFilenameUri;
+	}
+	
+	public static SurfaceHolder getPreviewSurfaceHolder()
+	{
+		return thiz.surfaceHolder;
+	}
+	
+	public static SurfaceView getPreviewSurfaceView()
+	{
+		return thiz.preview;
+	}
+	
+	public static int getOrientation()
+	{
+		return thiz.orientationMain;
+	}
+	
+	public static String getImageSizeIndex()
+	{
+		return thiz.imageSizeIdxPreference;
+	}
+	
+	public static boolean isShutterSoundEnabled()
+	{
+		return thiz.shutterPreference;
+	}
+	
+	public static boolean isShotOnTap()
+	{
+		return thiz.shotOnTapPreference;
+	}
+	
+	public static boolean isShowHelp()
+	{
+		return thiz.showHelp;
+	}
+	
+	public static void setShowHelp(boolean show)
+	{
+		thiz.showHelp = show;
+	}
+	
+	public static String getSaveToPath()
+	{
+		return thiz.saveToPath;
+	}
+	
+	public static String getSaveTo()
+	{
+		return thiz.saveToPreference;
+	}
+	
+	public static boolean isSortByData()
+	{
+		return thiz.sortByDataPreference;
 	}
 	/*	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 *	Get/Set method for private variables 
 	 */
-	
-	
 	
 
 	
@@ -859,14 +908,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					
 					captureYUVFrames = false;
 					
-					SaveToPath = prefs.getString(sSavePathPref, Environment
+					saveToPath = prefs.getString(sSavePathPref, Environment
 							.getExternalStorageDirectory().getAbsolutePath());
-					SaveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
-					SortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref,
+					saveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
+					sortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref,
 							false);
 					
-					MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-					setScreenBrightness(MaxScreenBrightnessPreference);
+					maxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+					setScreenBrightness(maxScreenBrightnessPreference);
 					
 					CameraController.useHALv3(prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false));
 			
@@ -968,11 +1017,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraIndex(!prefs.getBoolean(MainScreen.sUseFrontCameraPref, false)? 0 : 1);
-		ShutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
+		shutterPreference = prefs.getBoolean(MainScreen.sShutterPref,
 				false);
-		ShotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
+		shotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref,
 				false);
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
+		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 				MainScreen.sImageSizeRearPref : MainScreen.sImageSizeFrontPref, "-1");
 	}
 	
@@ -986,7 +1035,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		orientListener.disable();
 
-		if (ShutterPreference) {
+		if (shutterPreference) {
 			AudioManager mgr = (AudioManager) MainScreen.thiz
 					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
@@ -1056,7 +1105,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 						else
 						{
-							H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 						}						
 					}
 				}
@@ -1076,11 +1125,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
-		ShutterPreference = prefs.getBoolean("shutterPrefCommon",
+		shutterPreference = prefs.getBoolean("shutterPrefCommon",
 				false);
-		ShotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
+		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon",
 				false);
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
+		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ?
 				"imageSizePrefCommonBack" : "imageSizePrefCommonFront", "-1");
 
 		if (!MainScreen.thiz.mPausing && surfaceCreated
@@ -1091,7 +1140,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					.setVisibility(View.VISIBLE);			
 			
 			if(CameraController.isUseHALv3())
-				H.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 			else
 			{
 				Log.e("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
@@ -1311,7 +1360,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			landscapeIsNormal = false;
 
 		surfaceCreated = true;
-		surfaceJustCreated = true;
 		
 		mCameraSurface = surfaceHolder.getSurface();
 		
@@ -1321,7 +1369,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		surfaceCreated = false;
-		surfaceJustCreated = false;
 	}
 	
 	
@@ -1353,35 +1400,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return null;
 
 		return cameraController.new Size(lp.width, lp.height);
-	}
-
-	public int getPreviewWidth() {
-		LayoutParams lp = preview.getLayoutParams();
-		if (lp == null)
-			return 0;
-
-		return lp.width;
-
-	}
-
-	public int getPreviewHeight() {
-		LayoutParams lp = preview.getLayoutParams();
-		if (lp == null)
-			return 0;
-
-		return lp.height;
-	}
-	
-	public ImageReader getImageReaderPreviewYUV() {
-		return mImageReaderPreviewYUV;
-	}
-	
-	public ImageReader getImageReaderYUV() {
-		return mImageReaderYUV;
-	}
-	
-	public ImageReader getImageReaderJPEG() {
-		return mImageReaderJPEG;
 	}
 
 	/*
@@ -1645,7 +1663,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	public void PlayShutter(int sound) {
-		if (!MainScreen.ShutterPreference) {
+		if (!MainScreen.isShutterSoundEnabled()) {
 			MediaPlayer mediaPlayer = MediaPlayer
 					.create(MainScreen.thiz, sound);
 			mediaPlayer.start();
@@ -1653,7 +1671,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	public void PlayShutter() {
-		if (!MainScreen.ShutterPreference) {
+		if (!MainScreen.isShutterSoundEnabled()) {
 			if (shutterPlayer != null)
 				shutterPlayer.play();
 		}
@@ -1661,7 +1679,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	// set TRUE to mute and FALSE to unmute
 	public void MuteShutter(boolean mute) {
-		if (MainScreen.ShutterPreference) {
+		if (MainScreen.isShutterSoundEnabled()) {
 			AudioManager mgr = (AudioManager) MainScreen.thiz
 					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
@@ -1669,35 +1687,51 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	public static int getImageWidth() {
-		return imageWidth;
+		return thiz.imageWidth;
 	}
 
 	public static void setImageWidth(int setImageWidth) {
-		imageWidth = setImageWidth;
+		thiz.imageWidth = setImageWidth;
 	}
 
 	public static int getImageHeight() {
-		return imageHeight;
+		return thiz.imageHeight;
 	}
 
 	public static void setImageHeight(int setImageHeight) {
-		imageHeight = setImageHeight;
+		thiz.imageHeight = setImageHeight;
 	}
 
 	public static int getSaveImageWidth() {
-		return saveImageWidth;
+		return thiz.saveImageWidth;
 	}
 
 	public static void setSaveImageWidth(int setSaveImageWidth) {
-		saveImageWidth = setSaveImageWidth;
+		thiz.saveImageWidth = setSaveImageWidth;
 	}
 
 	public static int getSaveImageHeight() {
-		return saveImageHeight;
+		return thiz.saveImageHeight;
 	}
 
 	public static void setSaveImageHeight(int setSaveImageHeight) {
-		saveImageHeight = setSaveImageHeight;
+		thiz.saveImageHeight = setSaveImageHeight;
+	}
+	
+	public static int getPreviewWidth(){
+		return thiz.previewWidth;
+	}
+	
+	public static void setPreviewWidth(int iWidth){
+		thiz.previewWidth = iWidth;
+	}
+	
+	public static int getPreviewHeight(){
+		return thiz.previewWidth;
+	}
+	
+	public static void setPreviewHeight(int iHeight){
+		thiz.previewHeight = iHeight;
 	}
 
 	public static boolean getWantLandscapePhoto() {

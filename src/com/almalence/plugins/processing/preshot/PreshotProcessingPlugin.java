@@ -538,13 +538,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    		return null;
 	    	}
 	
-	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
+	    	int H = MainScreen.getPreviewHeight(), W = MainScreen.getPreviewWidth();
 	    	int or = PreShot.getOrientation(index);
 	    	Log.e("PreShot", "getMultishotBitmap orientation: " + or);
 	    	if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
 	    	{ 
-	    		H = MainScreen.previewWidth;
-	    		W = MainScreen.previewHeight;
+	    		H = MainScreen.getPreviewWidth();
+	    		W = MainScreen.getPreviewHeight();
 	    	}
 			
 			Bitmap bitmap;
@@ -562,14 +562,14 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	    }
     	else
     	{//slow mode
-    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.previewHeight, MainScreen.previewWidth, CameraController.isFrontCamera());
+    		byte[] data = PreShot.GetFromBufferToShowInSlow(index, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth(), CameraController.isFrontCamera());
 	    	
 	    	if (data.length == 0)
 	    	{
 	    		return null;
 	    	}
 	
-	    	int H = MainScreen.previewHeight, W = MainScreen.previewWidth;
+	    	int H = MainScreen.getPreviewHeight(), W = MainScreen.getPreviewWidth();
     		
 	        Bitmap photo = null ;
 	        photo = BitmapFactory.decodeByteArray(data, 0, data.length);

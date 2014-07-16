@@ -1818,7 +1818,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				{
 					params.setFocusMode(CameraController.mode_focus.get(mode));
 					setCameraParameters(params);
-					MainScreen.mAFLocked = false;
+					MainScreen.setAutoFocusLock(false);
 				}
 			}
 		}

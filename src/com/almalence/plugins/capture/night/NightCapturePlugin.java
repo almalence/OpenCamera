@@ -392,7 +392,7 @@ public class NightCapturePlugin extends PluginCapture
     		if(mode == 1)
     			prefIdx = Integer.parseInt(NightCapturePlugin.ImageSizeIdxPreference);
     		else
-    			prefIdx = Integer.parseInt(MainScreen.ImageSizeIdxPreference);
+    			prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
     	}
     	catch (IndexOutOfBoundsException e)
     	{

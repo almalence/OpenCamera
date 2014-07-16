@@ -366,8 +366,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 		if (frameCounter != 4) {
 			return;
 		}
-		int previewWidth = MainScreen.previewWidth;
-		int previewHeight = MainScreen.previewHeight;
+		int previewWidth = MainScreen.getPreviewWidth();
+		int previewHeight = MainScreen.getPreviewHeight();
 
 		if (histogramType == LUMA) {
 			Histogram.createHistogram(data, histFacts, previewWidth,

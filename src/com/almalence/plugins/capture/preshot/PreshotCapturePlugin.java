@@ -309,8 +309,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getInstance().getPreviewFrameRate();
 			
-			imW = MainScreen.previewWidth;
-			imH = MainScreen.previewHeight;
+			imW = MainScreen.getPreviewWidth();
+			imH = MainScreen.getPreviewHeight();
 			
 			MainScreen.setSaveImageWidth(imW);
 			MainScreen.setSaveImageHeight(imH);

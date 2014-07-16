@@ -187,13 +187,13 @@ public class HALv3
 		Log.e(TAG, "setupImageReadersHALv3()");
 		//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
 		
-		MainScreen.getInstance().surfaceHolder.setFixedSize(1280, 720);
-		MainScreen.previewWidth = 1280;
-		MainScreen.previewHeight = 720;
+		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
+		MainScreen.setPreviewWidth(1280);
+		MainScreen.setPreviewHeight(720);
 		
 		//MainScreen.getInstance().surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
-//		MainScreen.previewWidth = MainScreen.imageWidth;
-//		MainScreen.previewHeight = MainScreen.imageHeight;
+//		MainScreen.getPreviewWidth() = MainScreen.imageWidth;
+//		MainScreen.getPreviewHeight() = MainScreen.imageHeight;
 		
 		// HALv3 code -------------------------------------------------------------------
 		MainScreen.createImageReaders();

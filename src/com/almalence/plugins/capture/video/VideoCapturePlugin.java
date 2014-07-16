@@ -294,7 +294,7 @@ public class VideoCapturePlugin extends PluginCapture
 			        if (cp!=null)
 			        {
 			        	setCameraPreviewSize(cp);
-			        	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
+			        	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight());
 			        	MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			        }
 		        	if (VideoCapturePlugin.this.modeDRO())
@@ -323,7 +323,7 @@ public class VideoCapturePlugin extends PluginCapture
 		    	
 		        		if(camera != null)
 		    			try {
-		    				camera.setPreviewDisplay(MainScreen.getInstance().surfaceHolder);
+		    				camera.setPreviewDisplay(MainScreen.getPreviewSurfaceHolder());
 		    			} catch (IOException e) {
 		    				e.printStackTrace();
 		    			}
@@ -1020,8 +1020,8 @@ public class VideoCapturePlugin extends PluginCapture
 	    cp.setPreviewSize(sz.width, sz.height);    	
     	
     	CameraController.getInstance().setCameraParameters(cp);
-	    MainScreen.previewWidth = sz.width;
-	    MainScreen.previewHeight = sz.height;    	
+	    MainScreen.setPreviewWidth(sz.width);
+	    MainScreen.setPreviewHeight(sz.height);    	
 	}
 	
 	//Get optimal supported preview size with aspect ration 16:9 or 4:3
@@ -1360,7 +1360,7 @@ public class VideoCapturePlugin extends PluginCapture
         if (cp!=null)
         {
         	setCameraPreviewSize(cp);
-        	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.previewWidth, MainScreen.previewHeight);
+        	CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight());
         	MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);	        	
    	    	if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
    	    		CameraController.getInstance().setVideoStabilization(false);
@@ -1640,7 +1640,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
 
 		// Step 5: Set the preview output
-		mMediaRecorder.setPreviewDisplay(MainScreen.getInstance().surfaceHolder.getSurface());
+		mMediaRecorder.setPreviewDisplay(MainScreen.getPreviewSurfaceHolder().getSurface());
 
 		mMediaRecorder.setOrientationHint(
 				CameraController.isFrontCamera()?

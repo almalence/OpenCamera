@@ -1458,7 +1458,7 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 
-		MainScreen.getInstance().preview.setLayoutParams(lp);
+		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 
@@ -5833,7 +5833,7 @@ public class AlmalenceGUI extends GUI implements
 			return true;
 
 		// to possibly slide-out top panel
-		if (view == MainScreen.getInstance().preview
+		if (view == MainScreen.getPreviewSurfaceView()
 				|| view == (View) MainScreen.getInstance()
 						.findViewById(R.id.mainLayout1))
 			((Panel) guiView.findViewById(R.id.topPanel)).touchListener
@@ -6660,8 +6660,8 @@ public class AlmalenceGUI extends GUI implements
 		boolean needToShow = prefs.getBoolean(Prefs, true);
 		
 		//check show help settings
-		MainScreen.showHelp = prefs.getBoolean("showHelpPrefCommon", true);
-		if (false == needToShow || !MainScreen.showHelp)
+		MainScreen.setShowHelp(prefs.getBoolean("showHelpPrefCommon", true));
+		if (false == needToShow || !MainScreen.isShowHelp())
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)

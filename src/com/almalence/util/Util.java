@@ -699,7 +699,7 @@ public final class Util {
     {
         Matrix matrix = new Matrix();
         Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0,
-        		MainScreen.previewWidth, MainScreen.previewHeight);
+        		MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight());
         matrix.invert(mMeteringMatrix);
     }
     public static Rect convertToDriverCoordinates(Rect rect)
