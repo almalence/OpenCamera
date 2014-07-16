@@ -224,23 +224,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static boolean prefBarcode = false;
 
 	private static final int VOLUME_FUNC_SHUTTER = 0;
-	private static final int VOLUME_FUNC_ZOOM 	= 1;
 	private static final int VOLUME_FUNC_EXPO 	= 2;
 	private static final int VOLUME_FUNC_NONE	= 3;
 	
-	public static String deviceSS3_01;
-	public static String deviceSS3_02;
-	public static String deviceSS3_03;
-	public static String deviceSS3_04;
-	public static String deviceSS3_05;
-	public static String deviceSS3_06;
-	public static String deviceSS3_07;
-	public static String deviceSS3_08;
-	public static String deviceSS3_09;
-	public static String deviceSS3_10;
-	public static String deviceSS3_11;
-	public static String deviceSS3_12;
-	public static String deviceSS3_13;
+	private static String deviceSS3_01;
+	private static String deviceSS3_02;
+	private static String deviceSS3_03;
+	private static String deviceSS3_04;
+	private static String deviceSS3_05;
+	private static String deviceSS3_06;
+	private static String deviceSS3_07;
+	private static String deviceSS3_08;
+	private static String deviceSS3_09;
+	private static String deviceSS3_10;
+	private static String deviceSS3_11;
+	private static String deviceSS3_12;
+	private static String deviceSS3_13;
 	
 	private static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();	
 	private static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();	
@@ -687,6 +686,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static boolean isSortByData()
 	{
 		return thiz.sortByDataPreference;
+	}
+	
+	public static boolean isDeviceModelProhibited()
+	{
+		return (Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
+				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13));
 	}
 	/*	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 *	Get/Set method for private variables 
