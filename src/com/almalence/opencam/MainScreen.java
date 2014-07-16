@@ -588,8 +588,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(19)
 	public static void createImageReaders()
 	{
+		//ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(MainScreen.previewWidth, MainScreen.previewHeight, ImageFormat.YUV_420_888, 1);
+		
+		//ImageReader for YUV still images
 		thiz.mImageReaderYUV = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.YUV_420_888, 1);
+		
+		//ImageReader for JPEG still images
 		thiz.mImageReaderJPEG = ImageReader.newInstance(MainScreen.imageWidth, MainScreen.imageHeight, ImageFormat.JPEG, 1);
 	}
 	
@@ -635,6 +640,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	/*	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 *	Get/Set method for private variables 
 	 */
+	
+	
+	
 
 	
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
