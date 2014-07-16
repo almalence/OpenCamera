@@ -817,7 +817,7 @@ public class FocusVFPlugin extends PluginViewfinder
         boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("UseFocus", true);
         return !(focusMode == CameraParameters.AF_MODE_INFINITY
                 || focusMode == CameraParameters.AF_MODE_FIXED
-                || focusMode == CameraParameters.AF_MODE_EDOF		// FixMe: EDOF likely needs auto-focus call 
+                || focusMode == CameraParameters.AF_MODE_EDOF		// EDOF likely needs auto-focus call 
                 || !useFocus
                 || mFocusDisabled);
     }
