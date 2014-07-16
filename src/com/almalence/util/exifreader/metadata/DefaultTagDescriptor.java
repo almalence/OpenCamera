@@ -45,7 +45,8 @@ public class DefaultTagDescriptor extends TagDescriptor<Directory>
     public String getTagName(int tagType)
     {
         String hex = Integer.toHexString(tagType).toUpperCase();
-        while (hex.length() < 4) hex = "0" + hex;
+        while (hex.length() < 4) 
+        	hex = "0" + hex;
         return "Unknown tag 0x" + hex;
     }
 }

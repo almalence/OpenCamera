@@ -91,7 +91,8 @@ public class RotateImageView extends ImageView
     {
         // make sure in the range of [0, 359]
         degree = degree >= 0 ? degree % 360 : degree % 360 + 360;
-        if (degree == mTargetDegree) return;
+        if (degree == mTargetDegree) 
+        	return;
 
         mTargetDegree = degree;
         mStartDegree = mCurrentDegree;
@@ -115,13 +116,15 @@ public class RotateImageView extends ImageView
     protected void onDraw(Canvas canvas)
     {
         Drawable drawable = getDrawable();
-        if (drawable == null) return;
+        if (drawable == null) 
+        	return;
 
         Rect bounds = drawable.getBounds();
         int w = bounds.right - bounds.left;
         int h = bounds.bottom - bounds.top;
 
-        if (w == 0 || h == 0) return; // nothing to draw
+        if (w == 0 || h == 0) 
+        	return; // nothing to draw
 
         if (mCurrentDegree != mTargetDegree) 
         {

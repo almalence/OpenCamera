@@ -420,9 +420,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		int n = evIdx[frame_num]; 
     	if (cm7_crap && (total_frames==3))
     	{
-   			if (frame_num == 0)      n = evIdx[0];
-   			else if (frame_num == 1) n = evIdx[2];
-   			else                     n = evIdx[1];
+   			if (frame_num == 0)      
+   				n = evIdx[0];
+   			else if (frame_num == 1) 
+   				n = evIdx[2];
+   			else                     
+   				n = evIdx[1];
     	}
 
     	compressed_frame[n] = SwapHeap.SwapToHeap(paramArrayOfByte);
@@ -512,9 +515,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		int n = evIdx[frame_num];
     	if (cm7_crap && (total_frames==3))
     	{
-   			if (frame_num == 0)      n = evIdx[0];
-   			else if (frame_num == 1) n = evIdx[2];
-   			else                     n = evIdx[1];
+   			if (frame_num == 0)      
+   				n = evIdx[0];
+   			else if (frame_num == 1) 
+   				n = evIdx[2];
+   			else                     
+   				n = evIdx[1];
     	}
 		
 		if(im.getFormat() == ImageFormat.YUV_420_888)
@@ -759,10 +765,26 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	int min_range = 0;
 	    	int max_range = 0;
 	    	
-	    	if ((ev_inc<=max_ev) && (total_frames<max_total_frames))      { max_range = 1;  ++total_frames;}
-	    	if ((-ev_inc>=min_ev) && (total_frames<max_total_frames))     { min_range = -1; ++total_frames;}
-	    	if ((2*ev_inc<=max_ev) && (total_frames<max_total_frames))    { max_range = 2;  ++total_frames;}
-	    	if ((-2*ev_inc>=min_ev) && (total_frames<max_total_frames))   { min_range = -2; ++total_frames;}
+	    	if ((ev_inc<=max_ev) && (total_frames<max_total_frames))      
+	    	{ 
+	    		max_range = 1;  
+	    		++total_frames;
+	    	}
+	    	if ((-ev_inc>=min_ev) && (total_frames<max_total_frames))     
+	    	{
+	    		min_range = -1; 
+	    		++total_frames;
+	    	}
+	    	if ((2*ev_inc<=max_ev) && (total_frames<max_total_frames))    
+	    	{ 
+	    		max_range = 2;  
+	    		++total_frames;
+	    	}
+	    	if ((-2*ev_inc>=min_ev) && (total_frames<max_total_frames))   
+	    	{ 
+	    		min_range = -2; 
+	    		++total_frames;
+	    	}
 	    	
 	    	// if the range is too small for reported Ev step - just do two frames - at min Ev and at max Ev
 	    	if (max_range==min_range)

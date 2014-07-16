@@ -1644,17 +1644,28 @@ public class PluginManager implements PluginManagerInterface {
 				PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
 			else if(s1 != null)
 				PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);	
-			if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
-			if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
-			if(s4 != null) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
-			if(s5 != null) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
-			if(s6 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
-			if(s7 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
-			if(s8 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
-			if(s9 != null) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
-			if(s10 != null) PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
-			if(s11 != null) PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
-			if(s12 != null) PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
+			if(s2 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+			if(s3 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+			if(s4 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+			if(s5 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+			if(s6 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+			if(s7 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+			if(s8 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+			if(s9 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
+			if(s10 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
+			if(s11 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+			if(s12 != null) 
+				PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
 			
 		} catch (JpegProcessingException e1)
 		{
@@ -1675,12 +1686,18 @@ public class PluginManager implements PluginManagerInterface {
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));		
 		
-		if(exposure_time != null && !exposure_time.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
-		if(sensitivity != null && !sensitivity.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
-		if(aperture != null && !aperture.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
-		if(focal_lenght != null && !focal_lenght.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
-		if(flash_mode != null && !flash_mode.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
-		if(awb_mode != null && !awb_mode.equals("null")) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
+		if(exposure_time != null && !exposure_time.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
+		if(sensitivity != null && !sensitivity.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
+		if(aperture != null && !aperture.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
+		if(focal_lenght != null && !focal_lenght.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
+		if(flash_mode != null && !flash_mode.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
+		if(awb_mode != null && !awb_mode.equals("null")) 
+			PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
 		
 		return true;
 	}

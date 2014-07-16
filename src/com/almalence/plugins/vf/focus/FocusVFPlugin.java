@@ -413,7 +413,8 @@ public class FocusVFPlugin extends PluginViewfinder
     public boolean onTouch(View view, MotionEvent e)
     {
     	//Not handle touch event if no need of autoFocus and refuse 'shot on tap' in video mode.
-        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH || mState == STATE_INACTIVE || mFocusDisabled || (!needAutoFocusCall() && !(MainScreen.ShotOnTapPreference &&  !PluginManager.getInstance().getActiveMode().modeID.equals("video")))) return false;
+        if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH || mState == STATE_INACTIVE || mFocusDisabled || (!needAutoFocusCall() && !(MainScreen.ShotOnTapPreference &&  !PluginManager.getInstance().getActiveMode().modeID.equals("video")))) 
+        	return false;
 
         // Let users be able to cancel previous touch focus.
         if ((mFocusArea != null) && (mState == STATE_FOCUSING) && !delayedFocus)
@@ -630,7 +631,8 @@ public class FocusVFPlugin extends PluginViewfinder
     // This can only be called after mParameters is initialized.
     public int getFocusMode()
     {
-        if (mOverrideFocusMode != -1) return mOverrideFocusMode;
+        if (mOverrideFocusMode != -1) 
+        	return mOverrideFocusMode;
 
         if (mFocusAreaSupported && mFocusArea != null)
             mFocusMode = CameraParameters.AF_MODE_AUTO;
@@ -667,7 +669,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
     public void updateFocusUI()
     {
-        if (!mInitialized || !mFocusSupported) return;
+        if (!mInitialized || !mFocusSupported) 
+        	return;
 
         FocusIndicator focusIndicator = mFocusIndicator;
 
@@ -696,7 +699,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
     public void resetTouchFocus()
     {
-        if (!mInitialized) return;
+        if (!mInitialized) 
+        	return;
 
         // Put focus indicator to the center.
         RelativeLayout.LayoutParams p =

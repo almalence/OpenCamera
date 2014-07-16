@@ -293,15 +293,19 @@ public class AugmentedRotationListener implements SensorEventListener
 		    			float adiff = (this.angle_magnetic[mag_remap[i]] - 
 			    				(float)Math.atan2(this.data_magnetic[i], this.data_magnetic[j]));
 		    			
-		    			while (adiff > Math.PI) adiff -= 2*Math.PI;
-		    			while (adiff < -Math.PI) adiff += 2*Math.PI;
+		    			while (adiff > Math.PI) 
+		    				adiff -= 2*Math.PI;
+		    			while (adiff < -Math.PI) 
+		    				adiff += 2*Math.PI;
 		    			
 		    			this.rate_magnetic[mag_remap[i]] = adiff / dT;
 		    			
 		    			// compute LP-filtered angle
 		    			adiff = this.angle_magnetic[mag_remap[i]] - this.angleLF_magnetic[mag_remap[i]];
-		    			while (adiff > Math.PI) adiff -= 2*Math.PI;
-		    			while (adiff < -Math.PI) adiff += 2*Math.PI;
+		    			while (adiff > Math.PI) 
+		    				adiff -= 2*Math.PI;
+		    			while (adiff < -Math.PI) 
+		    				adiff += 2*Math.PI;
 		    			
 		    			if (Math.abs(adiff) > Math.PI*3/180)	// above 3 degree difference - assume fast change in position
 		    				this.angleLF_magnetic[mag_remap[i]] = this.angle_magnetic[mag_remap[i]];
@@ -380,8 +384,10 @@ public class AugmentedRotationListener implements SensorEventListener
 	
 	private float fuseAngles(float nice, float dirty, final float compensation, float filtCf)
 	{
-		while (nice-(dirty+compensation) > Math.PI) dirty += 2*Math.PI;
-		while (nice-(dirty+compensation) < -Math.PI) dirty -= 2*Math.PI;
+		while (nice-(dirty+compensation) > Math.PI) 
+			dirty += 2*Math.PI;
+		while (nice-(dirty+compensation) < -Math.PI) 
+			dirty -= 2*Math.PI;
 		
 		// if gyro (nice) is very far from accelerometer (dirty) - converge faster 
 		if (nice-(dirty+compensation) > Math.PI*5/180)	// 5 degrees

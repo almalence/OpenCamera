@@ -230,9 +230,11 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		if (this.modeDRO())
 		{
-			if (expStep < 0.3f) expStep = 0.33f;	// there is a bug in Nexus 5 (android 4.4.2) 
+			if (expStep < 0.3f) 
+				expStep = 0.33f;	// there is a bug in Nexus 5 (android 4.4.2) 
     		int cmpns = -(int)(0.8f/expStep);
-    		if (cmpns == 0) cmpns = -1;	// on Ascend P6 Ev compensation step is 1.0
+    		if (cmpns == 0) 
+    			cmpns = -1;	// on Ascend P6 Ev compensation step is 1.0
 			newEv -= cmpns;
 		}
 		

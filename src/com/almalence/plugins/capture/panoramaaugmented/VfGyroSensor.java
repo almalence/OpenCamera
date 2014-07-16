@@ -189,7 +189,8 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 			}
     	}
     
-		if ((!doneWithNewData) || (data==null)) return;
+		if ((!doneWithNewData) || (data==null)) 
+			return;
 		
 		if (datacopy==null) 
 			datacopy = new byte[data.length];

@@ -240,14 +240,22 @@ public class InfosetVFPlugin extends PluginViewfinder
 				else
 					mDeviceOrientation = newOrientation;
 	    		
-	    		if(batteryInfoImage != null) batteryInfoImage.setOrientation(mDeviceOrientation);
-	    		if(sceneInfoImage != null) sceneInfoImage.setOrientation(mDeviceOrientation);
-	    		if(wbInfoImage != null) wbInfoImage.setOrientation(mDeviceOrientation);
-	    		if(focusInfoImage != null) focusInfoImage.setOrientation(mDeviceOrientation);
-	    		if(flashInfoImage != null) flashInfoImage.setOrientation(mDeviceOrientation);
-	    		if(isoInfoImage != null) isoInfoImage.setOrientation(mDeviceOrientation);
-	    		if(memoryInfoText != null) memoryInfoText.setRotation(-mDeviceOrientation);
-	    		if(evInfoText != null) evInfoText.setRotation(-mDeviceOrientation);
+	    		if(batteryInfoImage != null) 
+	    			batteryInfoImage.setOrientation(mDeviceOrientation);
+	    		if(sceneInfoImage != null) 
+	    			sceneInfoImage.setOrientation(mDeviceOrientation);
+	    		if(wbInfoImage != null) 
+	    			wbInfoImage.setOrientation(mDeviceOrientation);
+	    		if(focusInfoImage != null) 
+	    			focusInfoImage.setOrientation(mDeviceOrientation);
+	    		if(flashInfoImage != null) 
+	    			flashInfoImage.setOrientation(mDeviceOrientation);
+	    		if(isoInfoImage != null) 
+	    			isoInfoImage.setOrientation(mDeviceOrientation);
+	    		if(memoryInfoText != null) 
+	    			memoryInfoText.setRotation(-mDeviceOrientation);
+	    		if(evInfoText != null) 
+	    			evInfoText.setRotation(-mDeviceOrientation);
 	        }
 	    };	
 	}

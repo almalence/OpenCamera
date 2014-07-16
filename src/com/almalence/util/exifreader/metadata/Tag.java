@@ -61,7 +61,8 @@ public class Tag
     public String getTagTypeHex()
     {
         String hex = Integer.toHexString(_tagType);
-        while (hex.length() < 4) hex = "0" + hex;
+        while (hex.length() < 4) 
+        	hex = "0" + hex;
         return "0x" + hex;
     }
 

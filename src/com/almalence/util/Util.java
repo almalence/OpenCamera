@@ -253,7 +253,8 @@ public final class Util {
     }
 
     public static void closeSilently(Closeable c) {
-        if (c == null) return;
+        if (c == null) 
+        	return;
         try {
             c.close();
         } catch (Exception t) {
@@ -267,7 +268,8 @@ public final class Util {
     }    
 
     public static <T> T checkNotNull(T object) {
-        if (object == null) throw new NullPointerException();
+        if (object == null) 
+        	throw new NullPointerException();
         return object;
     }
 
@@ -288,14 +290,18 @@ public final class Util {
     }
 
     public static int clamp(int x, int min, int max) {
-        if (x > max) return max;
-        if (x < min) return min;
+        if (x > max) 
+        	return max;
+        if (x < min) 
+        	return min;
         return x;
     }
     
     public static float clamp(float x, float min, float max) {
-        if (x > max) return max;
-        if (x < min) return min;
+        if (x > max) 
+        	return max;
+        if (x < min) 
+        	return min;
         return x;
     }
 
@@ -347,14 +353,16 @@ public final class Util {
             List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.001;
-        if (sizes == null) return null;
+        if (sizes == null) 
+        	return null;
 
         Size optimalSize = null;
 
         // Try to find a size matches aspect ratio and has the largest width
         for (Size size : sizes) {
             double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) 
+            	continue;
             if (optimalSize == null || size.width > optimalSize.width) {
                 optimalSize = size;
             }
@@ -426,7 +434,8 @@ public final class Util {
     }
 
     public static void fadeOut(View view) {
-        if (view.getVisibility() != View.VISIBLE) return;
+        if (view.getVisibility() != View.VISIBLE) 
+        	return;
 
         Animation animation = new AlphaAnimation(1F, 0F);
         animation.setDuration(400);
@@ -535,7 +544,8 @@ public final class Util {
 
     public static boolean isUriValid(Uri uri, ContentResolver resolver) 
     {
-        if (uri == null) return false;
+        if (uri == null) 
+        	return false;
 
         try
         {

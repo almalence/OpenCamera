@@ -757,7 +757,8 @@ public class NightCapturePlugin extends PluginCapture
             	ri = 2;
             if (Math.abs(ratio - 16/9.f) < 0.15f)
             	ri = 3;
-            if (Math.abs(ratio - 1)  == 0) ri = 4;
+            if (Math.abs(ratio - 1)  == 0) 
+            	ri = 4;
 
             if (mode == 1)	// hi-speed mode
             	mpix *= 4;

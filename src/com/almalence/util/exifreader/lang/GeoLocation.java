@@ -117,11 +117,15 @@ public final class GeoLocation
     @Override
     public boolean equals(final Object o)
     {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) 
+        	return true;
+        if (o == null || getClass() != o.getClass()) 
+        	return false;
         GeoLocation that = (GeoLocation) o;
-        if (Double.compare(that._latitude, _latitude) != 0) return false;
-        if (Double.compare(that._longitude, _longitude) != 0) return false;
+        if (Double.compare(that._latitude, _latitude) != 0) 
+        	return false;
+        if (Double.compare(that._longitude, _longitude) != 0) 
+        	return false;
         return true;
     }
 

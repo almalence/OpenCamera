@@ -1345,9 +1345,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			// z - axis is perpendicular to screen surface, pointing in direction opposite to where camera is pointing
 			float[] baseTransform16 = this.engine.initialTransform;
 			float[] baseTransform = new float[9];
-			baseTransform[0] = baseTransform16[0]; baseTransform[1] = baseTransform16[1]; baseTransform[2] = baseTransform16[2]; 
-			baseTransform[3] = baseTransform16[4]; baseTransform[4] = baseTransform16[5]; baseTransform[5] = baseTransform16[6]; 
-			baseTransform[6] = baseTransform16[8]; baseTransform[7] = baseTransform16[9]; baseTransform[8] = baseTransform16[10]; 
+			baseTransform[0] = baseTransform16[0]; 
+			baseTransform[1] = baseTransform16[1]; 
+			baseTransform[2] = baseTransform16[2]; 
+			baseTransform[3] = baseTransform16[4]; 
+			baseTransform[4] = baseTransform16[5]; 
+			baseTransform[5] = baseTransform16[6]; 
+			baseTransform[6] = baseTransform16[8]; 
+			baseTransform[7] = baseTransform16[9]; 
+			baseTransform[8] = baseTransform16[10]; 
 			
 			frame.getPosition(normalLast);
 			normalLast = transformVector(normalLast, baseTransform);
@@ -1368,10 +1374,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 									
 				// make sure angle difference is within bounds
 				// along X axis the angle difference is always positive measuring from the previous frame 
-				while (angleX-angleXprev > 2*Math.PI) angleX -= 2*Math.PI;
-				while (angleX-angleXprev < 0) angleX += 2*Math.PI;
-				while (angleY > Math.PI) angleY -= 2*Math.PI;
-				while (angleY < -Math.PI) angleY += 2*Math.PI;
+				while (angleX-angleXprev > 2*Math.PI) 
+					angleX -= 2*Math.PI;
+				while (angleX-angleXprev < 0) 
+					angleX += 2*Math.PI;
+				while (angleY > Math.PI) 
+					angleY -= 2*Math.PI;
+				while (angleY < -Math.PI) 
+					angleY += 2*Math.PI;
 				
 				angleXprev = angleX;
 				
@@ -1394,7 +1404,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".21."+String.valueOf(SessionID), String.valueOf(0.0f));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".22."+String.valueOf(SessionID), String.valueOf(1.0f));
 				
-				if (!iterator.hasNext()) break;
+				if (!iterator.hasNext()) 
+					break;
 				
 				frame = iterator.next();
 				
@@ -1438,8 +1449,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			float angle = (float)Math.atan2( sina, cosa );
 
 			float sign = Vn.x*Vx.x+Vn.y*Vx.y+Vn.z*Vx.z;
-			if(sign<0) return -angle;
-				else return angle;
+			if(sign<0) 
+				return -angle;
+			else 
+				return angle;
 		}
 		catch (final Exception e)	// if div0 happens
 		{
@@ -1467,7 +1480,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 			vA.z = normal.z;
 			vA.y = -radius*radius/normal.y+normal.y;
 		}
-		else { vA.x = 0; vA.y = 1; vA.z = 0; }
+		else 
+		{ 
+			vA.x = 0; 
+			vA.y = 1; 
+			vA.z = 0; 
+		}
 		
 		if (vA.length() > 0)
 		{

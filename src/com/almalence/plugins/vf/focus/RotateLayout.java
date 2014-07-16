@@ -109,7 +109,8 @@ public class RotateLayout extends ViewGroup implements Rotatable {
     // Rotate the view counter-clockwise
     public void setOrientation(int orientation) {
         orientation = orientation % 360;
-        if (mOrientation == orientation) return;
+        if (mOrientation == orientation) 
+        	return;
         mOrientation = orientation;
         requestLayout();
     }

@@ -2486,25 +2486,6 @@ public class AlmalenceGUI extends GUI implements
 				animation.setDuration(duration);
 				animation.setFillAfter(true);
 				animation.setInterpolator(new DecelerateInterpolator());
-
-				animation.setAnimationListener(new AnimationListener() {
-
-					@Override
-					public void onAnimationEnd(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-
-					}
-
-					@Override
-					public void onAnimationStart(Animation animation) {
-
-					}
-
-				});
-
 				view.clearAnimation();
 				view.startAnimation(animation);
 			}

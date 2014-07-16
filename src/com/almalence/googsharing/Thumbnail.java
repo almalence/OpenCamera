@@ -78,7 +78,8 @@ public class Thumbnail {
         mBitmap = rotateImage(bitmap, orientation);
         if(fullBitmap != null)
         	mFullBitmap = rotateImage(fullBitmap, orientation);
-        if (mBitmap == null) throw new IllegalArgumentException("null bitmap");
+        if (mBitmap == null) 
+        	throw new IllegalArgumentException("null bitmap");
     }
 
     public Uri getUri() 
@@ -95,7 +96,8 @@ public class Thumbnail {
     {
     	Media image = getLastImageThumbnail(mResolver);
 
-        if (image == null) return null;
+        if (image == null) 
+        	return null;
 
         Bitmap fullBitmap = null;
                 	
@@ -112,7 +114,8 @@ public class Thumbnail {
         
         mUri = image.uri;
         mFullBitmap = rotateImage(fullBitmap, image.orientation);        
-        if (mFullBitmap == null) throw new IllegalArgumentException("null bitmap");
+        if (mFullBitmap == null) 
+        	throw new IllegalArgumentException("null bitmap");
         
         return mFullBitmap;
     }
@@ -142,7 +145,8 @@ public class Thumbnail {
                         bitmap.getWidth(), bitmap.getHeight(), m, true);
                 // If the rotated bitmap is the original bitmap, then it
                 // should not be recycled.
-                if (rotated != bitmap) bitmap.recycle();
+                if (rotated != bitmap) 
+                	bitmap.recycle();
                 return rotated;
             } 
             catch (Exception t) 
@@ -213,7 +217,8 @@ public class Thumbnail {
         }
         
         Thumbnail thumbnail = createThumbnail(uri, bitmap, null, 0);
-        if (thumbnail != null) thumbnail.setFromFile(true);
+        if (thumbnail != null) 
+        	thumbnail.setFromFile(true);
         
         return thumbnail;
     }
@@ -224,7 +229,8 @@ public class Thumbnail {
         Media image = getLastImageThumbnail(resolver);
         Media video = getLastVideoThumbnail(resolver);
         
-        if (image == null && video == null) return null;
+        if (image == null && video == null) 
+        	return null;
 
         Bitmap bitmap = null;
         Media lastMedia=null;
@@ -491,7 +497,8 @@ public class Thumbnail {
                 // Ignore failures while cleaning up.
             }
         }
-        if (bitmap == null) return null;
+        if (bitmap == null) 
+        	return null;
 
         // Scale down the bitmap if it is bigger than we need.
         int width = bitmap.getWidth();

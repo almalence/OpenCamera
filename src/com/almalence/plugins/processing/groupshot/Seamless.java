@@ -282,15 +282,20 @@ public class Seamless
 			int top = faceRect.centerY() - (int)radius;
 			int right = faceRect.centerX() + (int)radius;
 			int bottom = faceRect.centerY() + (int)radius;
-			if (left < 0) left = 0;
-			if (right > mInputFrameSize.getWidth()) right = mInputFrameSize.getWidth();
-			if (top < 0) top = 0;
-			if (bottom > mInputFrameSize.getHeight()) bottom = mInputFrameSize.getHeight();
+			if (left < 0) 
+				left = 0;
+			if (right > mInputFrameSize.getWidth()) 
+				right = mInputFrameSize.getWidth();
+			if (top < 0) 
+				top = 0;
+			if (bottom > mInputFrameSize.getHeight()) 
+				bottom = mInputFrameSize.getHeight();
 			
 			if ((right - left) > (bottom - top)) {
 				left = ((right + left) / 2) - ((bottom - top) / 2);
 				right = ((right + left) / 2) + ((bottom - top) / 2);
-			} else if ((right - left) < (bottom - top)){
+			} else if ((right - left) < (bottom - top))
+			{
 				top = ((bottom + top) / 2) - ((right - left) / 2);
 				bottom = ((bottom + top) / 2) + ((right - left) / 2);
 			}
@@ -425,10 +430,14 @@ public class Seamless
 			right = newRect.centerX() + (int)radius;
 			bottom = newRect.centerY() + (int)radius;
 			
-			if (left < 0) left = 0;
-			if (right > width) right = width;
-			if (top < 0) top = 0;
-			if (bottom > Height) bottom = Height;
+			if (left < 0) 
+				left = 0;
+			if (right > width) 
+				right = width;
+			if (top < 0) 
+				top = 0;
+			if (bottom > Height) 
+				bottom = Height;
 
 			for(int yy=top; yy<bottom; ++yy) {
 				for(int xx=left; xx<right; ++xx) {
@@ -472,10 +481,14 @@ public class Seamless
 			right = newRect.centerX() + (int)radius;
 			bottom = newRect.centerY() + (int)radius;
 			
-			if (left < 0) left = 0;
-			if (right > width) right = width;
-			if (top < 0) top = 0;
-			if (bottom > Height) bottom = Height;
+			if (left < 0) 
+				left = 0;
+			if (right > width) 
+				right = width;
+			if (top < 0) 
+				top = 0;
+			if (bottom > Height) 
+				bottom = Height;
 
 			for(int yy=top; yy<bottom; ++yy) {
 				for(int xx=left; xx<right; ++xx) {
