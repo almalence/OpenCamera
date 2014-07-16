@@ -58,6 +58,8 @@ public class ValueNumber extends ExifValue {
 			case ExifDriver.FORMAT_UNSIGNED_LONG:
 				values[i] = ExifDriver.readUInt(_data, iOffs, componentSize, _align);
 				break;
+			default:
+				break;
 			}
 
 		}

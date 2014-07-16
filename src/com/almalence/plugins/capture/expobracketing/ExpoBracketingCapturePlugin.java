@@ -730,6 +730,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			max_ev = (int)Math.floor(2/ev_step);
 			min_ev = -max_ev;
 			break;
+		default:
+			break;
 		}
     	
     	// select proper min_ev, ev_inc

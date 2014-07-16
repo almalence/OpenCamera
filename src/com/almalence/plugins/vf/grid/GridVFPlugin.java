@@ -84,6 +84,8 @@ public class GridVFPlugin extends PluginViewfinder
         case 3:
         	quickControlIconID = R.drawable.plugin_vf_grid_none;
         	break;
+        default:
+			break;
         }
 	}
 
@@ -134,6 +136,8 @@ public class GridVFPlugin extends PluginViewfinder
         	quickControlIconID = R.drawable.plugin_vf_grid_none;
         	editor.putString("typePrefGrid", "3");
         	break;
+        default:
+			break;
         }
     	editor.commit();
     	

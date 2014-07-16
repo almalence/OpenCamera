@@ -62,6 +62,8 @@ public final class GeoResultHandler extends ResultHandler {
       case 1:
         getDirections(geoResult.getLatitude(), geoResult.getLongitude());
         break;
+      default:
+		break;
     }
   }
 

@@ -207,6 +207,8 @@ public class PanoramaProcessingPlugin extends PluginProcessing
     	case 4://IMG_YEARMMDD_HHMMSS_MODE
     		fileFormat = "IMG_" + fileFormat + "_" + modeName;
     		break;
+    	default:
+			break;
     	}
 
         final Rect crop = new Rect(0, 0, input_width, input_height);

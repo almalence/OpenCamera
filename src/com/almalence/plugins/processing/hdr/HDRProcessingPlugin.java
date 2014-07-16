@@ -269,6 +269,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        	case 4://IMG_YEARMMDD_HHMMSS_MODE
 	        		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
 	        		break;
+	        	default:
+	    			break;
 	        	}
 	        	
 	        	ContentValues values=null;
@@ -459,6 +461,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					return -1;
 				case 1:
 					return -25;
+				default:
+					break;
 				}
 			}
 			catch (Exception e)
@@ -499,6 +503,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					return -63;
 				case 3:
 					return -75;
+				default:
+					break;
 				}
 			}
 			catch (Exception e)
@@ -536,6 +542,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					return -75;
 				case 2:
 					return -100;
+				default:
+					break;
 				}	
 			}
 			catch (Exception e)
@@ -683,6 +691,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					break;
 				case ADJUSTMENT_CODE_MICROCONTRAST:
 					this.microcontrast = adj.getValue();
+					break;
+				default:
 					break;
 				}
 			}

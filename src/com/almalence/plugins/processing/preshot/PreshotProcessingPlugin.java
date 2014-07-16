@@ -813,6 +813,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				Xprev = Math.round(difX);				
 			}
 				break;
+			default:
+				break;
         }
         return true;
     }

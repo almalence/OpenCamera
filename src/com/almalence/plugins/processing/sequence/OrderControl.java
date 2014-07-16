@@ -280,6 +280,8 @@ public class OrderControl extends View
 				this.notifyListener();
 			}
 			break;
+		default:
+			break;
 		}
 
 		this.invalidate();

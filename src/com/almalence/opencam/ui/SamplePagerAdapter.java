@@ -62,21 +62,4 @@ public class SamplePagerAdapter extends PagerAdapter{
     public boolean isViewFromObject(View view, Object object){
         return view.equals(object);
     }
-
-    @Override
-    public void finishUpdate(View arg0){
-    }
-
-    @Override
-    public void restoreState(Parcelable arg0, ClassLoader arg1){
-    }
-
-    @Override
-    public Parcelable saveState(){
-        return null;
-    }
-
-    @Override
-    public void startUpdate(View arg0){
-    }
 }

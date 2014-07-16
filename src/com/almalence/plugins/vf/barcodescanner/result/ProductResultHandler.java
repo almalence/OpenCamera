@@ -64,6 +64,8 @@ public final class ProductResultHandler extends ResultHandler {
       case 1:
         webSearch(productID);
         break;
+      default:
+		break;
     }
   }
 

@@ -75,6 +75,8 @@ public class RotateLayout extends ViewGroup implements Rotatable {
             case 270:
                 mChild.layout(0, 0, height, width);
                 break;
+            default:
+    			break;
         }
     }
 
@@ -101,6 +103,8 @@ public class RotateLayout extends ViewGroup implements Rotatable {
                 w = mChild.getMeasuredHeight();
                 h = mChild.getMeasuredWidth();
                 break;
+            default:
+    			break;
         }
         setMeasuredDimension(w, h);
 

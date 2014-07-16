@@ -516,12 +516,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	}
 	
 	@Override
-	public void onCameraParametersSetup()
-	{
-		
-	}
-	
-	@Override
 	public boolean isGLSurfaceNeeded()
 	{
 		return true;
@@ -687,6 +681,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
          case 2:
         	 AugmentedPanoramaEngine.setFrameIntersection(0.30f);
         	 break;
+         default:
+ 			break;
          }
          
          aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
@@ -1080,6 +1076,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				break;
 			case 2:
 				lock = true;
+				break;
+			default:
 				break;
 		}
 		

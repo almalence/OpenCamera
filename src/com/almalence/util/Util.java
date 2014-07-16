@@ -313,6 +313,8 @@ public final class Util {
             case Surface.ROTATION_90: return 90;
             case Surface.ROTATION_180: return 180;
             case Surface.ROTATION_270: return 270;
+            default:
+    			break;
         }
         return 0;
     }

@@ -83,6 +83,8 @@ public class SoundPlayer implements Runnable {
     				break;
     			case AudioManager.RINGER_MODE_VIBRATE:
     				break;
+    			default:
+    				break;
     			}
             } catch (Exception e) {
                 Log.e(TAG, "Error playing sound", e);

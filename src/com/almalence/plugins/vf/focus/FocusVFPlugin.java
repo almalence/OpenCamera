@@ -114,28 +114,26 @@ public class FocusVFPlugin extends PluginViewfinder
         @Override
         public void handleMessage(Message msg)
         {
-            switch (msg.what)
+            if (msg.what == RESET_TOUCH_FOCUS)
             {
-                case RESET_TOUCH_FOCUS:                	
-        			cancelAutoFocus();
-                    int fm = CameraController.getInstance().getFocusMode();
-                	if((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-    		  	    preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO) &&
-    		  	    fm != -1 &&
-    		  	    preferenceFocusMode != fm)
-                      	{
-                          	CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-                      	}
-                    break;
-                case START_TOUCH_FOCUS:
-                {                	
-	    			lastEvent.setAction(MotionEvent.ACTION_UP);
-	        		delayedFocus = true;
-	        		cancelAutoFocus();
-	    			onTouchAreas(lastEvent);
-	    			lastEvent.recycle();
-                } break;                
+    			cancelAutoFocus();
+                int fm = CameraController.getInstance().getFocusMode();
+            	if((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
+		  	    preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO) &&
+		  	    fm != -1 &&
+		  	    preferenceFocusMode != fm)
+              	{
+                  	CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+              	}
             }
+            else if (msg.what == START_TOUCH_FOCUS)
+            {                	
+    			lastEvent.setAction(MotionEvent.ACTION_UP);
+        		delayedFocus = true;
+        		cancelAutoFocus();
+    			onTouchAreas(lastEvent);
+    			lastEvent.recycle();
+            }                
         }
     }
 
@@ -465,6 +463,8 @@ public class FocusVFPlugin extends PluginViewfinder
 	        	if(focusCanceled || delayedFocus)
 	        		return true;
 	        	break;
+	        default:
+				break;
         }
         
 		onTouchAreas(e);		
@@ -817,7 +817,7 @@ public class FocusVFPlugin extends PluginViewfinder
         boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean("UseFocus", true);
         return !(focusMode == CameraParameters.AF_MODE_INFINITY
                 || focusMode == CameraParameters.AF_MODE_FIXED
-                || focusMode == CameraParameters.AF_MODE_EDOF		// FixMe: EDOF likely needs auto-focus call 
+                || focusMode == CameraParameters.AF_MODE_EDOF		// EDOF likely needs auto-focus call 
                 || !useFocus
                 || mFocusDisabled);
     }

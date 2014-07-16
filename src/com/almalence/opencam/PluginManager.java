@@ -194,8 +194,6 @@ public class PluginManager implements PluginManagerInterface {
 
 	public static final int MSG_FOCUS_STATE_CHANGED = 28;
 
-	public static final int MSG_START_FULLSIZE_PROCESSING = 29;
-
 	public static final int MSG_RESTART_MAIN_SCREEN = 30;
 
 	public static final int MSG_RETURN_CAPTURED = 31;
@@ -747,11 +745,6 @@ public class PluginManager implements PluginManagerInterface {
 		return pluginList.get(id);
 	}
 
-	// loads preferences to main preferences activity. Big preference screen
-	// with all active plugin preferences
-	public void loadPreferences() {
-	}
-
 	private void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
@@ -1056,8 +1049,6 @@ public class PluginManager implements PluginManagerInterface {
 			}.start();
 			//-+- -->
 		}
-
-		loadStandardSettingsAfter(pf, settings);
 	}
 
 	private void addHeadersContent(PreferenceFragment pf, List<Plugin> list,
@@ -1095,10 +1086,6 @@ public class PluginManager implements PluginManagerInterface {
 			pf.addPreferencesFromResource(R.xml.preferences);
 			MainScreen.getInstance().onPreferenceCreate(pf);
 		}
-	}
-
-	private void loadStandardSettingsAfter(PreferenceFragment pf,
-			String settings) {
 	}
 
 	private void loadCommonAdvancedSettings(PreferenceFragment pf) {
@@ -1321,26 +1308,6 @@ public class PluginManager implements PluginManagerInterface {
 	/******************************************************************************************************
 	 * Processing Interfaces
 	 ******************************************************************************************************/
-	void startProcessingActivity() {
-	}
-
-	void startProcessing() {
-	}
-
-	public void processingOnClick(View v) {
-	}
-
-	public void onPreviewComplete(Task task) {
-	}
-
-	public Bitmap getMultishotBitmap(int index) {
-		return null;
-	}
-
-	public Bitmap getScaledMultishotBitmap(int index, int scaled_width,
-			int scaled_height) {
-		return null;
-	}
 
 	public int getResultYUV(int index) {
 		if (null != pluginList.get(activeProcessing))
@@ -1349,16 +1316,9 @@ public class PluginManager implements PluginManagerInterface {
 			return -1;
 	}
 
-	public int getMultishotImageCount() {
-		return 0;
-	}
-
 	/******************************************************************************************************
 	 * Filter Interfaces
 	 ******************************************************************************************************/
-
-	public void callFilterPlugin() {
-	}
 
 	/******************************************************************************************************
 	 * Export Interfaces
@@ -1486,10 +1446,6 @@ public class PluginManager implements PluginManagerInterface {
 			}
 			break;
 
-		case MSG_PROCESSING_FINISHED:
-			pluginManager.callFilterPlugin();
-			break;
-
 		case MSG_POSTPROCESSING_FINISHED:
 			long sessionID = 0;
 			String sSessionID = PluginManager.getInstance().getFromSharedMem("sessionID");
@@ -1570,10 +1526,6 @@ public class PluginManager implements PluginManagerInterface {
 			MainScreen.getInstance().finish();
 			break;
 
-		case MSG_START_FULLSIZE_PROCESSING:
-			PluginManager.getInstance().startProcessing();
-			break;
-
 		case MSG_RESTART_MAIN_SCREEN:
 			PluginManager.getInstance().restartMainScreen();
 			break;
@@ -1604,6 +1556,8 @@ public class PluginManager implements PluginManagerInterface {
 
 		case MSG_BROADCAST:
 			pluginManager.onBroadcast(msg.arg1, msg.arg2);
+			break;
+		default:
 			break;
 		}
 
@@ -1827,10 +1781,6 @@ public class PluginManager implements PluginManagerInterface {
 		}
 
 		@Override
-		protected void onPreExecute() {
-		}
-
-		@Override
 		protected Void doInBackground(Void... params) 
 		{
 			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
@@ -1865,9 +1815,6 @@ public class PluginManager implements PluginManagerInterface {
 			return null;
 		}
 
-		@Override
-		protected void onPostExecute(Void v) {
-		}
 	}
 
 	// /////////////////////////////////////
@@ -1878,6 +1825,48 @@ public class PluginManager implements PluginManagerInterface {
 		return cntProcessing;
 	}
 
+	private static final String[] MEMCARD_DIR_PATH = new String[] 
+	{ 
+		"/storage",
+		"/mnt",
+		"",
+		"/storage",
+		"/Removable",
+		"/storage",
+		"/storage",
+		"",
+		"/mnt",
+		"/"
+	};
+	
+	private static final String[] MEMCARD_DIR_PATH_NAMES = new String[] 
+	{ 
+		"sdcard1",
+		"extSdCard",
+		"external_sd",
+		"external_SD",
+		"MicroSD",
+		"emulated",
+		"sdcard0",
+		"sdcard-ext",
+		"sdcard-ext",
+		"sdcard"
+	};
+	
+	private static final String[] SAVEDIR_DIR_PATH_NAMES = new String[] 
+	{ 
+		"sdcard1/DCIM/",
+		"extSdCard/DCIM/",
+		"external_sd/DCIM/",
+		"external_SD/DCIM/",
+		"MicroSD/DCIM/",
+		"emulated/0/DCIM/",
+		"sdcard0/DCIM/",
+		"sdcard-ext/DCIM/",
+		"sdcard-ext/DCIM/",
+		"sdcard/DCIM/"
+	};
+	
 	//get file saving directory
 	//toInternalMemory - should be true only if force save to internal 
 	public File GetSaveDir(boolean forceSaveToInternalMemory)
@@ -1896,94 +1885,29 @@ public class PluginManager implements PluginManagerInterface {
         {
 			dcimDir = Environment.getExternalStorageDirectory();
 
-			// there are variations in sd-card directory namings
-			memcardDir = new File("/storage", "sdcard1");		// Jelly Bean fix
-            if (memcardDir.exists())
-            {
-	            saveDir = new File("/storage", "sdcard1/DCIM/" + abcDir);
-            	usePhoneMem = false;
-            }
-            else
-            {
-            	memcardDir = new File("/mnt", "extSdCard");		// SGSIII
-	            if (memcardDir.exists())
-	            {
-		            saveDir = new File("/mnt", "extSdCard/DCIM/" + abcDir);
-	            	usePhoneMem = false;
-	            }
-	            else
-	            {
-	            	memcardDir = new File(dcimDir, "external_sd");		// Samsung
-	                if (memcardDir.exists())
-	                {
-	    	            saveDir = new File(dcimDir, "external_sd/DCIM/" + abcDir);
-	                	usePhoneMem = false;
-	                }					
-		            else
+			for (int i=0; i < SAVEDIR_DIR_PATH_NAMES.length; i++)
+			{
+				if (MEMCARD_DIR_PATH[i].isEmpty())
+				{
+					memcardDir = new File(dcimDir, MEMCARD_DIR_PATH_NAMES[i]);
+		            if (memcardDir.exists())
 		            {
-		            	memcardDir = new File("/storage", "external_SD");		// LG optimus 4xhd / LG p880
-		                if (memcardDir.exists())
-		                {
-		    	            saveDir = new File("/storage", "external_SD/DCIM/" + abcDir);
-		                	usePhoneMem = false;
-		                }					
-			            else
-			            {
-			            	memcardDir = new File("/Removable", "MicroSD");		//Huawei honor 2
-				            if (memcardDir.exists())
-				            {
-					            saveDir = new File("/Removable", "MicroSD/DCIM/" + abcDir);
-				            	usePhoneMem = false;
-				            }
-				            else
-				            {
-				            	memcardDir = new File("/storage", "emulated");		//Huawei honor 2
-					            if (memcardDir.exists())
-					            {
-						            saveDir = new File("/storage", "emulated/0/DCIM/" + abcDir);
-					            	usePhoneMem = false;
-					            }
-					            else
-					            {
-					            	memcardDir = new File("/storage", "sdcard0");		// Jelly Bean fix
-						            if (memcardDir.exists())
-						            {
-							            saveDir = new File("/storage", "sdcard0/DCIM/" + abcDir);
-						            	usePhoneMem = false;
-						            }
-					                else
-					                {
-										memcardDir = new File(dcimDir, "sdcard-ext");		// HTC 4G (?)
-							            if (memcardDir.exists())
-							            {
-								            saveDir = new File(dcimDir, "sdcard-ext/DCIM/" + abcDir); 
-							            	usePhoneMem = false;
-							            }
-							            else
-							            {
-											memcardDir = new File("/mnt", "sdcard-ext");		// Motorola Atrix 4G (?)
-								            if (memcardDir.exists())
-								            {
-									            saveDir = new File("/mnt", "sdcard-ext/DCIM/" + abcDir); 
-								            	usePhoneMem = false;
-								            }
-								            else
-								            {
-												memcardDir = new File("/", "sdcard");		// Motorola Droid X (?) - an internal sd card location on normal phones
-									            if (memcardDir.exists())
-									            {
-										            saveDir = new File("/", "sdcard/DCIM/" + abcDir);
-									            	usePhoneMem = false;
-									            }
-								            }
-							            }
-					                }
-					            }
-			                }
-			            }
+			            saveDir = new File(dcimDir, SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
+		            	usePhoneMem = false;
+		            	break;
 		            }
-	            }
-            }
+				}
+				else
+				{
+					memcardDir = new File(MEMCARD_DIR_PATH[i], MEMCARD_DIR_PATH_NAMES[i]);
+		            if (memcardDir.exists())
+		            {
+			            saveDir = new File(MEMCARD_DIR_PATH[i], SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
+		            	usePhoneMem = false;
+		            	break;
+		            }
+				}
+			}
         }
         else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
         {

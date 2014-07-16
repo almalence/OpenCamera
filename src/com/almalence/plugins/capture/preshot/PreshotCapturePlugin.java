@@ -93,11 +93,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void onCreate()
-	{
-	}
-	
-	@Override
 	public void onStart()
 	{
 		getPrefs();

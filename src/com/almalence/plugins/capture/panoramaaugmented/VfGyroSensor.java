@@ -59,8 +59,6 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 
     int getHandle() { return 0; }
 
-    void setRange(float max, float res) { }
-    
     Constructor<SensorEvent> EventConstructor = null;
     SensorEvent sensorEvent, sensorEventPrev;
     private float[] sensorValuesPrev = new float[3];
@@ -148,12 +146,8 @@ public class VfGyroSensor implements Closeable, Handler.Callback
     
 	public boolean handleMessage(Message msg)
 	{
-    	switch (msg.what)
-    	{
-    		case MSG_SMOOTHER_GYRO:
-    			NewData(null);
-    			break;
-    	}
+    	if (msg.what == MSG_SMOOTHER_GYRO)
+    		NewData(null);
     	
     	return true;
 	}

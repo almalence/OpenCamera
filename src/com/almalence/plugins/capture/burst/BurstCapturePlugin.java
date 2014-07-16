@@ -120,6 +120,8 @@ public class BurstCapturePlugin extends PluginCapture
         case 20:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst20;
         	break;
+        default:
+			break;
         }       
 	}
 	
@@ -146,6 +148,8 @@ public class BurstCapturePlugin extends PluginCapture
         case 20:
         	selected=4;
         	break;
+        default:
+			break;
         }
         selected= (selected+1)%5;
         
@@ -172,6 +176,8 @@ public class BurstCapturePlugin extends PluginCapture
         	quickControlIconID = R.drawable.gui_almalence_mode_burst20;
         	editor.putString("burstImagesAmount", "20");
         	break;
+        default:
+			break;
         }
     	editor.commit();
 	}

@@ -248,6 +248,8 @@ public class ConfigParser {
 		    case XmlPullParser.START_TAG:
 		        depth++;
 		        break;
+		    default:
+				break;
 		    }
 		}
 	 }

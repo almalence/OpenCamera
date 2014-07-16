@@ -241,6 +241,8 @@ public class AlmaCLRShot
 		case 270:
 			newRect = new Rect(rect.top, mInputFrameSize.getWidth() - rect.left, rect.bottom, mInputFrameSize.getWidth() - rect.left);
 			break;
+		default:
+			break;
 		}
 		return newRect;
 	}
@@ -262,6 +264,8 @@ public class AlmaCLRShot
 			break;
 		case 270:
 			newRect = new Rect(rect.top, mPreviewSize.getWidth() - rect.left, rect.bottom, mPreviewSize.getWidth() - rect.left);
+			break;
+		default:
 			break;
 		}
 		return newRect;
@@ -668,6 +672,8 @@ public class AlmaCLRShot
 					}
 				}
 	        	break;
+	        default:
+				break;
 	        }
 	   
 	        if (++i%20 == 19) {
@@ -862,6 +868,8 @@ public class AlmaCLRShot
 		case 270:
 			x = mPreviewSize.getHeight() - ly; 
 			y = lx;
+			break;
+		default:
 			break;
 		}
 		

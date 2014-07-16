@@ -881,6 +881,8 @@ public class AlmalenceGUI extends GUI implements
         			//3
         			imgTipsPrev.setVisibility(View.VISIBLE);
         			break;
+    			default:
+    				break;
         		}
             }
         });
@@ -1010,6 +1012,8 @@ public class AlmalenceGUI extends GUI implements
 					else
 						price.setText("");
 					break;
+				default:
+    				break;
 			}
 
 			item.setOnTouchListener(new OnTouchListener()
@@ -1060,6 +1064,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case 5:// Promo
 			MainScreen.getInstance().enterPromo();
+			break;
+		default:
 			break;
 		}
 	}
@@ -1347,6 +1353,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case MODE_MET:
 			setMeteringMode(system_name);
+			break;
+		default:
 			break;
 		}
 	}
@@ -2250,6 +2258,8 @@ public class AlmalenceGUI extends GUI implements
 					return true;
 				else
 					return false;
+			default:
+				break;
 			}
 		}
 
@@ -2291,6 +2301,8 @@ public class AlmalenceGUI extends GUI implements
 		case CAMERA_PARAMETER_CAMERACHANGE:
 			topMenuView = topMenuButtons.get(MODE_CAM);
 			isCameraChangeEnabled = !bDisable;
+			break;
+		default:
 			break;
 		}
 
@@ -2577,7 +2589,9 @@ public class AlmalenceGUI extends GUI implements
 			icon_id = icon_settings;
 			icon_text = MainScreen.getInstance().getResources().getString(
 					R.string.settings_mode_moresettings);
-			break;		
+			break;
+		default:
+			break;
 		}
 
 		// Get required size of button
@@ -2652,7 +2666,9 @@ public class AlmalenceGUI extends GUI implements
 				return;
 			else
 				createSettingMoreOnClick(settingView);
-			break;		
+			break;
+		default:
+			break;
 		}
 
 		if (isQuickControl)
@@ -2734,7 +2750,9 @@ public class AlmalenceGUI extends GUI implements
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, true);
-				break;			
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -3149,7 +3167,9 @@ public class AlmalenceGUI extends GUI implements
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, false);
-				break;			
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -3792,6 +3812,8 @@ public class AlmalenceGUI extends GUI implements
 				zonesVisibility[2] = View.GONE;
 				break;
 			}
+			default:
+				break;
 		}
 		applyZonesVisibility(zonesVisibility, isAnimate, toLeft, rlvisible, lrvisible, rlinvisible, lrinvisible);
 
@@ -3940,6 +3962,8 @@ public class AlmalenceGUI extends GUI implements
 		case 4:
 			quickControl4 = newView;
 			pref.edit().putString("quickControlButton4", qcID).commit();
+			break;
+		default:
 			break;
 		}
 	}
@@ -4383,7 +4407,8 @@ public class AlmalenceGUI extends GUI implements
 			}
 		}
 			break;			
-		case R.id.camerachangeButton: {
+		case R.id.camerachangeButton: 
+		{
 			if (quickControlsChangeVisible) {
 				changeCurrentQuickControl(button);
 				initQuickControlsMenu(button);
@@ -4405,17 +4430,17 @@ public class AlmalenceGUI extends GUI implements
 			}
 
 			CameraSwitched(true);
+			break;
 		}
-			break;		
 
 		// EXPOSURE COMPENSATION BUTTONS (-\+)
-		case R.id.evMinusButton: {
+		case R.id.evMinusButton:
 			expoMinus();
-		}
 			break;
-		case R.id.evPlusButton: {
+		case R.id.evPlusButton: 
 			expoPlus();
-		}
+			break;
+		default:
 			break;
 		}
 		this.initSettingsMenu();
@@ -4819,7 +4844,9 @@ public class AlmalenceGUI extends GUI implements
 		case MODE_CAM:
 			if (isCameraChangeEnabled)
 				isEnabled = true;
-			break;		
+			break;
+		default:
+			break;
 		}
 
 		return isEnabled;
@@ -4897,7 +4924,9 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case MODE_MET:
 			views = activeMetering;
-			break;			
+			break;
+		default:
+			break;
 		}
 
 		if (views != null) {
@@ -4932,7 +4961,9 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case MODE_MET:
 			guiView.findViewById(R.id.meteringLayout).setVisibility(View.VISIBLE);
-			break;			
+			break;
+		default:
+			break;
 		}
 
 		quickControlsVisible = true;
@@ -4978,7 +5009,9 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case MODE_MET:
 			mMeteringMode = sValue;
-			break;			
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -5576,6 +5609,8 @@ public class AlmalenceGUI extends GUI implements
 			currParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 			return currParams;
 		}
+		default:
+			break;
 		}
 
 		return findFreeSpaceOnLayout(new Rect(left, top, right, bottom),
@@ -6062,11 +6097,15 @@ public class AlmalenceGUI extends GUI implements
 					}
 				}
 					break;
+				default:
+					break;
 			}
 
 			Xprev = Math.round(difX);
 
 		}
+			break;
+		default:
 			break;
 		}
 		return false;
@@ -6923,7 +6962,9 @@ public class AlmalenceGUI extends GUI implements
         		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
         	 else
         		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-        	 break;         
+        	 break;    
+         default:
+ 			break;
          }
 	}
 }

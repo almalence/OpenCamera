@@ -111,6 +111,8 @@ public class BestShotCapturePlugin extends PluginCapture
         case 10:
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
         	break;
+        default:
+			break;
         }       
 	}
 	
@@ -131,6 +133,8 @@ public class BestShotCapturePlugin extends PluginCapture
         case 10:
         	selected=2;
         	break;
+        default:
+			break;
         }
         selected= (selected+1)%3;
         
@@ -149,6 +153,8 @@ public class BestShotCapturePlugin extends PluginCapture
         	quickControlIconID = R.drawable.gui_almalence_mode_burst10;
         	editor.putString("BestshotImagesAmount", "10");
         	break;
+        default:
+			break;
         }
     	editor.commit();
 	}
