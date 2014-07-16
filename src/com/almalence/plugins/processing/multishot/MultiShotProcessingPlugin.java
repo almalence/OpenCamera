@@ -278,6 +278,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				case 4://IMG_YEARMMDD_HHMMSS_MODE
 					fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
 					break;
+				default:
+					break;
 				}
 				
 				ContentValues values=null;

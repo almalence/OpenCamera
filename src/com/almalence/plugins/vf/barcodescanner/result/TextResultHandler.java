@@ -67,6 +67,8 @@ public final class TextResultHandler extends ResultHandler {
       case 2:
         shareBySMS(text);
         break;
+      default:
+		break;
     }
   }
 

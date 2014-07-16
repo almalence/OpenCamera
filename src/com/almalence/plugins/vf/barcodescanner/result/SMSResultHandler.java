@@ -65,6 +65,8 @@ public final class SMSResultHandler extends ResultHandler {
       case 1:
         sendMMS(number, smsResult.getSubject(), smsResult.getBody());
         break;
+      default:
+		break;
     }
   }
 

@@ -135,6 +135,8 @@ public class AugmentedRotationListener implements SensorEventListener
 				    case Sensor.TYPE_MAGNETIC_FIELD:
 				        this.magnetoFunction(event);
 				        break;
+				    default:
+						break;
 				    }
 				}
 			}

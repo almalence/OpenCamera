@@ -470,6 +470,8 @@ public class ExifDriver {
 			case FORMAT_SIGNED_RATIONAL:
 				value = new ValueRationals(datatype);
 				break;
+			default:
+				break;
 			}
 			if (value != null) {
 				value.readValueFromData(_data, offset, components, originalAlign);
@@ -528,6 +530,8 @@ public class ExifDriver {
 		case ALIGN_II:
 			shift = 0;
 			break;
+		default:
+			break;
 		}
 		for (int i = _offset; i < _bytesNumber + _offset; i++) {
 			switch (_align) {
@@ -538,6 +542,8 @@ public class ExifDriver {
 			case ALIGN_II:
 				result += (_data[i] & 0xFF) << shift;
 				shift += 8;
+				break;
+			default:
 				break;
 			}
 		}

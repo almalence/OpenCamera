@@ -88,15 +88,13 @@ public class ZoomVFPlugin extends PluginViewfinder
     
     private static final int CLOSE_ZOOM_PANEL = 0;
     private static final int CLOSE_ZOOM_PANEL_DELAY = 1500;
-    private class MainHandler extends Handler {
+    private class MainHandler extends Handler 
+    {
         @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case CLOSE_ZOOM_PANEL: {
-                    closeZoomPanel();                    
-                    break;
-                }
-            }
+        public void handleMessage(Message msg) 
+        {
+            if(msg.what == CLOSE_ZOOM_PANEL)
+            	closeZoomPanel();                    
         }
     }
 
@@ -168,6 +166,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 					break;
 					case MotionEvent.ACTION_MOVE:
 						return false;
+					default:
+						break;
 				}
 				
 				return false;

@@ -584,6 +584,8 @@ public class VideoCapturePlugin extends PluginCapture
 			        case DialogInterface.BUTTON_NEGATIVE:
 			            //No button clicked
 			            break;
+			        default:
+						break;
 			        }
 			    }
 			};
@@ -681,7 +683,9 @@ public class VideoCapturePlugin extends PluginCapture
 	    	quality = QUALITY_4K;
 	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
 	    	editor.putString(CameraController.getCameraIndex() == 0? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "5");
-	    	break;	    	
+	    	break;
+	    default:
+			break;
 	    }
 	    
 	    editor.commit();
@@ -948,7 +952,9 @@ public class VideoCapturePlugin extends PluginCapture
 	    case 5:
 	    	quality = QUALITY_4K;
 	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
-	    	break;	    	
+	    	break;
+	    default:
+			break;
 	    }
 	    
 	    if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
@@ -1008,6 +1014,8 @@ public class VideoCapturePlugin extends PluginCapture
 		    case 5:
 		    	aspect169 = true;
 		    	break;
+		    default:
+				break;
 		    }
 	    	
 	    	sz = getBestPreviewSizeNormal(aspect169);
@@ -1432,6 +1440,8 @@ public class VideoCapturePlugin extends PluginCapture
 		case 5:
 			quality = QUALITY_4K;
 			break;
+		default:
+			break;
 		}
 
 		boolean useProfile = true;
@@ -1504,6 +1514,8 @@ public class VideoCapturePlugin extends PluginCapture
 						break;
 					case QUALITY_4K:
 						quality = QUALITY_4K;
+						break;
+					default:
 						break;
 					}
 					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality))
@@ -1588,6 +1600,8 @@ public class VideoCapturePlugin extends PluginCapture
 						sz = CameraController.getInstance().new Size(4096,2160);
 				}
 				break;
+				default:
+					break;
 				}
 
 				if(!useProf)
@@ -1614,6 +1628,8 @@ public class VideoCapturePlugin extends PluginCapture
 					break;
 				case 2:
 					val2 = 3600;
+					break;
+				default:
 					break;
 				}
 				captureRate = 1/(val1 * val2);

@@ -69,6 +69,8 @@ public class JpegComponent implements Serializable
                 return "I";
             case 5:
                 return "Q";
+            default:
+    			break;
         }
         return null;
     }

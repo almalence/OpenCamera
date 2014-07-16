@@ -167,6 +167,8 @@ public class ExportPlugin extends PluginExport
 	    	gpsInfoImage.setVisibility(View.VISIBLE);
 	    	isFirstGpsFix=false;
 	        break;
+	    default:
+			break;
 		}
     }
 
@@ -264,6 +266,8 @@ public class ExportPlugin extends PluginExport
 		    	case 4://IMG_YEARMMDD_HHMMSS_MODE
 		    		fileFormat = "IMG_" + fileFormat + (modeName.isEmpty()?"":"_") + modeName;
 		    		break;
+		    	default:
+					break;
 		    	}
 		    		
 		    	fileFormat += idx+".jpg";

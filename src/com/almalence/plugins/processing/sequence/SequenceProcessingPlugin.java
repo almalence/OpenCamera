@@ -462,6 +462,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
             
             sequenceView.setEnabled(true);
             break;
+    	default:
+			break;
     	}    	
     	return true;
 	}

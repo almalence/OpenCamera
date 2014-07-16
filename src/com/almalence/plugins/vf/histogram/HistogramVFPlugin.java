@@ -200,6 +200,8 @@ public class HistogramVFPlugin extends PluginViewfinder
         	quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
         	editor.putString("PrefHistogramVF", "0");
         	break;
+        default:
+			break;
         }
         editor.commit();
         
@@ -233,6 +235,8 @@ public class HistogramVFPlugin extends PluginViewfinder
         case NONE:
         	quickControlIconID = R.drawable.gui_almalence_histogram_off;
         	break;
+        default:
+			break;
         }
 	}
 
@@ -325,10 +329,6 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onPause() {
 		orientListener.disable();
-	}
-
-	@Override
-	public void onStop() {
 	}
 
 	@Override

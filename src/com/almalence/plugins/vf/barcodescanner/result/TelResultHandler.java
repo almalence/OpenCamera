@@ -69,6 +69,8 @@ public final class TelResultHandler extends ResultHandler {
         numbers[0] = telResult.getNumber();
         addPhoneOnlyContact(numbers, null);
         break;
+      default:
+		break;
     }
   }
 

@@ -421,9 +421,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 						new DialogInterface.OnClickListener() 
 				{
 				   public void onClick(DialogInterface dialog, int which) 
-				   {
-					   
-				   }
+				   {}
 				});
 				alertDialog.setIcon(R.drawable.alert_dialog_icon);
 				alertDialog.show();
@@ -445,9 +443,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 						new DialogInterface.OnClickListener() 
 				{
 				   public void onClick(DialogInterface dialog, int which) 
-				   {
-					   
-				   }
+				   {}
 				});
 				alertDialog.setIcon(R.drawable.alert_dialog_icon);
 				alertDialog.show();

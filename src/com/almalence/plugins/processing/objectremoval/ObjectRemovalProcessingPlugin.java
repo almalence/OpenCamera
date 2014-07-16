@@ -447,6 +447,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
             	mImgView.setRotation(CameraController.isFrontCamera()? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0 : 180) : 0);
         	}
             break;
+    	default:
+			break;
     	}    	
     	return true;
 	}
@@ -489,6 +491,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			break;
 		case 270:
 			ratio = (float)bitmap.getWidth() / (float)bitmap.getHeight();
+			break;
+		default:
 			break;
 		}
 

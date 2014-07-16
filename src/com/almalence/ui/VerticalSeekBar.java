@@ -108,6 +108,8 @@ public class VerticalSeekBar extends SeekBar {
             setPressed(false);
             setSelected(false);
             break;
+        default:
+			break;
         }
         return true;
     }

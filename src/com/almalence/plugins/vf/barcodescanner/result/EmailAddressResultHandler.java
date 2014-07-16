@@ -67,6 +67,8 @@ public final class EmailAddressResultHandler extends ResultHandler {
         addresses[0] = emailResult.getEmailAddress();
         addEmailOnlyContact(addresses, null);
         break;
+      default:
+		break;
     }
   }
 

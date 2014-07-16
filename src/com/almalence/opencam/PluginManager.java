@@ -1557,6 +1557,8 @@ public class PluginManager implements PluginManagerInterface {
 		case MSG_BROADCAST:
 			pluginManager.onBroadcast(msg.arg1, msg.arg2);
 			break;
+		default:
+			break;
 		}
 
 		return true;
