@@ -2127,75 +2127,73 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	IabHelper.OnIabPurchaseFinishedListener mPreferencePurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
 			showStore = true;
-			Log.v("Main billing", "Purchase finished: " + result
-					+ ", purchase: " + purchase);
-			if (result.isFailure()) {
-				Log.v("Main billing", "Error purchasing: " + result);
-				return;
-			}
-
-			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.getMainContext());
-			
-			Log.v("Main billing", "Purchase successful.");
-
-			if (purchase.getSku().equals(SKU_HDR)) {
-				Log.v("Main billing", "Purchase HDR.");
-
-				hdrPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_PANORAMA)) {
-				Log.v("Main billing", "Purchase Panorama.");
-
-				panoramaPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
-				Log.v("Main billing", "Purchase all.");
-
-				unlockAllPurchased = true;
-
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("unlock_all_forever", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
-				Log.v("Main billing", "Purchase all coupon.");
-
-				unlockAllPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("unlock_all_forever", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
-				Log.v("Main billing", "Purchase object removal.");
-
-				objectRemovalBurstPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_GROUPSHOT)) {
-				Log.v("Main billing", "Purchase groupshot.");
-
-				groupShotPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-				prefsEditor.commit();
-			}
+			purchaseFinished(result, purchase);
 		}
 		
 	};
+	
+	private void purchaseFinished(IabResult result, Purchase purchase)
+	{
+		Log.v("Main billing", "Purchase finished: " + result
+				+ ", purchase: " + purchase);
+		if (result.isFailure()) {
+			Log.v("Main billing", "Error purchasing: " + result);
+			return;
+		}
+
+		Log.v("Main billing", "Purchase successful.");
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
+		if (purchase.getSku().equals(SKU_HDR)) {
+			Log.v("Main billing", "Purchase HDR.");
+			hdrPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_hdr", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_PANORAMA)) {
+			Log.v("Main billing", "Purchase Panorama.");
+			panoramaPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_panorama", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
+			Log.v("Main billing", "Purchase unlock_all_forever.");
+			unlockAllPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("unlock_all_forever", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
+			Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
+			unlockAllPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("unlock_all_forever", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
+			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
+			objectRemovalBurstPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_GROUPSHOT)) {
+			Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
+			groupShotPurchased = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+			prefsEditor.commit();
+		}
+	}
 
 	public void launchPurchase(String SKU, int requestID) {
 		try {
@@ -2211,65 +2209,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
 			
 			guiManager.showStore();
-			Log.v("Main billing", "Purchase finished: " + result
-					+ ", purchase: " + purchase);
-			if (result.isFailure()) {
-				Log.v("Main billing", "Error purchasing: " + result);
-				return;
-			}
-
-			Log.v("Main billing", "Purchase successful.");
-
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			
-			if (purchase.getSku().equals(SKU_HDR)) {
-				Log.v("Main billing", "Purchase HDR.");
-				hdrPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_PANORAMA)) {
-				Log.v("Main billing", "Purchase Panorama.");
-				panoramaPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_UNLOCK_ALL)) {
-				Log.v("Main billing", "Purchase unlock_all_forever.");
-				unlockAllPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("unlock_all_forever", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON)) {
-				Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
-				unlockAllPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("unlock_all_forever", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_MOVING_SEQ)) {
-				Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-				objectRemovalBurstPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-				prefsEditor.commit();
-			}
-			if (purchase.getSku().equals(SKU_GROUPSHOT)) {
-				Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
-				groupShotPurchased = true;
-				
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-				prefsEditor.commit();
-			}
+			purchaseFinished(result, purchase);
 		}
 	};
 
