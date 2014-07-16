@@ -70,7 +70,7 @@ public class Seamless
     	JPEG,
     	YUV420SP,
     	YVU420SP
-    };
+    }
     
     public class FaceThumb{
     	  public Rect mRect;

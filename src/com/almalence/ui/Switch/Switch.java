@@ -270,6 +270,8 @@ public class Switch extends CompoundButton
 			case MONOSPACE:
 				tf = Typeface.MONOSPACE;
 				break;
+			default:
+				break;
 		}
 
 		setSwitchTypeface(tf, styleIndex);
@@ -649,6 +651,8 @@ public class Switch extends CompoundButton
 						}
 						return true;
 					}
+					default:
+						break;
 				}
 				break;
 			}
@@ -665,6 +669,8 @@ public class Switch extends CompoundButton
 				mVelocityTracker.clear();
 				break;
 			}
+			default:
+				break;
 		}
 
 		return super.onTouchEvent(ev);

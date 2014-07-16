@@ -301,7 +301,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 	
 	@Override
 	public void onAutoFocus(boolean paramBoolean) {
-		if(takingAlready == true)
+		if(takingAlready)
 			takePicture();
 	}
 

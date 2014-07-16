@@ -34,7 +34,6 @@ import com.almalence.util.Util;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;

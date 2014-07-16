@@ -373,7 +373,7 @@ public class ExportPlugin extends PluginExport
 			            	com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
 			            	//to avoid problems with SKIA
 			            	int cropHeight = image.getHeight()-image.getHeight()%16;
-					    	if (false == image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
+					    	if (!image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
 					    	{
 					    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 					            return;
@@ -387,7 +387,7 @@ public class ExportPlugin extends PluginExport
 		    	    		out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
 			    	    	if (null == PluginManager.getInstance().getFromSharedMem("resultcrop0"+Long.toString(sessionID)))
 			    	    	{
-			    	    		if (false == out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
+			    	    		if (!out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
 						    	{
 						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						            return;
@@ -401,7 +401,7 @@ public class ExportPlugin extends PluginExport
 					    		int crop3 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
 					    		Rect r = new Rect(crop0, crop1, crop0+crop2, crop1+crop3);
 					    		
-					    		if (false == out.compressToJpeg(r, 95, os))
+					    		if (!out.compressToJpeg(r, 95, os))
 						    	{
 						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						            return;

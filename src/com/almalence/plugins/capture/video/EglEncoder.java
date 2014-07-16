@@ -120,7 +120,7 @@ public class EglEncoder
 	private MediaCodec mEncoder;
 	private CodecInputSurface mInputSurface;
 	private MediaMuxer mMuxer;
-	private int mTrackIndex;;
+	private int mTrackIndex;
 	private boolean mMuxerStarted;
 
 	// allocate one of these up front so we don't need to do it every time

@@ -23,7 +23,6 @@ import java.util.List;
 
 import android.content.SharedPreferences;
 import android.graphics.PointF;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;

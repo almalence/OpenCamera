@@ -152,11 +152,11 @@ public class AlmalenceGUI extends GUI implements
 
 	public enum ShutterButton {
 		DEFAULT, RECORDER_START, RECORDER_STOP, RECORDER_RECORDING, RECORDER_PAUSED
-	};
+	}
 
 	public enum SettingsType {
 		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, MORE
-	};
+	}
 
 	private OrientationEventListener orientListener;	
 
@@ -1150,7 +1150,7 @@ public class AlmalenceGUI extends GUI implements
 		// if first launch - show layout with hints
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
-		if (true == prefs.contains("isFirstLaunch")) {
+		if (prefs.contains("isFirstLaunch")) {
 			isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
 		} else {
 			Editor prefsEditor = prefs.edit();
@@ -2219,45 +2219,21 @@ public class AlmalenceGUI extends GUI implements
 			int cameraParameter = Integer.valueOf(param);
 			switch (cameraParameter) {
 			case MODE_EV:
-				if (mEVSupported)
-					return true;
-				else
-					return false;
+				return mEVSupported;
 			case MODE_SCENE:
-				if (mSceneModeSupported)
-					return true;
-				else
-					return false;
+				return mSceneModeSupported;
 			case MODE_WB:
-				if (mWBSupported)
-					return true;
-				else
-					return false;
+				return mWBSupported;
 			case MODE_FLASH:
-				if (mFlashModeSupported)
-					return true;
-				else
-					return false;
+				return mFlashModeSupported;
 			case MODE_FOCUS:
-				if (mFocusModeSupported)
-					return true;
-				else
-					return false;
+				return mFocusModeSupported;
 			case MODE_ISO:
-				if (mISOSupported)
-					return true;
-				else
-					return false;
+				return mISOSupported;
 			case MODE_MET:
-				if (mMeteringAreasSupported)
-					return true;
-				else
-					return false;
+				return mMeteringAreasSupported;
 			case MODE_CAM:
-				if (mCameraChangeSupported)
-					return true;
-				else
-					return false;
+				return mCameraChangeSupported;
 			default:
 				break;
 			}
@@ -6700,7 +6676,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		//check show help settings
 		MainScreen.setShowHelp(prefs.getBoolean("showHelpPrefCommon", true));
-		if (false == needToShow || !MainScreen.isShowHelp())
+		if (!needToShow || !MainScreen.isShowHelp())
 			return;
 		
 		if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
@@ -6781,7 +6757,7 @@ public class AlmalenceGUI extends GUI implements
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 			{
-				if (false == sw.isChecked())
+				if (!sw.isChecked())
 		        {
 		        	np.setEnabled(false);
 		        	flashCheckbox.setEnabled(false);
@@ -6800,7 +6776,7 @@ public class AlmalenceGUI extends GUI implements
 		});
         
         //disable control in dialog by default
-        if (false == swChecked)
+        if (!swChecked)
         {
         	sw.setChecked(false);
         	flashCheckbox.setEnabled(false);
@@ -6878,7 +6854,7 @@ public class AlmalenceGUI extends GUI implements
 		
 		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
 		
-		if (!needToShow || PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported()==false)
+		if (!needToShow || !PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported())
 		{
 			return; 
 		}

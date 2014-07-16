@@ -19,7 +19,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.standard;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -386,7 +385,7 @@ public class CapturePlugin extends PluginCapture
 	public void onAutoFocus(boolean paramBoolean)
 	{
 		Log.e("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
-		if(takingAlready == true)
+		if(takingAlready)
 			takePicture();
 	}
 	

@@ -49,7 +49,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
@@ -76,7 +75,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.asynctaskmanager.Task;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
@@ -422,7 +420,7 @@ public class PluginManager implements PluginManagerInterface {
 
 		// checks preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		if (true == prefs.contains(MainScreen.sDefaultModeName))
+		if (prefs.contains(MainScreen.sDefaultModeName))
 		{
 			String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 			mode = ConfigParser.getInstance().getMode(defaultModeName);
@@ -702,7 +700,7 @@ public class PluginManager implements PluginManagerInterface {
 		delayedCaptureSoundPrefCommon = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
-		if (!showDelayedCapturePrefCommon ||delayInterval==0 || pluginList.get(activeCapture).delayedCaptureSupported()==false)
+		if (!showDelayedCapturePrefCommon ||delayInterval==0 || !pluginList.get(activeCapture).delayedCaptureSupported())
 		{	
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
@@ -1672,10 +1670,14 @@ public class PluginManager implements PluginManagerInterface {
 		if(MainScreen.getGUIManager().mISOSupported)
 			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
-		if(s1 != null) PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
-		if(s2 != null) PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
-		if(s3 != null) PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
-		if(s4 != null && (s4.compareTo("auto") != 0)) PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
+		if(s1 != null) 
+			PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+		if(s2 != null) 
+			PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+		if(s3 != null) 
+			PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+		if(s4 != null && (s4.compareTo("auto") != 0)) 
+			PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
 		return true;
 	}
 

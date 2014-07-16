@@ -138,7 +138,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
         
         
-        if (true == prefs.contains(sExpoPreviewModePref)) 
+        if (prefs.contains(sExpoPreviewModePref)) 
         {
         	previewMode = prefs.getBoolean(sExpoPreviewModePref, true);
         }
@@ -474,7 +474,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		MainScreen.getMessageHandler().sendMessage(msg);
 		
 		//if preview not working
-		if (previewMode==false)
+		if (previewMode)
 			return;
 		previewWorking = false;
 		//start timer to check if onpreviewframe working
@@ -737,7 +737,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	// select proper min_ev, ev_inc
     	if (ev_step == 0)
     	{
-    		min_ev = 0; max_ev = 0; ev_inc = 0;
+    		min_ev = 0; 
+    		max_ev = 0; 
+    		ev_inc = 0;
     		total_frames = 3;
     		
         	for (int i=0; i<total_frames; ++i)

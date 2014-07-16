@@ -412,7 +412,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
     		mHandler.sendEmptyMessage(MSG_LEAVING);
     		break;
     	case MSG_LEAVING:
-    		if (released==true)
+    		if (released)
     			return false;
     		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
     		mJpegBufferList.clear();

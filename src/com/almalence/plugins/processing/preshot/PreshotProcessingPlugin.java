@@ -279,7 +279,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
         // if first launch - show layout with hints
  		SharedPreferences prefs = PreferenceManager
  				.getDefaultSharedPreferences(MainScreen.getMainContext());
- 		if (true == prefs.contains("isFirstPreShotLaunch")) {
+ 		if (prefs.contains("isFirstPreShotLaunch")) {
  			isFirstLaunch = prefs.getBoolean("isFirstPreShotLaunch", true);
  		} else {
  			Editor prefsEditor = prefs.edit();
