@@ -22,20 +22,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +41,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -63,7 +54,6 @@ import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlu
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.RotateLayout;
-import com.almalence.util.MLocation;
 
 /***
 Implements multishot processing

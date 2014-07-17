@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -34,7 +33,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.ImageFormat;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
@@ -46,13 +44,9 @@ import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -92,12 +86,10 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
-import com.almalence.util.MLocation;
 
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 
 /***
 Implements HDR processing plugin.
@@ -219,8 +211,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	{
 		int SXP, SYP;
     	int[] pview;
-    	
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
     	
     	SXP = mImageWidth/4;
     	SYP = mImageHeight/4;
