@@ -138,7 +138,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -166,7 +166,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -240,7 +240,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -266,7 +266,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -310,7 +310,7 @@ public class MultiShotCapturePlugin extends PluginCapture {
 		if (arg1 == PluginManager.MSG_NEXT_FRAME) {
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().PlayShutter();
+			MainScreen.getInstance().playShutter();
 			
 			try {
 				requestID = CameraController.captureImage(1, CameraController.YUV);

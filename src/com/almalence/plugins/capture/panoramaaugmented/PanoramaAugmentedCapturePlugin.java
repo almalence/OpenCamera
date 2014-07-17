@@ -309,7 +309,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	@Override
 	public void onResume()
 	{		
-		MainScreen.getInstance().MuteShutter(false);
+		MainScreen.getInstance().muteShutter(false);
 		
         final Message msg = new Message();
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;

@@ -359,7 +359,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		setContentView(R.layout.opencamera_main_layout);
 		
 		//reset or save settings
-		ResetOrSaveSettings();
+		resetOrSaveSettings();
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
@@ -473,7 +473,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
 		screenTimer = new CountDownTimer(180000, 180000) {
-			public void onTick(long millisUntilFinished) {
+			public void onTick(long millisUntilFinished) { 
+				//Not used
 			}
 
 			public void onFinish() {
@@ -911,6 +912,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
 				public void onTick(long millisUntilFinished) {
+					//Not used
 				}
 
 				public void onFinish() {
@@ -994,8 +996,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		Log.e("Density", "" + getResources().getDisplayMetrics().toString());
 		
-		long Free = getAvailableInternalMemory();
-		if (Free<30)
+		long memoryFree = getAvailableInternalMemory();
+		if (memoryFree<30)
 			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
 	}
 	
@@ -1006,6 +1008,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			new CountDownTimer(100, 100) {
 				public void onTick(long millisUntilFinished) {
+					//Not used
 				}
 
 				public void onFinish() {
@@ -1074,19 +1077,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void PauseMain() {
+	public void pauseMain() {
 		onPause();
 	}
 
-	public void StopMain() {
+	public void stopMain() {
 		onStop();
 	}
 
-	public void StartMain() {
+	public void startMain() {
 		onStart();
 	}
 
-	public void ResumeMain() {
+	public void resumeMain() {
 		onResume();
 	}
 
@@ -1097,7 +1100,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (!isCreating)
 			new CountDownTimer(50, 50) {
 				public void onTick(long millisUntilFinished) {
-
+					//Not used
 				}
 
 				public void onFinish() {
@@ -1264,6 +1267,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			@Override
 			public void onTick(long millisUntilFinished) {
+				//Not used
 			}
 		}.start();
 	}
@@ -1392,7 +1396,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	@TargetApi(14)
 	public boolean isFaceDetectionAvailable(Camera.Parameters params) {
-		return (params.getMaxNumDetectedFaces() > 0);
+		return params.getMaxNumDetectedFaces() > 0;
 	}
 
 	public CameraController.Size getPreviewSize() {
@@ -1608,23 +1612,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				this.finish();
 				break;	
 			case PluginManager.MSG_CAMERA_READY:
+			{
 				configureCamera();
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();
-				break;
+			}	break;
 			case PluginManager.MSG_CAMERA_OPENED:
 			case PluginManager.MSG_SURFACE_READY:
-	
-					// if both surface is created and camera device is opened
-					// - ready to set up preview and other things
-					if (surfaceCreated && (HALv3.getCamera2() != null))
-					{
-						Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
-						configureCamera();
-						PluginManager.getInstance().onGUICreate();
-						MainScreen.getGUIManager().onGUICreate();
-					}
-					break;			
+			{
+				// if both surface is created and camera device is opened
+				// - ready to set up preview and other things
+				if (surfaceCreated && (HALv3.getCamera2() != null))
+				{
+					Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
+					configureCamera();
+					PluginManager.getInstance().onGUICreate();
+					MainScreen.getGUIManager().onGUICreate();
+				}
+			}	break;			
 			default:
 			PluginManager.getInstance().handleMessage(msg); 
 			break;
@@ -1646,7 +1651,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if (glView == null)
 		{
-			glView = new GLLayer(MainScreen.getMainContext(), version);// (GLLayer)findViewById(R.id.SurfaceView02);
+			glView = new GLLayer(MainScreen.getMainContext(), version);
 			glView.setLayoutParams(new LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			((RelativeLayout)this.findViewById(R.id.mainLayout2)).addView(glView, 1);
@@ -1664,7 +1669,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void PlayShutter(int sound) {
+	public void playShutter(int sound) {
 		if (!MainScreen.isShutterSoundEnabled()) {
 			MediaPlayer mediaPlayer = MediaPlayer
 					.create(MainScreen.thiz, sound);
@@ -1672,7 +1677,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void PlayShutter() {
+	public void playShutter() {
 		if (!MainScreen.isShutterSoundEnabled()) {
 			if (shutterPlayer != null)
 				shutterPlayer.play();
@@ -1680,7 +1685,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	// set TRUE to mute and FALSE to unmute
-	public void MuteShutter(boolean mute) {
+	public void muteShutter(boolean mute) {
 		if (MainScreen.isShutterSoundEnabled()) {
 			AudioManager mgr = (AudioManager) MainScreen.thiz
 					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
@@ -1746,9 +1751,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void setScreenBrightness(boolean setMax)
 	{
-		//ContentResolver cResolver = getContentResolver();
 		Window window = getWindow();
-		
 		WindowManager.LayoutParams layoutpars = window.getAttributes();
 		
         //Set the brightness of this window	
@@ -2464,7 +2467,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 // <!-- -+-
 	
 	//Application rater code
-	public static void CallStoreFree(Activity act)
+	public static void callStoreFree(Activity act)
     {
     	try
     	{
@@ -2480,7 +2483,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 // -+- -->
 	
 	//widget ad code
-	public static void CallStoreWidgetInstall(Activity act)
+	public static void callStoreWidgetInstall(Activity act)
     {
     	try
     	{
@@ -2494,7 +2497,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
     	}
     }
 	
-	private void ResetOrSaveSettings()
+	private void resetOrSaveSettings()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();

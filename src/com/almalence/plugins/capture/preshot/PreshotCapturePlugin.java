@@ -102,7 +102,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(CameraController.isFrontCamera()? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);        
-		MainScreen.getInstance().MuteShutter(false);
+		MainScreen.getInstance().muteShutter(false);
 		captureStarted=false;
 	}
 
@@ -296,7 +296,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
-		MainScreen.getInstance().MuteShutter(true);
+		MainScreen.getInstance().muteShutter(true);
 		
 		isBuffering = true;
 		if (!isSlowMode)
@@ -344,7 +344,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		MainScreen.getGUIManager().stopCaptureIndication();
 		
-		MainScreen.getInstance().MuteShutter(false);
+		MainScreen.getInstance().muteShutter(false);
 		
 		if(modeSwitcher != null)
 			modeSwitcher.setEnabled(false);
@@ -605,7 +605,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	    		inCapture = true;
 	    		
 	    		MainScreen.getGUIManager().showCaptureIndication();
-	    		MainScreen.getInstance().PlayShutter();
+	    		MainScreen.getInstance().playShutter();
 	    		
 	    		requestID = CameraController.captureImage(1, CameraController.JPEG);
 	    		counter++;

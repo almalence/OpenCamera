@@ -156,7 +156,7 @@ public class AppWidgetNotifier
 		{
 			public void onClick(View v)
 			{
-				MainScreen.CallStoreWidgetInstall(mContext);
+				MainScreen.callStoreWidgetInstall(mContext);
 				
 				if (prefs != null)
 				{

@@ -466,13 +466,13 @@ public class PluginManager implements PluginManagerInterface {
 	private void restartMainScreen() {
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
-		MainScreen.getInstance().PauseMain();
+		MainScreen.getInstance().pauseMain();
 		onStop();
 
 		// create correct workflow for plugins
 		onCreate();
 		onStart();
-		MainScreen.getInstance().ResumeMain();
+		MainScreen.getInstance().resumeMain();
 
 		countdownView.clearAnimation();
         countdownLayout.setVisibility(View.GONE);
@@ -492,7 +492,7 @@ public class PluginManager implements PluginManagerInterface {
 	public void switchMode(Mode mode) {
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
-		MainScreen.getInstance().PauseMain();
+		MainScreen.getInstance().pauseMain();
 		onStop();
 		onDestroy();
 
@@ -516,7 +516,7 @@ public class PluginManager implements PluginManagerInterface {
 
 		onCreate();
 		onStart();
-		MainScreen.getInstance().ResumeMain();
+		MainScreen.getInstance().resumeMain();
 	}
 
 	public List<Plugin> getActivePlugins(PluginType type) {
@@ -1389,7 +1389,7 @@ public class PluginManager implements PluginManagerInterface {
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 
 			// <!-- -+-
 			//if mode free
@@ -1415,7 +1415,7 @@ public class PluginManager implements PluginManagerInterface {
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 
 	    	MainScreen.getGUIManager().lockControls = false;
 			Message messageNoResult = new Message();

@@ -145,7 +145,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -176,7 +176,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -254,7 +254,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
     	}
@@ -282,7 +282,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 			MainScreen.getMessageHandler().sendMessage(message);
 			
 			imagesTaken=0;
-			MainScreen.getInstance().MuteShutter(false);
+			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -333,7 +333,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		{
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().PlayShutter();
+			MainScreen.getInstance().playShutter();
 			
 			try {
 				requestID = CameraController.captureImage(1, CameraController.YUV);

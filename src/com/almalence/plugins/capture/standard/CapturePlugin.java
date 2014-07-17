@@ -228,11 +228,11 @@ public class CapturePlugin extends PluginCapture
 			Log.e("CapturePlugin", "next frame message received");
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-    		MainScreen.getInstance().PlayShutter();
+    		MainScreen.getInstance().playShutter();
     		
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-    		MainScreen.getInstance().PlayShutter();
+    		MainScreen.getInstance().playShutter();
     		
     		try {
     			if(ModePreference.compareTo("0") == 0)

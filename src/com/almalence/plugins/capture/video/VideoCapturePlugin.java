@@ -1219,7 +1219,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{			
 			this.droEngine.stopRecording();
 
-    		MainScreen.getInstance().PlayShutter();
+    		MainScreen.getInstance().playShutter();
             
             MainScreen.getGUIManager().lockControls = false;
             // inform the user that recording has stopped
@@ -1311,7 +1311,7 @@ public class VideoCapturePlugin extends PluginCapture
             isRecording = true;
             onPause = false;
             
-    		MainScreen.getInstance().PlayShutter();
+    		MainScreen.getInstance().playShutter();
     		
             showRecordingUI(isRecording);
             PreferenceManager.getDefaultSharedPreferences(

@@ -160,7 +160,7 @@ public class AppRater
 				if (rating>= 4)
 				{
 					mContext.finish();
-					MainScreen.CallStoreFree(mContext);
+					MainScreen.callStoreFree(mContext);
 				}
 				else
 					contactSupport();

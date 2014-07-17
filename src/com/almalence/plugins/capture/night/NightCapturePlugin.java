@@ -228,7 +228,7 @@ public class NightCapturePlugin extends PluginCapture
 		takingAlready = false;
 		inCapture = false;
         
-        MainScreen.getInstance().MuteShutter(false);
+        MainScreen.getInstance().muteShutter(false);
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
@@ -951,7 +951,7 @@ public class NightCapturePlugin extends PluginCapture
 	
 	private void startCaptureSequence()
 	{
-		MainScreen.getInstance().MuteShutter(true);
+		MainScreen.getInstance().muteShutter(true);
 		
 		if (!inCapture)
         {
@@ -1160,7 +1160,7 @@ public class NightCapturePlugin extends PluginCapture
     		nVFframesToBuffer = HI_SPEED_FRAMES;
     		// play tick sound
     		MainScreen.getGUIManager().startContinuousCaptureIndication();
-    		MainScreen.getInstance().PlayShutter();
+    		MainScreen.getInstance().playShutter();
     		return;
     	}
 
@@ -1170,7 +1170,7 @@ public class NightCapturePlugin extends PluginCapture
 	    	{
 	    		// play tick sound
 	    		MainScreen.getGUIManager().showCaptureIndication();
-        		MainScreen.getInstance().PlayShutter();
+        		MainScreen.getInstance().playShutter();
         		requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, 0, new int[0]);
 	    	}
 	    	catch (RuntimeException e)
@@ -1254,7 +1254,7 @@ public class NightCapturePlugin extends PluginCapture
 			if (nVFframesToBuffer == 0)
 			{
 				// play tick sound
-        		MainScreen.getInstance().PlayShutter();
+        		MainScreen.getInstance().playShutter();
 									
         		Message message = new Message();
         		message.obj = String.valueOf(SessionID);
@@ -1422,7 +1422,7 @@ public class NightCapturePlugin extends PluginCapture
 			{
 				PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(true));
 				// play tick sound
-        		MainScreen.getInstance().PlayShutter();
+        		MainScreen.getInstance().playShutter();
 									
         		Message message = new Message();
         		message.obj = String.valueOf(SessionID);

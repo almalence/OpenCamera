@@ -131,7 +131,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
         evRequested = 0;
         evLatency=0;
         
-        MainScreen.getInstance().MuteShutter(false);
+        MainScreen.getInstance().muteShutter(false);
         
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
         preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
@@ -222,7 +222,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	private void startCaptureSequence()
 	{
-		MainScreen.getInstance().MuteShutter(true);
+		MainScreen.getInstance().muteShutter(true);
     	
         if (!inCapture)
         {
@@ -379,7 +379,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    	}
 
 	    	MainScreen.getGUIManager().showCaptureIndication();
-	    	MainScreen.getInstance().PlayShutter();
+	    	MainScreen.getInstance().playShutter();
 	    	
 	    	try
 	    	{

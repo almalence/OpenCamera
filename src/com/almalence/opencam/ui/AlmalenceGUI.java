@@ -3550,8 +3550,8 @@ public class AlmalenceGUI extends GUI implements
 		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
 
 		if (restart) {
-			MainScreen.getInstance().PauseMain();
-			MainScreen.getInstance().ResumeMain();
+			MainScreen.getInstance().pauseMain();
+			MainScreen.getInstance().resumeMain();
 		}
 	}
 
