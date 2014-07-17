@@ -1405,7 +1405,7 @@ public class PluginManager implements PluginManagerInterface {
 			int id = MainScreen.getInstance().getResources().getIdentifier(getActiveMode().modeName,
 					"string", MainScreen.getInstance().getPackageName());
 			String modeName = MainScreen.getInstance().getResources().getString(id);
-			PluginManager.getInstance().addToSharedMem("mode_name"+(String)msg.obj, modeName);
+			addToSharedMem("mode_name"+(String)msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
 			ProcessingTask task = new ProcessingTask(MainScreen.getInstance());
@@ -1470,9 +1470,9 @@ public class PluginManager implements PluginManagerInterface {
 
 		case MSG_POSTPROCESSING_FINISHED:
 			long sessionID = 0;
-			String sSessionID = PluginManager.getInstance().getFromSharedMem("sessionID");
+			String sSessionID = getFromSharedMem("sessionID");
 			if(sSessionID != null)
-				sessionID = Long.parseLong(PluginManager.getInstance().getFromSharedMem("sessionID"));
+				sessionID = Long.parseLong(getFromSharedMem("sessionID"));
 
 			// notify GUI about saved images			
 			MainScreen.getGUIManager().lockControls = false;
@@ -1549,7 +1549,7 @@ public class PluginManager implements PluginManagerInterface {
 			break;
 
 		case MSG_RESTART_MAIN_SCREEN:
-			PluginManager.getInstance().restartMainScreen();
+			restartMainScreen();
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW:
@@ -1617,31 +1617,31 @@ public class PluginManager implements PluginManagerInterface {
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL);
 
 			if(num != -1 && s1 != null)
-				PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
+				addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
 			else if(s1 != null)
-				PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);	
+				addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);	
 			if(s2 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+				addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
 			if(s3 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+				addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
 			if(s4 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+				addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
 			if(s5 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+				addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
 			if(s6 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+				addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
 			if(s7 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+				addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
 			if(s8 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+				addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
 			if(s9 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
+				addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
 			if(s10 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
+				addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
 			if(s11 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+				addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
 			if(s12 != null) 
-				PluginManager.getInstance().addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
+				addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
 			
 		} catch (JpegProcessingException e1)
 		{
@@ -1663,17 +1663,17 @@ public class PluginManager implements PluginManagerInterface {
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));		
 		
 		if(exposure_time != null && !exposure_time.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
+			addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
 		if(sensitivity != null && !sensitivity.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
+			addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
 		if(aperture != null && !aperture.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
+			addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
 		if(focal_lenght != null && !focal_lenght.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
+			addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
 		if(flash_mode != null && !flash_mode.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
+			addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
 		if(awb_mode != null && !awb_mode.equals("null")) 
-			PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
+			addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
 		
 		return true;
 	}
@@ -1695,13 +1695,13 @@ public class PluginManager implements PluginManagerInterface {
 			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
 		if(s1 != null) 
-			PluginManager.getInstance().addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+			addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
 		if(s2 != null) 
-			PluginManager.getInstance().addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+			addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
 		if(s3 != null) 
-			PluginManager.getInstance().addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+			addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
 		if(s4 != null && (s4.compareTo("auto") != 0)) 
-			PluginManager.getInstance().addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
+			addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
 		return true;
 	}
 
@@ -2149,18 +2149,18 @@ public class PluginManager implements PluginManagerInterface {
 		// save fused result
 		try
         {
-            File saveDir = PluginManager.getInstance().GetSaveDir(false);
+            File saveDir = GetSaveDir(false);
 
 	    	Calendar d = Calendar.getInstance();
 		    	
-	    	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofresultframes"+Long.toString(sessionID)));
+	    	int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes"+Long.toString(sessionID)));
 			if (imagesAmount==0)
 				imagesAmount=1;
 			
 			int imageIndex = 0;
-			String sImageIndex = PluginManager.getInstance().getFromSharedMem("resultframeindex"+Long.toString(sessionID));
+			String sImageIndex = getFromSharedMem("resultframeindex"+Long.toString(sessionID));
 			if(sImageIndex != null)
-				imageIndex = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframeindex"+Long.toString(sessionID)));
+				imageIndex = Integer.parseInt(getFromSharedMem("resultframeindex"+Long.toString(sessionID)));
 			
 			if(imageIndex != 0)
 				imagesAmount = 1;
@@ -2182,7 +2182,7 @@ public class PluginManager implements PluginManagerInterface {
 	            		d.get(Calendar.HOUR_OF_DAY),
 	            		d.get(Calendar.MINUTE),
 	            		d.get(Calendar.SECOND));
-		    	String modeName = PluginManager.getInstance().getFromSharedMem("modeSaveName"+Long.toString(sessionID));
+		    	String modeName = getFromSharedMem("modeSaveName"+Long.toString(sessionID));
 		    	switch (saveOption)
 		    	{
 		    	case 1://YEARMMDD_HHMMSS
@@ -2232,7 +2232,7 @@ public class PluginManager implements PluginManagerInterface {
 			        {
 			    		//save always if not working saving to sdcard
 			        	e.printStackTrace();
-			        	saveDir = PluginManager.getInstance().GetSaveDir(true);
+			        	saveDir = GetSaveDir(true);
 			        	if (MainScreen.getForceFilename() == null)
 			            {
 				    		file = new File(
@@ -2252,38 +2252,38 @@ public class PluginManager implements PluginManagerInterface {
 	            if(imagesAmount == 1 && imageIndex != 0)
 	            	i = imageIndex;
 	            
-	            String resultOrientation = PluginManager.getInstance().getFromSharedMem("resultframeorientation" + i+Long.toString(sessionID));
+	            String resultOrientation = getFromSharedMem("resultframeorientation" + i+Long.toString(sessionID));
 	            int orientation = 0;
 	            if (resultOrientation != null)
 	            	orientation = Integer.parseInt(resultOrientation);
 	            
-	            String resultMirrored = PluginManager.getInstance().getFromSharedMem("resultframemirrored" + i+Long.toString(sessionID));
+	            String resultMirrored = getFromSharedMem("resultframemirrored" + i+Long.toString(sessionID));
 	            Boolean cameraMirrored = false;
 	            if (resultMirrored != null)
 	            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
-	            int x = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-	            int y = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
+	            int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
+	            int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
 	            if (orientation == 0 || orientation == 180)
 	            {
-	            	x = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-		            y = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
+	            	x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
+		            y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
 	            }
 	            
 	            Boolean writeOrientationTag = true;
-	            String writeOrientTag = PluginManager.getInstance().getFromSharedMem("writeorientationtag"+Long.toString(sessionID));
+	            String writeOrientTag = getFromSharedMem("writeorientationtag"+Long.toString(sessionID));
 	            if (writeOrientTag != null)
 	            	writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
 	            
-	            String format = PluginManager.getInstance().getFromSharedMem("resultframeformat"+i+Long.toString(sessionID));
+	            String format = getFromSharedMem("resultframeformat"+i+Long.toString(sessionID));
 	            if (format != null && format.equalsIgnoreCase("jpeg"))
 	            {//if result in jpeg format
 
 		            if (os != null)
 		            {
 		            	byte[] frame = SwapHeap.SwapFromHeap(
-			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
-			            		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
+			            		Integer.parseInt(getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
+			            		Integer.parseInt(getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
 	            		os.write(frame);
 	            		try
 	    		    	{
@@ -2298,11 +2298,11 @@ public class PluginManager implements PluginManagerInterface {
 	            else
 	            {//if result in nv21 format
 		            {
-			            String res = PluginManager.getInstance().getFromSharedMem("resultfromshared"+Long.toString(sessionID));
+			            String res = getFromSharedMem("resultfromshared"+Long.toString(sessionID));
 			            if ((null == res) || "".equals(res) || "true".equals(res))
 			            {
 			            	// Why not just compress directly from native?
-			            	final int ptr = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe"+i+Long.toString(sessionID)));
+			            	final int ptr = Integer.parseInt(getFromSharedMem("resultframe"+i+Long.toString(sessionID)));
 			            	com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
 			            	//to avoid problems with SKIA
 			            	int cropHeight = image.getHeight()-image.getHeight()%16;
@@ -2315,10 +2315,10 @@ public class PluginManager implements PluginManagerInterface {
 			            }
 			            else
 			            {
-			            	int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultframe" +i+Long.toString(sessionID)));
+			            	int yuv = Integer.parseInt(getFromSharedMem("resultframe" +i+Long.toString(sessionID)));
 			            	com.almalence.YuvImage out;
 		    	    		out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
-			    	    	if (null == PluginManager.getInstance().getFromSharedMem("resultcrop0"+Long.toString(sessionID)))
+			    	    	if (null == getFromSharedMem("resultcrop0"+Long.toString(sessionID)))
 			    	    	{
 			    	    		if (!out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
 						    	{
@@ -2328,10 +2328,10 @@ public class PluginManager implements PluginManagerInterface {
 			    	    	}
 			    	    	else
 		    	    		{
-			    	    		int crop0 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop0"+Long.toString(sessionID)));
-					    		int crop1 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop1"+Long.toString(sessionID)));
-					    		int crop2 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop2"+Long.toString(sessionID)));
-					    		int crop3 = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
+			    	    		int crop0 = Integer.parseInt(getFromSharedMem("resultcrop0"+Long.toString(sessionID)));
+					    		int crop1 = Integer.parseInt(getFromSharedMem("resultcrop1"+Long.toString(sessionID)));
+					    		int crop2 = Integer.parseInt(getFromSharedMem("resultcrop2"+Long.toString(sessionID)));
+					    		int crop3 = Integer.parseInt(getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
 					    		Rect r = new Rect(crop0, crop1, crop0+crop2, crop1+crop3);
 					    		
 					    		if (!out.compressToJpeg(r, 95, os))
@@ -2388,8 +2388,8 @@ public class PluginManager implements PluginManagerInterface {
                 // Can't figure out why, other Exif tools work fine.
                 ExifInterface ei = new ExifInterface(tmpFile.getAbsolutePath());
                 
-                String tag_model = PluginManager.getInstance().getFromSharedMem("exiftag_model"+Long.toString(sessionID));
-                String tag_make = PluginManager.getInstance().getFromSharedMem("exiftag_make"+Long.toString(sessionID));
+                String tag_model = getFromSharedMem("exiftag_model"+Long.toString(sessionID));
+                String tag_make = getFromSharedMem("exiftag_make"+Long.toString(sessionID));
                 if(tag_model != null) {
 	        		ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
 	        		ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
@@ -2429,16 +2429,16 @@ public class PluginManager implements PluginManagerInterface {
 	            	}
 	            }
     	    	
-    	    	String tag_exposure_time = PluginManager.getInstance().getFromSharedMem("exiftag_exposure_time"+Long.toString(sessionID));
-	            String tag_aperture = PluginManager.getInstance().getFromSharedMem("exiftag_aperture"+Long.toString(sessionID));
-	            String tag_flash = PluginManager.getInstance().getFromSharedMem("exiftag_flash"+Long.toString(sessionID));
-	            String tag_focal_length = PluginManager.getInstance().getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
-	            String tag_iso = PluginManager.getInstance().getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
-	            String tag_white_balance = PluginManager.getInstance().getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
-	            String tag_spectral_sensitivity = PluginManager.getInstance().getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
-	            String tag_version = PluginManager.getInstance().getFromSharedMem("exiftag_version"+Long.toString(sessionID));
-	            String tag_scene = PluginManager.getInstance().getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
-	            String tag_metering_mode = PluginManager.getInstance().getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));	            
+    	    	String tag_exposure_time = getFromSharedMem("exiftag_exposure_time"+Long.toString(sessionID));
+	            String tag_aperture = getFromSharedMem("exiftag_aperture"+Long.toString(sessionID));
+	            String tag_flash = getFromSharedMem("exiftag_flash"+Long.toString(sessionID));
+	            String tag_focal_length = getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
+	            String tag_iso = getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
+	            String tag_white_balance = getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
+	            String tag_spectral_sensitivity = getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
+	            String tag_version = getFromSharedMem("exiftag_version"+Long.toString(sessionID));
+	            String tag_scene = getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
+	            String tag_metering_mode = getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));	            
 	            	   
 	            if (exifDriver != null) {
 	            	if(tag_exposure_time != null) {
@@ -2450,7 +2450,7 @@ public class PluginManager implements PluginManagerInterface {
 		            	}
 		            }
 	            	else { // hack for expo bracketing
-	            		tag_exposure_time = PluginManager.getInstance().getFromSharedMem("exiftag_exposure_time"+Integer.toString(i)+Long.toString(sessionID));
+	            		tag_exposure_time = getFromSharedMem("exiftag_exposure_time"+Integer.toString(i)+Long.toString(sessionID));
 	            		if(tag_exposure_time != null) {
 			            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
 			            	if (ratValue != null) {
@@ -2608,7 +2608,7 @@ public class PluginManager implements PluginManagerInterface {
 		            }
 
 		            //extract mode name
-		            String tag_modename = PluginManager.getInstance().getFromSharedMem("mode_name"+Long.toString(sessionID));
+		            String tag_modename = getFromSharedMem("mode_name"+Long.toString(sessionID));
 		            if (tag_modename == null)
 		            	tag_modename = "";
 		            String softwareString = MainScreen.getInstance().getResources().getString(R.string.app_name) + ", " + tag_modename;
@@ -2696,7 +2696,7 @@ public class PluginManager implements PluginManagerInterface {
     		break;
     		
     	case 2://YEARMMDD_HHMMSS_MODE
-    		fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
+    		fileFormat += "_" + getActiveMode().modeSaveName;
     		break;
     		
     	case 3://IMG_YEARMMDD_HHMMSS
@@ -2704,7 +2704,7 @@ public class PluginManager implements PluginManagerInterface {
     		break;
     		
     	case 4://IMG_YEARMMDD_HHMMSS_MODE
-    		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
+    		fileFormat = "IMG_" + fileFormat + "_" + getActiveMode().modeSaveName;
     		break;
     	default:
 			break;
@@ -2717,14 +2717,14 @@ public class PluginManager implements PluginManagerInterface {
 		int iImageWidth = MainScreen.getImageWidth();
 		int iImageHeight = MainScreen.getImageHeight();
 		ContentValues values=null;
-		String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(SessionID));
+		String resultOrientation = getFromSharedMem("frameorientation" + (i+1) + Long.toString(SessionID));
 		Boolean orientationLandscape = false;
 		if (resultOrientation == null)
 			orientationLandscape = true;
 		else
 			orientationLandscape = Boolean.parseBoolean(resultOrientation);
 		
-		String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(SessionID));
+		String resultMirrored = getFromSharedMem("framemirrored" + (i+1) + Long.toString(SessionID));
 		Boolean cameraMirrored = false;
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);

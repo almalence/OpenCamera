@@ -292,7 +292,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        }
 		}
 		
-		
 		if(!isYUV)
 		{
 	    	AlmaShotHDR.HDRConvertFromJpeg(
