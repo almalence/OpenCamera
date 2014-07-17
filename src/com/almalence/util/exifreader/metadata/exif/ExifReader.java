@@ -298,17 +298,6 @@ public class ExifReader implements MetadataReader
 
         if (ifd0Directory==null)
             return;
-
-        String cameraModel = ifd0Directory.getString(ExifIFD0Directory.TAG_MAKE);
-
-        //final String firstTwoChars = reader.getString(subdirOffset, 2);
-        final String firstThreeChars = reader.getString(subdirOffset, 3);
-        final String firstFourChars = reader.getString(subdirOffset, 4);
-        final String firstFiveChars = reader.getString(subdirOffset, 5);
-        final String firstSixChars = reader.getString(subdirOffset, 6);
-        final String firstSevenChars = reader.getString(subdirOffset, 7);
-        final String firstEightChars = reader.getString(subdirOffset, 8);
-        final String firstTwelveChars = reader.getString(subdirOffset, 12);        
     }
 
     private void processTag(@NotNull Directory directory, int tagType, int tagValueOffset, int componentCount, int formatCode, @NotNull final BufferReader reader) throws BufferBoundsException
@@ -323,30 +312,6 @@ public class ExifReader implements MetadataReader
             case FMT_STRING:
                 String string = reader.getNullTerminatedString(tagValueOffset, componentCount);
                 directory.setString(tagType, string);
-/*
-                // special handling for certain known tags, proposed by Yuri Binev but left out for now,
-                // as it gives the false impression that the image was captured in the same timezone
-                // in which the string is parsed
-                if (tagType==ExifSubIFDDirectory.TAG_DATETIME ||
-                    tagType==ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL ||
-                    tagType==ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED) {
-                    String[] datePatterns = {
-                        "yyyy:MM:dd HH:mm:ss",
-                        "yyyy:MM:dd HH:mm",
-                        "yyyy-MM-dd HH:mm:ss",
-                        "yyyy-MM-dd HH:mm"};
-                    for (String datePattern : datePatterns) {
-                        try {
-                            DateFormat parser = new SimpleDateFormat(datePattern);
-                            Date date = parser.parse(string);
-                            directory.setDate(tagType, date);
-                            break;
-                        } catch (ParseException ex) {
-                            // simply try the next pattern
-                        }
-                    }
-                }
-*/
                 break;
             case FMT_SRATIONAL:
                 if (componentCount == 1) {

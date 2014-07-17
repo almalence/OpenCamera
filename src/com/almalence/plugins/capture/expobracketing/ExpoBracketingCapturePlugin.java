@@ -430,12 +430,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
     	compressed_frame[n] = SwapHeap.SwapToHeap(paramArrayOfByte);
     	compressed_frame_len[n] = paramArrayOfByte.length;
-    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[n]));
+    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+SessionID, String.valueOf(compressed_frame[n]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+SessionID, String.valueOf(compressed_frame_len[n]));
     	
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (n+1) + SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + (n+1) + SessionID, String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(n+1));
     	
    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, n + 1);
     	
@@ -581,9 +581,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	PluginManager.getInstance().addToSharedMem("framemirrored"+(n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
 		
     	Log.e("ExpoBracketing", "amountofcapturedframes = " + (n+1));
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(n+1));
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(n+1));
     	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));    	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(isYUV));    	
 		
     	try
 		{
@@ -701,7 +701,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	if (ev_step > 1)
     	{
     		// debug log
-	    	//debugString += " bogus ev_step, changing to 0.5 "; 
     		ev_step = 0.5f;
     		cm7_crap = true;
     	}
@@ -709,14 +708,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
     	// motorola droid2 crap (likely other motorola models too) - step is clearly not what is reported
     	// signature: <motorola> <DROID2>, ev_step = 0.3333
     	if (android.os.Build.MANUFACTURER.toLowerCase().contains("motorola") && (Math.abs(ev_step - 0.333) < 0.01)) 
-    		ev_step = 1.5f; // 0.5f;
+    		ev_step = 1.5f;
 
     	// xperia cameras seem to give slightly higher step than reported by android 
     	if (android.os.Build.MANUFACTURER.toLowerCase().contains("sony") && (Math.abs(ev_step - 0.333) < 0.01)) 
     		ev_step = 0.5f;
 
     	// incorrect step in GT-S5830, may be other samsung models
-    	//if (android.os.Build.MODEL.contains("GT-S5830") && (Math.abs(ev_step - 0.166) < 0.01))
     	if (android.os.Build.MANUFACTURER.toLowerCase().contains("samsung") && (Math.abs(ev_step - 0.166) < 0.01)) 
     		ev_step = 0.5f;
 

@@ -1617,31 +1617,31 @@ public class PluginManager implements PluginManagerInterface {
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL);
 
 			if(num != -1 && s1 != null)
-				addToSharedMem("exiftag_exposure_time"+String.valueOf(num)+String.valueOf(SessionID), s1);
+				addToSharedMem("exiftag_exposure_time"+num+SessionID, s1);
 			else if(s1 != null)
-				addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), s1);	
+				addToSharedMem("exiftag_exposure_time"+SessionID, s1);	
 			if(s2 != null) 
-				addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), s2);
+				addToSharedMem("exiftag_aperture"+SessionID, s2);
 			if(s3 != null) 
-				addToSharedMem("exiftag_flash"+String.valueOf(SessionID), s3);
+				addToSharedMem("exiftag_flash"+SessionID, s3);
 			if(s4 != null) 
-				addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), s4);
+				addToSharedMem("exiftag_focal_lenght"+SessionID, s4);
 			if(s5 != null) 
-				addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s5);
+				addToSharedMem("exiftag_iso"+SessionID, s5);
 			if(s6 != null) 
-				addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s6);
+				addToSharedMem("exiftag_white_balance"+SessionID, s6);
 			if(s7 != null) 
-				addToSharedMem("exiftag_make"+String.valueOf(SessionID), s7);
+				addToSharedMem("exiftag_make"+SessionID, s7);
 			if(s8 != null) 
-				addToSharedMem("exiftag_model"+String.valueOf(SessionID), s8);
+				addToSharedMem("exiftag_model"+SessionID, s8);
 			if(s9 != null) 
-				addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), s9);
+				addToSharedMem("exiftag_spectral_sensitivity"+SessionID, s9);
 			if(s10 != null) 
-				addToSharedMem("exiftag_version"+String.valueOf(SessionID), s10);
+				addToSharedMem("exiftag_version"+SessionID, s10);
 			if(s11 != null) 
-				addToSharedMem("exiftag_scene_capture_type"+String.valueOf(SessionID), s11);
+				addToSharedMem("exiftag_scene_capture_type"+SessionID, s11);
 			if(s12 != null) 
-				addToSharedMem("exiftag_metering_mode"+String.valueOf(SessionID), s12);
+				addToSharedMem("exiftag_metering_mode"+SessionID, s12);
 			
 		} catch (JpegProcessingException e1)
 		{
@@ -1663,17 +1663,17 @@ public class PluginManager implements PluginManagerInterface {
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));		
 		
 		if(exposure_time != null && !exposure_time.equals("null")) 
-			addToSharedMem("exiftag_exposure_time"+String.valueOf(SessionID), exposure_time);
+			addToSharedMem("exiftag_exposure_time"+SessionID, exposure_time);
 		if(sensitivity != null && !sensitivity.equals("null")) 
-			addToSharedMem("exiftag_spectral_sensitivity"+String.valueOf(SessionID), sensitivity);
+			addToSharedMem("exiftag_spectral_sensitivity"+SessionID, sensitivity);
 		if(aperture != null && !aperture.equals("null")) 
-			addToSharedMem("exiftag_aperture"+String.valueOf(SessionID), aperture);
+			addToSharedMem("exiftag_aperture"+SessionID, aperture);
 		if(focal_lenght != null && !focal_lenght.equals("null")) 
-			addToSharedMem("exiftag_focal_lenght"+String.valueOf(SessionID), focal_lenght);
+			addToSharedMem("exiftag_focal_lenght"+SessionID, focal_lenght);
 		if(flash_mode != null && !flash_mode.equals("null")) 
-			addToSharedMem("exiftag_flash"+String.valueOf(SessionID), flash_mode);
+			addToSharedMem("exiftag_flash"+SessionID, flash_mode);
 		if(awb_mode != null && !awb_mode.equals("null")) 
-			addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), awb_mode);
+			addToSharedMem("exiftag_white_balance"+SessionID, awb_mode);
 		
 		return true;
 	}
@@ -1695,13 +1695,13 @@ public class PluginManager implements PluginManagerInterface {
 			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
 		if(s1 != null) 
-			addToSharedMem("exiftag_white_balance"+String.valueOf(SessionID), s1);
+			addToSharedMem("exiftag_white_balance"+SessionID, s1);
 		if(s2 != null) 
-			addToSharedMem("exiftag_make"+String.valueOf(SessionID), s2);
+			addToSharedMem("exiftag_make"+SessionID, s2);
 		if(s3 != null) 
-			addToSharedMem("exiftag_model"+String.valueOf(SessionID), s3);
+			addToSharedMem("exiftag_model"+SessionID, s3);
 		if(s4 != null && (s4.compareTo("auto") != 0)) 
-			addToSharedMem("exiftag_iso"+String.valueOf(SessionID), s4);
+			addToSharedMem("exiftag_iso"+SessionID, s4);
 		return true;
 	}
 

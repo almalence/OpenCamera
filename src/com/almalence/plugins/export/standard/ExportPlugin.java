@@ -75,7 +75,7 @@ public class ExportPlugin extends PluginExport
 		sessionID=SessionID;
 		getPrefs();
 		
-		isResultFromProcessingPlugin = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("ResultFromProcessingPlugin"+Long.toString(sessionID)));
+		isResultFromProcessingPlugin = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("ResultFromProcessingPlugin"+sessionID));
 		
 		PluginManager.getInstance().saveResultPicture(sessionID);
 	}

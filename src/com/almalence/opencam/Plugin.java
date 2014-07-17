@@ -212,8 +212,7 @@ public abstract class Plugin
 	public void selectImageDimension()
 	{
 		// ----- Figure how much memory do we have and possibly limit resolution
-		long maxMem = Runtime.getRuntime().maxMemory();// -
-														// Debug.getNativeHeapAllocatedSize();
+		long maxMem = Runtime.getRuntime().maxMemory();
 		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
 												// x 4 - compressed input jpegs,
 												// 1Mb - safe reserve

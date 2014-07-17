@@ -127,8 +127,6 @@ public class YuvImage {
     public boolean compressToJpeg(Rect rectangle, int quality, OutputStream stream) {
         Rect wholeImage = new Rect(0, 0, mWidth, mHeight);
         if (!wholeImage.contains(rectangle)) {
-//            throw new IllegalArgumentException(
-//                    "rectangle is not inside the image");
         	wholeImage.set(rectangle);
         }
 

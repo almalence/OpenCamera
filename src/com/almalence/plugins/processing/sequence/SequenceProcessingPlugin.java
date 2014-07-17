@@ -117,7 +117,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		
 		sessionID=SessionID;
 
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();    	
@@ -144,7 +144,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
          
      	try {
      		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
      		int minSize = 1000;
      		if (mMinSize == 0) {
      			minSize = 0;
@@ -158,7 +158,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     		int iImageWidth = MainScreen.getImageWidth();
     		int iImageHeight = MainScreen.getImageHeight();
     		
-    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
     
     		thumbnails.clear();
     		for (int i=1; i<=imagesAmount; i++) {
@@ -170,8 +170,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     			}
     			else {
 	    			byte[] in = SwapHeap.CopyFromHeap(
-	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+sessionID)),
+	    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+sessionID))
 	    	        		);
 	    			
 	    			BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -204,10 +204,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     		
     		Size preview = new Size(mDisplayWidth, mDisplayHeight);
     		
-    		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
+    		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(imagesAmount));
     		
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));
      		
     		this.indexes = new int[imagesAmount];
             for (int i = 0; i < imagesAmount; i++)
@@ -243,8 +243,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
  					 */
  					Integer.parseInt(mGhosting),
  					indexes);
-     		
-     		//compressed_frame.clear();
  		} 
      	catch (Exception e) 
  		{
@@ -407,15 +405,15 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		int frame_len = result.length;
 		int frame = SwapHeap.SwapToHeap(result);
 
-		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
-		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
+		PluginManager.getInstance().addToSharedMem("resultframeformat1"+sessionID, "jpeg");
+		PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("resultframelen1"+sessionID, String.valueOf(frame_len));
     	
-    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientation));
-    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
+    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mDisplayOrientation));
+    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 		
 		
-		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
+		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 		mAlmaCLRShot.release();

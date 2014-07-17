@@ -1238,11 +1238,11 @@ public class NightCapturePlugin extends PluginCapture
 	    	compressed_frame[HI_SPEED_FRAMES-nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
 	    	compressed_frame_len[HI_SPEED_FRAMES-nVFframesToBuffer] = data.length;
 	    	
-	    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[frameNumber]));
-	    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[frameNumber]));
+	    	PluginManager.getInstance().addToSharedMem("frame"+(frameNumber+1)+SessionID, String.valueOf(compressed_frame[frameNumber]));
+	    	PluginManager.getInstance().addToSharedMem("framelen"+(frameNumber+1)+SessionID, String.valueOf(compressed_frame_len[frameNumber]));
 	    	
-	    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frameNumber+1) + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-	    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(frameNumber+1));
+	    	PluginManager.getInstance().addToSharedMem("frameorientation"+ (frameNumber+1) + SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+	    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(frameNumber+1));
 			
 	    	if(frameNumber == 0)
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
@@ -1293,24 +1293,6 @@ public class NightCapturePlugin extends PluginCapture
 			// - U and V strides are the same
 			//   So, passing all these parameters is a bit overkill
 			
-//			int status = YuvImage.CreateYUVImage(Y, U, V,
-//					im.getPlanes()[0].getPixelStride(),
-//					im.getPlanes()[0].getRowStride(),
-//					im.getPlanes()[1].getPixelStride(),
-//					im.getPlanes()[1].getRowStride(),
-//					im.getPlanes()[2].getPixelStride(),
-//					im.getPlanes()[2].getRowStride(),
-//					imageWidth, imageHeight, 0);
-//			
-//			
-//			if (status != 0)
-//				Log.e("CapturePlugin", "Error while cropping: "+status);
-//			
-//			
-//			
-//			byte[] data = YuvImage.GetByteFrame(0);
-			
-//			Log.e("NightCapturePlugin", "BEFORE");			
 			byte[] data =  YuvImage.CreateSingleYUVImage(Y, U, V,
 					im.getPlanes()[0].getPixelStride(),
 					im.getPlanes()[0].getRowStride(),
@@ -1319,7 +1301,6 @@ public class NightCapturePlugin extends PluginCapture
 					im.getPlanes()[2].getPixelStride(),
 					im.getPlanes()[2].getRowStride(),
 					imageWidth, imageHeight);
-//			Log.e("NightCapturePlugin", "SUCCESS");
 			
 			
 			if(data1 == null)		
@@ -1332,9 +1313,6 @@ public class NightCapturePlugin extends PluginCapture
 					dataS = new byte[data2.length];
 				else if (dataS.length<data2.length)
 					dataS = new byte[data2.length];
-				
-//				int previewWidth = 1280;
-//				int previewHeight = 720;
 				
 				ImageConversion.sumByteArraysNV21(data1,data2,dataS,imageWidth,imageHeight);
 				if(CameraController.isFrontCamera())
@@ -1479,17 +1457,7 @@ public class NightCapturePlugin extends PluginCapture
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW); 	//Select The Modelview Matrix
 		gl.glLoadIdentity(); 					//Reset The Modelview Matrix
-		
-//		Camera camera = CameraController.getCamera();
-//    	if (null==camera)
-//    		return;
-//		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//		if(params == null)
-//		{
-//			Log.e("NIGHT CAMERA DEBUG", "GLLayer.onSurfaceChanged params = null");
-//			return;
-//		}
-		
+
 		cameraPreview.setSurfaceSize(width, height);
 	}
 	

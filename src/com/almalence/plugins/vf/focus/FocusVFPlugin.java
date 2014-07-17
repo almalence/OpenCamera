@@ -223,7 +223,7 @@ public class FocusVFPlugin extends PluginViewfinder
     @Override
 	public void onCameraParametersSetup()
 	{
-    	preferenceFocusMode = CameraController.getInstance().getFocusMode();//PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString("FocusModeValue", Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+    	preferenceFocusMode = CameraController.getInstance().getFocusMode();
 
     	initializeParameters();		
 		
@@ -233,7 +233,7 @@ public class FocusVFPlugin extends PluginViewfinder
         
         cancelAutoFocus();
         
-     // Set the length of focus indicator according to preview frame size.
+        // Set the length of focus indicator according to preview frame size.
         int len = Math.min(mPreviewWidth, mPreviewHeight) / 25;
         ViewGroup.LayoutParams layout = mFocusIndicator.getLayoutParams();
         layout.width = (int) (len * MainScreen.getInstance().getResources().getInteger(R.integer.focusIndicator_cropFactor));
@@ -260,8 +260,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
     public void initialize(boolean mirror, int displayOrientation)
     {        
-        mPreviewWidth = MainScreen.getInstance().getPreviewWidth();
-        mPreviewHeight = MainScreen.getInstance().getPreviewHeight();
+        mPreviewWidth = MainScreen.getPreviewWidth();
+        mPreviewHeight = MainScreen.getPreviewHeight();
         
         Matrix matrix = new Matrix();
         Util.prepareMatrix(matrix, mirror, 90,
@@ -572,7 +572,7 @@ public class FocusVFPlugin extends PluginViewfinder
     {
         // Note: CameraController.getInstance().getFocusMode(); will return 'FOCUS_MODE_AUTO' if actual
         // mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or FOCUS_MODE_CONTINUOUS_VIDEO
-        int fm = CameraController.getInstance().getFocusMode(); // preferenceFocusMode;
+        int fm = CameraController.getInstance().getFocusMode();
         if (fm != -1)
         {
         	if(fm == CameraParameters.AF_MODE_INFINITY)

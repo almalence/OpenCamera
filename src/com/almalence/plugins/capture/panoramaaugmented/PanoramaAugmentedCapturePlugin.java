@@ -895,10 +895,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 	private static long getAmountOfMemoryToFitFrames()
 	{
 		// activityManager returning crap (way less than really available)
-        //this.activityManager.getMemoryInfo(this.memoryInfo);
-		//Log.i(TAG,"memoryInfo.availMem: "+this.memoryInfo.availMem+"memoryInfo.threshold: "+this.memoryInfo.threshold);
-		//return (long)((this.memoryInfo.availMem - this.memoryInfo.threshold - 2097152) * 0.7f);
-		
 		final int[] mi = HeapUtil.getMemoryInfo();
 
 		Log.e(TAG, "Memory: used: "+mi[0]+"Mb  free: "+mi[1]+"Mb");
@@ -1314,14 +1310,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 		
 		if (frames.size() > 0)
 		{
-			PluginManager.getInstance().addToSharedMem("frameorientation" + String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-			PluginManager.getInstance().addToSharedMem("pano_mirror" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
-			PluginManager.getInstance().addToSharedMem("pano_width"+String.valueOf(SessionID), String.valueOf(this.pictureHeight));
-			PluginManager.getInstance().addToSharedMem("pano_height"+String.valueOf(SessionID), String.valueOf(this.pictureWidth));
-			PluginManager.getInstance().addToSharedMem("pano_frames_count"+String.valueOf(SessionID), String.valueOf(frames.size()));
-			PluginManager.getInstance().addToSharedMem("pano_camera_fov"+String.valueOf(SessionID), String.valueOf((int)(this.viewAngleY + 0.5f)));
-			PluginManager.getInstance().addToSharedMem("pano_useall"+String.valueOf(SessionID), "1");
-			PluginManager.getInstance().addToSharedMem("pano_freeinput"+String.valueOf(SessionID), "0");
+			PluginManager.getInstance().addToSharedMem("frameorientation" + SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+			PluginManager.getInstance().addToSharedMem("pano_mirror" + SessionID, String.valueOf(CameraController.isFrontCamera()));
+			PluginManager.getInstance().addToSharedMem("pano_width"+SessionID, String.valueOf(this.pictureHeight));
+			PluginManager.getInstance().addToSharedMem("pano_height"+SessionID, String.valueOf(this.pictureWidth));
+			PluginManager.getInstance().addToSharedMem("pano_frames_count"+SessionID, String.valueOf(frames.size()));
+			PluginManager.getInstance().addToSharedMem("pano_camera_fov"+SessionID, String.valueOf((int)(this.viewAngleY + 0.5f)));
+			PluginManager.getInstance().addToSharedMem("pano_useall"+SessionID, "1");
+			PluginManager.getInstance().addToSharedMem("pano_freeinput"+SessionID, "0");
 			
 			Vector3d normalLast = new Vector3d();
 			Vector3d normalCurrent = new Vector3d();
@@ -1390,17 +1386,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture //implements A
 				PixelsShiftX +=   MainScreen.getImageWidth()/2 * (1-FloatMath.cos(angleR)) + MainScreen.getImageHeight()/2 * FloatMath.sin(angleR); 
 				PixelsShiftY += - MainScreen.getImageWidth()/2 * FloatMath.sin(angleR)     + MainScreen.getImageHeight()/2 * (1-FloatMath.cos(angleR)); 
 				
-				PluginManager.getInstance().addToSharedMem("pano_frame"+(frame_cursor+1)+"."+String.valueOf(SessionID), String.valueOf(frame.getNV21address()));
+				PluginManager.getInstance().addToSharedMem("pano_frame"+(frame_cursor+1)+"."+SessionID, String.valueOf(frame.getNV21address()));
 
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".00."+String.valueOf(SessionID), String.valueOf(FloatMath.cos(angleR)));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".01."+String.valueOf(SessionID), String.valueOf(-FloatMath.sin(angleR)));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".02."+String.valueOf(SessionID), String.valueOf(PixelsShiftX));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".10."+String.valueOf(SessionID), String.valueOf(FloatMath.sin(angleR)));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".11."+String.valueOf(SessionID), String.valueOf(FloatMath.cos(angleR)));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".12."+String.valueOf(SessionID), String.valueOf(PixelsShiftY));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".20."+String.valueOf(SessionID), String.valueOf(0.0f));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".21."+String.valueOf(SessionID), String.valueOf(0.0f));
-				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".22."+String.valueOf(SessionID), String.valueOf(1.0f));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".00."+SessionID, String.valueOf(FloatMath.cos(angleR)));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".01."+SessionID, String.valueOf(-FloatMath.sin(angleR)));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".02."+SessionID, String.valueOf(PixelsShiftX));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".10."+SessionID, String.valueOf(FloatMath.sin(angleR)));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".11."+SessionID, String.valueOf(FloatMath.cos(angleR)));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".12."+SessionID, String.valueOf(PixelsShiftY));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".20."+SessionID, String.valueOf(0.0f));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".21."+SessionID, String.valueOf(0.0f));
+				PluginManager.getInstance().addToSharedMem("pano_frametrs"+(frame_cursor+1)+".22."+SessionID, String.valueOf(1.0f));
 				
 				if (!iterator.hasNext()) 
 					break;

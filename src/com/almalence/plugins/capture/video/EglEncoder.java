@@ -310,8 +310,6 @@ public class EglEncoder
 		GLES20.glEnableVertexAttribArray(tch);
 
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-		//GLES20.glFlush();
-		//GLES20.glFinish();
 
 		GLES20.glDisableVertexAttribArray(ph);
 		GLES20.glDisableVertexAttribArray(tch);
@@ -404,8 +402,6 @@ public class EglEncoder
 			Log.e(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
 			throw new RuntimeException("No codec found.");
 		}
-
-        //final int colorFormat = selectColorFormat(codecInfo, MIME_TYPE);
 
 		final MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, this.mWidth, this.mHeight);
 
@@ -721,26 +717,12 @@ public class EglEncoder
 		 */
 		public void makeCurrent()
 		{
-			//if (EGL14.eglGetCurrentDisplay().equals(this.eglDisplay)
-				//	|| EGL14.eglGetCurrentContext().equals(this.eglContext))
-			{
-				//throw new IllegalStateException(
-					//	"EGL Context and Display current on the thread should match construction time ones");
-			}
-			
 			EGL14.eglMakeCurrent(this.eglDisplay, this.eglSurfaceSwap, this.eglSurfaceSwap, this.eglContext);
 			checkEglError("eglMakeCurrent");
 		}
 		
 		public void unmakeCurrent()
 		{
-			if (EGL14.eglGetCurrentDisplay().equals(this.eglDisplay)
-					|| EGL14.eglGetCurrentContext().equals(this.eglContext))
-			{
-			//	throw new IllegalStateException(
-				//		"EGL Context and Display current on the thread should match construction time ones");
-			}
-			
 			EGL14.eglMakeCurrent(this.eglDisplay, this.eglSurfaceDraw, this.eglSurfaceRead, this.eglContext);
 		}
 
@@ -760,14 +742,6 @@ public class EglEncoder
 		 */
 		public void setPresentationTime(final long nsecs)
 		{
-			//if (EGL14.eglGetCurrentDisplay().equals(this.eglDisplay)
-				//	|| EGL14.eglGetCurrentContext().equals(this.eglContext)
-					//|| EGL14.eglGetCurrentSurface(EGL14.EGL_DRAW).equals(this.eglSurfaceSwap)
-					//|| EGL14.eglGetCurrentSurface(EGL14.EGL_READ).equals(this.eglSurfaceSwap))
-			{
-				//throw new IllegalStateException(
-					//	"Call makeCurrent() for this instance first.");
-			}
 			EGLExt.eglPresentationTimeANDROID(this.eglDisplay, this.eglSurfaceSwap, nsecs);
 			checkEglError("eglPresentationTimeANDROID");
 		}

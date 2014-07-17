@@ -264,17 +264,16 @@ public class CapturePlugin extends PluginCapture
     	
     	if (frame == 0)
     	{
-    		//NotEnoughMemory();
     	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
     	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
     	
-    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
+    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+SessionID, ModePreference);
     	
 		try
 		{
@@ -345,23 +344,21 @@ public class CapturePlugin extends PluginCapture
 			frame_len = jpeg.limit();
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
-//			byte[] jpegByteArray = jpeg.array();			
-//			int frame_len = jpegByteArray.length;
 			
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 			
 			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
     	
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
     	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(isYUV));
-    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+String.valueOf(SessionID), ModePreference);
+    	PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(isYUV));
+    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+SessionID, ModePreference);
 		
 		Message message = new Message();
 		message.obj = String.valueOf(SessionID);

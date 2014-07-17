@@ -16,7 +16,6 @@ import com.almalence.plugins.export.standard.ExifDriver.Values.UndefinedValueAcc
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
-//import android.util.Log;
 
 /**
  * Driver for reading/writting EXIF meta data to JPEG images. It tries to
@@ -308,12 +307,9 @@ public class ExifDriver {
 					fis.read(origEXIFdata);
 					readExifData(origEXIFdata);
 				} else {
-					// Log.v(LOGTAG, "APP1 marker not found, offset is "
-					// + origAPP1MarkerOffset);
 					readyToWork = false;
 				}
 			} else {
-				// Log.v(LOGTAG, "Not a JPG image");
 				readyToWork = false;
 			}
 			channel.close();
@@ -371,13 +367,6 @@ public class ExifDriver {
 				    .getIntegers()[0];
 				origThumbnailLength = ifd1.get(TAG_JPEG_INTERCHANGE_FORMAT_LENGTH)
 				    .getIntegers()[0];
-				/*
-				 * Log.v( LOGTAG, "Thumbnail offs/length: " +
-				 * Integer.toHexString(origThumbnailOffset) + "/" +
-				 * Integer.toHexString(origThumbnailLength));
-				 */
-			} else {
-				// Log.e(LOGTAG, "No thumbnail address");
 			}
 		}
 		// Is there a IFDExif reference?
@@ -698,7 +687,6 @@ public class ExifDriver {
 			int skipped = 0;
 			int imageOffset = origAPP1MarkerOffset + APP1Marker.length
 			    + LENGTH_EXIF_SIZE_DECL + EXIFHeader.length + origEXIFdata.length;
-			// Log.v(LOGTAG, "Image offset is " + Integer.toHexString(imageOffset));
 			while (skipped < imageOffset) {
 				int skip = (int) fis.skip(imageOffset - skipped);
 				if (skip < 0) {

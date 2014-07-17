@@ -174,7 +174,6 @@ public class AudioRecorder
 							final ByteBuffer inputBuffer = buffersInput[inputBufferIndex];
 							inputBuffer.clear();
 							inputBuffer.put(recordedBytes);
-							// recycleInputBuffer(mTempBuffer);
 							
 							this.timeLast = Math.max(this.timeLast + 1,
 									(AudioRecorder.this.time + (System.nanoTime() - AudioRecorder.this.timeOrigin)) / 1000);

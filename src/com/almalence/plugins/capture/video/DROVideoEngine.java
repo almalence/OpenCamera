@@ -87,32 +87,6 @@ public class DROVideoEngine
 
 		return program;
 	}
-
-	/*
-    public static int roundOrientation(int orientation, final int orientationHistory) 
-    {    	
-        final int ORIENTATION_HYSTERESIS = 5;
-        
-        final boolean changeOrientation;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) 
-        {
-            changeOrientation = true;
-        } 
-        else
-        {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min( dist, 360 - dist );
-            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
-        }
-        if (changeOrientation) 
-        {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        
-        return orientationHistory;
-    }
-    */
-	
 	private final Object stateSync = new Object();
 	private int instance = 0;
 	private int previewWidth = -1;
@@ -299,17 +273,14 @@ public class DROVideoEngine
 			@Override
 			public void run()
 			{
-				//synchronized (DROVideoEngine.this.stateSync)
+				if (!DROVideoEngine.this.paused
+						&& paused
+						&& DROVideoEngine.this.encoder != null)
 				{
-					if (!DROVideoEngine.this.paused
-							&& paused
-							&& DROVideoEngine.this.encoder != null)
-					{
-						DROVideoEngine.this.encoder.pause();
-					}
-					
-					DROVideoEngine.this.paused = paused;
+					DROVideoEngine.this.encoder.pause();
 				}
+				
+				DROVideoEngine.this.paused = paused;
 			}
 		});
 	}
@@ -439,14 +410,12 @@ public class DROVideoEngine
 						this.texture_out);
 
 				t = System.currentTimeMillis() - t;
-				//Log.v(TAG, String.format("RealtimeDRO.render() lasted: %dms (%.2f FPS)", t, 1000.0f / t));
 				
 				this.forceUpdate = false;
 				
 				this.drawOutputTexture();
 					
 				DROVideoEngine.this.fps.measure();
-				//Log.v(TAG, String.format("DRO FPS: %.2f", fps.getFPS()));
 				
 				if (this.encoder != null
 						&& System.currentTimeMillis() > this.recordingDelayed
@@ -486,8 +455,6 @@ public class DROVideoEngine
 		GLES20.glEnableVertexAttribArray(tch);
 
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-		//GLES20.glFlush();
-		//GLES20.glFinish();
 
 		GLES20.glDisableVertexAttribArray(ph);
 		GLES20.glDisableVertexAttribArray(tch);

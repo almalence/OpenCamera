@@ -100,9 +100,9 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 			sensorEventPrev = EventConstructor.newInstance(3);  
 			
 			sensorEvent.accuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
-			sensorEvent.sensor = (Sensor)null; // (Sensor)this;
+			sensorEvent.sensor = (Sensor)null;
 			sensorEventPrev.accuracy = SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
-			sensorEventPrev.sensor = (Sensor)null; // (Sensor)this;
+			sensorEventPrev.sensor = (Sensor)null;
 		}
 		catch (Exception e)
 		{

@@ -190,7 +190,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		
 		sessionID=SessionID;
 		
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
         
         Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
     	mDisplayWidth = display.getHeight();
@@ -221,14 +221,14 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
         }
         
      	try {     		
-            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
     		
     		if (imagesAmount==0)
     			imagesAmount=1;
     		
     		nFrames = imagesAmount;
     		
-    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+    		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
     		
     		if(!isYUV)
     		{
@@ -277,11 +277,11 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
  			e.printStackTrace();
  		}
 		
-     	PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
-		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
+     	PluginManager.getInstance().addToSharedMem("resultfromshared"+sessionID, "false");
+		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, "1");
 		
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));
 	}    	
 	
 	private void getFaceRects()
@@ -332,8 +332,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	        Size fdSize = new Size(imgWidthFD, imgHeightFD);
 
 	    	try {
-	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;//mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270 || mDisplayOrientationOnStartProcessing == 180;
-	    		//boolean mirrored = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? false: mCameraMirrored;
+	    		boolean needRotation = mDisplayOrientationOnStartProcessing != 0;
 		        // Note: DecodeJpegs doing free() to jpeg data!
 	    		int rotation = mCameraMirrored && (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360 : mDisplayOrientationOnStartProcessing;	    		
 	    		if(!isYUV)
@@ -579,7 +578,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		                    });
 		                    
 		                    // Probably this should be called from mSeamless ? 
-		                    // mSeamless.fillLayoutwithStitchingflag(mFaceRect);
 		                    mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
 		                }
 		            }).start();
@@ -930,15 +928,14 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	        
 			int frame_len = result.length;
 			int frame = SwapHeap.SwapToHeap(result);
-    		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
-			PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-	    	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
+    		PluginManager.getInstance().addToSharedMem("resultframeformat1"+sessionID, "jpeg");
+			PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(frame));
+	    	PluginManager.getInstance().addToSharedMem("resultframelen1"+sessionID, String.valueOf(frame_len));
 	    	
-	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID),
-	    			String.valueOf(0));
-	    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(false));
+	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
+	    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(false));
 			
-			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
+			PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(1));
 			PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 	    }
 }

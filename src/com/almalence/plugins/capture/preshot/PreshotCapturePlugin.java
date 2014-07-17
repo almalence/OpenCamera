@@ -317,7 +317,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture", "StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
-			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(SessionID), "false");
+			PluginManager.getInstance().addToSharedMem("IsSlowMode"+SessionID, "false");
 		}
 		else
 		{
@@ -334,7 +334,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture","StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
-			PluginManager.getInstance().addToSharedMem("IsSlowMode"+String.valueOf(SessionID), "true");
+			PluginManager.getInstance().addToSharedMem("IsSlowMode"+SessionID, "true");
 			
 			StartCaptureSequence();
 		}
@@ -356,7 +356,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		counter = 0;
 		
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(PreShot.GetImageCount()));
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(PreShot.GetImageCount()));
 		
 		if (!isSlowMode)
 		{

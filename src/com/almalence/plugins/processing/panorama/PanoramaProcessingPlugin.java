@@ -78,34 +78,34 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(
 				MainScreen.getInstance()).getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 		
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
 		
-		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + Long.toString(sessionID)));		
+		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + sessionID));		
 		this.prefLandscape = orient == 0 || orient == 180? true : false;
 		mOrientation = this.prefLandscape? (orient == 180? 90 : 270) : (orient == 270? 180 : 0);
 		
 		try
 		{
-			final int input_width = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_width"+String.valueOf(sessionID)));
-			final int input_height = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_height"+String.valueOf(sessionID)));
-			final int frames_count = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_frames_count"+String.valueOf(sessionID)));
-			final int camera_fov = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_camera_fov"+String.valueOf(sessionID)));
-			final boolean use_all = PluginManager.getInstance().getFromSharedMem("pano_useall"+String.valueOf(sessionID)).equals("1");
-			final boolean free_input = use_all ? true : PluginManager.getInstance().getFromSharedMem("pano_freeinput"+String.valueOf(sessionID)).equals("1");
-			final boolean mirror = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("pano_mirror" + String.valueOf(sessionID)));
+			final int input_width = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_width"+sessionID));
+			final int input_height = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_height"+sessionID));
+			final int frames_count = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_frames_count"+sessionID));
+			final int camera_fov = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_camera_fov"+sessionID));
+			final boolean use_all = PluginManager.getInstance().getFromSharedMem("pano_useall"+sessionID).equals("1");
+			final boolean free_input = use_all ? true : PluginManager.getInstance().getFromSharedMem("pano_freeinput"+sessionID).equals("1");
+			final boolean mirror = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("pano_mirror" + sessionID));
 			
 			final int[] frames_ptrs = new int[frames_count];
 			final float[][][] frame_trs = new float[frames_count][3][3];
 			
 			for (int i = 0; i < frames_count; i++)
 			{
-				frames_ptrs[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_frame"+(i+1)+"."+String.valueOf(sessionID)));
+				frames_ptrs[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("pano_frame"+(i+1)+"."+sessionID));
 				
 				for (int y = 0; y < 3; y++)
 				{
 					for (int x = 0; x < 3; x++)
 					{
-						frame_trs[i][y][x] = Float.parseFloat(PluginManager.getInstance().getFromSharedMem("pano_frametrs"+(i+1)+"." + y + x + "."+String.valueOf(sessionID)));
+						frame_trs[i][y][x] = Float.parseFloat(PluginManager.getInstance().getFromSharedMem("pano_frametrs"+(i+1)+"." + y + x + "."+sessionID));
 					}
 				}
 			}
@@ -148,22 +148,22 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			MainScreen.setSaveImageHeight(output_height);
 			if (this.prefLandscape)
 			{
-				PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(output_height));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(output_width));
+				PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(output_height));
+	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(output_width));
 			}
 			else
 			{
-				PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(output_width));
-	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(output_height));
+				PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(output_width));
+	        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(output_height));
 			}
-			PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
-	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mOrientation));			
-			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
-	    	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(this.out_ptr));
-	    	PluginManager.getInstance().addToSharedMem("resultcrop0"+Long.toString(sessionID), String.valueOf(crop_x));
-	     	PluginManager.getInstance().addToSharedMem("resultcrop1"+Long.toString(sessionID), String.valueOf(crop_y));
-	     	PluginManager.getInstance().addToSharedMem("resultcrop2"+Long.toString(sessionID), String.valueOf(crop_w));
-	     	PluginManager.getInstance().addToSharedMem("resultcrop3"+Long.toString(sessionID), String.valueOf(crop_h));
+			PluginManager.getInstance().addToSharedMem("resultfromshared"+sessionID, "false");
+	    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mOrientation));			
+			PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, "1");
+	    	PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(this.out_ptr));
+	    	PluginManager.getInstance().addToSharedMem("resultcrop0"+sessionID, String.valueOf(crop_x));
+	     	PluginManager.getInstance().addToSharedMem("resultcrop1"+sessionID, String.valueOf(crop_y));
+	     	PluginManager.getInstance().addToSharedMem("resultcrop2"+sessionID, String.valueOf(crop_w));
+	     	PluginManager.getInstance().addToSharedMem("resultcrop3"+sessionID, String.valueOf(crop_h));
 	     	AlmashotPanorama.release();
 		}
 		catch (final NumberFormatException e)

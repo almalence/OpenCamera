@@ -86,9 +86,9 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID=SessionID;
 		
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
 		
-		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation1" + Long.toString(sessionID)));
+		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 		
 		mImageWidth = MainScreen.getImageWidth();
@@ -107,7 +107,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		if(mDisplayOrientation == 180 || mDisplayOrientation == 270)
 		{
 			int yuv_lenght = mImageWidth*mImageHeight+2*((mImageWidth+1)/2)*((mImageHeight+1)/2);
-			int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+Long.toString(sessionID)));	    	
+			int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+sessionID));	    	
 	    	if (mode == 1)
 	    		yuv_lenght = mImageWidth*2*mImageHeight*2+2*((mImageWidth*2+1)/2)*((mImageHeight*2+1)/2);
 			
@@ -122,37 +122,37 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			yuv = SwapHeap.SwapToHeap(dataRotated);
 		}
 		
-		PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "false");
-		PluginManager.getInstance().addToSharedMem("resultcrop0"+Long.toString(sessionID), String.valueOf(NightProcessingPlugin.crop[0]));
-		PluginManager.getInstance().addToSharedMem("resultcrop1"+Long.toString(sessionID), String.valueOf(NightProcessingPlugin.crop[1]));
-		PluginManager.getInstance().addToSharedMem("resultcrop2"+Long.toString(sessionID), String.valueOf(NightProcessingPlugin.crop[2]));
-		PluginManager.getInstance().addToSharedMem("resultcrop3"+Long.toString(sessionID), String.valueOf(NightProcessingPlugin.crop[3]));
+		PluginManager.getInstance().addToSharedMem("resultfromshared"+sessionID, "false");
+		PluginManager.getInstance().addToSharedMem("resultcrop0"+sessionID, String.valueOf(NightProcessingPlugin.crop[0]));
+		PluginManager.getInstance().addToSharedMem("resultcrop1"+sessionID, String.valueOf(NightProcessingPlugin.crop[1]));
+		PluginManager.getInstance().addToSharedMem("resultcrop2"+sessionID, String.valueOf(NightProcessingPlugin.crop[2]));
+		PluginManager.getInstance().addToSharedMem("resultcrop3"+sessionID, String.valueOf(NightProcessingPlugin.crop[3]));
 	
-		PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), "false");
-    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientation));
-    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
-		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
-    	PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(yuv));
+		PluginManager.getInstance().addToSharedMem("writeorientationtag"+sessionID, "false");
+    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mDisplayOrientation));
+    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
+		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, "1");
+    	PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(yuv));
     	
-		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));
 	}
 			
 	
 	private void nightPreview()
 	{
-    	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+    	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
     	
     	int[] compressed_frame = new int[imagesAmount];
         int[] compressed_frame_len = new int[imagesAmount];
 
 		for (int i=0; i<imagesAmount; i++)
 		{
-			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
-			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
+			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+sessionID));
+			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+sessionID));
 		}
 		
-		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+Long.toString(sessionID)));
+		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+sessionID));
     	
     	if(mode == 1)
     	{
@@ -163,7 +163,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
     	}
     	else
     	{
-            boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+            boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
     		if(!isYUV)
     		{
     	    	AlmaShotNight.ConvertFromJpeg(
@@ -193,7 +193,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	
 	private void nightProcessing()
 	{
-    	int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+Long.toString(sessionID)));
+    	int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode"+sessionID));
     	
     	if (mode == 1)
     	{

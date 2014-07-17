@@ -153,7 +153,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		Log.e("HDR", "start processing");
 		sessionID=SessionID;
 		
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
     	mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
@@ -191,16 +191,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			int frame_len = yuv.length;
 			int frame = SwapHeap.SwapToHeap(yuv);
 			
-			PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "true");
+			PluginManager.getInstance().addToSharedMem("resultfromshared"+sessionID, "true");
 		
-			PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), "false");
-			PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientationOnStartProcessing));
-			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
-			PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-			PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
+			PluginManager.getInstance().addToSharedMem("writeorientationtag"+sessionID, "false");
+			PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mDisplayOrientationOnStartProcessing));
+			PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, "1");
+			PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("resultframelen1"+sessionID, String.valueOf(frame_len));
 			
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));
     	
     		AlmaShotHDR.HDRFreeInstance();
 		    AlmaShotHDR.Release();
@@ -217,18 +217,18 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
     	
     	pview = new int[SXP*SYP];	// allocate memory for preview
     	
-    	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+    	int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
     	
     	int[] compressed_frame = new int[imagesAmount];
         int[] compressed_frame_len = new int[imagesAmount];
 
 		for (int i=0; i<imagesAmount; i++)
 		{
-			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+Long.toString(sessionID)));
-			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+Long.toString(sessionID)));
+			compressed_frame[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + (i+1)+sessionID));
+			compressed_frame_len[i] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + (i+1)+sessionID));
 		}
 		
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
         
 		if (HDRProcessingPlugin.SaveInputPreference != 0)
 		{
@@ -1302,16 +1302,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			
 			PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 			
-			PluginManager.getInstance().addToSharedMem("resultfromshared"+Long.toString(sessionID), "true");
+			PluginManager.getInstance().addToSharedMem("resultfromshared"+sessionID, "true");
 		
-			PluginManager.getInstance().addToSharedMem("writeorientationtag"+Long.toString(sessionID), "false");
-			PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientationOnStartProcessing));
-			PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), "1");
-			PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-			PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
+			PluginManager.getInstance().addToSharedMem("writeorientationtag"+sessionID, "false");
+			PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mDisplayOrientationOnStartProcessing));
+			PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, "1");
+			PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("resultframelen1"+sessionID, String.valueOf(frame_len));
 			
-			PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageWidth()));
-	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(MainScreen.getSaveImageHeight()));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(MainScreen.getSaveImageWidth()));
+	    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(MainScreen.getSaveImageHeight()));
 		}
 	}
 	

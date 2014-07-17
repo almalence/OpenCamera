@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,6 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -1303,7 +1301,6 @@ public class AlmalenceGUI extends GUI implements
 			((TextView) paramMode.findViewById(R.id.textView))
 					.setText(value_name);
 			
-			//final boolean isFirstMode = mode_number == 0? true : false;
 			if (system_name == CameraParameters.AF_MODE_AUTO)
 			paramMode.setOnTouchListener(new OnTouchListener(){
 

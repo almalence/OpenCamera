@@ -84,7 +84,6 @@ public final class LocaleManager {
   static {
     GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD = new HashMap<String, String>();
     GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD.put("AU", "com.au"); // AUSTRALIA
-    //GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD.put(Locale.CHINA.getCountry(), "cn");
     GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD.put(Locale.FRANCE.getCountry(), "fr");
     GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD.put(Locale.GERMANY.getCountry(), "de");
     GOOGLE_PRODUCT_SEARCH_COUNTRY_TLD.put(Locale.ITALY.getCountry(), "it");

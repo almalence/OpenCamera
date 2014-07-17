@@ -208,25 +208,25 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	private void prepareDataForProcessing() 
 	{
-        int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+        int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
 		
 		if (imagesAmount==0)
 			imagesAmount=1;
 		
-		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
 
 		mYUVBufferList.clear();
 		mJpegBufferList.clear();
 		
 		for (int i=1; i<=imagesAmount; i++) {
 			if(isYUV) {
-				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
+				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+sessionID));
 				mYUVBufferList.add(i-1, yuv);
 			}
 			else {
     			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+sessionID)),
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+sessionID))
     	        		);
     			
     			mJpegBufferList.add(i-1, in);

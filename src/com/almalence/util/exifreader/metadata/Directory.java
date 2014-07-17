@@ -340,11 +340,6 @@ public abstract class Directory
         if (!_tagMap.containsKey(Integer.valueOf(tagType))) {
             _definedTagList.add(new Tag(tagType, this));
         }
-//        else {
-//            final Object oldValue = _tagMap.get(tagType);
-//            if (!oldValue.equals(value))
-//                addError(String.format("Overwritten tag 0x%s (%s).  Old=%s, New=%s", Integer.toHexString(tagType), getTagName(tagType), oldValue, value));
-//        }
         _tagMap.put(tagType, value);
     }
 

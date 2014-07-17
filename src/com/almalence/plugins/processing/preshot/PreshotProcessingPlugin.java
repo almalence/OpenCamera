@@ -140,9 +140,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		
     	sessionID=SessionID;
     	
-    	PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+    	PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
     	
-    	PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+    	PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
     	
     	if (0 == PreShot.MakeCopy())
     	{
@@ -150,13 +150,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     		return;
     	}
 
-    	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled"+Long.toString(sessionID)));
+    	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled"+sessionID));
     	//processing only in fast mode.
    		ProcessingImages();
    		
-    	imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
-    	PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imgCnt));
-   		PluginManager.getInstance().addToSharedMem("ResultFromProcessingPlugin"+Long.toString(sessionID), isSlowMode? "true" : "false");
+    	imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
+    	PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(imgCnt));
+   		PluginManager.getInstance().addToSharedMem("ResultFromProcessingPlugin"+sessionID, isSlowMode? "true" : "false");
    		
    		prepareMiniFrames();
    		miniframesReady.set(true);
@@ -164,8 +164,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
     private Integer ProcessingImages()
     {
-    	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("IsSlowMode"+Long.toString(sessionID)));
-		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+    	isSlowMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("IsSlowMode"+sessionID));
+		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
 		
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
@@ -193,8 +193,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				
 		    	int frame = SwapHeap.SwapToHeap(data);
 		    	
-		    	PluginManager.getInstance().addToSharedMem("resultframe"+(i+1)+Long.toString(sessionID), String.valueOf(frame));
-		    	PluginManager.getInstance().addToSharedMem("resultframelen"+(i+1)+Long.toString(sessionID), String.valueOf(data.length));
+		    	PluginManager.getInstance().addToSharedMem("resultframe"+(i+1)+sessionID, String.valueOf(frame));
+		    	PluginManager.getInstance().addToSharedMem("resultframelen"+(i+1)+sessionID, String.valueOf(data.length));
 		    	
 	    	}
 	    	else if(isSlowMode)
@@ -208,31 +208,31 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		    	
 		    	int frame = SwapHeap.SwapToHeap(data);
 		    	
-		    	PluginManager.getInstance().addToSharedMem("resultframe"+(i+1)+Long.toString(sessionID), String.valueOf(frame));
-		    	PluginManager.getInstance().addToSharedMem("resultframelen"+(i+1)+Long.toString(sessionID), String.valueOf(data.length));
-		    	PluginManager.getInstance().addToSharedMem("resultframeformat"+(i+1)+Long.toString(sessionID), "jpeg");
+		    	PluginManager.getInstance().addToSharedMem("resultframe"+(i+1)+sessionID, String.valueOf(frame));
+		    	PluginManager.getInstance().addToSharedMem("resultframelen"+(i+1)+sessionID, String.valueOf(data.length));
+		    	PluginManager.getInstance().addToSharedMem("resultframeformat"+(i+1)+sessionID, "jpeg");
 	    	}
 	    	
 	    	int iOrientation = PreShot.getOrientationReserved(i);
 	    	if(isSlowMode)
-	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((iOrientation)));
+	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + sessionID, String.valueOf((iOrientation)));
 	    	else
-	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + String.valueOf(sessionID), String.valueOf((0)));
+	    		PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i+1) + sessionID, String.valueOf((0)));
 	    	if(iOrientation == 90 || iOrientation == 270)
 	    	{
-		    	PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
-		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
+		    	PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageHeight));
+		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageWidth));
 	    	}
 	    	else
 	    	{
-	    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));
+	    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+		    	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));
 	    	}
 
-			PluginManager.getInstance().addToSharedMem("resultframemirrored" + (i+1) + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
+			PluginManager.getInstance().addToSharedMem("resultframemirrored" + (i+1) + sessionID, String.valueOf(mCameraMirrored));
 		}
 		
-		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
+		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(imagesAmount));
 		return null;
 	}
     
@@ -244,7 +244,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
     
 	public int getMultishotImageCount()
 	{
-		return Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+		return Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
 	}
 
 	@Override
@@ -267,7 +267,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
 				.getMetrics(metrics);
 		
-		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
         if (0!=imgCnt)
         	idx = imgCnt-1;
         else
@@ -829,6 +829,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		int index = idx+1;
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-		PluginManager.getInstance().addToSharedMem("resultframeindex" + Long.toString(sessionID), String.valueOf(index));
+		PluginManager.getInstance().addToSharedMem("resultframeindex" + sessionID, String.valueOf(index));
 	}
 }

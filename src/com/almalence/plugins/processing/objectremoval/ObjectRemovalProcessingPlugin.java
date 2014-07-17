@@ -115,7 +115,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		
 		sessionID=SessionID;
 
-		PluginManager.getInstance().addToSharedMem("modeSaveName"+Long.toString(sessionID), PluginManager.getInstance().getActiveMode().modeSaveName);
+		PluginManager.getInstance().addToSharedMem("modeSaveName"+sessionID, PluginManager.getInstance().getActiveMode().modeSaveName);
 		
 		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
     	mCameraMirrored = CameraController.isFrontCamera();
@@ -134,7 +134,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
         	imgHeightOR = MainScreen.getImageHeight();
         }
         
-        boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
+        boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+sessionID));
         mYUVBufferList.clear();
 		
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
@@ -143,7 +143,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
          
      	try {
      		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
+            int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+sessionID));
      		int minSize = 1000;
      		if (mMinSize == 0) {
      			minSize = 0;
@@ -158,8 +158,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
     		for (int i=1; i<=imagesAmount; i++)
     		{
     			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+sessionID)),
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+sessionID))
     	        		);
     			
     			mJpegBufferList.add(i-1, in);
@@ -168,10 +168,10 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
     		getDisplaySize(mJpegBufferList.get(0));
     		Size preview = new Size(mDisplayWidth, mDisplayHeight);
     		
-    		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(imagesAmount));
+    		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(imagesAmount));
     		
-    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+String.valueOf(sessionID), String.valueOf(iSaveImageWidth));
-        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+String.valueOf(sessionID), String.valueOf(iSaveImageHeight));   	
+    		PluginManager.getInstance().addToSharedMem("saveImageWidth"+sessionID, String.valueOf(iSaveImageWidth));
+        	PluginManager.getInstance().addToSharedMem("saveImageHeight"+sessionID, String.valueOf(iSaveImageHeight));   	
         	
      		//frames!!! should be taken from heap
      		mAlmaCLRShot.addInputFrame(mJpegBufferList, input, isYUV);
@@ -239,9 +239,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	}
 
 	public static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
-//	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList) {
-//		ObjectRemovalProcessingPlugin.mYUVBufferList = mYUVBufferList;
-//	}
 	
 	Paint paint=null;
 	
@@ -379,15 +376,15 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
     	byte[] result = mAlmaCLRShot.processingSaveData();
 		int frame_len = result.length;
 		int frame = SwapHeap.SwapToHeap(result);
-		PluginManager.getInstance().addToSharedMem("resultframeformat1"+Long.toString(sessionID), "jpeg");
-		PluginManager.getInstance().addToSharedMem("resultframe1"+Long.toString(sessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("resultframelen1"+Long.toString(sessionID), String.valueOf(frame_len));
+		PluginManager.getInstance().addToSharedMem("resultframeformat1"+sessionID, "jpeg");
+		PluginManager.getInstance().addToSharedMem("resultframe1"+sessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("resultframelen1"+sessionID, String.valueOf(frame_len));
     	
-    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + String.valueOf(sessionID), String.valueOf(mDisplayOrientation));
-    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + String.valueOf(sessionID), String.valueOf(mCameraMirrored));
+    	PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(mDisplayOrientation));
+    	PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 		
 		
-		PluginManager.getInstance().addToSharedMem("amountofresultframes"+Long.toString(sessionID), String.valueOf(1));
+		PluginManager.getInstance().addToSharedMem("amountofresultframes"+sessionID, String.valueOf(1));
 		
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
     }

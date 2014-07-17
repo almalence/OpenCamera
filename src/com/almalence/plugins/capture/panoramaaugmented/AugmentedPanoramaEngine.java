@@ -1226,9 +1226,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			gl.glMultMatrixf(this.transform, 0);
 			
-			// float scale = Math.max(0.5f, 1.0f - this.distance);
 			// make appearance a bit more stable - do not change scale if distance is small
-			//float scale = Math.max(0.5f, 1.0f - Math.max(0, this.distance-0.1f));
 			float scale = Math.max(0.5f, 1.0f - Math.max(0.1f, this.distance - 0.1f));
 			scale += part * 0.1f;
 			gl.glScalef(scale, scale, scale);

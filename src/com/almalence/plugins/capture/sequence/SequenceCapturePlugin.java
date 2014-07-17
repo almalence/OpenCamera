@@ -153,10 +153,10 @@ public class SequenceCapturePlugin extends PluginCapture
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
     	
-    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem(frameName+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID, String.valueOf(CameraController.isFrontCamera()));
     	
     	if(imagesTaken == 1)
     		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
@@ -186,7 +186,7 @@ public class SequenceCapturePlugin extends PluginCapture
 		}
 		else
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(imagesTaken));
 			
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
@@ -262,12 +262,12 @@ public class SequenceCapturePlugin extends PluginCapture
     	String frameName = "frame" + imagesTaken;
     	String frameLengthName = "framelen" + imagesTaken;
     	
-    	PluginManager.getInstance().addToSharedMem(frameName+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem(frameLengthName+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken +String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem(frameName+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem(frameLengthName+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID, String.valueOf(CameraController.isFrontCamera()));
     	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(true));	
+    	PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(true));	
 
 		try
 		{
@@ -294,7 +294,7 @@ public class SequenceCapturePlugin extends PluginCapture
 		}
 		else
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), String.valueOf(imagesTaken));
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(imagesTaken));
 			
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);

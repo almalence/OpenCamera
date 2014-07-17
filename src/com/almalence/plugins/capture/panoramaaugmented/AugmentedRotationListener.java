@@ -38,7 +38,7 @@ public class AugmentedRotationListener implements SensorEventListener
 
 	private static final float VF_GYRO_SPEED_LIMIT = 5.f;	// radians/sec
 	
-	private static final float GYRO_FUSION_CF = 0.02f; // 0.05f;
+	private static final float GYRO_FUSION_CF = 0.02f;
 	private static final float GRAVITY_FILTER_CF = 0.1f;
 
 	private final Object receiverSynchObject = new Object();

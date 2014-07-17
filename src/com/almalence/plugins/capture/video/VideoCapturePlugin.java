@@ -2294,12 +2294,12 @@ public class VideoCapturePlugin extends PluginCapture
     	if (frame == 0)
     	{
     	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
     	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		try
@@ -2338,14 +2338,14 @@ public class VideoCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		
     	
-    	PluginManager.getInstance().addToSharedMem("frame1"+String.valueOf(SessionID), String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+String.valueOf(SessionID), String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
+    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
+    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+String.valueOf(SessionID), "1");
+    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
     	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+String.valueOf(SessionID), String.valueOf(false));
+    	PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(false));
     	
     	CameraController.startCameraPreview();
 		
