@@ -83,9 +83,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private static ObjectRemovalProcessingPlugin objectRemovalProcessingPlugin = new ObjectRemovalProcessingPlugin();
 	
 	private int selectedPlugin;
-	private long SessionID;
+	private long sessionID;
 	
-	private int mMinSize;
 	private boolean isYUV;
 	private boolean mSaveInputPreference;
 	private static ArrayList<Integer> mYUVBufferList = new ArrayList<Integer>();
@@ -171,7 +170,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	
 	@Override
 	public void onStartProcessing(long SessionID)  {
-		this.SessionID = SessionID;
+		this.sessionID = SessionID;
 		
 		selectedPlugin = -1;
 		
@@ -204,89 +203,54 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		if (selectedPlugin == GROUP_SHOT) {
 			GroupShotProcessingPlugin.setmJpegBufferList(mJpegBufferList);
 			GroupShotProcessingPlugin.setmYUVBufferList(mYUVBufferList);
-			groupShotProcessingPlugin.onStartProcessing(SessionID);
+			groupShotProcessingPlugin.onStartProcessing(sessionID);
 		}
 		else if (selectedPlugin == SEQUENCE) {
 			SequenceProcessingPlugin.setmJpegBufferList(mJpegBufferList);
 			SequenceProcessingPlugin.setmYUVBufferList(mYUVBufferList);
-			sequenceProcessingPlugin.onStartProcessing(SessionID);
+			sequenceProcessingPlugin.onStartProcessing(sessionID);
 		}
 		else if (selectedPlugin == OBJECT_REMOVAL) {
 			ObjectRemovalProcessingPlugin.setmJpegBufferList(mJpegBufferList);
-			objectRemovalProcessingPlugin.onStartProcessing(SessionID);
+			objectRemovalProcessingPlugin.onStartProcessing(sessionID);
 		}
 	}
 	
-	private void prepareDataForProcessing() {
-        int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(SessionID)));
+	private void prepareDataForProcessing() 
+	{
+        int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes"+Long.toString(sessionID)));
 		
 		if (imagesAmount==0)
 			imagesAmount=1;
 		
-		int iImageWidth = MainScreen.getImageWidth();
-		int iImageHeight = MainScreen.getImageHeight();
-		
-		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(SessionID)));
+		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv"+Long.toString(sessionID)));
 
 		mYUVBufferList.clear();
 		mJpegBufferList.clear();
 		
 		for (int i=1; i<=imagesAmount; i++) {
 			if(isYUV) {
-				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(SessionID)));
+				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID)));
 				mYUVBufferList.add(i-1, yuv);
 			}
 			else {
     			byte[] in = SwapHeap.CopyFromHeap(
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(SessionID))),
-    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(SessionID)))
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i+Long.toString(sessionID))),
+    	        		Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i+Long.toString(sessionID)))
     	        		);
     			
     			mJpegBufferList.add(i-1, in);
 			}
 		}
 		
-		int mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
-		
 		if (mSaveInputPreference) {
 			try {
 				File saveDir = PluginManager.getInstance().GetSaveDir(false);
 				
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-				Calendar d = Calendar.getInstance();
-				String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-						d.get(Calendar.YEAR),
-						d.get(Calendar.MONTH)+1,
-						d.get(Calendar.DAY_OF_MONTH),
-						d.get(Calendar.HOUR_OF_DAY),
-						d.get(Calendar.MINUTE),
-						d.get(Calendar.SECOND));
-				switch (saveOption)
-				{
-				case 1://YEARMMDD_HHMMSS
-					break;
-					
-				case 2://YEARMMDD_HHMMSS_MODE
-					fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-					break;
-					
-				case 3://IMG_YEARMMDD_HHMMSS
-					fileFormat = "IMG_" + fileFormat;
-					break;
-					
-				case 4://IMG_YEARMMDD_HHMMSS_MODE
-					fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-					break;
-				default:
-					break;
-				}
-				
-				ContentValues values=null;
+				String fileFormat = PluginManager.getInstance().getFileFormat();
 				
 				for (int i = 0; i<imagesAmount; ++i)
 				{
-					
 					String index = String.format("_%02d", i);
 					File file = new File(saveDir, fileFormat+index+".jpg");
 					
@@ -304,83 +268,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 						os = new FileOutputStream(file);
 					}	   
 					
-					String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(SessionID));
-					Boolean orientationLandscape = false;
-					if (resultOrientation == null)
-						orientationLandscape = true;
-					else
-						orientationLandscape = Boolean.parseBoolean(resultOrientation);
-					
-					String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(SessionID));
-					Boolean cameraMirrored = false;
-					if (resultMirrored != null)
-						cameraMirrored = Boolean.parseBoolean(resultMirrored);
-					
-					if (os != null)
-					{
-						if(!isYUV)
-						{
-							os.write(mJpegBufferList.get(i));
-						}
-						else
-						{
-							com.almalence.YuvImage image = new com.almalence.YuvImage(mYUVBufferList.get(i), ImageFormat.NV21, iImageWidth, iImageHeight, null);
-							//to avoid problems with SKIA
-							int cropHeight = image.getHeight()-image.getHeight()%16;
-							image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
-						}
-						os.close();
-						
-						ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-						int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						switch(mDisplayOrientation)
-						{
-						default:
-						case 0:
-							exif_orientation = ExifInterface.ORIENTATION_NORMAL;//cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-							break;
-						case 90:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-							break;
-						case 180:
-							exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;//cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-							break;
-						case 270:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-							break;
-						}
-						ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-						ei.saveAttributes();
-					}
-					
-					values = new ContentValues(9);
-					values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-					values.put(ImageColumns.DISPLAY_NAME, file.getName());
-					values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-					values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-					values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
-					values.put(ImageColumns.DATA, file.getAbsolutePath());
-					
-					if (prefs.getBoolean("useGeoTaggingPrefExport", false))
-					{
-						Location l = MLocation.getLocation(MainScreen.getMainContext());
-						
-						if (l != null)
-						{	     
-							ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-							ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
-							ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
-							ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
-							ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-							
-							ei.saveAttributes();
-							
-							values.put(ImageColumns.LATITUDE, l.getLatitude());
-							values.put(ImageColumns.LONGITUDE, l.getLongitude());
-						}
-					}
-					
-					MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+					PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i), mYUVBufferList.get(i), file);
 				}
 			}
 			catch(IOException e) {

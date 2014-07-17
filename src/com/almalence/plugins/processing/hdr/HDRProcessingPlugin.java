@@ -97,6 +97,7 @@ import com.almalence.util.MLocation;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 
 /***
 Implements HDR processing plugin.
@@ -219,6 +220,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		int SXP, SYP;
     	int[] pview;
     	
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+    	
     	SXP = mImageWidth/4;
     	SYP = mImageHeight/4;
     	
@@ -243,35 +246,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        {
 	            File saveDir = PluginManager.getInstance().GetSaveDir(false);
 	
-	            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-	    		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-	        	Calendar d = Calendar.getInstance();
-	        	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-	            		d.get(Calendar.YEAR),
-	            		d.get(Calendar.MONTH)+1,
-	            		d.get(Calendar.DAY_OF_MONTH),
-	            		d.get(Calendar.HOUR_OF_DAY),
-	            		d.get(Calendar.MINUTE),
-	            		d.get(Calendar.SECOND));
-	        	switch (saveOption)
-	        	{
-	        	case 1://YEARMMDD_HHMMSS
-	        		break;
-	        		
-	        	case 2://YEARMMDD_HHMMSS_MODE
-	        		fileFormat += "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-	        		break;
-	        		
-	        	case 3://IMG_YEARMMDD_HHMMSS
-	        		fileFormat = "IMG_" + fileFormat;
-	        		break;
-	        		
-	        	case 4://IMG_YEARMMDD_HHMMSS_MODE
-	        		fileFormat = "IMG_" + fileFormat + "_" + PluginManager.getInstance().getActiveMode().modeSaveName;
-	        		break;
-	        	default:
-	    			break;
-	        	}
+	            String fileFormat = PluginManager.getInstance().getFileFormat();
 	        	
 	        	ContentValues values=null;
 	        	
@@ -300,80 +275,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			        	os = new FileOutputStream(file);
 			        }
 		            
-		            String resultOrientation = PluginManager.getInstance().getFromSharedMem("frameorientation" + (i+1) + Long.toString(sessionID));
-		            Boolean orientationLandscape = false;
-		            if (resultOrientation == null)
-			            orientationLandscape = true;
-		            else
-		            	orientationLandscape = Boolean.parseBoolean(resultOrientation);
-		            
-		            String resultMirrored = PluginManager.getInstance().getFromSharedMem("framemirrored" + (i+1) + Long.toString(sessionID));
-		            Boolean cameraMirrored = false;
-		            if (resultMirrored != null)
-		            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
-		            
-		            if (os != null)
-		            {
-		            	if(!isYUV)
-		            	{
-				            os.write(SwapHeap.CopyFromHeap(
-				            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
-				            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]));
-		            	}
-		            	else
-		            	{
-		            		com.almalence.YuvImage image = new com.almalence.YuvImage(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
-		            																  ImageFormat.NV21,
-		            																  mImageWidth,
-		            																  mImageHeight,
-		            																  null);
-		            		//to avoid problems with SKIA
-		            		int cropHeight = image.getHeight()-image.getHeight()%16;
-					    	image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
-		            	}
-			            os.close();
-			        
-			            int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-		            	switch(mDisplayOrientationOnStartProcessing)
-		            	{
-		            	default:
-		            	case 0:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_180 : ExifInterface.ORIENTATION_NORMAL;
-		            		break;
-		            	case 90:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-		            		break;
-		            	case 180:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_NORMAL : ExifInterface.ORIENTATION_ROTATE_180;
-		            		break;
-		            	case 270:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-		            		break;
-		            	}
-//		            	ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
-//			            ei.saveAttributes();
-		            }
-		            
-		            values = new ContentValues(9);
-	                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-	                values.put(ImageColumns.DISPLAY_NAME, file.getName());
-	                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-	                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-	                values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
-	                values.put(ImageColumns.DATA, file.getAbsolutePath());
-	                
-	                if (prefs.getBoolean("useGeoTaggingPrefExport", false))
-		            {
-		            	Location l = MLocation.getLocation(MainScreen.getMainContext());
-			            
-			            if (l != null)
-			            {	     
-				            values.put(ImageColumns.LATITUDE, l.getLatitude());
-				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-		            	}
-		            }
-	                
-	                MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);	                
+		            byte[] buffer = SwapHeap.CopyFromHeap(
+		            		compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+		            		compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
+		            int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
+	                PluginManager.getInstance().writeData(os, isYUV, sessionID, i, buffer, yuvBuffer, file);
 	            }
 	        }
 			catch(IOException e) {
@@ -385,7 +291,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	        	e.printStackTrace();
 	        }
 		}
-		
 		
 		if(!isYUV)
 		{
