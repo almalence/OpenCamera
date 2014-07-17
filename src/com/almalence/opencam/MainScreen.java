@@ -167,12 +167,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean surfaceCreated = false;	
 
 	// shared between activities
-	private int surfaceWidth, surfaceHeight;
 	private int imageWidth, imageHeight;
 	private int previewWidth, previewHeight;
 	private int saveImageWidth, saveImageHeight;
 
-	private CountDownTimer ScreenTimer = null;
+	private CountDownTimer screenTimer = null;
 	private boolean isScreenTimerRunning = false;
 
 	private static boolean wantLandscapePhoto = false;
@@ -247,7 +246,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static List<Area> mMeteringAreaCenter = new ArrayList<Area>();	
 	private static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
 	
-	public static int currentMeteringMode = -1;
+	private int currentMeteringMode = -1;
 	
 	public static String sEvPref;
 	public static String sSceneModePref;
@@ -473,7 +472,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
-		ScreenTimer = new CountDownTimer(180000, 180000) {
+		screenTimer = new CountDownTimer(180000, 180000) {
 			public void onTick(long millisUntilFinished) {
 			}
 
@@ -482,7 +481,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				if (isVideoRecording || keepScreenOn)
 				{
 					//restart timer
-					ScreenTimer.start();
+					screenTimer.start();
 					isScreenTimerRunning = true;
 					preview.setKeepScreenOn(true);
 					return;
@@ -491,7 +490,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				isScreenTimerRunning = false;
 			}
 		};
-		ScreenTimer.start();
+		screenTimer.start();
 		isScreenTimerRunning = true;
 
 		PluginManager.getInstance().setupDefaultMode();
@@ -696,6 +695,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
 				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13));
+	}
+	
+	public static int getMeteringMode()
+	{
+		return thiz.currentMeteringMode;
 	}
 	/*	^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	 *	Get/Set method for private variables 
@@ -981,10 +985,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources()
 				.openRawResourceFd(R.raw.plugin_capture_tick));
 
-		if (ScreenTimer != null) {
+		if (screenTimer != null) {
 			if (isScreenTimerRunning)
-				ScreenTimer.cancel();
-			ScreenTimer.start();
+				screenTimer.cancel();
+			screenTimer.start();
 			isScreenTimerRunning = true;
 		}
 
@@ -1054,9 +1058,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		this.hideOpenGLLayer();
 
-		if (ScreenTimer != null) {
+		if (screenTimer != null) {
 			if (isScreenTimerRunning)
-				ScreenTimer.cancel();
+				screenTimer.cancel();
 			isScreenTimerRunning = false;
 		}
 
@@ -1101,8 +1105,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					if (!MainScreen.thiz.mPausing && surfaceCreated
 							&& (!CameraController.isCameraCreated())) {
-						surfaceWidth = width;
-						surfaceHeight = height;
 						MainScreen.thiz.findViewById(R.id.mainLayout2)
 								.setVisibility(View.VISIBLE);
 						Log.e("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
@@ -1121,11 +1123,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}.start();
 		else {
 			updatePreferences();
-
-			if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated())) {
-				surfaceWidth = width;
-				surfaceHeight = height;
-			}
 		}
 	}
 	
@@ -1143,8 +1140,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		if (!MainScreen.thiz.mPausing && surfaceCreated
 				&& (!CameraController.isCameraCreated())) {
-			surfaceWidth = width;
-			surfaceHeight = height;
 			MainScreen.thiz.findViewById(R.id.mainLayout2)
 					.setVisibility(View.VISIBLE);			
 			

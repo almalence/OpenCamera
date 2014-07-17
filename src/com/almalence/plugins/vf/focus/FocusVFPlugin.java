@@ -501,7 +501,7 @@ public class FocusVFPlugin extends PluginViewfinder
         // easy to over- or underexposure if area is too small.
         calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
                 mFocusArea.get(0).rect);
-        if(MainScreen.currentMeteringMode != -1 && MainScreen.currentMeteringMode == CameraParameters.meteringModeSpot)
+        if(MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
         	calculateTapArea(20, 20, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
                     mMeteringArea.get(0).rect);
         else
