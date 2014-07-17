@@ -427,7 +427,8 @@ public final class Util {
     }   
 
     public static void fadeIn(View view) {
-        if (view.getVisibility() == View.VISIBLE) return;
+        if (view.getVisibility() == View.VISIBLE) 
+        	return;
 
         view.setVisibility(View.VISIBLE);
         Animation animation = new AlphaAnimation(0F, 1F);

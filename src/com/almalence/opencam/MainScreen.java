@@ -1392,10 +1392,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	@TargetApi(14)
 	public boolean isFaceDetectionAvailable(Camera.Parameters params) {
-		if (params.getMaxNumDetectedFaces() > 0)
-			return true;
-		else
-			return false;
+		return (params.getMaxNumDetectedFaces() > 0);
 	}
 
 	public CameraController.Size getPreviewSize() {
@@ -1629,7 +1626,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					}
 					break;			
 			default:
-			PluginManager.getInstance().handleMessage(msg); break;
+			PluginManager.getInstance().handleMessage(msg); 
+			break;
 		}
 
 		return true;
@@ -2501,14 +2499,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		boolean isSaving = prefs.getBoolean("SaveConfiguration_Mode", true);
-		if (false == isSaving)
+		if (!isSaving)
 		{
 			prefsEditor.putString("defaultModeName", "single");
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_ImageSize", true);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			//general settings - image size
 			prefsEditor.putString("imageSizePrefCommonBack", "-1");
@@ -2520,14 +2518,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", false);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt(sSceneModePref, sDefaultValue);
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_FocusMode", true);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt("sRearFocusModePref", sDefaultFocusValue);
 			prefsEditor.putInt(sFrontFocusModePref, sDefaultFocusValue);
@@ -2535,35 +2533,35 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", false);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt(sWBModePref, sDefaultValue);
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", false);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt(sISOPref, sDefaultValue);
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_FlashMode", true);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt(sFlashModePref, sDefaultValue);
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_FrontRearCamera", true);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putBoolean("useFrontCamera", false);
 			prefsEditor.commit();
 		}
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", false);
-		if (false == isSaving)
+		if (!isSaving)
 		{			
 			prefsEditor.putInt("EvCompensationValue", 0);
 			prefsEditor.commit();

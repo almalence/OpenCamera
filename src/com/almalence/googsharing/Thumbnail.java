@@ -340,7 +340,7 @@ public class Thumbnail {
             String selection = ImageColumns.MIME_TYPE + "='image/jpeg'";
             String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
             
-	        Cursor cursor = null;;
+	        Cursor cursor = null;
 	        
 	        try 
 	        {
@@ -378,7 +378,7 @@ public class Thumbnail {
             String selection = ImageColumns.MIME_TYPE + "='image/jpeg'";
             String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
             
-	        Cursor cursor = null;;
+	        Cursor cursor = null;
 	        
 	        try 
 	        {

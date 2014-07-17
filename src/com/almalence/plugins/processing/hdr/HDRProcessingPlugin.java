@@ -1028,7 +1028,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		
 		if (this.adjustments == null)
 		{
-			this.adjustments = new ArrayList<Adjustment>();;
+			this.adjustments = new ArrayList<Adjustment>();
 				
 			this.setupAdjustments();
 		}

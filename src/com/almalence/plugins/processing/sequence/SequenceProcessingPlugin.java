@@ -392,7 +392,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
     	if (v == mSaveButton)
     	{
-    		if (finishing == true)
+    		if (finishing)
 				return;
     		finishing = true;
     		savePicture(MainScreen.getMainContext());
@@ -447,7 +447,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
     	case MSG_REDRAW:
             if (PreviewBmp != null)
             	PreviewBmp.recycle();
-            if (finishing == true)
+            if (finishing)
 				return true;
     		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
             if (PreviewBmp != null) 
@@ -472,7 +472,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
-			if (finishing == true)
+			if (finishing)
 				return true;
 			finishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);

@@ -88,7 +88,7 @@ public class GLCameraPreview {
 	private int textureHeight;
 	private int textureWidth;
 	
-	private int cropRect[];
+	private int[] cropRect;
 	
 	public void setSurfaceSize(int width, int height)
 	{

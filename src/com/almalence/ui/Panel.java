@@ -99,7 +99,7 @@ public class Panel extends LinearLayout
 
 	private enum State {
 		ABOUT_TO_ANIMATE, ANIMATING, READY, TRACKING, FLYING,
-	};
+	}
 
 	private State mState;
 	private Interpolator mInterpolator;

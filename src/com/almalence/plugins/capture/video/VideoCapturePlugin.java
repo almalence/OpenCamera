@@ -398,7 +398,9 @@ public class VideoCapturePlugin extends PluginCapture
 	    case 5:
 	    	quality = QUALITY_4K;
 	    	quickControlIconID = R.drawable.gui_almalence_video_4096;
-	    	break;	    	
+	    	break;	    
+	    default:
+			break;
 	    }
 	    
 	    if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
@@ -2209,7 +2211,7 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 			{
-				if (false == sw.isChecked())
+				if (!sw.isChecked())
 		        {
 		        	swChecked = false;
 		        }
@@ -2241,7 +2243,7 @@ public class VideoCapturePlugin extends PluginCapture
             });
         
         //disable control in dialog by default
-        if (false == swChecked)
+        if (!swChecked)
         {
         	sw.setChecked(false);
         	bSet.setEnabled(false);
@@ -2258,7 +2260,7 @@ public class VideoCapturePlugin extends PluginCapture
          @Override
          public void onClick(View v) {
              d.dismiss();
-             if (swChecked == true)
+             if (swChecked)
              {
             	 measurementVal = np2.getValue();
             	 interval  		= np.getValue();
