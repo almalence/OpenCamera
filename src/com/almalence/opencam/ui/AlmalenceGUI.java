@@ -4632,9 +4632,6 @@ public class AlmalenceGUI extends GUI implements
 				|| fullScreenLayout.getChildCount() > 0;
 	}
 
-	// selected mode - to use in onClick
-	private Mode tmpActiveMode;
-
 	// controls if info about new mode shown or not. to prevent from double info
 	private void initModeList() {
 		modeViews.clear();
@@ -4710,7 +4707,7 @@ public class AlmalenceGUI extends GUI implements
 		if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
 			return false;
 
-		tmpActiveMode = mode;
+		final Mode tmpActiveMode = mode;
 
 		if (mode.modeID.equals("video"))
 		{
