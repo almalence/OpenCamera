@@ -608,6 +608,34 @@ public class AlmalenceGUI extends GUI implements
 		iCenterViewMaxWidth = (int) (MainScreen.getMainContext().getResources()
 				.getInteger(R.integer.centerViewWidth) * fScreenDensity);
 
+		//Create orientation listener
+		initOrientationListener();
+
+		//Create select mode button with appropriate icon
+		createMergedSelectModeButton();		
+		
+		// <!-- -+-
+		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
+		unlock.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) 
+			{
+				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+					return;
+				
+				if (MainScreen.getInstance().titleUnlockAll == null || MainScreen.getInstance().titleUnlockAll.endsWith("check for sale"))
+				{
+					Toast.makeText(MainScreen.getMainContext(), "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
+					return;
+				}
+				//start store
+				showStore();
+			}
+		});
+		//-+- -->
+	}
+	
+	private void initOrientationListener()
+	{
 		// set orientation listener to rotate controls
 		this.orientListener = new OrientationEventListener(
 				MainScreen.getMainContext()) {
@@ -691,8 +719,11 @@ public class AlmalenceGUI extends GUI implements
 					timeLapseButton.requestLayout();
 				}
 			}
-		};
-
+		};		
+	}
+	
+	private void createMergedSelectModeButton()
+	{
 		// create merged image for select mode button
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -723,26 +754,7 @@ public class AlmalenceGUI extends GUI implements
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		
-		// <!-- -+-
-		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) 
-			{
-				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
-					return;
-				
-				if (MainScreen.getInstance().titleUnlockAll == null || MainScreen.getInstance().titleUnlockAll.endsWith("check for sale"))
-				{
-					Toast.makeText(MainScreen.getMainContext(), "Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-					return;
-				}
-				//start store
-				showStore();
-			}
-		});
-		//-+- -->
+		}		
 	}
 
 	@Override
