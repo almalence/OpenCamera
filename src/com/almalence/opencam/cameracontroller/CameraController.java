@@ -25,7 +25,7 @@ package com.almalence.opencam.cameracontroller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -208,7 +208,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<String> ResolutionsIdxesListVF;
 	protected static List<String> ResolutionsNamesListVF;
 	
-	protected static final CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
+	protected static final CharSequence[] RATIO_STRINGS = { " ", "4:3", "3:2", "16:9", "1:1" };
 
 	//States of focus and capture
 	public static final int FOCUS_STATE_IDLE = 0;
@@ -227,7 +227,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static Surface mPreviewSurface = null;
 	
 	
-	private static final Object syncObject = new Object();
+	private static final Object SYNC_OBJECT = new Object();
 	
 	//Singleton access function
 	public static CameraController getInstance()
@@ -322,7 +322,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		meteringSpot = mainContext.getResources().getString(R.string.meteringSpotSystem);
 		
 		// List of localized names for camera parameters values	
-		mode_scene = new Hashtable<Integer, String>() {
+		mode_scene = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.SCENE_MODE_AUTO, sceneAuto);
 				put(CameraParameters.SCENE_MODE_ACTION, sceneAction);
@@ -343,7 +343,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_scene = new Hashtable<String, Integer>() {
+		key_scene = new HashMap<String, Integer>() {
 			{
 				put(sceneAuto, CameraParameters.SCENE_MODE_AUTO);
 				put(sceneAction, CameraParameters.SCENE_MODE_ACTION);
@@ -366,7 +366,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		
 
-		mode_wb = new Hashtable<Integer, String>() {
+		mode_wb = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.WB_MODE_AUTO, wbAuto);
 				put(CameraParameters.WB_MODE_INCANDESCENT, wbIncandescent);
@@ -379,7 +379,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_wb = new Hashtable<String, Integer>() {
+		key_wb = new HashMap<String, Integer>() {
 			{
 				put(wbAuto, CameraParameters.WB_MODE_AUTO);
 				put(wbIncandescent, CameraParameters.WB_MODE_INCANDESCENT);
@@ -393,7 +393,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 
 
-		mode_focus = new Hashtable<Integer, String>() {
+		mode_focus = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.AF_MODE_AUTO, focusAuto);
 				put(CameraParameters.AF_MODE_INFINITY, focusInfinity);
@@ -406,7 +406,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_focus = new Hashtable<String, Integer>() {
+		key_focus = new HashMap<String, Integer>() {
 			{
 				put(focusAuto, CameraParameters.AF_MODE_AUTO);
 				put(focusInfinity, CameraParameters.AF_MODE_INFINITY);
@@ -420,7 +420,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 
 		
-		mode_flash = new Hashtable<Integer, String>() {
+		mode_flash = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.FLASH_MODE_OFF, flashOff);
 				put(CameraParameters.FLASH_MODE_AUTO, flashAuto);
@@ -430,7 +430,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_flash = new Hashtable<String, Integer>() {
+		key_flash = new HashMap<String, Integer>() {
 			{
 				put(flashOff, CameraParameters.FLASH_MODE_OFF);
 				put(flashAuto, CameraParameters.FLASH_MODE_AUTO);
@@ -467,7 +467,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 		
 			
-		iso_default_values = new Hashtable<String, String>() {
+		iso_default_values = new HashMap<String, String>() {
 			{			
 				put(isoAuto, mainContext.getResources().getString(R.string.isoAutoDefaultSystem));			
 				put(iso100, mainContext.getResources().getString(R.string.iso100DefaultSystem));
@@ -478,7 +478,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		mode_iso = new Hashtable<Integer, String>() {
+		mode_iso = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.ISO_AUTO, isoAuto);
 				put(CameraParameters.ISO_50, iso50);
@@ -491,7 +491,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		mode_iso2 = new Hashtable<Integer, String>() {
+		mode_iso2 = new HashMap<Integer, String>() {
 			{
 				put(CameraParameters.ISO_AUTO, isoAuto_2);
 				put(CameraParameters.ISO_50, iso50_2);
@@ -505,7 +505,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 		
 		
-		mode_iso_HALv3 = new Hashtable<Integer, Integer>() {
+		mode_iso_HALv3 = new HashMap<Integer, Integer>() {
 			{
 				put(CameraParameters.ISO_AUTO, 1);
 				put(CameraParameters.ISO_50, 50);
@@ -518,7 +518,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_iso = new Hashtable<String, Integer>() {
+		key_iso = new HashMap<String, Integer>() {
 			{
 				put(isoAuto, CameraParameters.ISO_AUTO);
 				put(iso50, CameraParameters.ISO_50);
@@ -531,7 +531,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		};
 		
-		key_iso2 = new Hashtable<String, Integer>() {
+		key_iso2 = new HashMap<String, Integer>() {
 			{
 				put(isoAuto_2, CameraParameters.ISO_AUTO);
 				put(iso50_2, CameraParameters.ISO_50);
@@ -717,8 +717,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 				cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
 			
-			pluginManager.selectDefaults();
-
 			// screen rotation
 			if (!pluginManager.shouldPreviewToGPU())
 			{
@@ -738,7 +736,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 			HALv3.openCameraHALv3();
 		
-
 
 		pluginManager.selectDefaults();
 
@@ -772,15 +769,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if(CameraController.isHALv3)
 			HALv3.setupImageReadersHALv3();
 			
-//		appInterface.addSurfaceCallback();
-		
 		if(!CameraController.isHALv3)
 		{
 			Message msg = new Message();
 			msg.what = PluginManager.MSG_CAMERA_READY;
 			MainScreen.getMessageHandler().sendMessage(msg);
-			
-//			appInterface.configureCamera();
 		}
 	}
 	
@@ -898,7 +891,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			ri = 4;
 
 		CameraController.ResolutionsNamesList.add(loc,
-				String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
+				String.format("%3.1f Mpix  " + RATIO_STRINGS[ri], mpix));
 		CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
 		CameraController.ResolutionsMPixList.add(loc, lmpix);
 		CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(currSizeWidth, currSizeHeight));		
@@ -1006,6 +999,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onError(int arg0, Camera arg1)
 	{
+		//Not used
 	}	
 	
 	//------------ CAMERA PARAMETERS AND CAPABILITIES SECTION-------------------------------------------
@@ -1235,10 +1229,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if(!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null && CameraController.cameraParameters != null) {
-				return (CameraController.cameraParameters.getMinExposureCompensation() != 0
-						&& CameraController.cameraParameters.getMaxExposureCompensation() != 0);
-			} else
+			if (CameraController.camera != null && CameraController.cameraParameters != null)
+			{
+				return CameraController.cameraParameters.getMinExposureCompensation() != 0
+						&& CameraController.cameraParameters.getMaxExposureCompensation() != 0;
+			}
+			else
 				return false;
 		}
 		else
@@ -1308,7 +1304,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private boolean getSceneModeSupported()
 	{
 		byte[] supported_scene = getSupportedSceneModesInternal();
-		return (supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED);
+		return supported_scene != null && supported_scene.length > 0 && supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED;
 	}
 	
 	public boolean isSceneModeSupported()
@@ -1351,7 +1347,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private boolean getWhiteBalanceSupported()
 	{
 		byte[] supported_wb = getSupportedWhiteBalanceInternal();
-		return (supported_wb != null && supported_wb.length > 0);
+		return supported_wb != null && supported_wb.length > 0;
 	}
 	
 	public boolean isWhiteBalanceSupported()
@@ -1394,7 +1390,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private boolean getFocusModeSupported()
 	{
 		byte[] supported_focus = getSupportedFocusModesInternal();
-		return (supported_focus != null && supported_focus.length > 0);
+		return supported_focus != null && supported_focus.length > 0;
 	}
 	
 	public boolean isFocusModeSupported()
@@ -1442,7 +1438,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 		{
 			byte[] supported_flash = getSupportedFlashModesInternal();
-			return (supported_flash != null && supported_flash.length > 0);
+			return supported_flash != null && supported_flash.length > 0;
 		}
 	}
 	
@@ -1500,7 +1496,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			byte[] supported_iso = getSupportedISO();
 			String isoSystem = CameraController.getInstance().getCameraParameters().get("iso");
 			String isoSystem2 = CameraController.getInstance().getCameraParameters().get("iso-speed");
-			return (supported_iso != null || isoSystem != null || isoSystem2 != null);
+			return supported_iso != null || isoSystem != null || isoSystem2 != null;
 		}
 		else
 			return HALv3.isISOModeSupportedHALv3();
@@ -1522,7 +1518,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				String supportedIsoValues = camParams.get("iso-values");
 				String supportedIsoValues2 = camParams.get("iso-speed-values");
 				String supportedIsoValues3 = camParams.get("iso-mode-values");
-				//String iso = camParams.get("iso");
 				
 				String delims = "[,]+";
 				String[] isoList = null;
@@ -2055,7 +2050,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		//In old camera interface we can capture only JPEG images, so image format parameter will be ignored.
 		if(!CameraController.isHALv3)
 		{
-			synchronized (syncObject)
+			synchronized (SYNC_OBJECT)
 			{
 				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
 				{
@@ -2086,7 +2081,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if(!CameraController.isHALv3)
 		{
-			synchronized (syncObject)
+			synchronized (SYNC_OBJECT)
 			{
 				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING) 
 				{
@@ -2115,7 +2110,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
 	{
-		synchronized (syncObject)
+		synchronized (SYNC_OBJECT)
 		{
 			if(!CameraController.isHALv3)
 			{
@@ -2143,7 +2138,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean autoFocus()
 	{
-		synchronized (syncObject)
+		synchronized (SYNC_OBJECT)
 		{
 			if(!CameraController.isHALv3)
 			{
@@ -2278,5 +2273,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onShutter()
 	{
+		//Not used
 	}
 }

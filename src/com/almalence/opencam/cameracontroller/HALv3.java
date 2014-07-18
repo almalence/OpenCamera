@@ -90,7 +90,7 @@ public class HALv3
 	{
 		// HALv3 code ---------------------------------------------------------
 		// get manager for camera devices
-		HALv3.getInstance().manager = (CameraManager)MainScreen.getMainContext().getSystemService("camera"); // = Context.CAMERA_SERVICE;
+		HALv3.getInstance().manager = (CameraManager)MainScreen.getMainContext().getSystemService("camera");
 		
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try {
@@ -113,24 +113,6 @@ public class HALv3
 			HALv3.getInstance().camDevice.close();
 			HALv3.getInstance().camDevice = null;
         }
-		
-//		if (HALv3.getInstance().camDevice != null)
-//		{
-//			try
-//			{
-//				HALv3.getInstance().camDevice.stopRepeating();
-//				HALv3.getInstance().camDevice.waitUntilIdle();
-//				HALv3.getInstance().camDevice.flush();
-//				HALv3.getInstance().camDevice.close();
-//				HALv3.getInstance().camDevice = null;
-//			}
-//			catch(CameraAccessException e)	
-//			{
-//				HALv3.getInstance().camDevice = null;
-//				Log.e(TAG, "close camera device failed: " + e.getMessage());
-//				e.printStackTrace();
-//			}
-//		}
 	}
 	
 	
@@ -184,15 +166,10 @@ public class HALv3
 	public static void setupImageReadersHALv3()
 	{
 		Log.e(TAG, "setupImageReadersHALv3()");
-		//surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
 		
 		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
 		MainScreen.setPreviewWidth(1280);
 		MainScreen.setPreviewHeight(720);
-		
-		//MainScreen.getInstance().surfaceHolder.setFixedSize(MainScreen.imageWidth, MainScreen.imageHeight);
-//		MainScreen.getPreviewWidth() = MainScreen.imageWidth;
-//		MainScreen.getPreviewHeight() = MainScreen.imageHeight;
 		
 		// HALv3 code -------------------------------------------------------------------
 		MainScreen.createImageReaders();
@@ -211,11 +188,9 @@ public class HALv3
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();
 		
-		int MinMPIX = CameraController.MIN_MPIX_SUPPORTED;
+		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		android.hardware.camera2.Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
-
-		CharSequence[] RatioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
 
 		int iHighestIndex = 0;		
 		android.hardware.camera2.Size sHighest = cs[iHighestIndex];
@@ -234,7 +209,7 @@ public class HALv3
 				iHighestIndex = ii;
 			}
 
-			if ((long) currSizeWidth * currSizeHeight < MinMPIX)
+			if ((long) currSizeWidth * currSizeHeight < minMPIX)
 				continue;
 			
 			CameraController.fillResolutionsList(ii, currSizeWidth, currSizeHeight);		
@@ -242,7 +217,7 @@ public class HALv3
 			ii++;
 		}
 
-		if (CameraController.ResolutionsNamesList.size() == 0) {
+		if (CameraController.ResolutionsNamesList.isEmpty()) {
 			android.hardware.camera2.Size s = cs[iHighestIndex];
 			
 			int currSizeWidth = s.getWidth();
@@ -328,17 +303,17 @@ public class HALv3
 	
 	public static Rect getZoomRect(float zoom, int imgWidth, int imgHeight)
 	{
-		int CropWidth  = (int)(imgWidth/zoom)+2*64;
-		int CropHeight = (int)(imgHeight/zoom)+2*64;
+		int cropWidth  = (int)(imgWidth/zoom)+2*64;
+		int cropHeight = (int)(imgHeight/zoom)+2*64;
 		// ensure crop w,h divisible by 4 (SZ requirement)
-		CropWidth  -= CropWidth&3;
-		CropHeight -= CropHeight&3;
+		cropWidth  -= cropWidth&3;
+		cropHeight -= cropHeight&3;
 		// crop area for standard frame
-		int CropWidthStd  = CropWidth-2*64;
-		int CropHeightStd = CropHeight-2*64;
+		int cropWidthStd  = cropWidth-2*64;
+		int cropHeightStd = cropHeight-2*64;
 		
-		return new Rect((imgWidth-CropWidthStd)/2, (imgHeight-CropHeightStd)/2,
-				(imgWidth+CropWidthStd)/2, (imgHeight+CropHeightStd)/2);
+		return new Rect((imgWidth-cropWidthStd)/2, (imgHeight-cropHeightStd)/2,
+				(imgWidth+cropWidthStd)/2, (imgHeight+cropHeightStd)/2);
 	}
 	
 	public static boolean isExposureCompensationSupportedHALv3()
@@ -409,7 +384,7 @@ public class HALv3
 				return scenes;				
 		}
 		
-		return null;
+		return new byte[0];
 	}
 	
 
@@ -435,7 +410,7 @@ public class HALv3
 				return focus;				
 		}
 		
-		return null;
+		return new byte[0];
 	}
 	
 	
@@ -474,7 +449,7 @@ public class HALv3
 				return iso_values;				
 		}
 		
-		return null;
+		return new byte[0];
 	}
 	
 	public static boolean isISOModeSupportedHALv3()
@@ -656,12 +631,6 @@ public class HALv3
 		        af_regions[currRegion+2] = r.right;
 		        af_regions[currRegion+3] = r.bottom;
 		        af_regions[currRegion+4] = 10;
-//		        af_regions = new int[5];
-//				af_regions[0] = 0;
-//		        af_regions[1] = 0;
-//		        af_regions[2] = activeRect.width()-1;
-//		        af_regions[3] = activeRect.height()-1;
-//		        af_regions[4] = 10;
 			}
 		}
 		else
@@ -841,18 +810,15 @@ public class HALv3
 			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from current position 
 			//stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-	//					Log.e("CameraController", "captureImage 2");
 			if(format == CameraController.JPEG)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
 				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-	//						Log.e("CameraController", "captureImage 3.1");
 			}
 			else
 			{
 				Log.e("HALv3", "Capture " + nFrames + " YUVs");
 				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
-	//						Log.e("CameraController", "captureImage 3.2");
 			}
 	
 			// Google: throw: "Burst capture implemented yet", when to expect implementation?
