@@ -21,14 +21,22 @@ package com.almalence.opencam_plus;
 +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+// <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+//-+- -->
 import com.almalence.ui.RotateImageView;
 
 import android.content.SharedPreferences;
@@ -38,7 +46,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-//-+- -->
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;

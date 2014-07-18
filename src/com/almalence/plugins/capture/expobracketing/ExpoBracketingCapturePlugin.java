@@ -575,10 +575,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	    		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
     	
-    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame[n]));
-    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+String.valueOf(SessionID), String.valueOf(compressed_frame_len[n]));
-    	PluginManager.getInstance().addToSharedMem("frameorientation"+(n+1)+String.valueOf(SessionID), String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored"+(n+1) + String.valueOf(SessionID), String.valueOf(CameraController.isFrontCamera()));
+    	PluginManager.getInstance().addToSharedMem("frame"+(n+1)+SessionID, String.valueOf(compressed_frame[n]));
+    	PluginManager.getInstance().addToSharedMem("framelen"+(n+1)+SessionID, String.valueOf(compressed_frame_len[n]));
+    	PluginManager.getInstance().addToSharedMem("frameorientation"+(n+1)+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+    	PluginManager.getInstance().addToSharedMem("framemirrored"+(n+1) + SessionID, String.valueOf(CameraController.isFrontCamera()));
 		
     	Log.e("ExpoBracketing", "amountofcapturedframes = " + (n+1));
     	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, String.valueOf(n+1));
