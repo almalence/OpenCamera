@@ -36,7 +36,6 @@ import java.util.Set;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -86,15 +85,11 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -917,7 +912,7 @@ public class AlmalenceGUI extends GUI implements
 		//manage unlock control
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
-		if (true == prefs.getBoolean("unlock_all_forever", false))
+		if (prefs.getBoolean("unlock_all_forever", false))
 			store.HideUnlockControl();
 		else 
 		{
@@ -4637,9 +4632,6 @@ public class AlmalenceGUI extends GUI implements
 				|| fullScreenLayout.getChildCount() > 0;
 	}
 
-	// selected mode - to use in onClick
-	private Mode tmpActiveMode;
-
 	// controls if info about new mode shown or not. to prevent from double info
 	private void initModeList() {
 		modeViews.clear();
@@ -4715,7 +4707,7 @@ public class AlmalenceGUI extends GUI implements
 		if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
 			return false;
 
-		tmpActiveMode = mode;
+		final Mode tmpActiveMode = mode;
 
 		if (mode.modeID.equals("video"))
 		{
