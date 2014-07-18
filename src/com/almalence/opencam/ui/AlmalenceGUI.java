@@ -104,8 +104,6 @@ import com.almalence.ui.Panel.OnPanelListener;
 
 import com.almalence.googsharing.Thumbnail;
 
-import android.support.v4.view.ViewPager;
-
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
@@ -181,14 +179,13 @@ public class AlmalenceGUI extends GUI implements
 	private boolean modeSelectorVisible = false; // If quick settings layout is
 													// showing now
 
+	private AlmalenceStore store;
+	
+	private SelfTimer selfTimer;
+	
 	// Assoc list for storing association between mode button and mode ID
 	private HashMap<View, String> buttonModeViewAssoc;
 
-	//store grid adapter
-	private ElementAdapter storeAdapter;
-	private List<View> storeViews;
-	private HashMap<View, Integer> buttonStoreViewAssoc;
-	
 	private Thumbnail mThumbnail;
 	private RotateImageView thumbnailView;
 	
@@ -516,9 +513,6 @@ public class AlmalenceGUI extends GUI implements
 		modeViews = new ArrayList<View>();
 		buttonModeViewAssoc = new HashMap<View, String>();
 		
-		storeAdapter = new ElementAdapter();
-		storeViews = new ArrayList<View>();
-		buttonStoreViewAssoc = new HashMap<View, Integer>();
 	}
 
 	/*
@@ -703,21 +697,13 @@ public class AlmalenceGUI extends GUI implements
 				((TextView) guiView.findViewById(R.id.blockingText))
 						.setRotation(-AlmalenceGUI.mDeviceOrientation);
 				
-				// <!-- -+-
-				((RotateImageView) guiView.findViewById(R.id.Unlock))
-				.setOrientation(AlmalenceGUI.mDeviceOrientation);
-				//-+- -->
+				store.setOrientation();
 				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 				
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 				
-				if (timeLapseButton!=null)
-				{
-					timeLapseButton.setOrientation(AlmalenceGUI.mDeviceOrientation);
-					timeLapseButton.invalidate();
-					timeLapseButton.requestLayout();
-				}
+				selfTimer.setOrientation();
 			}
 		};		
 	}
@@ -754,7 +740,7 @@ public class AlmalenceGUI extends GUI implements
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
@@ -777,361 +763,17 @@ public class AlmalenceGUI extends GUI implements
 			hideStore();
 	}
 
-	//<!-- -+-
 	@Override
 	public void showStore()
 	{
-		LayoutInflater inflater = LayoutInflater.from(MainScreen.getInstance());
-        List<RelativeLayout> pages = new ArrayList<RelativeLayout>();
-        
-        //page 1
-        RelativeLayout page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-		initStoreList();
-		RelativeLayout store = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_store, null);
-		final ImageView imgStoreNext = (ImageView) store.findViewById(R.id.storeWhatsNew);
-		GridView gridview = (GridView) store.findViewById(R.id.storeGrid);
-		gridview.setAdapter(storeAdapter);
-		
-		gridview.setOnTouchListener(new OnTouchListener(){
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return false;
-			}
-			
-		});
-		page.addView(store);
-        pages.add(page);
-        
-        //page 2
-        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-        RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
-        final ImageView imgWhatNewNext = (ImageView) whatsnew.findViewById(R.id.storeFeatures);
-        final ImageView imgWhatNewPrev = (ImageView) whatsnew.findViewById(R.id.storeStore);
-        imgWhatNewNext.setVisibility(View.INVISIBLE);
-		imgWhatNewPrev.setVisibility(View.INVISIBLE);
-        TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
-		text_whatsnew.setText("version 3.24"+
-							  "\n- exif tags fixed"+
-							  "\n- auto backup/sharing fixed"+
-							  "\n- fixed work from 3rd party apps"+
-							  "\n- UI corrections"+
-							  "\n- video on some devices improved"+
-							  "\n- stability fixes");
-
-		page.addView(whatsnew);
-        pages.add(page);
-        
-        //page 3
-        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-        RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
-        final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
-        final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
-		TextView text_features= (TextView) features.findViewById(R.id.text_features);
-		text_features.setText("BLA BLA BLA BLA");
-
-		page.addView(features);
-        pages.add(page);
-        
-        //page 4
-        page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-        RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
-        final ImageView imgTipsPrev = (ImageView) tips.findViewById(R.id.storeTips);
-		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
-		text_tips.setText("ABC tips and tricks"+
-						  "\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you'd like."+
-						  "\n\nSwipe left/write on main scree to see more/less info on the screen - histogram, grids, info controls, top quick settings menu."+
-						  "\n\nPull down top menu to see all quick settings.");
-
-		page.addView(tips);
-        pages.add(page);
-        
-        SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
-        ViewPager viewPager = new ViewPager(MainScreen.getInstance());
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
-        {
-        	@Override
-            public void onPageSelected(int position) 
-        	{
-        		switch (position)
-        		{
-        		case 0:
-        			//0
-        			imgStoreNext.setVisibility(View.VISIBLE);
-        			//1
-        			imgWhatNewNext.setVisibility(View.INVISIBLE);
-        			imgWhatNewPrev.setVisibility(View.INVISIBLE);
-        			break;
-        		case 1:
-        			//0
-        			imgStoreNext.setVisibility(View.INVISIBLE);
-        			//1
-        			imgWhatNewNext.setVisibility(View.VISIBLE);
-        			imgWhatNewPrev.setVisibility(View.VISIBLE);
-        			//2
-        			imgFeaturesNext.setVisibility(View.INVISIBLE);
-        			imgFeaturesPrev.setVisibility(View.INVISIBLE);
-        			break;
-        		case 2:
-        			//1
-        			imgWhatNewNext.setVisibility(View.INVISIBLE);
-        			imgWhatNewPrev.setVisibility(View.INVISIBLE);
-        			//2
-        			imgFeaturesNext.setVisibility(View.VISIBLE);
-        			imgFeaturesPrev.setVisibility(View.VISIBLE);
-        			//3
-        			imgTipsPrev.setVisibility(View.INVISIBLE);
-        			break;
-        		case 3:
-        			//2
-        			imgFeaturesNext.setVisibility(View.INVISIBLE);
-        			imgFeaturesPrev.setVisibility(View.INVISIBLE);
-        			//3
-        			imgTipsPrev.setVisibility(View.VISIBLE);
-        			break;
-    			default:
-    				break;
-        		}
-            }
-        });
-		
-		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
-		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
-		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
-		
-		Message msg2 = new Message();
-		msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg2);
-		
-		MainScreen.getGUIManager().lockControls = true;
-		
-		if (MainScreen.getInstance().showPromoRedeemed)
-		{
-			Toast.makeText(MainScreen.getInstance(), "The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG).show();
-			MainScreen.getInstance().showPromoRedeemed = false;
-		}
-		
-		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
-		pagerLayout.addView(viewPager);
-		pagerLayout.setVisibility(View.VISIBLE);
-		pagerLayout.bringToFront();
+		store.showStore();
 	}
 	
 	@Override
 	public void hideStore()
 	{
-		((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).setVisibility(View.INVISIBLE);
-		
-		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
-		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
-		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
-		
-		Message msg2 = new Message();
-		msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		msg2.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg2);
-		
-		MainScreen.getGUIManager().lockControls = false;
-	}
-	
-	private void initStoreList() {
-		storeViews.clear();
-		buttonStoreViewAssoc.clear();
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean bOnSale = prefs.getBoolean("bOnSale", false);
-		
-		for (int i =0; i<6; i++) {
-
-			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-			View item = inflator.inflate(
-					R.layout.gui_almalence_store_grid_element, null,
-					false);
-			ImageView icon = (ImageView) item.findViewById(R.id.storeImage);
-			TextView description = (TextView) item.findViewById(R.id.storeText);
-			TextView price = (TextView) item.findViewById(R.id.storePriceText);
-			switch (i)
-			{
-				case 0:
-					// unlock all
-					icon.setImageResource(R.drawable.store_all);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_All_Preference_Title));
-					
-					if(MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-					{
-						if (MainScreen.getInstance().isCouponSale())
-						{
-							price.setText(MainScreen.getInstance().titleUnlockAllCoupon);
-							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
-						}
-						else
-						{
-							price.setText(MainScreen.getInstance().titleUnlockAll);
-							if (bOnSale)
-								((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
-						}
-					}
-					break;
-				case 1:
-					// HDR
-					icon.setImageResource(R.drawable.store_hdr);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_HDR_Preference_Title));
-					if(MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-						price.setText(MainScreen.getInstance().titleUnlockHDR);
-					break;
-				case 2:
-					// Panorama
-					icon.setImageResource(R.drawable.store_panorama);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
-					if(MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-						price.setText(MainScreen.getInstance().titleUnlockPano);
-					break;
-				case 3:
-					// Moving
-					icon.setImageResource(R.drawable.store_moving);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Moving_Preference_Title));
-					if(MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-						price.setText(MainScreen.getInstance().titleUnlockMoving);
-					break;
-				case 4:
-					// Groupshot
-					icon.setImageResource(R.drawable.store_groupshot);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
-					if(MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-						price.setText(MainScreen.getInstance().titleUnlockGroup);
-					break;
-				case 5:
-					// Promo code
-					icon.setImageResource(R.drawable.store_promo);
-					description.setText(MainScreen.getInstance().getResources().getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
-					if(MainScreen.getInstance().isPurchasedAll())
-						price.setText(R.string.already_unlocked);
-					else
-						price.setText("");
-					break;
-				default:
-    				break;
-			}
-
-			item.setOnTouchListener(new OnTouchListener()
-			{
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					if(event.getAction() == MotionEvent.ACTION_CANCEL)
-						purchasePressed(v);
-					return false;
-				}
-			});
-			
-			item.setOnClickListener(new OnClickListener() 
-			{
-				public void onClick(View v) {
-					// get inapp associated with pressed button
-					purchasePressed(v);
-				}
-			});
-			
-			buttonStoreViewAssoc.put(item, i);
-			storeViews.add(item);
-		}
-
-		storeAdapter.Elements = storeViews;
-	}
-	
-	private void purchasePressed(View v)
-	{
-		// get inapp associated with pressed button
-		Integer id = buttonStoreViewAssoc.get(v);
-		switch (id)
-		{
-		case 0:// unlock all
-			MainScreen.getInstance().purchaseAll();
-			break;
-		case 1:// HDR
-			MainScreen.getInstance().purchaseHDR();
-			break;
-		case 2:// Panorama
-			MainScreen.getInstance().purchasePanorama();
-			break;
-		case 3:// Moving
-			MainScreen.getInstance().purchaseMoving();
-			break;
-		case 4:// Groupshot
-			MainScreen.getInstance().purchaseGroupshot();
-			break;
-		case 5:// Promo
-			MainScreen.getInstance().enterPromo();
-			break;
-		default:
-			break;
-		}
-	}
-	
-	private void showWhatsNew()
-	{
-		
-	}
-	
-	public void ShowUnlockControl()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean bOnSale = prefs.getBoolean("bOnSale", false);
-		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setImageResource(bOnSale?R.drawable.unlock_sale:R.drawable.unlock);
-		unlock.setAlpha(1.0f);
-		unlock.setVisibility(View.VISIBLE);
-		
-		Animation invisible_alpha = new AlphaAnimation(1, 0.4f);
-		invisible_alpha.setDuration(7000);
-		invisible_alpha.setRepeatCount(0);
-
-		invisible_alpha.setAnimationListener(new AnimationListener() 
-		{
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				unlock.clearAnimation();
-				unlock.setImageResource(R.drawable.unlock_gray);
-				unlock.setAlpha(0.4f);
-			}
-			@Override
-			public void onAnimationRepeat(Animation animation) {}
-			@Override
-			public void onAnimationStart(Animation animation) {}
-		});
-
-		unlock.startAnimation(invisible_alpha);
-	}
-	
-	
-	public void ShowGrayUnlockControl()
-	{
-		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		if (unlock.getVisibility() == View.VISIBLE)
-			return;
-		unlock.setImageResource(R.drawable.unlock_gray);
-		unlock.setAlpha(0.4f);
-		unlock.setVisibility(View.VISIBLE);
-	}
-	
-	public void HideUnlockControl()
-	{
-		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));		
-		unlock.setVisibility(View.GONE);
-	}
-	
-	//-+- -->
+		store.hideStore();
+	}	
 	
 	@Override
 	public void onResume() {
@@ -1264,24 +906,24 @@ public class AlmalenceGUI extends GUI implements
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 		
+		store = new AlmalenceStore(guiView);
+		
 		manageUnlockControl();
 	}
 
 	
 	private void manageUnlockControl()
 	{
-		// <!-- -+-
 		//manage unlock control
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (true == prefs.getBoolean("unlock_all_forever", false))
-			HideUnlockControl();
+			store.HideUnlockControl();
 		else 
 		{
 			String modeID = PluginManager.getInstance().getActiveMode().modeID;
 			visibilityUnlockControl(UNLOCK_MODE_PREFERENCES.get(modeID));
 		}
-		//-+- -->
 	}
 	
 	private void visibilityUnlockControl(String prefName)
@@ -1289,9 +931,9 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
 		if (prefs.getBoolean(prefName, false))
-			HideUnlockControl();
+			store.HideUnlockControl();
 		else
-			ShowUnlockControl();
+			store.ShowUnlockControl();
 	}
 	
 	private Map<Integer, View> initCameraParameterModeButtons(
@@ -1381,7 +1023,8 @@ public class AlmalenceGUI extends GUI implements
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
-		addSelfTimerControl(showDelayedCapturePrefCommon);
+		selfTimer = new SelfTimer();
+		selfTimer.addSelfTimerControl(showDelayedCapturePrefCommon);
 
 		LinearLayout infoLayout = (LinearLayout) guiView
 				.findViewById(R.id.infoLayout);
@@ -6600,225 +6243,4 @@ public class AlmalenceGUI extends GUI implements
 		help.bringToFront();
 	}
 	
-	boolean swChecked = false;
-	String[] stringInterval = {"3", "5", "10", "15", "30", "60"};
-	public void selfTimerDialog()
-	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int interval = prefs.getInt(MainScreen.sDelayedCaptureIntervalPref, 0);
-		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);		
-		
-		final Dialog d = new Dialog(MainScreen.getInstance());
-        d.setTitle("Self timer settings");
-        d.setContentView(R.layout.selftimer_dialog);
-        final Button bSet = (Button) d.findViewById(R.id.button1);
-        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        np.setMaxValue(5);
-        np.setMinValue(0);
-        np.setValue(interval);
-        np.setDisplayedValues(stringInterval);
-        np.setWrapSelectorWheel(false);
-        
-        final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
-        boolean flash = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
-        flashCheckbox.setChecked(flash);
-        
-        final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
-        boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
-        soundCheckbox.setChecked(sound);
-        
-        final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
-        
-        //disable/enable controls in dialog
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-			{
-				if (!sw.isChecked())
-		        {
-		        	np.setEnabled(false);
-		        	flashCheckbox.setEnabled(false);
-		        	soundCheckbox.setEnabled(false);
-		        	swChecked = false;
-		        }
-				else
-				{
-		        	np.setEnabled(true);
-		        	flashCheckbox.setEnabled(true);
-		        	soundCheckbox.setEnabled(true);
-		        	swChecked = true;
-		        	bSet.setEnabled(true);
-				}
-			}
-		});
-        
-        //disable control in dialog by default
-        if (!swChecked)
-        {
-        	sw.setChecked(false);
-        	flashCheckbox.setEnabled(false);
-        	soundCheckbox.setEnabled(false);
-        	np.setEnabled(false);
-        	bSet.setEnabled(false);
-        }
-        else
-        {
-        	np.setEnabled(true);
-        	flashCheckbox.setEnabled(true);
-        	soundCheckbox.setEnabled(true);
-        	bSet.setEnabled(true);
-        	sw.setChecked(true);
-        }
-        
-        //set button in dialog pressed
-        bSet.setOnClickListener(new OnClickListener()
-        {
-         @Override
-         public void onClick(View v) {
-             d.dismiss();
-             int interval = 0;
-             Editor prefsEditor = prefs.edit();
- 			
-             if (swChecked)
-            	 interval  = np.getValue();
-             else
-            	 interval = 0;
-             int real_int = Integer.parseInt(stringInterval[np.getValue()]);
-             prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swChecked);
-             if (swChecked)
-            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
-             else
-             {
-            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, 0);
-            	 real_int = 0;
-             }
-             prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
-             prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
-             prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
-             prefsEditor.commit();
-
-             updateTimelapseButton(real_int);
-          }    
-         });
-      d.show();
-	}
-	
-	private RotateImageView timeLapseButton =null;
-	private void addSelfTimerControl(boolean needToShow)
-	{
-		View selfTimerControl =null;
-		// Calculate right sizes for plugin's controls
-		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
-		float screenDensity = metrics.density;
-    			
-    	int iIndicatorSize = (int) (MainScreen.getMainContext().getResources()
-				.getInteger(R.integer.infoControlHeight) * screenDensity);
-    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
-		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
-		params.setMargins((int)(2*MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
-		
-		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();		
-		
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
-		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
-		selfTimerControl.setVisibility(View.VISIBLE);
-		
-		removeViews(selfTimerControl, R.id.specialPluginsLayout2);
-		
-		if (!needToShow || !PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported())
-		{
-			return; 
-		}
-		
-		timeLapseButton = (RotateImageView)selfTimerControl.findViewById(R.id.buttonSelftimer);
-		
-		timeLapseButton.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {			
-				selfTimerDialog();
-			}
-			
-		});
-		
-		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout2.getChildCount(); i++)
-			specialView2.add(specialLayout2.getChildAt(i));
-
-		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int)MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
-		
-		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
-		
-		selfTimerControl.setLayoutParams(params);
-		selfTimerControl.requestLayout();
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
-
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
-		updateTimelapseButton(delayInterval);
-	}
-	
-	private void updateTimelapseButton(int delayInterval)
-	{
-		switch (delayInterval)
-        {
-         case 0:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
-        	 break;
-         case 3:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
-        	 break;
-         case 5:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
-        	 break;
-         case 10:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
-        	 break;
-         case 15:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
-        	 break;
-         case 30:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
-        	 break;
-         case 60:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-        	 break;    
-         default:
- 			break;
-         }
-	}
 }
