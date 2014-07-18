@@ -833,7 +833,7 @@ public class NightCapturePlugin extends PluginCapture
 	        }
         }
 		
-		ListPreference fp = (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
+		Preference fp = prefActivity.findPreference(nightCaptureFocusPref);
 		if(fp != null)
 		{
 	        fp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -914,7 +914,7 @@ public class NightCapturePlugin extends PluginCapture
 	        }
         }
 		
-		ListPreference fp = (ListPreference)prefActivity.findPreference(nightCaptureFocusPref);
+		Preference fp = prefActivity.findPreference(nightCaptureFocusPref);
 		if(fp != null)
 		{
 	        fp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
