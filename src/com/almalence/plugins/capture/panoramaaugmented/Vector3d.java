@@ -14,53 +14,53 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
 public class Vector3d
 {
-	public float x;
-	public float y;
-	public float z;
-	
+	public float	x;
+	public float	y;
+	public float	z;
+
 	public Vector3d()
 	{
 		this(0.0f, 0.0f, 0.0f);
 	}
-	
+
 	public Vector3d(final float x, final float y, final float z)
 	{
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
-	
+
 	public Vector3d(final Vector3d original)
 	{
 		this.x = original.x;
 		this.y = original.y;
 		this.z = original.z;
 	}
-	
+
 	public void set(final Vector3d vector)
 	{
 		this.x = vector.x;
 		this.y = vector.y;
 		this.z = vector.z;
 	}
-	
+
 	public void multiply(final float multi)
 	{
 		this.x *= multi;
 		this.y *= multi;
 		this.z *= multi;
 	}
-	
+
 	public void normalize()
 	{
 		final float length = this.length();
-		
+
 		if (length == 0.0f)
 		{
 			throw new ArithmeticException("Can't normalize a zero-length vector");
@@ -70,12 +70,12 @@ public class Vector3d
 		this.y /= length;
 		this.z /= length;
 	}
-	
+
 	public float length()
 	{
-		return (float)Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+		return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 	}
-	
+
 	@Override
 	public String toString()
 	{

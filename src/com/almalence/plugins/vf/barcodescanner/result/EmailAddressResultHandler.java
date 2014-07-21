@@ -19,8 +19,8 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 
 /* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.R;
 //-+- -->
@@ -29,51 +29,53 @@ import com.google.zxing.client.result.ParsedResult;
 
 /**
  * Handles email addresses.
- *
+ * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class EmailAddressResultHandler extends ResultHandler {
-  private static final int[] buttons = {
-      R.string.Button_Email,
-      R.string.Button_Add_Contact
-  };
+public final class EmailAddressResultHandler extends ResultHandler
+{
+	private static final int[]	buttons	= { R.string.Button_Email, R.string.Button_Add_Contact };
 
-  public EmailAddressResultHandler(Activity activity, ParsedResult result) {
-    super(activity, result);
-  }
+	public EmailAddressResultHandler(Activity activity, ParsedResult result)
+	{
+		super(activity, result);
+	}
 
-  @Override
-  public int getButtonCount() {
-    return buttons.length;
-  }
+	@Override
+	public int getButtonCount()
+	{
+		return buttons.length;
+	}
 
-  @Override
-  public int getButtonText(int index) {
-    return buttons[index];
-  }
+	@Override
+	public int getButtonText(int index)
+	{
+		return buttons[index];
+	}
 
-  @Override
-  public void handleButtonPress(int index) {
-    EmailAddressParsedResult emailResult = (EmailAddressParsedResult) getResult();
-    switch (index) {
-      case 0:
-        sendEmailFromUri(emailResult.getMailtoURI(),
-                         emailResult.getEmailAddress(),
-                         emailResult.getSubject(),
-                         emailResult.getBody());
-        break;
-      case 1:
-        String[] addresses = new String[1];
-        addresses[0] = emailResult.getEmailAddress();
-        addEmailOnlyContact(addresses, null);
-        break;
-      default:
-		break;
-    }
-  }
+	@Override
+	public void handleButtonPress(int index)
+	{
+		EmailAddressParsedResult emailResult = (EmailAddressParsedResult) getResult();
+		switch (index)
+		{
+		case 0:
+			sendEmailFromUri(emailResult.getMailtoURI(), emailResult.getEmailAddress(), emailResult.getSubject(),
+					emailResult.getBody());
+			break;
+		case 1:
+			String[] addresses = new String[1];
+			addresses[0] = emailResult.getEmailAddress();
+			addEmailOnlyContact(addresses, null);
+			break;
+		default:
+			break;
+		}
+	}
 
-  @Override
-  public int getDisplayTitle() {
-    return R.string.Result_Email_Address;
-  }
+	@Override
+	public int getDisplayTitle()
+	{
+		return R.string.Result_Email_Address;
+	}
 }

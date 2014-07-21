@@ -14,27 +14,24 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-//-+- -->
 
+//-+- -->
 
 public abstract class PluginExport extends Plugin
 {
-	public PluginExport(String ID,
-							int preferenceID,
-							int advancedPreferenceID,
-							int quickControlID,
-							String quickControlInitTitle)
+	public PluginExport(String ID, int preferenceID, int advancedPreferenceID, int quickControlID,
+			String quickControlInitTitle)
 	{
-		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);		
+		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);
 	}
-	
+
 	@Override
 	public abstract void onExportActive(long SessionID);
 }

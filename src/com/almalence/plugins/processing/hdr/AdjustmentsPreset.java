@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.processing.hdr;
 
@@ -24,9 +24,9 @@ import android.graphics.Bitmap;
 
 public final class AdjustmentsPreset
 {
-	private final ArrayList<Integer[]> sets = new ArrayList<Integer[]>();
-	private final String title;
-	private Bitmap thumbnail;
+	private final ArrayList<Integer[]>	sets	= new ArrayList<Integer[]>();
+	private final String				title;
+	private Bitmap						thumbnail;
 
 	public AdjustmentsPreset(String title, Bitmap thumbnail, Integer... sets)
 	{
@@ -34,35 +34,35 @@ public final class AdjustmentsPreset
 		{
 			throw new IllegalArgumentException("Invalid adjustments sets");
 		}
-		
+
 		this.title = title;
-		
+
 		for (int i = 0; i < sets.length / 2; i++)
 		{
 			int id = sets[i * 2];
 			int value = sets[i * 2 + 1];
-			
-			this.sets.add(new Integer[] {id, value});
+
+			this.sets.add(new Integer[] { id, value });
 		}
-		
+
 		this.thumbnail = thumbnail;
 	}
-	
+
 	public final int getSetsCount()
 	{
 		return this.sets.size();
 	}
-	
+
 	public final int getSetId(int position)
 	{
 		return this.sets.get(position)[0];
 	}
-	
+
 	public final int getSetValue(int position)
 	{
 		return this.sets.get(position)[1];
 	}
-	
+
 	public final void saveSets(ArrayList<Adjustment> sets)
 	{
 		for (int i = 0; i < this.sets.size(); i++)
@@ -77,17 +77,17 @@ public final class AdjustmentsPreset
 			}
 		}
 	}
-	
+
 	public final Bitmap getThumbnail()
 	{
 		return this.thumbnail;
 	}
-	
+
 	public final void setThumbnail(Bitmap thumb)
 	{
 		this.thumbnail = thumb;
 	}
-	
+
 	@Override
 	public String toString()
 	{

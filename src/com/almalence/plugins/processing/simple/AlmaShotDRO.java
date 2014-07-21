@@ -14,26 +14,27 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.processing.simple;
 
 public final class AlmaShotDRO
 {
 	public static synchronized native String Initialize();
-    public static synchronized native int Release();
-    
-    public static synchronized native String ConvertFromJpeg(
-    		int[] frame, int[] frame_len, int nFrames, int sx, int sy);
-    public static synchronized native int GetYUVFrame(int index);
 
-    public static synchronized native int DroProcess(int yuv, int sx, int sy, float max_amplify,
-    		boolean local_mapping, int filterStrength, int strongFilter, int pullUV);
-    
-    static 
-    {
-    	System.loadLibrary("utils-image");
+	public static synchronized native int Release();
+
+	public static synchronized native String ConvertFromJpeg(int[] frame, int[] frame_len, int nFrames, int sx, int sy);
+
+	public static synchronized native int GetYUVFrame(int index);
+
+	public static synchronized native int DroProcess(int yuv, int sx, int sy, float max_amplify, boolean local_mapping,
+			int filterStrength, int strongFilter, int pullUV);
+
+	static
+	{
+		System.loadLibrary("utils-image");
 		System.loadLibrary("almalib");
-        System.loadLibrary("almashot-dro");
-    }
+		System.loadLibrary("almashot-dro");
+	}
 }

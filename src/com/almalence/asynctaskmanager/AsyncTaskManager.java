@@ -115,5 +115,5 @@ public final class AsyncTaskManager implements IProgressTracker
     {
 		// Track current status
 		return (mAsyncTask != null);
-    }
+	}
 }

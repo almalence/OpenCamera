@@ -14,13 +14,14 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
 import java.io.File;
@@ -50,61 +51,39 @@ import android.widget.TextView;
 
 @SuppressWarnings("deprecation")
 public class FolderPicker extends Activity implements OnItemClickListener, OnClickListener
-{	
-	private static final String[] MOUNT_POINT_FOLDERNAMES = new String[] 
-	{ 
-		"sd-ext", 
-		"external_sd", 
-		"external_SD",
-		"sdcard-ext",
-		"extSdCard", 
-		"sdcard",
-		"bootsdcard",
-		"emmc",
-		"extSdCard",
-		"ExtSDCard",
-		"sdcard0",
-		"sdcard1",
-		"sdcard2",
-		"ext_sdcard",
-		"MicroSD"
-	};
-	
-	private static final String[] ROOT_CANDIDATES = new String[]
-	{
-		"/storage",
-		"/mnt",
-		"/Removable",
-		"/"
-	};
+{
+	private static final String[]	MOUNT_POINT_FOLDERNAMES	= new String[] { "sd-ext", "external_sd", "external_SD",
+			"sdcard-ext", "extSdCard", "sdcard", "bootsdcard", "emmc", "extSdCard", "ExtSDCard", "sdcard0", "sdcard1",
+			"sdcard2", "ext_sdcard", "MicroSD"				};
 
-	
-	private static final String TEMP_DIR = "FLDRPICKTMPDIR";
-	
-	private FolderPickerAdapter adapter;
-	private ListView listView;
-	private EditText editText;
-	private Button buttonNewFolder;
-	private Button buttonPick;
-	private File currentRoot;
-	private File currentPath = null;
-	private boolean show_all = false;
-	
-	private int old_value = 0;
-	
-	private ArrayList<String> items = new ArrayList<String>();
-	
-	private AlertDialog nf_dialog = null;
-	
+	private static final String[]	ROOT_CANDIDATES			= new String[] { "/storage", "/mnt", "/Removable", "/" };
+
+	private static final String		TEMP_DIR				= "FLDRPICKTMPDIR";
+
+	private FolderPickerAdapter		adapter;
+	private ListView				listView;
+	private EditText				editText;
+	private Button					buttonNewFolder;
+	private Button					buttonPick;
+	private File					currentRoot;
+	private File					currentPath				= null;
+	private boolean					show_all				= false;
+
+	private int						old_value				= 0;
+
+	private ArrayList<String>		items					= new ArrayList<String>();
+
+	private AlertDialog				nf_dialog				= null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		this.setContentView(R.layout.folderpicker);
-		
+
 		this.findOutBestRoot();
-		
+
 		if (savedInstanceState != null)
 		{
 			if (savedInstanceState.containsKey(FolderPicker.TEMP_DIR))
@@ -112,56 +91,54 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 				this.currentPath = new File(savedInstanceState.getString(FolderPicker.TEMP_DIR));
 			}
 		}
-		
+
 		if (this.currentPath == null)
 		{
-			String savedPath = PreferenceManager.getDefaultSharedPreferences(this).getString(
-					MainScreen.sSavePathPref, "/");
-			
+			String savedPath = PreferenceManager.getDefaultSharedPreferences(this).getString(MainScreen.sSavePathPref,
+					"/");
+
 			if (savedPath.startsWith(this.currentRoot.getAbsolutePath()))
-			{	
+			{
 				this.currentPath = new File(savedPath);
-			}
-			else
+			} else
 			{
 				this.currentPath = this.currentRoot;
 			}
 		}
-		
+
 		this.adapter = new FolderPickerAdapter();
-		
-		this.listView = (ListView)this.findViewById(R.id.folderpicker_list);
+
+		this.listView = (ListView) this.findViewById(R.id.folderpicker_list);
 		this.listView.setAdapter(this.adapter);
 		this.listView.setOnItemClickListener(this);
-		
-		this.buttonPick = ((Button)this.findViewById(R.id.folderpicker_pick));
-		this.buttonPick.setOnClickListener(this);	
-		this.buttonNewFolder = ((Button)this.findViewById(R.id.folderpicker_newfolder));
+
+		this.buttonPick = ((Button) this.findViewById(R.id.folderpicker_pick));
+		this.buttonPick.setOnClickListener(this);
+		this.buttonNewFolder = ((Button) this.findViewById(R.id.folderpicker_newfolder));
 		this.buttonNewFolder.setOnClickListener(this);
-		
-		this.editText = (EditText)this.findViewById(R.id.folderpicker_address);	
-				
-		
+
+		this.editText = (EditText) this.findViewById(R.id.folderpicker_address);
+
 		this.old_value = this.getIntent().getExtras().getInt(MainScreen.sSavePathPref, 0);
-		
+
 		Object obj = this.getLastNonConfigurationInstance();
 		if (obj != null)
 		{
 			if (obj instanceof String)
 			{
-				this.showCreateFolderDialog((String)obj);
+				this.showCreateFolderDialog((String) obj);
 			}
 		}
 	}
-	
+
 	private void findOutBestRoot()
 	{
 		int[] counts = new int[ROOT_CANDIDATES.length];
-		
+
 		for (int i = 0; i < ROOT_CANDIDATES.length; i++)
 		{
 			File troot = new File(ROOT_CANDIDATES[i]);
-			
+
 			for (int j = 0; j < MOUNT_POINT_FOLDERNAMES.length; j++)
 			{
 				try
@@ -170,14 +147,13 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 					{
 						++counts[i];
 					}
-				}
-				catch (Exception e)
+				} catch (Exception e)
 				{
-					
+
 				}
 			}
 		}
-		
+
 		int max = 0;
 		for (int i = 1; i < ROOT_CANDIDATES.length; i++)
 		{
@@ -186,96 +162,91 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 				max = i;
 			}
 		}
-		
+
 		if (counts[max] == 0)
 		{
 			this.currentRoot = new File("/");
 			this.show_all = true;
-		}
-		else
+		} else
 		{
 			this.currentRoot = new File(ROOT_CANDIDATES[max]);
 		}
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle bundle)
 	{
 		super.onSaveInstanceState(bundle);
-		
+
 		bundle.putString(FolderPicker.TEMP_DIR, this.currentPath.getAbsolutePath());
-		
+
 	}
-	
-	private static final int editTextId = 9853284;
-	
+
+	private static final int	editTextId	= 9853284;
+
 	@Override
 	public Object onRetainNonConfigurationInstance()
 	{
 		if (this.nf_dialog == null)
 		{
 			return null;
-		}
-		else
+		} else
 		{
 			if (this.nf_dialog.isShowing())
 			{
-				return ((EditText)this.nf_dialog.findViewById(editTextId)).getText().toString();
-			}
-			else
+				return ((EditText) this.nf_dialog.findViewById(editTextId)).getText().toString();
+			} else
 			{
 				return null;
 			}
 		}
 	}
-	
+
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-		
+
 		this.refreshItems(this.currentPath);
 	}
-	
+
 	private void showCreateFolderDialog(String name)
 	{
 		this.nf_dialog = new AlertDialog.Builder(this).create();
-		
+
 		this.nf_dialog.setTitle(R.string.choose_folder_alert_0_2);
-		
+
 		final EditText editText = new EditText(this);
 		editText.setText(name);
 		editText.setSingleLine();
 		editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
 		editText.setId(editTextId);
-		
+
 		this.nf_dialog.setView(editText);
-		
-		this.nf_dialog.setButton(
-				this.getResources().getString(R.string.choose_folder_alert_2_1), 
-				new DialogInterface.OnClickListener() 
+
+		this.nf_dialog.setButton(this.getResources().getString(R.string.choose_folder_alert_2_1),
+				new DialogInterface.OnClickListener()
 				{
-				   public void onClick(DialogInterface dialog, int which) 
-				   {
-					   
-					   try
-					   {
-						   new File(FolderPicker.this.currentPath.getAbsoluteFile() + File.separator + editText.getText().toString()).mkdirs();
-						   
-						   FolderPicker.this.refreshItems(FolderPicker.this.currentPath);
-					   }
-					   catch (Exception e)
-					   {
-						   e.printStackTrace();
-					   }
-				   }
+					public void onClick(DialogInterface dialog, int which)
+					{
+
+						try
+						{
+							new File(FolderPicker.this.currentPath.getAbsoluteFile() + File.separator
+									+ editText.getText().toString()).mkdirs();
+
+							FolderPicker.this.refreshItems(FolderPicker.this.currentPath);
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
 				});
-		
-		this.nf_dialog.setButton2(
-				this.getResources().getString(R.string.choose_folder_alert_2_2),
-				new DialogInterface.OnClickListener() 
+
+		this.nf_dialog.setButton2(this.getResources().getString(R.string.choose_folder_alert_2_2),
+				new DialogInterface.OnClickListener()
 				{
-					public void onClick(DialogInterface dialog,	int which) 
+					public void onClick(DialogInterface dialog, int which)
 					{
 						dialog.cancel();
 					}
@@ -283,27 +254,26 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 
 		this.nf_dialog.show();
 	}
-	
+
 	protected void refreshItems(File newDir)
 	{
 		File[] files = null;
-		
+
 		try
 		{
 			if (newDir.isDirectory())
 			{
 				files = newDir.listFiles();
 			}
+		} catch (Exception e)
+		{
+			// Couldn't access
 		}
-		catch (Exception e)
-		{			
-			//Couldn't access
-		}
-				
+
 		if (files != null)
 		{
 			this.items.clear();
-				
+
 			if (this.isRoot(newDir) && !this.show_all)
 			{
 				for (File file : files)
@@ -317,19 +287,17 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 								if (file.getName().equals(fname))
 								{
 									this.items.add(file.getName());
-										
+
 									break;
 								}
 							}
 						}
-					}
-					catch (Exception e)
+					} catch (Exception e)
 					{
 						e.printStackTrace();
 					}
 				}
-			}
-			else
+			} else
 			{
 				for (File file : files)
 				{
@@ -339,49 +307,48 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 						{
 							this.items.add(file.getName());
 						}
-					}
-					catch (Exception e)
+					} catch (Exception e)
 					{
 						e.printStackTrace();
 					}
 				}
 			}
-		
-			Collections.sort(this.items, new Comparator<String>() 
+
+			Collections.sort(this.items, new Comparator<String>()
 			{
 				@Override
-				public int compare(String object1, String object2) 
+				public int compare(String object1, String object2)
 				{
 					return object1.compareToIgnoreCase(object2);
 				}
 			});
-			
+
 			this.currentPath = newDir;
-			
+
 			this.adapter.notifyDataSetChanged();
-			
+
 			this.editText.setText(this.currentPath.getAbsolutePath());
 		}
 	}
-	
+
 	private boolean isRoot(File newDir)
 	{
 		return (this.currentRoot.equals(newDir));
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		
+
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			PreferenceManager.getDefaultSharedPreferences(this).edit().putString("saveToPref", "" + this.old_value).commit();
+			PreferenceManager.getDefaultSharedPreferences(this).edit().putString("saveToPref", "" + this.old_value)
+					.commit();
 		}
-		
-		
+
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	private boolean isCurrentPathWritable()
 	{
 		try
@@ -390,95 +357,90 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 			{
 				return true;
 			}
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
-			
+
 		}
-		
+
 		return false;
 	}
 
 	@Override
-	public void onClick(View v) 
-	{		
+	public void onClick(View v)
+	{
 		if (v == this.buttonPick)
-		{		
+		{
 			if (this.isCurrentPathWritable())
 			{
-				PreferenceManager.getDefaultSharedPreferences(this).edit().putString(
-						MainScreen.sSavePathPref, 
-						this.currentPath.getAbsolutePath()).commit();
-				
+				PreferenceManager.getDefaultSharedPreferences(this).edit()
+						.putString(MainScreen.sSavePathPref, this.currentPath.getAbsolutePath()).commit();
+
 				this.finish();
-			}
-			else
+			} else
 			{
 				AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 				alertDialog.setTitle(R.string.choose_folder_alert_0);
 				alertDialog.setMessage(this.getResources().getString(R.string.choose_folder_alert_1));
-				alertDialog.setButton(this.getResources().getString(R.string.choose_folder_alert_2), 
-						new DialogInterface.OnClickListener() 
-				{
-				   public void onClick(DialogInterface dialog, int which) 
-				   {}
-				});
+				alertDialog.setButton(this.getResources().getString(R.string.choose_folder_alert_2),
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int which)
+							{
+							}
+						});
 				alertDialog.setIcon(R.drawable.alert_dialog_icon);
 				alertDialog.show();
-	
+
 			}
-		}
-		else if (v == this.buttonNewFolder)
+		} else if (v == this.buttonNewFolder)
 		{
 			if (this.isCurrentPathWritable())
 			{
 				this.showCreateFolderDialog("A Better Camera");
-			}
-			else
+			} else
 			{
 				AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 				alertDialog.setTitle(R.string.choose_folder_alert_0);
 				alertDialog.setMessage(this.getResources().getString(R.string.choose_folder_alert_1_2));
-				alertDialog.setButton(this.getResources().getString(R.string.choose_folder_alert_2), 
-						new DialogInterface.OnClickListener() 
-				{
-				   public void onClick(DialogInterface dialog, int which) 
-				   {}
-				});
+				alertDialog.setButton(this.getResources().getString(R.string.choose_folder_alert_2),
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int which)
+							{
+							}
+						});
 				alertDialog.setIcon(R.drawable.alert_dialog_icon);
 				alertDialog.show();
-	
+
 			}
 		}
 	}
-	    	
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		if (!this.isRoot(this.currentPath))
 		{
 			if (position != 0)
 			{
-				this.refreshItems(new File(this.currentPath.getAbsoluteFile() + File.separator + items.get(position - 1)));
-			}
-			else
+				this.refreshItems(new File(this.currentPath.getAbsoluteFile() + File.separator
+						+ items.get(position - 1)));
+			} else
 			{
 				this.refreshItems(this.currentPath.getParentFile());
 			}
-		}
-		else
+		} else
 		{
 			this.refreshItems(new File(this.currentPath.getAbsoluteFile() + File.separator + items.get(position)));
 		}
 	}
-	
+
 	private class FolderPickerAdapter extends BaseAdapter
 	{
-		private LayoutInflater inflater = LayoutInflater.from(FolderPicker.this);
-		
+		private LayoutInflater	inflater	= LayoutInflater.from(FolderPicker.this);
+
 		@Override
-		public int getCount() 
+		public int getCount()
 		{
 			return (FolderPicker.this.items.size() + (FolderPicker.this.isRoot(FolderPicker.this.currentPath) ? 0 : 1));
 		}
@@ -490,40 +452,43 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 		}
 
 		@Override
-		public long getItemId(int position) 
+		public long getItemId(int position)
 		{
 			return position;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) 
+		public View getView(int position, View convertView, ViewGroup parent)
 		{
 			if (convertView == null)
 			{
 				convertView = this.inflater.inflate(R.layout.folderpicker_cell, null);
 			}
-			
+
 			if (!FolderPicker.this.isRoot(FolderPicker.this.currentPath))
 			{
 				if (position == 0)
 				{
-					((ImageView)convertView.findViewById(R.id.folderpicker_cell_icon)).setImageResource(R.drawable.ic_menu_back);
-					((TextView)convertView.findViewById(R.id.folderpicker_cell_text)).setText("...");
-				}
-				else
+					((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
+							.setImageResource(R.drawable.ic_menu_back);
+					((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText("...");
+				} else
 				{
-					((ImageView)convertView.findViewById(R.id.folderpicker_cell_icon)).setImageResource(R.drawable.ic_menu_archive);
-					((TextView)convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items.get(position - 1));
+					((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
+							.setImageResource(R.drawable.ic_menu_archive);
+					((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items
+							.get(position - 1));
 				}
-			}
-			else
+			} else
 			{
-				((ImageView)convertView.findViewById(R.id.folderpicker_cell_icon)).setImageResource(R.drawable.ic_menu_archive);
-				((TextView)convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items.get(position));
+				((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
+						.setImageResource(R.drawable.ic_menu_archive);
+				((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items
+						.get(position));
 			}
-			
+
 			return convertView;
 		}
-		
+
 	}
 }

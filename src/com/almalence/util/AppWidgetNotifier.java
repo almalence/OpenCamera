@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.util;
 
@@ -33,16 +33,17 @@ import android.widget.TextView;
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
+
 //-+- -->
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 
 public class AppWidgetNotifier
 {
-	private static final int DAYS_UNTIL_PROMPT = 0;
-	private static final int LAUNCHES_UNTIL_PROMPT = 2;
+	private static final int	DAYS_UNTIL_PROMPT		= 0;
+	private static final int	LAUNCHES_UNTIL_PROMPT	= 2;
 
 	public static void app_launched(Activity mContext)
 	{
@@ -68,49 +69,47 @@ public class AppWidgetNotifier
 
 		editor.commit();
 	}
-	
+
 	public static final boolean isABCWidgetInstalled(Activity activity)
-    {
-        try
-        {
-        	activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
-        }
-        catch (IllegalArgumentException e)
-        {
-        	return false;
-        }
-        
-        return true;
-    }
-	
+	{
+		try
+		{
+			activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
+		} catch (IllegalArgumentException e)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 	public static boolean showNotifierDialogIfNeeded(final Activity mContext)
 	{
-		//check if installed
+		// check if installed
 		if (isABCWidgetInstalled(MainScreen.getInstance()))
 		{
 			return false;
 		}
-		
+
 		final SharedPreferences prefs = mContext.getSharedPreferences("appwidgetnotifier", 0);
 		if (prefs.getBoolean("dontshowagainwidgetnotifier", false))
 		{
 			return false;
 		}
-		
+
 		final long launch_count = prefs.getLong("launch_count_widgetnotifier", 0) + 1;
 		final Long date_firstLaunch = prefs.getLong("date_firstlaunch_widgetnotifier", 0);
-		
+
 		if (launch_count >= LAUNCHES_UNTIL_PROMPT)
 		{
-			if (System.currentTimeMillis() >= date_firstLaunch
-					+ (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+			if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 			{
 				showNotifierDialog(mContext, prefs);
-				
+
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -120,16 +119,16 @@ public class AppWidgetNotifier
 
 		LinearLayout ll = new LinearLayout(mContext);
 		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
-		
+		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+
 		ImageView img = new ImageView(mContext);
 		img.setImageResource(R.drawable.widget_adv);
 		ll.addView(img);
-		
+
 		TextView tv = new TextView(mContext);
 		tv.setText("Do you know that you can launch A Better Camera straight into desired mode (be it video or hdr or else)? \nAll you need is our free Widget.");
-		tv.setWidth((int)(250 * density));
-		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
+		tv.setWidth((int) (250 * density));
+		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button b1 = new Button(mContext);
@@ -139,7 +138,7 @@ public class AppWidgetNotifier
 		Button b3 = new Button(mContext);
 		b3.setText("No");
 		ll.addView(b3);
-		
+
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
@@ -151,20 +150,20 @@ public class AppWidgetNotifier
 				mContext.finish();
 			}
 		});
-		
+
 		b1.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
 			{
 				MainScreen.callStoreWidgetInstall(mContext);
-				
+
 				if (prefs != null)
 				{
 					prefs.edit().putBoolean("dontshowagainwidgetnotifier", true).commit();
-					
+
 					mContext.finish();
 				}
-				
+
 				dialog.dismiss();
 			}
 		});
@@ -176,14 +175,14 @@ public class AppWidgetNotifier
 				if (prefs != null)
 				{
 					prefs.edit().putBoolean("dontshowagainwidgetnotifier", true).commit();
-					
+
 					mContext.finish();
 				}
-				
+
 				dialog.dismiss();
 			}
 		});
-		
+
 		dialog.show();
 	}
 }

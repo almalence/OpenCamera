@@ -19,20 +19,19 @@ package com.almalence.util;
 /**
  * Collection of utility functions used in this package.
  */
-public class HeapUtil {
-	
-    /**
-     * Return information about native heap memory:
-     *
-     * [0] = megabytes used
-     * [1] = megabytes free
-     */
-    public static native int[] getMemoryInfo();
-    
-   
-    static
+public class HeapUtil
+{
+
+	/**
+	 * Return information about native heap memory:
+	 * 
+	 * [0] = megabytes used [1] = megabytes free
+	 */
+	public static native int[] getMemoryInfo();
+
+	static
 	{
-    	System.loadLibrary("utils-image");
+		System.loadLibrary("utils-image");
 		System.loadLibrary("utils-jni");
 	}
 }

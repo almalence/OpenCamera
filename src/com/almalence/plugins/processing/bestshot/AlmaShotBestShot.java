@@ -14,25 +14,26 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.processing.bestshot;
 
 public final class AlmaShotBestShot
 {
 	public static synchronized native String Initialize();
-    public static synchronized native int Release();
-    
-    public static synchronized native String ConvertFromJpeg(
-    		int[] frame, int[] frame_len, int nFrames, int sx, int sy);
-    public static synchronized native String AddYUVFrames(int[] frame, int nFrames, int sx, int sy);
 
-    public static synchronized native int BestShotProcess(int nFrames, int sx, int sy);
-    
-    static 
-    {
-    	System.loadLibrary("utils-image");
+	public static synchronized native int Release();
+
+	public static synchronized native String ConvertFromJpeg(int[] frame, int[] frame_len, int nFrames, int sx, int sy);
+
+	public static synchronized native String AddYUVFrames(int[] frame, int nFrames, int sx, int sy);
+
+	public static synchronized native int BestShotProcess(int nFrames, int sx, int sy);
+
+	static
+	{
+		System.loadLibrary("utils-image");
 		System.loadLibrary("almalib");
 		System.loadLibrary("bestshot");
-    }
+	}
 }

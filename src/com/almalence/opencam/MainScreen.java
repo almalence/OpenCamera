@@ -2565,7 +2565,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", false);
 		if (!isSaving)
-		{			
+		{
 			prefsEditor.putInt("EvCompensationValue", 0);
 			prefsEditor.commit();
 		}

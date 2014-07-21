@@ -14,15 +14,15 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-//-+- -->
 
+//-+- -->
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -57,53 +57,51 @@ import com.almalence.asynctaskmanager.Task;
 import com.almalence.opencam.cameracontroller.CameraController;
 
 /***
-Abstract class for plugins
-***/
+ * Abstract class for plugins
+ ***/
 
-public abstract class Plugin 
+public abstract class Plugin
 {
-	//unique plugin id
-	public String ID;
-	//preferences file name - file distributed with plugin - analog of preference.xml - should be also with unique name.
-	private int prefName = 0;
-	
-	//name of advanced preference file.
-	//each plugin can shot it's preference by type + can add advanced preferences for expert users
-	private int advancedPrefName = 0;
-	
-	//indicates if plugin has preferences and want to show it. Default - false (no settings to show)
-	// plugin should set this to true if want to show preferences
-	protected boolean isShowPreferences=false;
-	
-	//ID of icon and title for creating quick control button
-	//Each plugin may have only one quick control button
-	public int quickControlIconID = -1;
-	public String quickControlTitle = "";
-	public View quickControlView = null;
-	
-	protected static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
+	// unique plugin id
+	public String					ID;
+	// preferences file name - file distributed with plugin - analog of
+	// preference.xml - should be also with unique name.
+	private int						prefName			= 0;
 
-	protected long SessionID=0;
-	
-	protected int requestID = -1;
-	
-	public enum ViewfinderZone {
-		
-		//6 zones of ordinary controls
-		VIEWFINDER_ZONE_TOP_LEFT,
-		VIEWFINDER_ZONE_TOP_RIGHT,		
-		VIEWFINDER_ZONE_CENTER_RIGHT,
-		VIEWFINDER_ZONE_BOTTOM_RIGHT,
-		VIEWFINDER_ZONE_BOTTOM_LEFT,
-		VIEWFINDER_ZONE_CENTER_LEFT,
-		
-		//Center screen controls
-		VIEWFINDER_ZONE_FULLSCREEN,
-		VIEWFINDER_ZONE_CENTER;
-		
+	// name of advanced preference file.
+	// each plugin can shot it's preference by type + can add advanced
+	// preferences for expert users
+	private int						advancedPrefName	= 0;
+
+	// indicates if plugin has preferences and want to show it. Default - false
+	// (no settings to show)
+	// plugin should set this to true if want to show preferences
+	protected boolean				isShowPreferences	= false;
+
+	// ID of icon and title for creating quick control button
+	// Each plugin may have only one quick control button
+	public int						quickControlIconID	= -1;
+	public String					quickControlTitle	= "";
+	public View						quickControlView	= null;
+
+	protected static final String	TIME_STAMP_NAME		= "'IMG'_yyyyMMdd_HHmmss";
+
+	protected long					SessionID			= 0;
+
+	protected int					requestID			= -1;
+
+	public enum ViewfinderZone
+	{
+
+		// 6 zones of ordinary controls
+		VIEWFINDER_ZONE_TOP_LEFT, VIEWFINDER_ZONE_TOP_RIGHT, VIEWFINDER_ZONE_CENTER_RIGHT, VIEWFINDER_ZONE_BOTTOM_RIGHT, VIEWFINDER_ZONE_BOTTOM_LEFT, VIEWFINDER_ZONE_CENTER_LEFT,
+
+		// Center screen controls
+		VIEWFINDER_ZONE_FULLSCREEN, VIEWFINDER_ZONE_CENTER;
+
 		public static int getInt(ViewfinderZone value)
 		{
-			switch(value)
+			switch (value)
 			{
 			case VIEWFINDER_ZONE_TOP_LEFT:
 				return 0;
@@ -117,98 +115,150 @@ public abstract class Plugin
 				return 4;
 			case VIEWFINDER_ZONE_CENTER_LEFT:
 				return 5;
-				
-			default: return 7;
+
+			default:
+				return 7;
 			}
-			
+
 		}
 	}
-	
-	//Views (generally a Buttons) for GUI
-	protected Map<View, ViewfinderZone> pluginViews;
-	
-	//Informational views
-	protected List<View> infoViews;
-	
-	//Postprocessing view. Actually a layout
-	protected View postProcessingView = null;
-	
-	public Plugin(String sID, int preferenceID, int advancedPreferenceID, int quickControlID, String quickControlInitTitle)
+
+	// Views (generally a Buttons) for GUI
+	protected Map<View, ViewfinderZone>	pluginViews;
+
+	// Informational views
+	protected List<View>				infoViews;
+
+	// Postprocessing view. Actually a layout
+	protected View						postProcessingView	= null;
+
+	public Plugin(String sID, int preferenceID, int advancedPreferenceID, int quickControlID,
+			String quickControlInitTitle)
 	{
-		ID=sID;
-		
-		if(preferenceID != 0)
+		ID = sID;
+
+		if (preferenceID != 0)
 		{
-			setPreferenceName(preferenceID);		
-			isShowPreferences=true;
+			setPreferenceName(preferenceID);
+			isShowPreferences = true;
 		}
-		
+
 		setAdvancedPreferenceName(advancedPreferenceID);
-		
+
 		quickControlIconID = quickControlID;
 		quickControlTitle = quickControlInitTitle;
-		
+
 		pluginViews = new Hashtable<View, ViewfinderZone>();
 		infoViews = new ArrayList<View>();
 	}
-	
-	//base onCreate stage;
-	public void onCreate(){}
-		
-	//base onStart stage;
-	public void onStart(){}
-	public void onStartProcessing(long SessionID){}
-	public void onStartPostProcessing(){}
-	
-	//base onStop stage;
-	public void onStop(){}
-    
-    //base onDestroy stage
-	public void onDestroy(){}
 
-    //base onResume stage
-	public void onResume(){}
+	// base onCreate stage;
+	public void onCreate()
+	{
+	}
 
-    //base onPause stage
-	public void onPause(){}
-	
-	//base onGUIStart stage
-	public void onGUICreate(){}
+	// base onStart stage;
+	public void onStart()
+	{
+	}
 
-	public void onShowPreferences(){}
-	
-	public void onShutterClick(){}
-	
-	public void onFocusButtonClick(){}
-	
-	public boolean onTouch(View view, MotionEvent e){return false;}
-	
-	public void onOrientationChanged(int orientation){}
-	
-	public boolean onKeyDown(int keyCode, KeyEvent event){return false;}
-	
-/******************************************************************************************************
-	VF/Capture Interfaces
-******************************************************************************************************/
-	public void onAutoFocus(boolean paramBoolean){}
-	
-	public void takePicture(){}
-	
-	public void onShutter(){}
-	
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera){}
-	
-	public void onImageAvailable(Image im){}
-	
+	public void onStartProcessing(long SessionID)
+	{
+	}
+
+	public void onStartPostProcessing()
+	{
+	}
+
+	// base onStop stage;
+	public void onStop()
+	{
+	}
+
+	// base onDestroy stage
+	public void onDestroy()
+	{
+	}
+
+	// base onResume stage
+	public void onResume()
+	{
+	}
+
+	// base onPause stage
+	public void onPause()
+	{
+	}
+
+	// base onGUIStart stage
+	public void onGUICreate()
+	{
+	}
+
+	public void onShowPreferences()
+	{
+	}
+
+	public void onShutterClick()
+	{
+	}
+
+	public void onFocusButtonClick()
+	{
+	}
+
+	public boolean onTouch(View view, MotionEvent e)
+	{
+		return false;
+	}
+
+	public void onOrientationChanged(int orientation)
+	{
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		return false;
+	}
+
+	/******************************************************************************************************
+	 * VF/Capture Interfaces
+	 ******************************************************************************************************/
+	public void onAutoFocus(boolean paramBoolean)
+	{
+	}
+
+	public void takePicture()
+	{
+	}
+
+	public void onShutter()
+	{
+	}
+
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	{
+	}
+
+	public void onImageAvailable(Image im)
+	{
+	}
+
 	@TargetApi(19)
-	public void onCaptureCompleted(CaptureResult result){}
-	
-	public void onPreviewAvailable(Image im){}
+	public void onCaptureCompleted(CaptureResult result)
+	{
+	}
 
-	public void onPreviewFrame(byte[] data, Camera paramCamera){}
-	
-	private int MIN_MPIX_SUPPORTED = 1280 * 960;
-		
+	public void onPreviewAvailable(Image im)
+	{
+	}
+
+	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	{
+	}
+
+	private int	MIN_MPIX_SUPPORTED	= 1280 * 960;
+
 	public void selectImageDimension()
 	{
 		// ----- Figure how much memory do we have and possibly limit resolution
@@ -218,24 +268,23 @@ public abstract class Plugin
 												// 1Mb - safe reserve
 
 		// find index selected in preferences
-    	int prefIdx = -1;
-    	try
-    	{
-    		prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
-    	}
-    	catch (IndexOutOfBoundsException e)
-    	{
-    		prefIdx = -1;
-    	}
+		int prefIdx = -1;
+		try
+		{
+			prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
+		} catch (IndexOutOfBoundsException e)
+		{
+			prefIdx = -1;
+		}
 
-    	List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
-		//add 8 Mpix for rear camera for HTC One X
-		if(Build.MODEL.contains("HTC One X"))
+		List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
+		// add 8 Mpix for rear camera for HTC One X
+		if (Build.MODEL.contains("HTC One X"))
 		{
 			if (!CameraController.isFrontCamera())
 			{
-				CameraController.Size additional= null;
-				additional= CameraController.getInstance().new Size(3264, 2448);
+				CameraController.Size additional = null;
+				additional = CameraController.getInstance().new Size(3264, 2448);
 				additional.setWidth(3264);
 				additional.setHeight(2448);
 				cs.add(additional);
@@ -253,29 +302,32 @@ public abstract class Plugin
 
 		// figure default resolution
 		int ii = 0;
-		for(CameraController.Size s : cs)
+		for (CameraController.Size s : cs)
 		{
 			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((mpix >= MIN_MPIX_SUPPORTED)
-					&& (mpix < maxMpix)) {
-				if (mpix > Capture5mMpix) {
+			if ((mpix >= MIN_MPIX_SUPPORTED) && (mpix < maxMpix))
+			{
+				if (mpix > Capture5mMpix)
+				{
 					Capture5mIdx = ii;
 					Capture5mMpix = mpix;
 					Capture5mWidth = s.getWidth();
 					Capture5mHeight = s.getHeight();
 				}
 			}
-			
+
 			ii++;
 		}
 
 		ii = 0;
-		for(CameraController.Size s : cs)
+		for (CameraController.Size s : cs)
 		{
 			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii)) == prefIdx) && (mpix >= MIN_MPIX_SUPPORTED)) {
+			if ((Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii)) == prefIdx)
+					&& (mpix >= MIN_MPIX_SUPPORTED))
+			{
 				prefFound = true;
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
@@ -284,19 +336,21 @@ public abstract class Plugin
 				break;
 			}
 
-			if (mpix > CaptureMpix) {
+			if (mpix > CaptureMpix)
+			{
 				CaptureIdx = ii;
 				CaptureMpix = mpix;
 				CaptureWidth = s.getWidth();
 				CaptureHeight = s.getHeight();
 			}
-			
+
 			ii++;
 		}
 
 		// default to about 5Mpix if nothing is set in preferences or maximum
 		// resolution is above memory limits
-		if (Capture5mMpix > 0) {
+		if (Capture5mMpix > 0)
+		{
 			if (!prefFound)
 			{
 				CaptureIdx = Capture5mIdx;
@@ -309,51 +363,51 @@ public abstract class Plugin
 		CameraController.setCameraImageSizeIndex(CaptureIdx);
 		MainScreen.setImageWidth(CaptureWidth);
 		MainScreen.setImageHeight(CaptureHeight);
-		
+
 		MainScreen.setSaveImageWidth(CaptureWidth);
 		MainScreen.setSaveImageHeight(CaptureHeight);
 	}
-	
-	public void setCameraPreviewSize(Camera.Parameters cp) {
+
+	public void setCameraPreviewSize(Camera.Parameters cp)
+	{
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
-		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(),
-				MainScreen.getImageHeight());
+		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setPreviewSize(os.getWidth(), os.getHeight());
 		try
-        {
+		{
 			CameraController.getInstance().setCameraParameters(cp);
+		} catch (RuntimeException e)
+		{
+			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 		}
-		catch(RuntimeException e)
-	    {
-	    	Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
-	    }
 	}
-	
-	//Used only in old camera interface (HALv3 don't use it)
-	public void setCameraPictureSize() {
+
+	// Used only in old camera interface (HALv3 don't use it)
+	public void setCameraPictureSize()
+	{
 		Camera camera = CameraController.getCamera();
-    	if (null==camera)
-    		return;
-    	
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-    	int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
-    	
+		if (null == camera)
+			return;
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		cp.setJpegQuality(jpegQuality);
 		try
-        {
+		{
 			CameraController.getInstance().setCameraParameters(cp);
+		} catch (RuntimeException e)
+		{
+			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 		}
-		catch(RuntimeException e)
-	    {
-	    	Log.e("CameraTest", "MainScreen.setupCamera unable setParameters "+e.getMessage());	
-	    }
 	}
-	
+
 	// from google example
-	protected CameraController.Size getOptimalPreviewSize(List<CameraController.Size> sizes, int w, int h) {
+	protected CameraController.Size getOptimalPreviewSize(List<CameraController.Size> sizes, int w, int h)
+	{
 		final double ASPECT_TOLERANCE = 0.05;
 		double targetRatio = (double) w / h;
 		if (sizes == null)
@@ -365,21 +419,26 @@ public abstract class Plugin
 		int targetHeight = h;
 
 		// Try to find an size match aspect ratio and size
-		for (CameraController.Size size : sizes) {
+		for (CameraController.Size size : sizes)
+		{
 			double ratio = (double) size.getWidth() / size.getHeight();
 			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
 				continue;
-			if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
+			if (Math.abs(size.getHeight() - targetHeight) < minDiff)
+			{
 				optimalSize = size;
 				minDiff = Math.abs(size.getHeight() - targetHeight);
 			}
 		}
 
 		// Cannot find the one match the aspect ratio, ignore the requirement
-		if (optimalSize == null) {
+		if (optimalSize == null)
+		{
 			minDiff = Double.MAX_VALUE;
-			for (CameraController.Size size : sizes) {
-				if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
+			for (CameraController.Size size : sizes)
+			{
+				if (Math.abs(size.getHeight() - targetHeight) < minDiff)
+				{
 					optimalSize = size;
 					minDiff = Math.abs(size.getHeight() - targetHeight);
 				}
@@ -387,202 +446,308 @@ public abstract class Plugin
 		}
 		return optimalSize;
 	}
-	
-	//called after camera parameters setup
-	public void onCameraSetup(){}
-	
-	//called to set specific plugin's camera parameters
-	public void setupCameraParameters(){}	
-		
-	//called before camera parameters setup - to set plugin specific options
-	public void onCameraParametersSetup(){}	
-	
-	// Called for each plugin on first camera startup. Camera setup is guaranteed when it's called.
-	public void onDefaultsSelect() { }
-	
-	public void onCaptureFinished() { }
 
-	//return true in implementation of plugin if plugin can call onShutterClick with delay, specified in general settings.
-	public boolean delayedCaptureSupported(){return false;}
-	
-/******************************************************************************************************
-	Processing Interfaces
-******************************************************************************************************/
-	public void startProcessing(){}
-	
-	//called on task complete
-	public void onTaskComplete(Task task){}
-	
-	//called on intermediate result ready. For example if during processing some preview available
-	public void onPreviewComplete(Task task){}
-	
-	public void onClick(View v){}
-	
-	//onBroadcast message - receives broadcast message.
-	//if message ignored - return false (continue onBroadcast)
-	//if message needed and no need to send it further - return true (stop onBroadcast)
-	//if message needed and need to send it further - return false (continue onBroadcast)
+	// called after camera parameters setup
+	public void onCameraSetup()
+	{
+	}
+
+	// called to set specific plugin's camera parameters
+	public void setupCameraParameters()
+	{
+	}
+
+	// called before camera parameters setup - to set plugin specific options
+	public void onCameraParametersSetup()
+	{
+	}
+
+	// Called for each plugin on first camera startup. Camera setup is
+	// guaranteed when it's called.
+	public void onDefaultsSelect()
+	{
+	}
+
+	public void onCaptureFinished()
+	{
+	}
+
+	// return true in implementation of plugin if plugin can call onShutterClick
+	// with delay, specified in general settings.
+	public boolean delayedCaptureSupported()
+	{
+		return false;
+	}
+
+	/******************************************************************************************************
+	 * Processing Interfaces
+	 ******************************************************************************************************/
+	public void startProcessing()
+	{
+	}
+
+	// called on task complete
+	public void onTaskComplete(Task task)
+	{
+	}
+
+	// called on intermediate result ready. For example if during processing
+	// some preview available
+	public void onPreviewComplete(Task task)
+	{
+	}
+
+	public void onClick(View v)
+	{
+	}
+
+	// onBroadcast message - receives broadcast message.
+	// if message ignored - return false (continue onBroadcast)
+	// if message needed and no need to send it further - return true (stop
+	// onBroadcast)
+	// if message needed and need to send it further - return false (continue
+	// onBroadcast)
 	public boolean onBroadcast(int arg1, int arg2)
 	{
 		return false;
 	}
-	
-	//supplementary methods
+
+	// supplementary methods
 	public String getID()
 	{
 		return ID;
 	}
-	
+
 	public void setPreferenceName(int id)
 	{
 		prefName = id;
 	}
-	
+
 	public void setAdvancedPreferenceName(int id)
 	{
 		advancedPrefName = id;
 	}
-	
+
 	public int getPreferenceName()
 	{
 		return prefName;
 	}
-	
+
 	public int getAdvancedPreferenceName()
 	{
 		return advancedPrefName;
 	}
-	
-	//show preference's value in summary on start 
+
+	// show preference's value in summary on start
 	public void showInitialSummary(PreferenceActivity prefActivity)
 	{
-		for(int i=0;i<prefActivity.getPreferenceScreen().getPreferenceCount();i++)
+		for (int i = 0; i < prefActivity.getPreferenceScreen().getPreferenceCount(); i++)
 		{
-		    initSummary(prefActivity.getPreferenceScreen().getPreference(i));
+			initSummary(prefActivity.getPreferenceScreen().getPreference(i));
 		}
 		onPreferenceCreate(prefActivity);
 	}
-	
+
 	public void showInitialSummary(PreferenceFragment preferenceFragment)
 	{
-		for(int i=0;i<preferenceFragment.getPreferenceScreen().getPreferenceCount();i++)
+		for (int i = 0; i < preferenceFragment.getPreferenceScreen().getPreferenceCount(); i++)
 		{
-		    initSummary(preferenceFragment.getPreferenceScreen().getPreference(i));
+			initSummary(preferenceFragment.getPreferenceScreen().getPreference(i));
 		}
 		onPreferenceCreate(preferenceFragment);
 	}
-	
+
 	private void initSummary(Preference p)
 	{
 		if (p instanceof PreferenceCategory)
 		{
-		    PreferenceCategory pCat = (PreferenceCategory)p;
-		    for(int i=0;i<pCat.getPreferenceCount();i++)
-		    {
-		    	initSummary(pCat.getPreference(i));
-		    }
+			PreferenceCategory pCat = (PreferenceCategory) p;
+			for (int i = 0; i < pCat.getPreferenceCount(); i++)
+			{
+				initSummary(pCat.getPreference(i));
+			}
+		} else
+		{
+			updatePrefSummary(p);
 		}
-		else
-   		{
-   			updatePrefSummary(p);
-   		}
 	}
-		 
+
 	public void updatePrefSummary(Preference p)
 	{
-		if (p instanceof ListPreference) 
+		if (p instanceof ListPreference)
 		{
-			ListPreference listPref = (ListPreference) p; 
-			p.setSummary(listPref.getEntry()); 
+			ListPreference listPref = (ListPreference) p;
+			p.setSummary(listPref.getEntry());
 		}
-		if (p instanceof EditTextPreference) 
+		if (p instanceof EditTextPreference)
 		{
-			EditTextPreference editTextPref = (EditTextPreference) p; 
-			if(p.getKey().equalsIgnoreCase("editKey"))
+			EditTextPreference editTextPref = (EditTextPreference) p;
+			if (p.getKey().equalsIgnoreCase("editKey"))
 			{
-				p.setSummary("*****"); 
-			}
-			else 
+				p.setSummary("*****");
+			} else
 			{
-				p.setSummary(editTextPref.getText()); 
+				p.setSummary(editTextPref.getText());
 			}
 		}
- 	}
-	
-	//method can be used to create some additional preferences programmatically 
-	public void onPreferenceCreate(PreferenceActivity prefActivity){}
-	
-	public void onPreferenceCreate(PreferenceFragment preferenceFragment){}
-	
+	}
+
+	// method can be used to create some additional preferences programmatically
+	public void onPreferenceCreate(PreferenceActivity prefActivity)
+	{
+	}
+
+	public void onPreferenceCreate(PreferenceFragment preferenceFragment)
+	{
+	}
+
 	public boolean ShowPreferences()
 	{
 		return isShowPreferences;
 	}
-	
-	//called for multishot plugin to obtain bitmap at specific index
-	public Bitmap getMultishotBitmap(int index) {return null;}
-	public Bitmap getScaledMultishotBitmap(int index, int scaled_width, int scaled_height){return null;}
-	public int getResultYUV(int index){return -1;}
-	public int getMultishotImageCount(){return 0;}
-	public boolean isPostProcessingNeeded(){return false;}
 
+	// called for multishot plugin to obtain bitmap at specific index
+	public Bitmap getMultishotBitmap(int index)
+	{
+		return null;
+	}
 
-/******************************************************************************************************
-Export Interface
-******************************************************************************************************/
+	public Bitmap getScaledMultishotBitmap(int index, int scaled_width, int scaled_height)
+	{
+		return null;
+	}
+
+	public int getResultYUV(int index)
+	{
+		return -1;
+	}
+
+	public int getMultishotImageCount()
+	{
+		return 0;
+	}
+
+	public boolean isPostProcessingNeeded()
+	{
+		return false;
+	}
+
+	/******************************************************************************************************
+	 * Export Interface
+	 ******************************************************************************************************/
 	public void onExportActive(long SessionID)
-	{}
-	
-	//called when export finished to clean all allocated memory
+	{
+	}
+
+	// called when export finished to clean all allocated memory
 	public void freeMemory()
-	{}
-	
+	{
+	}
+
 	public void onExportFinished()
-	{}
-	
-/******************************************************************************************************
-	GUI Interface
-******************************************************************************************************/
-	//method is used by children of class Plugin
-	protected void clearViews(){pluginViews.clear();}
-	protected void addView(View view, ViewfinderZone position){pluginViews.put(view, position);}
-	protected void addView(View view){pluginViews.put(view, ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);}
-	protected void removeView(View view){pluginViews.remove(view);}
-	
-	//used by GUIManager to obtain list of view for current plugin
-	public Map<View, ViewfinderZone> getPluginViews(){return pluginViews;}
-	
-	
-	//method is used by children of class Plugin
-	protected void clearInfoViews(){infoViews.clear();}
-	protected void addInfoView(View view){infoViews.add(view);}
-	protected void removeInfoView(View view){infoViews.remove(view);}
-	
-	//used by GUIManager to obtain list of view for current plugin
-	public List<View> getInfoViews(){return infoViews;}
-	
-	public View getPostProcessingView(){return postProcessingView;}
-	
-	//Quick control interfaces
-	public int getQuickControlIconID(){return quickControlIconID;}
-	public String getQuickControlTitle(){return quickControlTitle;}
-	public void onQuickControlClick(){}
+	{
+	}
+
+	/******************************************************************************************************
+	 * GUI Interface
+	 ******************************************************************************************************/
+	// method is used by children of class Plugin
+	protected void clearViews()
+	{
+		pluginViews.clear();
+	}
+
+	protected void addView(View view, ViewfinderZone position)
+	{
+		pluginViews.put(view, position);
+	}
+
+	protected void addView(View view)
+	{
+		pluginViews.put(view, ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);
+	}
+
+	protected void removeView(View view)
+	{
+		pluginViews.remove(view);
+	}
+
+	// used by GUIManager to obtain list of view for current plugin
+	public Map<View, ViewfinderZone> getPluginViews()
+	{
+		return pluginViews;
+	}
+
+	// method is used by children of class Plugin
+	protected void clearInfoViews()
+	{
+		infoViews.clear();
+	}
+
+	protected void addInfoView(View view)
+	{
+		infoViews.add(view);
+	}
+
+	protected void removeInfoView(View view)
+	{
+		infoViews.remove(view);
+	}
+
+	// used by GUIManager to obtain list of view for current plugin
+	public List<View> getInfoViews()
+	{
+		return infoViews;
+	}
+
+	public View getPostProcessingView()
+	{
+		return postProcessingView;
+	}
+
+	// Quick control interfaces
+	public int getQuickControlIconID()
+	{
+		return quickControlIconID;
+	}
+
+	public String getQuickControlTitle()
+	{
+		return quickControlTitle;
+	}
+
+	public void onQuickControlClick()
+	{
+	}
+
 	public void refreshQuickControl()
 	{
 		if (this.quickControlView != null)
 		{
 			int icon_id = this.getQuickControlIconID();
 			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_id);
-			((ImageView)this.quickControlView.findViewById(R.id.imageView)).setImageDrawable(icon);
+			((ImageView) this.quickControlView.findViewById(R.id.imageView)).setImageDrawable(icon);
 		}
 	}
-	
-/******************************************************************************************************
-	OpenGL layer functions
-******************************************************************************************************/
-	
-	public boolean isGLSurfaceNeeded(){return false;}
-	public void onGLSurfaceCreated(GL10 gl, EGLConfig config){}	
-	public void onGLSurfaceChanged(GL10 gl, int width, int height){}	
-	public void onGLDrawFrame(GL10 gl){}
+
+	/******************************************************************************************************
+	 * OpenGL layer functions
+	 ******************************************************************************************************/
+
+	public boolean isGLSurfaceNeeded()
+	{
+		return false;
+	}
+
+	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
+	{
+	}
+
+	public void onGLSurfaceChanged(GL10 gl, int width, int height)
+	{
+	}
+
+	public void onGLDrawFrame(GL10 gl)
+	{
+	}
 }

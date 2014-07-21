@@ -14,27 +14,37 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.util;
 
-public class Size {
-	private int width;
-	private int height;
-	public Size(int w, int h) {
+public class Size
+{
+	private int	width;
+	private int	height;
+
+	public Size(int w, int h)
+	{
 		width = w;
 		height = h;
 	}
-	public boolean isValid() {
-		if (width > 0 && height > 0) {
+
+	public boolean isValid()
+	{
+		if (width > 0 && height > 0)
+		{
 			return true;
 		}
 		return false;
 	}
-	public int getWidth() {
+
+	public int getWidth()
+	{
 		return width;
 	}
-	public int getHeight() {
+
+	public int getHeight()
+	{
 		return height;
 	}
 }

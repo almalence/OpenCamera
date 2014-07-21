@@ -14,25 +14,22 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
-
 /***
-Currently available plugin types
-***/
+ * Currently available plugin types
+ ***/
 
-public enum PluginType {
+public enum PluginType
+{
 
-	ViewFinder,
-	Capture,
-	Processing,
-	Filter,
-	Export
+	ViewFinder, Capture, Processing, Filter, Export
 }

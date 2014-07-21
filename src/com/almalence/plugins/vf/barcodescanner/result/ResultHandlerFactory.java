@@ -24,36 +24,41 @@ import com.google.zxing.client.result.ResultParser;
 
 /**
  * Manufactures Android-specific handlers based on the barcode content's type.
- *
+ * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class ResultHandlerFactory {
-  private ResultHandlerFactory() {
-  }
+public final class ResultHandlerFactory
+{
+	private ResultHandlerFactory()
+	{
+	}
 
-  public static ResultHandler makeResultHandler(Activity activity, Result rawResult) {
-    ParsedResult result = parseResult(rawResult);
-    switch (result.getType()) {
-      case EMAIL_ADDRESS:
-        return new EmailAddressResultHandler(activity, result);
-      case PRODUCT:
-        return new ProductResultHandler(activity, result, rawResult);
-      case URI:
-        return new URIResultHandler(activity, result);
-      case GEO:
-        return new GeoResultHandler(activity, result);
-      case TEL:
-        return new TelResultHandler(activity, result);
-      case SMS:
-        return new SMSResultHandler(activity, result);
-      case CALENDAR:
-        return new CalendarResultHandler(activity, result);
-      default:
-        return new TextResultHandler(activity, result, rawResult);
-    }
-  }
+	public static ResultHandler makeResultHandler(Activity activity, Result rawResult)
+	{
+		ParsedResult result = parseResult(rawResult);
+		switch (result.getType())
+		{
+		case EMAIL_ADDRESS:
+			return new EmailAddressResultHandler(activity, result);
+		case PRODUCT:
+			return new ProductResultHandler(activity, result, rawResult);
+		case URI:
+			return new URIResultHandler(activity, result);
+		case GEO:
+			return new GeoResultHandler(activity, result);
+		case TEL:
+			return new TelResultHandler(activity, result);
+		case SMS:
+			return new SMSResultHandler(activity, result);
+		case CALENDAR:
+			return new CalendarResultHandler(activity, result);
+		default:
+			return new TextResultHandler(activity, result, rawResult);
+		}
+	}
 
-  private static ParsedResult parseResult(Result rawResult) {
-    return ResultParser.parseResult(rawResult);
-  }
+	private static ParsedResult parseResult(Result rawResult)
+	{
+		return ResultParser.parseResult(rawResult);
+	}
 }

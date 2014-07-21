@@ -14,28 +14,30 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
 
 import android.hardware.Camera;
+
 //-+- -->
 
 public interface PluginManagerInterface
 {
 	public void selectImageDimension();
-	public void selectDefaults();	
+
+	public void selectDefaults();
+
 	public boolean shouldPreviewToGPU();
-	
-	
+
 	public void onAutoFocus(boolean focused);
-	
+
 	public void onPreviewFrame(byte[] data, Camera paramCamera);
+
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
-	
 
 }

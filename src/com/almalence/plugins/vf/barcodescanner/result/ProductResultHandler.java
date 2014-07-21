@@ -19,8 +19,8 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 
 /* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.R;
 //-+- -->
@@ -31,56 +31,63 @@ import com.google.zxing.client.result.ProductParsedResult;
 
 /**
  * Handles generic products which are not books.
- *
+ * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class ProductResultHandler extends ResultHandler {
-  private static final int[] buttons = {
-      R.string.Button_Product_Search,
-      R.string.Button_Web_Search,
-  };
+public final class ProductResultHandler extends ResultHandler
+{
+	private static final int[]	buttons	= { R.string.Button_Product_Search, R.string.Button_Web_Search, };
 
-  public ProductResultHandler(Activity activity, ParsedResult result, Result rawResult) {
-    super(activity, result, rawResult);
-  }
+	public ProductResultHandler(Activity activity, ParsedResult result, Result rawResult)
+	{
+		super(activity, result, rawResult);
+	}
 
-  @Override
-  public int getButtonCount() {
-    return buttons.length;
-  }
+	@Override
+	public int getButtonCount()
+	{
+		return buttons.length;
+	}
 
-  @Override
-  public int getButtonText(int index) {
-    return buttons[index];
-  }
+	@Override
+	public int getButtonText(int index)
+	{
+		return buttons[index];
+	}
 
-  @Override
-  public void handleButtonPress(int index) {
-    String productID = getProductIDFromResult(getResult());
-    switch (index) {
-      case 0:
-        openProductSearch(productID);
-        break;
-      case 1:
-        webSearch(productID);
-        break;
-      default:
-		break;
-    }
-  }
+	@Override
+	public void handleButtonPress(int index)
+	{
+		String productID = getProductIDFromResult(getResult());
+		switch (index)
+		{
+		case 0:
+			openProductSearch(productID);
+			break;
+		case 1:
+			webSearch(productID);
+			break;
+		default:
+			break;
+		}
+	}
 
-  private static String getProductIDFromResult(ParsedResult rawResult) {
-    if (rawResult instanceof ProductParsedResult) {
-      return ((ProductParsedResult) rawResult).getNormalizedProductID();
-    }
-    if (rawResult instanceof ExpandedProductParsedResult) {
-      return ((ExpandedProductParsedResult) rawResult).getDisplayResult();
-    }
-    throw new IllegalArgumentException(rawResult.getClass().toString());
-  }
+	private static String getProductIDFromResult(ParsedResult rawResult)
+	{
+		if (rawResult instanceof ProductParsedResult)
+		{
+			return ((ProductParsedResult) rawResult).getNormalizedProductID();
+		}
+		if (rawResult instanceof ExpandedProductParsedResult)
+		{
+			return ((ExpandedProductParsedResult) rawResult).getDisplayResult();
+		}
+		throw new IllegalArgumentException(rawResult.getClass().toString());
+	}
 
-  @Override
-  public int getDisplayTitle() {
-    return R.string.Result_Product;
-  }
+	@Override
+	public int getDisplayTitle()
+	{
+		return R.string.Result_Product;
+	}
 }

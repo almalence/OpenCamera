@@ -14,19 +14,24 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence;
 
 public final class SwapHeap
 {
-    public static native int SwapToHeap(byte[] data);
-    public static native int SwapYuvToHeap(int ptr, int length);
-    public static native byte[] SwapFromHeap(int ptr, int length);
-    public static native byte[] CopyFromHeap(int ptr, int length);
-    public static native boolean FreeFromHeap(int ptr);
-    
-    static {
-        System.loadLibrary("swapheap");
-    }
+	public static native int SwapToHeap(byte[] data);
+
+	public static native int SwapYuvToHeap(int ptr, int length);
+
+	public static native byte[] SwapFromHeap(int ptr, int length);
+
+	public static native byte[] CopyFromHeap(int ptr, int length);
+
+	public static native boolean FreeFromHeap(int ptr);
+
+	static
+	{
+		System.loadLibrary("swapheap");
+	}
 }

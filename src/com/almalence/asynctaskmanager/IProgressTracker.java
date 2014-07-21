@@ -14,13 +14,15 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.asynctaskmanager;
 
-public interface IProgressTracker {
-    // Updates progress message
-    void onProgress(String message);
-    // Notifies about task completeness
-    void onComplete();
+public interface IProgressTracker
+{
+	// Updates progress message
+	void onProgress(String message);
+
+	// Notifies about task completeness
+	void onComplete();
 }
