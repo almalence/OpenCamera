@@ -46,27 +46,27 @@ public class AlmaCLRShot
 	private int					mNumOfFrame;
 	private int[]				ARGBBuffer		= null;
 	private int[]				mCrop			= null;
-	private int					mSensitivity;																		// sensitivity:
-																													// default
-																													// is
-																													// 0,
-																													// useful
-																													// range
-																													// is
-																													// [-15..+15]
-	private int					mMinSize;																			// minSize:
-																													// the
-																													// smallest
-																													// object
-																													// size
-																													// which
-																													// will
-																													// be
-																													// detected
-																													// (object
-																													// area,
-																													// in
-																													// pixels).
+	private int					mSensitivity;	// sensitivity:
+												// default
+												// is
+												// 0,
+												// useful
+												// range
+												// is
+												// [-15..+15]
+	private int					mMinSize;		// minSize:
+												// the
+												// smallest
+												// object
+												// size
+												// which
+												// will
+												// be
+												// detected
+												// (object
+												// area,
+												// in
+												// pixels).
 	private int					mGhosting;
 	private int					mAngle;
 
