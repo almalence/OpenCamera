@@ -820,9 +820,7 @@ public class PluginManager implements PluginManagerInterface
 		boolean hasInactive = false;
 
 		loadStandardSettingsBefore(pf, settings);
-		if ("general_settings".equals(settings))
-		{
-		} else if ("general_more".equals(settings))
+		if ("general_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_more);
 			MainScreen.getInstance().onAdvancePreferenceCreate(pf);

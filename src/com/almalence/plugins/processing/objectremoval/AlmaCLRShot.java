@@ -55,27 +55,27 @@ public class AlmaCLRShot
 	private int[]					ARGBBuffer		= null;
 	private int[]					mBaseArea		= null;
 	private int[]					mCrop			= null;
-	private int						mSensitivity;																		// sensitivity:
-																														// default
-																														// is
-																														// 0,
-																														// useful
-																														// range
-																														// is
-																														// [-15..+15]
-	private int						mMinSize;																			// minSize:
-																														// the
-																														// smallest
-																														// object
-																														// size
-																														// which
-																														// will
-																														// be
-																														// detected
-																														// (object
-																														// area,
-																														// in
-																														// pixels).
+	private int						mSensitivity;	// sensitivity:
+													// default
+													// is
+													// 0,
+													// useful
+													// range
+													// is
+													// [-15..+15]
+	private int						mMinSize;		// minSize:
+													// the
+													// smallest
+													// object
+													// size
+													// which
+													// will
+													// be
+													// detected
+													// (object
+													// area,
+													// in
+													// pixels).
 	private int						mGhosting;
 	private int						mAngle;
 
@@ -190,7 +190,6 @@ public class AlmaCLRShot
 			int[] PointOfData = new int[mNumOfFrame];
 			int[] LengthOfData = new int[mNumOfFrame];
 
-			long start = System.currentTimeMillis();
 			for (int i = 0; i < mNumOfFrame; i++)
 			{
 				PointOfData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
@@ -207,7 +206,6 @@ public class AlmaCLRShot
 				error = ConvertFromJpeg(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
 			else
 				error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
-			Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
 			if (error < 0)
 			{
 				Log.d(TAG, "Out Of Memory");

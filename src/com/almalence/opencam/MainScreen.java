@@ -2421,39 +2421,31 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				return true;
 		}
 
-		// if (!mode.purchased)
+		int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
+		int id = MainScreen.thiz.getResources().getIdentifier(
+				mode.modeName, "string",
+				MainScreen.thiz.getPackageName());
+		String modename = MainScreen.thiz.getResources().getString(id);
+
+		if (0 == launchesLeft)// no more launches left
 		{
-			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-			if (0 == launchesLeft)// no more launches left
-			{
-				int id = MainScreen.thiz.getResources().getIdentifier(
-						mode.modeName, "string",
-						MainScreen.thiz.getPackageName());
-				String modename = MainScreen.thiz.getResources().getString(id);
-
-				String left = String.format(getResources().getString(R.string.trial_finished),
-						modename);
-				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
-				
-				// show appstore for this mode
-				launchPurchase(mode.SKU, 100);
-				return false;
-			} else if ((10 == launchesLeft) || (20 == launchesLeft)
-					|| (5 >= launchesLeft)) {
-				// show appstore button and say that it cost money
-				int id = MainScreen.thiz.getResources().getIdentifier(
-						mode.modeName, "string",
-						MainScreen.thiz.getPackageName());
-				String modename = MainScreen.thiz.getResources().getString(id);
-
-				String left = String.format(getResources().getString(R.string.trial_left),
-						modename, launchesLeft);
-				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
-			}
+			String left = String.format(getResources().getString(R.string.trial_finished),
+					modename);
+			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
+			
+			// show appstore for this mode
+			launchPurchase(mode.SKU, 100);
+			return false;
+		} else if ((10 == launchesLeft) || (20 == launchesLeft)
+				|| (5 >= launchesLeft)) {
+			// show appstore button and say that it cost money
+			String left = String.format(getResources().getString(R.string.trial_left),
+					modename, launchesLeft);
+			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
 		}
 		return true;
 	}
