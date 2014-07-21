@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.processing.groupshot;
 
@@ -36,10 +36,9 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
-
 /* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
@@ -47,45 +46,49 @@ import com.almalence.opencam.R;
 import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;
 
-public class ImageAdapter extends BaseAdapter {
-	static final int THUMBNAIL_WIDTH = 150;
-	static final int THUMBNAIL_HEIGHT = 180;
-	static final int IMAGEVIEW_PADDING = 4;
-	int mGalleryItemBackground;
-	private Context mContext = null;
-	private String[] imagePath = null;
-	private List<byte[]> mJpegList;
-	private List<Integer> mYUVList;
-	private boolean mCameraMirrored;
-	private boolean mIsLandscape;
-	private MemoryImageCache cache = null;
-	private int mSelectedItem;
-	private boolean isYUV = false;
+public class ImageAdapter extends BaseAdapter
+{
+	static final int			THUMBNAIL_WIDTH		= 150;
+	static final int			THUMBNAIL_HEIGHT	= 180;
+	static final int			IMAGEVIEW_PADDING	= 4;
+	int							mGalleryItemBackground;
+	private Context				mContext			= null;
+	private String[]			imagePath			= null;
+	private List<byte[]>		mJpegList;
+	private List<Integer>		mYUVList;
+	private boolean				mCameraMirrored;
+	private boolean				mIsLandscape;
+	private MemoryImageCache	cache				= null;
+	private int					mSelectedItem;
+	private boolean				isYUV				= false;
 
-	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored) {
+	public ImageAdapter(Context context, List<byte[]> list, boolean isLandscape, boolean isMirrored)
+	{
 		mContext = context;
 		mJpegList = list;
 		mCameraMirrored = isMirrored;
 		mIsLandscape = isLandscape;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
-		mGalleryItemBackground = a.getResourceId(
-				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
+		mGalleryItemBackground = a.getResourceId(R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
-		
+
 		cache = new MemoryImageCache(mJpegList.size());
-		
-		for (int i = 0; i < mJpegList.size(); i++) {
-	    	final int id = i;
-		    new Thread(new Runnable() {
-		        @Override
-		        public void run() {
-		        	final String Key = String.valueOf(id);
-		        	cache.addBitmap(Key, decodeJPEGfromData(id));
-		        }
-		    }).start();
+
+		for (int i = 0; i < mJpegList.size(); i++)
+		{
+			final int id = i;
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					final String Key = String.valueOf(id);
+					cache.addBitmap(Key, decodeJPEGfromData(id));
+				}
+			}).start();
 		}
 	}
-	
+
 	public ImageAdapter(Context context, List<Integer> list, boolean isLandscape, boolean isMirrored, boolean isyuv)
 	{
 		isYUV = isyuv;
@@ -94,221 +97,263 @@ public class ImageAdapter extends BaseAdapter {
 		mCameraMirrored = isMirrored;
 		mIsLandscape = isLandscape;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
-		mGalleryItemBackground = a.getResourceId(
-				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
+		mGalleryItemBackground = a.getResourceId(R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
-		
+
 		cache = new MemoryImageCache(mYUVList.size());
-		
-		for (int i = 0; i < mYUVList.size(); i++) {
-	    	final int id = i;
-		    new Thread(new Runnable() {
-		        @Override
-		        public void run() {
-		        	final String Key = String.valueOf(id);
-		        	cache.addBitmap(Key, decodeYUVfromData(id));
-		        }
-		    }).start();
+
+		for (int i = 0; i < mYUVList.size(); i++)
+		{
+			final int id = i;
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					final String Key = String.valueOf(id);
+					cache.addBitmap(Key, decodeYUVfromData(id));
+				}
+			}).start();
 		}
 	}
-	
-	public ImageAdapter(Context context, String path) {
+
+	public ImageAdapter(Context context, String path)
+	{
 		mContext = context;
 		TypedArray a = context.obtainStyledAttributes(R.styleable.GalleryTheme);
-		mGalleryItemBackground = a.getResourceId(
-				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
+		mGalleryItemBackground = a.getResourceId(R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
 		setDirContainThumbnails(path);
 	}
-	
-	public void finalize() {
+
+	public void finalize()
+	{
 		cache.clear();
 	}
-	
-	private Bitmap decodeJPEGfromData(int position) {
+
+	private Bitmap decodeJPEGfromData(int position)
+	{
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPreferredConfig = Config.RGB_565;
 		options.inJustDecodeBounds = true;
-		
-		if (mJpegList == null) {
+
+		if (mJpegList == null)
+		{
 			BitmapFactory.decodeFile(imagePath[position], options);
-		} else {
+		} else
+		{
 			BitmapFactory.decodeByteArray(mJpegList.get(position), 0, mJpegList.get(position).length, options);
 		}
 
-		float widthScale = (float)options.outWidth / (float)THUMBNAIL_WIDTH;
-		float heightScale = (float)options.outHeight / (float)THUMBNAIL_HEIGHT;
+		float widthScale = (float) options.outWidth / (float) THUMBNAIL_WIDTH;
+		float heightScale = (float) options.outHeight / (float) THUMBNAIL_HEIGHT;
 		float scale = widthScale > heightScale ? widthScale : heightScale;
-		float imageRatio = (float)options.outWidth / (float)options.outHeight;
-		float displayRatio = (float)THUMBNAIL_WIDTH / (float)THUMBNAIL_HEIGHT;
+		float imageRatio = (float) options.outWidth / (float) options.outHeight;
+		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
 
-		if (scale >= 8) {
+		if (scale >= 8)
+		{
 			options.inSampleSize = 8;
-		} else if (scale >= 6) {
+		} else if (scale >= 6)
+		{
 			options.inSampleSize = 6;
-		} else if (scale >= 4) {
+		} else if (scale >= 4)
+		{
 			options.inSampleSize = 4;
-		} else if (scale >= 2) {
+		} else if (scale >= 2)
+		{
 			options.inSampleSize = 2;
-		} else {
+		} else
+		{
 			options.inSampleSize = 1;
 		}
 
 		options.inJustDecodeBounds = false;
-		
+
 		Bitmap bm = null;
 		Bitmap bitmap = null;
-		
-		if (mJpegList == null) {
-			bm = BitmapFactory.decodeFile(imagePath[position], options);		
-		} else {
+
+		if (mJpegList == null)
+		{
+			bm = BitmapFactory.decodeFile(imagePath[position], options);
+		} else
+		{
 			bm = BitmapFactory.decodeByteArray(mJpegList.get(position), 0, mJpegList.get(position).length, options);
 		}
-		
-		if (imageRatio > displayRatio) {
-			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int)(THUMBNAIL_WIDTH / displayRatio), true);
-		} else {
-			bitmap = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+
+		if (imageRatio > displayRatio)
+		{
+			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int) (THUMBNAIL_WIDTH / displayRatio), true);
+		} else
+		{
+			bitmap = Bitmap.createScaledBitmap(bm, (int) (THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
 		}
 
-		if(bitmap != bm)
+		if (bitmap != bm)
 			bm.recycle();
-		
+
 		Matrix matrix = new Matrix();
-		matrix.postRotate(mCameraMirrored? (mIsLandscape ? (-90+180)%360 : -90) : 90);
-		if (mCameraMirrored) {
-			if (mIsLandscape) {
+		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
+		if (mCameraMirrored)
+		{
+			if (mIsLandscape)
+			{
 				matrix.preScale(-1, 1);
-			} else {
+			} else
+			{
 				matrix.preScale(1, -1);
 			}
 		}
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
-	
-	
+
 	private Bitmap decodeYUVfromData(int position)
 	{
 		int width = MainScreen.getImageWidth();
 		int height = MainScreen.getImageHeight();
-		
+
 		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		Size mInputFrameSize = new Size(width, height);
 
 		Rect rect = new Rect(0, 0, width, height);
 		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
 		bm.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
-		
-		float imageRatio = (float)width / (float)height;
-		float displayRatio = (float)THUMBNAIL_WIDTH / (float)THUMBNAIL_HEIGHT;
-		
+
+		float imageRatio = (float) width / (float) height;
+		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
+
 		Bitmap bitmap = null;
-		if (imageRatio > displayRatio) {
-			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int)(THUMBNAIL_WIDTH / displayRatio), true);
-		} else {
-			bitmap = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+		if (imageRatio > displayRatio)
+		{
+			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int) (THUMBNAIL_WIDTH / displayRatio), true);
+		} else
+		{
+			bitmap = Bitmap.createScaledBitmap(bm, (int) (THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
 		}
 
-		if(bitmap != bm)
+		if (bitmap != bm)
 			bm.recycle();
-		
+
 		Matrix matrix = new Matrix();
-		matrix.postRotate(mCameraMirrored? (mIsLandscape ? (-90+180)%360 : -90) : 90);
-		if (mCameraMirrored) {
-			if (mIsLandscape) {
+		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
+		if (mCameraMirrored)
+		{
+			if (mIsLandscape)
+			{
 				matrix.preScale(-1, 1);
-			} else {
+			} else
+			{
 				matrix.preScale(1, -1);
 			}
 		}
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
-	
-	private int setDirContainThumbnails(String path) {
+
+	private int setDirContainThumbnails(String path)
+	{
 		int numOfFrame = 0;
-        File file = new File(path);
-        File[] list = file.listFiles(new FilenameFilter()
-        {
-            @Override
-            public boolean accept(File dir, String name) 
-            {
-                return name.endsWith(".jpg");
-            }
-        });
-        
-        if (list.length == numOfFrame ) {
-        	return numOfFrame;
-        }
-        imagePath = new String[list.length];
-        for (File f : list) {
-        	imagePath[numOfFrame] = f.getAbsolutePath();
-        	final int id = numOfFrame;
-		    new Thread(new Runnable() {
-		        @Override
-		        public void run() {
-		        	final String Key = String.valueOf(id);
-		        	cache.addBitmap(Key, decodeJPEGfromData(id));
-		        }
-		    }).start();
-		    numOfFrame++;
-        }
-        
+		File file = new File(path);
+		File[] list = file.listFiles(new FilenameFilter()
+		{
+			@Override
+			public boolean accept(File dir, String name)
+			{
+				return name.endsWith(".jpg");
+			}
+		});
+
+		if (list.length == numOfFrame)
+		{
+			return numOfFrame;
+		}
+		imagePath = new String[list.length];
+		for (File f : list)
+		{
+			imagePath[numOfFrame] = f.getAbsolutePath();
+			final int id = numOfFrame;
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					final String Key = String.valueOf(id);
+					cache.addBitmap(Key, decodeJPEGfromData(id));
+				}
+			}).start();
+			numOfFrame++;
+		}
+
 		return numOfFrame;
 	}
 
-	public int getCount() {
-		if (imagePath != null) {
+	public int getCount()
+	{
+		if (imagePath != null)
+		{
 			return imagePath.length;
-		} else if(!isYUV){
+		} else if (!isYUV)
+		{
 			return mJpegList.size();
-		} else {
+		} else
+		{
 			return mYUVList.size();
 		}
-		
+
 	}
-	
-	public void setCurrentSeleted(int position) {
+
+	public void setCurrentSeleted(int position)
+	{
 		mSelectedItem = position;
 	}
 
-	public Object getItem(int position) {
+	public Object getItem(int position)
+	{
 		return position;
 	}
 
-	public long getItemId(int position) {
+	public long getItemId(int position)
+	{
 		return position;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
 		ImageView imageView;
-        if (convertView == null) {  // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setPadding(0, 0, 0, 0);
-        } else {
-            imageView = (ImageView) convertView;
-        }
-        
-    	final String Key = String.valueOf(position);
-    	Bitmap b = cache.getBitmap(Key);
-    	
-    	if (b != null) {
-    		imageView.setImageBitmap(b);
-    	} else if(!isYUV){
-    		imageView.setImageBitmap(decodeJPEGfromData(position));
-    	} else {
-    		imageView.setImageBitmap(decodeYUVfromData(position));
-    	}
+		if (convertView == null)
+		{ // if it's not recycled, initialize some attributes
+			imageView = new ImageView(mContext);
+			imageView.setLayoutParams(new Gallery.LayoutParams(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT));
+			imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+			imageView.setPadding(0, 0, 0, 0);
+		} else
+		{
+			imageView = (ImageView) convertView;
+		}
 
-    	if (position == mSelectedItem) {
-    		imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
-    		imageView.setBackgroundColor(0xFF00AAEA);
-        } else {
-        	imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
-        	imageView.setBackgroundColor(Color.WHITE);
-        }
+		final String Key = String.valueOf(position);
+		Bitmap b = cache.getBitmap(Key);
+
+		if (b != null)
+		{
+			imageView.setImageBitmap(b);
+		} else if (!isYUV)
+		{
+			imageView.setImageBitmap(decodeJPEGfromData(position));
+		} else
+		{
+			imageView.setImageBitmap(decodeYUVfromData(position));
+		}
+
+		if (position == mSelectedItem)
+		{
+			imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
+			imageView.setBackgroundColor(0xFF00AAEA);
+		} else
+		{
+			imageView.setPadding(IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING, IMAGEVIEW_PADDING);
+			imageView.setBackgroundColor(Color.WHITE);
+		}
 		return imageView;
 	}
 }

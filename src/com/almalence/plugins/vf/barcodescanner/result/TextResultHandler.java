@@ -19,8 +19,8 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 
 /* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.R;
 //-+- -->
@@ -28,52 +28,57 @@ import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;
 
 /**
- * This class handles TextParsedResult as well as unknown formats. It's the fallback handler.
- *
+ * This class handles TextParsedResult as well as unknown formats. It's the
+ * fallback handler.
+ * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class TextResultHandler extends ResultHandler {
+public final class TextResultHandler extends ResultHandler
+{
 
-  private static final int[] buttons = {
-      R.string.Button_Web_Search,
-      R.string.Button_Share_By_Email,
-      R.string.Button_Share_By_Sms,
-  };
+	private static final int[]	buttons	= { R.string.Button_Web_Search, R.string.Button_Share_By_Email,
+			R.string.Button_Share_By_Sms, };
 
-  public TextResultHandler(Activity activity, ParsedResult result, Result rawResult) {
-    super(activity, result, rawResult);
-  }
+	public TextResultHandler(Activity activity, ParsedResult result, Result rawResult)
+	{
+		super(activity, result, rawResult);
+	}
 
-  @Override
-  public int getButtonCount() {
-    return buttons.length;
-  }
+	@Override
+	public int getButtonCount()
+	{
+		return buttons.length;
+	}
 
-  @Override
-  public int getButtonText(int index) {
-    return buttons[index];
-  }
+	@Override
+	public int getButtonText(int index)
+	{
+		return buttons[index];
+	}
 
-  @Override
-  public void handleButtonPress(int index) {
-    String text = getResult().getDisplayResult();
-    switch (index) {
-      case 0:
-        webSearch(text);
-        break;
-      case 1:
-        shareByEmail(text);
-        break;
-      case 2:
-        shareBySMS(text);
-        break;
-      default:
-		break;
-    }
-  }
+	@Override
+	public void handleButtonPress(int index)
+	{
+		String text = getResult().getDisplayResult();
+		switch (index)
+		{
+		case 0:
+			webSearch(text);
+			break;
+		case 1:
+			shareByEmail(text);
+			break;
+		case 2:
+			shareBySMS(text);
+			break;
+		default:
+			break;
+		}
+	}
 
-  @Override
-  public int getDisplayTitle() {
-    return R.string.Result_Text;
-  }
+	@Override
+	public int getDisplayTitle()
+	{
+		return R.string.Result_Text;
+	}
 }

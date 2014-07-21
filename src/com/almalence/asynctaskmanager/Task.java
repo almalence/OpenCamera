@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.asynctaskmanager;
 
@@ -22,58 +22,58 @@ import android.os.AsyncTask;
 
 public abstract class Task extends AsyncTask<Void, String, Boolean>
 {
-    private Boolean mResult;
-    public String mProgressMessage;
-    private IProgressTracker mProgressTracker;
+	private Boolean				mResult;
+	public String				mProgressMessage;
+	private IProgressTracker	mProgressTracker;
 
-    /* UI Thread */
-    public Task()
-    {
-    }
+	/* UI Thread */
+	public Task()
+	{
+	}
 
-    /* UI Thread */
-    public void setProgressTracker(IProgressTracker progressTracker)
-    {
+	/* UI Thread */
+	public void setProgressTracker(IProgressTracker progressTracker)
+	{
 		// Attach to progress tracker
-    	this.mProgressTracker = progressTracker;
+		this.mProgressTracker = progressTracker;
 		// Initialize progress tracker with current task state
 		if (this.mProgressTracker != null)
 		{
 			this.mProgressTracker.onProgress(this.mProgressMessage);
-		    if (this.mResult != null)
-		    {
-		    	this.mProgressTracker.onComplete();
-		    }
+			if (this.mResult != null)
+			{
+				this.mProgressTracker.onComplete();
+			}
 		}
-    }
+	}
 
-    /* UI Thread */
-    @Override
-    protected void onCancelled()
-    {
+	/* UI Thread */
+	@Override
+	protected void onCancelled()
+	{
 		// Detach from progress tracker
-    	this.mProgressTracker = null;
-    }
-    
-    /* UI Thread */
-    @Override
-    protected void onProgressUpdate(String... values)
-    {
-		// Update progress message 
-    	this.mProgressMessage = values[0];
+		this.mProgressTracker = null;
+	}
+
+	/* UI Thread */
+	@Override
+	protected void onProgressUpdate(String... values)
+	{
+		// Update progress message
+		this.mProgressMessage = values[0];
 		// And send it to progress tracker
 		if (this.mProgressTracker != null)
 		{
 			this.mProgressTracker.onProgress(mProgressMessage);
 		}
-    }
+	}
 
-    /* UI Thread */
-    @Override
-    protected void onPostExecute(Boolean result)
-    {
+	/* UI Thread */
+	@Override
+	protected void onPostExecute(Boolean result)
+	{
 		// Update result
-    	this.mResult = result;
+		this.mResult = result;
 		// And send it to progress tracker
 		if (this.mProgressTracker != null)
 		{
@@ -82,5 +82,5 @@ public abstract class Task extends AsyncTask<Void, String, Boolean>
 
 		// Detach from progress tracker
 		this.mProgressTracker = null;
-    } 
+	}
 }

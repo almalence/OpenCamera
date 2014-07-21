@@ -14,18 +14,20 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.vf.histogram;
 
 public final class Histogram
 {
-	public static synchronized native void createHistogram(byte[] ain, int[] afacts, int width, int height, int surfaceWidth, int surfaceHeight);
-	
-	public static synchronized native void createRGBHistogram(byte[] ain, int[] afactsR, int[] afactsG, int[] afactsB, int width, int height, int surfaceWidth, int surfaceHeight);
+	public static synchronized native void createHistogram(byte[] ain, int[] afacts, int width, int height,
+			int surfaceWidth, int surfaceHeight);
 
-    static 
-    {
-        System.loadLibrary("histogram");
-    }
+	public static synchronized native void createRGBHistogram(byte[] ain, int[] afactsR, int[] afactsG, int[] afactsB,
+			int width, int height, int surfaceWidth, int surfaceHeight);
+
+	static
+	{
+		System.loadLibrary("histogram");
+	}
 }

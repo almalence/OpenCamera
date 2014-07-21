@@ -14,13 +14,14 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
 import android.annotation.TargetApi;
@@ -43,126 +44,132 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-
 /***
-New interface for preferences. Loads sections for Common preferences.
-***/
+ * New interface for preferences. Loads sections for Common preferences.
+ ***/
 
 @TargetApi(11)
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
-	public static PreferenceFragment thiz;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	public static PreferenceFragment	thiz;
 
-        thiz=this;
-        
-        String settings = getArguments().getString("type");
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
 
-        PluginManager.getInstance().loadHeaderContent(settings, this);
-        
-        if (null == getPreferenceScreen())
-        	return;
-        for(int i=0;i<getPreferenceScreen().getPreferenceCount();i++)
+		thiz = this;
+
+		String settings = getArguments().getString("type");
+
+		PluginManager.getInstance().loadHeaderContent(settings, this);
+
+		if (null == getPreferenceScreen())
+			return;
+		for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++)
 		{
-		    initSummary(getPreferenceScreen().getPreference(i));
+			initSummary(getPreferenceScreen().getPreference(i));
 		}
-        
-        Preference aboutPref = (Preference) findPreference("about");
-        if (aboutPref!=null)
-        aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
-        {
-            public boolean onPreferenceClick(Preference preference)
-            {
-                Toast.makeText(MainScreen.getInstance(),
-                		MainScreen.getInstance().getResources().getString(R.string.Pref_About),
-                        Toast.LENGTH_LONG).show();
 
-                return true;
-            }
-        });
-        
-        
-        CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
-        if (helpPref!=null)
-        	helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
-        {
-            public boolean onPreferenceClick(Preference preference)
-            {
-                if (((CheckBoxPreference)preference).isChecked())
-                {
-                	SharedPreferences prefs = PreferenceManager
-            				.getDefaultSharedPreferences(MainScreen.getMainContext());
-                	Editor prefsEditor = prefs.edit();
-                	prefsEditor.putBoolean("droShowHelp", true);
-					prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
-					prefsEditor.putBoolean("panoramaShowHelp", true);
-					prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
-					prefsEditor.putBoolean("objectRemovalShowHelp", true);
-					prefsEditor.putBoolean("bestShotShowHelp", true);
-					prefsEditor.commit();
-                }
-
-                return true;
-            }
-        });
-        
-        ListPreference saveToPreference = (ListPreference)this.findPreference("saveToPref");
-        if (saveToPreference!=null)
-	        saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() 
-	        {			
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) 
+		Preference aboutPref = (Preference) findPreference("about");
+		if (aboutPref != null)
+			aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
+			{
+				public boolean onPreferenceClick(Preference preference)
 				{
-					int v = -1;
-					
-					int v_old = 0;
-					
-					try
-					{
-						v = Integer.parseInt(newValue.toString());
-						v_old = Integer.parseInt(((ListPreference)preference).getValue());
-					}
-					catch (NumberFormatException e)
-					{
-						
-					}
-					
-					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-					{
-						Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
-					}
-					
-					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-					{
-						Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getResources().getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG).show();
-					}
-					
-					if (v == 2)
-					{
-						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
-						
-						intent.putExtra(MainScreen.sSavePathPref, v_old);
-						
-						Preferences.thiz.startActivity(intent);
-					}
-					
+					Toast.makeText(MainScreen.getInstance(),
+							MainScreen.getInstance().getResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
+							.show();
+
 					return true;
 				}
 			});
-        
-        
-        PreferenceCategory cat = (PreferenceCategory)this.findPreference("Pref_VFCommon_Preference_Category");
-		if(cat != null)
-		{
-			CheckBoxPreference cp = (CheckBoxPreference)cat.findPreference("maxScreenBrightnessPref");
-			if(cp != null)
+
+		CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
+		if (helpPref != null)
+			helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
 			{
-				cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-					public boolean onPreferenceChange(Preference preference,
-							Object newValue) {
+				public boolean onPreferenceClick(Preference preference)
+				{
+					if (((CheckBoxPreference) preference).isChecked())
+					{
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
+								.getMainContext());
+						Editor prefsEditor = prefs.edit();
+						prefsEditor.putBoolean("droShowHelp", true);
+						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
+						prefsEditor.putBoolean("panoramaShowHelp", true);
+						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
+						prefsEditor.putBoolean("objectRemovalShowHelp", true);
+						prefsEditor.putBoolean("bestShotShowHelp", true);
+						prefsEditor.commit();
+					}
+
+					return true;
+				}
+			});
+
+		ListPreference saveToPreference = (ListPreference) this.findPreference("saveToPref");
+		if (saveToPreference != null)
+			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					int v = -1;
+
+					int v_old = 0;
+
+					try
+					{
+						v = Integer.parseInt(newValue.toString());
+						v_old = Integer.parseInt(((ListPreference) preference).getValue());
+					} catch (NumberFormatException e)
+					{
+
+					}
+
+					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+					{
+						Toast.makeText(
+								MainScreen.getInstance(),
+								MainScreen.getInstance().getResources()
+										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
+								Toast.LENGTH_LONG).show();
+					}
+
+					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+					{
+						Toast.makeText(
+								MainScreen.getInstance(),
+								MainScreen.getInstance().getResources()
+										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
+								Toast.LENGTH_LONG).show();
+					}
+
+					if (v == 2)
+					{
+						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
+
+						intent.putExtra(MainScreen.sSavePathPref, v_old);
+
+						Preferences.thiz.startActivity(intent);
+					}
+
+					return true;
+				}
+			});
+
+		PreferenceCategory cat = (PreferenceCategory) this.findPreference("Pref_VFCommon_Preference_Category");
+		if (cat != null)
+		{
+			CheckBoxPreference cp = (CheckBoxPreference) cat.findPreference("maxScreenBrightnessPref");
+			if (cp != null)
+			{
+				cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+				{
+					public boolean onPreferenceChange(Preference preference, Object newValue)
+					{
 						boolean value = Boolean.parseBoolean(newValue.toString());
 						setScreenBrightness(value);
 						return true;
@@ -170,96 +177,96 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				});
 			}
 		}
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		boolean MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 		setScreenBrightness(MaxScreenBrightnessPreference);
-    }
-    
-    public static void setScreenBrightness(boolean setMax)
+	}
+
+	public static void setScreenBrightness(boolean setMax)
 	{
-    	try{
+		try
+		{
 			Window window = thiz.getActivity().getWindow();
-			
+
 			WindowManager.LayoutParams layoutpars = window.getAttributes();
-			
-	        //Set the brightness of this window	
-			if(setMax)
+
+			// Set the brightness of this window
+			if (setMax)
 				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
 			else
 				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-	
-	        //Apply attribute changes to this window
-	        window.setAttributes(layoutpars);
-    	}
-		catch(Exception e)
+
+			// Apply attribute changes to this window
+			window.setAttributes(layoutpars);
+		} catch (Exception e)
 		{
-			
+
 		}
 	}
-    
-    public static void closePrefs()
+
+	public static void closePrefs()
 	{
 		thiz.getFragmentManager().popBackStack();
 	}
-    
-    @Override
-    public void onResume(){
-     super.onResume();
-     if (null == getPreferenceScreen())
-     	return;
-     // Set up a listener whenever a key changes             
-     getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-   
-    @Override
-    public void onPause() { 
-     super.onPause();
-     if (null == getPreferenceScreen())
-     	return;
-     // Unregister the listener whenever a key changes             
-     getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);     
-    } 
-    
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) 
-    { 
-    	updatePrefSummary(findPreference(key));
-    }
-    
-    private void initSummary(Preference p)
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if (null == getPreferenceScreen())
+			return;
+		// Set up a listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (null == getPreferenceScreen())
+			return;
+		// Unregister the listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		updatePrefSummary(findPreference(key));
+	}
+
+	private void initSummary(Preference p)
 	{
 		if (p instanceof PreferenceCategory)
 		{
-		    PreferenceCategory pCat = (PreferenceCategory)p;
-		    for(int i=0;i<pCat.getPreferenceCount();i++)
-		    {
-		    	initSummary(pCat.getPreference(i));
-		    }
+			PreferenceCategory pCat = (PreferenceCategory) p;
+			for (int i = 0; i < pCat.getPreferenceCount(); i++)
+			{
+				initSummary(pCat.getPreference(i));
+			}
+		} else
+		{
+			updatePrefSummary(p);
 		}
-		else
-   		{
-   			updatePrefSummary(p);
-   		}
 	}
-		 
+
 	private void updatePrefSummary(Preference p)
 	{
-		if (p instanceof ListPreference) 
+		if (p instanceof ListPreference)
 		{
-			ListPreference listPref = (ListPreference) p; 
-			p.setSummary(listPref.getEntry()); 
+			ListPreference listPref = (ListPreference) p;
+			p.setSummary(listPref.getEntry());
 		}
-		if (p instanceof EditTextPreference) 
+		if (p instanceof EditTextPreference)
 		{
-			EditTextPreference editTextPref = (EditTextPreference) p; 
-			if(p.getKey().equalsIgnoreCase("editKey"))
+			EditTextPreference editTextPref = (EditTextPreference) p;
+			if (p.getKey().equalsIgnoreCase("editKey"))
 			{
-				p.setSummary("*****"); 
-			}
-			else 
+				p.setSummary("*****");
+			} else
 			{
-				p.setSummary(editTextPref.getText()); 
+				p.setSummary(editTextPref.getText());
 			}
 		}
- 	}
+	}
 }

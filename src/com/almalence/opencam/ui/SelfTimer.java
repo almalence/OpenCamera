@@ -14,24 +14,25 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-+++ --> */
+ package com.almalence.opencam_plus;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
 import java.util.ArrayList;
 import java.util.List;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
-import com.almalence.opencam_plus.PluginManager;
-import com.almalence.opencam_plus.PluginType;
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.PluginType;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
@@ -57,235 +58,236 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
-
-public class SelfTimer 
+public class SelfTimer
 {
-	private RotateImageView timeLapseButton =null;
-	boolean swChecked = false;
-	String[] stringInterval = {"3", "5", "10", "15", "30", "60"};
-	
+	private RotateImageView	timeLapseButton	= null;
+	boolean					swChecked		= false;
+	String[]				stringInterval	= { "3", "5", "10", "15", "30", "60" };
+
 	public void selfTimerDialog()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int interval = prefs.getInt(MainScreen.sDelayedCaptureIntervalPref, 0);
-		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);		
-		
+		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);
+
 		final Dialog d = new Dialog(MainScreen.getInstance());
-        d.setTitle("Self timer settings");
-        d.setContentView(R.layout.selftimer_dialog);
-        final Button bSet = (Button) d.findViewById(R.id.button1);
-        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        np.setMaxValue(5);
-        np.setMinValue(0);
-        np.setValue(interval);
-        np.setDisplayedValues(stringInterval);
-        np.setWrapSelectorWheel(false);
-        
-        final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
-        boolean flash = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
-        flashCheckbox.setChecked(flash);
-        
-        final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
-        boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
-        soundCheckbox.setChecked(sound);
-        
-        final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
-        
-        //disable/enable controls in dialog
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		d.setTitle("Self timer settings");
+		d.setContentView(R.layout.selftimer_dialog);
+		final Button bSet = (Button) d.findViewById(R.id.button1);
+		final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		np.setMaxValue(5);
+		np.setMinValue(0);
+		np.setValue(interval);
+		np.setDisplayedValues(stringInterval);
+		np.setWrapSelectorWheel(false);
+
+		final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
+		boolean flash = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
+		flashCheckbox.setChecked(flash);
+
+		final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
+		boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
+		soundCheckbox.setChecked(sound);
+
+		final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
+
+		// disable/enable controls in dialog
+		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+		{
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
 				if (!sw.isChecked())
-		        {
-		        	np.setEnabled(false);
-		        	flashCheckbox.setEnabled(false);
-		        	soundCheckbox.setEnabled(false);
-		        	swChecked = false;
-		        }
-				else
 				{
-		        	np.setEnabled(true);
-		        	flashCheckbox.setEnabled(true);
-		        	soundCheckbox.setEnabled(true);
-		        	swChecked = true;
-		        	bSet.setEnabled(true);
+					np.setEnabled(false);
+					flashCheckbox.setEnabled(false);
+					soundCheckbox.setEnabled(false);
+					swChecked = false;
+				} else
+				{
+					np.setEnabled(true);
+					flashCheckbox.setEnabled(true);
+					soundCheckbox.setEnabled(true);
+					swChecked = true;
+					bSet.setEnabled(true);
 				}
 			}
 		});
-        
-        //disable control in dialog by default
-        if (!swChecked)
-        {
-        	sw.setChecked(false);
-        	flashCheckbox.setEnabled(false);
-        	soundCheckbox.setEnabled(false);
-        	np.setEnabled(false);
-        	bSet.setEnabled(false);
-        }
-        else
-        {
-        	np.setEnabled(true);
-        	flashCheckbox.setEnabled(true);
-        	soundCheckbox.setEnabled(true);
-        	bSet.setEnabled(true);
-        	sw.setChecked(true);
-        }
-        
-        //set button in dialog pressed
-        bSet.setOnClickListener(new OnClickListener()
-        {
-         @Override
-         public void onClick(View v) {
-             d.dismiss();
-             int interval = 0;
-             Editor prefsEditor = prefs.edit();
- 			
-             if (swChecked)
-            	 interval  = np.getValue();
-             else
-            	 interval = 0;
-             int real_int = Integer.parseInt(stringInterval[np.getValue()]);
-             prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swChecked);
-             if (swChecked)
-            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
-             else
-             {
-            	 prefsEditor.putInt(MainScreen.sDelayedCapturePref, 0);
-            	 real_int = 0;
-             }
-             prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
-             prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
-             prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
-             prefsEditor.commit();
 
-             updateTimelapseButton(real_int);
-          }    
-         });
-      d.show();
+		// disable control in dialog by default
+		if (!swChecked)
+		{
+			sw.setChecked(false);
+			flashCheckbox.setEnabled(false);
+			soundCheckbox.setEnabled(false);
+			np.setEnabled(false);
+			bSet.setEnabled(false);
+		} else
+		{
+			np.setEnabled(true);
+			flashCheckbox.setEnabled(true);
+			soundCheckbox.setEnabled(true);
+			bSet.setEnabled(true);
+			sw.setChecked(true);
+		}
+
+		// set button in dialog pressed
+		bSet.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				d.dismiss();
+				int interval = 0;
+				Editor prefsEditor = prefs.edit();
+
+				if (swChecked)
+					interval = np.getValue();
+				else
+					interval = 0;
+				int real_int = Integer.parseInt(stringInterval[np.getValue()]);
+				prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swChecked);
+				if (swChecked)
+					prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
+				else
+				{
+					prefsEditor.putInt(MainScreen.sDelayedCapturePref, 0);
+					real_int = 0;
+				}
+				prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
+				prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
+				prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, interval);
+				prefsEditor.commit();
+
+				updateTimelapseButton(real_int);
+			}
+		});
+		d.show();
 	}
-	
+
 	public void addSelfTimerControl(boolean needToShow)
 	{
-		View selfTimerControl =null;
+		View selfTimerControl = null;
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		float screenDensity = metrics.density;
-    			
-    	int iIndicatorSize = (int) (MainScreen.getMainContext().getResources()
-				.getInteger(R.integer.infoControlHeight) * screenDensity);
-    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
-		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight() + (int)MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
-		params.setMargins((int)(2*MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
-		
+
+		int iIndicatorSize = (int) (MainScreen.getMainContext().getResources().getInteger(R.integer.infoControlHeight) * screenDensity);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
+		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight()
+				+ (int) MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+		params.setMargins((int) (2 * MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
+
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();		
-		
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
+
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
 		selfTimerControl.setVisibility(View.VISIBLE);
-		
+
 		MainScreen.getGUIManager().removeViews(selfTimerControl, R.id.specialPluginsLayout2);
-		
-		if (!needToShow || !PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported())
+
+		if (!needToShow
+				|| !PluginManager.getInstance().getActivePlugins(PluginType.Capture).get(0).delayedCaptureSupported())
 		{
-			return; 
+			return;
 		}
-		
-		timeLapseButton = (RotateImageView)selfTimerControl.findViewById(R.id.buttonSelftimer);
-		
-		timeLapseButton.setOnClickListener(new OnClickListener(){
+
+		timeLapseButton = (RotateImageView) selfTimerControl.findViewById(R.id.buttonSelftimer);
+
+		timeLapseButton.setOnClickListener(new OnClickListener()
+		{
 
 			@Override
-			public void onClick(View v) {			
+			public void onClick(View v)
+			{
 				selfTimerDialog();
 			}
-			
+
 		});
-		
+
 		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2);
-		for(int i = 0; i < specialLayout2.getChildCount(); i++)
+		RelativeLayout specialLayout2 = (RelativeLayout) MainScreen.getInstance().findViewById(
+				R.id.specialPluginsLayout2);
+		for (int i = 0; i < specialLayout2.getChildCount(); i++)
 			specialView2.add(specialLayout2.getChildAt(i));
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int)MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
-		
-		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);		
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl, params);
-		
+		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
+
+		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).addView(selfTimerControl,
+				params);
+
 		selfTimerControl.setLayoutParams(params);
 		selfTimerControl.requestLayout();
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		updateTimelapseButton(delayInterval);
 	}
-	
+
 	private void updateTimelapseButton(int delayInterval)
 	{
 		switch (delayInterval)
-        {
-         case 0:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
-        	 break;
-         case 3:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
-        	 break;
-         case 5:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
-        	 break;
-         case 10:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
-        	 break;
-         case 15:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
-        	 break;
-         case 30:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
-        	 break;
-         case 60:
-        	 if (swChecked)
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
-        	 else
-        		 timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
-        	 break;    
-         default:
- 			break;
-         }
+		{
+		case 0:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+			break;
+		case 3:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
+			break;
+		case 5:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
+			break;
+		case 10:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
+			break;
+		case 15:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
+			break;
+		case 30:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
+			break;
+		case 60:
+			if (swChecked)
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
+			else
+				timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
+			break;
+		default:
+			break;
+		}
 	}
-	
+
 	public void setOrientation()
 	{
-		if (timeLapseButton!=null)
+		if (timeLapseButton != null)
 		{
 			timeLapseButton.setOrientation(AlmalenceGUI.mDeviceOrientation);
 			timeLapseButton.invalidate();

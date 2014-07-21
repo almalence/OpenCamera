@@ -14,13 +14,14 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus.ui;
-+++ --> */
+ package com.almalence.opencam_plus.ui;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
 import java.util.List;
@@ -30,31 +31,37 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /***
-Adapter for grids elements
-***/
+ * Adapter for grids elements
+ ***/
 
-public class ElementAdapter extends BaseAdapter {  
-	
-	public List<View> Elements;
-	
-	public ElementAdapter() {  
-	}  
-	  
-	public int getCount() {  
-		return Elements.size();  
-	}  
-	  
-	public Object getItem(int position) {  
-		return null;  
-	}  
-	  
-	public long getItemId(int position) {  
-		 return position;  
-	}  
-	  
-	public View getView(int position, View convertView, ViewGroup parent) {  
+public class ElementAdapter extends BaseAdapter
+{
+
+	public List<View>	Elements;
+
+	public ElementAdapter()
+	{
+	}
+
+	public int getCount()
+	{
+		return Elements.size();
+	}
+
+	public Object getItem(int position)
+	{
+		return null;
+	}
+
+	public long getItemId(int position)
+	{
+		return position;
+	}
+
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
 		if (null == Elements)
 			return null;
 		return Elements.get(position);
-	 }  
-}  
+	}
+}

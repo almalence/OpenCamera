@@ -16,6 +16,7 @@
 
 package com.almalence.plugins.vf.focus;
 
-public interface Rotatable {
-    public void setOrientation(int orientation);
+public interface Rotatable
+{
+	public void setOrientation(int orientation);
 }

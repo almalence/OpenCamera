@@ -14,21 +14,23 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.processing.panorama;
 
 public class AlmashotPanorama
 {
 	static
-    {
-        System.loadLibrary("utils-image");
-    	System.loadLibrary("almalib");
-        System.loadLibrary("almashot-pano");
-    }
-	
+	{
+		System.loadLibrary("utils-image");
+		System.loadLibrary("almalib");
+		System.loadLibrary("almashot-pano");
+	}
+
 	public static native int initialize();
+
 	public static native int release();
-	public static native int[] process(int width, int height,
-			int[] jframes, float[][][] jtrs, int cameraFOV, boolean useAll,	boolean freeInput);
+
+	public static native int[] process(int width, int height, int[] jframes, float[][][] jtrs, int cameraFOV,
+			boolean useAll, boolean freeInput);
 }

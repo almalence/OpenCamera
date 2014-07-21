@@ -14,14 +14,15 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 /* <!-- +++
-package com.almalence.opencam_plus;
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-+++ --> */
+ package com.almalence.opencam_plus;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -132,7 +133,6 @@ import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
-
 /***
  * Plugins managing class.
  * 
@@ -143,8 +143,9 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  * plugins
  ***/
 
-public class PluginManager implements PluginManagerInterface {
-	private static PluginManager pluginManager;
+public class PluginManager implements PluginManagerInterface
+{
+	private static PluginManager		pluginManager;
 
 	// we need some selection of active plugins by type.
 	// probably different lists for different plugin's types
@@ -154,115 +155,119 @@ public class PluginManager implements PluginManagerInterface {
 	// of each type (as we have limited amount
 	// of types we can have just simple int variables or create a list, but it's
 	// more complicated)
-	Map<String, Plugin> pluginList;
+	Map<String, Plugin>					pluginList;
 
 	// active plugins IDs
-	List<String> activeVF;
-	String activeCapture;
-	String activeProcessing;
-	List<String> activeFilter;
-	String activeExport;
+	List<String>						activeVF;
+	String								activeCapture;
+	String								activeProcessing;
+	List<String>						activeFilter;
+	String								activeExport;
 
 	// list of plugins by type
-	List<Plugin> listVF;
-	List<Plugin> listCapture;
-	List<Plugin> listProcessing;
-	List<Plugin> listFilter;
-	List<Plugin> listExport;
+	List<Plugin>						listVF;
+	List<Plugin>						listCapture;
+	List<Plugin>						listProcessing;
+	List<Plugin>						listFilter;
+	List<Plugin>						listExport;
 
 	// counter indicating amout of processing tasks running
-	private int cntProcessing = 0;
+	private int							cntProcessing							= 0;
 
 	// table for sharing plugin's data
 	// hashtable for storing shared data - assoc massive for string key and
 	// string value
 	// file SharedMemory.txt contains data keys and formats for currently used
 	// data
-	private Hashtable<String, String> sharedMemory;
+	private Hashtable<String, String>	sharedMemory;
 
 	// message codes
-	public static final int MSG_NO_CAMERA = 1;
-	public static final int MSG_TAKE_PICTURE = 2;
-	public static final int MSG_CAPTURE_FINISHED = 3;
-	public static final int MSG_PROCESSING_FINISHED = 4;
-	public static final int MSG_START_POSTPROCESSING = 5;
-	public static final int MSG_POSTPROCESSING_FINISHED = 6;
-	public static final int MSG_FILTER_FINISHED = 7;
-	public static final int MSG_EXPORT_FINISHED = 8;
-	public static final int MSG_EXPORT_FINISHED_IOEXCEPTION = 9;
-    public static final int MSG_START_FX = 10;
-	public static final int MSG_FX_FINISHED = 11;
-	public static final int MSG_DELAYED_CAPTURE = 12;	
-	public static final int MSG_FORCE_FINISH_CAPTURE = 13;
-	public static final int MSG_NOTIFY_LIMIT_REACHED = 14;
-	public static final int MSG_CAPTURE_FINISHED_NORESULT = 15;
-	
-	public static final int MSG_CAMERA_READY = 161;
-	
-	//For HALv3 code version
-	public static final int MSG_CAMERA_OPENED = 16;
-	public static final int MSG_SURFACE_READY = 17;
-	public static final int MSG_NOT_LEVEL_FULL = 18;
-	public static final int MSG_PROCESS = 19;
-	public static final int MSG_PROCESS_FINISHED = 20;
-	public static final int MSG_VOLUME_ZOOM = 21;
+	public static final int				MSG_NO_CAMERA							= 1;
+	public static final int				MSG_TAKE_PICTURE						= 2;
+	public static final int				MSG_CAPTURE_FINISHED					= 3;
+	public static final int				MSG_PROCESSING_FINISHED					= 4;
+	public static final int				MSG_START_POSTPROCESSING				= 5;
+	public static final int				MSG_POSTPROCESSING_FINISHED				= 6;
+	public static final int				MSG_FILTER_FINISHED						= 7;
+	public static final int				MSG_EXPORT_FINISHED						= 8;
+	public static final int				MSG_EXPORT_FINISHED_IOEXCEPTION			= 9;
+	public static final int				MSG_START_FX							= 10;
+	public static final int				MSG_FX_FINISHED							= 11;
+	public static final int				MSG_DELAYED_CAPTURE						= 12;
+	public static final int				MSG_FORCE_FINISH_CAPTURE				= 13;
+	public static final int				MSG_NOTIFY_LIMIT_REACHED				= 14;
+	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
+
+	public static final int				MSG_CAMERA_READY						= 161;
+
+	// For HALv3 code version
+	public static final int				MSG_CAMERA_OPENED						= 16;
+	public static final int				MSG_SURFACE_READY						= 17;
+	public static final int				MSG_NOT_LEVEL_FULL						= 18;
+	public static final int				MSG_PROCESS								= 19;
+	public static final int				MSG_PROCESS_FINISHED					= 20;
+	public static final int				MSG_VOLUME_ZOOM							= 21;
 	// ^^ For HALv3 code version
 
-	public static final int MSG_SET_EXPOSURE = 22;
-	public static final int MSG_NEXT_FRAME = 23;
+	public static final int				MSG_SET_EXPOSURE						= 22;
+	public static final int				MSG_NEXT_FRAME							= 23;
 
-	public static final int MSG_BAD_FRAME = 24;
-	public static final int MSG_OUT_OF_MEMORY = 25;
+	public static final int				MSG_BAD_FRAME							= 24;
+	public static final int				MSG_OUT_OF_MEMORY						= 25;
 
-	public static final int MSG_FOCUS_STATE_CHANGED = 28;
+	public static final int				MSG_FOCUS_STATE_CHANGED					= 28;
 
-	public static final int MSG_RESTART_MAIN_SCREEN = 30;
+	public static final int				MSG_RESTART_MAIN_SCREEN					= 30;
 
-	public static final int MSG_RETURN_CAPTURED = 31;
+	public static final int				MSG_RETURN_CAPTURED						= 31;
 
-	public static final int MSG_RESULT_OK = 40;
-	public static final int MSG_RESULT_UNSAVED = 41;
+	public static final int				MSG_RESULT_OK							= 40;
+	public static final int				MSG_RESULT_UNSAVED						= 41;
 
-	public static final int MSG_CONTROL_LOCKED = 50;
-	public static final int MSG_CONTROL_UNLOCKED = 51;
-	public static final int MSG_PROCESSING_BLOCK_UI = 52;
-	public static final int MSG_PREVIEW_CHANGED = 53;
+	public static final int				MSG_CONTROL_LOCKED						= 50;
+	public static final int				MSG_CONTROL_UNLOCKED					= 51;
+	public static final int				MSG_PROCESSING_BLOCK_UI					= 52;
+	public static final int				MSG_PREVIEW_CHANGED						= 53;
 
-	public static final int MSG_EV_CHANGED = 60;
-	public static final int MSG_SCENE_CHANGED = 61;
-	public static final int MSG_WB_CHANGED = 62;
-	public static final int MSG_FOCUS_CHANGED = 63;
-	public static final int MSG_FLASH_CHANGED = 64;
-	public static final int MSG_ISO_CHANGED = 65;
+	public static final int				MSG_EV_CHANGED							= 60;
+	public static final int				MSG_SCENE_CHANGED						= 61;
+	public static final int				MSG_WB_CHANGED							= 62;
+	public static final int				MSG_FOCUS_CHANGED						= 63;
+	public static final int				MSG_FLASH_CHANGED						= 64;
+	public static final int				MSG_ISO_CHANGED							= 65;
 
 	// OpenGL layer messages
-	public static final int MSG_OPENGL_LAYER_SHOW = 70;
-	public static final int MSG_OPENGL_LAYER_HIDE = 71;
-	public static final int MSG_OPENGL_LAYER_SHOW_V2 = 72;
-	public static final int MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS = 73;
-	public static final int MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY = 74;
+	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
+	public static final int				MSG_OPENGL_LAYER_HIDE					= 71;
+	public static final int				MSG_OPENGL_LAYER_SHOW_V2				= 72;
+	public static final int				MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS	= 73;
+	public static final int				MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY	= 74;
 
-	//events to pause/resume capture. for example to stop capturing in preshot when popup share opened
-	public static final int MSG_STOP_CAPTURE = 80;
-	public static final int MSG_START_CAPTURE = 81;
+	// events to pause/resume capture. for example to stop capturing in preshot
+	// when popup share opened
+	public static final int				MSG_STOP_CAPTURE						= 80;
+	public static final int				MSG_START_CAPTURE						= 81;
 
 	// broadcast will be resent to every active plugin
-	public static final int MSG_BROADCAST = 9999;
+	public static final int				MSG_BROADCAST							= 9999;
 
 	// Support flag to avoid plugin's view disappearance issue
-	static boolean isRestarting = false;
+	static boolean						isRestarting							= false;
 
-	private static boolean isDefaultsSelected = false;
+	private static boolean				isDefaultsSelected						= false;
 
-	public static PluginManager getInstance() {
-		if (pluginManager == null) {
+	public static PluginManager getInstance()
+	{
+		if (pluginManager == null)
+		{
 			pluginManager = new PluginManager();
 		}
 		return pluginManager;
 	}
 
 	// plugin manager ctor. plugins initialization and filling plugin list
-	private PluginManager() {
+	private PluginManager()
+	{
 		pluginList = new Hashtable<String, Plugin>();
 
 		sharedMemory = new Hashtable<String, String>();
@@ -295,11 +300,11 @@ public class PluginManager implements PluginManagerInterface {
 		BarcodeScannerVFPlugin barcodeScannerVFPlugin = new BarcodeScannerVFPlugin();
 		pluginList.put(barcodeScannerVFPlugin.getID(), barcodeScannerVFPlugin);
 		listVF.add(barcodeScannerVFPlugin);
-		
+
 		GyroVFPlugin gyroVFPlugin = new GyroVFPlugin();
 		pluginList.put(gyroVFPlugin.getID(), gyroVFPlugin);
 		listVF.add(gyroVFPlugin);
-		
+
 		ZoomVFPlugin zoomVFPlugin = new ZoomVFPlugin();
 		pluginList.put(zoomVFPlugin.getID(), zoomVFPlugin);
 		listVF.add(zoomVFPlugin);
@@ -322,8 +327,7 @@ public class PluginManager implements PluginManagerInterface {
 		listCapture.add(testCapturePlugin);
 
 		ExpoBracketingCapturePlugin expoBracketingCapturePlugin = new ExpoBracketingCapturePlugin();
-		pluginList.put(expoBracketingCapturePlugin.getID(),
-				expoBracketingCapturePlugin);
+		pluginList.put(expoBracketingCapturePlugin.getID(), expoBracketingCapturePlugin);
 		listCapture.add(expoBracketingCapturePlugin);
 
 		NightCapturePlugin nightCapturePlugin = new NightCapturePlugin();
@@ -341,7 +345,7 @@ public class PluginManager implements PluginManagerInterface {
 		MultiShotCapturePlugin multiShotCapturePlugin = new MultiShotCapturePlugin();
 		pluginList.put(multiShotCapturePlugin.getID(), multiShotCapturePlugin);
 		listCapture.add(multiShotCapturePlugin);
-		
+
 		VideoCapturePlugin videoCapturePlugin = new VideoCapturePlugin();
 		pluginList.put(videoCapturePlugin.getID(), videoCapturePlugin);
 		listCapture.add(videoCapturePlugin);
@@ -355,8 +359,7 @@ public class PluginManager implements PluginManagerInterface {
 		listCapture.add(panoramaAugmentedCapturePlugin);
 
 		PreshotProcessingPlugin backInTimeProcessingPlugin = new PreshotProcessingPlugin();
-		pluginList.put(backInTimeProcessingPlugin.getID(),
-				backInTimeProcessingPlugin);
+		pluginList.put(backInTimeProcessingPlugin.getID(), backInTimeProcessingPlugin);
 		listCapture.add(backInTimeProcessingPlugin);
 
 		// Processing
@@ -375,7 +378,7 @@ public class PluginManager implements PluginManagerInterface {
 		MultiShotProcessingPlugin multiShotProcessingPlugin = new MultiShotProcessingPlugin();
 		pluginList.put(multiShotProcessingPlugin.getID(), multiShotProcessingPlugin);
 		listProcessing.add(multiShotProcessingPlugin);
-		
+
 		PanoramaProcessingPlugin panoramaProcessingPlugin = new PanoramaProcessingPlugin();
 		pluginList.put(panoramaProcessingPlugin.getID(), panoramaProcessingPlugin);
 		listProcessing.add(panoramaProcessingPlugin);
@@ -395,14 +398,13 @@ public class PluginManager implements PluginManagerInterface {
 		ParseConfig();
 	}
 
-
 	public void setupDefaultMode()
 	{
 		// select default mode - selection from preferences if exists. or from
 		// config if first start
 		Mode mode = getMode();
 
-		//when old mode removed for example
+		// when old mode removed for example
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (mode == null)
 		{
@@ -427,17 +429,18 @@ public class PluginManager implements PluginManagerInterface {
 		activeExport = mode.Export;
 	}
 
-
-	public String getActiveModeID() {
+	public String getActiveModeID()
+	{
 		return getActiveMode().modeID;
 	}
 
-	public Mode getActiveMode() {
+	public Mode getActiveMode()
+	{
 		// select default mode - selection from preferences if exists. or from
 		// config if first start
 		return getMode();
 	}
-	
+
 	private Mode getMode()
 	{
 		Mode mode = null;
@@ -448,8 +451,7 @@ public class PluginManager implements PluginManagerInterface {
 		{
 			String defaultModeName = prefs.getString(MainScreen.sDefaultModeName, "");
 			mode = ConfigParser.getInstance().getMode(defaultModeName);
-		}
-		else
+		} else
 		{
 			// set default mode - get this val from mode.xml and later control
 			// in preerences
@@ -479,15 +481,17 @@ public class PluginManager implements PluginManagerInterface {
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
 
-		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.getInstance(), R.anim.plugin_capture_selftimer_countdown);
+		countdownAnimation = AnimationUtils.loadAnimation(MainScreen.getInstance(),
+				R.anim.plugin_capture_selftimer_countdown);
 		countdownAnimation.setFillAfter(true);
 
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
-		countdownLayout = (RelativeLayout)inflator.inflate(R.layout.plugin_capture_selftimer_layout, null, false);
-		countdownView = (TextView)countdownLayout.findViewById(R.id.countdown_text);
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		countdownLayout = (RelativeLayout) inflator.inflate(R.layout.plugin_capture_selftimer_layout, null, false);
+		countdownView = (TextView) countdownLayout.findViewById(R.id.countdown_text);
 	}
 
-	private void restartMainScreen() {
+	private void restartMainScreen()
+	{
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
@@ -499,21 +503,26 @@ public class PluginManager implements PluginManagerInterface {
 		MainScreen.getInstance().resumeMain();
 
 		countdownView.clearAnimation();
-        countdownLayout.setVisibility(View.GONE);
+		countdownLayout.setVisibility(View.GONE);
 	}
 
 	// parse config to get camera and modes configurations
-	void ParseConfig() {
-		try {
+	void ParseConfig()
+	{
+		try
+		{
 			ConfigParser.getInstance().parse(MainScreen.getMainContext());
-		} catch (XmlPullParserException e) {
+		} catch (XmlPullParserException e)
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
 
-	public void switchMode(Mode mode) {
+	public void switchMode(Mode mode)
+	{
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
@@ -532,8 +541,7 @@ public class PluginManager implements PluginManagerInterface {
 		activeExport = mode.Export;
 
 		// set mode as default for future starts
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
 		prefsEditor.commit();
@@ -543,13 +551,16 @@ public class PluginManager implements PluginManagerInterface {
 		MainScreen.getInstance().resumeMain();
 	}
 
-	public List<Plugin> getActivePlugins(PluginType type) {
+	public List<Plugin> getActivePlugins(PluginType type)
+	{
 		List<Plugin> activePlugins = new ArrayList<Plugin>();
-		switch (type) {
-		case ViewFinder: {
-			for (int i = 0; i < activeVF.size(); i++)
-				activePlugins.add(pluginList.get(activeVF.get(i)));
-		}
+		switch (type)
+		{
+		case ViewFinder:
+			{
+				for (int i = 0; i < activeVF.size(); i++)
+					activePlugins.add(pluginList.get(activeVF.get(i)));
+			}
 			break;
 		case Capture:
 			activePlugins.add(pluginList.get(activeCapture));
@@ -557,10 +568,11 @@ public class PluginManager implements PluginManagerInterface {
 		case Processing:
 			activePlugins.add(pluginList.get(activeProcessing));
 			break;
-		case Filter: {
-			for (int i = 0; i < activeFilter.size(); i++)
-				activePlugins.add(pluginList.get(i));
-		}
+		case Filter:
+			{
+				for (int i = 0; i < activeFilter.size(); i++)
+					activePlugins.add(pluginList.get(i));
+			}
 			break;
 		case Export:
 			activePlugins.add(pluginList.get(activeExport));
@@ -573,7 +585,8 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	// base onStart stage
-	public void onStart() {
+	public void onStart()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onStart();
 		if (null != pluginList.get(activeCapture))
@@ -587,7 +600,8 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	// base onStop stage;
-	public void onStop() {
+	public void onStop()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onStop();
 		if (null != pluginList.get(activeCapture))
@@ -601,7 +615,8 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	// base onDestroy stage
-	public void onDestroy() {
+	public void onDestroy()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onDestroy();
 		if (null != pluginList.get(activeCapture))
@@ -615,7 +630,8 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	// base onResume stage
-	public void onResume() {
+	public void onResume()
+	{
 		shutterRelease = true;
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onResume();
@@ -630,20 +646,21 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	// base onPause stage
-	public void onPause(boolean isFromMain) {
+	public void onPause(boolean isFromMain)
+	{
 
-		//stops delayed interval timer if it's working
+		// stops delayed interval timer if it's working
 		if (delayedCaptureFlashPrefCommon || delayedCaptureSoundPrefCommon)
 		{
 			releaseSoundPlayers();
-	        countdownHandler.removeCallbacks(FlashOff);
-		    finalcountdownHandler.removeCallbacks(FlashBlink);
+			countdownHandler.removeCallbacks(FlashOff);
+			finalcountdownHandler.removeCallbacks(FlashBlink);
 		}
-		//stops timer before exit to be sure it's canceled
-		if (timer!=null)
+		// stops timer before exit to be sure it's canceled
+		if (timer != null)
 		{
 			timer.cancel();
-			timer=null;
+			timer = null;
 		}
 
 		for (int i = 0; i < activeVF.size(); i++)
@@ -658,15 +675,16 @@ public class PluginManager implements PluginManagerInterface {
 			pluginList.get(activeExport).onPause();
 	}
 
-	public void menuButtonPressed() {
+	public void menuButtonPressed()
+	{
 		onShowPreferences();
-		Intent settingsActivity = new Intent(MainScreen.getMainContext(),
-				Preferences.class);
+		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
 		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 
 	// Called before preferences activity started
-	public void onShowPreferences() {
+	public void onShowPreferences()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onShowPreferences();
 		if (null != pluginList.get(activeCapture))
@@ -679,7 +697,8 @@ public class PluginManager implements PluginManagerInterface {
 			pluginList.get(activeExport).onShowPreferences();
 	}
 
-	public void onGUICreate() {
+	public void onGUICreate()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onGUICreate();
 		if (null != pluginList.get(activeCapture))
@@ -695,27 +714,29 @@ public class PluginManager implements PluginManagerInterface {
 
 		MainScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
 
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);		
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT);
 
-		params.addRule(RelativeLayout.CENTER_IN_PARENT);		
+		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(this.countdownLayout, params);
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(
+				this.countdownLayout, params);
 
 		this.countdownLayout.setLayoutParams(params);
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 	}
 
-	public void onShutterClick() 
+	public void onShutterClick()
 	{
-		//<!-- -+-
+		// <!-- -+-
 		// check if plugin payed
 		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
 		{
 			MainScreen.getGUIManager().lockControls = false;
 			return;
 		}
-		//-+- -->
+		// -+- -->
 		if (!shutterRelease)
 			return;
 
@@ -724,37 +745,39 @@ public class PluginManager implements PluginManagerInterface {
 		delayedCaptureSoundPrefCommon = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
-		if (!showDelayedCapturePrefCommon ||delayInterval==0 || !pluginList.get(activeCapture).delayedCaptureSupported())
-		{	
+		if (!showDelayedCapturePrefCommon || delayInterval == 0
+				|| !pluginList.get(activeCapture).delayedCaptureSupported())
+		{
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
-			if (null != pluginList.get(activeCapture) && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+			if (null != pluginList.get(activeCapture)
+					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
-		}
-		else
+		} else
 		{
 			shutterRelease = false;
-			delayedCapture(delayInterval);	
+			delayedCapture(delayInterval);
 		}
 	}
 
-	public void onFocusButtonClick() 
+	public void onFocusButtonClick()
 	{
-		//<!-- -+-
+		// <!-- -+-
 		// check if plugin payed
 		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
 		{
 			MainScreen.getGUIManager().lockControls = false;
 			return;
 		}
-		//-+- -->
+		// -+- -->
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onFocusButtonClick();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onFocusButtonClick();
 	}
 
-	public boolean onTouch(View view, MotionEvent e) {
+	public boolean onTouch(View view, MotionEvent e)
+	{
 		int res = 0;
 		for (int i = 0; i < activeVF.size(); i++)
 			res += (pluginList.get(activeVF.get(i)).onTouch(view, e) ? 1 : 0);
@@ -763,21 +786,24 @@ public class PluginManager implements PluginManagerInterface {
 		return (res > 0 ? true : false);
 	}
 
-	public Plugin getPlugin(String id) {
+	public Plugin getPlugin(String id)
+	{
 		return pluginList.get(id);
 	}
 
 	private void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
-		for (int j = 0; j < listCapture.size(); j++) {
+		for (int j = 0; j < listCapture.size(); j++)
+		{
 			Plugin pg = listCapture.get(j);
 			if (mode.Capture.equals(pg.getID()))
 			{
 				addHeadersContent(pf, pg, false);
 			}
 		}
-		for (int j = 0; j < listProcessing.size(); j++) {
+		for (int j = 0; j < listProcessing.size(); j++)
+		{
 			Plugin pg = listProcessing.get(j);
 			if (mode.Processing.equals(pg.getID()))
 			{
@@ -786,29 +812,27 @@ public class PluginManager implements PluginManagerInterface {
 		}
 	}
 
-	public void loadHeaderContent(String settings, PreferenceFragment pf) {
+	public void loadHeaderContent(String settings, PreferenceFragment pf)
+	{
 		List<Plugin> activePlugins = new ArrayList<Plugin>();
 		List<Plugin> inactivePlugins = new ArrayList<Plugin>();
 
 		boolean hasInactive = false;
 
 		loadStandardSettingsBefore(pf, settings);
-		if ("general_settings".equals(settings)) 
+		if ("general_settings".equals(settings))
 		{
-		}
-		else if ("general_more".equals(settings)) 
+		} else if ("general_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_more);
 			MainScreen.getInstance().onAdvancePreferenceCreate(pf);
-		}
-		else if ("vf_settings".equals(settings)) 
+		} else if ("vf_settings".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
-		}
-		else if ("vf_more".equals(settings)) 
+		} else if ("vf_more".equals(settings))
 		{
-			for (int i = 0; i < listVF.size(); i++) 
-			{				
+			for (int i = 0; i < listVF.size(); i++)
+			{
 				Plugin pg = listVF.get(i);
 				if (activeVF.contains(pg.getID()))
 					activePlugins.add(pg);
@@ -817,123 +841,105 @@ public class PluginManager implements PluginManagerInterface {
 			}
 			addHeadersContent(pf, activePlugins, false);
 
-			if (activePlugins.size() != listVF.size()
-					&& isPreferenecesAvailable(inactivePlugins, false))
+			if (activePlugins.size() != listVF.size() && isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
-		}
-		else if ("vf_inactive_settings".equals(settings)) 
+		} else if ("vf_inactive_settings".equals(settings))
 		{
-			for (int i = 0; i < listVF.size(); i++) 
-			{				
+			for (int i = 0; i < listVF.size(); i++)
+			{
 				Plugin pg = listVF.get(i);
 				if (!activeVF.contains(pg.getID()))
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, false);
-		}
-		else if ("save_configuration".equals(settings)) 
+		} else if ("save_configuration".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_saveconfiguration);
-		}
-		else if ("export_more".equals(settings)) 
+		} else if ("export_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_export_common);
-		}		
-		else if ("shooting_settings".equals(settings)) 
+		} else if ("shooting_settings".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
-		}
-		else if ("capture_expobracketing_more".equals(settings)) 
+		} else if ("capture_expobracketing_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_expobracketing_more);
-		}
-		else if ("processing_expobracketing_more".equals(settings)) 
+		} else if ("processing_expobracketing_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_hdr_more);
-		}
-		else if ("capture_night_more".equals(settings)) 
+		} else if ("capture_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_night_more);
-		}
-		else if ("processing_night_more".equals(settings)) 
+		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
-		}
-		else if ("capture_preshot_more".equals(settings)) 
+		} else if ("capture_preshot_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);
-		}
-		else if ("capture_panorama_more".equals(settings)) 
+		} else if ("capture_panorama_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
-		}
-		else if ("burst".equals(settings))
+		} else if ("burst".equals(settings))
 		{
 			AddModeSettings("burstmode", pf);
-		}
-		else if ("expobracketing".equals(settings))
+		} else if ("expobracketing".equals(settings))
 		{
 			AddModeSettings("expobracketing", pf);
-		}
-		else if ("hdr".equals(settings))
+		} else if ("hdr".equals(settings))
 		{
 			AddModeSettings("hdrmode", pf);
-		}
-		else if ("night".equals(settings))
+		} else if ("night".equals(settings))
 		{
 			AddModeSettings("nightmode", pf);
-		}
-		else if ("video".equals(settings))
+		} else if ("video".equals(settings))
 		{
 			AddModeSettings("video", pf);
-		}
-		else if ("preshot".equals(settings))
+		} else if ("preshot".equals(settings))
 		{
 			AddModeSettings("pixfix", pf);
-		}
-		else if ("multishot".equals(settings))
+		} else if ("multishot".equals(settings))
 		{
 			AddModeSettings("multishot", pf);
-		}
-		else if ("panorama_augmented".equals(settings))
+		} else if ("panorama_augmented".equals(settings))
 		{
 			AddModeSettings("panorama_augmented", pf);
-		}
-		else if ("bestshotmode".equals(settings))
+		} else if ("bestshotmode".equals(settings))
 		{
 			AddModeSettings("bestshotmode", pf);
-		}
-		else if ("saving_settings".equals(settings)) {
-			for (int i = 0; i < listFilter.size(); i++) {
+		} else if ("saving_settings".equals(settings))
+		{
+			for (int i = 0; i < listFilter.size(); i++)
+			{
 				Plugin pg = listFilter.get(i);
 				if (activeFilter.contains(pg.getID()))
 					activePlugins.add(pg);
 				else
 					inactivePlugins.add(pg);
 			}
-			if (activePlugins.size() != listFilter.size()
-					&& isPreferenecesAvailable(inactivePlugins, false))
+			if (activePlugins.size() != listFilter.size() && isPreferenecesAvailable(inactivePlugins, false))
 				hasInactive = true;
 			addHeadersContent(pf, activePlugins, false);
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listExport.size(); i++) {
+			for (int i = 0; i < listExport.size(); i++)
+			{
 				Plugin pg = listExport.get(i);
 				if (activeExport.contains(pg.getID()))
 					activePlugins.add(pg);
 				else
 					inactivePlugins.add(pg);
 			}
-			if (activePlugins.size() != listExport.size()
-					&& isPreferenecesAvailable(inactivePlugins, false))
+			if (activePlugins.size() != listExport.size() && isPreferenecesAvailable(inactivePlugins, false))
 				hasInactive = true;
 			addHeadersContent(pf, activePlugins, false);
 
 			if (hasInactive)
 				pf.addPreferencesFromResource(R.xml.preferences_saving_inactive);
-		} else if ("saving_inactive_settings".equals(settings)) {
-			for (int i = 0; i < listFilter.size(); i++) {
+		} else if ("saving_inactive_settings".equals(settings))
+		{
+			for (int i = 0; i < listFilter.size(); i++)
+			{
 				Plugin pg = listFilter.get(i);
 				if (!activeFilter.contains(pg.getID()))
 					inactivePlugins.add(pg);
@@ -941,16 +947,19 @@ public class PluginManager implements PluginManagerInterface {
 			addHeadersContent(pf, inactivePlugins, false);
 
 			activePlugins.clear();
-			for (int i = 0; i < listExport.size(); i++) {
+			for (int i = 0; i < listExport.size(); i++)
+			{
 				Plugin pg = listExport.get(i);
 				if (!activeExport.contains(pg.getID()))
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, false);
-		} else if ("advanced".equals(settings)) {
+		} else if ("advanced".equals(settings))
+		{
 			loadCommonAdvancedSettings(pf);
 
-			for (int i = 0; i < listVF.size(); i++) {
+			for (int i = 0; i < listVF.size(); i++)
+			{
 				Plugin pg = listVF.get(i);
 				if (activeVF.contains(pg.getID()))
 					activePlugins.add(pg);
@@ -963,7 +972,8 @@ public class PluginManager implements PluginManagerInterface {
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listCapture.size(); i++) {
+			for (int i = 0; i < listCapture.size(); i++)
+			{
 				Plugin pg = listCapture.get(i);
 				if (activeCapture.equals(pg.getID()))
 					activePlugins.add(pg);
@@ -976,7 +986,8 @@ public class PluginManager implements PluginManagerInterface {
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listProcessing.size(); i++) {
+			for (int i = 0; i < listProcessing.size(); i++)
+			{
 				Plugin pg = listProcessing.get(i);
 				if (activeProcessing.equals(pg.getID()))
 					activePlugins.add(pg);
@@ -989,7 +1000,8 @@ public class PluginManager implements PluginManagerInterface {
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listFilter.size(); i++) {
+			for (int i = 0; i < listFilter.size(); i++)
+			{
 				Plugin pg = listFilter.get(i);
 				if (activeFilter.contains(pg.getID()))
 					activePlugins.add(pg);
@@ -1002,7 +1014,8 @@ public class PluginManager implements PluginManagerInterface {
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listExport.size(); i++) {
+			for (int i = 0; i < listExport.size(); i++)
+			{
 				Plugin pg = listExport.get(i);
 				if (activeExport.equals(pg.getID()))
 					activePlugins.add(pg);
@@ -1015,8 +1028,10 @@ public class PluginManager implements PluginManagerInterface {
 
 			if (hasInactive)
 				pf.addPreferencesFromResource(R.xml.preferences_advance_inactive);
-		} else if ("advanced_inactive".equals(settings)) {
-			for (int i = 0; i < listVF.size(); i++) {
+		} else if ("advanced_inactive".equals(settings))
+		{
+			for (int i = 0; i < listVF.size(); i++)
+			{
 				Plugin pg = listVF.get(i);
 				if (!activeVF.contains(pg.getID()))
 					inactivePlugins.add(pg);
@@ -1024,7 +1039,8 @@ public class PluginManager implements PluginManagerInterface {
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			for (int i = 0; i < listCapture.size(); i++) {
+			for (int i = 0; i < listCapture.size(); i++)
+			{
 				Plugin pg = listCapture.get(i);
 				if (!activeCapture.equals(pg.getID()))
 					inactivePlugins.add(pg);
@@ -1032,7 +1048,8 @@ public class PluginManager implements PluginManagerInterface {
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			for (int i = 0; i < listProcessing.size(); i++) {
+			for (int i = 0; i < listProcessing.size(); i++)
+			{
 				Plugin pg = listProcessing.get(i);
 				if (!activeProcessing.equals(pg.getID()))
 					inactivePlugins.add(pg);
@@ -1040,7 +1057,8 @@ public class PluginManager implements PluginManagerInterface {
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			for (int i = 0; i < listFilter.size(); i++) {
+			for (int i = 0; i < listFilter.size(); i++)
+			{
 				Plugin pg = listFilter.get(i);
 				if (!activeFilter.contains(pg.getID()))
 					inactivePlugins.add(pg);
@@ -1048,52 +1066,58 @@ public class PluginManager implements PluginManagerInterface {
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			for (int i = 0; i < listExport.size(); i++) {
+			for (int i = 0; i < listExport.size(); i++)
+			{
 				Plugin pg = listExport.get(i);
 				if (!activeExport.equals(pg.getID()))
 					inactivePlugins.add(pg);
 			}
 			addHeadersContent(pf, inactivePlugins, true);
-		} 
-		else if ("plugins_settings".equals(settings)) 
+		} else if ("plugins_settings".equals(settings))
 		{
-			//<!-- -+-
+			// <!-- -+-
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 
-			new CountDownTimer(800, 800) {
-				public void onTick(long millisUntilFinished) {
+			new CountDownTimer(800, 800)
+			{
+				public void onTick(long millisUntilFinished)
+				{
 				}
-	
-				public void onFinish() {
+
+				public void onFinish()
+				{
 					MainScreen.getGUIManager().showStore();
 				}
 			}.start();
-			//-+- -->
+			// -+- -->
 		}
 	}
 
-	private void addHeadersContent(PreferenceFragment pf, List<Plugin> list,
-			boolean isAdvanced) {
+	private void addHeadersContent(PreferenceFragment pf, List<Plugin> list, boolean isAdvanced)
+	{
 		int size = list.size(), i = 0;
-		while (i < size) {
+		while (i < size)
+		{
 			addHeadersContent(pf, list.get(i), isAdvanced);
 			i++;
 		}
 	}
 
-	private void addHeadersContent(PreferenceFragment pf, Plugin plugin,
-			boolean isAdvanced) {
+	private void addHeadersContent(PreferenceFragment pf, Plugin plugin, boolean isAdvanced)
+	{
 		if (null == plugin)
 			return;
 		if (!plugin.isShowPreferences)
 			return;
-		if (!isAdvanced) {
+		if (!isAdvanced)
+		{
 			if (plugin.getPreferenceName() == 0)
 				return;
 			pf.addPreferencesFromResource(plugin.getPreferenceName());
 			plugin.onPreferenceCreate(pf);
-		} else {
+		} else
+		{
 			if (plugin.getAdvancedPreferenceName() == 0)
 				return;
 			pf.addPreferencesFromResource(plugin.getAdvancedPreferenceName());
@@ -1102,22 +1126,26 @@ public class PluginManager implements PluginManagerInterface {
 		plugin.showInitialSummary(pf);
 	}
 
-	private void loadStandardSettingsBefore(PreferenceFragment pf,
-			String settings) {
-		if ("general_settings".equals(settings)) {
+	private void loadStandardSettingsBefore(PreferenceFragment pf, String settings)
+	{
+		if ("general_settings".equals(settings))
+		{
 			pf.addPreferencesFromResource(R.xml.preferences);
 			MainScreen.getInstance().onPreferenceCreate(pf);
 		}
 	}
 
-	private void loadCommonAdvancedSettings(PreferenceFragment pf) {
+	private void loadCommonAdvancedSettings(PreferenceFragment pf)
+	{
 		pf.addPreferencesFromResource(R.xml.preferences_advanced_common);
 	}
 
 	// show preference's value in summary on start
-	public void showInitialSummary(PreferenceActivity prefActivity) {
+	public void showInitialSummary(PreferenceActivity prefActivity)
+	{
 		Plugin tmp;
-		for (int i = 0; i < activeVF.size(); i++) {
+		for (int i = 0; i < activeVF.size(); i++)
+		{
 			tmp = pluginList.get(activeVF.get(i));
 			tmp.showInitialSummary(prefActivity);
 		}
@@ -1130,7 +1158,8 @@ public class PluginManager implements PluginManagerInterface {
 		if (null != tmp)
 			tmp.showInitialSummary(prefActivity);
 
-		for (int i = 0; i < activeFilter.size(); i++) {
+		for (int i = 0; i < activeFilter.size(); i++)
+		{
 			tmp = pluginList.get(activeFilter.get(i));
 			tmp.showInitialSummary(prefActivity);
 		}
@@ -1140,57 +1169,50 @@ public class PluginManager implements PluginManagerInterface {
 			tmp.showInitialSummary(prefActivity);
 	}
 
-	protected boolean isPreferenecesAvailable(List<Plugin> plugins,
-			boolean isAdvanced) {
+	protected boolean isPreferenecesAvailable(List<Plugin> plugins, boolean isAdvanced)
+	{
 		boolean isAvailable = false;
-		for (int i = 0; i < plugins.size(); i++) {
+		for (int i = 0; i < plugins.size(); i++)
+		{
 			Plugin plugin = plugins.get(i);
-			if (plugin.isShowPreferences && !isAdvanced
-					&& plugin.getPreferenceName() != 0)
+			if (plugin.isShowPreferences && !isAdvanced && plugin.getPreferenceName() != 0)
 				isAvailable = true;
-			else if (plugin.isShowPreferences && isAdvanced
-					&& plugin.getAdvancedPreferenceName() != 0)
+			else if (plugin.isShowPreferences && isAdvanced && plugin.getAdvancedPreferenceName() != 0)
 				isAvailable = true;
 		}
 		return isAvailable;
 	}
 
-	public void onOrientationChanged(int orientation) {
+	public void onOrientationChanged(int orientation)
+	{
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onOrientationChanged(
-					orientation);
+			pluginList.get(activeVF.get(i)).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onOrientationChanged(
-					orientation);
+			pluginList.get(activeCapture).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeProcessing))
-			pluginList.get(activeProcessing).onOrientationChanged(
-					orientation);
+			pluginList.get(activeProcessing).onOrientationChanged(orientation);
 		for (int i = 0; i < activeFilter.size(); i++)
 			pluginList.get(i).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeExport))
-			pluginList.get(activeExport).onOrientationChanged(
-					orientation);
+			pluginList.get(activeExport).onOrientationChanged(orientation);
 	}
 
 	// can be situation when 2 plugins will handle this interface and it's not
 	// write.
 	// probably we should close it.
-	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event) {
+	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event)
+	{
 		int res = 0;
 		for (int i = 0; i < activeVF.size(); i++)
-			res += pluginList.get(activeVF.get(i)).onKeyDown(keyCode, event) ? 1
-					: 0;
+			res += pluginList.get(activeVF.get(i)).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeCapture))
-			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) ? 1
-					: 0;
+			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeProcessing))
-			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) ? 1
-					: 0;
+			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) ? 1 : 0;
 		for (int i = 0; i < activeFilter.size(); i++)
 			res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeExport))
-			res += pluginList.get(activeExport).onKeyDown(keyCode, event) ? 1
-					: 0;
+			res += pluginList.get(activeExport).onKeyDown(keyCode, event) ? 1 : 0;
 		return (res > 0 ? true : false);
 	}
 
@@ -1201,73 +1223,81 @@ public class PluginManager implements PluginManagerInterface {
 	@Override
 	public void selectDefaults()
 	{
-		if(!isDefaultsSelected)
+		if (!isDefaultsSelected)
 			for (final Entry<String, Plugin> entry : this.pluginList.entrySet())
 			{
 				final Plugin plugin = entry.getValue();
 				plugin.onDefaultsSelect();
 			}
-		isDefaultsSelected = true;	
+		isDefaultsSelected = true;
 	}
 
 	@Override
-	public void selectImageDimension() {
+	public void selectImageDimension()
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).selectImageDimension();
 	}
 
-	public void setCameraPreviewSize(Camera.Parameters cp) {
+	public void setCameraPreviewSize(Camera.Parameters cp)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).setCameraPreviewSize(cp);
 	}
 
-	public void setCameraPictureSize() {
+	public void setCameraPictureSize()
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).setCameraPictureSize();
 	}
 
 	@Override
-	public void onAutoFocus(boolean paramBoolean) {
+	public void onAutoFocus(boolean paramBoolean)
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onAutoFocus(paramBoolean);
 
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture)
-					.onAutoFocus(paramBoolean);
+			pluginList.get(activeCapture).onAutoFocus(paramBoolean);
 	}
 
-	void takePicture() {
+	void takePicture()
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).takePicture();
 	}
 
-	void onShutter() {
+	void onShutter()
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onShutter();
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera) {
+	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte,
-					paramCamera);
+			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte, paramCamera);
 	}
-	
-	public void onImageAvailable(Image im) {
+
+	public void onImageAvailable(Image im)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
-	
+
 	@TargetApi(19)
-	public void onCaptureCompleted(CaptureResult result) {
+	public void onCaptureCompleted(CaptureResult result)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
-	
-	public void onPreviewAvailable(Image im) {
-		if (isRestarting) {
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
-					.findViewById(R.id.mainLayout1);
+
+	public void onPreviewAvailable(Image im)
+	{
+		if (isRestarting)
+		{
+			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
 			pluginsLayout.requestLayout();
 			isRestarting = false;
 		}
@@ -1280,11 +1310,12 @@ public class PluginManager implements PluginManagerInterface {
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera) {
+	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	{
 		// prevents plugin's views to disappear
-		if (isRestarting) {
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
-					.findViewById(R.id.mainLayout1);
+		if (isRestarting)
+		{
+			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
 			pluginsLayout.requestLayout();
 			isRestarting = false;
 		}
@@ -1299,28 +1330,31 @@ public class PluginManager implements PluginManagerInterface {
 	public void onFrameAvailable()
 	{
 		final Plugin plugin = pluginList.get(activeCapture);
-		
+
 		if (plugin != null && plugin instanceof PluginCapture)
 		{
-			((PluginCapture)plugin).onFrameAvailable();
+			((PluginCapture) plugin).onFrameAvailable();
 		}
 	}
 
-	public void setupCameraParameters() {
+	public void setupCameraParameters()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).setupCameraParameters();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).setupCameraParameters();
 	}
 
-	public void onCameraParametersSetup() {
+	public void onCameraParametersSetup()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onCameraParametersSetup();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCameraParametersSetup();
 	}
 
-	public void onCameraSetup() {
+	public void onCameraSetup()
+	{
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onCameraSetup();
 		if (null != pluginList.get(activeCapture))
@@ -1331,7 +1365,8 @@ public class PluginManager implements PluginManagerInterface {
 	 * Processing Interfaces
 	 ******************************************************************************************************/
 
-	public int getResultYUV(int index) {
+	public int getResultYUV(int index)
+	{
 		if (null != pluginList.get(activeProcessing))
 			return pluginList.get(activeProcessing).getResultYUV(index);
 		else
@@ -1352,29 +1387,35 @@ public class PluginManager implements PluginManagerInterface {
 	// any interested plugin.
 	// message can pass 2 int parameters. can be used as message id or short
 	// data pass
-	void onBroadcast(int arg1, int arg2) {
+	void onBroadcast(int arg1, int arg2)
+	{
 		boolean res;
-		for (int i = 0; i < activeVF.size(); i++) {
+		for (int i = 0; i < activeVF.size(); i++)
+		{
 			res = pluginList.get(activeVF.get(i)).onBroadcast(arg1, arg2);
 			if (res)
 				return;
 		}
-		if (null != pluginList.get(activeCapture)) {
+		if (null != pluginList.get(activeCapture))
+		{
 			res = pluginList.get(activeCapture).onBroadcast(arg1, arg2);
 			if (res)
 				return;
 		}
-		if (null != pluginList.get(activeProcessing)) {
+		if (null != pluginList.get(activeProcessing))
+		{
 			res = pluginList.get(activeProcessing).onBroadcast(arg1, arg2);
 			if (res)
 				return;
 		}
-		for (int i = 0; i < activeFilter.size(); i++) {
+		for (int i = 0; i < activeFilter.size(); i++)
+		{
 			res = pluginList.get(i).onBroadcast(arg1, arg2);
 			if (res)
 				return;
 		}
-		if (null != pluginList.get(activeExport)) {
+		if (null != pluginList.get(activeExport))
+		{
 			res = pluginList.get(activeExport).onBroadcast(arg1, arg2);
 			if (res)
 				return;
@@ -1384,8 +1425,10 @@ public class PluginManager implements PluginManagerInterface {
 	/******************************************************************************************************
 	 * Message handler
 	 ******************************************************************************************************/
-	public boolean handleMessage(Message msg) {
-		switch (msg.what) {
+	public boolean handleMessage(Message msg)
+	{
+		switch (msg.what)
+		{
 		case MSG_NO_CAMERA:
 			break;
 
@@ -1402,28 +1445,28 @@ public class PluginManager implements PluginManagerInterface {
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
-			int id = MainScreen.getInstance().getResources().getIdentifier(getActiveMode().modeName,
-					"string", MainScreen.getInstance().getPackageName());
+			int id = MainScreen.getInstance().getResources()
+					.getIdentifier(getActiveMode().modeName, "string", MainScreen.getInstance().getPackageName());
 			String modeName = MainScreen.getInstance().getResources().getString(id);
-			addToSharedMem("mode_name"+(String)msg.obj, modeName);
+			addToSharedMem("mode_name" + (String) msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
 			ProcessingTask task = new ProcessingTask(MainScreen.getInstance());
-			task.SessionID = Long.valueOf((String)msg.obj);
+			task.SessionID = Long.valueOf((String) msg.obj);
 			task.processing = pluginList.get(activeProcessing);
 			task.export = pluginList.get(activeExport);
 			task.execute();
 			MainScreen.getInstance().muteShutter(false);
 
 			// <!-- -+-
-			//if mode free
+			// if mode free
 			Mode mode = getActiveMode();
-	    	if (mode.SKU != null)
-	    		if (!mode.SKU.isEmpty())
-	    			MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
-	    	//-+- -->
+			if (mode.SKU != null)
+				if (!mode.SKU.isEmpty())
+					MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
+			// -+- -->
 
-	    	MainScreen.getGUIManager().lockControls = false;
+			MainScreen.getGUIManager().lockControls = false;
 			Message message = new Message();
 			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			message.what = PluginManager.MSG_BROADCAST;
@@ -1441,17 +1484,17 @@ public class PluginManager implements PluginManagerInterface {
 
 			MainScreen.getInstance().muteShutter(false);
 
-	    	MainScreen.getGUIManager().lockControls = false;
+			MainScreen.getGUIManager().lockControls = false;
 			Message messageNoResult = new Message();
 			messageNoResult.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
 			messageNoResult.what = PluginManager.MSG_BROADCAST;
 			MainScreen.getMessageHandler().sendMessage(messageNoResult);
-			
+
 			MainScreen.getGUIManager().onExportFinished();
 
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
-			
+
 			break;
 
 		case MSG_START_POSTPROCESSING:
@@ -1471,10 +1514,10 @@ public class PluginManager implements PluginManagerInterface {
 		case MSG_POSTPROCESSING_FINISHED:
 			long sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
-			if(sSessionID != null)
+			if (sSessionID != null)
 				sessionID = Long.parseLong(getFromSharedMem("sessionID"));
 
-			// notify GUI about saved images			
+			// notify GUI about saved images
 			MainScreen.getGUIManager().lockControls = false;
 			Message message3 = new Message();
 			message3.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
@@ -1507,39 +1550,41 @@ public class PluginManager implements PluginManagerInterface {
 				pluginList.get(activeVF.get(i)).onExportFinished();
 
 			if (MainScreen.getInstance().getIntent().getAction() != null)
-	        {
-		    	if (MainScreen.getInstance().getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
-		    			&& MainScreen.getForceFilename() == null)
-		    	{
-		    		MainScreen.getMessageHandler().sendEmptyMessage(MSG_RETURN_CAPTURED);
-		    	}
-	        }
+			{
+				if (MainScreen.getInstance().getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
+						&& MainScreen.getForceFilename() == null)
+				{
+					MainScreen.getMessageHandler().sendEmptyMessage(MSG_RETURN_CAPTURED);
+				}
+			}
 			break;
-			
-			case MSG_EXPORT_FINISHED_IOEXCEPTION:
-				// event from plugin that saving finished and memory can be freed
-				if (cntProcessing > 0)
-					cntProcessing--;
-				// free memory in processing
-				if (null != pluginList.get(activeProcessing))
-					pluginList.get(activeProcessing).freeMemory();
 
-				// notify GUI about saved images
-				MainScreen.getGUIManager().onExportFinished();
+		case MSG_EXPORT_FINISHED_IOEXCEPTION:
+			// event from plugin that saving finished and memory can be freed
+			if (cntProcessing > 0)
+				cntProcessing--;
+			// free memory in processing
+			if (null != pluginList.get(activeProcessing))
+				pluginList.get(activeProcessing).freeMemory();
 
-				// notify capture plugins that saving finished
-				if (null != pluginList.get(activeCapture))
-					pluginList.get(activeCapture).onExportFinished();
-				for (int i = 0; i < activeVF.size(); i++)
-					pluginList.get(activeVF.get(i)).onExportFinished();
+			// notify GUI about saved images
+			MainScreen.getGUIManager().onExportFinished();
 
-				Toast.makeText(MainScreen.getMainContext(), "Can't save data - seems no free space left.", Toast.LENGTH_LONG).show();
-				break;
+			// notify capture plugins that saving finished
+			if (null != pluginList.get(activeCapture))
+				pluginList.get(activeCapture).onExportFinished();
+			for (int i = 0; i < activeVF.size(); i++)
+				pluginList.get(activeVF.get(i)).onExportFinished();
 
-		case MSG_DELAYED_CAPTURE: 
+			Toast.makeText(MainScreen.getMainContext(), "Can't save data - seems no free space left.",
+					Toast.LENGTH_LONG).show();
+			break;
+
+		case MSG_DELAYED_CAPTURE:
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
-			if (null != pluginList.get(activeCapture) && MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+			if (null != pluginList.get(activeCapture)
+					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
 			break;
 
@@ -1589,23 +1634,25 @@ public class PluginManager implements PluginManagerInterface {
 	/******************************************************************************************************
 	 * Work with hash table
 	 ******************************************************************************************************/
-	public boolean addToSharedMem(String key, String value) {
+	public boolean addToSharedMem(String key, String value)
+	{
 		sharedMemory.put(key, value);
 
 		return true;
 	}
-	
-	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID, final int num) {		
+
+	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID, final int num)
+	{
 		try
-    	{
-    		InputStream is = new ByteArrayInputStream(paramArrayOfByte);
+		{
+			InputStream is = new ByteArrayInputStream(paramArrayOfByte);
 			Metadata metadata = JpegMetadataReader.readMetadata(is);
-			Directory exifDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);		
+			Directory exifDirectory = metadata.getDirectory(ExifSubIFDDirectory.class);
 			String s1 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
 			String s2 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER);
 			String s3 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FLASH);
 			String s4 = exifDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
-			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);			
+			String s5 = exifDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
 			String s6 = exifDirectory.getString(ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE);
 			String s9 = exifDirectory.getString(ExifSubIFDDirectory.TAG_SPECTRAL_SENSITIVITY);
 			String s10 = exifDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
@@ -1616,33 +1663,33 @@ public class PluginManager implements PluginManagerInterface {
 			String s7 = exif2Directory.getString(ExifIFD0Directory.TAG_MAKE);
 			String s8 = exif2Directory.getString(ExifIFD0Directory.TAG_MODEL);
 
-			if(num != -1 && s1 != null)
-				addToSharedMem("exiftag_exposure_time"+num+SessionID, s1);
-			else if(s1 != null)
-				addToSharedMem("exiftag_exposure_time"+SessionID, s1);	
-			if(s2 != null) 
-				addToSharedMem("exiftag_aperture"+SessionID, s2);
-			if(s3 != null) 
-				addToSharedMem("exiftag_flash"+SessionID, s3);
-			if(s4 != null) 
-				addToSharedMem("exiftag_focal_lenght"+SessionID, s4);
-			if(s5 != null) 
-				addToSharedMem("exiftag_iso"+SessionID, s5);
-			if(s6 != null) 
-				addToSharedMem("exiftag_white_balance"+SessionID, s6);
-			if(s7 != null) 
-				addToSharedMem("exiftag_make"+SessionID, s7);
-			if(s8 != null) 
-				addToSharedMem("exiftag_model"+SessionID, s8);
-			if(s9 != null) 
-				addToSharedMem("exiftag_spectral_sensitivity"+SessionID, s9);
-			if(s10 != null) 
-				addToSharedMem("exiftag_version"+SessionID, s10);
-			if(s11 != null) 
-				addToSharedMem("exiftag_scene_capture_type"+SessionID, s11);
-			if(s12 != null) 
-				addToSharedMem("exiftag_metering_mode"+SessionID, s12);
-			
+			if (num != -1 && s1 != null)
+				addToSharedMem("exiftag_exposure_time" + num + SessionID, s1);
+			else if (s1 != null)
+				addToSharedMem("exiftag_exposure_time" + SessionID, s1);
+			if (s2 != null)
+				addToSharedMem("exiftag_aperture" + SessionID, s2);
+			if (s3 != null)
+				addToSharedMem("exiftag_flash" + SessionID, s3);
+			if (s4 != null)
+				addToSharedMem("exiftag_focal_lenght" + SessionID, s4);
+			if (s5 != null)
+				addToSharedMem("exiftag_iso" + SessionID, s5);
+			if (s6 != null)
+				addToSharedMem("exiftag_white_balance" + SessionID, s6);
+			if (s7 != null)
+				addToSharedMem("exiftag_make" + SessionID, s7);
+			if (s8 != null)
+				addToSharedMem("exiftag_model" + SessionID, s8);
+			if (s9 != null)
+				addToSharedMem("exiftag_spectral_sensitivity" + SessionID, s9);
+			if (s10 != null)
+				addToSharedMem("exiftag_version" + SessionID, s10);
+			if (s11 != null)
+				addToSharedMem("exiftag_scene_capture_type" + SessionID, s11);
+			if (s12 != null)
+				addToSharedMem("exiftag_metering_mode" + SessionID, s12);
+
 		} catch (JpegProcessingException e1)
 		{
 			e1.printStackTrace();
@@ -1660,78 +1707,87 @@ public class PluginManager implements PluginManagerInterface {
 		String aperture = String.valueOf(result.get(CaptureResult.LENS_APERTURE));
 		String focal_lenght = String.valueOf(result.get(CaptureResult.LENS_FOCAL_LENGTH));
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
-		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));		
-		
-		if(exposure_time != null && !exposure_time.equals("null")) 
-			addToSharedMem("exiftag_exposure_time"+SessionID, exposure_time);
-		if(sensitivity != null && !sensitivity.equals("null")) 
-			addToSharedMem("exiftag_spectral_sensitivity"+SessionID, sensitivity);
-		if(aperture != null && !aperture.equals("null")) 
-			addToSharedMem("exiftag_aperture"+SessionID, aperture);
-		if(focal_lenght != null && !focal_lenght.equals("null")) 
-			addToSharedMem("exiftag_focal_lenght"+SessionID, focal_lenght);
-		if(flash_mode != null && !flash_mode.equals("null")) 
-			addToSharedMem("exiftag_flash"+SessionID, flash_mode);
-		if(awb_mode != null && !awb_mode.equals("null")) 
-			addToSharedMem("exiftag_white_balance"+SessionID, awb_mode);
-		
+		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
+
+		if (exposure_time != null && !exposure_time.equals("null"))
+			addToSharedMem("exiftag_exposure_time" + SessionID, exposure_time);
+		if (sensitivity != null && !sensitivity.equals("null"))
+			addToSharedMem("exiftag_spectral_sensitivity" + SessionID, sensitivity);
+		if (aperture != null && !aperture.equals("null"))
+			addToSharedMem("exiftag_aperture" + SessionID, aperture);
+		if (focal_lenght != null && !focal_lenght.equals("null"))
+			addToSharedMem("exiftag_focal_lenght" + SessionID, focal_lenght);
+		if (flash_mode != null && !flash_mode.equals("null"))
+			addToSharedMem("exiftag_flash" + SessionID, flash_mode);
+		if (awb_mode != null && !awb_mode.equals("null"))
+			addToSharedMem("exiftag_white_balance" + SessionID, awb_mode);
+
 		return true;
 	}
 
 	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID)
-	{		
+	{
 		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if (params==null)
+		if (params == null)
 			return false;
 
 		String s1 = null;
-		if(params.getSupportedWhiteBalance() != null)
-			s1 = params.getWhiteBalance().compareTo(MainScreen.getInstance().getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0) : String.valueOf(1);
+		if (params.getSupportedWhiteBalance() != null)
+			s1 = params.getWhiteBalance().compareTo(
+					MainScreen.getInstance().getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0)
+					: String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;
 
 		String s4 = null;
-		if(MainScreen.getGUIManager().mISOSupported)
+		if (MainScreen.getGUIManager().mISOSupported)
 			s4 = String.valueOf(CameraController.getInstance().getISOMode());
 
-		if(s1 != null) 
-			addToSharedMem("exiftag_white_balance"+SessionID, s1);
-		if(s2 != null) 
-			addToSharedMem("exiftag_make"+SessionID, s2);
-		if(s3 != null) 
-			addToSharedMem("exiftag_model"+SessionID, s3);
-		if(s4 != null && (s4.compareTo("auto") != 0)) 
-			addToSharedMem("exiftag_iso"+SessionID, s4);
+		if (s1 != null)
+			addToSharedMem("exiftag_white_balance" + SessionID, s1);
+		if (s2 != null)
+			addToSharedMem("exiftag_make" + SessionID, s2);
+		if (s3 != null)
+			addToSharedMem("exiftag_model" + SessionID, s3);
+		if (s4 != null && (s4.compareTo("auto") != 0))
+			addToSharedMem("exiftag_iso" + SessionID, s4);
 		return true;
 	}
 
-	public String getFromSharedMem(String key) {
+	public String getFromSharedMem(String key)
+	{
 		return sharedMemory.get(key);
 	}
 
-	public boolean containsSharedMem(String key) {
+	public boolean containsSharedMem(String key)
+	{
 		if (!sharedMemory.containsKey(key))
 			return false;
 		return true;
 	}
 
-	public void clearSharedMemory(long sessionID) {
+	public void clearSharedMemory(long sessionID)
+	{
 		String partKey = String.valueOf(sessionID);
 		Enumeration<String> e = sharedMemory.keys();
-		while (e.hasMoreElements()) {
+		while (e.hasMoreElements())
+		{
 			String i = (String) e.nextElement();
 			if (i.contains(partKey))
 				sharedMemory.remove(i);
 		}
 	}
 
-	public int sizeOfSharedMemory() {
+	public int sizeOfSharedMemory()
+	{
 		return sharedMemory.size();
 	}
 
-	public void removeFromSharedMemory(String key) {
+	public void removeFromSharedMemory(String key)
+	{
 		Enumeration<String> e = sharedMemory.keys();
-		while (e.hasMoreElements()) {
+		while (e.hasMoreElements())
+		{
 			String i = (String) e.nextElement();
 			if (i.equals(key))
 				sharedMemory.remove(i);
@@ -1743,9 +1799,8 @@ public class PluginManager implements PluginManagerInterface {
 		final Plugin plugin = pluginList.get(activeCapture);
 		if (plugin != null && plugin instanceof PluginCapture)
 		{
-			return ((PluginCapture)plugin).muteSound();
-		}
-		else
+			return ((PluginCapture) plugin).muteSound();
+		} else
 		{
 			return false;
 		}
@@ -1758,18 +1813,18 @@ public class PluginManager implements PluginManagerInterface {
 	public boolean shouldPreviewToGPU()
 	{
 		final Plugin plugin = pluginList.get(activeCapture);
-		
+
 		if (plugin != null && (plugin instanceof PluginCapture))
 		{
-			return ((PluginCapture)plugin).shouldPreviewToGPU();
-		}
-		else
+			return ((PluginCapture) plugin).shouldPreviewToGPU();
+		} else
 		{
 			return false;
 		}
 	}
-	
-	public boolean isGLSurfaceNeeded() {
+
+	public boolean isGLSurfaceNeeded()
+	{
 		boolean ret = false;
 		if (null != pluginList.get(activeCapture))
 		{
@@ -1779,17 +1834,20 @@ public class PluginManager implements PluginManagerInterface {
 		return ret;
 	}
 
-	public void onGLSurfaceCreated(GL10 gl, EGLConfig config) {
+	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onGLSurfaceCreated(gl, config);
 	}
 
-	public void onGLSurfaceChanged(GL10 gl, int width, int height) {
+	public void onGLSurfaceChanged(GL10 gl, int width, int height)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onGLSurfaceChanged(gl, width, height);
 	}
 
-	public void onGLDrawFrame(GL10 gl) {
+	public void onGLDrawFrame(GL10 gl)
+	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onGLDrawFrame(gl);
 	}
@@ -1797,37 +1855,38 @@ public class PluginManager implements PluginManagerInterface {
 	// ////////////////////////////
 	// processing&Filter&Export task
 	// ////////////////////////////
-	private class ProcessingTask extends AsyncTask<Void, Void, Void> {
-		public long SessionID = 0;// id to identify data flow
+	private class ProcessingTask extends AsyncTask<Void, Void, Void>
+	{
+		public long	SessionID	= 0;	// id to identify data flow
 
-		Plugin processing=null;
-		Plugin export = null;
+		Plugin		processing	= null;
+		Plugin		export		= null;
 
-		public ProcessingTask(Context context) {
+		public ProcessingTask(Context context)
+		{
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) 
+		protected Void doInBackground(Void... params)
 		{
 			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
-			//if post rpocessing not needed - save few values 
-			//from main screen to shared memory for current session
+			// if post rpocessing not needed - save few values
+			// from main screen to shared memory for current session
 			if (null != processing)
-				if(!processing.isPostProcessingNeeded())
+				if (!processing.isPostProcessingNeeded())
 				{
-					addToSharedMem("imageHeight"+SessionID, String.valueOf(MainScreen.getImageHeight()));
-					addToSharedMem("imageWidth"+SessionID, String.valueOf(MainScreen.getImageWidth()));
-					addToSharedMem("wantLandscapePhoto"+SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
-					addToSharedMem("CameraMirrored"+SessionID, String.valueOf(CameraController.isFrontCamera()));
+					addToSharedMem("imageHeight" + SessionID, String.valueOf(MainScreen.getImageHeight()));
+					addToSharedMem("imageWidth" + SessionID, String.valueOf(MainScreen.getImageWidth()));
+					addToSharedMem("wantLandscapePhoto" + SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
+					addToSharedMem("CameraMirrored" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 				}
-
 
 			if (null != processing)
 			{
 				processing.onStartProcessing(SessionID);
-				if(processing.isPostProcessingNeeded())
+				if (processing.isPostProcessingNeeded())
 				{
-					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_START_POSTPROCESSING);					
+					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_START_POSTPROCESSING);
 					return null;
 				}
 			}
@@ -1847,197 +1906,169 @@ public class PluginManager implements PluginManagerInterface {
 	// Utils
 	// /////////////////////////////////////
 
-	public int getProcessingCounter() {
+	public int getProcessingCounter()
+	{
 		return cntProcessing;
 	}
 
-	private static final String[] MEMCARD_DIR_PATH = new String[] 
-	{ 
-		"/storage",
-		"/mnt",
-		"",
-		"/storage",
-		"/Removable",
-		"/storage",
-		"/storage",
-		"",
-		"/mnt",
-		"/"
-	};
-	
-	private static final String[] MEMCARD_DIR_PATH_NAMES = new String[] 
-	{ 
-		"sdcard1",
-		"extSdCard",
-		"external_sd",
-		"external_SD",
-		"MicroSD",
-		"emulated",
-		"sdcard0",
-		"sdcard-ext",
-		"sdcard-ext",
-		"sdcard"
-	};
-	
-	private static final String[] SAVEDIR_DIR_PATH_NAMES = new String[] 
-	{ 
-		"sdcard1/DCIM/",
-		"extSdCard/DCIM/",
-		"external_sd/DCIM/",
-		"external_SD/DCIM/",
-		"MicroSD/DCIM/",
-		"emulated/0/DCIM/",
-		"sdcard0/DCIM/",
-		"sdcard-ext/DCIM/",
-		"sdcard-ext/DCIM/",
-		"sdcard/DCIM/"
-	};
-	
-	//get file saving directory
-	//toInternalMemory - should be true only if force save to internal 
+	private static final String[]	MEMCARD_DIR_PATH		= new String[] { "/storage", "/mnt", "", "/storage",
+			"/Removable", "/storage", "/storage", "", "/mnt", "/" };
+
+	private static final String[]	MEMCARD_DIR_PATH_NAMES	= new String[] { "sdcard1", "extSdCard", "external_sd",
+			"external_SD", "MicroSD", "emulated", "sdcard0", "sdcard-ext", "sdcard-ext", "sdcard" };
+
+	private static final String[]	SAVEDIR_DIR_PATH_NAMES	= new String[] { "sdcard1/DCIM/", "extSdCard/DCIM/",
+			"external_sd/DCIM/", "external_SD/DCIM/", "MicroSD/DCIM/", "emulated/0/DCIM/", "sdcard0/DCIM/",
+			"sdcard-ext/DCIM/", "sdcard-ext/DCIM/", "sdcard/DCIM/" };
+
+	// get file saving directory
+	// toInternalMemory - should be true only if force save to internal
 	public File GetSaveDir(boolean forceSaveToInternalMemory)
-    {
-        File dcimDir, saveDir = null, memcardDir;
-        boolean usePhoneMem = true;
-        
-        String abcDir = "Camera";
-        if(MainScreen.isSortByData())
-        {
-        	Calendar rightNow = Calendar.getInstance();
-        	abcDir = String.format("%tF", rightNow);
-        }
-        
-        if ((Integer.parseInt(MainScreen.getSaveTo()) == 1))
-        {
+	{
+		File dcimDir, saveDir = null, memcardDir;
+		boolean usePhoneMem = true;
+
+		String abcDir = "Camera";
+		if (MainScreen.isSortByData())
+		{
+			Calendar rightNow = Calendar.getInstance();
+			abcDir = String.format("%tF", rightNow);
+		}
+
+		if ((Integer.parseInt(MainScreen.getSaveTo()) == 1))
+		{
 			dcimDir = Environment.getExternalStorageDirectory();
 
-			for (int i=0; i < SAVEDIR_DIR_PATH_NAMES.length; i++)
+			for (int i = 0; i < SAVEDIR_DIR_PATH_NAMES.length; i++)
 			{
 				if (MEMCARD_DIR_PATH[i].isEmpty())
 				{
 					memcardDir = new File(dcimDir, MEMCARD_DIR_PATH_NAMES[i]);
-		            if (memcardDir.exists())
-		            {
-			            saveDir = new File(dcimDir, SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
-		            	usePhoneMem = false;
-		            	break;
-		            }
-				}
-				else
+					if (memcardDir.exists())
+					{
+						saveDir = new File(dcimDir, SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
+						usePhoneMem = false;
+						break;
+					}
+				} else
 				{
 					memcardDir = new File(MEMCARD_DIR_PATH[i], MEMCARD_DIR_PATH_NAMES[i]);
-		            if (memcardDir.exists())
-		            {
-			            saveDir = new File(MEMCARD_DIR_PATH[i], SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
-		            	usePhoneMem = false;
-		            	break;
-		            }
+					if (memcardDir.exists())
+					{
+						saveDir = new File(MEMCARD_DIR_PATH[i], SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
+						usePhoneMem = false;
+						break;
+					}
 				}
 			}
-        }
-        else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
-        {
-        	saveDir = new File(MainScreen.getSaveToPath());
-        	usePhoneMem = false;
-        }
-        
-        if (usePhoneMem || forceSaveToInternalMemory)		// phone memory (internal sd card)
+		} else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
 		{
-        	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, abcDir);
+			saveDir = new File(MainScreen.getSaveToPath());
+			usePhoneMem = false;
 		}
-        if (!saveDir.exists())
-            saveDir.mkdirs();
 
-        // if creation failed - try to switch to phone mem
-        if (!saveDir.exists())
-        {
-        	dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            saveDir = new File(dcimDir, abcDir);
-            
-            if (!saveDir.exists())
-                saveDir.mkdirs();
-        }
-        return saveDir;
-    }
+		if (usePhoneMem || forceSaveToInternalMemory) // phone memory (internal
+														// sd card)
+		{
+			dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+			saveDir = new File(dcimDir, abcDir);
+		}
+		if (!saveDir.exists())
+			saveDir.mkdirs();
 
-	//delayed capture feature
-	private SoundPlayer countdownPlayer = null;
-    private SoundPlayer finalcountdownPlayer = null;
+		// if creation failed - try to switch to phone mem
+		if (!saveDir.exists())
+		{
+			dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+			saveDir = new File(dcimDir, abcDir);
 
-    private CountDownTimer timer=null;
-    
-    public int flashModeBackUp = -1;
+			if (!saveDir.exists())
+				saveDir.mkdirs();
+		}
+		return saveDir;
+	}
 
-	final Handler countdownHandler = new Handler();
-	final Handler finalcountdownHandler = new Handler();
+	// delayed capture feature
+	private SoundPlayer		countdownPlayer					= null;
+	private SoundPlayer		finalcountdownPlayer			= null;
 
-	private RelativeLayout countdownLayout = null;
-    private TextView countdownView = null;
-    
-    private Animation countdownAnimation = null;
-    
-	private boolean delayedCaptureFlashPrefCommon = false; 
-	private boolean delayedCaptureSoundPrefCommon = false;
+	private CountDownTimer	timer							= null;
 
-	private boolean shutterRelease = true;
+	public int				flashModeBackUp					= -1;
+
+	final Handler			countdownHandler				= new Handler();
+	final Handler			finalcountdownHandler			= new Handler();
+
+	private RelativeLayout	countdownLayout					= null;
+	private TextView		countdownView					= null;
+
+	private Animation		countdownAnimation				= null;
+
+	private boolean			delayedCaptureFlashPrefCommon	= false;
+	private boolean			delayedCaptureSoundPrefCommon	= false;
+
+	private boolean			shutterRelease					= true;
+
 	private void delayedCapture(int delayInterval)
 	{
-		initializeSoundPlayers(MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
-		MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
-		countdownHandler.removeCallbacks(FlashOff);	 
-		finalcountdownHandler.removeCallbacks(FlashBlink);		
+		initializeSoundPlayers(
+				MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
+				MainScreen.getInstance().getResources()
+						.openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
+		countdownHandler.removeCallbacks(FlashOff);
+		finalcountdownHandler.removeCallbacks(FlashBlink);
 
-		timer = new CountDownTimer(delayInterval*1000+500, 1000) 
-		{			 
-			 public void onTick(long millisUntilFinished) 
-		     {		    	 
-		    	 countdownView.setRotation(90 - MainScreen.getOrientation());
-		         countdownView.setText(String.valueOf(millisUntilFinished/1000));
-		         countdownView.clearAnimation();
-		         countdownLayout.setVisibility(View.VISIBLE);
-		         countdownView.startAnimation(countdownAnimation);
+		timer = new CountDownTimer(delayInterval * 1000 + 500, 1000)
+		{
+			public void onTick(long millisUntilFinished)
+			{
+				countdownView.setRotation(90 - MainScreen.getOrientation());
+				countdownView.setText(String.valueOf(millisUntilFinished / 1000));
+				countdownView.clearAnimation();
+				countdownLayout.setVisibility(View.VISIBLE);
+				countdownView.startAnimation(countdownAnimation);
 
-		         if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
-		    		 return;
+				if (!delayedCaptureFlashPrefCommon && !delayedCaptureSoundPrefCommon)
+					return;
 
-	    		 TickEverySecond((millisUntilFinished/1000 <= 1)? true : false);
+				TickEverySecond((millisUntilFinished / 1000 <= 1) ? true : false);
 
-		         if(delayedCaptureFlashPrefCommon)
-		         {
-			         if(millisUntilFinished > 1000)
-			         {
-			        	try 
-			        	{
-			        		flashModeBackUp = CameraController.getInstance().getFlashMode();
-			        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-						} catch (Exception e) {
+				if (delayedCaptureFlashPrefCommon)
+				{
+					if (millisUntilFinished > 1000)
+					{
+						try
+						{
+							flashModeBackUp = CameraController.getInstance().getFlashMode();
+							CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+						} catch (Exception e)
+						{
 							e.printStackTrace();
 							Log.e("Self-timer", "Torch exception: " + e.getMessage());
 						}
-			        	countdownHandler.postDelayed(FlashOff, 50);
-			         }
-		         }
-		     }
+						countdownHandler.postDelayed(FlashOff, 50);
+					}
+				}
+			}
 
-		     public void onFinish() 
-		     {
-				 countdownView.clearAnimation();
-				 countdownLayout.setVisibility(View.GONE);
-				
-				 countdownHandler.removeCallbacks(FlashOff);	 
-				 finalcountdownHandler.removeCallbacks(FlashBlink);
-				 if(CameraController.getInstance().getSupportedFlashModes() != null)
+			public void onFinish()
+			{
+				countdownView.clearAnimation();
+				countdownLayout.setVisibility(View.GONE);
+
+				countdownHandler.removeCallbacks(FlashOff);
+				finalcountdownHandler.removeCallbacks(FlashBlink);
+				if (CameraController.getInstance().getSupportedFlashModes() != null)
 					CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
-				
-				 Message msg = new Message();
-				 msg.what = PluginManager.MSG_DELAYED_CAPTURE;
-				 MainScreen.getMessageHandler().sendMessage(msg);
-				
-				 timer=null;
-		     }
-		  };
-		  timer.start();
+
+				Message msg = new Message();
+				msg.what = PluginManager.MSG_DELAYED_CAPTURE;
+				MainScreen.getMessageHandler().sendMessage(msg);
+
+				timer = null;
+			}
+		};
+		timer.start();
 	}
 
 	public void TickEverySecond(boolean isLastSecond)
@@ -2046,700 +2077,760 @@ public class PluginManager implements PluginManagerInterface {
 			return;
 		if (delayedCaptureSoundPrefCommon)
 		{
-			if(isLastSecond)
+			if (isLastSecond)
 			{
 				if (finalcountdownPlayer != null)
 					finalcountdownPlayer.play();
-			}
-			else
+			} else
 			{
-				if (countdownPlayer!=null)
+				if (countdownPlayer != null)
 					countdownPlayer.play();
 			}
 		}
- 	}
+	}
 
-	public void initializeSoundPlayers(AssetFileDescriptor fd_countdown, AssetFileDescriptor fd_finalcountdown) {
+	public void initializeSoundPlayers(AssetFileDescriptor fd_countdown, AssetFileDescriptor fd_finalcountdown)
+	{
 		countdownPlayer = new SoundPlayer(MainScreen.getMainContext(), fd_countdown);
 		finalcountdownPlayer = new SoundPlayer(MainScreen.getMainContext(), fd_finalcountdown);
-    }
-
-    public void releaseSoundPlayers() {
-        if (countdownPlayer != null) {
-        	countdownPlayer.release();
-        	countdownPlayer = null;
-        }
-        
-        if (finalcountdownPlayer != null) {
-        	finalcountdownPlayer.release();
-        	finalcountdownPlayer = null;
-        }
-    }
-    
-    private Runnable FlashOff = new Runnable() {
-        public void run() {
-       	 CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
-        }
-    };
-    
-    private Runnable FlashBlink = new Runnable() {
-    	boolean isFlashON = false;
-        public void run() {
-        	try {
-	        	if(isFlashON)
-	        	{
-	        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
-	       	 		isFlashON = false;
-	        	}
-	        	else
-	        	{
-	        		CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-	       	 		isFlashON = true;
-	        	}
-        	} catch (Exception e) {
-				e.printStackTrace();
-				Log.e("Self-timer", "finalcountdownHandler exception: " + e.getMessage());
-			}
-        	finalcountdownHandler.postDelayed(this, 50);
-        }
-    };
-
-//Saving
-    private void copyFromForceFileName(File dst) throws IOException {
-	    InputStream in = MainScreen.getInstance().getContentResolver().openInputStream(MainScreen.getForceFilenameURI());
-	    OutputStream out = new FileOutputStream(dst);
-
-	    // Transfer bytes from in to out
-	    byte[] buf = new byte[1024];
-	    int len;
-	    while ((len = in.read(buf)) > 0) {
-	        out.write(buf, 0, len);
-	    }
-	    in.close();
-	    out.close();
-	}
-	
-	private void copyToForceFileName(File src) throws IOException {
-	    InputStream in = new FileInputStream(src);
-	    OutputStream out = MainScreen.getInstance().getContentResolver().openOutputStream(MainScreen.getForceFilenameURI());
-
-	    // Transfer bytes from in to out
-	    byte[] buf = new byte[1024];
-	    int len;
-	    while ((len = in.read(buf)) > 0) {
-	        out.write(buf, 0, len);
-	    }
-	    in.close();
-	    out.close();
 	}
 
-	private int saveOption;
-	private boolean useGeoTaggingPrefExport;
-	
+	public void releaseSoundPlayers()
+	{
+		if (countdownPlayer != null)
+		{
+			countdownPlayer.release();
+			countdownPlayer = null;
+		}
+
+		if (finalcountdownPlayer != null)
+		{
+			finalcountdownPlayer.release();
+			finalcountdownPlayer = null;
+		}
+	}
+
+	private Runnable	FlashOff	= new Runnable()
+									{
+										public void run()
+										{
+											CameraController.getInstance().setCameraFlashMode(
+													CameraParameters.FLASH_MODE_OFF);
+										}
+									};
+
+	private Runnable	FlashBlink	= new Runnable()
+									{
+										boolean	isFlashON	= false;
+
+										public void run()
+										{
+											try
+											{
+												if (isFlashON)
+												{
+													CameraController.getInstance().setCameraFlashMode(
+															CameraParameters.FLASH_MODE_OFF);
+													isFlashON = false;
+												} else
+												{
+													CameraController.getInstance().setCameraFlashMode(
+															CameraParameters.FLASH_MODE_TORCH);
+													isFlashON = true;
+												}
+											} catch (Exception e)
+											{
+												e.printStackTrace();
+												Log.e("Self-timer",
+														"finalcountdownHandler exception: " + e.getMessage());
+											}
+											finalcountdownHandler.postDelayed(this, 50);
+										}
+									};
+
+	// Saving
+	private void copyFromForceFileName(File dst) throws IOException
+	{
+		InputStream in = MainScreen.getInstance().getContentResolver()
+				.openInputStream(MainScreen.getForceFilenameURI());
+		OutputStream out = new FileOutputStream(dst);
+
+		// Transfer bytes from in to out
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0)
+		{
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+	}
+
+	private void copyToForceFileName(File src) throws IOException
+	{
+		InputStream in = new FileInputStream(src);
+		OutputStream out = MainScreen.getInstance().getContentResolver()
+				.openOutputStream(MainScreen.getForceFilenameURI());
+
+		// Transfer bytes from in to out
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0)
+		{
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+	}
+
+	private int		saveOption;
+	private boolean	useGeoTaggingPrefExport;
+
 	private void getPrefs()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-        saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
-        useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
+		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
+		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 	}
-	
-	public void saveResultPicture(long sessionID) 
+
+	public void saveResultPicture(long sessionID)
 	{
 		getPrefs();
 		// save fused result
 		try
-        {
-            File saveDir = GetSaveDir(false);
+		{
+			File saveDir = GetSaveDir(false);
 
-	    	Calendar d = Calendar.getInstance();
-		    	
-	    	int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes"+Long.toString(sessionID)));
-			if (imagesAmount==0)
-				imagesAmount=1;
-			
-			int imageIndex = 0;
-			String sImageIndex = getFromSharedMem("resultframeindex"+Long.toString(sessionID));
-			if(sImageIndex != null)
-				imageIndex = Integer.parseInt(getFromSharedMem("resultframeindex"+Long.toString(sessionID)));
-			
-			if(imageIndex != 0)
+			Calendar d = Calendar.getInstance();
+
+			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
+			if (imagesAmount == 0)
 				imagesAmount = 1;
-			
-			ContentValues values=null;
-			
-			for (int i=1; i<=imagesAmount; i++)
+
+			int imageIndex = 0;
+			String sImageIndex = getFromSharedMem("resultframeindex" + Long.toString(sessionID));
+			if (sImageIndex != null)
+				imageIndex = Integer.parseInt(getFromSharedMem("resultframeindex" + Long.toString(sessionID)));
+
+			if (imageIndex != 0)
+				imagesAmount = 1;
+
+			ContentValues values = null;
+
+			for (int i = 1; i <= imagesAmount; i++)
 			{
-				String idx="";
-				
-				if (imagesAmount!=1)
-					idx+="_"+i;
-				
-		    	//define file name format. from settings!
-		    	String fileFormat = String.format(Locale.US, "%04d%02d%02d_%02d%02d%02d",
-	            		d.get(Calendar.YEAR),
-	            		d.get(Calendar.MONTH)+1,
-	            		d.get(Calendar.DAY_OF_MONTH),
-	            		d.get(Calendar.HOUR_OF_DAY),
-	            		d.get(Calendar.MINUTE),
-	            		d.get(Calendar.SECOND));
-		    	String modeName = getFromSharedMem("modeSaveName"+Long.toString(sessionID));
-		    	switch (saveOption)
-		    	{
-		    	case 1://YEARMMDD_HHMMSS
-		    		break;
-		    		
-		    	case 2://YEARMMDD_HHMMSS_MODE
-		    		fileFormat += (modeName.isEmpty()?"":"_") + modeName;
-		    		break;
-		    		
-		    	case 3://IMG_YEARMMDD_HHMMSS
-		    		fileFormat = "IMG_" + fileFormat;
-		    		break;
-		    		
-		    	case 4://IMG_YEARMMDD_HHMMSS_MODE
-		    		fileFormat = "IMG_" + fileFormat + (modeName.isEmpty()?"":"_") + modeName;
-		    		break;
-		    	default:
+				String idx = "";
+
+				if (imagesAmount != 1)
+					idx += "_" + i;
+
+				// define file name format. from settings!
+				String fileFormat = String.format(Locale.US, "%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR),
+						d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY),
+						d.get(Calendar.MINUTE), d.get(Calendar.SECOND));
+				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
+				switch (saveOption)
+				{
+				case 1:// YEARMMDD_HHMMSS
 					break;
-		    	}
-		    		
-		    	fileFormat += idx+".jpg";
-		    	
-		    	File file;
-		    	if (MainScreen.getForceFilename() == null)
-	            {
-		    		file = new File(
-		            		saveDir, 
-		            		fileFormat);
-	            }
-	            else
-	            {
-	            	file = MainScreen.getForceFilename();
-	            }
-	
-		    	OutputStream os = null;
-		    	if (MainScreen.getForceFilename() != null)
-	    		{
-		    		os = MainScreen.getInstance().getContentResolver().openOutputStream(MainScreen.getForceFilenameURI());
-		    	}
-		    	else
-		    	{
-		    		try
-			    	{
-			    		os = new FileOutputStream(file);
-			    	}
-			    	catch (Exception e)
-			        {
-			    		//save always if not working saving to sdcard
-			        	e.printStackTrace();
-			        	saveDir = GetSaveDir(true);
-			        	if (MainScreen.getForceFilename() == null)
-			            {
-				    		file = new File(
-				            		saveDir, 
-				            		fileFormat);
-			            }
-			            else
-			            {
-			            	file = MainScreen.getForceFilename();
-			            }
-			        	os = new FileOutputStream(file);
-			        }
-		    	}        
-		    	
-	            //Take only one result frame from several results
-	            //Used for PreShot plugin that may decide which result to save
-	            if(imagesAmount == 1 && imageIndex != 0)
-	            	i = imageIndex;
-	            
-	            String resultOrientation = getFromSharedMem("resultframeorientation" + i+Long.toString(sessionID));
-	            int orientation = 0;
-	            if (resultOrientation != null)
-	            	orientation = Integer.parseInt(resultOrientation);
-	            
-	            String resultMirrored = getFromSharedMem("resultframemirrored" + i+Long.toString(sessionID));
-	            Boolean cameraMirrored = false;
-	            if (resultMirrored != null)
-	            	cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
-	            int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-	            int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-	            if (orientation == 0 || orientation == 180)
-	            {
-	            	x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-		            y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-	            }
-	            
-	            Boolean writeOrientationTag = true;
-	            String writeOrientTag = getFromSharedMem("writeorientationtag"+Long.toString(sessionID));
-	            if (writeOrientTag != null)
-	            	writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
-	            
-	            String format = getFromSharedMem("resultframeformat"+i+Long.toString(sessionID));
-	            if (format != null && format.equalsIgnoreCase("jpeg"))
-	            {//if result in jpeg format
+				case 2:// YEARMMDD_HHMMSS_MODE
+					fileFormat += (modeName.isEmpty() ? "" : "_") + modeName;
+					break;
 
-		            if (os != null)
-		            {
-		            	byte[] frame = SwapHeap.SwapFromHeap(
-			            		Integer.parseInt(getFromSharedMem("resultframe"+i+Long.toString(sessionID))),
-			            		Integer.parseInt(getFromSharedMem("resultframelen"+i+Long.toString(sessionID))));
-	            		os.write(frame);
-	            		try
-	    		    	{
-	    		    		os.close();
-	    				}
-	    		    	catch (Exception e)
-	    		        {
-	    		        	e.printStackTrace();
-	    		        }
-		            }
-	            }
-	            else
-	            {//if result in nv21 format
-		            {
-			            String res = getFromSharedMem("resultfromshared"+Long.toString(sessionID));
-			            if ((null == res) || "".equals(res) || "true".equals(res))
-			            {
-			            	// Why not just compress directly from native?
-			            	final int ptr = Integer.parseInt(getFromSharedMem("resultframe"+i+Long.toString(sessionID)));
-			            	com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
-			            	//to avoid problems with SKIA
-			            	int cropHeight = image.getHeight()-image.getHeight()%16;
-					    	if (!image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
-					    	{
-					    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-					            return;
-					    	}
-					    	SwapHeap.FreeFromHeap(ptr);
-			            }
-			            else
-			            {
-			            	int yuv = Integer.parseInt(getFromSharedMem("resultframe" +i+Long.toString(sessionID)));
-			            	com.almalence.YuvImage out;
-		    	    		out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
-			    	    	if (null == getFromSharedMem("resultcrop0"+Long.toString(sessionID)))
-			    	    	{
-			    	    		if (!out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
-						    	{
-						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-						            return;
-						    	}
-			    	    	}
-			    	    	else
-		    	    		{
-			    	    		int crop0 = Integer.parseInt(getFromSharedMem("resultcrop0"+Long.toString(sessionID)));
-					    		int crop1 = Integer.parseInt(getFromSharedMem("resultcrop1"+Long.toString(sessionID)));
-					    		int crop2 = Integer.parseInt(getFromSharedMem("resultcrop2"+Long.toString(sessionID)));
-					    		int crop3 = Integer.parseInt(getFromSharedMem("resultcrop3"+Long.toString(sessionID)));
-					    		Rect r = new Rect(crop0, crop1, crop0+crop2, crop1+crop3);
-					    		
-					    		if (!out.compressToJpeg(r, 95, os))
-						    	{
-						    		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-						            return;
-						    	}
-		    	    		} 	    	
+				case 3:// IMG_YEARMMDD_HHMMSS
+					fileFormat = "IMG_" + fileFormat;
+					break;
 
-					    	SwapHeap.FreeFromHeap(yuv);
-			            }
-		            }
-	            }
-	            
-	            String orientation_tag = String.valueOf(0);
-            	switch(orientation)
-            	{
-            	default:
-            	case 0:
-            		orientation_tag = String.valueOf(0);
-            		break;
-            	case 90:
-            		orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
-            		break;
-            	case 180:
-            		orientation_tag = String.valueOf(180);
-            		break;
-            	case 270:
-            		orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
-            		break;
-            	}
-	            
-	            
-	            values = new ContentValues(9);
-                values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName().length()));
-                values.put(ImageColumns.DISPLAY_NAME, file.getName());
-                values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-                values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-                values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
-                values.put(ImageColumns.DATA, file.getAbsolutePath());
-                
-                File tmpFile;
-                if (MainScreen.getForceFilename() == null) {
-                	tmpFile = file;
-                }
-                else {
-                	tmpFile = new File(saveDir, "external.tmp");
-                	tmpFile.createNewFile();
-                	copyFromForceFileName(tmpFile);
-                }
-                
-                // Set tag_model using ExifInterface. 
-                // If we try set tag_model using ExifDriver, then standard gallery of android (Nexus 4) will crash on this file.
-                // Can't figure out why, other Exif tools work fine.
-                ExifInterface ei = new ExifInterface(tmpFile.getAbsolutePath());
-                
-                String tag_model = getFromSharedMem("exiftag_model"+Long.toString(sessionID));
-                String tag_make = getFromSharedMem("exiftag_make"+Long.toString(sessionID));
-                if(tag_model != null) {
-	        		ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-	        		ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-	            }
-                ei.saveAttributes();
-                
-                // Open ExifDriver.
-            	ExifDriver exifDriver = ExifDriver.getInstance(tmpFile.getAbsolutePath());
-		    	ExifManager exifManager = null;
-		    	if (exifDriver != null) {
-	            	exifManager = new ExifManager(exifDriver, MainScreen.getInstance());
-		    	}
-	
-		    	if (useGeoTaggingPrefExport)
-	            {
-	            	Location l = MLocation.getLocation(MainScreen.getMainContext());
-		            
-		            if (l != null)
-		            {
-		                double lat = l.getLatitude();
-		                double lon = l.getLongitude();
-		                boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+				case 4:// IMG_YEARMMDD_HHMMSS_MODE
+					fileFormat = "IMG_" + fileFormat + (modeName.isEmpty() ? "" : "_") + modeName;
+					break;
+				default:
+					break;
+				}
 
-		                if (hasLatLon) {
-			            	exifManager.setGPSLocation(l.getLatitude(), l.getLongitude(), l.getAltitude());
-				            
-				            values.put(ImageColumns.LATITUDE, l.getLatitude());
-				            values.put(ImageColumns.LONGITUDE, l.getLongitude());
-		                }
-		                
-			            String GPSDateString = new SimpleDateFormat("yyyy:MM:dd").format(new Date(l.getTime()));
-			            if (GPSDateString != null) {
-			            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-			        		value.setBytes(GPSDateString.getBytes());
-			        		exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
-			            }
-	            	}
-	            }
-    	    	
-    	    	String tag_exposure_time = getFromSharedMem("exiftag_exposure_time"+Long.toString(sessionID));
-	            String tag_aperture = getFromSharedMem("exiftag_aperture"+Long.toString(sessionID));
-	            String tag_flash = getFromSharedMem("exiftag_flash"+Long.toString(sessionID));
-	            String tag_focal_length = getFromSharedMem("exiftag_focal_lenght"+Long.toString(sessionID));
-	            String tag_iso = getFromSharedMem("exiftag_iso"+Long.toString(sessionID));
-	            String tag_white_balance = getFromSharedMem("exiftag_white_balance"+Long.toString(sessionID));
-	            String tag_spectral_sensitivity = getFromSharedMem("exiftag_spectral_sensitivity"+Long.toString(sessionID));
-	            String tag_version = getFromSharedMem("exiftag_version"+Long.toString(sessionID));
-	            String tag_scene = getFromSharedMem("exiftag_scene_capture_type"+Long.toString(sessionID));
-	            String tag_metering_mode = getFromSharedMem("exiftag_metering_mode"+Long.toString(sessionID));	            
-	            	   
-	            if (exifDriver != null) {
-	            	if(tag_exposure_time != null) {
-		            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
-		            	if (ratValue != null) {
-		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-		            		value.setRationals(ratValue);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
-		            	}
-		            }
-	            	else { // hack for expo bracketing
-	            		tag_exposure_time = getFromSharedMem("exiftag_exposure_time"+Integer.toString(i)+Long.toString(sessionID));
-	            		if(tag_exposure_time != null) {
-			            	int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
-			            	if (ratValue != null) {
-			            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-			            		value.setRationals(ratValue);
-			            		exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
-			            	}
-			            }
-	            	}
-		            if(tag_aperture != null) {
-		            	int[][] ratValue = ExifManager.stringToRational(tag_aperture);
-		            	if (ratValue != null) {
-		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-		            		value.setRationals(ratValue);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
-		            	}
-		            }
-		            if(tag_flash != null) {
-	            		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_flash));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
-		            }
-		            if(tag_focal_length != null) {
-		            	int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
-		            	if (ratValue != null) {
-		            		ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-		            		value.setRationals(ratValue);
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
-		            	}
-		            }
-		            try{
-			            if(tag_iso != null) {
-			            	if (tag_iso.indexOf("ISO") > 0) {
-			            		tag_iso = tag_iso.substring(0, 2);
-			            	}
-			            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-		            		exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
-			            }
-		            }catch(Exception e){}
-		            if(tag_scene != null) {
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
-		            } else {
-		            	int sceneMode = CameraController.getInstance().getSceneMode();		            	
-		            	
-		            	int sceneModeVal = 0;
-		            	if (sceneMode == CameraParameters.SCENE_MODE_LANDSCAPE) {
-		            		sceneModeVal = 1;
-		            	}
-		            	else if (sceneMode == CameraParameters.SCENE_MODE_PORTRAIT) {
-		            		sceneModeVal = 2;
-		            	}
-		            	else if (sceneMode == CameraParameters.SCENE_MODE_NIGHT) {
-		            		sceneModeVal = 3;
-		            	}
-		            	
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
-		            }
-		            if(tag_white_balance != null) {
-		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
-		            	
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_white_balance));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
-		            } else {
-		            	exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
-		            	
-		            	int whiteBalance = CameraController.getInstance().getWBMode();
-		            	int whiteBalanceVal = 0;
-		            	int lightSourceVal = 0;
-		            	if (whiteBalance == CameraParameters.WB_MODE_AUTO) {
-		            		whiteBalanceVal = 0;
-		            		lightSourceVal = 0;
-		            	} else {
-		            		whiteBalanceVal = 1;
-		            		lightSourceVal = 0;
-		            	}
+				fileFormat += idx + ".jpg";
 
-		            	if (whiteBalance == CameraParameters.WB_MODE_DAYLIGHT) {
-		            		lightSourceVal = 1;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_FLUORESCENT) {
-		            		lightSourceVal = 2;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_WARM_FLUORESCENT) {
-		            		lightSourceVal = 2;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_INCANDESCENT) {
-		            		lightSourceVal = 3;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_TWILIGHT) {
-		            		lightSourceVal = 3;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_CLOUDY_DAYLIGHT) {
-		            		lightSourceVal = 10;
-		            	}
-		            	else if (whiteBalance == CameraParameters.WB_MODE_SHADE) {
-		            		lightSourceVal = 11;
-		            	}
-		            	
-		            	ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
-	            		
-	            		ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
-		            }
-		            if(tag_spectral_sensitivity != null) {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(tag_spectral_sensitivity.getBytes());
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
-		            }
-		            if (tag_version != null && !tag_version.equals("48 50 50 48")) {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		        		value.setBytes(tag_version.getBytes());
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
-		            }
-		            else {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		            	byte[] version = {(byte) 48, (byte) 50, (byte) 50, (byte) 48};
-		        		value.setBytes(version);
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
-		            }
-		            if (tag_metering_mode != null && !tag_metering_mode.equals("") && Integer.parseInt(tag_metering_mode) <= 255) {
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_metering_mode));
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
-	            		exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
-		            }
-		            else {
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
-	            		exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
-	            		exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
-		            }		            
-		            
-	            	ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
-	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
+				File file;
+				if (MainScreen.getForceFilename() == null)
+				{
+					file = new File(saveDir, fileFormat);
+				} else
+				{
+					file = MainScreen.getForceFilename();
+				}
 
-	        		ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
-	        		exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
-		            
-		            String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-		            if (dateString != null) {
-		            	ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		            	// Date string length is 19 bytes. But exif tag specification length is 20 bytes.
-		            	// That's why we add "empty" byte (0x00) in the end.
-		            	byte[] bytes = dateString.getBytes();
-		            	byte[] res = new byte[20];
-		            	for (int ii = 0; ii < bytes.length; ii++) {
-		            		res[ii] = bytes[ii];
-		            	}
-		            	res[19] = 0x00;
-		        		value.setBytes(res);
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
-		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
-		        		exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
-		            }
+				OutputStream os = null;
+				if (MainScreen.getForceFilename() != null)
+				{
+					os = MainScreen.getInstance().getContentResolver()
+							.openOutputStream(MainScreen.getForceFilenameURI());
+				} else
+				{
+					try
+					{
+						os = new FileOutputStream(file);
+					} catch (Exception e)
+					{
+						// save always if not working saving to sdcard
+						e.printStackTrace();
+						saveDir = GetSaveDir(true);
+						if (MainScreen.getForceFilename() == null)
+						{
+							file = new File(saveDir, fileFormat);
+						} else
+						{
+							file = MainScreen.getForceFilename();
+						}
+						os = new FileOutputStream(file);
+					}
+				}
 
-		            //extract mode name
-		            String tag_modename = getFromSharedMem("mode_name"+Long.toString(sessionID));
-		            if (tag_modename == null)
-		            	tag_modename = "";
-		            String softwareString = MainScreen.getInstance().getResources().getString(R.string.app_name) + ", " + tag_modename;
-		            ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-		            softwareValue.setBytes(softwareString.getBytes());
-	        		exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
-		            
-		            if(writeOrientationTag)			            	
-		            {
-		            	int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-		            	switch(orientation)
-		            	{
-		            	default:
-		            	case 0:
-		            		exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-		            		break;
-		            	case 90:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
-		            		break;
-		            	case 180:
-		            		exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-		            		break;
-		            	case 270:
-		            		exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
-		            		break;
-		            	}
-		        		ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-		            }
-		            else {
-		            	ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, ExifInterface.ORIENTATION_NORMAL);
-		        		exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-		            }
-		            
-		            // Save exif info to new file, and replace old file with new one.
-		            File modifiedFile = new File(tmpFile.getAbsolutePath() + ".tmp");
-		            exifDriver.save(modifiedFile.getAbsolutePath());
-		            if (MainScreen.getForceFilename() == null) {
-		            	file.delete();
-		            	modifiedFile.renameTo(file);
-		            }
-		            else {
-		            	copyToForceFileName(modifiedFile);
-		            	tmpFile.delete();
-		            	modifiedFile.delete();
-		            }
-	            }
-	            
-		    	MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+				// Take only one result frame from several results
+				// Used for PreShot plugin that may decide which result to save
+				if (imagesAmount == 1 && imageIndex != 0)
+					i = imageIndex;
+
+				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
+				int orientation = 0;
+				if (resultOrientation != null)
+					orientation = Integer.parseInt(resultOrientation);
+
+				String resultMirrored = getFromSharedMem("resultframemirrored" + i + Long.toString(sessionID));
+				Boolean cameraMirrored = false;
+				if (resultMirrored != null)
+					cameraMirrored = Boolean.parseBoolean(resultMirrored);
+
+				int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
+				int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
+				if (orientation == 0 || orientation == 180)
+				{
+					x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
+					y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
+				}
+
+				Boolean writeOrientationTag = true;
+				String writeOrientTag = getFromSharedMem("writeorientationtag" + Long.toString(sessionID));
+				if (writeOrientTag != null)
+					writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
+
+				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
+				if (format != null && format.equalsIgnoreCase("jpeg"))
+				{// if result in jpeg format
+
+					if (os != null)
+					{
+						byte[] frame = SwapHeap.SwapFromHeap(
+								Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID))),
+								Integer.parseInt(getFromSharedMem("resultframelen" + i + Long.toString(sessionID))));
+						os.write(frame);
+						try
+						{
+							os.close();
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+				} else
+				{// if result in nv21 format
+					{
+						String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
+						if ((null == res) || "".equals(res) || "true".equals(res))
+						{
+							// Why not just compress directly from native?
+							final int ptr = Integer.parseInt(getFromSharedMem("resultframe" + i
+									+ Long.toString(sessionID)));
+							com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
+							// to avoid problems with SKIA
+							int cropHeight = image.getHeight() - image.getHeight() % 16;
+							if (!image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
+							{
+								MainScreen.getMessageHandler().sendEmptyMessage(
+										PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+								return;
+							}
+							SwapHeap.FreeFromHeap(ptr);
+						} else
+						{
+							int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
+							com.almalence.YuvImage out;
+							out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
+							if (null == getFromSharedMem("resultcrop0" + Long.toString(sessionID)))
+							{
+								if (!out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
+								{
+									MainScreen.getMessageHandler().sendEmptyMessage(
+											PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+									return;
+								}
+							} else
+							{
+								int crop0 = Integer
+										.parseInt(getFromSharedMem("resultcrop0" + Long.toString(sessionID)));
+								int crop1 = Integer
+										.parseInt(getFromSharedMem("resultcrop1" + Long.toString(sessionID)));
+								int crop2 = Integer
+										.parseInt(getFromSharedMem("resultcrop2" + Long.toString(sessionID)));
+								int crop3 = Integer
+										.parseInt(getFromSharedMem("resultcrop3" + Long.toString(sessionID)));
+								Rect r = new Rect(crop0, crop1, crop0 + crop2, crop1 + crop3);
+
+								if (!out.compressToJpeg(r, 95, os))
+								{
+									MainScreen.getMessageHandler().sendEmptyMessage(
+											PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+									return;
+								}
+							}
+
+							SwapHeap.FreeFromHeap(yuv);
+						}
+					}
+				}
+
+				String orientation_tag = String.valueOf(0);
+				switch (orientation)
+				{
+				default:
+				case 0:
+					orientation_tag = String.valueOf(0);
+					break;
+				case 90:
+					orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
+					break;
+				case 180:
+					orientation_tag = String.valueOf(180);
+					break;
+				case 270:
+					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
+					break;
+				}
+
+				values = new ContentValues(9);
+				values.put(
+						ImageColumns.TITLE,
+						file.getName().substring(
+								0,
+								file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName()
+										.length()));
+				values.put(ImageColumns.DISPLAY_NAME, file.getName());
+				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+				values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
+				values.put(ImageColumns.DATA, file.getAbsolutePath());
+
+				File tmpFile;
+				if (MainScreen.getForceFilename() == null)
+				{
+					tmpFile = file;
+				} else
+				{
+					tmpFile = new File(saveDir, "external.tmp");
+					tmpFile.createNewFile();
+					copyFromForceFileName(tmpFile);
+				}
+
+				// Set tag_model using ExifInterface.
+				// If we try set tag_model using ExifDriver, then standard
+				// gallery of android (Nexus 4) will crash on this file.
+				// Can't figure out why, other Exif tools work fine.
+				ExifInterface ei = new ExifInterface(tmpFile.getAbsolutePath());
+
+				String tag_model = getFromSharedMem("exiftag_model" + Long.toString(sessionID));
+				String tag_make = getFromSharedMem("exiftag_make" + Long.toString(sessionID));
+				if (tag_model != null)
+				{
+					ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+					ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
+				}
+				ei.saveAttributes();
+
+				// Open ExifDriver.
+				ExifDriver exifDriver = ExifDriver.getInstance(tmpFile.getAbsolutePath());
+				ExifManager exifManager = null;
+				if (exifDriver != null)
+				{
+					exifManager = new ExifManager(exifDriver, MainScreen.getInstance());
+				}
+
+				if (useGeoTaggingPrefExport)
+				{
+					Location l = MLocation.getLocation(MainScreen.getMainContext());
+
+					if (l != null)
+					{
+						double lat = l.getLatitude();
+						double lon = l.getLongitude();
+						boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+
+						if (hasLatLon)
+						{
+							exifManager.setGPSLocation(l.getLatitude(), l.getLongitude(), l.getAltitude());
+
+							values.put(ImageColumns.LATITUDE, l.getLatitude());
+							values.put(ImageColumns.LONGITUDE, l.getLongitude());
+						}
+
+						String GPSDateString = new SimpleDateFormat("yyyy:MM:dd").format(new Date(l.getTime()));
+						if (GPSDateString != null)
+						{
+							ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+							value.setBytes(GPSDateString.getBytes());
+							exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
+						}
+					}
+				}
+
+				String tag_exposure_time = getFromSharedMem("exiftag_exposure_time" + Long.toString(sessionID));
+				String tag_aperture = getFromSharedMem("exiftag_aperture" + Long.toString(sessionID));
+				String tag_flash = getFromSharedMem("exiftag_flash" + Long.toString(sessionID));
+				String tag_focal_length = getFromSharedMem("exiftag_focal_lenght" + Long.toString(sessionID));
+				String tag_iso = getFromSharedMem("exiftag_iso" + Long.toString(sessionID));
+				String tag_white_balance = getFromSharedMem("exiftag_white_balance" + Long.toString(sessionID));
+				String tag_spectral_sensitivity = getFromSharedMem("exiftag_spectral_sensitivity"
+						+ Long.toString(sessionID));
+				String tag_version = getFromSharedMem("exiftag_version" + Long.toString(sessionID));
+				String tag_scene = getFromSharedMem("exiftag_scene_capture_type" + Long.toString(sessionID));
+				String tag_metering_mode = getFromSharedMem("exiftag_metering_mode" + Long.toString(sessionID));
+
+				if (exifDriver != null)
+				{
+					if (tag_exposure_time != null)
+					{
+						int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
+						if (ratValue != null)
+						{
+							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+							value.setRationals(ratValue);
+							exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
+						}
+					} else
+					{ // hack for expo bracketing
+						tag_exposure_time = getFromSharedMem("exiftag_exposure_time" + Integer.toString(i)
+								+ Long.toString(sessionID));
+						if (tag_exposure_time != null)
+						{
+							int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
+							if (ratValue != null)
+							{
+								ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+								value.setRationals(ratValue);
+								exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
+							}
+						}
+					}
+					if (tag_aperture != null)
+					{
+						int[][] ratValue = ExifManager.stringToRational(tag_aperture);
+						if (ratValue != null)
+						{
+							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+							value.setRationals(ratValue);
+							exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
+						}
+					}
+					if (tag_flash != null)
+					{
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+								Integer.parseInt(tag_flash));
+						exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
+					}
+					if (tag_focal_length != null)
+					{
+						int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
+						if (ratValue != null)
+						{
+							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+							value.setRationals(ratValue);
+							exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
+						}
+					}
+					try
+					{
+						if (tag_iso != null)
+						{
+							if (tag_iso.indexOf("ISO") > 0)
+							{
+								tag_iso = tag_iso.substring(0, 2);
+							}
+							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+									Integer.parseInt(tag_iso));
+							exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
+						}
+					} catch (Exception e)
+					{
+					}
+					if (tag_scene != null)
+					{
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+								Integer.parseInt(tag_scene));
+						exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
+					} else
+					{
+						int sceneMode = CameraController.getInstance().getSceneMode();
+
+						int sceneModeVal = 0;
+						if (sceneMode == CameraParameters.SCENE_MODE_LANDSCAPE)
+						{
+							sceneModeVal = 1;
+						} else if (sceneMode == CameraParameters.SCENE_MODE_PORTRAIT)
+						{
+							sceneModeVal = 2;
+						} else if (sceneMode == CameraParameters.SCENE_MODE_NIGHT)
+						{
+							sceneModeVal = 3;
+						}
+
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
+					}
+					if (tag_white_balance != null)
+					{
+						exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
+
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+								Integer.parseInt(tag_white_balance));
+						exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
+					} else
+					{
+						exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
+
+						int whiteBalance = CameraController.getInstance().getWBMode();
+						int whiteBalanceVal = 0;
+						int lightSourceVal = 0;
+						if (whiteBalance == CameraParameters.WB_MODE_AUTO)
+						{
+							whiteBalanceVal = 0;
+							lightSourceVal = 0;
+						} else
+						{
+							whiteBalanceVal = 1;
+							lightSourceVal = 0;
+						}
+
+						if (whiteBalance == CameraParameters.WB_MODE_DAYLIGHT)
+						{
+							lightSourceVal = 1;
+						} else if (whiteBalance == CameraParameters.WB_MODE_FLUORESCENT)
+						{
+							lightSourceVal = 2;
+						} else if (whiteBalance == CameraParameters.WB_MODE_WARM_FLUORESCENT)
+						{
+							lightSourceVal = 2;
+						} else if (whiteBalance == CameraParameters.WB_MODE_INCANDESCENT)
+						{
+							lightSourceVal = 3;
+						} else if (whiteBalance == CameraParameters.WB_MODE_TWILIGHT)
+						{
+							lightSourceVal = 3;
+						} else if (whiteBalance == CameraParameters.WB_MODE_CLOUDY_DAYLIGHT)
+						{
+							lightSourceVal = 10;
+						} else if (whiteBalance == CameraParameters.WB_MODE_SHADE)
+						{
+							lightSourceVal = 11;
+						}
+
+						ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
+
+						ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
+					}
+					if (tag_spectral_sensitivity != null)
+					{
+						ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+						value.setBytes(tag_spectral_sensitivity.getBytes());
+						exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
+					}
+					if (tag_version != null && !tag_version.equals("48 50 50 48"))
+					{
+						ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+						value.setBytes(tag_version.getBytes());
+						exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+					} else
+					{
+						ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+						byte[] version = { (byte) 48, (byte) 50, (byte) 50, (byte) 48 };
+						value.setBytes(version);
+						exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
+					}
+					if (tag_metering_mode != null && !tag_metering_mode.equals("")
+							&& Integer.parseInt(tag_metering_mode) <= 255)
+					{
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+								Integer.parseInt(tag_metering_mode));
+						exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+						exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
+					} else
+					{
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
+						exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
+					}
+
+					ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
+					exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
+
+					ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
+					exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
+
+					String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
+					if (dateString != null)
+					{
+						ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+						// Date string length is 19 bytes. But exif tag
+						// specification length is 20 bytes.
+						// That's why we add "empty" byte (0x00) in the end.
+						byte[] bytes = dateString.getBytes();
+						byte[] res = new byte[20];
+						for (int ii = 0; ii < bytes.length; ii++)
+						{
+							res[ii] = bytes[ii];
+						}
+						res[19] = 0x00;
+						value.setBytes(res);
+						exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
+						exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
+					}
+
+					// extract mode name
+					String tag_modename = getFromSharedMem("mode_name" + Long.toString(sessionID));
+					if (tag_modename == null)
+						tag_modename = "";
+					String softwareString = MainScreen.getInstance().getResources().getString(R.string.app_name) + ", "
+							+ tag_modename;
+					ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
+					softwareValue.setBytes(softwareString.getBytes());
+					exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
+
+					if (writeOrientationTag)
+					{
+						int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						switch (orientation)
+						{
+						default:
+						case 0:
+							exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+							break;
+						case 90:
+							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+									: ExifInterface.ORIENTATION_ROTATE_90;
+							break;
+						case 180:
+							exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+							break;
+						case 270:
+							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+									: ExifInterface.ORIENTATION_ROTATE_270;
+							break;
+						}
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+						exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+					} else
+					{
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
+								ExifInterface.ORIENTATION_NORMAL);
+						exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+					}
+
+					// Save exif info to new file, and replace old file with new
+					// one.
+					File modifiedFile = new File(tmpFile.getAbsolutePath() + ".tmp");
+					exifDriver.save(modifiedFile.getAbsolutePath());
+					if (MainScreen.getForceFilename() == null)
+					{
+						file.delete();
+						modifiedFile.renameTo(file);
+					} else
+					{
+						copyToForceFileName(modifiedFile);
+						tmpFile.delete();
+						modifiedFile.delete();
+					}
+				}
+
+				MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 			}
-            
-            MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-        }
-		catch(IOException e) {
-            e.printStackTrace();
-            MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-            return;
-        }
-        catch (Exception e)
-        {
-        	e.printStackTrace();
-        	MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-        }
-		finally
+
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+			return;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+		} finally
 		{
 			MainScreen.setForceFilename(null);
 		}
 	}
-	
+
 	public String getFileFormat()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-    	Calendar d = Calendar.getInstance();
-    	String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d",
-        		d.get(Calendar.YEAR),
-        		d.get(Calendar.MONTH)+1,
-        		d.get(Calendar.DAY_OF_MONTH),
-        		d.get(Calendar.HOUR_OF_DAY),
-        		d.get(Calendar.MINUTE),
-        		d.get(Calendar.SECOND));
-    	switch (saveOption)
-    	{
-    	case 1://YEARMMDD_HHMMSS
-    		break;
-    		
-    	case 2://YEARMMDD_HHMMSS_MODE
-    		fileFormat += "_" + getActiveMode().modeSaveName;
-    		break;
-    		
-    	case 3://IMG_YEARMMDD_HHMMSS
-    		fileFormat = "IMG_" + fileFormat;
-    		break;
-    		
-    	case 4://IMG_YEARMMDD_HHMMSS_MODE
-    		fileFormat = "IMG_" + fileFormat + "_" + getActiveMode().modeSaveName;
-    		break;
-    	default:
+		Calendar d = Calendar.getInstance();
+		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+				d.get(Calendar.SECOND));
+		switch (saveOption)
+		{
+		case 1:// YEARMMDD_HHMMSS
 			break;
-    	}
-    	return fileFormat;
+
+		case 2:// YEARMMDD_HHMMSS_MODE
+			fileFormat += "_" + getActiveMode().modeSaveName;
+			break;
+
+		case 3:// IMG_YEARMMDD_HHMMSS
+			fileFormat = "IMG_" + fileFormat;
+			break;
+
+		case 4:// IMG_YEARMMDD_HHMMSS_MODE
+			fileFormat = "IMG_" + fileFormat + "_" + getActiveMode().modeSaveName;
+			break;
+		default:
+			break;
+		}
+		return fileFormat;
 	}
-	
-	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer, File file) throws IOException
+
+	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,
+			File file) throws IOException
 	{
 		int iImageWidth = MainScreen.getImageWidth();
 		int iImageHeight = MainScreen.getImageHeight();
-		ContentValues values=null;
-		String resultOrientation = getFromSharedMem("frameorientation" + (i+1) + Long.toString(SessionID));
+		ContentValues values = null;
+		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
 		Boolean orientationLandscape = false;
 		if (resultOrientation == null)
 			orientationLandscape = true;
 		else
 			orientationLandscape = Boolean.parseBoolean(resultOrientation);
-		
-		String resultMirrored = getFromSharedMem("framemirrored" + (i+1) + Long.toString(SessionID));
+
+		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
 		Boolean cameraMirrored = false;
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
-		
+
 		if (os != null)
 		{
-			if(!isYUV)
+			if (!isYUV)
 			{
 				os.write(buffer);
-			}
-			else
+			} else
 			{
-				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth, iImageHeight, null);
-				//to avoid problems with SKIA
-				int cropHeight = image.getHeight()-image.getHeight()%16;
+				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
+						iImageHeight, null);
+				// to avoid problems with SKIA
+				int cropHeight = image.getHeight() - image.getHeight() % 16;
 				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
 			}
 			os.close();
@@ -2747,54 +2838,57 @@ public class PluginManager implements PluginManagerInterface {
 			int mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-			switch(mDisplayOrientation)
+			switch (mDisplayOrientation)
 			{
 			default:
 			case 0:
 				exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 				break;
 			case 90:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
+				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+						: ExifInterface.ORIENTATION_ROTATE_90;
 				break;
 			case 180:
 				exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 				break;
 			case 270:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
+				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+						: ExifInterface.ORIENTATION_ROTATE_270;
 				break;
 			}
 			ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
 			ei.saveAttributes();
 		}
-		
+
 		values = new ContentValues(9);
 		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
 		values.put(ImageColumns.DISPLAY_NAME, file.getName());
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-		values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90 : (!orientationLandscape && cameraMirrored) ? -90 : 0);                
+		values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90
+				: (!orientationLandscape && cameraMirrored) ? -90 : 0);
 		values.put(ImageColumns.DATA, file.getAbsolutePath());
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (prefs.getBoolean("useGeoTaggingPrefExport", false))
 		{
 			Location l = MLocation.getLocation(MainScreen.getMainContext());
-			
+
 			if (l != null)
-			{	     
+			{
 				ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 				ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
 				ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
 				ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
 				ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, GPSTagsConverter.longitudeRef(l.getLongitude()));
-				
+
 				ei.saveAttributes();
-				
+
 				values.put(ImageColumns.LATITUDE, l.getLatitude());
 				values.put(ImageColumns.LONGITUDE, l.getLongitude());
 			}
 		}
-		
+
 		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 	}
 }

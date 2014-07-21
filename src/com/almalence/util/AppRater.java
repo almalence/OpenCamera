@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.util;
 
@@ -43,8 +43,8 @@ import com.almalence.opencam.R;
 
 public class AppRater
 {
-	private static final int DAYS_UNTIL_PROMPT = 0;
-	private static final int LAUNCHES_UNTIL_PROMPT = 15;
+	private static final int	DAYS_UNTIL_PROMPT		= 0;
+	private static final int	LAUNCHES_UNTIL_PROMPT	= 15;
 
 	public static void app_launched(Activity mContext)
 	{
@@ -70,33 +70,32 @@ public class AppRater
 
 		editor.commit();
 	}
-	
+
 	public static boolean showRateDialogIfNeeded(final Activity mContext)
 	{
-		//temp research - disable rater for 4.03 - 4.0.4
+		// temp research - disable rater for 4.03 - 4.0.4
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
 			return false;
-		
+
 		final SharedPreferences prefs = mContext.getSharedPreferences("apprater", 0);
 		if (prefs.getBoolean("dontshowagain", false))
 		{
 			return false;
 		}
-		
+
 		final long launch_count = prefs.getLong("launch_count", 0) + 1;
 		final Long date_firstLaunch = prefs.getLong("date_firstlaunch", 0);
-		
+
 		if (launch_count >= LAUNCHES_UNTIL_PROMPT)
 		{
-			if (System.currentTimeMillis() >= date_firstLaunch
-					+ (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+			if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 			{
 				showRateDialog(mContext, prefs);
-				
+
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -106,33 +105,33 @@ public class AppRater
 
 		LinearLayout ll = new LinearLayout(mContext);
 		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
-		
+		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+
 		TextView tv = new TextView(mContext);
 		tv.setText(mContext.getResources().getString(R.string.raterMain));
-		tv.setWidth((int)(250 * density));
-		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
+		tv.setWidth((int) (250 * density));
+		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
-		//rating bar
+		// rating bar
 		final RatingBar ratingBar = new RatingBar(mContext);
 		ratingBar.setNumStars(5);
 		ratingBar.setStepSize(1);
 		LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
 		stars.getDrawable(0).setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
 		stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
-		
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.gravity=Gravity.CENTER_HORIZONTAL;
+
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
+		params.gravity = Gravity.CENTER_HORIZONTAL;
 		params.setMargins(0, 5, 0, 10);
 		ratingBar.setLayoutParams(params);
 		ll.addView(ratingBar);
 
-
 		Button b3 = new Button(mContext);
 		b3.setText(mContext.getResources().getString(R.string.raterNo));
 		ll.addView(b3);
-		
+
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
@@ -144,25 +143,22 @@ public class AppRater
 				mContext.finish();
 			}
 		});
-		
-		
+
 		ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener()
 		{
-			public void onRatingChanged(RatingBar ratingBar, float rating,
-                    boolean fromUser)
+			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser)
 			{
 				if (prefs != null)
 				{
 					prefs.edit().putBoolean("dontshowagain", true).commit();
 				}
 				dialog.dismiss();
-				
-				if (rating>= 4)
+
+				if (rating >= 4)
 				{
 					mContext.finish();
 					MainScreen.callStoreFree(mContext);
-				}
-				else
+				} else
 					contactSupport();
 			}
 		});
@@ -176,26 +172,26 @@ public class AppRater
 					prefs.edit().putBoolean("dontshowagain", true).commit();
 					mContext.finish();
 				}
-				
+
 				dialog.dismiss();
 			}
 		});
-		
+
 		dialog.show();
 	}
-	
+
 	private static void contactSupport()
 	{
 		final float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
 
 		LinearLayout ll = new LinearLayout(MainScreen.getInstance());
 		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding((int)(10 * density), (int)(10 * density), (int)(10 * density), (int)(10 * density));
-		
+		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+
 		TextView tv = new TextView(MainScreen.getInstance());
 		tv.setText(MainScreen.getInstance().getResources().getString(R.string.raterSendReview));
-		tv.setWidth((int)(250 * density));
-		tv.setPadding((int)(4 * density), 0, (int)(4 * density), (int)(24 * density));
+		tv.setWidth((int) (250 * density));
+		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button b1 = new Button(MainScreen.getInstance());
@@ -205,7 +201,7 @@ public class AppRater
 		Button b2 = new Button(MainScreen.getInstance());
 		b2.setText(MainScreen.getInstance().getResources().getString(R.string.raterNo));
 		ll.addView(b2);
-		
+
 		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
@@ -217,7 +213,7 @@ public class AppRater
 				MainScreen.getInstance().finish();
 			}
 		});
-		
+
 		b1.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -242,5 +238,5 @@ public class AppRater
 		});
 		dialog.show();
 	}
-	
+
 }

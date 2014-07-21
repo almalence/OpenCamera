@@ -14,7 +14,7 @@ The Original Code is collection of files collectively known as Open Camera.
 The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
-*/
+ */
 
 package com.almalence.plugins.capture.standard;
 
@@ -38,12 +38,12 @@ import com.almalence.YuvImage;
 import com.almalence.SwapHeap;
 
 /* <!-- +++
-import com.almalence.opencam_plus.CameraController;
-import com.almalence.opencam_plus.MainScreen;
-import com.almalence.opencam_plus.PluginCapture;
-import com.almalence.opencam_plus.PluginManager;
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginCapture;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -53,32 +53,32 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.ui.Switch.Switch;
 
-
 /***
-Implements standard capture plugin - capture single image and save it in shared memory
-***/
+ * Implements standard capture plugin - capture single image and save it in
+ * shared memory
+ ***/
 
 public class CapturePlugin extends PluginCapture
 {
-	private static String ModePreference;	// 0=DRO On 1=DRO Off
-	private Switch modeSwitcher;
-	
+	private static String	ModePreference; // 0=DRO On 1=DRO Off
+	private Switch			modeSwitcher;
+
 	public CapturePlugin()
 	{
 		super("com.almalence.plugins.capture", 0, 0, 0, null);
 	}
-	
+
 	@Override
 	public void onCreate()
 	{
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();		
-		modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
-		
+		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-        ModePreference = prefs.getString("modeStandardPref", "1");
-        modeSwitcher.setTextOn("DRO On");
-        modeSwitcher.setTextOff("DRO Off");
-        modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
+		ModePreference = prefs.getString("modeStandardPref", "1");
+		modeSwitcher.setTextOn("DRO On");
+		modeSwitcher.setTextOff("DRO Off");
+		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
 		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 		{
 			@Override
@@ -91,41 +91,41 @@ public class CapturePlugin extends PluginCapture
 				float expStep = CameraController.getInstance().getExposureCompensationStep();
 				if (isChecked)
 				{
-					int diff = (int)Math.round(0.5/expStep);
-					if(diff < 1)
+					int diff = (int) Math.round(0.5 / expStep);
+					if (diff < 1)
 						diff = 1;
 					newEv -= diff;
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
-				}
-				else
+				} else
 				{
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
 				}
-				
-				if(newEv >= minValue)
+
+				if (newEv >= minValue)
 					CameraController.getInstance().setCameraExposureCompensation(newEv);
-				
-				
-				SharedPreferences.Editor editor = prefs.edit();		        	
-	        	editor.putString("modeStandardPref", ModePreference);
-	        	editor.commit();
-	        	
-	        	MainScreen.getInstance().relaunchCamera();
-	        	
-	        	if (ModePreference.compareTo("0") == 0)
-	    			MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Dro_Help_Header), MainScreen.getInstance().getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
+
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putString("modeStandardPref", ModePreference);
+				editor.commit();
+
+				MainScreen.getInstance().relaunchCamera();
+
+				if (ModePreference.compareTo("0") == 0)
+					MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Dro_Help_Header),
+							MainScreen.getInstance().getResources().getString(R.string.Dro_Help),
+							R.drawable.plugin_help_dro, "droShowHelp");
 			}
 		});
-		
-		if(PluginManager.getInstance().getProcessingCounter() == 0)
+
+		if (PluginManager.getInstance().getProcessingCounter() == 0)
 			modeSwitcher.setEnabled(true);
 	}
-	
+
 	@Override
 	public void onCameraParametersSetup()
-	{		
+	{
 		if (ModePreference.compareTo("0") == 0)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -133,22 +133,20 @@ public class CapturePlugin extends PluginCapture
 			int newEv = currEv;
 			int minValue = CameraController.getInstance().getMinExposureCompensation();
 			newEv -= 1;
-			
-			if(newEv >= minValue)
+
+			if (newEv >= minValue)
 				CameraController.getInstance().setCameraExposureCompensation(newEv);
 		}
 	}
-	
-	
+
 	@Override
 	public void onStart()
 	{
 		// Get the xml/preferences.xml preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());        
-        ModePreference = prefs.getString("modeStandardPref", "1");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		ModePreference = prefs.getString("modeStandardPref", "1");
 	}
-	
-	
+
 	@Override
 	public void onResume()
 	{
@@ -157,61 +155,62 @@ public class CapturePlugin extends PluginCapture
 		else
 			MainScreen.setCaptureYUVFrames(false);
 	}
-	
-	
+
 	@Override
 	public void onGUICreate()
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
-		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		
+
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
+
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
-		
+
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
+				params);
+
 		this.modeSwitcher.setLayoutParams(params);
 		this.modeSwitcher.requestLayout();
-		
-		((RelativeLayout)MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
-		
+
+		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
+
 		if (ModePreference.compareTo("0") == 0)
-			MainScreen.getGUIManager().showHelp("Dro help", MainScreen.getInstance().getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro, "droShowHelp");
+			MainScreen.getGUIManager().showHelp("Dro help",
+					MainScreen.getInstance().getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro,
+					"droShowHelp");
 	}
-	
-	
+
 	@Override
 	public void onStop()
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 	}
-	
+
 	@Override
 	public void onDefaultsSelect()
 	{
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());        
-        ModePreference = prefs.getString("modeStandardPref", "1");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		ModePreference = prefs.getString("modeStandardPref", "1");
 	}
-	
+
 	@Override
 	public void onShowPreferences()
 	{
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());        
-        ModePreference = prefs.getString("modeStandardPref", "1");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		ModePreference = prefs.getString("modeStandardPref", "1");
 	}
 
-	
 	@Override
 	public void takePicture()
 	{
 		Log.e("CapturePlugin", "takePicture");
-		if(!inCapture)
+		if (!inCapture)
 		{
 			Log.e("CapturePlugin", "send next frame message");
 			inCapture = true;
 			takingAlready = true;
-			
+
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
 			msg.what = PluginManager.MSG_BROADCAST;
@@ -219,7 +218,7 @@ public class CapturePlugin extends PluginCapture
 		}
 
 	}
-	
+
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
@@ -228,21 +227,21 @@ public class CapturePlugin extends PluginCapture
 			Log.e("CapturePlugin", "next frame message received");
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-    		MainScreen.getInstance().playShutter();
-    		
+			MainScreen.getInstance().playShutter();
+
 			// play tick sound
 			MainScreen.getGUIManager().showCaptureIndication();
-    		MainScreen.getInstance().playShutter();
-    		
-    		try {
-    			if(ModePreference.compareTo("0") == 0)
-					requestID = CameraController.captureImage(1, CameraController.YUV);			
+			MainScreen.getInstance().playShutter();
+
+			try
+			{
+				if (ModePreference.compareTo("0") == 0)
+					requestID = CameraController.captureImage(1, CameraController.YUV);
 				else
 					requestID = CameraController.captureImage(1, CameraController.JPEG);
-			}
-    		catch (Exception e) 
+			} catch (Exception e)
 			{
-    			e.printStackTrace();
+				e.printStackTrace();
 				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
 				takingAlready = false;
 				Message msg = new Message();
@@ -251,39 +250,40 @@ public class CapturePlugin extends PluginCapture
 				MainScreen.getMessageHandler().sendMessage(msg);
 				MainScreen.getGUIManager().lockControls = false;
 			}
-    		return true;
+			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
 		int frame_len = paramArrayOfByte.length;
 		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-    	
-    	if (frame == 0)
-    	{
-    	}
-    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
-		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
-    	PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
-    	
-    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+SessionID, ModePreference);
-    	
+
+		if (frame == 0)
+		{
+		}
+		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
+		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
+		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
+				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
+				String.valueOf(CameraController.isFrontCamera()));
+
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
+		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+
+		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
+
 		try
 		{
 			paramCamera.startPreview();
-		}
-		catch (RuntimeException e)
+		} catch (RuntimeException e)
 		{
 			Log.i("Capture", "StartPreview fail");
 		}
-		
+
 		Message message = new Message();
 		message.obj = String.valueOf(SessionID);
 		message.what = PluginManager.MSG_CAPTURE_FINISHED;
@@ -292,7 +292,7 @@ public class CapturePlugin extends PluginCapture
 		takingAlready = false;
 		inCapture = false;
 	}
-	
+
 	@TargetApi(19)
 	@Override
 	public void onImageAvailable(Image im)
@@ -300,66 +300,62 @@ public class CapturePlugin extends PluginCapture
 		int frame = 0;
 		int frame_len = 0;
 		boolean isYUV = false;
-		
-		if(im.getFormat() == ImageFormat.YUV_420_888)
+
+		if (im.getFormat() == ImageFormat.YUV_420_888)
 		{
 			Log.e("CapturePlugin", "YUV Image received");
 			ByteBuffer Y = im.getPlanes()[0].getBuffer();
 			ByteBuffer U = im.getPlanes()[1].getBuffer();
 			ByteBuffer V = im.getPlanes()[2].getBuffer();
-	
-			if ( (!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()) )
+
+			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
 			{
 				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
 				return;
 			}
-			
-			
+
 			// Note: android documentation guarantee that:
 			// - Y pixel stride is always 1
 			// - U and V strides are the same
-			//   So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V,
-					im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(),
-					im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(),
-					im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(),
-					MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-			
+			// So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+
 			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: "+status);
-			
-			
-			frame = YuvImage.GetFrame(0);			
-			frame_len = MainScreen.getImageWidth()*MainScreen.getImageHeight()+MainScreen.getImageWidth()*((MainScreen.getImageHeight()+1)/2);
+				Log.e("CapturePlugin", "Error while cropping: " + status);
+
+			frame = YuvImage.GetFrame(0);
+			frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
+					* ((MainScreen.getImageHeight() + 1) / 2);
 			isYUV = true;
-		}
-		else if(im.getFormat() == ImageFormat.JPEG)
+		} else if (im.getFormat() == ImageFormat.JPEG)
 		{
 			Log.e("CapturePlugin", "JPEG Image received");
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-			
+
 			frame_len = jpeg.limit();
 			byte[] jpegByteArray = new byte[frame_len];
 			jpeg.get(jpegByteArray, 0, frame_len);
-			
+
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
-			
+
 			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
-    	
-    	PluginManager.getInstance().addToSharedMem("frame1"+SessionID, String.valueOf(frame));
-    	PluginManager.getInstance().addToSharedMem("framelen1"+SessionID, String.valueOf(frame_len));
-    	PluginManager.getInstance().addToSharedMem("frameorientation1"+SessionID, String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-    	PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID, String.valueOf(CameraController.isFrontCamera()));
-		
-    	PluginManager.getInstance().addToSharedMem("amountofcapturedframes"+SessionID, "1");
-    	
-    	PluginManager.getInstance().addToSharedMem("isyuv"+SessionID, String.valueOf(isYUV));
-    	PluginManager.getInstance().addToSharedMem("isdroprocessing"+SessionID, ModePreference);
-		
+
+		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
+		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
+		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
+				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
+				String.valueOf(CameraController.isFrontCamera()));
+
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
+
+		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
+
 		Message message = new Message();
 		message.obj = String.valueOf(SessionID);
 		message.what = PluginManager.MSG_CAPTURE_FINISHED;
@@ -367,27 +363,32 @@ public class CapturePlugin extends PluginCapture
 
 		takingAlready = false;
 	}
-	
+
 	@TargetApi(19)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if(result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.get(CaptureResult.REQUEST_ID) == requestID)
 		{
-    		PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
-	
+
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
 		Log.e("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
-		if(takingAlready)
+		if (takingAlready)
 			takePicture();
 	}
-	
+
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera){}
-	
-	public boolean delayedCaptureSupported(){return true;}
+	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	{
+	}
+
+	public boolean delayedCaptureSupported()
+	{
+		return true;
+	}
 }

@@ -30,10 +30,10 @@ import android.view.View;
  */
 public class AllCapsTransformationMethod implements TransformationMethodCompat2
 {
-	private static final String TAG = "AllCapsTransformationMethod";
+	private static final String	TAG	= "AllCapsTransformationMethod";
 
-	private boolean mEnabled;
-	private Locale mLocale;
+	private boolean				mEnabled;
+	private Locale				mLocale;
 
 	public AllCapsTransformationMethod(Context context)
 	{
@@ -52,7 +52,8 @@ public class AllCapsTransformationMethod implements TransformationMethodCompat2
 	}
 
 	@Override
-	public void onFocusChanged(View view, CharSequence sourceText, boolean focused, int direction, Rect previouslyFocusedRect)
+	public void onFocusChanged(View view, CharSequence sourceText, boolean focused, int direction,
+			Rect previouslyFocusedRect)
 	{
 	}
 
