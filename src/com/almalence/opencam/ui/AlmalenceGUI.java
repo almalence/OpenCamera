@@ -3718,261 +3718,259 @@ public class AlmalenceGUI extends GUI implements
 
 		// TOP MENU BUTTONS - Scene mode, white balance, focus mode, flash mode,
 		// settings
-		case R.id.evButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
+		case R.id.evButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
 
-			if (!isEVEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
+				if (!isEVEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
 
-			LinearLayout layout = (LinearLayout) guiView
-					.findViewById(R.id.evLayout);
-			if (layout.getVisibility() == View.GONE) {
-				unselectPrimaryTopMenuButtons(MODE_EV);
-				hideSecondaryMenus();
-				showParams(MODE_EV);
-				quickControlsVisible = true;
-			} else {
-				quickControlsVisible = false;
+				LinearLayout layout = (LinearLayout) guiView.findViewById(R.id.evLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					unselectPrimaryTopMenuButtons(MODE_EV);
+					hideSecondaryMenus();
+					showParams(MODE_EV);
+					quickControlsVisible = true;
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.sceneButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isSceneEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.scenemodeLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_SCENE);
+					hideSecondaryMenus();
+					showParams(MODE_SCENE);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.wbButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isWBEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.wbLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_WB);
+					hideSecondaryMenus();
+					showParams(MODE_WB);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.focusButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isFocusEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.focusmodeLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_FOCUS);
+					hideSecondaryMenus();
+					showParams(MODE_FOCUS);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.flashButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isFlashEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.flashmodeLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_FLASH);
+					hideSecondaryMenus();
+					showParams(MODE_FLASH);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.isoButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isIsoEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.isoLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_ISO);
+					hideSecondaryMenus();
+					showParams(MODE_ISO);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.meteringButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
+				if (!isMeteringEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				RelativeLayout layout = (RelativeLayout) guiView.findViewById(R.id.meteringLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					quickControlsVisible = true;
+					unselectPrimaryTopMenuButtons(MODE_MET);
+					hideSecondaryMenus();
+					showParams(MODE_MET);
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.camerachangeButton:
+			{
+				if (quickControlsChangeVisible)
+				{
+					changeCurrentQuickControl(button);
+					initQuickControlsMenu(button);
+					showQuickControlsSettings();
+					break;
+				}
+
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.sceneButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
+
+				if (!isCameraChangeEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getInstance().getResources()
+							.getString(R.string.settings_not_available), true, false);
+					break;
+				}
+
+				cameraSwitched(true);
 				break;
 			}
-
-			if (!isSceneEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.scenemodeLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_SCENE);
-				hideSecondaryMenus();
-				showParams(MODE_SCENE);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.wbButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			if (!isWBEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.wbLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_WB);
-				hideSecondaryMenus();
-				showParams(MODE_WB);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.focusButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			if (!isFocusEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.focusmodeLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_FOCUS);
-				hideSecondaryMenus();
-				showParams(MODE_FOCUS);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.flashButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			if (!isFlashEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.flashmodeLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_FLASH);
-				hideSecondaryMenus();
-				showParams(MODE_FLASH);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.isoButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			if (!isIsoEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.isoLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_ISO);
-				hideSecondaryMenus();
-				showParams(MODE_ISO);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;
-		case R.id.meteringButton: {
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			if (!isMeteringEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			RelativeLayout layout = (RelativeLayout) guiView
-					.findViewById(R.id.meteringLayout);
-			if (layout.getVisibility() == View.GONE) {
-				quickControlsVisible = true;
-				unselectPrimaryTopMenuButtons(MODE_MET);
-				hideSecondaryMenus();
-				showParams(MODE_MET);
-			} else {
-				quickControlsVisible = false;
-				unselectPrimaryTopMenuButtons(-1);
-				hideSecondaryMenus();
-			}
-		}
-			break;			
-		case R.id.camerachangeButton: 
-		{
-			if (quickControlsChangeVisible) {
-				changeCurrentQuickControl(button);
-				initQuickControlsMenu(button);
-				showQuickControlsSettings();
-				break;
-			}
-
-			unselectPrimaryTopMenuButtons(-1);
-			hideSecondaryMenus();
-
-			if (!isCameraChangeEnabled) {
-				showToast(
-						null,
-						Toast.LENGTH_SHORT,
-						Gravity.CENTER,
-						MainScreen.getInstance().getResources().getString(
-								R.string.settings_not_available), true, false);
-				break;
-			}
-
-			cameraSwitched(true);
-			break;
-		}
 
 		// EXPOSURE COMPENSATION BUTTONS (-\+)
 		case R.id.evMinusButton:
 			expoMinus();
 			break;
-		case R.id.evPlusButton: 
+		case R.id.evPlusButton:
 			expoPlus();
 			break;
 		default:
@@ -4068,22 +4066,20 @@ public class AlmalenceGUI extends GUI implements
 			MainScreen.getMessageHandler().sendMessage(msg);
 		}
 		if (mFocusMode != -1)
-		{				
-			try {
+		{
+			try
+			{
 				but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
 				icon_id = ICONS_FOCUS.get(mFocusMode);
 				but.setImageResource(icon_id);
-			} catch (Exception e) {
+			} catch (Exception e)
+			{
 				e.printStackTrace();
 				Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
 			}
-			
-			preferences
-					.edit()
-					.putInt(
-							CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-									: MainScreen.sFrontFocusModePref, mFocusMode)
-					.commit();
+
+			preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+							: MainScreen.sFrontFocusModePref, mFocusMode).commit();
 
 			Message msg = new Message();
 			msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
@@ -4138,9 +4134,7 @@ public class AlmalenceGUI extends GUI implements
 		{
 			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
 					&& CameraController.getInstance().isSceneModeSupported())
-			{
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-			}
 			
 			CameraController.getInstance().setCameraWhiteBalance(newMode);
 			
@@ -4169,10 +4163,8 @@ public class AlmalenceGUI extends GUI implements
 		if (newMode != -1 )
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
-			{
 				if (CameraController.getInstance().isSceneModeSupported())
 					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
-			}
 
 			CameraController.getInstance().setCameraFocusMode(newMode);
 			
@@ -4182,11 +4174,13 @@ public class AlmalenceGUI extends GUI implements
 			preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, newMode).commit();
 		}
 
-		try {
+		try
+		{
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
 			int icon_id = ICONS_FOCUS.get(mFocusMode);
 			but.setImageResource(icon_id);
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
 			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
 		}
@@ -4286,16 +4280,16 @@ public class AlmalenceGUI extends GUI implements
 	{
 		Set<Integer> keys = topMenuButtons.keySet();
 		Iterator<Integer> it = keys.iterator();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			Integer it_button = it.next();
 			(topMenuButtons.get(it_button)).setPressed(false);
 			(topMenuButtons.get(it_button)).setSelected(false);
 		}
 
-		if ((iTopMenuButtonSelected > -1)
-				&& topMenuButtons.containsKey(iTopMenuButtonSelected)) {
-			RotateImageView pressed_button = (RotateImageView) topMenuButtons
-					.get(iTopMenuButtonSelected);
+		if ((iTopMenuButtonSelected > -1) && topMenuButtons.containsKey(iTopMenuButtonSelected))
+		{
+			RotateImageView pressed_button = (RotateImageView) topMenuButtons.get(iTopMenuButtonSelected);
 			pressed_button.setPressed(false);
 			pressed_button.setSelected(true);
 		}
