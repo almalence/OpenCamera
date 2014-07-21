@@ -137,10 +137,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
 			MainScreen.getMessageHandler().sendMessage(msg);
 
-			Message msg2 = new Message();
-			msg2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-			msg2.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg2);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_LOCKED);
 
 			MainScreen.getGUIManager().lockControls = true;
 		}
@@ -939,10 +937,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				AlmaShotHDR.HDRFreeInstance();
 				AlmaShotHDR.Release();
 
-				Message msg2 = new Message();
-				msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg2.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg2);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 
 				MainScreen.getGUIManager().lockControls = false;
 
@@ -1146,10 +1142,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			Message msg2 = new Message();
-			msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg2.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg2);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 
@@ -1340,10 +1334,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			Message msg2 = new Message();
-			msg2.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg2.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg2);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 

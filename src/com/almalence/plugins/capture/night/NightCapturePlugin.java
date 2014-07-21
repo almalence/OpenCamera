@@ -1051,10 +1051,8 @@ public class NightCapturePlugin extends PluginCapture
 				{
 					inCapture = false;
 
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.getMessageHandler().sendMessage(msg);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+							PluginManager.MSG_CONTROL_UNLOCKED);
 
 					MainScreen.getGUIManager().lockControls = false;
 				}
@@ -1090,10 +1088,8 @@ public class NightCapturePlugin extends PluginCapture
 		capturingDialog.setText(message);
 		capturingDialog.show();
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_NEXT_FRAME);
 	}
 
 	@TargetApi(19)
@@ -1171,10 +1167,8 @@ public class NightCapturePlugin extends PluginCapture
 
 		if (++frameNumber == total_frames)
 		{
-			Message sys_message = new Message();
-			sys_message.obj = String.valueOf(SessionID);
-			sys_message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(sys_message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			takingAlready = false;
 			inCapture = false;
@@ -1295,10 +1289,8 @@ public class NightCapturePlugin extends PluginCapture
 				// play tick sound
 				MainScreen.getInstance().playShutter();
 
-				Message message = new Message();
-				message.obj = String.valueOf(SessionID);
-				message.what = PluginManager.MSG_CAPTURE_FINISHED;
-				MainScreen.getMessageHandler().sendMessage(message);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+						String.valueOf(SessionID));
 
 				MainScreen.getGUIManager().stopCaptureIndication();
 
@@ -1434,10 +1426,8 @@ public class NightCapturePlugin extends PluginCapture
 				// play tick sound
 				MainScreen.getInstance().playShutter();
 
-				Message message = new Message();
-				message.obj = String.valueOf(SessionID);
-				message.what = PluginManager.MSG_CAPTURE_FINISHED;
-				MainScreen.getMessageHandler().sendMessage(message);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+						String.valueOf(SessionID));
 
 				MainScreen.getGUIManager().stopCaptureIndication();
 
@@ -1570,17 +1560,13 @@ public class NightCapturePlugin extends PluginCapture
 					// just repost our request and try once more (takePicture
 					// latency issues?)
 					--frameNumber;
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.getMessageHandler().sendMessage(msg);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+							PluginManager.MSG_NEXT_FRAME);
 				}
 			} else
 			{
-				Message message = new Message();
-				message.obj = String.valueOf(SessionID);
-				message.what = PluginManager.MSG_CAPTURE_FINISHED;
-				MainScreen.getMessageHandler().sendMessage(message);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+						String.valueOf(SessionID));
 
 				takingAlready = false;
 				inCapture = false;

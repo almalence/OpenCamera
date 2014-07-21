@@ -255,10 +255,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			} else
 			{
 				inCapture = false;
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 
 				MainScreen.getGUIManager().lockControls = false;
 			}
@@ -300,10 +298,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 					public void onFinish()
 					{
-						Message msg = new Message();
-						msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-						msg.what = PluginManager.MSG_BROADCAST;
-						MainScreen.getMessageHandler().sendMessage(msg);
+						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+								PluginManager.MSG_TAKE_PICTURE);
 					}
 				}.start();
 			}
@@ -333,10 +329,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					// just repost our request and try once more (takePicture
 					// latency issues?)
 					--frame_num;
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.getMessageHandler().sendMessage(msg);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+							PluginManager.MSG_NEXT_FRAME);
 				}
 			} else
 			{
@@ -349,10 +343,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					cdt = null;
 				}
 
-				Message message = new Message();
-				message.obj = String.valueOf(SessionID);
-				message.what = PluginManager.MSG_CAPTURE_FINISHED;
-				MainScreen.getMessageHandler().sendMessage(message);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+						String.valueOf(SessionID));
 
 				CameraController.getInstance().resetExposureCompensation();
 			}
@@ -401,10 +393,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					cdt = null;
 				}
 
-				Message message = new Message();
-				message.obj = String.valueOf(SessionID);
-				message.what = PluginManager.MSG_CAPTURE_FINISHED;
-				MainScreen.getMessageHandler().sendMessage(message);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+						String.valueOf(SessionID));
 
 				CameraController.getInstance().resetExposureCompensation();
 			}
@@ -460,19 +450,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				cdt = null;
 			}
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			CameraController.getInstance().resetExposureCompensation();
 			return;
 		}
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_NEXT_FRAME);
 
 		// if preview not working
 		if (previewMode)
@@ -497,10 +483,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					prefsEditor.putBoolean(sExpoPreviewModePref, false);
 					prefsEditor.commit();
 					evLatency = 0;
-					Message msg = new Message();
-					msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-					msg.what = PluginManager.MSG_BROADCAST;
-					MainScreen.getMessageHandler().sendMessage(msg);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+							PluginManager.MSG_TAKE_PICTURE);
 				}
 			}
 		};
@@ -599,10 +583,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				cdt = null;
 			}
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			CameraController.getInstance().resetExposureCompensation();
 			return;
@@ -619,10 +601,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				cdt = null;
 			}
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			CameraController.getInstance().resetExposureCompensation();
 		}
@@ -840,10 +820,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// only requesting exposure change here
 		evRequested = evValues[cur_ev];
 		cur_ev += 1;
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_SET_EXPOSURE;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_SET_EXPOSURE);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)
@@ -878,10 +856,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					cdt.cancel();
 					cdt = null;
 				}
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_TAKE_PICTURE);
 			}
 			return;
 		}
@@ -901,10 +877,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					cdt.cancel();
 					cdt = null;
 				}
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_TAKE_PICTURE;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_TAKE_PICTURE);
 			}
 			return;
 		}

@@ -737,10 +737,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		CameraController.startCameraPreview();
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_PREVIEW_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_PREVIEW_CHANGED);
 	}
 
 	@Override
@@ -1583,10 +1581,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 				MainScreen.getGUIManager().lockControls = false;
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 			}
 
 			lastUseProfile = useProfile;
@@ -1692,10 +1688,8 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("Video", "On shutter pressed " + e.getMessage());
 
 			MainScreen.getGUIManager().lockControls = false;
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
@@ -1732,10 +1726,8 @@ public class VideoCapturePlugin extends PluginCapture
 			Toast.makeText(MainScreen.getInstance(), "Failed to start video recording", Toast.LENGTH_LONG).show();
 
 			MainScreen.getGUIManager().lockControls = false;
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
@@ -2425,10 +2417,8 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.i("View capture still image", "StartPreview fail");
 		}
 
-		Message message = new Message();
-		message.obj = String.valueOf(SessionID);
-		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-		MainScreen.getMessageHandler().sendMessage(message);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+				String.valueOf(SessionID));
 
 		takingAlready = false;
 	}
@@ -2464,10 +2454,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 		CameraController.startCameraPreview();
 
-		Message message = new Message();
-		message.obj = String.valueOf(SessionID);
-		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-		MainScreen.getMessageHandler().sendMessage(message);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+				String.valueOf(SessionID));
 
 		takingAlready = false;
 	}

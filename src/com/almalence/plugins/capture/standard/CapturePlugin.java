@@ -211,10 +211,8 @@ public class CapturePlugin extends PluginCapture
 			inCapture = true;
 			takingAlready = true;
 
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_NEXT_FRAME);
 		}
 
 	}
@@ -244,10 +242,8 @@ public class CapturePlugin extends PluginCapture
 				e.printStackTrace();
 				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
 				takingAlready = false;
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 				MainScreen.getGUIManager().lockControls = false;
 			}
 			return true;
@@ -284,10 +280,8 @@ public class CapturePlugin extends PluginCapture
 			Log.i("Capture", "StartPreview fail");
 		}
 
-		Message message = new Message();
-		message.obj = String.valueOf(SessionID);
-		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-		MainScreen.getMessageHandler().sendMessage(message);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+				String.valueOf(SessionID));
 
 		takingAlready = false;
 		inCapture = false;
@@ -356,10 +350,8 @@ public class CapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
-		Message message = new Message();
-		message.obj = String.valueOf(SessionID);
-		message.what = PluginManager.MSG_CAPTURE_FINISHED;
-		MainScreen.getMessageHandler().sendMessage(message);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+				String.valueOf(SessionID));
 
 		takingAlready = false;
 	}

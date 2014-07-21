@@ -341,10 +341,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 						if (result <= 0)
 						{
 							this.stopCapture();
-							Message message = new Message();
-							message.obj = String.valueOf(SessionID);
-							message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
-							MainScreen.getMessageHandler().sendMessage(message);
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 
+									String.valueOf(SessionID));
 						}
 
 						return true;
@@ -1127,11 +1125,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.onCameraError();
 
 			this.stopCapture();
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED_NORESULT;
-			MainScreen.getMessageHandler().sendMessage(message);
-
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 
+					String.valueOf(SessionID));
+			
 			takingAlready = false;
 			capturing = false;
 			aboutToTakePicture = false;
@@ -1173,41 +1169,22 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		final boolean oom = this.engine.isMax();
 
 		if (oom && !done)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		} else if (done)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NOTIFY_LIMIT_REACHED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_OUT_OF_MEMORY);
+		else if (done)
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_NOTIFY_LIMIT_REACHED);
 
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessageDelayed(msg, 300);
-		}
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_NEXT_FRAME);
 
 		if (!goodPlace)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_BAD_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_BAD_FRAME);
 
 		if (done || oom)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
 
 	@TargetApi(19)
@@ -1233,41 +1210,22 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		final boolean oom = this.engine.isMax();
 
 		if (oom && !done)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_OUT_OF_MEMORY;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		} else if (done)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NOTIFY_LIMIT_REACHED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_OUT_OF_MEMORY);
+		else if (done)
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_NOTIFY_LIMIT_REACHED);
 
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessageDelayed(msg, 300);
-		}
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_NEXT_FRAME);
 
 		if (!goodPlace)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_BAD_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_BAD_FRAME);
 
 		if (done || oom)
-		{
-			final Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FORCE_FINISH_CAPTURE;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
-		}
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
 
 	@TargetApi(19)

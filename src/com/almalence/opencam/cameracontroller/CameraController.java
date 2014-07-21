@@ -1891,10 +1891,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		mFocusState = state;
 
-		Message msg = new Message();
-		msg.what = PluginManager.MSG_BROADCAST;
-		msg.arg1 = PluginManager.MSG_FOCUS_STATE_CHANGED;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_FOCUS_STATE_CHANGED);
 	}
 
 	public static int getFocusState()

@@ -257,10 +257,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		}
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_FOCUS_CHANGED);
 	}
 
 	@Override
@@ -285,10 +283,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			captureStarted = false;
 			StopBuffering();
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 		} else
 		{
 			if (!AutostartPreference)
@@ -513,10 +509,8 @@ public class PreshotCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.i("Preshot capture", "StartPreview fail");
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_NEXT_FRAME);
 		}
 	}
 
@@ -549,10 +543,8 @@ public class PreshotCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.i("Preshot capture", "StartPreview fail");
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_NEXT_FRAME);
 		}
 	}
 
@@ -656,10 +648,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			} catch (RuntimeException e)
 			{
 				Log.i("CameraTest", "RuntimeException in MSG_NEXT_FRAME");
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_NEXT_FRAME);
 			}
 			return true;
 		} else if (arg1 == PluginManager.MSG_STOP_CAPTURE)

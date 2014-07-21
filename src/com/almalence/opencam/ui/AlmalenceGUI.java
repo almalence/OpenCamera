@@ -1483,11 +1483,9 @@ public class AlmalenceGUI extends GUI implements
 							CameraController.getInstance().setCameraFocusMode(afMode);
 							
 							preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, afMode).commit();
-							
-							Message msg = new Message();
-							msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-							msg.what = PluginManager.MSG_BROADCAST;
-							MainScreen.getMessageHandler().sendMessage(msg);
+
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+									PluginManager.MSG_FOCUS_CHANGED);
 							
 							initSettingsMenu();
 							hideSecondaryMenus();
@@ -1800,10 +1798,8 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		if (mEVSupported) {
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_EV_CHANGED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_EV_CHANGED);
 		}
 
 		
@@ -1830,19 +1826,15 @@ public class AlmalenceGUI extends GUI implements
 				if (isSecondaryMenusVisible())
 					hideSecondaryMenus();
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_LOCKED);
 			}
 
 			public void onPanelClosed(Panel panel) {
 				settingsControlsVisible = false;
 
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
 						false);
 			}
@@ -2682,10 +2674,8 @@ public class AlmalenceGUI extends GUI implements
 				: AlmalenceGUI.mDeviceOrientation % 360 + 360;
 		rotateSquareViews(degree, 0);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_LOCKED);
 	}
 
 	private void closeQuickControlsSettings() {
@@ -2719,10 +2709,8 @@ public class AlmalenceGUI extends GUI implements
 		correctTopMenuButtonBackground(
 				MainScreen.getInstance().findViewById(MODE_CAM), isCameraChangeEnabled);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_UNLOCKED);
 
 		guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 	}
@@ -3146,10 +3134,8 @@ public class AlmalenceGUI extends GUI implements
 
 		modeSelectorVisible = true;
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_LOCKED);
 	}
 
 	private void hideModeList()
@@ -3189,10 +3175,8 @@ public class AlmalenceGUI extends GUI implements
 
 		modeSelectorVisible = false;
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_UNLOCKED);
 	}
 
 	@Override
@@ -4060,10 +4044,8 @@ public class AlmalenceGUI extends GUI implements
 			but.setImageResource(icon_id);
 			preferences.edit().putInt(MainScreen.sWBModePref, mWB).commit();
 
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_WB_CHANGED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_WB_CHANGED);
 		}
 		if (mFocusMode != -1)
 		{
@@ -4081,10 +4063,8 @@ public class AlmalenceGUI extends GUI implements
 			preferences.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 							: MainScreen.sFrontFocusModePref, mFocusMode).commit();
 
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_FOCUS_CHANGED);
 		}
 		if (mFlashMode != -1)
 		{
@@ -4094,10 +4074,8 @@ public class AlmalenceGUI extends GUI implements
 			preferences.edit().putInt(MainScreen.sFlashModePref, mFlashMode)
 					.commit();
 
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_FLASH_CHANGED);
 		}
 		if (mISO != -1)
 		{
@@ -4106,10 +4084,8 @@ public class AlmalenceGUI extends GUI implements
 			but.setImageResource(icon_id);
 			preferences.edit().putInt(MainScreen.sISOPref, mISO).commit();
 
-			Message msg = new Message();
-			msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-			msg.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_ISO_CHANGED);
 		}
 		preferences.edit().putInt(MainScreen.sSceneModePref, newMode).commit();
 
@@ -4122,10 +4098,8 @@ public class AlmalenceGUI extends GUI implements
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_SCENE_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_SCENE_CHANGED);
 	}
 
 	private void setWhiteBalance(int newMode)
@@ -4152,10 +4126,8 @@ public class AlmalenceGUI extends GUI implements
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_WB_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_WB_CHANGED);
 	}
 
 	private void setFocusMode(int newMode)
@@ -4185,10 +4157,8 @@ public class AlmalenceGUI extends GUI implements
 			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
 		}
 		
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_FOCUS_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_FOCUS_CHANGED);
 
 		initSettingsMenu();
 		hideSecondaryMenus();
@@ -4220,10 +4190,8 @@ public class AlmalenceGUI extends GUI implements
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_FLASH_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_FLASH_CHANGED);
 	}
 
 	private void setISO(int newMode)
@@ -4249,10 +4217,8 @@ public class AlmalenceGUI extends GUI implements
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_ISO_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_ISO_CHANGED);
 	}
 	
 	private void setMeteringMode(int newMode)
@@ -4397,10 +4363,8 @@ public class AlmalenceGUI extends GUI implements
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_UNLOCKED);
 	}
 
 	public boolean isSecondaryMenusVisible() {
@@ -4496,10 +4460,8 @@ public class AlmalenceGUI extends GUI implements
 
 		quickControlsVisible = true;
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_CONTROL_LOCKED);
 	}
 
 	private void setButtonSelected(Map<Integer, View> buttonsList,
@@ -5663,10 +5625,8 @@ public class AlmalenceGUI extends GUI implements
 
 		mEV = iEv;
 
-		Message msg = new Message();
-		msg.arg1 = PluginManager.MSG_EV_CHANGED;
-		msg.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_EV_CHANGED);
 	}
 
 	@Override
@@ -5890,10 +5850,8 @@ public class AlmalenceGUI extends GUI implements
 
 		Uri uri = this.mThumbnail.getUri();
 
-		Message message = new Message();
-		message.arg1 = PluginManager.MSG_STOP_CAPTURE;
-		message.what = PluginManager.MSG_BROADCAST;
-		MainScreen.getMessageHandler().sendMessage(message);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+												PluginManager.MSG_STOP_CAPTURE);
 
 		try {
 			MainScreen.getInstance().startActivity(new Intent(Intent.ACTION_VIEW,

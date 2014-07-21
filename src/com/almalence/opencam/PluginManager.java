@@ -1465,10 +1465,8 @@ public class PluginManager implements PluginManagerInterface
 			// -+- -->
 
 			MainScreen.getGUIManager().lockControls = false;
-			Message message = new Message();
-			message.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			message.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
+					PluginManager.MSG_CONTROL_UNLOCKED);
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
@@ -1483,11 +1481,10 @@ public class PluginManager implements PluginManagerInterface
 			MainScreen.getInstance().muteShutter(false);
 
 			MainScreen.getGUIManager().lockControls = false;
-			Message messageNoResult = new Message();
-			messageNoResult.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			messageNoResult.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(messageNoResult);
 
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
+			
 			MainScreen.getGUIManager().onExportFinished();
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1499,10 +1496,8 @@ public class PluginManager implements PluginManagerInterface
 			if (null != pluginList.get(activeProcessing))
 			{
 				MainScreen.getGUIManager().lockControls = true;
-				Message message2 = new Message();
-				message2.arg1 = PluginManager.MSG_CONTROL_LOCKED;
-				message2.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(message2);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_LOCKED);
 
 				pluginList.get(activeProcessing).onStartPostProcessing();
 				MainScreen.getGUIManager().onPostProcessingStarted();
@@ -1517,10 +1512,8 @@ public class PluginManager implements PluginManagerInterface
 
 			// notify GUI about saved images
 			MainScreen.getGUIManager().lockControls = false;
-			Message message3 = new Message();
-			message3.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-			message3.what = PluginManager.MSG_BROADCAST;
-			MainScreen.getMessageHandler().sendMessage(message3);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().onPostProcessingFinished();
 			if (null != pluginList.get(activeExport) && 0 != sessionID)
@@ -2888,5 +2881,32 @@ public class PluginManager implements PluginManagerInterface
 		}
 
 		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+	
+	public void sendMessage(int what, String obj, int arg1, int arg2)
+	{
+		Message message = new Message();
+		message.obj = String.valueOf(obj);
+		message.arg1 = arg1;
+		message.arg2 = arg2;
+		message.what = what;
+		MainScreen.getMessageHandler().sendMessage(message);
+
+	}
+	
+	public void sendMessage(int what, int arg1)
+	{
+		Message message = new Message();
+		message.arg1 = arg1;
+		message.what = what;
+		MainScreen.getMessageHandler().sendMessage(message);
+	}
+	
+	public void sendMessage(int what, String obj)
+	{
+		Message message = new Message();
+		message.obj = String.valueOf(obj);
+		message.what = what;
+		MainScreen.getMessageHandler().sendMessage(message);
 	}
 }

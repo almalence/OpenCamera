@@ -108,10 +108,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 			if (imagesTaken == 0 || pauseBetweenShots == 0)
 			{
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_NEXT_FRAME);
 			} else
 			{
 				new CountDownTimer(pauseBetweenShots, pauseBetweenShots)
@@ -122,10 +120,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 					public void onFinish()
 					{
-						Message msg = new Message();
-						msg.arg1 = PluginManager.MSG_NEXT_FRAME;
-						msg.what = PluginManager.MSG_BROADCAST;
-						MainScreen.getMessageHandler().sendMessage(msg);
+						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+								PluginManager.MSG_NEXT_FRAME);
 					}
 				}.start();
 			}
@@ -143,10 +139,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -174,10 +168,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "StartPreview fail");
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -193,10 +185,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			new CountDownTimer(5000, 5000)
@@ -250,10 +240,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.e(TAG, "Load to heap failed");
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -279,10 +267,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.e(TAG, "StartPreview fail");
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -298,10 +284,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
-			Message message = new Message();
-			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
-			MainScreen.getMessageHandler().sendMessage(message);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			inCapture = false;
@@ -346,10 +330,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
-				Message msg = new Message();
-				msg.arg1 = PluginManager.MSG_CONTROL_UNLOCKED;
-				msg.what = PluginManager.MSG_BROADCAST;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
 				MainScreen.getGUIManager().lockControls = false;
 			}
 
