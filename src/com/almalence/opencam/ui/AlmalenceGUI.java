@@ -3299,40 +3299,24 @@ public class AlmalenceGUI extends GUI implements
 
 		lrvisible.addAnimation(lrvisible_translate);
 
-		int[] zonesVisibility = new int[3];
+		int[] zonesVisibility = new int[]{View.GONE, View.GONE, View.GONE};
 		switch (infoSet)
 		{
 			case INFO_ALL:
-			{
-				zonesVisibility[0] = View.VISIBLE;
-				zonesVisibility[1] = View.VISIBLE;
-				zonesVisibility[2] = View.VISIBLE;
+				zonesVisibility = initZonesVisibility(View.VISIBLE, View.VISIBLE, View.VISIBLE);
 				break;
-			}
 	
 			case INFO_NO:
-			{
-				zonesVisibility[0] = View.GONE;
-				zonesVisibility[1] = View.GONE;
-				zonesVisibility[2] = View.GONE;				
+				zonesVisibility = initZonesVisibility(View.GONE, View.GONE, View.GONE);
 				break;
-			}
 	
 			case INFO_GRID:
-			{
-				zonesVisibility[0] = View.GONE;
-				zonesVisibility[1] = View.GONE;
-				zonesVisibility[2] = View.VISIBLE;
+				zonesVisibility = initZonesVisibility(View.GONE, View.GONE, View.VISIBLE);
 				break;
-			}
 			
 			case INFO_PARAMS:
-			{
-				zonesVisibility[0] = View.VISIBLE;
-				zonesVisibility[1] = View.GONE;
-				zonesVisibility[2] = View.GONE;
+				zonesVisibility = initZonesVisibility(View.VISIBLE, View.GONE, View.GONE);
 				break;
-			}
 			default:
 				break;
 		}
@@ -3386,6 +3370,16 @@ public class AlmalenceGUI extends GUI implements
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putInt(MainScreen.sDefaultInfoSetPref, infoSet);
 		prefsEditor.commit();
+	}
+	
+	private int[] initZonesVisibility(final int zoneVisibiltyFirst, final int zoneVisibiltySecond, final int zoneVisibilityThird)
+	{
+		int[] zonesVisibility = new int[3];
+		zonesVisibility[0] = zoneVisibiltyFirst;
+		zonesVisibility[1] = zoneVisibiltySecond;
+		zonesVisibility[2] = zoneVisibilityThird;
+		
+		return zonesVisibility;
 	}
 	
 	private void applyZonesVisibility(int[] zonesVisibility, boolean isAnimate, boolean toLeft, AnimationSet rlvisible, AnimationSet lrvisible, AnimationSet rlinvisible, AnimationSet lrinvisible)
@@ -3720,13 +3714,8 @@ public class AlmalenceGUI extends GUI implements
 		// settings
 		case R.id.evButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isEVEnabled)
 				{
@@ -3752,13 +3741,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.sceneButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isSceneEnabled)
 				{
@@ -3784,13 +3768,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.wbButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isWBEnabled)
 				{
@@ -3816,13 +3795,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.focusButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isFocusEnabled)
 				{
@@ -3848,13 +3822,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.flashButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isFlashEnabled)
 				{
@@ -3880,13 +3849,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.isoButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isIsoEnabled)
 				{
@@ -3912,13 +3876,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.meteringButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				if (!isMeteringEnabled)
 				{
@@ -3944,13 +3903,8 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		case R.id.camerachangeButton:
 			{
-				if (quickControlsChangeVisible)
-				{
-					changeCurrentQuickControl(button);
-					initQuickControlsMenu(button);
-					showQuickControlsSettings();
+				if (changeQuickControlIfVisible(button))
 					break;
-				}
 
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
@@ -3977,6 +3931,19 @@ public class AlmalenceGUI extends GUI implements
 			break;
 		}
 		this.initSettingsMenu();
+	}
+	
+	private boolean changeQuickControlIfVisible(View button)
+	{
+		if (quickControlsChangeVisible)
+		{
+			changeCurrentQuickControl(button);
+			initQuickControlsMenu(button);
+			showQuickControlsSettings();
+			return true;
+		}
+		
+		return false;
 	}
 
 	private void setSceneMode(int newMode)
