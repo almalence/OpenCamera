@@ -408,7 +408,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	@Override
 	public void onOrientationChanged(int orientation)
 	{
-		((RotateLayout) MainScreen.getInstance().findViewById(R.id.rotateLayout)).setAngle(orientation - 90);
-		MainScreen.getInstance().findViewById(R.id.rotateLayout).requestLayout();
+		RotateLayout rotateLayout =  (RotateLayout)MainScreen.getInstance().findViewById(R.id.rotateLayout);
+		if (rotateLayout != null)
+		{
+			rotateLayout.setAngle(orientation - 90);
+			rotateLayout.requestLayout();
+		}
 	}
 }

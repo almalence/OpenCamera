@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="Pref_Billing_Left">%1$s mode free shots left: %2$d</string>
+    <string name="trial_left">%1$s mode free shots left: %2$d</string>
+    <string name="trial_finished">Free %1$s shots exhausted, please unlock</string>
     <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
     <string name="Pref_About">A Better Camera  v3.25\n(©) by Almalence Inc\n</string>
