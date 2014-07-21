@@ -2426,6 +2426,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
 			if (0 == launchesLeft)// no more launches left
 			{
+				int id = MainScreen.thiz.getResources().getIdentifier(
+						mode.modeName, "string",
+						MainScreen.thiz.getPackageName());
+				String modename = MainScreen.thiz.getResources().getString(id);
+
+				String left = String.format(getResources().getString(R.string.trial_finished),
+						modename);
+				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
+				toast.setGravity(Gravity.CENTER, 0, 0);
+				toast.show();
+				
 				// show appstore for this mode
 				launchPurchase(mode.SKU, 100);
 				return false;
@@ -2437,7 +2448,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						MainScreen.thiz.getPackageName());
 				String modename = MainScreen.thiz.getResources().getString(id);
 
-				String left = String.format(getResources().getString(R.string.Pref_Billing_Left),
+				String left = String.format(getResources().getString(R.string.trial_left),
 						modename, launchesLeft);
 				Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
 				toast.setGravity(Gravity.CENTER, 0, 0);
