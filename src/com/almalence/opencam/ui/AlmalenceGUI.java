@@ -179,7 +179,7 @@ public class AlmalenceGUI extends GUI implements
 	private SelfTimer selfTimer;
 	
 	// Assoc list for storing association between mode button and mode ID
-	private HashMap<View, String> buttonModeViewAssoc;
+	private Map<View, String> buttonModeViewAssoc;
 
 	private Thumbnail mThumbnail;
 	private RotateImageView thumbnailView;
@@ -641,10 +641,7 @@ public class AlmalenceGUI extends GUI implements
 						: Configuration.ORIENTATION_LANDSCAPE;
 				final int rotation = display.getRotation();
 
-				boolean remapOrientation = (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_0)
-						|| (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
+				boolean remapOrientation = Util.shouldRemapOrientation(orientationProc, rotation);
 
 				if (remapOrientation)
 					orientation = (orientation - 90 + 360) % 360;
@@ -2003,11 +2000,7 @@ public class AlmalenceGUI extends GUI implements
 			int buttonID = topMenuButtonsIterator.next();
 			View topMenuButton = topMenuButtons.get(buttonID);
 
-			if (topMenuButton != quickControl1
-					&& topMenuButton != quickControl2
-					&& topMenuButton != quickControl3
-					&& topMenuButton != quickControl4 && buttonID != id1
-					&& buttonID != id2 && buttonID != id3 && buttonID != id4
+			if (checkTopMenuButtonIntegerID(topMenuButton, buttonID, id1, id2, id3, id4)
 					&& isCameraParameterSupported(String.valueOf(buttonID)))
 				return topMenuButton;
 		}
@@ -2018,19 +2011,38 @@ public class AlmalenceGUI extends GUI implements
 			String buttonID = topMenuPluginButtonsIterator.next();
 			View topMenuButton = topMenuPluginButtons.get(buttonID);
 
-			if (topMenuButton != quickControl1
-					&& topMenuButton != quickControl2
-					&& topMenuButton != quickControl3
-					&& topMenuButton != quickControl4 && buttonID != qc1
-					&& buttonID != qc2 && buttonID != qc3 && buttonID != qc4)
+			if (checkTopMenuButtonStringID(topMenuButton, buttonID, qc1, qc2, qc3, qc4))
 				return topMenuButton;
 		}
 
 		// If no button is found create a empty button
 		return emptyView;
 	}
+	
+	//Util function used to check if topMenuButton already added to top menu
+	private boolean checkTopMenuButtonStringID(final View topMenuButton, final String buttonID,
+									   final String qc1, final String qc2, final String qc3, final String qc4)
+	{
+		return topMenuButton != quickControl1
+				&& topMenuButton != quickControl2
+				&& topMenuButton != quickControl3
+				&& topMenuButton != quickControl4 && buttonID != qc1
+				&& buttonID != qc2 && buttonID != qc3 && buttonID != qc4;
+	}
+	
+	//Util function used to check if topMenuButton already added to top menu
+	private boolean checkTopMenuButtonIntegerID(final View topMenuButton, final int buttonID,
+			   final int qc1, final int qc2, final int qc3, final int qc4)
+	{
+		return topMenuButton != quickControl1
+		&& topMenuButton != quickControl2
+		&& topMenuButton != quickControl3
+		&& topMenuButton != quickControl4 && buttonID != qc1
+		&& buttonID != qc2 && buttonID != qc3 && buttonID != qc4;
+	}
+	
 
-	void addCameraChangeButton()
+	private void addCameraChangeButton()
 	{
 		if (CameraController.getNumberOfCameras() > 1)
 		{
