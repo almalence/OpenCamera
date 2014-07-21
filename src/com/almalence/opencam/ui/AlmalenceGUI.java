@@ -2139,7 +2139,8 @@ public class AlmalenceGUI extends GUI implements
 	 * different behavior
 	 * 
 	 ****************************************************************************************/
-	private void addQuickSetting(SettingsType type, boolean isQuickControl) {
+	private void addQuickSetting(SettingsType type, boolean isQuickControl)
+	{
 		int icon_id = -1;
 		CharSequence icon_text = "";
 		boolean isEnabled = true;
@@ -2147,70 +2148,62 @@ public class AlmalenceGUI extends GUI implements
 		switch (type) {
 		case SCENE:
 			icon_id = ICONS_SCENE.get(mSceneMode);
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_scene);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_scene);
 			isEnabled = isSceneEnabled;
 			break;
 		case WB:
 			icon_id = ICONS_WB.get(mWB);
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_wb);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_wb);
 			isEnabled = isWBEnabled;
 			break;
 		case FOCUS:
-			try {
+			try
+			{
 				if(mFocusMode == FOCUS_AF_LOCK)
 					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
 				else
 					icon_id = ICONS_FOCUS.get(mFocusMode);
-				icon_text = MainScreen.getInstance().getResources().getString(
-						R.string.settings_mode_focus);
+				icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_focus);
 				isEnabled = isFocusEnabled;
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				e.printStackTrace();
 				Log.e("addQuickSetting", "icons_focus.get exception: " + e.getMessage());
 			}
 			break;
 		case FLASH:
 			icon_id = ICONS_FLASH.get(mFlashMode);
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_flash);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_flash);
 			isEnabled = isFlashEnabled;
 			break;
 		case ISO:
 			icon_id = ICONS_ISO.get(mISO);
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_iso);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_iso);
 			isEnabled = isIsoEnabled;
 			break;
 		case METERING:
 			icon_id = ICONS_METERING.get(mMeteringMode);
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_metering);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_metering);
 			isEnabled = isMeteringEnabled;
 			break;			
-		case CAMERA: {
+		case CAMERA:
 			icon_id = ICON_CAM;
 			if (!preferences.getBoolean("useFrontCamera", false))
-				icon_text = MainScreen.getInstance().getResources().getString(
-						R.string.settings_mode_rear);
+				icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_rear);
 			else
-				icon_text = MainScreen.getInstance().getResources().getString(
-						R.string.settings_mode_front);
+				icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_front);
 
 			isEnabled = isCameraChangeEnabled;
-		}
 			break;
 		case EV:
 			icon_id = ICON_EV;
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_exposure);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_exposure);
 			isEnabled = isEVEnabled;
 			break;
 		case MORE:
 			icon_id = ICON_SETTINGS;
-			icon_text = MainScreen.getInstance().getResources().getString(
-					R.string.settings_mode_moresettings);
+			icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_moresettings);
 			break;
 		default:
 			break;
@@ -2218,23 +2211,21 @@ public class AlmalenceGUI extends GUI implements
 
 		// Get required size of button
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		View settingView = inflator.inflate(
-				R.layout.gui_almalence_quick_control_grid_element, null, false);
-		ImageView iconView = (ImageView) settingView
-				.findViewById(R.id.imageView);
+		View settingView = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
+		ImageView iconView = (ImageView) settingView.findViewById(R.id.imageView);
 		iconView.setImageResource(icon_id);
 		TextView textView = (TextView) settingView.findViewById(R.id.textView);
 		textView.setText(icon_text);
 
-		if (!isEnabled && !isQuickControl) {
-			iconView.setColorFilter(MainScreen.getMainContext().getResources()
-					.getColor(R.color.buttonDisabled), PorterDuff.Mode.DST_IN);
-			textView.setTextColor(MainScreen.getMainContext().getResources()
-					.getColor(R.color.textDisabled));
+		if (!isEnabled && !isQuickControl)
+		{
+			iconView.setColorFilter(MainScreen.getMainContext().getResources().getColor(R.color.buttonDisabled), PorterDuff.Mode.DST_IN);
+			textView.setTextColor(MainScreen.getMainContext().getResources().getColor(R.color.textDisabled));
 		}
 
 		// Create onClickListener of right type
-		switch (type) {
+		switch (type)
+		{
 		case SCENE:
 			if (isQuickControl)
 				createQuickControlSceneOnClick(settingView);
@@ -2299,7 +2290,8 @@ public class AlmalenceGUI extends GUI implements
 			settingsViews.add(settingView);
 	}
 
-	private void addPluginQuickSetting(Plugin plugin, boolean isQuickControl) {
+	private void addPluginQuickSetting(Plugin plugin, boolean isQuickControl)
+	{
 		int iconID = plugin.getQuickControlIconID();
 		String title = plugin.getQuickControlTitle();
 
@@ -2329,18 +2321,22 @@ public class AlmalenceGUI extends GUI implements
 	 * 
 	 * begin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	 ****************************************************************************************/
-	private void initQuickControlsMenu(View currentView) {
+	private void initQuickControlsMenu(View currentView)
+	{
 		quickControlChangeres.clear();
-		if (quickControlAdapter.Elements != null) {
+		if (quickControlAdapter.Elements != null)
+		{
 			quickControlAdapter.Elements.clear();
 			quickControlAdapter.notifyDataSetChanged();
 		}
 
 		Set<Integer> keys = topMenuButtons.keySet();
 		Iterator<Integer> it = keys.iterator();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			Integer id = it.next();
-			switch (id) {
+			switch (id)
+			{
 			case R.id.evButton:
 				if (mEVSupported)
 					addQuickSetting(SettingsType.EV, true);
@@ -2395,11 +2391,13 @@ public class AlmalenceGUI extends GUI implements
 		quickControlAdapter.notifyDataSetChanged();
 	}
 
-	private void initPluginQuickControls(List<Plugin> plugins) {
-		if (!plugins.isEmpty()) {
-			for (int i = 0; i < plugins.size(); i++) {
+	private void initPluginQuickControls(List<Plugin> plugins)
+	{
+		if (!plugins.isEmpty())
+		{
+			for (int i = 0; i < plugins.size(); i++)
+			{
 				Plugin plugin = plugins.get(i);
-
 				if (plugin == null)
 					continue;
 
@@ -2408,11 +2406,13 @@ public class AlmalenceGUI extends GUI implements
 		}
 	}
 
-	private void initPluginSettingsControls(List<Plugin> plugins) {
-		if (!plugins.isEmpty()) {
-			for (int i = 0; i < plugins.size(); i++) {
+	private void initPluginSettingsControls(List<Plugin> plugins)
+	{
+		if (!plugins.isEmpty()) 
+		{
+			for (int i = 0; i < plugins.size(); i++)
+			{
 				Plugin plugin = plugins.get(i);
-
 				if (plugin == null)
 					continue;
 
@@ -2421,16 +2421,15 @@ public class AlmalenceGUI extends GUI implements
 		}
 	}
 
-	private void createPluginQuickControlOnClick(final Plugin plugin,
-			View view, boolean isQuickControl) {
+	private void createPluginQuickControlOnClick(final Plugin plugin, View view, boolean isQuickControl)
+	{
 		if (isQuickControl)
-			view.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					RotateImageView pluginButton = (RotateImageView) topMenuPluginButtons
-							.get(plugin.getID());
-
-					pluginButton.setImageResource(plugin
-							.getQuickControlIconID());
+			view.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					RotateImageView pluginButton = (RotateImageView) topMenuPluginButtons.get(plugin.getID());
+					pluginButton.setImageResource(plugin.getQuickControlIconID());
 
 					switchViews(currentQuickView, pluginButton, plugin.getID());
 					recreateQuickControlsMenu();
@@ -2438,11 +2437,12 @@ public class AlmalenceGUI extends GUI implements
 					initQuickControlsMenu(currentQuickView);
 					showQuickControlsSettings();
 				}
-
 			});
 		else
-			view.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
+			view.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
 					try 
 					{
 						plugin.onQuickControlClick();
@@ -2460,7 +2460,9 @@ public class AlmalenceGUI extends GUI implements
 						pluginButton.setImageDrawable(icon);
 	
 						initSettingsMenu();
-					} catch (Exception e) {
+					}
+					catch (Exception e)
+					{
 						e.printStackTrace();
 						Log.e("Almalence GUI", "createPluginQuickControlOnClick exception" + e.getMessage());
 					}
@@ -2468,9 +2470,12 @@ public class AlmalenceGUI extends GUI implements
 			});
 	}
 
-	private void createQuickControlEVOnClick(View ev) {
-		ev.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+	private void createQuickControlEVOnClick(View ev)
+	{
+		ev.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
 				RotateImageView ev = (RotateImageView) topMenuButtons
 						.get(MODE_EV);
 				Drawable icon = MainScreen.getMainContext().getResources()
@@ -2487,9 +2492,12 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createQuickControlSceneOnClick(View scene) {
-		scene.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+	private void createQuickControlSceneOnClick(View scene)
+	{
+		scene.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
 				RotateImageView scene = (RotateImageView) topMenuButtons
 						.get(MODE_SCENE);
 				Drawable icon = MainScreen.getMainContext().getResources()
@@ -2502,13 +2510,15 @@ public class AlmalenceGUI extends GUI implements
 				initQuickControlsMenu(currentQuickView);
 				showQuickControlsSettings();
 			}
-
 		});
 	}
 
-	private void createQuickControlWBOnClick(View wb) {
-		wb.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+	private void createQuickControlWBOnClick(View wb)
+	{
+		wb.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
 				RotateImageView wb = (RotateImageView) topMenuButtons
 						.get(MODE_WB);
 				Drawable icon = MainScreen.getMainContext().getResources()
@@ -2521,31 +2531,32 @@ public class AlmalenceGUI extends GUI implements
 				initQuickControlsMenu(currentQuickView);
 				showQuickControlsSettings();
 			}
-
 		});
 	}
 
-	private void createQuickControlFocusOnClick(View focus) {
-		focus.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				RotateImageView focus = (RotateImageView) topMenuButtons
-						.get(MODE_FOCUS);
-				try {
-					Drawable icon = MainScreen.getMainContext().getResources()
-							.getDrawable(ICONS_FOCUS.get(mFocusMode));
+	private void createQuickControlFocusOnClick(View focus)
+	{
+		focus.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				RotateImageView focus = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
+				try
+				{
+					Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_FOCUS.get(mFocusMode));
 					focus.setImageDrawable(icon);
-				} catch (Exception e) {
+				}
+				catch (Exception e)
+				{
 					e.printStackTrace();
 					Log.e("createQuickControlFocusOnClick", "icons_focus.get exception: " + e.getMessage());
 				}
-
 				switchViews(currentQuickView, focus, String.valueOf(MODE_FOCUS));
 				recreateQuickControlsMenu();
 				changeCurrentQuickControl(focus);
 				initQuickControlsMenu(currentQuickView);
 				showQuickControlsSettings();
 			}
-
 		});
 	}
 
@@ -2808,17 +2819,18 @@ public class AlmalenceGUI extends GUI implements
 		settingsAdapter.notifyDataSetChanged();
 	}
 
-	private void createSettingSceneOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(final View v) {
-				if (!isSceneEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.BOTTOM,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingSceneOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(final View v)
+			{
+				if (!isSceneEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.BOTTOM,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				byte[] supported_scene = CameraController.getInstance().getSupportedSceneModes();
@@ -2841,17 +2853,18 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createSettingWBOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isWBEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingWBOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isWBEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				byte[] supported_wb = CameraController.getInstance().getSupportedWhiteBalance();
@@ -2875,17 +2888,18 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createSettingFocusOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isFocusEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingFocusOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isFocusEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				byte[] supported_focus = CameraController.getInstance().getSupportedFocusModes();
@@ -2908,17 +2922,18 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createSettingFlashOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isFlashEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingFlashOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isFlashEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				byte[] supported_flash = CameraController.getInstance().getSupportedFlashModes();
@@ -2941,17 +2956,18 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createSettingIsoOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isIsoEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingIsoOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isIsoEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				byte[] supported_iso = CameraController.getInstance().getSupportedISO();
@@ -2973,17 +2989,18 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 	
-	private void createSettingMeteringOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isMeteringEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingMeteringOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isMeteringEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
@@ -3005,36 +3022,37 @@ public class AlmalenceGUI extends GUI implements
 	}
 	
 
-	private void createSettingCameraOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isCameraChangeEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingCameraOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isCameraChangeEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				cameraSwitched(true);
 			}
-
 		});
 	}
 
-	private void createSettingEVOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (!isEVEnabled) {
-					showToast(
-							null,
-							Toast.LENGTH_SHORT,
-							Gravity.CENTER,
-							MainScreen.getInstance().getResources().getString(
-									R.string.settings_not_available), true,
-							false);
+	private void createSettingEVOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isEVEnabled)
+				{
+					showToast(null,	Toast.LENGTH_SHORT,	Gravity.CENTER,
+							  MainScreen.getInstance().getResources().getString(R.string.settings_not_available),
+							  true,
+							  false);
 					return;
 				}
 				if(iScreenType == 0)
@@ -3051,15 +3069,16 @@ public class AlmalenceGUI extends GUI implements
 		});
 	}
 
-	private void createSettingMoreOnClick(View settingView) {
-		settingView.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
+	private void createSettingMoreOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
 				PluginManager.getInstance().onShowPreferences();
-				Intent settingsActivity = new Intent(MainScreen.getMainContext(),
-						Preferences.class);
+				Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
 				MainScreen.getInstance().startActivity(settingsActivity);
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
-						false);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 			}
 		});
 	}
@@ -3071,42 +3090,40 @@ public class AlmalenceGUI extends GUI implements
 	 * <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 	 ***************************************************************************************/
 
-	private void cameraSwitched(boolean restart) {
+	private void cameraSwitched(boolean restart)
+	{
 		if (PluginManager.getInstance().getProcessingCounter() != 0)
 			return;
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean isFrontCamera = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseFrontCameraValue), false);
 		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseFrontCameraValue), !isFrontCamera).commit();
 
-		if (restart) {
+		if (restart)
+		{
 			MainScreen.getInstance().pauseMain();
 			MainScreen.getInstance().resumeMain();
 		}
 	}
 
-	private void showModeList() {
+	private void showModeList()
+	{
 		unselectPrimaryTopMenuButtons(-1);
 		hideSecondaryMenus();
 
 		initModeList();
 		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.getInstance().getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeightByWidth = (int) (width / 3 - 5 * metrics.density);
-		int modeHeightByDimen = Math.round(MainScreen.getInstance().getResources()
-				.getDimension(R.dimen.gridModeImageSize)
-				+ MainScreen.getInstance().getResources().getDimension(
-						R.dimen.gridModeTextLayoutSize));
+		int modeHeightByDimen = Math.round(MainScreen.getInstance().getResources().getDimension(R.dimen.gridModeImageSize)
+										   + MainScreen.getInstance().getResources().getDimension(R.dimen.gridModeTextLayoutSize));
 
-		int modeHeight = modeHeightByDimen > modeHeightByWidth ? modeHeightByWidth
-				: modeHeightByDimen;
+		int modeHeight = modeHeightByDimen > modeHeightByWidth ? modeHeightByWidth : modeHeightByDimen;
 
-		AbsListView.LayoutParams params = new AbsListView.LayoutParams(
-				LayoutParams.WRAP_CONTENT, modeHeight);
+		AbsListView.LayoutParams params = new AbsListView.LayoutParams(LayoutParams.WRAP_CONTENT, modeHeight);
 
-		for (int i = 0; i < modeViews.size(); i++) {
+		for (int i = 0; i < modeViews.size(); i++)
+		{
 			View mode = modeViews.get(i);
 			mode.setLayoutParams(params);
 		}
@@ -3114,19 +3131,17 @@ public class AlmalenceGUI extends GUI implements
 		GridView gridview = (GridView) guiView.findViewById(R.id.modeGrid);
 		gridview.setAdapter(modeAdapter);
 		
-		gridview.setOnTouchListener(new OnTouchListener(){
-
+		gridview.setOnTouchListener(new OnTouchListener()
+		{
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(View v, MotionEvent event)
+			{
 				return false;
 			}
-			
 		});
 
-		((RelativeLayout) guiView.findViewById(R.id.modeLayout))
-				.setVisibility(View.VISIBLE);
+		((RelativeLayout) guiView.findViewById(R.id.modeLayout)).setVisibility(View.VISIBLE);
 		(guiView.findViewById(R.id.modeGrid)).setVisibility(View.VISIBLE);
-
 		guiView.findViewById(R.id.modeLayout).bringToFront();
 
 		modeSelectorVisible = true;
@@ -3137,12 +3152,11 @@ public class AlmalenceGUI extends GUI implements
 		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
-	private void hideModeList() {
-		RelativeLayout gridview = (RelativeLayout) guiView
-				.findViewById(R.id.modeLayout);
+	private void hideModeList()
+	{
+		RelativeLayout gridview = (RelativeLayout) guiView.findViewById(R.id.modeLayout);
 
-		Animation gone = AnimationUtils.loadAnimation(MainScreen.getInstance(),
-				R.anim.gui_almalence_modelist_invisible);
+		Animation gone = AnimationUtils.loadAnimation(MainScreen.getInstance(),	R.anim.gui_almalence_modelist_invisible);
 		gone.setFillAfter(true);
 
 		gridview.setAnimation(gone);
@@ -3151,20 +3165,24 @@ public class AlmalenceGUI extends GUI implements
 		gridview.setVisibility(View.GONE);
 		(guiView.findViewById(R.id.modeGrid)).setVisibility(View.GONE);
 
-		gone.setAnimationListener(new AnimationListener() {
+		gone.setAnimationListener(new AnimationListener()
+		{
 			@Override
-			public void onAnimationEnd(Animation animation) {
+			public void onAnimationEnd(Animation animation)
+			{
 				guiView.findViewById(R.id.modeLayout).clearAnimation();
 				guiView.findViewById(R.id.modeGrid).clearAnimation();
 			}
 
 			@Override
-			public void onAnimationRepeat(Animation animation) {
+			public void onAnimationRepeat(Animation animation)
+			{
 				//Not used
 			}
 
 			@Override
-			public void onAnimationStart(Animation animation) {
+			public void onAnimationStart(Animation animation)
+			{
 				//Not used
 			}
 		});
@@ -3178,7 +3196,8 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	@Override
-	public void onHardwareShutterButtonPressed() {
+	public void onHardwareShutterButtonPressed()
+	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		lockControls = true;
@@ -3186,20 +3205,23 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	@Override
-	public void onHardwareFocusButtonPressed() {
+	public void onHardwareFocusButtonPressed()
+	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		PluginManager.getInstance().onFocusButtonClick();
 	}
 
-	private void shutterButtonPressed() {
+	private void shutterButtonPressed()
+	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		lockControls = true;
 		PluginManager.getInstance().onShutterClick();
 	}
 
-	private void infoSlide(boolean toLeft, float xToVisible, float xToInvisible) {
+	private void infoSlide(boolean toLeft, float xToVisible, float xToInvisible)
+	{
 		if ((infoSet == INFO_ALL & !toLeft) && isAnyViewOnViewfinder())
 			infoSet = INFO_PARAMS;
 		else if (infoSet == INFO_ALL && !isAnyViewOnViewfinder())
@@ -3215,10 +3237,9 @@ public class AlmalenceGUI extends GUI implements
 		prefs.edit().putInt(MainScreen.sDefaultInfoSetPref, infoSet).commit();
 	}
 
-	private void setInfo(boolean toLeft, float xToVisible, float xToInvisible,
-			boolean isAnimate) {
-		int pluginzoneWidth = guiView.findViewById(R.id.pluginsLayout)
-				.getWidth();
+	private void setInfo(boolean toLeft, float xToVisible, float xToInvisible, boolean isAnimate)
+	{
+		int pluginzoneWidth = guiView.findViewById(R.id.pluginsLayout).getWidth();
 		int infozoneWidth = guiView.findViewById(R.id.infoLayout).getWidth();
 		int screenWidth = pluginzoneWidth + infozoneWidth;
 
@@ -3235,16 +3256,12 @@ public class AlmalenceGUI extends GUI implements
 		lrvisible.setInterpolator(new DecelerateInterpolator());
 
 		int duration_invisible = 0;
-		duration_invisible = isAnimate ? com.almalence.util.Util
-				.clamp(Math.abs(Math.round(((toLeft ? xToVisible
-						: (screenWidth - xToVisible)) * 500) / screenWidth)),
-						10, 500) : 0;
+		duration_invisible = isAnimate ? com.almalence.util.Util.clamp(
+				Math.abs(Math.round(((toLeft ? xToVisible : (screenWidth - xToVisible)) * 500) / screenWidth)), 10, 500) : 0;
 		
 		int duration_visible = 0; 
-		duration_visible = isAnimate ? com.almalence.util.Util
-				.clamp(Math.abs(Math.round(((toLeft ? xToInvisible
-						: (screenWidth - xToInvisible)) * 500) / screenWidth)),
-						10, 500) : 0;
+		duration_visible = isAnimate ? com.almalence.util.Util.clamp(
+				Math.abs(Math.round(((toLeft ? xToInvisible : (screenWidth - xToInvisible)) * 500) / screenWidth)), 10, 500) : 0;
 		
 
 		Animation invisible_alpha = new AlphaAnimation(1, 0);
@@ -3255,23 +3272,19 @@ public class AlmalenceGUI extends GUI implements
 		visible_alpha.setDuration(duration_visible);
 		visible_alpha.setRepeatCount(0);
 
-		Animation rlinvisible_translate = new TranslateAnimation(xToInvisible,
-				-screenWidth, 0, 0);
+		Animation rlinvisible_translate = new TranslateAnimation(xToInvisible, -screenWidth, 0, 0);
 		rlinvisible_translate.setDuration(duration_invisible);
 		rlinvisible_translate.setFillAfter(true);
 
-		Animation lrinvisible_translate = new TranslateAnimation(xToInvisible,
-				screenWidth, 0, 0);
+		Animation lrinvisible_translate = new TranslateAnimation(xToInvisible, screenWidth, 0, 0);
 		lrinvisible_translate.setDuration(duration_invisible);
 		lrinvisible_translate.setFillAfter(true);
 
-		Animation rlvisible_translate = new TranslateAnimation(xToVisible, 0,
-				0, 0);
+		Animation rlvisible_translate = new TranslateAnimation(xToVisible, 0, 0, 0);
 		rlvisible_translate.setDuration(duration_visible);
 		rlvisible_translate.setFillAfter(true);
 
-		Animation lrvisible_translate = new TranslateAnimation(xToVisible, 0,
-				0, 0);
+		Animation lrvisible_translate = new TranslateAnimation(xToVisible, 0, 0, 0);
 		lrvisible_translate.setDuration(duration_visible);
 		lrvisible_translate.setFillAfter(true);
 
@@ -3325,36 +3338,44 @@ public class AlmalenceGUI extends GUI implements
 		}
 		applyZonesVisibility(zonesVisibility, isAnimate, toLeft, rlvisible, lrvisible, rlinvisible, lrinvisible);
 
-		rlinvisible.setAnimationListener(new AnimationListener() {
+		rlinvisible.setAnimationListener(new AnimationListener()
+		{
 			@Override
-			public void onAnimationEnd(Animation animation) {
+			public void onAnimationEnd(Animation animation)
+			{
 				clearLayoutsAnimation();
 			}
 
 			@Override
-			public void onAnimationRepeat(Animation animation) {
+			public void onAnimationRepeat(Animation animation)
+			{
 				//Not used
 			}
 
 			@Override
-			public void onAnimationStart(Animation animation) {
+			public void onAnimationStart(Animation animation)
+			{
 				//Not used
 			}
 		});
 
-		lrinvisible.setAnimationListener(new AnimationListener() {
+		lrinvisible.setAnimationListener(new AnimationListener()
+		{
 			@Override
-			public void onAnimationEnd(Animation animation) {
+			public void onAnimationEnd(Animation animation)
+			{
 				clearLayoutsAnimation();
 			}
 
 			@Override
-			public void onAnimationRepeat(Animation animation) {
+			public void onAnimationRepeat(Animation animation)
+			{
 				//Not used
 			}
 
 			@Override
-			public void onAnimationStart(Animation animation) {
+			public void onAnimationStart(Animation animation)
+			{
 				//Not used
 			}
 		});
@@ -3375,31 +3396,26 @@ public class AlmalenceGUI extends GUI implements
 		if(guiView.findViewById(R.id.paramsLayout).getVisibility() != zonesVisibility[0])
 		{
 			if (isAnimate)
-				guiView.findViewById(R.id.paramsLayout).startAnimation(
-						toLeft ? zonesVisibility[0] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[0] == View.VISIBLE? lrvisible : lrinvisible);
+				guiView.findViewById(R.id.paramsLayout).startAnimation(toLeft ? zonesVisibility[0] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[0] == View.VISIBLE? lrvisible : lrinvisible);
 			guiView.findViewById(R.id.paramsLayout).setVisibility(zonesVisibility[0]);
-			((Panel) guiView.findViewById(R.id.topPanel)).reorder(zonesVisibility[0] == View.GONE,
-					true);
+			((Panel) guiView.findViewById(R.id.topPanel)).reorder(zonesVisibility[0] == View.GONE, true);
 		}
 		
 		if(guiView.findViewById(R.id.pluginsLayout).getVisibility() != zonesVisibility[1])
 		{
 			if (isAnimate)
-				guiView.findViewById(R.id.pluginsLayout).startAnimation(
-						toLeft ? zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible);
+				guiView.findViewById(R.id.pluginsLayout).startAnimation(toLeft ? zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible);
 			guiView.findViewById(R.id.pluginsLayout).setVisibility(zonesVisibility[1]);
 	
 			if (isAnimate)
-				guiView.findViewById(R.id.infoLayout).startAnimation(
-						toLeft ? zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible);
+				guiView.findViewById(R.id.infoLayout).startAnimation(toLeft ? zonesVisibility[1] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[1] == View.VISIBLE? lrvisible : lrinvisible);
 			guiView.findViewById(R.id.infoLayout).setVisibility(zonesVisibility[1]);
 		}
 		
 		if(guiView.findViewById(R.id.fullscreenLayout).getVisibility() != zonesVisibility[2])
 		{
 			if (isAnimate)
-				guiView.findViewById(R.id.fullscreenLayout).startAnimation(
-						toLeft ? zonesVisibility[2] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[2] == View.VISIBLE? lrvisible : lrinvisible);
+				guiView.findViewById(R.id.fullscreenLayout).startAnimation(toLeft ? zonesVisibility[2] == View.VISIBLE? rlvisible : rlinvisible : zonesVisibility[2] == View.VISIBLE? lrvisible : lrinvisible);
 			guiView.findViewById(R.id.fullscreenLayout).setVisibility(zonesVisibility[2]);
 		}
 	}
@@ -3414,7 +3430,8 @@ public class AlmalenceGUI extends GUI implements
 
 	// Method used by quick controls customization feature. Swaps current quick
 	// control with selected from qc grid.
-	private void switchViews(View currentView, View newView, String qcID) {
+	private void switchViews(View currentView, View newView, String qcID)
+	{
 		if (currentView == newView)
 			return;
 
@@ -3423,42 +3440,55 @@ public class AlmalenceGUI extends GUI implements
 
 		int currentQCNumber = -1;
 		String currentViewID = "";
-		if (currentView == quickControl1) {
+		if (currentView == quickControl1)
+		{
 			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1), "");
 			currentQCNumber = 1;
-		} else if (currentView == quickControl2) {
+		}
+		else if (currentView == quickControl2)
+		{
 			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2), "");
 			currentQCNumber = 2;
-		} else if (currentView == quickControl3) {
+		}
+		else if (currentView == quickControl3)
+		{
 			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3), "");
 			currentQCNumber = 3;
-		} else if (currentView == quickControl4) {
+		} 
+		else if (currentView == quickControl4)
+		{
 			currentViewID = pref.getString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4), "");
 			currentQCNumber = 4;
 		}
 
-		if (newView == quickControl1) {
+		if (newView == quickControl1)
+		{
 			quickControl1 = currentView;
-			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1), currentViewID)
-					.commit();
-		} else if (newView == quickControl2) {
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton1), currentViewID).commit();
+		}
+		else if (newView == quickControl2)
+		{
 			quickControl2 = currentView;
-			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2), currentViewID)
-					.commit();
-		} else if (newView == quickControl3) {
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton2), currentViewID).commit();
+		}
+		else if (newView == quickControl3)
+		{
 			quickControl3 = currentView;
-			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3), currentViewID)
-					.commit();
-		} else if (newView == quickControl4) {
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton3), currentViewID).commit();
+		}
+		else if (newView == quickControl4)
+		{
 			quickControl4 = currentView;
-			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4), currentViewID)
-					.commit();
-		} else {
+			pref.edit().putString(MainScreen.getInstance().getResources().getString(R.string.Preference_QuickControlButton4), currentViewID).commit();
+		}
+		else 
+		{
 			if (currentView.getParent() != null)
 				((ViewGroup) currentView.getParent()).removeView(currentView);
 		}
 
-		switch (currentQCNumber) {
+		switch (currentQCNumber)
+		{
 		case 1:
 			quickControl1 = newView;
 			pref.edit().putString("quickControlButton1", qcID).commit();
@@ -3480,22 +3510,20 @@ public class AlmalenceGUI extends GUI implements
 		}
 	}
 
-	private void recreateQuickControlsMenu() {
+	private void recreateQuickControlsMenu()
+	{
 		removeAllViews(topMenuButtons);
 		removeAllViews(topMenuPluginButtons);
 		removeAllQuickViews();
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl1);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl2);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl3);
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
-				.addView(quickControl4);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl1);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl2);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl3);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).addView(quickControl4);
 	}
 
-	private void removeAllQuickViews() {
+	private void removeAllQuickViews()
+	{
 		if (quickControl1 != null && quickControl1.getParent() != null)
 			((ViewGroup) quickControl1.getParent()).removeView(quickControl1);
 		if (quickControl2 != null && quickControl2.getParent() != null)
@@ -3506,24 +3534,27 @@ public class AlmalenceGUI extends GUI implements
 			((ViewGroup) quickControl4.getParent()).removeView(quickControl4);
 	}
 
-	private void removeAllViews(Map<?, View> buttons) {
+	private void removeAllViews(Map<?, View> buttons)
+	{
 		Collection<View> button_set = buttons.values();
 		Iterator<View> it = button_set.iterator();
-		while (it.hasNext()) {
+		while (it.hasNext())
+		{
 			View view = it.next();
 			if (view.getParent() != null)
 				((ViewGroup) view.getParent()).removeView(view);
 		}
 	}
 
-	private void removePluginViews() {
+	private void removePluginViews()
+	{
 		List<View> pluginsView = new ArrayList<View>();
-		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance()
-				.findViewById(R.id.pluginsLayout);
+		RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.pluginsLayout);
 		for (int i = 0; i < pluginsLayout.getChildCount(); i++)
 			pluginsView.add(pluginsLayout.getChildAt(i));
 
-		for (int j = 0; j < pluginsView.size(); j++) {
+		for (int j = 0; j < pluginsView.size(); j++)
+		{
 			View view = pluginsView.get(j);
 			if (view.getParent() != null)
 				((ViewGroup) view.getParent()).removeView(view);
@@ -3532,12 +3563,12 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		List<View> fullscreenView = new ArrayList<View>();
-		RelativeLayout fullscreenLayout = (RelativeLayout) MainScreen.getInstance()
-				.findViewById(R.id.fullscreenLayout);
+		RelativeLayout fullscreenLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.fullscreenLayout);
 		for (int i = 0; i < fullscreenLayout.getChildCount(); i++)
 			fullscreenView.add(fullscreenLayout.getChildAt(i));
 
-		for (int j = 0; j < fullscreenView.size(); j++) {
+		for (int j = 0; j < fullscreenView.size(); j++)
+		{
 			View view = fullscreenView.get(j);
 			if (view.getParent() != null)
 				((ViewGroup) view.getParent()).removeView(view);
@@ -3546,12 +3577,12 @@ public class AlmalenceGUI extends GUI implements
 		}
 
 		List<View> infoView = new ArrayList<View>();
-		LinearLayout infoLayout = (LinearLayout) MainScreen.getInstance()
-				.findViewById(R.id.infoLayout);
+		LinearLayout infoLayout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.infoLayout);
 		for (int i = 0; i < infoLayout.getChildCount(); i++)
 			infoView.add(infoLayout.getChildAt(i));
 
-		for (int j = 0; j < infoView.size(); j++) {
+		for (int j = 0; j < infoView.size(); j++)
+		{
 			View view = infoView.get(j);
 			if (view.getParent() != null)
 				((ViewGroup) view.getParent()).removeView(view);
@@ -3560,7 +3591,8 @@ public class AlmalenceGUI extends GUI implements
 		}
 	}
 
-	public boolean onLongClick(View v) {
+	public boolean onLongClick(View v)
+	{
 		if (quickControlsChangeVisible)
 			return true;
 
@@ -3579,15 +3611,20 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(View v)
+	{
 		hideSecondaryMenus();
-		if (!quickControlsChangeVisible) {
-			if (topMenuPluginButtons.containsValue(v)) {
+		if (!quickControlsChangeVisible)
+		{
+			if (topMenuPluginButtons.containsValue(v))
+			{
 				Set<String> pluginIDset = topMenuPluginButtons.keySet();
 				Iterator<String> it = pluginIDset.iterator();
-				while (it.hasNext()) {
+				while (it.hasNext())
+				{
 					String pluginID = it.next();
-					if (v == topMenuPluginButtons.get(pluginID)) {
+					if (v == topMenuPluginButtons.get(pluginID))
+					{
 						Plugin plugin = PluginManager.getInstance().getPlugin(
 								pluginID);
 						plugin.onQuickControlClick();
@@ -3612,7 +3649,8 @@ public class AlmalenceGUI extends GUI implements
 	}
 
 	@Override
-	public void onButtonClick(View button) {
+	public void onButtonClick(View button)
+	{
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
@@ -3629,28 +3667,32 @@ public class AlmalenceGUI extends GUI implements
 		// 3. if change quick controls visible - allow only OK button
 		
 		if (settingsControlsVisible || quickControlsChangeVisible
-				|| (modeSelectorVisible && (R.id.buttonSelectMode != id))) {
-			if (quickControlsChangeVisible) {// if change control visible and
-												// quick control button pressed
+			|| (modeSelectorVisible && (R.id.buttonSelectMode != id))) 
+		{
+			// if change control visible and
+			if (quickControlsChangeVisible)
+			{
+				// quick control button pressed
 				if ((button != quickControl1) && (button != quickControl2)
-						&& (button != quickControl3)
-						&& (button != quickControl4))
+					&& (button != quickControl3) && (button != quickControl4))
 					closeQuickControlsSettings();
 			}
-			if (settingsControlsVisible) {
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,
-						true);
+			if (settingsControlsVisible)
+			{
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 				return;
 			}
-			if (modeSelectorVisible) {
+			if (modeSelectorVisible)
+			{
 				hideModeList();
 				return;
 			}
 		}
 
-		switch (id) {
+		switch (id)
+		{
 		// BOTTOM BUTTONS - Modes, Shutter
-		case R.id.buttonSelectMode: {
+		case R.id.buttonSelectMode:
 			if (quickControlsChangeVisible || settingsControlsVisible)
 				break;
 
@@ -3658,24 +3700,21 @@ public class AlmalenceGUI extends GUI implements
 				showModeList();
 			else
 				hideModeList();
-		}
 			break;
 
-		case R.id.buttonShutter: {
+		case R.id.buttonShutter:
 			if (quickControlsChangeVisible || settingsControlsVisible)
 				break;
 
 			shutterButtonPressed();
-		}
 			break;
 
-		case R.id.buttonGallery: {
+		case R.id.buttonGallery:
 			if (quickControlsChangeVisible || settingsControlsVisible)
 				break;
 
 			openGallery();
 			break;
-		}
 
 		// TOP MENU BUTTONS - Scene mode, white balance, focus mode, flash mode,
 		// settings
