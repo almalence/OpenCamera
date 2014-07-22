@@ -1160,7 +1160,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			if (this.isFirstFrame)
 			{
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 				this.isFirstFrame = false;
 			}
 		}
@@ -1236,7 +1236,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (this.isFirstFrame)
 			{
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 				this.isFirstFrame = false;
 			}
 		}

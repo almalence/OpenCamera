@@ -429,7 +429,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
-		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, n + 1);
+		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, n + 1);
 
 		if (compressed_frame[n] == 0)
 		{
@@ -553,7 +553,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			compressed_frame_len[n] = frame_len;
 
 			if (n == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
 
 		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
@@ -615,7 +615,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if (result.get(CaptureResult.REQUEST_ID) == requestID)
 		{
 			if (evIdx[frame_num] == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

@@ -1079,7 +1079,7 @@ public class NightCapturePlugin extends PluginCapture
 				String.valueOf(frameNumber + 1));
 
 		if (frameNumber == 0)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		String message = MainScreen.getInstance().getResources().getString(R.string.capturing);
 		message += " ";
@@ -1141,7 +1141,7 @@ public class NightCapturePlugin extends PluginCapture
 			compressed_frame_len[frameNumber] = frame_len;
 
 			if (frameNumber == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
 
 		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
@@ -1180,7 +1180,7 @@ public class NightCapturePlugin extends PluginCapture
 	public void onCaptureCompleted(CaptureResult result)
 	{
 		if (result.get(CaptureResult.REQUEST_ID) == requestID && frameNumber == 0)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
 
 	public void captureFrame()

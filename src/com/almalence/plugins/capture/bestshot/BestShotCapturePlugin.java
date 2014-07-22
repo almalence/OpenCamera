@@ -227,7 +227,7 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		try
 		{
@@ -310,7 +310,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
 
 		String frameName = "frame" + imagesTaken;
@@ -347,7 +347,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		if (result.get(CaptureResult.REQUEST_ID) == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

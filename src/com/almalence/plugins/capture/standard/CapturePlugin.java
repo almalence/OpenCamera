@@ -268,7 +268,7 @@ public class CapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
@@ -335,7 +335,7 @@ public class CapturePlugin extends PluginCapture
 
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 		}
 
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
@@ -362,7 +362,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		if (result.get(CaptureResult.REQUEST_ID) == requestID)
 		{
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

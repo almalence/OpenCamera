@@ -259,7 +259,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			try
 			{
-				File saveDir = PluginManager.getInstance().GetSaveDir(false);
+				File saveDir = PluginManager.getInstance().getSaveDir(false);
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
@@ -276,7 +276,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					{
 						// save always if not working saving to sdcard
 						e.printStackTrace();
-						saveDir = PluginManager.getInstance().GetSaveDir(true);
+						saveDir = PluginManager.getInstance().getSaveDir(true);
 						file = new File(saveDir, fileFormat + index + ".jpg");
 						os = new FileOutputStream(file);
 					}
