@@ -367,17 +367,16 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		if (!isEnabled)
 			return false;
-		
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
-    	{
-    		this.zoomModify(-1);
-    		return true;
-    	}
-    	else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
-    	{
-    		this.zoomModify(1);
-    		return true;
-    	}
+
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_ZOOM_OUT)
+		{
+			this.zoomModify(-1);
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_ZOOM_IN)
+		{
+			this.zoomModify(1);
+			return true;
+		}
 		return false;
 	}
 	
