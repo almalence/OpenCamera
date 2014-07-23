@@ -128,6 +128,13 @@ public class ImageAdapter extends BaseAdapter
 
 	public void finalize()
 	{
+		try
+		{
+			super.finalize();
+		} catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
 		cache.clear();
 	}
 
