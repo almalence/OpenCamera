@@ -235,6 +235,7 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_FOCUS_CHANGED						= 63;
 	public static final int				MSG_FLASH_CHANGED						= 64;
 	public static final int				MSG_ISO_CHANGED							= 65;
+	public static final int				MSG_AEWB_CHANGED						= 66;
 
 	// OpenGL layer messages
 	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
