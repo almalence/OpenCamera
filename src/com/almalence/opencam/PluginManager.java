@@ -751,7 +751,8 @@ public class PluginManager implements PluginManagerInterface
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
 			if (null != pluginList.get(activeCapture)
-					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE
+					&& MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
 		} else
 		{

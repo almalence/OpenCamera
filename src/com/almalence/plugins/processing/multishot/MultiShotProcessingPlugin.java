@@ -67,6 +67,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private static int								SEQUENCE						= 1;
 	private static int								OBJECT_REMOVAL					= 2;
 	private static int								CANCELLED						= -2;
+	private static int								WAITING							= -1;
 
 	private View									mButtonsLayout;
 
@@ -129,6 +130,15 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		});
 
+		
+		mButtonsLayout.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+			}
+		});
+		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -174,7 +184,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	{
 		this.sessionID = SessionID;
 
-		selectedPlugin = -1;
+		selectedPlugin = WAITING;
 
 		MainScreen.getInstance().runOnUiThread(new Runnable()
 		{
@@ -190,7 +200,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		prepareDataForProcessing();
 
-		while (selectedPlugin == -1)
+		while (selectedPlugin == WAITING)
 		{
 			try
 			{
@@ -387,6 +397,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			return res;
 		}
+		
 		return super.onKeyDown(keyCode, event);
 	}
 
