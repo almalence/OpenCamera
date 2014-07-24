@@ -27,7 +27,6 @@ import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 

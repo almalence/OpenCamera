@@ -129,7 +129,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private boolean						showGyroWarnOnce				= false;
 
 	private int							aewblock						= 1;
-	private boolean						aewbLockedByPanorama			= false;
+	private boolean						aeLockedByPanorama			= false;
+	private boolean						wbLockedByPanorama			= false;
 
 	private static String				sMemoryPref;
 	private static String				sFrameOverlapPref;
@@ -302,7 +303,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.getMessageHandler().sendMessage(msg);
 
 		showGyroWarnOnce = false;
-		aewbLockedByPanorama = false;
+		aeLockedByPanorama = false;
+		wbLockedByPanorama = false;
 		this.getPrefs();
 
 		MainScreen.setCaptureYUVFrames(true);
@@ -1076,39 +1078,47 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				{
 					params.setAutoWhiteBalanceLock(true);
 					CameraController.getInstance().setCameraParameters(params);
-					aewbLockedByPanorama = true;
+					wbLockedByPanorama = true;
 				}
 				if (CameraController.getInstance().isExposureLockSupported() && !params.getAutoExposureLock())
 				{
 					params.setAutoExposureLock(true);
 					CameraController.getInstance().setCameraParameters(params);
-					aewbLockedByPanorama = true;
+					aeLockedByPanorama = true;
 				}
 			}
 		}
 		lock = false;
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_AEWB_CHANGED);
 	}
 
 	private void unlockAEWB()
-	{
-		if (aewbLockedByPanorama)
+	{	
+		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		if (params != null)
 		{
-			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-			if (params != null)
+			if (wbLockedByPanorama)
 			{
 				if (CameraController.getInstance().isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
 				{
 					params.setAutoWhiteBalanceLock(false);
 					CameraController.getInstance().setCameraParameters(params);
 				}
+				wbLockedByPanorama = false;
+			}
+			if (aeLockedByPanorama)
+			{
 				if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
 				{
 					params.setAutoExposureLock(false);
 					CameraController.getInstance().setCameraParameters(params);
 				}
+				aeLockedByPanorama = false;
 			}
-			aewbLockedByPanorama = false;
 		}
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+				PluginManager.MSG_AEWB_CHANGED);
 	}
 
 	private void takePictureReal()
