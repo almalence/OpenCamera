@@ -2814,6 +2814,7 @@ public class PluginManager implements PluginManagerInterface
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
+		int mDisplayOrientation = Integer.parseInt(resultOrientation);
 		if (os != null)
 		{
 			if (!isYUV)
@@ -2829,7 +2830,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 			os.close();
 
-			int mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+			
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 			switch (mDisplayOrientation)
@@ -2839,15 +2840,29 @@ public class PluginManager implements PluginManagerInterface
 				exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 				break;
 			case 90:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-						: ExifInterface.ORIENTATION_ROTATE_90;
+				if (cameraMirrored) 
+				{
+					mDisplayOrientation = 270;
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+				}
+				else
+				{
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+				}
 				break;
 			case 180:
 				exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 				break;
 			case 270:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-						: ExifInterface.ORIENTATION_ROTATE_270;
+				if (cameraMirrored) 
+				{
+					mDisplayOrientation = 90;
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+				}
+				else
+				{
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+				}
 				break;
 			}
 			ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
@@ -2859,8 +2874,7 @@ public class PluginManager implements PluginManagerInterface
 		values.put(ImageColumns.DISPLAY_NAME, file.getName());
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-		values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90
-				: (!orientationLandscape && cameraMirrored) ? -90 : 0);
+		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
 		values.put(ImageColumns.DATA, file.getAbsolutePath());
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());

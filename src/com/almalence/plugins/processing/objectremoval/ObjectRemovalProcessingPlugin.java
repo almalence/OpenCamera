@@ -120,7 +120,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();

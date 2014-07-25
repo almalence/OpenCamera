@@ -122,7 +122,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
