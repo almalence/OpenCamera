@@ -2908,7 +2908,6 @@ public class PluginManager implements PluginManagerInterface
 		message.arg2 = arg2;
 		message.what = what;
 		MainScreen.getMessageHandler().sendMessage(message);
-
 	}
 	
 	public void sendMessage(int what, int arg1)

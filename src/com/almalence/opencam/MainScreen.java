@@ -133,8 +133,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	private static final int MSG_RETURN_CAPTURED = -1;
 	
-	private static MainScreen thiz;
-	private Context mainContext;
+	public static MainScreen thiz;
+	public Context mainContext;
 	private Handler messageHandler;
 
 	//Interface to HALv3 camera and Old style camera
@@ -148,7 +148,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean captureYUVFrames = false; //Used for HALv3 to init YUV or JPEG surfaces for capturing.
 													//Both type of surfaces are not supported in current version of HALv3
 
-	private GUI guiManager = null;
+	public GUI guiManager = null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
@@ -1734,7 +1734,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 	
 	public static int getPreviewHeight(){
-		return thiz.previewWidth;
+		return thiz.previewHeight;
 	}
 	
 	public static void setPreviewHeight(int iHeight){
