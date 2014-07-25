@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1300,22 +1301,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// configure camera with all the surfaces to be ever used
 		try {
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
-			HALv3.getCamera2().configureOutputs(sfl);
+			HALv3.getCamera2().createCaptureSession(sfl,
+					HALv3.getInstance().captureSessionStateListener,
+					null);
 		} catch (Exception e)	{
 			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
 			e.printStackTrace();
 		}		
 		
-		try
-		{
-			HALv3.getInstance().configurePreviewRequest();
-			
-		}
-		catch (Exception e)
-		{
-			Log.d("MainScreen", "setting up preview failed");
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			HALv3.getInstance().configurePreviewRequest();
+//			
+//		}
+//		catch (Exception e)
+//		{
+//			Log.d("MainScreen", "setting up preview failed");
+//			e.printStackTrace();
+//		}
 		// ^^ HALv3 code -------------------------------------------------------------------		
 	}
 		

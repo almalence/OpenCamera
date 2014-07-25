@@ -192,7 +192,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		try
 		{
-			byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+			int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 			if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
 			{
 				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
@@ -608,7 +608,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{

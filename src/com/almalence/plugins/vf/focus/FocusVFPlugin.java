@@ -809,7 +809,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		return mAeAwbLock;
 	}
 
-	private static boolean isSupported(int value, byte[] supported)
+	private static boolean isSupported(int value, int[] supported)
 	{
 		boolean isAvailable = false;
 		for (int currMode : supported)

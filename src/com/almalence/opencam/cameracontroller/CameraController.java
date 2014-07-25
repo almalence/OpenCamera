@@ -178,11 +178,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected boolean								mVideoStabilizationSupported	= false;
 
-	private static byte[]							supportedSceneModes;
-	private static byte[]							supportedWBModes;
-	private static byte[]							supportedFocusModes;
-	private static byte[]							supportedFlashModes;
-	private static byte[]							supportedISOModes;
+	private static int[]							supportedSceneModes;
+	private static int[]							supportedWBModes;
+	private static int[]							supportedFocusModes;
+	private static int[]							supportedFlashModes;
+	private static int[]							supportedISOModes;
 
 	private static int								maxRegionsSupported;
 
@@ -1277,7 +1277,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private boolean getSceneModeSupported()
 	{
-		byte[] supported_scene = getSupportedSceneModesInternal();
+		int[] supported_scene = getSupportedSceneModesInternal();
 		return supported_scene != null && supported_scene.length > 0
 				&& supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED;
 	}
@@ -1287,7 +1287,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return mSceneModeSupported;
 	}
 
-	private byte[] getSupportedSceneModesInternal()
+	private int[] getSupportedSceneModesInternal()
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -1296,7 +1296,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				Set<String> known_scenes = CameraController.key_scene.keySet();
 				sceneModes.retainAll(known_scenes);
-				byte[] scenes = new byte[sceneModes.size()];
+				int[] scenes = new int[sceneModes.size()];
 				for (int i = 0; i < sceneModes.size(); i++)
 				{
 					String mode = sceneModes.get(i);
@@ -1307,19 +1307,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return scenes;
 			}
 
-			return new byte[0];
+			return new int[0];
 		} else
 			return HALv3.getSupportedSceneModesHALv3();
 	}
 
-	public byte[] getSupportedSceneModes()
+	public int[] getSupportedSceneModes()
 	{
 		return supportedSceneModes;
 	}
 
 	private boolean getWhiteBalanceSupported()
 	{
-		byte[] supported_wb = getSupportedWhiteBalanceInternal();
+		int[] supported_wb = getSupportedWhiteBalanceInternal();
 		return supported_wb != null && supported_wb.length > 0;
 	}
 
@@ -1328,7 +1328,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return mWBSupported;
 	}
 
-	private byte[] getSupportedWhiteBalanceInternal()
+	private int[] getSupportedWhiteBalanceInternal()
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -1337,7 +1337,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				Set<String> known_wb = CameraController.key_wb.keySet();
 				wbModes.retainAll(known_wb);
-				byte[] wb = new byte[wbModes.size()];
+				int[] wb = new int[wbModes.size()];
 				for (int i = 0; i < wbModes.size(); i++)
 				{
 					String mode = wbModes.get(i);
@@ -1347,19 +1347,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return wb;
 			}
 
-			return new byte[0];
+			return new int[0];
 		} else
 			return HALv3.getSupportedWhiteBalanceHALv3();
 	}
 
-	public byte[] getSupportedWhiteBalance()
+	public int[] getSupportedWhiteBalance()
 	{
 		return supportedWBModes;
 	}
 
 	private boolean getFocusModeSupported()
 	{
-		byte[] supported_focus = getSupportedFocusModesInternal();
+		int[] supported_focus = getSupportedFocusModesInternal();
 		return supported_focus != null && supported_focus.length > 0;
 	}
 
@@ -1368,7 +1368,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return mFocusModeSupported;
 	}
 
-	private byte[] getSupportedFocusModesInternal()
+	private int[] getSupportedFocusModesInternal()
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -1377,7 +1377,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				Set<String> known_focus = CameraController.key_focus.keySet();
 				focusModes.retainAll(known_focus);
-				byte[] focus = new byte[focusModes.size()];
+				int[] focus = new int[focusModes.size()];
 				for (int i = 0; i < focusModes.size(); i++)
 				{
 					String mode = focusModes.get(i);
@@ -1388,12 +1388,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return focus;
 			}
 
-			return new byte[0];
+			return new int[0];
 		} else
 			return HALv3.getSupportedFocusModesHALv3();
 	}
 
-	public byte[] getSupportedFocusModes()
+	public int[] getSupportedFocusModes()
 	{
 		return supportedFocusModes;
 	}
@@ -1404,7 +1404,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return HALv3.isFlashModeSupportedHALv3();
 		else
 		{
-			byte[] supported_flash = getSupportedFlashModesInternal();
+			int[] supported_flash = getSupportedFlashModesInternal();
 			return supported_flash != null && supported_flash.length > 0;
 		}
 	}
@@ -1414,13 +1414,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return mFlashModeSupported;
 	}
 
-	private byte[] getSupportedFlashModesInternal()
+	private int[] getSupportedFlashModesInternal()
 	{
 		if (CameraController.isHALv3)
 		{
 			if (isFlashModeSupported())
 			{
-				byte[] flash = new byte[3];
+				int[] flash = new int[3];
 				flash[0] = CameraParameters.FLASH_MODE_OFF;
 				flash[1] = CameraParameters.FLASH_MODE_SINGLE;
 				flash[2] = CameraParameters.FLASH_MODE_TORCH;
@@ -1433,7 +1433,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				Set<String> known_flash = CameraController.key_flash.keySet();
 				flashModes.retainAll(known_flash);
-				byte[] flash = new byte[flashModes.size()];
+				int[] flash = new int[flashModes.size()];
 				for (int i = 0; i < flashModes.size(); i++)
 				{
 					String mode = flashModes.get(i);
@@ -1445,10 +1445,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 
-		return new byte[0];
+		return new int[0];
 	}
 
-	public byte[] getSupportedFlashModes()
+	public int[] getSupportedFlashModes()
 	{
 		return supportedFlashModes;
 	}
@@ -1457,7 +1457,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			byte[] supported_iso = getSupportedISO();
+			int[] supported_iso = getSupportedISO();
 			String isoSystem = CameraController.getInstance().getCameraParameters().get("iso");
 			String isoSystem2 = CameraController.getInstance().getCameraParameters().get("iso-speed");
 			return supported_iso != null || isoSystem != null || isoSystem2 != null;
@@ -1470,7 +1470,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return mISOSupported;
 	}
 
-	private byte[] getSupportedISOInternal()
+	private int[] getSupportedISOInternal()
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -1498,9 +1498,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					for (int i = 0; i < isoList.length; i++)
 						isoModes.add(isoList[i]);
 				} else
-					return new byte[0];
+					return new int[0];
 
-				byte[] iso = new byte[isoModes.size()];
+				int[] iso = new int[isoModes.size()];
 				for (int i = 0; i < isoModes.size(); i++)
 				{
 					String mode = isoModes.get(i);
@@ -1516,12 +1516,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return iso;
 			}
 
-			return new byte[0];
+			return new int[0];
 		} else
 			return HALv3.getSupportedISOModesHALv3();
 	}
 
-	public byte[] getSupportedISO()
+	public int[] getSupportedISO()
 	{
 		return supportedISOModes;
 	}
@@ -1577,7 +1577,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CapIdx = captureIndex;
 	}
 
-	public static boolean isModeAvailable(byte[] modeList, int mode)
+	public static boolean isModeAvailable(int[] modeList, int mode)
 	{
 		boolean isAvailable = false;
 		for (int currMode : modeList)

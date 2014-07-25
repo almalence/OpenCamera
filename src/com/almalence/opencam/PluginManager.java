@@ -75,6 +75,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -1284,8 +1285,8 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
 
-	@TargetApi(19)
-	public void onCaptureCompleted(CaptureResult result)
+//	@TargetApi(21)
+	public void onCaptureCompleted(TotalCaptureResult result)
 	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);

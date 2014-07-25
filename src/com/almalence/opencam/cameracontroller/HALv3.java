@@ -35,10 +35,12 @@ import com.almalence.util.Util;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
@@ -46,28 +48,36 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Range;
+import android.util.Size;
+import android.widget.Toast;
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
 @TargetApi(19)
 public class HALv3
 {
-	private static final String	TAG				= "HALv3Controller";
+	private static final String				TAG				= "HALv3Controller";
 
-	private static HALv3		instance		= null;
+	private static HALv3					instance		= null;
 
-	private static Rect			activeRect		= null;
-	private static Rect			zoomCropPreview	= null;
-	private static Rect			zoomCropCapture	= null;
-	private static float		zoomLevel		= 1f;
-	private static int[]		af_regions;
-	private static int[]		ae_regions;
+	private static Rect						activeRect		= null;
+	private static Rect						zoomCropPreview	= null;
+	private static Rect						zoomCropCapture	= null;
+	private static float					zoomLevel		= 1f;
+	private static MeteringRectangle[]		af_regions;
+	private static MeteringRectangle[]		ae_regions;
 
 	public static HALv3 getInstance()
 	{
@@ -80,11 +90,19 @@ public class HALv3
 
 	private CameraManager			manager					= null;
 	private CameraCharacteristics	camCharacter			= null;
-	// private cameraAvailableListener availListener = null;
-	protected CameraDevice			camDevice				= null;
+
 	private CaptureRequest.Builder	previewRequestBuilder	= null;
+	private CameraCaptureSession    mCaptureSession         = null;
+    
+	protected CameraDevice			camDevice				= null;
+	
 
 	private static boolean			autoFocusTriggered		= false;
+	
+	 /**
+     * True if the app is currently trying to open camera
+     */
+    private boolean mOpeningCamera;
 
 	public static void onCreateHALv3()
 	{
@@ -185,14 +203,18 @@ public class HALv3
 		// HALv3 code
 		// -------------------------------------------------------------------
 		MainScreen.createImageReaders();
+		
+		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
+		backgroundThread.start();
+		
 		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
-				HALv3.getInstance().new imageAvailableListener(), null);
+				imageAvailableListener,  new Handler(backgroundThread.getLooper()));
 
-		MainScreen.getYUVImageReader().setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(),
-				null);
+		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener,
+				 new Handler(backgroundThread.getLooper()));
 
-		MainScreen.getJPEGImageReader().setOnImageAvailableListener(HALv3.getInstance().new imageAvailableListener(),
-				null);
+		MainScreen.getJPEGImageReader().setOnImageAvailableListener(imageAvailableListener,
+				 new Handler(backgroundThread.getLooper()));
 	}
 
 	public static void populateCameraDimensionsHALv3()
@@ -204,13 +226,13 @@ public class HALv3
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
-		android.hardware.camera2.Size[] cs = params.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
+		final Size[] cs = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);		
 
 		int iHighestIndex = 0;
-		android.hardware.camera2.Size sHighest = cs[iHighestIndex];
+		Size sHighest = cs[iHighestIndex];
 
 		int ii = 0;
-		for (android.hardware.camera2.Size s : cs)
+		for (Size s : cs)
 		{
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
@@ -233,7 +255,7 @@ public class HALv3
 
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
-			android.hardware.camera2.Size s = cs[iHighestIndex];
+			Size s = cs[iHighestIndex];
 
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
@@ -246,17 +268,15 @@ public class HALv3
 
 	public static void fillPreviewSizeList(List<CameraController.Size> previewSizes)
 	{
-		android.hardware.camera2.Size[] cs = HALv3.getInstance().camCharacter
-				.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
-		for (android.hardware.camera2.Size sz : cs)
+		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
+		for (Size sz : cs)
 			previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
 	}
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
-		android.hardware.camera2.Size[] cs = HALv3.getInstance().camCharacter
-				.get(CameraCharacteristics.SCALER_AVAILABLE_PROCESSED_SIZES);
-		for (android.hardware.camera2.Size sz : cs)
+		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
+		for (Size sz : cs)
 			pictureSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
 	}
 
@@ -306,8 +326,8 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		try
 		{
-			CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-					HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(), null);
+			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+					HALv3.getInstance().previewRequestBuilder.build(), captureListener, null);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -333,8 +353,8 @@ public class HALv3
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[1] == expRange[0] ? false : true;
+			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			return expRange.getLower() == expRange.getUpper() ? false : true;
 		}
 
 		return false;
@@ -344,8 +364,8 @@ public class HALv3
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[0];
+			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			return expRange.getLower();
 		}
 
 		return 0;
@@ -355,8 +375,8 @@ public class HALv3
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			int[] expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
-			return expRange[1];
+			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+			return expRange.getUpper();
 		}
 
 		return 0;
@@ -365,7 +385,7 @@ public class HALv3
 	public static float getExposureCompensationStepHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
-			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).toFloat();
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
 		return 0;
 	}
 
@@ -376,8 +396,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -386,58 +406,58 @@ public class HALv3
 		}
 	}
 
-	public static byte[] getSupportedSceneModesHALv3()
+	public static int[] getSupportedSceneModesHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			byte[] scenes = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
-			if (scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_UNSUPPORTED)
+			int[] scenes = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+			if (scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_DISABLED)
 				return scenes;
 		}
 
-		return new byte[0];
+		return new int[0];
 	}
 
-	public static byte[] getSupportedWhiteBalanceHALv3()
+	public static int[] getSupportedWhiteBalanceHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			byte[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+			int[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			if (wb.length > 0)
 				return wb;
 		}
 
-		return null;
+		return new int[0];
 	}
 
-	public static byte[] getSupportedFocusModesHALv3()
+	public static int[] getSupportedFocusModesHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			byte[] focus = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+			int[] focus = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
 			if (focus.length > 0)
 				return focus;
 		}
 
-		return new byte[0];
+		return new int[0];
 	}
 
 	public static boolean isFlashModeSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == 1 ? true : false;
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
 		}
 
 		return false;
 	}
 
-	public static byte[] getSupportedISOModesHALv3()
+	public static int[] getSupportedISOModesHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			int[] iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-			int max_iso = iso[1];
+			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			int max_iso = iso.getUpper();
 
 			int index = 0;
 			for (index = 0; index < CameraController.getIsoValuesList().size(); index++)
@@ -448,7 +468,7 @@ public class HALv3
 					break;
 				}
 			}
-			byte[] iso_values = new byte[index];
+			int[] iso_values = new int[index];
 			for (int i = 0; i < index; i++)
 				iso_values[i] = CameraController.getIsoValuesList().get(i).byteValue();
 
@@ -456,15 +476,15 @@ public class HALv3
 				return iso_values;
 		}
 
-		return new byte[0];
+		return new int[0];
 	}
 
 	public static boolean isISOModeSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			int[] iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-			if (iso[0] == iso[1])
+			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			if (iso.getLower() == iso.getUpper())
 				return false;
 			return true;
 		}
@@ -476,7 +496,7 @@ public class HALv3
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS);
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
 		}
 
 		return 0;
@@ -486,7 +506,7 @@ public class HALv3
 	{
 		if (HALv3.getInstance().camCharacter != null)
 		{
-			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS);
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
 		}
 
 		return 0;
@@ -499,8 +519,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -519,8 +539,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -541,8 +561,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -564,8 +584,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -586,8 +606,8 @@ public class HALv3
 						.getIsoModeHALv3().get(mode));
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -606,8 +626,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -624,7 +644,7 @@ public class HALv3
 		Rect zoomRect = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 		if (focusAreas != null)
 		{
-			af_regions = new int[5 * focusAreas.size()];
+			af_regions = new MeteringRectangle[5 * focusAreas.size()];
 			for (int i = 0; i < focusAreas.size(); i++)
 			{
 				Rect r = focusAreas.get(i).rect;
@@ -641,20 +661,23 @@ public class HALv3
 				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				int currRegion = i * 5;
-				af_regions[currRegion] = r.left;
-				af_regions[currRegion + 1] = r.top;
-				af_regions[currRegion + 2] = r.right;
-				af_regions[currRegion + 3] = r.bottom;
-				af_regions[currRegion + 4] = 10;
+				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
+//				af_regions[currRegion] = r.left;
+//				af_regions[currRegion + 1] = r.top;
+//				af_regions[currRegion + 2] = r.right;
+//				af_regions[currRegion + 3] = r.bottom;
+//				af_regions[currRegion + 4] = 10;
 			}
 		} else
 		{
-			af_regions = new int[5];
-			af_regions[0] = 0;
-			af_regions[1] = 0;
-			af_regions[2] = activeRect.width() - 1;
-			af_regions[3] = activeRect.height() - 1;
-			af_regions[4] = 0;
+			af_regions = new MeteringRectangle[1];
+			af_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 10);
+//			af_regions = new int[5];
+//			af_regions[0] = 0;
+//			af_regions[1] = 0;
+//			af_regions[2] = activeRect.width() - 1;
+//			af_regions[3] = activeRect.height() - 1;
+//			af_regions[4] = 0;
 		}
 		Log.e(TAG, "activeRect: " + activeRect.left + " " + activeRect.top + " " + activeRect.right + " "
 				+ activeRect.bottom);
@@ -665,8 +688,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -681,7 +704,7 @@ public class HALv3
 		Rect zoomRect = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 		if (meteringAreas != null)
 		{
-			ae_regions = new int[5 * meteringAreas.size()];
+			ae_regions = new MeteringRectangle[5 * meteringAreas.size()];
 			for (int i = 0; i < meteringAreas.size(); i++)
 			{
 				Rect r = meteringAreas.get(i).rect;
@@ -696,20 +719,23 @@ public class HALv3
 				Util.rectFToRect(rectF, r);
 
 				int currRegion = i * 5;
-				ae_regions[currRegion] = r.left;
-				ae_regions[currRegion + 1] = r.top;
-				ae_regions[currRegion + 2] = r.right;
-				ae_regions[currRegion + 3] = r.bottom;
-				ae_regions[currRegion + 4] = 10;
+				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
+//				ae_regions[currRegion] = r.left;
+//				ae_regions[currRegion + 1] = r.top;
+//				ae_regions[currRegion + 2] = r.right;
+//				ae_regions[currRegion + 3] = r.bottom;
+//				ae_regions[currRegion + 4] = 10;
 			}
 		} else
 		{
-			ae_regions = new int[5];
-			ae_regions[0] = 0;
-			ae_regions[1] = 0;
-			ae_regions[2] = activeRect.width() - 1;
-			ae_regions[3] = activeRect.height() - 1;
-			ae_regions[4] = 0;
+			af_regions = new MeteringRectangle[1];
+			af_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 10);
+//			ae_regions = new int[5];
+//			ae_regions[0] = 0;
+//			ae_regions[1] = 0;
+//			ae_regions[2] = activeRect.width() - 1;
+//			ae_regions[3] = activeRect.height() - 1;
+//			ae_regions[4] = 0;
 		}
 
 		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
@@ -717,8 +743,8 @@ public class HALv3
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, ae_regions);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -729,9 +755,9 @@ public class HALv3
 
 	public static int getPreviewFrameRateHALv3()
 	{
-		int[] range = { 0, 0 };
+		Range<Integer>[] range;
 		range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
-		return range[range.length - 1];
+		return range[range.length - 1].getUpper();
 	}
 
 	public static int captureImageHALv3(int nFrames, int format)
@@ -786,8 +812,8 @@ public class HALv3
 			// requests for SZ input frames
 			for (int n = 0; n < nFrames; ++n)
 			{
-				requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-						HALv3.getInstance().new captureListener(), null);
+				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+						captureListener, null);
 			}
 			// Log.e("CameraController", "captureImage 4");
 			// One more capture for comparison with a standard frame
@@ -858,7 +884,7 @@ public class HALv3
 			 * camDevice.captureBurst(requests, new captureListener() , null);
 			 */
 
-			HALv3.getInstance().camDevice.stopRepeating();
+			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
 			if (pause > 0)
 			{
@@ -878,8 +904,8 @@ public class HALv3
 
 						try
 						{
-							HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-									HALv3.getInstance().new captureListener(), null);
+							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+									captureListener, null);
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -900,8 +926,8 @@ public class HALv3
 
 						try
 						{
-							HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-									HALv3.getInstance().new captureListener(), null);
+							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+									captureListener, null);
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -926,7 +952,7 @@ public class HALv3
 					// expTime);
 					// requestID =
 					// HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-					// HALv3.getInstance().new captureListener() , null);
+					// captureListener , null);
 					// }
 
 					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[0]);
@@ -964,8 +990,8 @@ public class HALv3
 
 							try
 							{
-								HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-										HALv3.getInstance().new captureListener(), null);
+								HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+										captureListener, null);
 							} catch (CameraAccessException e)
 							{
 								e.printStackTrace();
@@ -999,8 +1025,8 @@ public class HALv3
 
 							try
 							{
-								HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-										HALv3.getInstance().new captureListener(), null);
+								HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+										captureListener, null);
 							} catch (CameraAccessException e)
 							{
 								e.printStackTrace();
@@ -1018,18 +1044,18 @@ public class HALv3
 						// evRequested[n]);
 						// setCameraExposureCompensationHALv3(evRequested[n]);
 						// }
-						requestID = HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-								HALv3.getInstance().new captureListener(), null);
+						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+								captureListener, null);
 					}
 				}
 			}
 
 			// requestID =
 			// HALv3.getInstance().camDevice.captureBurst(requestList,
-			// HALv3.getInstance().new captureListener() , null);
+			// captureListener , null);
 			// requestID =
 			// HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-			// HALv3.getInstance().new captureListener() , null);
+			// captureListener , null);
 			// Log.e("CameraController", "captureImage 4");
 			// One more capture for comparison with a standard frame
 			// stillRequestBuilder.set(CaptureRequest.EDGE_MODE,
@@ -1065,8 +1091,8 @@ public class HALv3
 			{
 				Log.e(TAG,
 						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new focusListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.getInstance().previewRequestBuilder.build(), focusListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -1090,8 +1116,8 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(
-						HALv3.getInstance().previewRequestBuilder.build(), HALv3.getInstance().new captureListener(),
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -1109,41 +1135,14 @@ public class HALv3
 				.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
 				CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.REQUEST_ID, 555);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
-		HALv3.getInstance().camDevice.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
-				HALv3.getInstance().new captureListener(), null);
+		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
+				captureListener, null);
 	}
 
 	// HALv3 ------------------------------------------------ camera-related
 	// listeners
-
-	// Note: never received onCameraAvailable notifications, only
-	// onCameraUnavailable
-	@SuppressLint("Override")
-	@TargetApi(19)
-	public class cameraAvailableListener extends CameraManager.AvailabilityListener
-	{
-		@Override
-		public void onCameraAvailable(java.lang.String cameraId)
-		{
-			// should we call this?
-			super.onCameraAvailable(cameraId);
-
-			Log.d(TAG, "CameraManager.AvailabilityListener.onCameraAvailable");
-		}
-
-		@Override
-		public void onCameraUnavailable(java.lang.String cameraId)
-		{
-			// should we call this?
-			super.onCameraUnavailable(cameraId);
-
-			Log.d(TAG, "CameraManager.AvailabilityListener.onCameraUnavailable");
-		}
-	}
-
 	@SuppressLint("Override")
 	@TargetApi(19)
 	public class openListener extends CameraDevice.StateListener
@@ -1156,12 +1155,10 @@ public class HALv3
 			{
 				try
 				{
-					HALv3.getInstance().camDevice.stopRepeating();
-					HALv3.getInstance().camDevice.waitUntilIdle();
-					HALv3.getInstance().camDevice.flush();
 					HALv3.getInstance().camDevice.close();
 					HALv3.getInstance().camDevice = null;
-				} catch (CameraAccessException e)
+					HALv3.getInstance().mOpeningCamera = false;
+				} catch (Exception e)
 				{
 					HALv3.getInstance().camDevice = null;
 					Log.e(TAG, "close camera device failed: " + e.getMessage());
@@ -1173,6 +1170,7 @@ public class HALv3
 		@Override
 		public void onError(CameraDevice arg0, int arg1)
 		{
+			HALv3.getInstance().mOpeningCamera = false;
 			Log.e(TAG, "CameraDevice.StateListener.onError: " + arg1);
 		}
 
@@ -1182,26 +1180,58 @@ public class HALv3
 			Log.e(TAG, "CameraDevice.StateListener.onOpened");
 
 			HALv3.getInstance().camDevice = arg0;
+			
+			HALv3.getInstance().mOpeningCamera = false;
 
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
 			// dumpCameraCharacteristics();
 		}
 	}
-
-	// Note: there other onCaptureXxxx methods in this listener which we do not
-	// implement
-	@TargetApi(19)
-	public class focusListener extends CameraDevice.CaptureListener
+	
+	
+	public final static CameraCaptureSession.StateListener captureSessionStateListener = new CameraCaptureSession.StateListener()
 	{
 		@Override
-		public void onCapturePartial(CameraDevice camera, CaptureRequest request, CaptureResult result)
+		public void onConfigureFailed(final CameraCaptureSession session)
 		{
-			Log.e(TAG, "onFocusPartial. AF State = " + result.get(CaptureResult.CONTROL_AF_STATE));
+			Log.e(TAG, "CaptureSessionConfigure failed");
+			MainScreen.getInstance().finish();
 		}
 
 		@Override
-		public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
+		public void onConfigured(final CameraCaptureSession session)
+		{
+			HALv3.getInstance().mCaptureSession = session;
+			
+			try
+			{
+				Log.e(TAG, "configurePreviewRequest()");
+				HALv3.getInstance().previewRequestBuilder = HALv3.getInstance().camDevice
+						.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+						CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+				session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
+											captureListener, null);
+			}
+			catch (final Exception e)
+			{
+				e.printStackTrace();
+				Toast.makeText(MainScreen.getInstance(), "Unable to start preview: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+				MainScreen.getInstance().finish();
+			}
+		}
+		
+	};
+
+	// Note: there other onCaptureXxxx methods in this listener which we do not
+	// implement
+	public final static CameraCaptureSession.CaptureListener focusListener = new CameraCaptureSession.CaptureListener()
+	{
+		@Override
+		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
 		{
 			PluginManager.getInstance().onCaptureCompleted(result);
 			try
@@ -1281,13 +1311,12 @@ public class HALv3
 				}
 			}
 		}
-	}
+	};
 
-	@TargetApi(19)
-	public class captureListener extends CameraDevice.CaptureListener
+	public final static CameraCaptureSession.CaptureListener captureListener = new CameraCaptureSession.CaptureListener()
 	{
 		@Override
-		public void onCaptureCompleted(CameraDevice camera, CaptureRequest request, CaptureResult result)
+		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
 		{
 			PluginManager.getInstance().onCaptureCompleted(result);
 			try
@@ -1358,7 +1387,7 @@ public class HALv3
 				try
 				{
 					// HALv3.getInstance().camDevice.stopRepeating();
-					CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
 							HALv3.getInstance().previewRequestBuilder.build(), null, null);
 				} catch (CameraAccessException e)
 				{
@@ -1366,10 +1395,9 @@ public class HALv3
 				}
 			}
 		}
-	}
+	};
 
-	@TargetApi(19)
-	public class imageAvailableListener implements ImageReader.OnImageAvailableListener
+	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
 		@Override
 		public void onImageAvailable(ImageReader ir)
@@ -1393,7 +1421,7 @@ public class HALv3
 			// Image should be closed after we are done with it
 			im.close();
 		}
-	}
+	};
 	// ^^ HALv3 code
 	// --------------------------------------------------------------
 	// camera-related listeners

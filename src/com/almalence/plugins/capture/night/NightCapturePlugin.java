@@ -591,7 +591,7 @@ public class NightCapturePlugin extends PluginCapture
 			CameraController.getInstance().applyCameraParameters();
 		}
 
-		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+		int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
 				&& (!Build.MODEL.contains("Nexus")))
 		{
@@ -605,7 +605,7 @@ public class NightCapturePlugin extends PluginCapture
 
 		try
 		{
-			byte[] focusModes = CameraController.getInstance().getSupportedFocusModes();
+			int[] focusModes = CameraController.getInstance().getSupportedFocusModes();
 			if (focusModes != null)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -651,7 +651,7 @@ public class NightCapturePlugin extends PluginCapture
 
 		try
 		{
-			byte[] flashModes = CameraController.getInstance().getSupportedFlashModes();
+			int[] flashModes = CameraController.getInstance().getSupportedFlashModes();
 			if (flashModes != null)
 			{
 				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
@@ -1175,7 +1175,7 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
