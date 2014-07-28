@@ -145,32 +145,44 @@ public class HALv3
 		{
 			try
 			{
-				onCreateHALv3();
+//				onCreateHALv3();
 				Log.e(TAG, "try to manager.openCamera");
-				HALv3.getInstance().manager.openCamera(
-						CameraController.getInstance().cameraIdList[CameraController.CameraIndex],
-						HALv3.getInstance().new openListener(), null);
+				String cameraId = CameraController.getInstance().cameraIdList[CameraController.CameraIndex];
+				HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
+						.getInstance().cameraIdList[CameraController.CameraIndex]);
+				HALv3.getInstance().manager.openCamera(cameraId, openListener, null);
 			} catch (CameraAccessException e)
 			{
-				Log.e(TAG, "manager.openCamera failed: " + e.getMessage());
+				Log.e(TAG, "CameraAccessException manager.openCamera failed: " + e.getMessage());
 				e.printStackTrace();
+				MainScreen.getInstance().finish();
+			}
+			catch(IllegalArgumentException e)
+			{
+				Log.e(TAG, "IllegalArgumentException manager.openCamera failed: " + e.getMessage());
+				e.printStackTrace();
+				MainScreen.getInstance().finish();
+			}
+			catch(SecurityException e)
+			{
+				Log.e(TAG, "SecurityException manager.openCamera failed: " + e.getMessage());
+				e.printStackTrace();
+				MainScreen.getInstance().finish();
 			}
 		}
 
-		try
-		{
-			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
-					.getInstance().cameraIdList[CameraController.CameraIndex]);
-		} catch (CameraAccessException e)
-		{
-			Log.e(TAG, "getCameraCharacteristics failed: " + e.getMessage());
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
+//					.getInstance().cameraIdList[CameraController.CameraIndex]);
+//		} catch (CameraAccessException e)
+//		{
+//			Log.e(TAG, "getCameraCharacteristics failed: " + e.getMessage());
+//			e.printStackTrace();
+//			MainScreen.getInstance().finish();
+//		}
 
-		if (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT)
-			CameraController.CameraMirrored = true;
-		else
-			CameraController.CameraMirrored = false;
+		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
 		// Add an Availability Listener as Cameras become available or
 		// unavailable
@@ -226,7 +238,8 @@ public class HALv3
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
-		final Size[] cs = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);		
+		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);		
+		final Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -275,7 +288,8 @@ public class HALv3
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
-		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
+		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
 		for (Size sz : cs)
 			pictureSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
 	}
@@ -1144,8 +1158,7 @@ public class HALv3
 	// HALv3 ------------------------------------------------ camera-related
 	// listeners
 	@SuppressLint("Override")
-	@TargetApi(19)
-	public class openListener extends CameraDevice.StateListener
+	public final static CameraDevice.StateListener openListener = new CameraDevice.StateListener()
 	{
 		@Override
 		public void onDisconnected(CameraDevice arg0)
@@ -1187,7 +1200,7 @@ public class HALv3
 
 			// dumpCameraCharacteristics();
 		}
-	}
+	};
 	
 	
 	public final static CameraCaptureSession.StateListener captureSessionStateListener = new CameraCaptureSession.StateListener()
@@ -1271,7 +1284,7 @@ public class HALv3
 				Log.e(TAG, "Exception: " + e.getMessage());
 			}
 
-			// if(result.get(CaptureResult.REQUEST_ID) == iCaptureID)
+			// if(result.getSequenceId() == iCaptureID)
 			// {
 			// //Log.e(TAG, "Image metadata received. Capture timestamp = " +
 			// result.get(CaptureResult.SENSOR_TIMESTAMP));
@@ -1303,7 +1316,7 @@ public class HALv3
 				try
 				{
 					// HALv3.getInstance().camDevice.stopRepeating();
-					CameraController.iCaptureID = HALv3.getInstance().camDevice.capture(
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
 							HALv3.getInstance().previewRequestBuilder.build(), null, null);
 				} catch (CameraAccessException e)
 				{
@@ -1355,7 +1368,7 @@ public class HALv3
 				Log.e(TAG, "Exception: " + e.getMessage());
 			}
 
-			// if(result.get(CaptureResult.REQUEST_ID) == iCaptureID)
+			// if(result.getSequenceId() == iCaptureID)
 			// {
 			// //Log.e(TAG, "Image metadata received. Capture timestamp = " +
 			// result.get(CaptureResult.SENSOR_TIMESTAMP));

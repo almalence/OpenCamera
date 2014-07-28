@@ -1179,7 +1179,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID && frameNumber == 0)
+		if (result.getSequenceId() == requestID && frameNumber == 0)
 			PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
 	}
 

@@ -1,5 +1,6 @@
 package com.almalence.plugins.capture.video;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -136,9 +137,16 @@ public class DROVideoEngine
 						{
 							DROVideoEngine.this.paused = false;
 
-							DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-									DROVideoEngine.this.previewHeight, 24, 20000000, (MainScreen.getGUIManager()
-											.getDisplayOrientation()) % 360);
+							try
+							{
+								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
+										DROVideoEngine.this.previewHeight, 24, 20000000, (MainScreen.getGUIManager()
+												.getDisplayOrientation()) % 360);
+							} catch (IOException e)
+							{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
 

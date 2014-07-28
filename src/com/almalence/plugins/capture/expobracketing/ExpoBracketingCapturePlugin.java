@@ -612,7 +612,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.getSequenceId() == requestID)
 		{
 			if (evIdx[frame_num] == 0)
 				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);

@@ -300,7 +300,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);

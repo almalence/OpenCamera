@@ -133,7 +133,7 @@ public class EglEncoder
 	private volatile boolean		paused					= true;
 
 	public EglEncoder(final String outputPath, final int width, final int height, final int fps, final int bitrate,
-			int orientation)
+			int orientation) throws IOException
 	{
 		this.outputPath = outputPath;
 		this.mBitRate = bitrate;
@@ -383,8 +383,9 @@ public class EglEncoder
 
 	/**
 	 * Configures encoder and muxer state, and prepares the input Surface.
+	 * @throws IOException 
 	 */
-	private void prepareEncoder()
+	private void prepareEncoder() throws IOException
 	{
 		this.mBufferInfo = new MediaCodec.BufferInfo();
 

@@ -251,7 +251,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	#pragma omp parallel for num_threads(10)
+	//#pragma omp parallel for num_threads(10)
 	for (i=0; i<nFrames; ++i)
 	{
 		// decode from jpeg
