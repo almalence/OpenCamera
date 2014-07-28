@@ -217,7 +217,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		mDisplayWidth = display.getHeight();
 		mDisplayHeight = display.getWidth();
 
-		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientationOnStartProcessing = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
 		Log.e("GroupShot", "onStartProcessing layout orientation: " + orientation);
@@ -371,10 +371,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 					&& (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360
 					: mDisplayOrientationOnStartProcessing;
 			if (!isYUV)
-				mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, mCameraMirrored,
+				mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, false,
 						rotation);
 			else
-				mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, mCameraMirrored, rotation);
+				mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
 			getFaceRects();
 
 			sortFaceList();
@@ -573,16 +573,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		{
 			Matrix matrix = new Matrix();
 			matrix.postRotate(90);
-			if (mCameraMirrored)
-			{
-				if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-				{
-					matrix.preScale(1, -1);
-				} else
-				{
-					matrix.preScale(-1, 1);
-				}
-			}
+
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			PreviewBmpInitial = Bitmap.createBitmap(rotated);
@@ -1013,7 +1004,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
-		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(false));
+		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));

@@ -75,9 +75,9 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	private View			postProcessingView;
 
 	private long			sessionID		= 0;
-	private static int		mSensitivity	= 15;
+	private static int		mSensitivity	= 19;
 	private static int		mMinSize		= 1000;
-	private static String	mGhosting		= "0";
+	private static String	mGhosting		= "2";
 
 	private static int		mAngle			= 0;
 
@@ -120,7 +120,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
@@ -576,6 +576,10 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 	private void getPrefs()
 	{
+		/*
+		 Code commented out because there are no correspondent controls exposed to the user
+		 ToDo: either delete (more likely), or add these controls as advanced
+		 
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
 				.getBaseContext());
@@ -588,5 +592,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		mGhosting = prefs.getString("Ghosting", "2"); // Should we manage this
 														// parameter or it's
 														// final value of 2?
+		*/
 	}
 }

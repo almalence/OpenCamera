@@ -419,7 +419,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
-		preview.setZOrderMediaOverlay(true);
 		preview.setOnClickListener(this);
 		preview.setOnTouchListener(this);
 		preview.setKeepScreenOn(true);

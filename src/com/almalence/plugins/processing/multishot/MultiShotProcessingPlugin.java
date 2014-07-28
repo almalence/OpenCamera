@@ -144,10 +144,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
-
-		buttonObjectRemoval.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-		buttonGroupShot.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-		buttonSequence.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 	}
 
 	@Override
@@ -177,6 +173,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		groupShotProcessingPlugin.onStart();
 		sequenceProcessingPlugin.onStart();
 		objectRemovalProcessingPlugin.onStart();
+		
+		selectedPlugin = CANCELLED;
 	}
 
 	@Override
@@ -292,7 +290,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					}
 
 					PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i),
-							mYUVBufferList.get(i), file);
+							isYUV ? mYUVBufferList.get(i) : 0, file);
 				}
 			} catch (IOException e)
 			{
@@ -383,6 +381,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
+			if (selectedPlugin == CANCELLED)
+			{
+				return false;
+			}
+			
 			MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			mButtonsLayout.setVisibility(View.GONE);
 
