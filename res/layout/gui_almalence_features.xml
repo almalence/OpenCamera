@@ -6,21 +6,11 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"        		
 	>
-	<ImageView
-		android:id="@+id/featuresHeader"
-		android:src="@drawable/store_header"
-		android:background="@android:color/transparent"
-		android:layout_height="@dimen/headerStoreImageSize"
-		android:layout_width="match_parent"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-   		>
-	</ImageView>
 	<ScrollView 
 		    android:id="@+id/featuresScroll"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@+id/featuresHeader"
+		    android:layout_alignParentTop="true"
 		    android:layout_marginBottom="5dip"
 		    android:layout_above="@+id/storeTips"
 		    >

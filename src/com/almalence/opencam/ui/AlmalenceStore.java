@@ -208,13 +208,15 @@ public class AlmalenceStore
 
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);
-		pagerLayout.setVisibility(View.VISIBLE);
-		pagerLayout.bringToFront();
+				
+		final RelativeLayout pagerLayoutMain = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain));
+		pagerLayoutMain.setVisibility(View.VISIBLE);
+		pagerLayoutMain.bringToFront();
 	}
 
 	public void hideStore()
 	{
-		((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).setVisibility(View.INVISIBLE);
+		((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).setVisibility(View.INVISIBLE);
 
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);

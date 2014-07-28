@@ -6,16 +6,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"        		
 	>
-	<ImageView
-		android:id="@+id/storeHeader"
-		android:src="@drawable/store_header"
-		android:background="@android:color/transparent"
-		android:layout_height="@dimen/headerStoreImageSize"
-		android:layout_width="match_parent"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-   		>
-	</ImageView>
+
 	<GridView
 	    android:id="@+id/storeGrid"
 	    android:layout_width="match_parent" 
@@ -25,7 +16,7 @@
 	    android:verticalSpacing="8dp"
 	    android:adjustViewBounds="true"
 	    android:stretchMode="columnWidth"
-	    android:layout_below="@+id/storeHeader"
+	    android:layout_alignParentTop="true"
 	    android:paddingTop="5dp"
 	    android:paddingLeft="8dp"
  				android:paddingRight="8dp"

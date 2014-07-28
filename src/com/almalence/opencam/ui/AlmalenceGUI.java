@@ -751,7 +751,7 @@ public class AlmalenceGUI extends GUI implements
 			hideModeList();
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false,true);
-		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
+		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
 	}
 
@@ -5754,7 +5754,7 @@ public class AlmalenceGUI extends GUI implements
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
 			}
-			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
+			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			{
 				hideStore();
 				res++;

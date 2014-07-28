@@ -363,10 +363,28 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:id="@+id/viewPagerLayout"
+		android:id="@+id/viewPagerLayoutMain"
         android:background="@drawable/store_background"
         android:visibility="gone"
 		>
+		<ImageView
+			android:id="@+id/storeHeader"
+			android:src="@drawable/store_header"
+			android:background="@android:color/transparent"
+			android:layout_height="@dimen/headerStoreImageSize"
+			android:layout_width="match_parent"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"
+	   		>
+		</ImageView>
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/viewPagerLayout"
+	        android:background="@drawable/store_background"
+	        android:layout_below="@+id/storeHeader"
+			>
+	 	</RelativeLayout>
 	</RelativeLayout>
 	
 	<RelativeLayout
