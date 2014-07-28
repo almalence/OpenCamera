@@ -2097,7 +2097,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					pauseDRORecording();
 				}
-			}, 2500 - delta);
+			}, (long) ((2500 * 24 / captureRate) - delta));
 		} else
 		{
 			if (onPause)
@@ -2117,7 +2117,7 @@ public class VideoCapturePlugin extends PluginCapture
 					{
 						pauseRecording();
 					}
-				}, 2500 - delta);
+				}, (long) ((2500 * 24 / captureRate) - delta));
 			}
 		}
 	}
