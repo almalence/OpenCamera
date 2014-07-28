@@ -366,7 +366,13 @@ public class VideoCapturePlugin extends PluginCapture
 		isRecording = false;
 		prefs.edit().putBoolean("videorecording", false).commit();
 
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+		}
 
 		onPreferenceCreate((PreferenceFragment) null);
 
@@ -737,8 +743,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		CameraController.startCameraPreview();
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_PREVIEW_CHANGED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_PREVIEW_CHANGED);
 	}
 
 	@Override
@@ -1268,7 +1273,13 @@ public class VideoCapturePlugin extends PluginCapture
 					.putBoolean("videorecording", false).commit();
 
 			// change shutter icon
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+			}
 
 			onPreExportVideo();
 			Runnable runnable = new Runnable()
@@ -1428,7 +1439,13 @@ public class VideoCapturePlugin extends PluginCapture
 				.putBoolean("videorecording", false).commit();
 
 		// change shutter icon
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+		}
 
 		onPreExportVideo();
 		Runnable runnable = new Runnable()
@@ -1581,8 +1598,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 				MainScreen.getGUIManager().lockControls = false;
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance()
+						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			}
 
 			lastUseProfile = useProfile;
@@ -1688,8 +1705,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("Video", "On shutter pressed " + e.getMessage());
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
@@ -1726,8 +1742,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Toast.makeText(MainScreen.getInstance(), "Failed to start video recording", Toast.LENGTH_LONG).show();
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
@@ -1736,7 +1751,13 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		// change shutter icon
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP_WITH_PAUSE);
+		}
 
 		// inform the user that recording has started
 		isRecording = true;
@@ -1979,11 +2000,23 @@ public class VideoCapturePlugin extends PluginCapture
 		// show recording shutter
 		if (showRecording)
 		{
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP_WITH_PAUSE);
+			}
 			showRecording = false;
 		} else
 		{
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING_WITH_PAUSE);
+			}
 			showRecording = true;
 		}
 	}
@@ -2097,7 +2130,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					pauseDRORecording();
 				}
-			}, (long) ((2500 * 24 / captureRate) - delta));
+			}, 2500 - delta);
 		} else
 		{
 			if (onPause)
@@ -2117,7 +2150,7 @@ public class VideoCapturePlugin extends PluginCapture
 					{
 						pauseRecording();
 					}
-				}, (long) ((2500 * 24 / captureRate) - delta));
+				}, 2500 - delta);
 			}
 		}
 	}
@@ -2378,9 +2411,12 @@ public class VideoCapturePlugin extends PluginCapture
 					editor.commit();
 
 					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
+
+					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				} else
 				{
 					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
+					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
 				}
 
 			}
@@ -2417,8 +2453,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.i("View capture still image", "StartPreview fail");
 		}
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-				String.valueOf(SessionID));
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 		takingAlready = false;
 	}
@@ -2454,8 +2489,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		CameraController.startCameraPreview();
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-				String.valueOf(SessionID));
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 		takingAlready = false;
 	}
