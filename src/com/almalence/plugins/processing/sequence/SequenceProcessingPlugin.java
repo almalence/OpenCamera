@@ -72,7 +72,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private View						postProcessingView;
 
 	private long						sessionID		= 0;
-	private static int					mSensitivity	= 15;
+	private static int					mSensitivity	= 22;
 	private static int					mMinSize		= 1000;
 	private static String				mGhosting		= "0";
 
@@ -544,12 +544,17 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	private void getPrefs()
 	{
+		/*
+		 Code commented out because there are no correspondent controls exposed to the user
+		 ToDo: either delete (more likely), or add these controls as advanced
+		 
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
 				.getBaseContext());
-		mSensitivity = prefs.getInt("Sensitivity", 19);
+		mSensitivity = prefs.getInt("Sensitivity", 22); // 19);
 		mMinSize = prefs.getInt("MinSize", 1000);
-		mGhosting = prefs.getString("Ghosting", "2");
+		mGhosting = prefs.getString("Ghosting", "0");
+		*/
 	}
 	/************************************************
 	 * POST PROCESSING END
