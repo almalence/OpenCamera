@@ -1299,7 +1299,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				rightText.setText(maxString);
 
 				mEV = initValue;
-				CameraController.getInstance().setCameraExposureCompensation(mEV);
+//				CameraController.getInstance().setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -1346,7 +1346,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraSceneMode(mSceneMode);
+//				CameraController.getInstance().setCameraSceneMode(mSceneMode);
 			} else
 			{
 				mSceneModeSupported = false;
@@ -1394,7 +1394,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraWhiteBalance(mWB);
+//				CameraController.getInstance().setCameraWhiteBalance(mWB);
 			} else
 			{
 				mWBSupported = false;
@@ -1524,9 +1524,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					else
 						afMode = supported_focus[0];
 
-					CameraController.getInstance().setCameraFocusMode(afMode);
-				} else
-					CameraController.getInstance().setCameraFocusMode(mFocusMode);
+//					CameraController.getInstance().setCameraFocusMode(afMode);
+				}
+//				else
+//					CameraController.getInstance().setCameraFocusMode(mFocusMode);
 			} else
 			{
 				mFocusModeSupported = false;
@@ -1579,7 +1580,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraFlashMode(mFlashMode);
+//				CameraController.getInstance().setCameraFlashMode(mFlashMode);
 			} else
 			{
 				mFlashModeSupported = false;
@@ -1638,7 +1639,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int icon_id = ICONS_ISO.get(initValue);
 					but.setImageResource(icon_id);
 				}
-				CameraController.getInstance().setCameraISO(mISO);
+//				CameraController.getInstance().setCameraISO(mISO);
 			} else
 			{
 				mISOSupported = false;
@@ -1685,7 +1686,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
+//				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
 			} else
 			{
 				mMeteringAreasSupported = false;

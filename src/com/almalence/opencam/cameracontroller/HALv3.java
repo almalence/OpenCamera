@@ -220,7 +220,7 @@ public class HALv3
 		backgroundThread.start();
 		
 		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
-				imageAvailableListener,  new Handler(backgroundThread.getLooper()));
+				imageAvailableListener,  null);
 
 		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener,
 				 new Handler(backgroundThread.getLooper()));
@@ -635,7 +635,7 @@ public class HALv3
 
 	public static void setCameraExposureCompensationHALv3(int iEV)
 	{
-		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null && HALv3.getInstance().mCaptureSession != null)
 		{
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
 			try
@@ -1215,6 +1215,7 @@ public class HALv3
 		@Override
 		public void onConfigured(final CameraCaptureSession session)
 		{
+			Log.e(TAG, "CaptureSession configured SUCCESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			HALv3.getInstance().mCaptureSession = session;
 			
 			try
@@ -1228,6 +1229,8 @@ public class HALv3
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 				session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureListener, null);
+				
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 			}
 			catch (final Exception e)
 			{

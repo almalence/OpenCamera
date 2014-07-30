@@ -1185,12 +1185,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
 			CameraController.getInstance().allocatePreviewBuffer(sz.width * sz.height
 			                                                      * ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters().getPreviewFormat()) / 8);
+			
+			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
+			
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 		}
 
-		if(!CameraController.isUseHALv3())
-			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-		
+	}
+	
+	
+	private void onCameraConfigured()
+	{
 		PluginManager.getInstance().setCameraPictureSize();
 		PluginManager.getInstance().setupCameraParameters();
 
@@ -1270,7 +1276,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			public void onTick(long millisUntilFinished) {
 				//Not used
 			}
-		}.start();
+		}.start();	
 	}
 	
 	
@@ -1302,7 +1308,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try {
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
 			HALv3.getCamera2().createCaptureSession(sfl,
-					HALv3.getInstance().captureSessionStateListener,
+					HALv3.captureSessionStateListener,
 					null);
 		} catch (Exception e)	{
 			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
@@ -1614,13 +1620,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				this.setResult(RESULT_OK);
 				this.finish();
 				break;	
+			case PluginManager.MSG_CAMERA_CONFIGURED:
+				onCameraConfigured();
+				break;
 			case PluginManager.MSG_CAMERA_READY:
 			{
 				configureCamera();
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();
 			}	break;
-			case PluginManager.MSG_CAMERA_OPENED:
+			case PluginManager.MSG_CAMERA_OPENED: break;
 			case PluginManager.MSG_SURFACE_READY:
 			{
 				// if both surface is created and camera device is opened
