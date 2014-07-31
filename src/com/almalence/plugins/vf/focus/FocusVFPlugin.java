@@ -27,6 +27,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -37,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
+
 
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
@@ -179,7 +181,14 @@ public class FocusVFPlugin extends PluginViewfinder
 		resetTouchFocus();
 
 		mPreferences = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		mDefaultFocusMode = CameraParameters.AF_MODE_AUTO;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+		{
+			mDefaultFocusMode = CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+		}
+		else
+		{
+			mDefaultFocusMode = CameraParameters.AF_MODE_AUTO;
+		}
 	}
 
 	@Override
