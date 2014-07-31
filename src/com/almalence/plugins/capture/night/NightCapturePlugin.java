@@ -588,7 +588,7 @@ public class NightCapturePlugin extends PluginCapture
 			CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 			CameraController.getInstance().setJpegQuality(100);
 
-			CameraController.getInstance().applyCameraParameters();
+//			CameraController.getInstance().applyCameraParameters();
 		}
 
 		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();

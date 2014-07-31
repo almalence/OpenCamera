@@ -52,7 +52,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -575,12 +574,6 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 		timeLapseButton.invalidate();
 		timeLapseButton.requestLayout();
-
-		if (MainScreen.isDeviceModelProhibited())
-		{
-			takePictureButton.setVisibility(View.GONE);
-			displayTakePicture = false;
-		}
 
 		if (this.modeDRO())
 		{
@@ -1388,8 +1381,7 @@ public class VideoCapturePlugin extends PluginCapture
 				public void onFinish()
 				{
 					shutterOff = false;
-					if (!MainScreen.isDeviceModelProhibited())
-						MainScreen.getGUIManager().lockControls = false;
+					MainScreen.getGUIManager().lockControls = false;
 				}
 			}.start();
 		} else
@@ -1779,8 +1771,7 @@ public class VideoCapturePlugin extends PluginCapture
 			public void onFinish()
 			{
 				shutterOff = false;
-				if (!MainScreen.isDeviceModelProhibited())
-					MainScreen.getGUIManager().lockControls = false;
+				MainScreen.getGUIManager().lockControls = false;
 			}
 		}.start();
 	}

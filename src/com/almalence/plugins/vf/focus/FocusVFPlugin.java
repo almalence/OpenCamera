@@ -601,9 +601,6 @@ public class FocusVFPlugin extends PluginViewfinder
 						"defaultModeName", null);
 				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
 						.getBoolean("videorecording", false);
-				if (!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording && MainScreen
-						.isDeviceModelProhibited()))
-					CameraController.cancelAutoFocus();
 			}
 
 			if (fm != preferenceFocusMode)
@@ -740,11 +737,6 @@ public class FocusVFPlugin extends PluginViewfinder
 					"defaultModeName", null);
 			boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
 					.getBoolean("videorecording", false);
-			if (!(modeName != null && modeName.compareTo("video") == 0 && !isVideoRecording && MainScreen
-					.isDeviceModelProhibited()))
-			{
-				CameraController.getInstance().setCameraFocusAreas(null);
-			}
 		}
 	}
 
