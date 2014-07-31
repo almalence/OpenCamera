@@ -144,6 +144,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
+		
+		mButtonsLayout.setVisibility(View.GONE);
 	}
 
 	@Override
