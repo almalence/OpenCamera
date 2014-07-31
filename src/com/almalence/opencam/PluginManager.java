@@ -201,6 +201,7 @@ public class PluginManager implements PluginManagerInterface
 
 	public static final int				MSG_CAMERA_CONFIGURED					= 160;
 	public static final int				MSG_CAMERA_READY						= 161;
+	public static final int				MSG_CAMERA_STOPED						= 162;
 
 	// For HALv3 code version
 	public static final int				MSG_CAMERA_OPENED						= 16;

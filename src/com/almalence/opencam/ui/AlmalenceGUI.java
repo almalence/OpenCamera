@@ -1299,7 +1299,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				rightText.setText(maxString);
 
 				mEV = initValue;
-//				CameraController.getInstance().setCameraExposureCompensation(mEV);
+				CameraController.getInstance().setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -1315,9 +1315,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int scene_name : supported_scene)
 			{
-				if (scene_name != CameraParameters.SCENE_MODE_NIGHT)
-					activeScene.add(sceneModeButtons.get(Integer.valueOf(scene_name)));
-				activeSceneNames.add(Integer.valueOf(scene_name));
+				if(sceneModeButtons.containsKey(scene_name))
+				{
+					if (scene_name != CameraParameters.SCENE_MODE_NIGHT)
+						activeScene.add(sceneModeButtons.get(Integer.valueOf(scene_name)));
+					activeSceneNames.add(Integer.valueOf(scene_name));
+				}
 			}
 
 			if (!activeSceneNames.isEmpty())
@@ -1346,7 +1349,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-//				CameraController.getInstance().setCameraSceneMode(mSceneMode);
+				CameraController.getInstance().setCameraSceneMode(mSceneMode);
 			} else
 			{
 				mSceneModeSupported = false;
@@ -1364,8 +1367,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int wb_name : supported_wb)
 			{
-				activeWB.add(wbModeButtons.get(Integer.valueOf(wb_name)));
-				activeWBNames.add(Integer.valueOf(wb_name));
+				if(wbModeButtons.containsKey(wb_name))
+				{
+					activeWB.add(wbModeButtons.get(Integer.valueOf(wb_name)));
+					activeWBNames.add(Integer.valueOf(wb_name));
+				}
 			}
 
 			if (!activeWBNames.isEmpty())
@@ -1394,7 +1400,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-//				CameraController.getInstance().setCameraWhiteBalance(mWB);
+				CameraController.getInstance().setCameraWhiteBalance(mWB);
 			} else
 			{
 				mWBSupported = false;
@@ -1412,8 +1418,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int focus_name : supported_focus)
 			{
-				activeFocus.add(focusModeButtons.get(Integer.valueOf(focus_name)));
-				activeFocusNames.add(Integer.valueOf(focus_name));
+				if(focusModeButtons.containsKey(focus_name))
+				{
+					activeFocus.add(focusModeButtons.get(Integer.valueOf(focus_name)));
+					activeFocusNames.add(Integer.valueOf(focus_name));
+				}
 			}
 
 			if (!activeFocusNames.isEmpty())
@@ -1524,10 +1533,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					else
 						afMode = supported_focus[0];
 
-//					CameraController.getInstance().setCameraFocusMode(afMode);
+					CameraController.getInstance().setCameraFocusMode(afMode);
 				}
-//				else
-//					CameraController.getInstance().setCameraFocusMode(mFocusMode);
+				else
+					CameraController.getInstance().setCameraFocusMode(mFocusMode);
 			} else
 			{
 				mFocusModeSupported = false;
@@ -1549,8 +1558,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int flash_name : supported_flash)
 			{
-				activeFlash.add(flashModeButtons.get(Integer.valueOf(flash_name)));
-				activeFlashNames.add(Integer.valueOf(flash_name));
+				if(flashModeButtons.containsKey(flash_name))
+				{
+					activeFlash.add(flashModeButtons.get(Integer.valueOf(flash_name)));
+					activeFlashNames.add(Integer.valueOf(flash_name));
+				}
 			}
 
 			if (!activeFlashNames.isEmpty())
@@ -1580,7 +1592,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-//				CameraController.getInstance().setCameraFlashMode(mFlashMode);
+				CameraController.getInstance().setCameraFlashMode(mFlashMode);
 			} else
 			{
 				mFlashModeSupported = false;
@@ -1600,8 +1612,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (supported_iso != null)
 				for (int iso_name : supported_iso)
 				{
-					activeISO.add(isoButtons.get(Integer.valueOf(iso_name)));
-					activeISONames.add(Integer.valueOf(iso_name));
+					if(isoButtons.containsKey(iso_name))
+					{
+						activeISO.add(isoButtons.get(Integer.valueOf(iso_name)));
+						activeISONames.add(Integer.valueOf(iso_name));
+					}
 				}
 			else
 			{
@@ -1639,7 +1654,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int icon_id = ICONS_ISO.get(initValue);
 					but.setImageResource(icon_id);
 				}
-//				CameraController.getInstance().setCameraISO(mISO);
+				CameraController.getInstance().setCameraISO(mISO);
 			} else
 			{
 				mISOSupported = false;
@@ -1660,8 +1675,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			while (it.hasNext())
 			{
 				int metering_name = it.next();
-				activeMetering.add(meteringModeButtons.get(metering_name));
-				activeMeteringNames.add(metering_name);
+				if(meteringModeButtons.containsKey(metering_name))
+				{
+					activeMetering.add(meteringModeButtons.get(metering_name));
+					activeMeteringNames.add(metering_name);
+				}
 			}
 
 			if (!activeMeteringNames.isEmpty())
@@ -1686,7 +1704,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-//				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
+				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
 			} else
 			{
 				mMeteringAreasSupported = false;

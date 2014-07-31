@@ -210,6 +210,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private static boolean isCreating = false;
 	private static boolean mApplicationStarted = false;
+	private static boolean mCameraStarted = false;
 	
 	public static final String EXTRA_ITEM = "WidgetModeID"; //Clicked mode id from widget.
 	public static final String EXTRA_TORCH = "WidgetTorchMode";
@@ -1621,6 +1622,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				this.finish();
 				break;	
 			case PluginManager.MSG_CAMERA_CONFIGURED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_CONFIGURED");
 				onCameraConfigured();
 				break;
 			case PluginManager.MSG_CAMERA_READY:
@@ -1629,19 +1631,27 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();
 			}	break;
-			case PluginManager.MSG_CAMERA_OPENED: break;
+			case PluginManager.MSG_CAMERA_OPENED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED");
+				if(mCameraStarted)
+					break;
 			case PluginManager.MSG_SURFACE_READY:
 			{
 				// if both surface is created and camera device is opened
 				// - ready to set up preview and other things
 				if (surfaceCreated && (HALv3.getCamera2() != null))
 				{
-					Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
+					Log.e("MainScreen", "case PluginManager.MSG_SURFACE_READY");
 					configureCamera();
 					PluginManager.getInstance().onGUICreate();
 					MainScreen.getGUIManager().onGUICreate();
+					mCameraStarted = true;
 				}
-			}	break;			
+			}	break;
+			case PluginManager.MSG_CAMERA_STOPED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_STOPED");
+				mCameraStarted = false;
+				break;
 			default:
 			PluginManager.getInstance().handleMessage(msg); 
 			break;
