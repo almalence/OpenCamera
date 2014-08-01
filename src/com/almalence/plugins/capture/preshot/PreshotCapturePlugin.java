@@ -301,6 +301,10 @@ public class PreshotCapturePlugin extends PluginCapture
 	public static int	imW			= 0;
 	public static int	imH			= 0;
 
+	private long t1 = 0;
+	private int cnt = 0;
+	private double fpsInterval = 0;
+	
 	// starts buffering to native buffer
 	void StartBuffering()
 	{
@@ -310,7 +314,6 @@ public class PreshotCapturePlugin extends PluginCapture
 
 		MainScreen.getInstance().muteShutter(true);
 
-		isBuffering = true;
 		if (!isSlowMode)
 		{
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
@@ -334,6 +337,9 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 			}
 			PluginManager.getInstance().addToSharedMem("IsSlowMode" + SessionID, "false");
+			cnt = frmCnt % (preview_fps / Integer.parseInt(FPS))*10;
+			fpsInterval = 1000.0/Integer.parseInt(FPS);
+			t1 = System.currentTimeMillis();
 		} else
 		{
 			// full size code
@@ -355,11 +361,11 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			StartCaptureSequence();
 		}
+		isBuffering = true;
 	}
 
 	void StopBuffering()
 	{
-
 		MainScreen.getGUIManager().stopCaptureIndication();
 
 		MainScreen.getInstance().muteShutter(false);
@@ -389,10 +395,15 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (isSlowMode || !isBuffering)
 			return;
 
-		if (0 == frmCnt % (preview_fps / Integer.parseInt(FPS)))
+		long t2 = System.currentTimeMillis();
+		long timelapse = t2-t1;
+		
+		if (0 == cnt || timelapse>fpsInterval)
 		{
+			t1 = System.currentTimeMillis();
 			System.gc();
 
+			//??? should it be 0? frmCnt seems never to be 0! 
 			if (frmCnt == 0)
 				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
 
@@ -408,8 +419,12 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (isSlowMode || !isBuffering)
 			return;
 
-		if (0 == frmCnt % (preview_fps / Integer.parseInt(FPS)))
+		long t2 = System.currentTimeMillis();
+		long timelapse = t2-t1;
+		
+		if (0 == cnt || timelapse>fpsInterval)
 		{
+			t1 = System.currentTimeMillis();
 			System.gc();
 
 			if (frmCnt == 0)
