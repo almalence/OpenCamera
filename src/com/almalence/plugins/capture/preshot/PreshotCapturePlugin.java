@@ -25,6 +25,7 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.media.Image;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -314,6 +315,8 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getInstance().getPreviewFrameRate();
+			if (Build.MODEL.contains("HTC One"))
+				preview_fps = 30;
 
 			imW = MainScreen.getPreviewWidth();
 			imH = MainScreen.getPreviewHeight();

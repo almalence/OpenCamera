@@ -1068,7 +1068,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 
-				selfTimer.setOrientation();
+				if (selfTimer!=null)
+					selfTimer.setOrientation();
 			}
 		};
 	}
