@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.almalence.SwapHeap;
@@ -94,9 +95,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
 
-		RotateImageView buttonObjectRemoval = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
-		RotateImageView buttonGroupShot = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonGroupShot);
-		RotateImageView buttonSequence = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonSequence);
+		LinearLayout buttonObjectRemoval = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
+		LinearLayout buttonGroupShot = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonGroupShot);
+		LinearLayout buttonSequence = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonSequence);
 
 		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.blockingLayout);
 
@@ -275,6 +276,17 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 				for (int i = 0; i < imagesAmount; ++i)
 				{
+					if (selectedPlugin != WAITING)
+					{
+						MainScreen.getInstance().runOnUiThread(new Runnable()
+						{
+							public void run()
+							{
+								MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+							}
+						});
+					}
+					
 					String index = String.format("_%02d", i);
 					File file = new File(saveDir, fileFormat + index + ".jpg");
 
