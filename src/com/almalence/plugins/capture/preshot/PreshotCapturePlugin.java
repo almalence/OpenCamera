@@ -398,7 +398,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		frmCnt++;
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{
@@ -514,7 +514,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onImageAvailable(Image im)
 	{

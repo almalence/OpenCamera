@@ -243,8 +243,13 @@ public abstract class Plugin
 	public void onImageAvailable(Image im)
 	{
 	}
+	
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	{
+		
+	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public void onCaptureCompleted(CaptureResult result)
 	{
 	}

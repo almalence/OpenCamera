@@ -25,12 +25,15 @@ package com.almalence.opencam.cameracontroller;
 //-+- -->
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
@@ -41,8 +44,10 @@ import com.almalence.opencam.R;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
+import android.media.Image;
 import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -807,7 +812,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public static boolean isCameraCreatedHALv3()
 	{
 		return HALv3.getInstance().camDevice != null;
@@ -2145,6 +2150,122 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
+
+
+
+	// ===============  Captured Image data manipulation ======================
+	public static int getImageFrame(Image im)
+	{
+		int frame = 0;
+
+		if (im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
+			{
+				Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
+				return -1;
+			}
+
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			// So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+
+			if (status != 0)
+				Log.e(TAG, "Error while cropping: " + status);
+
+			frame = YuvImage.GetFrame(0);
+		} else if (im.getFormat() == ImageFormat.JPEG)
+		{
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+
+			int frame_len = jpeg.limit();
+			byte[] jpegByteArray = new byte[frame_len];
+			jpeg.get(jpegByteArray, 0, frame_len);
+
+			frame = SwapHeap.SwapToHeap(jpegByteArray);
+		}
+		
+		return frame;
+	}
+	
+	// ===============  Captured Image data manipulation ======================
+	public static byte[] getImageFrameData(Image im)
+	{
+		byte[] frameData = new byte[0];
+
+		if (im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			ByteBuffer Y = im.getPlanes()[0].getBuffer();
+			ByteBuffer U = im.getPlanes()[1].getBuffer();
+			ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
+			{
+				Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
+				return frameData;
+			}
+
+			// Note: android documentation guarantee that:
+			// - Y pixel stride is always 1
+			// - U and V strides are the same
+			// So, passing all these parameters is a bit overkill
+			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
+					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
+					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+
+			if (status != 0)
+				Log.e(TAG, "Error while cropping: " + status);
+
+			frameData = YuvImage.GetByteFrame(0);
+			
+		} else if (im.getFormat() == ImageFormat.JPEG)
+		{
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+
+			int frame_len = jpeg.limit();
+			frameData = new byte[frame_len];
+			jpeg.get(frameData, 0, frame_len);
+		}
+		
+		return frameData;
+	}
+	
+	public static boolean isYUVImage(Image im)
+	{
+		return im.getFormat() == ImageFormat.YUV_420_888;
+	}
+	
+	public static int getImageLenght(Image im)
+	{
+		if (im.getFormat() == ImageFormat.YUV_420_888)
+		{
+			return MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
+					* ((MainScreen.getImageHeight() + 1) / 2);
+		}
+		else if (im.getFormat() == ImageFormat.JPEG)
+		{
+			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+
+			return jpeg.limit();
+		}
+		
+		return 0;
+	}
+	
+	// ^^^^^^^^^^^^^^^^^^^^^  Image data manipulation  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	
+	
+	
 
 	public class Size
 	{

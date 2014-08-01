@@ -965,7 +965,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{
@@ -1187,7 +1187,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onImageAvailable(Image im)
 	{
@@ -1228,7 +1228,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{

@@ -492,121 +492,76 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	}
 
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		int frame = 0;
-		int frame_len = 0;
-		boolean isYUV = false;
-
-		int n = evIdx[frame_num];
-		if (cm7_crap && (total_frames == 3))
-		{
-			if (frame_num == 0)
-				n = evIdx[0];
-			else if (frame_num == 1)
-				n = evIdx[2];
-			else
-				n = evIdx[1];
-		}
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			Log.e("CapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			compressed_frame[n] = YuvImage.GetFrame(0);
-			compressed_frame_len[n] = MainScreen.getImageWidth() * MainScreen.getImageHeight()
-					+ MainScreen.getImageWidth() * ((MainScreen.getImageHeight() + 1) / 2);
-			isYUV = true;
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			Log.e("CapturePlugin", "JPEG Image received");
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			compressed_frame[n] = SwapHeap.SwapToHeap(jpegByteArray);
-			compressed_frame_len[n] = frame_len;
-
-			if (n == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-		}
-
-		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
-		PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
-				String.valueOf(compressed_frame_len[n]));
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-
-		Log.e("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
-
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			takingAlready = false;
-			inCapture = false;
-			previewWorking = true;
-			if (cdt != null)
-			{
-				cdt.cancel();
-				cdt = null;
-			}
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			CameraController.getInstance().resetExposureCompensation();
-			return;
-		}
-
-		if (++frame_num >= total_frames)
-		{
-			takingAlready = false;
-			inCapture = false;
-			previewWorking = true;
-			if (cdt != null)
-			{
-				cdt.cancel();
-				cdt = null;
-			}
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			CameraController.getInstance().resetExposureCompensation();
-		}
-	}
+//	@TargetApi(21)
+//	@Override
+//	public void onImageAvailable(Image im)
+//	{
+//		int n = evIdx[frame_num];
+//		if (cm7_crap && (total_frames == 3))
+//		{
+//			if (frame_num == 0)
+//				n = evIdx[0];
+//			else if (frame_num == 1)
+//				n = evIdx[2];
+//			else
+//				n = evIdx[1];
+//		}
+//		
+//		compressed_frame[n] = CameraController.getImageFrame(im, SessionID, n == 0);
+//		compressed_frame_len[n] = CameraController.getImageLenght(im);
+//		boolean isYUV = CameraController.isYUVImage(im);
+//
+//		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
+//		PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
+//				String.valueOf(compressed_frame_len[n]));
+//		PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
+//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+//		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
+//				String.valueOf(CameraController.isFrontCamera()));
+//
+//		Log.e("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
+//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
+//
+//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+//
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			takingAlready = false;
+//			inCapture = false;
+//			previewWorking = true;
+//			if (cdt != null)
+//			{
+//				cdt.cancel();
+//				cdt = null;
+//			}
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			CameraController.getInstance().resetExposureCompensation();
+//			return;
+//		}
+//
+//		if (++frame_num >= total_frames)
+//		{
+//			takingAlready = false;
+//			inCapture = false;
+//			previewWorking = true;
+//			if (cdt != null)
+//			{
+//				cdt.cancel();
+//				cdt = null;
+//			}
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			CameraController.getInstance().resetExposureCompensation();
+//		}
+//	}
 
 	@TargetApi(21)
 	@Override
@@ -863,7 +818,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{

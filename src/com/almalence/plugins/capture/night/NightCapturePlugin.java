@@ -1092,88 +1092,44 @@ public class NightCapturePlugin extends PluginCapture
 				PluginManager.MSG_NEXT_FRAME);
 	}
 
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		int frame_len = 0;
-		boolean isYUV = false;
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			Log.e("CapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			compressed_frame[frameNumber] = YuvImage.GetFrame(0);
-			compressed_frame_len[frameNumber] = MainScreen.getImageWidth() * MainScreen.getImageHeight()
-					+ MainScreen.getImageWidth() * ((MainScreen.getImageHeight() + 1) / 2);
-			isYUV = true;
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			Log.e("NightCapturePlugin", "JPEG Image received");
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			compressed_frame[frameNumber] = SwapHeap.SwapToHeap(jpegByteArray);
-			compressed_frame_len[frameNumber] = frame_len;
-
-			if (frameNumber == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-		}
-
-		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame[frameNumber]));
-		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame[frameNumber]));
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-				String.valueOf(frameNumber + 1));
-
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-		String message = MainScreen.getInstance().getResources().getString(R.string.capturing);
-		message += " ";
-		message += frameNumber + 1 + "/";
-		message += total_frames;
-		capturingDialog.setText(message);
-		capturingDialog.show();
-
-		if (++frameNumber == total_frames)
-		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			takingAlready = false;
-			inCapture = false;
-		}
-	}
+//	@TargetApi(21)
+//	@Override
+//	public void onImageAvailable(Image im)
+//	{
+//		compressed_frame[frameNumber] = CameraController.getImageFrame(im, SessionID, frameNumber == 0);
+//		compressed_frame_len[frameNumber] = CameraController.getImageLenght(im);
+//		boolean isYUV = CameraController.isYUVImage(im);
+//
+//		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
+//				String.valueOf(compressed_frame[frameNumber]));
+//		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
+//				String.valueOf(compressed_frame_len[frameNumber]));
+//		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
+//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+//		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
+//				String.valueOf(CameraController.isFrontCamera()));
+//
+//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+//				String.valueOf(frameNumber + 1));
+//
+//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+//
+//		String message = MainScreen.getInstance().getResources().getString(R.string.capturing);
+//		message += " ";
+//		message += frameNumber + 1 + "/";
+//		message += total_frames;
+//		capturingDialog.setText(message);
+//		capturingDialog.show();
+//
+//		if (++frameNumber == total_frames)
+//		{
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			takingAlready = false;
+//			inCapture = false;
+//		}
+//	}
 
 	@TargetApi(21)
 	@Override
@@ -1300,7 +1256,7 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onPreviewAvailable(Image im)
 	{

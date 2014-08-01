@@ -1278,7 +1278,12 @@ public class PluginManager implements PluginManagerInterface
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte, paramCamera);
+		{
+			int frame_len = paramArrayOfByte.length;
+			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+			pluginList.get(activeCapture).onImageTaken(frame, paramArrayOfByte, frame_len, false);
+		}
+//			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte, paramCamera);
 	}
 
 	public void onImageAvailable(Image im)
@@ -1286,8 +1291,14 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onImageAvailable(im);
 	}
+	
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	{
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, isYUV);
+	}
 
-//	@TargetApi(21)
+	@TargetApi(21)
 	public void onCaptureCompleted(TotalCaptureResult result)
 	{
 		if (null != pluginList.get(activeCapture))
@@ -1693,7 +1704,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	@SuppressLint("NewApi")
-	@TargetApi(19)
+	@TargetApi(21)
 	public boolean addToSharedMem_ExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{
 		String exposure_time = String.valueOf(result.get(CaptureResult.SENSOR_EXPOSURE_TIME));

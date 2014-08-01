@@ -2423,7 +2423,7 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onImageAvailable(Image im)
 	{

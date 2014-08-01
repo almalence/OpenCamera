@@ -782,7 +782,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		return goodPlace;
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public boolean onImageAvailable(Image im)
 	{
 		final boolean goodPlace;

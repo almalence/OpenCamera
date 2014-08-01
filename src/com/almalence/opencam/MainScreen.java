@@ -582,7 +582,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz.guiManager;
 	}
 	
-	@TargetApi(19)
+	@TargetApi(21)
 	public static void createImageReaders()
 	{
 		//ImageReader for preview frames in YUV format
@@ -857,7 +857,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			stopImageReaders();
 	}
 	
-	@TargetApi(19)
+	@TargetApi(21)
 	private void stopImageReaders()
 	{
 		// IamgeReader should be closed
@@ -1283,7 +1283,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	
 	@SuppressLint("NewApi")
-	@TargetApi(19)
+	@TargetApi(21)
 	private void configureHALv3Camera(boolean captureYUVFrames)
 	{
 		List<Surface> sfl = new ArrayList<Surface>();
@@ -1396,7 +1396,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return mCameraSurface;
 	}
 	
-	@TargetApi(19)
+	@TargetApi(21)
 	public Surface getPreviewYUVSurface()
 	{
 		return mImageReaderPreviewYUV.getSurface();

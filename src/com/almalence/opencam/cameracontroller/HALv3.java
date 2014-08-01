@@ -24,9 +24,12 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
@@ -65,7 +68,7 @@ import android.widget.Toast;
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
-@TargetApi(19)
+@TargetApi(21)
 public class HALv3
 {
 	private static final String				TAG				= "HALv3Controller";
@@ -1442,7 +1445,63 @@ public class HALv3
 			else
 			{
 				Log.e("HALv3", "onImageAvailable");
-				PluginManager.getInstance().onImageAvailable(im);
+				//PluginManager.getInstance().onImageAvailable(im);
+//				int frame = CameraController.getImageFrame(im);
+//				byte[] frameData = CameraController.getImageFrameData(im);
+//				int frame_len = CameraController.getImageLenght(im);
+//				boolean isYUV = CameraController.isYUVImage(im);
+				
+				
+				int frame = 0;
+				byte[] frameData = new byte[0];
+				int frame_len = 0;
+				boolean isYUV = false;
+
+				if (im.getFormat() == ImageFormat.YUV_420_888)
+				{
+					ByteBuffer Y = im.getPlanes()[0].getBuffer();
+					ByteBuffer U = im.getPlanes()[1].getBuffer();
+					ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+					if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
+					{
+						Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
+						return;
+					}
+
+					// Note: android documentation guarantee that:
+					// - Y pixel stride is always 1
+					// - U and V strides are the same
+					// So, passing all these parameters is a bit overkill
+					int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+							im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
+							im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
+							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+
+					if (status != 0)
+						Log.e(TAG, "Error while cropping: " + status);
+
+					frameData = YuvImage.GetByteFrame(0);
+					frame = YuvImage.GetFrame(0);
+					
+					
+					frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
+								* ((MainScreen.getImageHeight() + 1) / 2);
+					
+					isYUV = true;
+					
+				} else if (im.getFormat() == ImageFormat.JPEG)
+				{
+					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+
+					frame_len = jpeg.limit();
+					frameData = new byte[frame_len];
+					jpeg.get(frameData, 0, frame_len);
+
+					frame = SwapHeap.SwapToHeap(frameData);
+				}
+				
+				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);
 			}
 
 			// Image should be closed after we are done with it

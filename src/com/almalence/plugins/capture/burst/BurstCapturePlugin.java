@@ -270,102 +270,58 @@ public class BurstCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		imagesTaken++;
+//	@TargetApi(21)
+//	@Override
+//	public void onImageAvailable(Image im)
+//	{
+//		imagesTaken++;
+//
+//		String frameName = "frame" + imagesTaken;
+//		String frameLengthName = "framelen" + imagesTaken;
+//
+//		int frame = CameraController.getImageFrame(im, SessionID, imagesTaken == 1);
+//		int frame_len = CameraController.getImageLenght(im);
+//		boolean isYUV = CameraController.isYUVImage(im);
+//
+//		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
+//		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
+//		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
+//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+//		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
+//				String.valueOf(CameraController.isFrontCamera()));
+//
+//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+//
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.i("Burst", "StartPreview fail");
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			inCapture = false;
+//			return;
+//		}
+//		if (imagesTaken == imageAmount)
+//		{
+//			Log.e("Burst", "CAPTURE FINISHED");
+//			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+//					String.valueOf(imagesTaken));
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			inCapture = false;
+//		}
+//		takingAlready = false;
+//	}
 
-		String frameName = "frame" + imagesTaken;
-		String frameLengthName = "framelen" + imagesTaken;
-
-		int frame = 0;
-		int frame_len = 0;
-		boolean isYUV = false;
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			Log.e("BurstCapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("BurstCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e("BurstCapturePlugin", "Error while cropping: " + status);
-
-			frame = YuvImage.GetFrame(0);
-			frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
-					* ((MainScreen.getImageHeight() + 1) / 2);
-			isYUV = true;
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			Log.e("BurstCapturePlugin", "JPEG Image received");
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			frame = SwapHeap.SwapToHeap(jpegByteArray);
-
-			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-		}
-
-		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
-		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.i("Burst", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
-			return;
-		}
-		if (imagesTaken == imageAmount)
-		{
-			Log.e("Burst", "CAPTURE FINISHED");
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(imagesTaken));
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			inCapture = false;
-		}
-		takingAlready = false;
-	}
-
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
