@@ -57,13 +57,13 @@ public class MultiShotCapturePlugin extends PluginCapture
 	private static final String	TAG					= "MultiShotCapturePlugin";
 
 	// defaul val. value should come from config
-	private int					imageAmount			= 1;
-	private int					pauseBetweenShots	= 0;
+	private int					imageAmount			= 8;
+	private int[]				pauseBetweenShots	= {0,0,250,250,500,750,1000,1250};
 	private int					imagesTaken			= 0;
 
 	public MultiShotCapturePlugin()
 	{
-		super("com.almalence.plugins.multishotcapture", R.xml.preferences_capture_multishot, 0, 0, null);
+		super("com.almalence.plugins.multishotcapture", 0, 0, 0, null);
 	}
 
 	@Override
@@ -72,8 +72,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
-
-		refreshPreferences();
 
 		MainScreen.setCaptureYUVFrames(true);
 	}
@@ -84,13 +82,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
 				MainScreen.getInstance().getResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_object, "multiShotShowHelp");
-	}
-
-	private void refreshPreferences()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		imageAmount = Integer.parseInt(prefs.getString("multiShotImagesAmount", "7"));
-		pauseBetweenShots = Integer.parseInt(prefs.getString("multiShotPauseBetweenShots", "750"));
 	}
 
 	public boolean delayedCaptureSupported()
@@ -104,15 +95,14 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			inCapture = true;
 			takingAlready = true;
-			refreshPreferences();
 
-			if (imagesTaken == 0 || pauseBetweenShots == 0)
+			if (imagesTaken == 0 || imagesTaken == 1)
 			{
 				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 						PluginManager.MSG_NEXT_FRAME);
 			} else
 			{
-				new CountDownTimer(pauseBetweenShots, pauseBetweenShots)
+				new CountDownTimer(pauseBetweenShots[imagesTaken], pauseBetweenShots[imagesTaken])
 				{
 					public void onTick(long millisUntilFinished)
 					{

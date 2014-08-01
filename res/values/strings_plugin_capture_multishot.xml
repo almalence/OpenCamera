@@ -1,26 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="Pref_MultiShot_Capture_Category_Title">Smart multishot capture</string>
-    <string name="Pref_MultiShot_Capture_Preference_Title">Smart multishoot mode</string>
-    <string name="Pref_MultiShot_Capture_Preference_Summary">Set number of images in capture</string>
-
-    <string name="Pref_MultiShot_Capture_ImagesAmount_Title">Number of images</string>
-    
-    <string name="Preference_MultiShotImagesAmountPref">multiShotImagesAmount</string>
-    <string name="Preference_MultiShotPauseBetweenShotsPref">multiShotPauseBetweenShots</string>
-    
     <string name="MultiShot_Help_Header">Smart multishot help</string>
     <string name="MultiShot_Help">1. Hold device still and do not move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n</string>
-    
-    <string name="Pref_MultiShot_Capture_PauseBetweenShots_Title"> Pause between shots</string>
-    <string name="Res_MultiShot_Capture_5">5 images</string>
-    <string name="Res_MultiShot_Capture_6">6 images</string>
-    <string name="Res_MultiShot_Capture_7">7 images</string>
-    <string name="Res_MultiShot_Capture_8">8 images</string>
-    
-    <string name="Res_MultiShot_Pause_0">as fast as possible</string>
-    <string name="Res_MultiShot_Pause_0_25">0,25 sec</string>
-    <string name="Res_MultiShot_Pause_0_5">0,5 sec</string>
-    <string name="Res_MultiShot_Pause_0_75">0,75 sec</string>
-    <string name="Res_MultiShot_Pause_1">1 sec</string>
 </resources>
