@@ -226,20 +226,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static final int VOLUME_FUNC_EXPO 	= 2;
 	private static final int VOLUME_FUNC_NONE	= 3;
 	
-	private static String deviceSS3_01;
-	private static String deviceSS3_02;
-	private static String deviceSS3_03;
-	private static String deviceSS3_04;
-	private static String deviceSS3_05;
-	private static String deviceSS3_06;
-	private static String deviceSS3_07;
-	private static String deviceSS3_08;
-	private static String deviceSS3_09;
-	private static String deviceSS3_10;
-	private static String deviceSS3_11;
-	private static String deviceSS3_12;
-	private static String deviceSS3_13;
-	
 	private static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();	
 	private static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();	
 	private static List<Area> mMeteringAreaMatrix1 = new ArrayList<Area>();	
@@ -323,20 +309,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 		
-		deviceSS3_01 = getResources().getString(R.string.device_name_ss3_01);
-		deviceSS3_02 = getResources().getString(R.string.device_name_ss3_02);
-		deviceSS3_03 = getResources().getString(R.string.device_name_ss3_03);
-		deviceSS3_04 = getResources().getString(R.string.device_name_ss3_04);
-		deviceSS3_05 = getResources().getString(R.string.device_name_ss3_05);
-		deviceSS3_06 = getResources().getString(R.string.device_name_ss3_06);
-		deviceSS3_07 = getResources().getString(R.string.device_name_ss3_07);
-		deviceSS3_08 = getResources().getString(R.string.device_name_ss3_08);
-		deviceSS3_09 = getResources().getString(R.string.device_name_ss3_09);
-		deviceSS3_10 = getResources().getString(R.string.device_name_ss3_10);
-		deviceSS3_11 = getResources().getString(R.string.device_name_ss3_11);
-		deviceSS3_12 = getResources().getString(R.string.device_name_ss3_12);
-		deviceSS3_13 = getResources().getString(R.string.device_name_ss3_13);
-
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
@@ -685,16 +657,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static boolean isSortByData()
 	{
 		return thiz.sortByDataPreference;
-	}
-	
-	public static boolean isDeviceModelProhibited()
-	{
-		return (Build.MODEL.contains(MainScreen.deviceSS3_01) || Build.MODEL.contains(MainScreen.deviceSS3_02) ||
-				Build.MODEL.contains(MainScreen.deviceSS3_03) || Build.MODEL.contains(MainScreen.deviceSS3_04) ||
-				Build.MODEL.contains(MainScreen.deviceSS3_05) || Build.MODEL.contains(MainScreen.deviceSS3_06) ||
-				Build.MODEL.contains(MainScreen.deviceSS3_07) || Build.MODEL.contains(MainScreen.deviceSS3_08) ||
-				Build.MODEL.contains(MainScreen.deviceSS3_09) || Build.MODEL.contains(MainScreen.deviceSS3_10) ||
-				Build.MODEL.contains(MainScreen.deviceSS3_11) || Build.MODEL.contains(MainScreen.deviceSS3_12) ||	Build.MODEL.contains(MainScreen.deviceSS3_13));
 	}
 	
 	public static int getMeteringMode()

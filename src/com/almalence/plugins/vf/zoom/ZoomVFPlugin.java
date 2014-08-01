@@ -255,8 +255,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 		}
 
 		String modeName = prefs.getString("defaultModeName", null);
-		if (modeName != null && modeName.compareTo("video") == 0 && MainScreen.isDeviceModelProhibited())
-			zoomPanel.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -264,9 +262,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		String modeName = prefs.getString("defaultModeName", null);
-		if (!isEnabled
-				|| (modeName != null && modeName.compareTo("video") == 0 && MainScreen.isDeviceModelProhibited()))
-			return;
 
 		zoomCurrent = 0;
 

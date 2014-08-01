@@ -257,7 +257,11 @@ public abstract class Plugin
 	{
 	}
 
-	private int	MIN_MPIX_SUPPORTED	= 1280 * 960;
+	private int		MIN_MPIX_SUPPORTED	= 1280 * 960;
+
+	private long	MPIX_8				= 3504 * 2336;	// Actually 8.2 mpix,
+														// some reserve for
+														// unusual cameras;
 
 	public void selectImageDimension()
 	{
@@ -290,10 +294,10 @@ public abstract class Plugin
 				cs.add(additional);
 			}
 		}
-		int Capture5mIdx = -1;
-		long Capture5mMpix = 0;
-		int Capture5mWidth = 0;
-		int Capture5mHeight = 0;
+		int defaultCaptureIdx = -1;
+		long defaultCaptureMpix = 0;
+		int defaultCaptureWidth = 0;
+		int defaultCaptureHeight = 0;
 		long CaptureMpix = 0;
 		int CaptureWidth = 0;
 		int CaptureHeight = 0;
@@ -308,12 +312,12 @@ public abstract class Plugin
 
 			if ((mpix >= MIN_MPIX_SUPPORTED) && (mpix < maxMpix))
 			{
-				if (mpix > Capture5mMpix)
+				if (mpix > defaultCaptureMpix && mpix <= MPIX_8)
 				{
-					Capture5mIdx = ii;
-					Capture5mMpix = mpix;
-					Capture5mWidth = s.getWidth();
-					Capture5mHeight = s.getHeight();
+					defaultCaptureIdx = ii;
+					defaultCaptureMpix = mpix;
+					defaultCaptureWidth = s.getWidth();
+					defaultCaptureHeight = s.getHeight();
 				}
 			}
 
@@ -349,14 +353,14 @@ public abstract class Plugin
 
 		// default to about 5Mpix if nothing is set in preferences or maximum
 		// resolution is above memory limits
-		if (Capture5mMpix > 0)
+		if (defaultCaptureMpix > 0)
 		{
 			if (!prefFound)
 			{
-				CaptureIdx = Capture5mIdx;
-				CaptureMpix = Capture5mMpix;
-				CaptureWidth = Capture5mWidth;
-				CaptureHeight = Capture5mHeight;
+				CaptureIdx = defaultCaptureIdx;
+				CaptureMpix = defaultCaptureMpix;
+				CaptureWidth = defaultCaptureWidth;
+				CaptureHeight = defaultCaptureHeight;
 			}
 		}
 
