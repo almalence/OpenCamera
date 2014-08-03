@@ -40,9 +40,12 @@ import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
 //-+- -->
 
+import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.RotateLayout;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
@@ -51,6 +54,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -61,6 +65,7 @@ import android.widget.Switch;
 public class SelfTimer
 {
 	private RotateImageView	timeLapseButton	= null;
+	private SelfTimerDialog	dialog			= null;
 	boolean					swChecked		= false;
 	String[]				stringInterval	= { "3", "5", "10", "15", "30", "60" };
 
@@ -70,11 +75,10 @@ public class SelfTimer
 		int interval = prefs.getInt(MainScreen.sDelayedCaptureIntervalPref, 0);
 		swChecked = prefs.getBoolean(MainScreen.sSWCheckedPref, false);
 
-		final Dialog d = new Dialog(MainScreen.getInstance());
-		d.setTitle("Self timer settings");
-		d.setContentView(R.layout.selftimer_dialog);
-		final Button bSet = (Button) d.findViewById(R.id.button1);
-		final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+		dialog = new SelfTimerDialog(MainScreen.getInstance());
+		dialog.setContentView(R.layout.selftimer_dialog);
+		final Button bSet = (Button) dialog.findViewById(R.id.button1);
+		final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker1);
 		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 		np.setMaxValue(5);
 		np.setMinValue(0);
@@ -82,15 +86,15 @@ public class SelfTimer
 		np.setDisplayedValues(stringInterval);
 		np.setWrapSelectorWheel(false);
 
-		final CheckBox flashCheckbox = (CheckBox) d.findViewById(R.id.flashCheckbox);
+		final CheckBox flashCheckbox = (CheckBox) dialog.findViewById(R.id.flashCheckbox);
 		boolean flash = prefs.getBoolean(MainScreen.sDelayedFlashPref, false);
 		flashCheckbox.setChecked(flash);
 
-		final CheckBox soundCheckbox = (CheckBox) d.findViewById(R.id.soundCheckbox);
+		final CheckBox soundCheckbox = (CheckBox) dialog.findViewById(R.id.soundCheckbox);
 		boolean sound = prefs.getBoolean(MainScreen.sDelayedSoundPref, false);
 		soundCheckbox.setChecked(sound);
 
-		final Switch sw = (Switch) d.findViewById(R.id.selftimer_switcher);
+		final Switch sw = (Switch) dialog.findViewById(R.id.selftimer_switcher);
 
 		// disable/enable controls in dialog
 		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -138,7 +142,7 @@ public class SelfTimer
 			@Override
 			public void onClick(View v)
 			{
-				d.dismiss();
+				dialog.dismiss();
 				int interval = 0;
 				Editor prefsEditor = prefs.edit();
 
@@ -163,7 +167,7 @@ public class SelfTimer
 				updateTimelapseButton(real_int);
 			}
 		});
-		d.show();
+		dialog.show();
 	}
 
 	public void addSelfTimerControl(boolean needToShow)
@@ -292,6 +296,38 @@ public class SelfTimer
 			timeLapseButton.setOrientation(AlmalenceGUI.mDeviceOrientation);
 			timeLapseButton.invalidate();
 			timeLapseButton.requestLayout();
+		}
+
+		if (dialog != null)
+		{
+			dialog.setRotate(AlmalenceGUI.mDeviceOrientation);
+		}
+	}
+
+	protected class SelfTimerDialog extends RotateDialog
+	{
+		public SelfTimerDialog(Context context)
+		{
+			super(context);
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
+
+		@Override
+		public void setRotate(int degree)
+		{
+			degree = degree >= 0 ? degree % 360 : degree % 360 + 360;
+
+			if (degree == currentOrientation)
+			{
+				return;
+			}
+			currentOrientation = degree;
+
+			RotateLayout r = (RotateLayout) findViewById(R.id.rotateLayout);
+			r.setAngle(degree);
+			r.requestLayout();
+			r.invalidate();
+
 		}
 	}
 }

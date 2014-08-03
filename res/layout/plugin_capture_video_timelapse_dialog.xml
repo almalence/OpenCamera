@@ -1,54 +1,87 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="300dp" >
 
-    <Switch 
-            android:id="@+id/timelapse_switcher"
-            android:textOff="Off" 
-            android:textOn="On"
+    <com.almalence.ui.RotateLayout
+        android:id="@+id/rotateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" >
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_alignParentRight="true"
-            android:checked="false">
-    </Switch>
-        
-    <LinearLayout
-	    android:id="@+id/utilityVideoButtons"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"			       
-	    android:orientation="horizontal"	        
-	    android:background="@android:color/transparent"
-	    android:layout_marginTop="5dp"
-	    android:layout_below="@+id/timelapse_switcher"
-	    android:gravity="center">
-	    <NumberPicker
-	        android:id="@+id/numberPicker1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginRight="20dp"
-	        />
-	    
-	    <NumberPicker
-	        android:id="@+id/numberPicker2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="20dp"
-	         />
-    </LinearLayout>
+            android:layout_height="wrap_content" >
 
-    <Button
-	        android:id="@+id/button1"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	    	android:background="@android:color/transparent"
-	    	android:layout_below="@+id/utilityVideoButtons"
-	    	android:layout_marginTop="5dp"
-	    	android:layout_marginBottom="5dp"
-	    	android:layout_centerHorizontal="true"
-	        android:text="@string/setVideoText" />
-    
+            <LinearLayout
+                android:id="@+id/timeLapseHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp" >
 
-</RelativeLayout>
+                <TextView
+                    android:id="@+id/timeLapseTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/timeLapseTitle"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp" />
+
+                <View
+                    android:id="@+id/separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    android:background="#ffffff" />
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/timelapse_switcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:textOff="Off"
+                android:textOn="On" />
+
+            <LinearLayout
+                android:id="@+id/utilityVideoButtons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/timelapse_switcher"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <NumberPicker
+                    android:id="@+id/numberPicker1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp" />
+
+                <NumberPicker
+                    android:id="@+id/numberPicker2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/utilityVideoButtons"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:text="@string/setVideoText" />
+        </RelativeLayout>
+    </com.almalence.ui.RotateLayout>
+</LinearLayout>

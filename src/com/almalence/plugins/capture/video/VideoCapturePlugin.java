@@ -98,6 +98,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+import com.almalence.plugins.vf.barcodescanner.BarcodeHistoryListDialog;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
@@ -159,6 +160,7 @@ public class VideoCapturePlugin extends PluginCapture
 	ImageView									rotateToLandscapeNotifier;
 	boolean										showRotateToLandscapeNotifier	= false;
 	private View								rotatorLayout;
+	private TimeLapseDialog						timeLapseDialog;
 
 	private boolean								displayTakePicture;
 	private ContentValues						values;
@@ -546,6 +548,19 @@ public class VideoCapturePlugin extends PluginCapture
 		for (int i = 0; i < specialLayout2.getChildCount(); i++)
 			specialView2.add(specialLayout2.getChildAt(i));
 
+		for (int j = 0; j < specialView2.size(); j++)
+		{
+			View view = specialView2.get(j);
+			int view_id = view.getId();
+			if (view_id == this.buttonsLayout.getId())
+			{
+				if (view.getParent() != null)
+					((ViewGroup) view.getParent()).removeView(view);
+
+				specialLayout.removeView(view);
+			}
+		}
+
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
@@ -781,6 +796,11 @@ public class VideoCapturePlugin extends PluginCapture
 					rotateToLandscapeNotifier.clearAnimation();
 				}
 			}
+		}
+
+		if (timeLapseDialog != null)
+		{
+			timeLapseDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
 		}
 	}
 
@@ -2314,11 +2334,10 @@ public class VideoCapturePlugin extends PluginCapture
 		measurementVal = Integer.valueOf(prefs.getString("timelapseMeasurementVal", "0"));
 
 		// show time lapse settings
-		final Dialog d = new Dialog(MainScreen.getInstance());
-		d.setTitle("Time lapse");
-		d.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
-		final Button bSet = (Button) d.findViewById(R.id.button1);
-		final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+		timeLapseDialog = new TimeLapseDialog(MainScreen.getInstance());
+		timeLapseDialog.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
+		final Button bSet = (Button) timeLapseDialog.findViewById(R.id.button1);
+		final NumberPicker np = (NumberPicker) timeLapseDialog.findViewById(R.id.numberPicker1);
 		np.setMaxValue(16);
 		np.setMinValue(0);
 		np.setValue(interval);
@@ -2326,7 +2345,7 @@ public class VideoCapturePlugin extends PluginCapture
 		np.setWrapSelectorWheel(false);
 		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-		final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
+		final NumberPicker np2 = (NumberPicker) timeLapseDialog.findViewById(R.id.numberPicker2);
 		np2.setMaxValue(2);
 		np2.setMinValue(0);
 		np2.setValue(measurementVal);
@@ -2334,7 +2353,7 @@ public class VideoCapturePlugin extends PluginCapture
 		np2.setDisplayedValues(stringMeasurement);
 		np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-		final android.widget.Switch sw = (android.widget.Switch) d.findViewById(R.id.timelapse_switcher);
+		final android.widget.Switch sw = (android.widget.Switch) timeLapseDialog.findViewById(R.id.timelapse_switcher);
 
 		// disable/enable controls in dialog
 		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -2389,7 +2408,7 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onClick(View v)
 			{
-				d.dismiss();
+				timeLapseDialog.dismiss();
 				if (swChecked)
 				{
 					measurementVal = np2.getValue();
@@ -2412,7 +2431,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 			}
 		});
-		d.show();
+		timeLapseDialog.show();
 	}
 
 	@Override
