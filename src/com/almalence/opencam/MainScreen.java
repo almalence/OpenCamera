@@ -960,6 +960,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		long memoryFree = getAvailableInternalMemory();
 		if (memoryFree<30)
 			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.", Toast.LENGTH_LONG).show();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
+		if (dismissKeyguard)
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		else
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 	}
 	
 	
@@ -1740,14 +1747,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean panoramaPurchased = false;
 	private boolean objectRemovalBurstPurchased = false;
 	private boolean groupShotPurchased = false;
-
 	
+	private boolean unlockAllSubscriptionMonth = false;
+	private boolean unlockAllSubscriptionYear = false;
+
 	static final String SKU_HDR = "plugin_almalence_hdr";
 	static final String SKU_PANORAMA = "plugin_almalence_panorama";
 	static final String SKU_UNLOCK_ALL = "unlock_all_forever";
 	static final String SKU_UNLOCK_ALL_COUPON = "unlock_all_forever_coupon";
 	static final String SKU_MOVING_SEQ = "plugin_almalence_moving_burst";
 	static final String SKU_GROUPSHOT = "plugin_almalence_groupshot";
+	//subscription
+	static final String SKU_SUBSCRIPTION_MONTH = "subscription_unlock_all_month";
+	static final String SKU_SUBSCRIPTION_YEAR = "subscription_unlock_all_year";
 	
 	static final String SKU_SALE1 = "abc_sale_controller1";
 	static final String SKU_SALE2 = "abc_sale_controller2";
@@ -1760,6 +1772,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
         OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
         OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
         OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
+        OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, "com.yandex.store", "subscription_unlock_all_month");
+        OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
         
         OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
         OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
@@ -1771,6 +1785,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
         OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
         OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
         OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
+        OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_month");
+        OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
         
         OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
         OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
@@ -1855,6 +1871,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
 						
+						//subscription
+						additionalSkuList.add(SKU_SUBSCRIPTION_MONTH);
+						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
+						
 						//for sale
 						additionalSkuList.add(SKU_SALE1);
 						additionalSkuList.add(SKU_SALE2);
@@ -1894,12 +1914,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String titleUnlockPano = "$2.99";
 	public String titleUnlockMoving = "$2.99";
 	public String titleUnlockGroup = "$2.99";
+	public String titleSubscriptionMonth = "$0.99";
+	public String titleSubscriptionYear = "$4.99";
 	
 	public String summaryUnlockAll = "";
 	public String summaryUnlockHDR = "";
 	public String summaryUnlockPano = "";
 	public String summaryUnlockMoving = "";
 	public String summaryUnlockGroup = "";
+	
+	public String summarySubscriptionMonth = "";
+	public String summarySubscriptionYear = "";
 	
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		public void onQueryInventoryFinished(IabResult result,
@@ -1950,6 +1975,25 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				prefsEditor.commit();
 			}
 			
+			if (inventory.hasPurchase(SKU_SUBSCRIPTION_MONTH)) {
+				unlockAllSubscriptionMonth = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("subscription_unlock_all_month", true);
+				prefsEditor.commit();
+				
+				mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_MONTH),
+                        mConsumeFinishedListener);
+			}
+			if (inventory.hasPurchase(SKU_SUBSCRIPTION_YEAR)) {
+				unlockAllSubscriptionYear = true;
+				Editor prefsEditor = prefs.edit();
+				prefsEditor.putBoolean("subscription_unlock_all_year", true);
+				prefsEditor.commit();
+				
+				mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_YEAR),
+                        mConsumeFinishedListener);
+			}
+			
 			try{
 				
 				String[] separated = inventory.getSkuDetails(SKU_SALE1).getPrice().split(",");
@@ -1982,11 +2026,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
 				titleUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getPrice();
 				
+				titleSubscriptionMonth = inventory.getSkuDetails(SKU_SUBSCRIPTION_MONTH).getPrice();
+				titleSubscriptionYear = inventory.getSkuDetails(SKU_SUBSCRIPTION_YEAR).getPrice();
+				
 				summaryUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getDescription();
 				summaryUnlockHDR = inventory.getSkuDetails(SKU_HDR).getDescription();
 				summaryUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getDescription();
 				summaryUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getDescription();
 				summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
+				
+				summarySubscriptionMonth = inventory.getSkuDetails(SKU_SUBSCRIPTION_MONTH).getDescription();
+				summarySubscriptionYear = inventory.getSkuDetails(SKU_SUBSCRIPTION_YEAR).getDescription();
 			}catch(Exception e)
 			{
 				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!", "Error Getting data for store!!!!!!!!");
@@ -1994,11 +2044,41 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	};
 
+	// Called when consumption is complete
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+        public void onConsumeFinished(Purchase purchase, IabResult result) {
+            Log.d("mConsumeFinishedListener", "Consumption finished. Purchase: " + purchase
+                    + ", result: " + result);
+            SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.getMainContext());
+            
+            if (purchase.getSku().equals(SKU_SUBSCRIPTION_MONTH))
+            {
+            	if (result.isSuccess()) 
+            	{
+            		unlockAllSubscriptionMonth = true;
+            		Editor prefsEditor = prefs.edit();
+    				prefsEditor.putBoolean("subscription_unlock_all_month", true);
+    				prefsEditor.commit();
+		            Log.d("mConsumeFinishedListener", "Consumption SKU_SUBSCRIPTION_MONTH successful.");
+		        } else 
+		        {
+		        	unlockAllSubscriptionMonth = false;		 
+		        	Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean("subscription_unlock_all_month", false);
+					prefsEditor.commit();
+		        }
+            }
+        }
+    };
+    
 	private int HDR_REQUEST = 100;
 	private int PANORAMA_REQUEST = 101;
 	private int ALL_REQUEST = 102;
 	private int OBJECTREM_BURST_REQUEST = 103;
 	private int GROUPSHOT_REQUEST = 104;
+	private int SUBSCRIPTION_MONTH_REQUEST = 105;
+	private int SUBSCRIPTION_YEAR_REQUEST = 106;
 
 	public boolean isPurchasedAll()
 	{
@@ -2023,6 +2103,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public boolean isPurchasedGroupshot()
 	{
 		return groupShotPurchased;
+	}
+	
+	public boolean isPurchasedUnlockAllSubscriptionMonth()
+	{
+		return unlockAllSubscriptionMonth;
+	}
+	
+	public boolean isPurchasedUnlockAllSubscriptionYear()
+	{
+		return unlockAllSubscriptionYear;
 	}
 	
 	public void purchaseAll()
@@ -2099,6 +2189,30 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					OBJECTREM_BURST_REQUEST,
 					mPreferencePurchaseFinishedListener,
 					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchasedUnlockAllSubscriptionMonth()
+	{
+		if(MainScreen.thiz.isPurchasedUnlockAllSubscriptionMonth() || MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+//			mHelper .con (MainScreen.thiz,
+//					SKU_GROUPSHOT,
+//					GROUPSHOT_REQUEST,
+//					mPreferencePurchaseFinishedListener,
+//					payload);
+//			mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_MONTH),
+//                    mConsumeFinishedListener);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
