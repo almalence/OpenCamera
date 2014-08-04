@@ -2353,7 +2353,7 @@ public class VideoCapturePlugin extends PluginCapture
 		np2.setDisplayedValues(stringMeasurement);
 		np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-		final android.widget.Switch sw = (android.widget.Switch) timeLapseDialog.findViewById(R.id.timelapse_switcher);
+		final Switch sw = (Switch) timeLapseDialog.findViewById(R.id.timelapse_switcher);
 
 		// disable/enable controls in dialog
 		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
