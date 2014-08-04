@@ -44,7 +44,6 @@ import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.RotateLayout;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -104,13 +103,13 @@ public class SelfTimer
 			{
 				if (!sw.isChecked())
 				{
-					np.setEnabled(false);
+//					np.setEnabled(false);
 					flashCheckbox.setEnabled(false);
 					soundCheckbox.setEnabled(false);
 					swChecked = false;
 				} else
 				{
-					np.setEnabled(true);
+//					np.setEnabled(true);
 					flashCheckbox.setEnabled(true);
 					soundCheckbox.setEnabled(true);
 					swChecked = true;
@@ -119,17 +118,27 @@ public class SelfTimer
 			}
 		});
 
+		np.setOnScrollListener(new NumberPicker.OnScrollListener()
+		{
+			@Override
+			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
+			{
+				bSet.setEnabled(true);
+				sw.setChecked(true);
+			}
+		});
+		
 		// disable control in dialog by default
 		if (!swChecked)
 		{
 			sw.setChecked(false);
 			flashCheckbox.setEnabled(false);
 			soundCheckbox.setEnabled(false);
-			np.setEnabled(false);
+			//np.setEnabled(false);
 			bSet.setEnabled(false);
 		} else
 		{
-			np.setEnabled(true);
+			//np.setEnabled(true);
 			flashCheckbox.setEnabled(true);
 			soundCheckbox.setEnabled(true);
 			bSet.setEnabled(true);
