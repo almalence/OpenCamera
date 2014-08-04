@@ -308,23 +308,27 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
-				aeLockButton.setImageDrawable(icon);
+				if (aeLockButton!=null)
+					aeLockButton.setImageDrawable(icon);
 			}
 			else
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
-				aeLockButton.setImageDrawable(icon);
+				if (aeLockButton!=null)
+					aeLockButton.setImageDrawable(icon);
 			}
 			if (CameraController.getInstance().isWhiteBalanceLockSupported()
 					&& params.getAutoWhiteBalanceLock())
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
-				awLockButton.setImageDrawable(icon);
+				if (awLockButton!=null)
+					awLockButton.setImageDrawable(icon);
 			}
 			else
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
-				awLockButton.setImageDrawable(icon);
+				if (awLockButton!=null)
+					awLockButton.setImageDrawable(icon);
 			}
 			return true;
 		}

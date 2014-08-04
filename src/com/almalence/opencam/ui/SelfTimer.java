@@ -39,7 +39,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
@@ -61,6 +60,14 @@ import com.almalence.opencam.R;
 import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.RotateLayout;
+/* <!-- +++
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.PluginType;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+// <!-- -+-
+//-+- -->
 
 public class SelfTimer
 {
@@ -103,13 +110,13 @@ public class SelfTimer
 			{
 				if (!sw.isChecked())
 				{
-					np.setEnabled(false);
+//					np.setEnabled(false);
 					flashCheckbox.setEnabled(false);
 					soundCheckbox.setEnabled(false);
 					swChecked = false;
 				} else
 				{
-					np.setEnabled(true);
+//					np.setEnabled(true);
 					flashCheckbox.setEnabled(true);
 					soundCheckbox.setEnabled(true);
 					swChecked = true;
@@ -117,16 +124,25 @@ public class SelfTimer
 			}
 		});
 
+		np.setOnScrollListener(new NumberPicker.OnScrollListener()
+		{
+			@Override
+			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
+			{
+				sw.setChecked(true);
+			}
+		});
+		
 		// disable control in dialog by default
 		if (!swChecked)
 		{
 			sw.setChecked(false);
 			flashCheckbox.setEnabled(false);
 			soundCheckbox.setEnabled(false);
-			np.setEnabled(false);
+			//np.setEnabled(false);
 		} else
 		{
-			np.setEnabled(true);
+			//np.setEnabled(true);
 			flashCheckbox.setEnabled(true);
 			soundCheckbox.setEnabled(true);
 			sw.setChecked(true);
