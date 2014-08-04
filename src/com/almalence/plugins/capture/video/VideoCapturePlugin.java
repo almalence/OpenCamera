@@ -35,9 +35,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -72,7 +72,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -98,7 +97,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
-import com.almalence.plugins.vf.barcodescanner.BarcodeHistoryListDialog;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
@@ -2336,7 +2334,6 @@ public class VideoCapturePlugin extends PluginCapture
 		// show time lapse settings
 		timeLapseDialog = new TimeLapseDialog(MainScreen.getInstance());
 		timeLapseDialog.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
-		final Button bSet = (Button) timeLapseDialog.findViewById(R.id.button1);
 		final NumberPicker np = (NumberPicker) timeLapseDialog.findViewById(R.id.numberPicker1);
 		np.setMaxValue(16);
 		np.setMinValue(0);
@@ -2367,7 +2364,6 @@ public class VideoCapturePlugin extends PluginCapture
 				} else
 				{
 					swChecked = true;
-					bSet.setEnabled(true);
 				}
 			}
 		});
@@ -2377,7 +2373,6 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
 			{
-				bSet.setEnabled(true);
 				sw.setChecked(true);
 			}
 		});
@@ -2386,7 +2381,6 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
 			{
-				bSet.setEnabled(true);
 				sw.setChecked(true);
 			}
 		});
@@ -2395,20 +2389,16 @@ public class VideoCapturePlugin extends PluginCapture
 		if (!swChecked)
 		{
 			sw.setChecked(false);
-			bSet.setEnabled(false);
 		} else
 		{
-			bSet.setEnabled(true);
 			sw.setChecked(true);
 		}
 
-		// set button in dialog pressed
-		bSet.setOnClickListener(new OnClickListener()
+		timeLapseDialog.setOnDismissListener(new OnDismissListener()
 		{
 			@Override
-			public void onClick(View v)
+			public void onDismiss(DialogInterface dialog)
 			{
-				timeLapseDialog.dismiss();
 				if (swChecked)
 				{
 					measurementVal = np2.getValue();
@@ -2429,6 +2419,7 @@ public class VideoCapturePlugin extends PluginCapture
 					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
 				}
 
+				
 			}
 		});
 		timeLapseDialog.show();

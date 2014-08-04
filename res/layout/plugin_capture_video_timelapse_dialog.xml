@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="300dp" >
+    android:layout_width="270dp"
+    android:layout_height="270dp" >
 
     <com.almalence.ui.RotateLayout
         android:id="@+id/rotateLayout"
@@ -56,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/timelapse_switcher"
                 android:background="@android:color/transparent"
+                android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:orientation="horizontal" >
 
@@ -71,17 +72,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/utilityVideoButtons"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@android:color/transparent"
-                android:text="@string/setVideoText" />
         </RelativeLayout>
     </com.almalence.ui.RotateLayout>
 </LinearLayout>

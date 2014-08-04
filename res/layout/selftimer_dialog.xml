@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp" >
+    android:layout_height="320dp" >
 
     <com.almalence.ui.RotateLayout
         android:id="@+id/rotateLayout"
@@ -93,17 +93,6 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="3dp"
                 android:text="@string/soundTimerText" />
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/soundCheckbox"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:background="@android:color/transparent"
-                android:text="@string/setTimerText" />
         </RelativeLayout>
     </com.almalence.ui.RotateLayout>
 

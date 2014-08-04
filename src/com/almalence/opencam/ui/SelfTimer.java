@@ -27,25 +27,9 @@ package com.almalence.opencam.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginType;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginType;
-import com.almalence.opencam.R;
-//-+- -->
-
-import com.almalence.ui.RotateDialog;
-import com.almalence.ui.RotateImageView;
-import com.almalence.ui.RotateLayout;
-
-import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
@@ -62,6 +46,22 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
+/* <!-- +++
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.PluginType;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+// <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginType;
+import com.almalence.opencam.R;
+//-+- -->
+import com.almalence.ui.RotateDialog;
+import com.almalence.ui.RotateImageView;
+import com.almalence.ui.RotateLayout;
+
 public class SelfTimer
 {
 	private RotateImageView	timeLapseButton	= null;
@@ -77,7 +77,6 @@ public class SelfTimer
 
 		dialog = new SelfTimerDialog(MainScreen.getInstance());
 		dialog.setContentView(R.layout.selftimer_dialog);
-		final Button bSet = (Button) dialog.findViewById(R.id.button1);
 		final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker1);
 		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 		np.setMaxValue(5);
@@ -114,7 +113,6 @@ public class SelfTimer
 					flashCheckbox.setEnabled(true);
 					soundCheckbox.setEnabled(true);
 					swChecked = true;
-					bSet.setEnabled(true);
 				}
 			}
 		});
@@ -126,23 +124,19 @@ public class SelfTimer
 			flashCheckbox.setEnabled(false);
 			soundCheckbox.setEnabled(false);
 			np.setEnabled(false);
-			bSet.setEnabled(false);
 		} else
 		{
 			np.setEnabled(true);
 			flashCheckbox.setEnabled(true);
 			soundCheckbox.setEnabled(true);
-			bSet.setEnabled(true);
 			sw.setChecked(true);
 		}
 
-		// set button in dialog pressed
-		bSet.setOnClickListener(new OnClickListener()
+		dialog.setOnDismissListener(new OnDismissListener()
 		{
 			@Override
-			public void onClick(View v)
+			public void onDismiss(DialogInterface dialog)
 			{
-				dialog.dismiss();
 				int interval = 0;
 				Editor prefsEditor = prefs.edit();
 
