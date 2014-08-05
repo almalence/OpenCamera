@@ -308,13 +308,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		if (this.textureHeight >= MAX_TEXTURE_SIZE)
 		{
 			this.textureHeight = MAX_TEXTURE_SIZE;
-		} else
+		}
+		else
 		{
 			this.textureHeight = AugmentedPanoramaEngine.pow2roundup(this.textureHeight);
 		}
 
-		this.textureWidth = AugmentedPanoramaEngine
-				.pow2roundup((int) (this.width * ((float) this.textureHeight / this.height)));
+		this.textureWidth = AugmentedPanoramaEngine.pow2roundup(
+				(int)(this.width * ((float) this.textureHeight / this.height)));
 	}
 
 	@Override
@@ -325,7 +326,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			if (transform.length == 16)
 			{
 				System.arraycopy(transform, 0, this.transform, 0, 16);
-			} else if (transform.length == 9)
+			}
+			else if (transform.length == 9)
 			{
 				System.arraycopy(transform, 0, this.transform, 0, 3);
 				System.arraycopy(transform, 3, this.transform, 4, 3);
@@ -340,7 +342,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.transform[14] = 0;
 
 				this.transform[15] = 1;
-			} else
+			}
+			else
 			{
 				throw new RuntimeException();
 			}
@@ -394,7 +397,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						if (target == -1)
 						{
 							this.state = STATE_STANDBY;
-						} else
+						}
+						else
 						{
 							this.state = STATE_CLOSEENOUGH;
 							this.currentlyTargetedTarget = target;
@@ -434,7 +438,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 							this.pictureTakingInDelay = false;
 						else
 							return this.state;
-					} else
+					}
+					else
 					{
 						this.delay_time = System.currentTimeMillis();
 						this.pictureTakingInDelay = true;
@@ -449,7 +454,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.capture_time = System.currentTimeMillis();
 
 				return STATE_TAKINGPICTURE;
-			} else
+			}
+			else
 			{
 				return this.state;
 			}
@@ -492,7 +498,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					try
 					{
 						this.stateSynch.wait();
-					} catch (final InterruptedException e)
+					}
+					catch (final InterruptedException e)
 					{
 						e.printStackTrace();
 						Thread.currentThread().interrupt();
@@ -545,14 +552,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				@Override
 				public int compare(final AugmentedFrameTaken frame1, final AugmentedFrameTaken frame2)
 				{
-					return (int) frame1.angleShift - (int) frame2.angleShift;
+					return (int)frame1.angleShift - (int)frame2.angleShift;
 				}
 			});
 
 			try
 			{
 				syncObject.wait();
-			} catch (InterruptedException e)
+			}
+			catch (InterruptedException e)
 			{
 				e.printStackTrace();
 
@@ -578,7 +586,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			if (frames_count > 0)
 			{
 				frame = this.frames.removeLast();
-			} else
+			}
+			else
 			{
 				this.state = STATE_STANDBY;
 				frame = null;
@@ -643,7 +652,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			{
 				angle += Math.signum(angle) * (float) Math.PI / 2.0f;
 			}
-		} else
+		}
+		else
 		{
 			angle = 0.0f;
 		}
@@ -686,7 +696,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 
 			return angle;
-		} else
+		}
+		else
 		{
 			return Float.POSITIVE_INFINITY;
 		}
@@ -716,7 +727,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.targetFrames[1].move(1);
 
 				this.addToBeginning = false;
-			} else
+			}
+			else
 			{
 				this.addToBeginning = (this.currentlyTargetedTarget == 0);
 			}
@@ -1177,8 +1189,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			this.angle += Math.toDegrees(AugmentedPanoramaEngine.this.angleShift * shift);
 
-			this.position
-					.set(rotateVectorAroundAxis((float) Math.toRadians(this.angle),
+			this.position.set(rotateVectorAroundAxis((float) Math.toRadians(this.angle),
 							AugmentedPanoramaEngine.this.initialTopVector,
 							AugmentedPanoramaEngine.this.initialDirectionVector));
 
@@ -1228,8 +1239,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 		}
 
-		public AugmentedFrameTaken(final float angleShift, final Vector3d position, final Vector3d topVec,
-				final float[] rotation, final byte[] img_data, final int yuv_address, final boolean isYUV)
+		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
+				final Vector3d topVec, final float[] rotation, final byte[] img_data,
+				final int yuv_address, final boolean isYUV)
 		{
 			this.angleShift = angleShift;
 
@@ -1367,14 +1379,16 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					if (GLES10.glGetError() == GLES10.GL_NO_ERROR)
 					{
 						this.textureAllocated = true;
-					} else
+					}
+					else
 					{
 						GLES10.glDeleteTextures(2, this.texture, 0);
 
 						Log.e("Almalence", "Error creating texture");
 						this.textureAllocated = false;
 					}
-				} else
+				}
+				else
 				{
 					Log.e("Almalence", "Error generating texture");
 					this.textureAllocated = false;
@@ -1473,14 +1487,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					}
 				}
 			}
-		}
-
-		@Override
-		public void finalize() throws Throwable
-		{
-			this.destroy();
-
-			super.finalize();
 		}
 	}
 }

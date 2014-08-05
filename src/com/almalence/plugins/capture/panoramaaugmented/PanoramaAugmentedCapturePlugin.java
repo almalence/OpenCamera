@@ -58,7 +58,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
@@ -141,7 +143,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private static String				sAELockPref;
 
 	private Switch						modeSwitcher;
-	private boolean						modeSweep;
+	private boolean						modeSweep = true;
 
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -315,6 +317,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				PanoramaAugmentedCapturePlugin.this.setMode();
 			}
 		});
+		this.modeSwitcher.setEnabled(
+				PluginManager.getInstance().getProcessingCounter() == 0);
 
 		this.engine = new AugmentedPanoramaEngine();
 	}
@@ -394,6 +398,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
+	public void onStop()
+	{
+		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+	}
+
+	@Override
+	public void onExportFinished()
+	{
+		if (modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && !inCapture)
+			modeSwitcher.setEnabled(true);
+	}
+
+	@Override
 	public void onGUICreate()
 	{
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
@@ -403,6 +420,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Panorama_Help_Header),
 				MainScreen.getInstance().getResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
+
+		MainScreen.getGUIManager().removeViews(this.modeSwitcher, R.id.specialPluginsLayout3);
+		final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		((RelativeLayout)MainScreen.getInstance().findViewById(
+				R.id.specialPluginsLayout3)).addView(this.modeSwitcher, params);
+		this.modeSwitcher.setLayoutParams(params);
+		this.modeSwitcher.requestLayout();
+		((RelativeLayout)MainScreen.getInstance().findViewById(
+				R.id.specialPluginsLayout3)).requestLayout();
 	}
 
 	@Override
@@ -965,6 +994,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void startCapture()
 	{
+		this.modeSwitcher.setEnabled(false);
+		
 		lockAEWB();
 
 		Date curDate = new Date();
@@ -975,8 +1006,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 
 		this.engine.ViewportCreationTime();
-
-		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+	}
+	
+	private void takePictureUnimode(final Object image)
+	{
+		if (this.modeSweep)
+		{
+			this.engine.onFrameAdded(image, true);
+			this.isFirstFrame = false;
+		}
+		else
+		{
+			this.takingAlready = true;
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+		}
 	}
 
 	@Override
@@ -996,17 +1039,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				final int state = this.engine.getPictureTakingState(
 						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
-				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
+				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
+						|| this.isFirstFrame)
 				{
-					if (this.modeSweep)
-					{
-						this.engine.onFrameAdded(data, true);
-					}
-					else
-					{
-						this.takingAlready = true;
-						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-					}
+					this.takePictureUnimode(data);
 				}
 			}
 		}
@@ -1058,18 +1094,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				final int state = this.engine.getPictureTakingState(
 						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
-				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
+				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
+						|| this.isFirstFrame)
 				{
-					if (this.modeSweep)
-					{
-						this.engine.onFrameAdded(im, true);
-					}
-					else
-					{
-						this.takingAlready = true;
-						Log.e(TAG, "MSG_TAKE_PICTURE onPreviewAvailable");
-						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-					}
+					this.takePictureUnimode(im);
 				}
 			}
 		}
