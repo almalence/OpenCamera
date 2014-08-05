@@ -11,6 +11,7 @@
     <string name="Pref_Video_None">None</string>
     
     <string name="setVideoText">Set</string>
+    <string name="timeLapseTitle">Time lapse</string>
     
     <string name="Pref_Video_StartStandard_Title">Standard video camera</string>
     <string name="Pref_Video_StartStandard_Summary">Use standard camera for video recording</string>

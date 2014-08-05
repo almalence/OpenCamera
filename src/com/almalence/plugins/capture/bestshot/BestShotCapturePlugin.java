@@ -180,7 +180,7 @@ public class BestShotCapturePlugin extends PluginCapture
 						PluginManager.MSG_NEXT_FRAME);
 			} else
 			{
-				new CountDownTimer(50, 50)
+				new CountDownTimer(500, 500)
 				{
 					public void onTick(long millisUntilFinished)
 					{
@@ -368,7 +368,7 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 50, new int[0]);
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 500, new int[0]);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
