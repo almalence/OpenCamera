@@ -731,7 +731,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 	}
 
-	public boolean onPictureTaken(final byte[] jpeg)
+	@TargetApi(19)
+	public boolean onFrameAdded(final Object image, boolean isYUV)
 	{
 		final boolean goodPlace;
 		final int framesCount;
@@ -762,102 +763,74 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
 
-			final byte[] jpeg_copy = new byte[jpeg.length];
-			System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
-			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform,
-					jpeg_copy, 0, false);
-
-			synchronized (AugmentedPanoramaEngine.this.frames)
+			final AugmentedFrameTaken frame;
+			
+			if (image instanceof byte[])
 			{
-				AugmentedPanoramaEngine.this.frames.add(frame);
+				final byte[] jpeg_copy = new byte[((byte[])image).length];
+				System.arraycopy(image, 0, jpeg_copy, 0, ((byte[])image).length);
+				frame = new AugmentedFrameTaken(targetFrame.angle,
+						position, topVec, transform, jpeg_copy, 0, false);
+				
 			}
-		}
-
-		synchronized (AugmentedPanoramaEngine.this.stateSynch)
-		{
-			AugmentedPanoramaEngine.this.state = STATE_STANDBY;
-			AugmentedPanoramaEngine.this.stateSynch.notify();
-		}
-
-		return goodPlace;
-	}
-
-	@TargetApi(19)
-	public boolean onImageAvailable(Image im)
-	{
-		final boolean goodPlace;
-		final int framesCount;
-		synchronized (this.frames)
-		{
-			framesCount = this.frames.size();
-		}
-
-		final AugmentedFrameTarget targetFrame = this.targetFrames[this.addToBeginning ? 0 : 1];
-
-		synchronized (this.stateSynch)
-		{
-			goodPlace = (framesCount == 0) || (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < 0.2f);
-		}
-
-		if (goodPlace)
-		{
-			this.angleTotal += this.angleShift;
-
-			if (framesCount > 0)
+			else if (image instanceof Image)
 			{
-				this.targetFrames[this.currentlyTargetedTarget].move();
+				final Image im = (Image)image;
+				
+				if (im.getFormat() == ImageFormat.YUV_420_888)
+				{
+					ByteBuffer Y = im.getPlanes()[0].getBuffer();
+					ByteBuffer U = im.getPlanes()[1].getBuffer();
+					ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+					if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
+					{
+						Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
+						return false;
+					}
+
+					// Note: android documentation guarantee that:
+					// - Y pixel stride is always 1
+					// - U and V strides are the same
+					// So, passing all these parameters is a bit overkill
+					int status = YuvImage.CreateYUVImage(Y, U, V,
+							im.getPlanes()[0].getPixelStride(),	im.getPlanes()[0].getRowStride(),
+							im.getPlanes()[1].getPixelStride(),	im.getPlanes()[1].getRowStride(),
+							im.getPlanes()[2].getPixelStride(), im.getPlanes()[2].getRowStride(),
+							MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+
+					if (status != 0)
+						Log.e("Panorama", "Error while cropping: " + status);
+
+					byte[] yuv = YuvImage.GetByteFrame(0);
+					int yuv_address = YuvImage.GetFrame(0);
+
+					frame = new AugmentedFrameTaken(targetFrame.angle,
+							position, topVec, transform, yuv, yuv_address, true);
+				}
+				else if (im.getFormat() == ImageFormat.JPEG)
+				{
+					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
+
+					int frame_len = jpeg.limit();
+					byte[] jpegByteArray = new byte[frame_len];
+					jpeg.get(jpegByteArray, 0, frame_len);
+
+					frame = new AugmentedFrameTaken(targetFrame.angle,
+							position, topVec, transform, jpegByteArray, 0, false);
+				}
+				else
+				{
+					frame = null;
+				}
+			}
+			else
+			{
+				frame = null;
 			}
 
-			final Vector3d position = new Vector3d(this.last_position);
-			final Vector3d topVec = new Vector3d(this.last_topVec);
-			final float[] transform = new float[16];
-			System.arraycopy(this.last_transform, 0, transform, 0, 16);
-
-			if (im.getFormat() == ImageFormat.YUV_420_888)
+			if (frame != null)
 			{
-				ByteBuffer Y = im.getPlanes()[0].getBuffer();
-				ByteBuffer U = im.getPlanes()[1].getBuffer();
-				ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-				if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-				{
-					Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-					return false;
-				}
-
-				// Note: android documentation guarantee that:
-				// - Y pixel stride is always 1
-				// - U and V strides are the same
-				// So, passing all these parameters is a bit overkill
-				int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-						im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-				if (status != 0)
-					Log.e("Panorama", "Error while cropping: " + status);
-
-				byte[] yuv = YuvImage.GetByteFrame(0);
-				int yuv_address = YuvImage.GetFrame(0);
-
-				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
-						transform, yuv, yuv_address, true);
-
-				synchronized (AugmentedPanoramaEngine.this.frames)
-				{
-					AugmentedPanoramaEngine.this.frames.add(frame);
-				}
-			} else if (im.getFormat() == ImageFormat.JPEG)
-			{
-				ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-				int frame_len = jpeg.limit();
-				byte[] jpegByteArray = new byte[frame_len];
-				jpeg.get(jpegByteArray, 0, frame_len);
-
-				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
-						transform, jpegByteArray, 0, false);
-
 				synchronized (AugmentedPanoramaEngine.this.frames)
 				{
 					AugmentedPanoramaEngine.this.frames.add(frame);
@@ -1251,7 +1224,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			synchronized (this.nv21addressSync)
 			{
-				return nv21address;
+				return this.nv21address;
 			}
 		}
 
@@ -1280,14 +1253,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									syncObject.notify();
 								}
 
-								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer
-										.allocate(AugmentedPanoramaEngine.this.textureWidth
-												* AugmentedPanoramaEngine.this.textureHeight * 4);
+								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
+										AugmentedPanoramaEngine.this.textureWidth
+											* AugmentedPanoramaEngine.this.textureHeight * 4);
 
 								if (!isYUV)
 									ImageConversion.resizeJpeg2RGBA(img_data,
 											AugmentedFrameTaken.this.rgba_buffer.array(),
-											AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											AugmentedPanoramaEngine.this.height,
 											AugmentedPanoramaEngine.this.textureWidth,
 											AugmentedPanoramaEngine.this.textureHeight,
 											CameraController.isFrontCamera());
@@ -1295,7 +1269,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								{
 									ImageConversion.convertNV21toGL(img_data,
 											AugmentedFrameTaken.this.rgba_buffer.array(),
-											AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											AugmentedPanoramaEngine.this.height,
 											AugmentedPanoramaEngine.this.textureWidth,
 											AugmentedPanoramaEngine.this.textureHeight);
 								}
@@ -1315,7 +1290,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(img_data,
 										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, true,
 										CameraController.isFrontCamera(), 90);
-							} else
+							}
+							else
 							{
 								int yuv_rotated = YuvImage.AllocateMemoryForYUV(AugmentedPanoramaEngine.this.height,
 										AugmentedPanoramaEngine.this.width);

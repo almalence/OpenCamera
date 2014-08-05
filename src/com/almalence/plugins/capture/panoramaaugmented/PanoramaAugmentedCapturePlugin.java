@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
@@ -54,8 +55,11 @@ import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
 import com.almalence.YuvImage;
@@ -77,8 +81,8 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 //-+- -->
 
+import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
-
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 
 public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
@@ -135,6 +139,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private static String				sMemoryPref;
 	private static String				sFrameOverlapPref;
 	private static String				sAELockPref;
+
+	private Switch						modeSwitcher;
+	private boolean						modeSweep;
 
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -290,7 +297,38 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		sFrameOverlapPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaFrameOverlap);
 		sAELockPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaAELock);
 
+		final LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		
+		this.modeSwitcher = (Switch)inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
+		final Resources resources = MainScreen.getInstance().getResources();
+		this.modeSwitcher.setTextOn(resources.getString(
+				R.string.plugin_capture_panoramaaugmented_modeswitch_sweep));
+		this.modeSwitcher.setTextOff(resources.getString(
+				R.string.plugin_capture_panoramaaugmented_modeswitch_augmented));
+		this.modeSwitcher.setChecked(this.modeSweep);
+		this.modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+			{
+				PanoramaAugmentedCapturePlugin.this.modeSweep = isChecked;
+				PanoramaAugmentedCapturePlugin.this.setMode();
+			}
+		});
+
 		this.engine = new AugmentedPanoramaEngine();
+	}
+	
+	private void setMode()
+	{
+		if (this.modeSweep)
+		{
+			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
+		}
+		else
+		{
+			this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+		}
 	}
 
 	@Override
@@ -338,7 +376,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				{
 					synchronized (this.engine)
 					{
-						final int result = engine.cancelFrame();
+						final int result = this.engine.cancelFrame();
 
 						if (result <= 0)
 						{
@@ -498,12 +536,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+		this.setMode();
 
 		if (!this.prefHardwareGyroscope)
 		{
-			this.sensorSoftGyroscope.SetFrameParameters(this.previewWidth, this.previewHeight, this.viewAngleX,
-					this.viewAngleY);
+			this.sensorSoftGyroscope.SetFrameParameters(this.previewWidth,
+					this.previewHeight, this.viewAngleX, this.viewAngleY);
 		}
 	}
 
@@ -955,13 +993,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				final int state = this.engine
-						.getPictureTakingState(CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
+				final int state = this.engine.getPictureTakingState(
+						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
-					this.takingAlready = true;
-					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					if (this.modeSweep)
+					{
+						this.engine.onFrameAdded(data, true);
+					}
+					else
+					{
+						this.takingAlready = true;
+						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					}
 				}
 			}
 		}
@@ -991,7 +1036,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			// - Y pixel stride is always 1
 			// - U and V strides are the same
 			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+			int status = YuvImage.CreateYUVImage(Y, U, V, 
+					im.getPlanes()[0].getPixelStride(),
 					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
 					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight, 1);
@@ -1009,14 +1055,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				final int state = this.engine
-						.getPictureTakingState(CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
+				final int state = this.engine.getPictureTakingState(
+						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE)
 				{
-					this.takingAlready = true;
-					Log.e(TAG, "MSG_TAKE_PICTURE onPreviewAvailable");
-					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					if (this.modeSweep)
+					{
+						this.engine.onFrameAdded(im, true);
+					}
+					else
+					{
+						this.takingAlready = true;
+						Log.e(TAG, "MSG_TAKE_PICTURE onPreviewAvailable");
+						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+					}
 				}
 			}
 		}
@@ -1128,7 +1181,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			Log.e(TAG, "Perform CAPTURE Panorama");
 			requestID = CameraController.captureImage(1, CameraController.YUV);
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 
@@ -1166,7 +1220,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
-			goodPlace = this.engine.onPictureTaken(paramArrayOfByte);
+			goodPlace = this.engine.onFrameAdded(paramArrayOfByte, false);
 
 			if (this.isFirstFrame)
 			{
@@ -1213,7 +1267,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
-			goodPlace = this.engine.onImageAvailable(im);
+			goodPlace = this.engine.onFrameAdded(im, false);
 		}
 
 		final boolean done = this.engine.isCircular();

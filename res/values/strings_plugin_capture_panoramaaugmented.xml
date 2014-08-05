@@ -22,6 +22,9 @@
     
     <string name="pref_plugin_capture_panoramaaugmented_frameoverlap_title">Frame overlap</string>
     
+    <string name="plugin_capture_panoramaaugmented_modeswitch_augmented">HD</string>
+    <string name="plugin_capture_panoramaaugmented_modeswitch_sweep">Sweep</string>
+    
     <string name="pref_plugin_capture_panoramaaugmented_memory_title">Relax memory constraints</string>
     <string name="pref_plugin_capture_panoramaaugmented_memory_summary">Allow more frames but may cause a crash due to out of memory</string>    
     <string name="pref_plugin_capture_panoramaaugmented_aelock_title">Panorama AE/AWB lock</string>
