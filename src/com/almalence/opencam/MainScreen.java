@@ -368,6 +368,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (true == prefs.contains("plugin_almalence_groupshot")) {
 			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
 		}
+		if (true == prefs.contains("subscription_unlock_all_month")) {
+			unlockAllSubscriptionMonth = prefs.getBoolean("subscription_unlock_all_month", false);
+		}
+		if (true == prefs.contains("subscription_unlock_all_year")) {
+			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
+		}
+		
 		
 		createBillingHandler();
 		/**** Billing *****/
@@ -913,12 +920,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.getGUIManager().onGUICreate();
-
-						if (showStore)
-						{
-							guiManager.showStore();
-							showStore = false;
-						}
 					}
 					else if (surfaceCreated && (!CameraController.isCameraCreated()))
 					{
@@ -933,12 +934,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.getGUIManager().onGUICreate();
-
-						if (showStore)
-						{
-							guiManager.showStore();
-							showStore = false;
-						}
 					}					
 					orientListener.enable();
 				}
@@ -1804,6 +1799,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 //        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018394");
     }
     
+	public void setShowStore(boolean show)
+	{
+		showStore = show;
+	}
+	
+	public boolean isShowStore()
+	{
+		return showStore;
+	}
+	
 	public void activateCouponSale()
 	{
 		couponSale = true;
@@ -1980,18 +1985,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("subscription_unlock_all_month", true);
 				prefsEditor.commit();
-				
-				mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_MONTH),
-                        mConsumeFinishedListener);
 			}
 			if (inventory.hasPurchase(SKU_SUBSCRIPTION_YEAR)) {
 				unlockAllSubscriptionYear = true;
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("subscription_unlock_all_year", true);
 				prefsEditor.commit();
-				
-				mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_YEAR),
-                        mConsumeFinishedListener);
 			}
 			
 			try{
@@ -2044,34 +2043,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	};
 
-	// Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            Log.d("mConsumeFinishedListener", "Consumption finished. Purchase: " + purchase
-                    + ", result: " + result);
-            SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.getMainContext());
-            
-            if (purchase.getSku().equals(SKU_SUBSCRIPTION_MONTH))
-            {
-            	if (result.isSuccess()) 
-            	{
-            		unlockAllSubscriptionMonth = true;
-            		Editor prefsEditor = prefs.edit();
-    				prefsEditor.putBoolean("subscription_unlock_all_month", true);
-    				prefsEditor.commit();
-		            Log.d("mConsumeFinishedListener", "Consumption SKU_SUBSCRIPTION_MONTH successful.");
-		        } else 
-		        {
-		        	unlockAllSubscriptionMonth = false;		 
-		        	Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("subscription_unlock_all_month", false);
-					prefsEditor.commit();
-		        }
-            }
-        }
-    };
-    
 	private int HDR_REQUEST = 100;
 	private int PANORAMA_REQUEST = 101;
 	private int ALL_REQUEST = 102;
@@ -2082,7 +2053,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public boolean isPurchasedAll()
 	{
-		return unlockAllPurchased;
+		return unlockAllPurchased||unlockAllSubscriptionMonth||unlockAllSubscriptionYear;
 	}
 	
 	public boolean isPurchasedHDR()
@@ -2201,18 +2172,38 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchasedUnlockAllSubscriptionMonth()
 	{
-		if(MainScreen.thiz.isPurchasedUnlockAllSubscriptionMonth() || MainScreen.thiz.isPurchasedAll())
+		if(MainScreen.thiz.isPurchasedAll())
 			return;
 		String payload = "";
 		try 
 		{
-//			mHelper .con (MainScreen.thiz,
-//					SKU_GROUPSHOT,
-//					GROUPSHOT_REQUEST,
-//					mPreferencePurchaseFinishedListener,
-//					payload);
-//			mHelper.consumeAsync(inventory.getPurchase(SKU_SUBSCRIPTION_MONTH),
-//                    mConsumeFinishedListener);
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_SUBSCRIPTION_MONTH,
+					SUBSCRIPTION_MONTH_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	public void purchasedUnlockAllSubscriptionYear()
+	{
+		if(MainScreen.thiz.isPurchasedAll())
+			return;
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					SKU_SUBSCRIPTION_YEAR,
+					SUBSCRIPTION_YEAR_REQUEST,
+					mPreferencePurchaseFinishedListener,
+					payload);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2313,6 +2304,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_groupshot", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_SUBSCRIPTION_MONTH)) {
+			Log.v("Main billing", "Purchase month subscription.");
+			unlockAllSubscriptionMonth = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("subscription_unlock_all_month", true);
+			prefsEditor.commit();
+		}
+		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR)) {
+			Log.v("Main billing", "Purchase year subscription.");
+			unlockAllSubscriptionYear = true;
+			
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("subscription_unlock_all_year", true);
 			prefsEditor.commit();
 		}
 	}
