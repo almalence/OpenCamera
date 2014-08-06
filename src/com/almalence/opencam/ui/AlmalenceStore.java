@@ -44,10 +44,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -86,15 +84,6 @@ public class AlmalenceStore
 		GridView gridview = (GridView) store.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
 
-		gridview.setOnTouchListener(new OnTouchListener()
-		{
-			@Override
-			public boolean onTouch(View v, MotionEvent event)
-			{
-				return false;
-			}
-
-		});
 		page.addView(store);
 		pages.add(page);
 
@@ -139,7 +128,7 @@ public class AlmalenceStore
 		pages.add(page);
 
 		SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
-		ViewPager viewPager = new ViewPager(MainScreen.getInstance());
+		final ViewPager viewPager = new ViewPager(MainScreen.getInstance());
 		viewPager.setAdapter(pagerAdapter);
 		viewPager.setCurrentItem(0);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
@@ -236,7 +225,7 @@ public class AlmalenceStore
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 8; i++)
 		{
 
 			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
@@ -318,20 +307,40 @@ public class AlmalenceStore
 				else
 					price.setText("");
 				break;
+			case 6:
+				// subscription year
+				icon.setImageResource(R.drawable.store_promo);
+				description.setText(MainScreen.getInstance().getResources()
+						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
+				if (MainScreen.getInstance().isPurchasedAll())
+					price.setText(R.string.already_unlocked);
+				else
+					price.setText("");
+				break;
+			case 7:
+				// subscription month
+				icon.setImageResource(R.drawable.store_promo);
+				description.setText(MainScreen.getInstance().getResources()
+						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
+				if (MainScreen.getInstance().isPurchasedAll())
+					price.setText(R.string.already_unlocked);
+				else
+					price.setText("");
+				break;
 			default:
 				break;
 			}
 
-			item.setOnTouchListener(new OnTouchListener()
-			{
-				@Override
-				public boolean onTouch(View v, MotionEvent event)
-				{
-					if (event.getAction() == MotionEvent.ACTION_CANCEL)
-						purchasePressed(v);
-					return false;
-				}
-			});
+//			item.setOnTouchListener(new OnTouchListener()
+//			{
+//				@Override
+//				public boolean onTouch(View v, MotionEvent event)
+//				{
+//					if (event.getAction() == MotionEvent.ACTION_CANCEL)
+//						purchasePressed(v);
+//					return false;
+//				}
+//			});
 
 			item.setOnClickListener(new OnClickListener()
 			{
@@ -372,6 +381,12 @@ public class AlmalenceStore
 			break;
 		case 5:// Promo
 			MainScreen.getInstance().enterPromo();
+			break;
+		case 6:// Year subscription
+			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
+			break;
+		case 7:// Month subscription
+			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
 			break;
 		default:
 			break;
