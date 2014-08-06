@@ -541,25 +541,6 @@ public class VideoCapturePlugin extends PluginCapture
 			});
 		}
 
-		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout) MainScreen.getInstance().findViewById(
-				R.id.specialPluginsLayout2);
-		for (int i = 0; i < specialLayout2.getChildCount(); i++)
-			specialView2.add(specialLayout2.getChildAt(i));
-
-		for (int j = 0; j < specialView2.size(); j++)
-		{
-			View view = specialView2.get(j);
-			int view_id = view.getId();
-			if (view_id == this.buttonsLayout.getId())
-			{
-				if (view.getParent() != null)
-					((ViewGroup) view.getParent()).removeView(view);
-
-				specialLayout.removeView(view);
-			}
-		}
-
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
