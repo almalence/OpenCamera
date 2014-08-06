@@ -207,7 +207,7 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 
 	if (ds)
 	{
-		////#pragma omp parallel for
+//		//#pragma omp parallel for
 		for (y=0; y<frame_height_ds; ++y)
 		{
 			int x, xx, yy;

@@ -49,6 +49,8 @@ import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
 import android.os.Build;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -57,7 +59,7 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback,
-		Camera.PreviewCallback, Camera.ShutterCallback
+		Camera.PreviewCallback, Camera.ShutterCallback, Handler.Callback
 {
 	private static final String						TAG								= "CameraController";
 
@@ -163,7 +165,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Camera							camera							= null;
 	private static Camera.Parameters				cameraParameters				= null;
 	private byte[]									pviewBuffer;
-
+	
+	//Message handler for multishot capturing with pause between shots
+	//and different exposure compensations
+	private Handler 								messageHandler;
+	
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
 
@@ -253,6 +259,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		pluginManager = pluginManagerBase;
 		appInterface = app;
 		mainContext = context;
+		
+		messageHandler = new Handler(this);
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -2001,30 +2009,35 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static int captureImagesWithParams(int nFrames, int format, int pause, int[] evRequested)
 	{
+		pauseBetweenShots = pause;
+		evValues = evRequested;
+
+		total_frames = nFrames;
+		frame_num = 0;
+		
 		if (!CameraController.isHALv3)
 		{
-			synchronized (SYNC_OBJECT)
-			{
-				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-				{
-					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-					camera.setPreviewCallback(null);
-					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-					return 0;
-				}
-
-				return -1;
-			}
+			if (evRequested != null && evRequested.length >= total_frames)
+				CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+			else
+				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+			
+			return 0;
+			
+//			synchronized (SYNC_OBJECT)
+//			{
+//				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+//				{
+//					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+//					camera.setPreviewCallback(null);
+//					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+//					return 0;
+//				}
+//
+//				return -1;
+//			}
 		} else
-		{
-			pauseBetweenShots = pause;
-			evValues = evRequested;
-
-			total_frames = nFrames;
-			frame_num = 0;
-
 			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested);
-		}
 	}
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
@@ -2112,6 +2125,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		pluginManager.onPictureTaken(paramArrayOfByte, paramCamera);
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
+		
+		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
 	}
 
 	@Override
@@ -2136,6 +2151,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera)
 	{
+		if (evLatency > 0)
+		{
+			previewWorking = true;
+			if (--evLatency == 0)
+			{
+				if (cdt != null)
+				{
+					cdt.cancel();
+					cdt = null;
+				}
+				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+			}
+			return;
+		}
+		
 		pluginManager.onPreviewFrame(data, paramCamera);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 	}
@@ -2303,5 +2333,97 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onShutter()
 	{
 		// Not used
+	}
+	
+	
+	// set exposure based on onpreviewframe
+	private int					evLatency;
+	private boolean				previewMode				= false;
+	private boolean				previewWorking			= false;
+	private CountDownTimer		cdt						= null;
+	
+	public static final int				MSG_SET_EXPOSURE						= 01;
+	public static final int				MSG_NEXT_FRAME							= 02;
+	public static final int				MSG_TAKE_IMAGE							= 03;
+	
+	public void sendMessage(int what)
+	{
+		Message message = new Message();		
+		message.what = what;
+		messageHandler.sendMessage(message);
+	}
+	
+	@Override
+	public boolean handleMessage(Message msg) {
+
+		switch(msg.what)
+		{
+			case MSG_SET_EXPOSURE:
+				Log.e(TAG, "MSG_SET_EXPOSURE");
+				try
+				{
+//					if (UseLumaAdaptation && LumaAdaptationAvailable)
+//						CameraController.getInstance().setLumaAdaptation(evValues[frame_num]);
+//					else
+						CameraController.getInstance().setCameraExposureCompensation(evValues[frame_num]);
+				} catch (RuntimeException e)
+				{
+					Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
+				}
+
+				if (previewMode)
+				{
+					// message to capture image will be emitted 2 or 3 frames after
+					// setExposure
+					evLatency = 10; // the minimum value at which Galaxy Nexus is
+									// changing exposure in a stable way
+
+					// Note 3 need more time to change exposure.
+					if (Build.MODEL.contains("SM-N900"))
+						evLatency = 20;
+				} else
+				{
+					new CountDownTimer(500, 500)
+					{
+						public void onTick(long millisUntilFinished)
+						{
+						}
+
+						public void onFinish()
+						{
+							CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+						}
+					}.start();
+				}
+
+				return true;
+				
+			case MSG_NEXT_FRAME:
+				if (++frame_num < total_frames)
+				{
+					if (evValues != null && evValues.length >= total_frames)
+						CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+					else
+						CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+					Log.e(TAG, "MSG_NEXT_FRAME");
+				}
+				break;
+			case MSG_TAKE_IMAGE:
+				Log.e(TAG, "MSG_TAKE_IMAGE");
+				synchronized (SYNC_OBJECT)
+				{
+					if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+					{
+						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+						camera.setPreviewCallback(null);
+						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					}
+				}
+				break;
+			default:			 
+			break;
+		}
+
+		return true;
 	}
 }

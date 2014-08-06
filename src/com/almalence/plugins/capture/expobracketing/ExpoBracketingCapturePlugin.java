@@ -152,7 +152,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPause()
+	public void onPause() 
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
@@ -489,7 +489,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			}
 		};
 		cdt.start();
-
 	}
 
 //	@TargetApi(21)
@@ -562,6 +561,75 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //			CameraController.getInstance().resetExposureCompensation();
 //		}
 //	}
+	
+	@Override
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	{
+		int n = evIdx[frame_num];
+		if (cm7_crap && (total_frames == 3))
+		{
+			if (frame_num == 0)
+				n = evIdx[0];
+			else if (frame_num == 1)
+				n = evIdx[2];
+			else
+				n = evIdx[1];
+		}
+		
+		compressed_frame[n] = frame;
+		compressed_frame_len[n] = frame_len;
+
+		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
+		PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
+				String.valueOf(compressed_frame_len[n]));
+		PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
+				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
+				String.valueOf(CameraController.isFrontCamera()));
+
+		Log.e("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
+
+		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+
+		try
+		{
+			CameraController.startCameraPreview();
+		} catch (RuntimeException e)
+		{
+			takingAlready = false;
+			inCapture = false;
+			previewWorking = true;
+			if (cdt != null)
+			{
+				cdt.cancel();
+				cdt = null;
+			}
+
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
+
+			CameraController.getInstance().resetExposureCompensation();
+			return;
+		}
+
+		if (++frame_num >= total_frames)
+		{
+			takingAlready = false;
+			inCapture = false;
+			previewWorking = true;
+			if (cdt != null)
+			{
+				cdt.cancel();
+				cdt = null;
+			}
+
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
+
+			CameraController.getInstance().resetExposureCompensation();
+		}
+	}	
 
 	@TargetApi(21)
 	@Override
@@ -773,10 +841,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void CaptureFrame()
 	{
 		// only requesting exposure change here
-		evRequested = evValues[cur_ev];
-		cur_ev += 1;
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_SET_EXPOSURE);
+//		evRequested = evValues[cur_ev];
+//		cur_ev += 1;
+//		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+//				PluginManager.MSG_SET_EXPOSURE);
+		MainScreen.getGUIManager().showCaptureIndication();
+		MainScreen.getInstance().playShutter();
+		
+		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
+			requestID = CameraController.captureImagesWithParams(3, CameraController.YUV, 0, evValues);
+		else
+			requestID = CameraController.captureImage(1, CameraController.JPEG);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)
