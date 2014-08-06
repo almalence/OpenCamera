@@ -23,6 +23,7 @@ by Almalence Inc. All Rights Reserved.
 // <!-- -+-
 package com.almalence.opencam;
 
+import com.almalence.googsharing.Thumbnail;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -46,6 +47,7 @@ import java.util.Map.Entry;
 
 import com.almalence.SwapHeap;
 import com.almalence.opencam.CameraParameters;
+
 import android.content.ContentValues;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -842,7 +844,7 @@ public class PluginManager implements PluginManagerInterface
 			addHeadersContent(pf, activePlugins, false);
 
 			pf.addPreferencesFromResource(R.xml.preferences_vf_more);
-			
+
 			if (activePlugins.size() != listVF.size() && isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
 		} else if ("vf_inactive_settings".equals(settings))
@@ -1469,8 +1471,7 @@ public class PluginManager implements PluginManagerInterface
 			// -+- -->
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
@@ -1486,9 +1487,8 @@ public class PluginManager implements PluginManagerInterface
 
 			MainScreen.getGUIManager().lockControls = false;
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
-			
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+
 			MainScreen.getGUIManager().onExportFinished();
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1500,8 +1500,7 @@ public class PluginManager implements PluginManagerInterface
 			if (null != pluginList.get(activeProcessing))
 			{
 				MainScreen.getGUIManager().lockControls = true;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_LOCKED);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_LOCKED);
 
 				pluginList.get(activeProcessing).onStartPostProcessing();
 				MainScreen.getGUIManager().onPostProcessingStarted();
@@ -1516,8 +1515,7 @@ public class PluginManager implements PluginManagerInterface
 
 			// notify GUI about saved images
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().onPostProcessingFinished();
 			if (null != pluginList.get(activeExport) && 0 != sessionID)
@@ -1918,7 +1916,7 @@ public class PluginManager implements PluginManagerInterface
 
 	// get file saving directory
 	// toInternalMemory - should be true only if force save to internal
-	public File getSaveDir(boolean forceSaveToInternalMemory)
+	public static File getSaveDir(boolean forceSaveToInternalMemory)
 	{
 		File dcimDir, saveDir = null, memcardDir;
 		boolean usePhoneMem = true;
@@ -2402,7 +2400,11 @@ public class PluginManager implements PluginManagerInterface
 					break;
 				}
 
-				values = new ContentValues(9);
+				File parent = file.getParentFile();
+				String path = parent.toString().toLowerCase();
+				String name = parent.getName().toLowerCase();
+
+				values = new ContentValues();
 				values.put(
 						ImageColumns.TITLE,
 						file.getName().substring(
@@ -2413,6 +2415,8 @@ public class PluginManager implements PluginManagerInterface
 				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 				values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
+				values.put(ImageColumns.BUCKET_ID, path.hashCode());
+				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
 				values.put(ImageColumns.DATA, file.getAbsolutePath());
 
 				File tmpFile;
@@ -2832,7 +2836,6 @@ public class PluginManager implements PluginManagerInterface
 			}
 			os.close();
 
-			
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 			switch (mDisplayOrientation)
@@ -2842,12 +2845,11 @@ public class PluginManager implements PluginManagerInterface
 				exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 				break;
 			case 90:
-				if (cameraMirrored) 
+				if (cameraMirrored)
 				{
 					mDisplayOrientation = 270;
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
-				}
-				else
+				} else
 				{
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
 				}
@@ -2856,12 +2858,11 @@ public class PluginManager implements PluginManagerInterface
 				exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 				break;
 			case 270:
-				if (cameraMirrored) 
+				if (cameraMirrored)
 				{
 					mDisplayOrientation = 90;
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
-				}
-				else
+				} else
 				{
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
 				}
@@ -2871,7 +2872,7 @@ public class PluginManager implements PluginManagerInterface
 			ei.saveAttributes();
 		}
 
-		values = new ContentValues(9);
+		values = new ContentValues();
 		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
 		values.put(ImageColumns.DISPLAY_NAME, file.getName());
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
@@ -2901,7 +2902,7 @@ public class PluginManager implements PluginManagerInterface
 
 		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 	}
-	
+
 	public void sendMessage(int what, String obj, int arg1, int arg2)
 	{
 		Message message = new Message();
@@ -2911,7 +2912,7 @@ public class PluginManager implements PluginManagerInterface
 		message.what = what;
 		MainScreen.getMessageHandler().sendMessage(message);
 	}
-	
+
 	public void sendMessage(int what, int arg1)
 	{
 		Message message = new Message();
@@ -2919,7 +2920,7 @@ public class PluginManager implements PluginManagerInterface
 		message.what = what;
 		MainScreen.getMessageHandler().sendMessage(message);
 	}
-	
+
 	public void sendMessage(int what, String obj)
 	{
 		Message message = new Message();
