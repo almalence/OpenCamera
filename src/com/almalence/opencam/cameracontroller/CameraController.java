@@ -2150,7 +2150,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera)
-	{
+	{		
+		pluginManager.onPreviewFrame(data, paramCamera);
+		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		
 		if (evLatency > 0)
 		{
 			previewWorking = true;
@@ -2165,9 +2168,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			return;
 		}
-		
-		pluginManager.onPreviewFrame(data, paramCamera);
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 	}
 
 	public static void setPreviewCallbackWithBuffer()
@@ -2353,6 +2353,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		messageHandler.sendMessage(message);
 	}
 	
+	//Handle messages only for old camera interface logic
 	@Override
 	public boolean handleMessage(Message msg) {
 
@@ -2399,13 +2400,33 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return true;
 				
 			case MSG_NEXT_FRAME:
+				Log.e(TAG, "MSG_NEXT_FRAME");
 				if (++frame_num < total_frames)
 				{
-					if (evValues != null && evValues.length >= total_frames)
-						CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+					if(pauseBetweenShots == 0)
+					{
+						if (evValues != null && evValues.length >= total_frames)
+							CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+						else
+							CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+					}
 					else
-						CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-					Log.e(TAG, "MSG_NEXT_FRAME");
+					{
+						new CountDownTimer(pauseBetweenShots, pauseBetweenShots)
+						{
+							public void onTick(long millisUntilFinished)
+							{
+							}
+			
+							public void onFinish()
+							{
+								if (evValues != null && evValues.length >= total_frames)
+									CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+								else
+									CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+							}
+						}.start();
+					}
 				}
 				break;
 			case MSG_TAKE_IMAGE:

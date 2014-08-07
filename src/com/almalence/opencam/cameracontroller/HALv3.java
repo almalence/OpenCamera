@@ -81,6 +81,11 @@ public class HALv3
 	private static float					zoomLevel		= 1f;
 	private static MeteringRectangle[]		af_regions;
 	private static MeteringRectangle[]		ae_regions;
+	
+	private static int 						totalFrames 		= 0;
+	private static int 						currentFrameIndex 	= 0;
+	private static int 						pauseBetweenShots 	= 0;
+	private static int[] 					expRequested 		= null;
 
 	public static HALv3 getInstance()
 	{
@@ -867,6 +872,7 @@ public class HALv3
 		return requestID;
 	}
 
+	
 	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int pause,
 			final int[] evRequested)
 	{
@@ -914,56 +920,61 @@ public class HALv3
 			 * camDevice.captureBurst(requests, new captureListener() , null);
 			 */
 
-			HALv3.getInstance().mCaptureSession.stopRepeating();
+//			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
 			if (pause > 0)
 			{
-				new CountDownTimer(pause, nFrames * pause)
-				{
-					int	index	= 0;
-
-					public void onTick(long millisUntilFinished)
-					{
-						Log.e(TAG, "onTick " + index + " millisUntilFinished =  " + millisUntilFinished);
-						if (evRequested != null && evRequested.length > index)
-						{
-							stillRequestBuilder
-									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-							// setCameraExposureCompensationHALv3(evRequested[index]);
-						}
-
-						try
-						{
-							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureListener, null);
-						} catch (CameraAccessException e)
-						{
-							e.printStackTrace();
-						}
-
-						index++;
-					}
-
-					public void onFinish()
-					{
-						Log.e(TAG, "onFinish index = " + index);
-						if (evRequested != null && evRequested.length > index)
-						{
-							stillRequestBuilder
-									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-							// setCameraExposureCompensationHALv3(evRequested[index]);
-						}
-
-						try
-						{
-							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureListener, null);
-						} catch (CameraAccessException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}.start();
+				totalFrames = nFrames;
+				currentFrameIndex = 0;
+				pauseBetweenShots = pause;
+				expRequested = evRequested;
+				captureNextImageWithParams(format, pause, evRequested, currentFrameIndex);
+//				new CountDownTimer(nFrames * pause, pause)
+//				{
+//					int	index	= 0;
+//
+//					public void onTick(long millisUntilFinished)
+//					{
+//						Log.e(TAG, "onTick " + index + " millisUntilFinished =  " + millisUntilFinished);
+//						if (evRequested != null && evRequested.length > index)
+//						{
+//							stillRequestBuilder
+//									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+//							// setCameraExposureCompensationHALv3(evRequested[index]);
+//						}
+//
+//						try
+//						{
+//							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+//									captureListener, null);
+//						} catch (CameraAccessException e)
+//						{
+//							e.printStackTrace();
+//						}
+//
+//						index++;
+//					}
+//
+//					public void onFinish()
+//					{
+//						Log.e(TAG, "onFinish index = " + index);
+//						if (evRequested != null && evRequested.length > index)
+//						{
+//							stillRequestBuilder
+//									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+//							// setCameraExposureCompensationHALv3(evRequested[index]);
+//						}
+//
+//						try
+//						{
+//							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+//									captureListener, null);
+//						} catch (CameraAccessException e)
+//						{
+//							e.printStackTrace();
+//						}
+//					}
+//				}.start();
 
 			} else
 			{
@@ -1104,6 +1115,69 @@ public class HALv3
 		}
 
 		return requestID;
+	}
+	
+	private static int captureNextImageWithParams(final int format, final int pause, final int[] evRequested, final int index)
+	{
+		int requestID = -1;
+		final CaptureRequest.Builder stillRequestBuilder;
+		try
+		{
+			stillRequestBuilder = HALv3.getInstance().camDevice
+					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if (zoomLevel >= 1.0f)
+			{
+				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
+				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+			}
+
+			if (format == CameraController.JPEG)
+			{
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+			} else
+			{
+				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
+			}
+
+			if (pause > 0)
+			{
+				new CountDownTimer(pause, pause)
+				{
+					public void onTick(long millisUntilFinished)
+					{
+						
+					}
+
+					public void onFinish()
+					{
+						if (evRequested != null && evRequested.length > index)
+							stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+
+						try
+						{
+							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+									captureListener, null);
+						} catch (CameraAccessException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}.start();
+
+			}
+		}
+		catch (CameraAccessException e)
+		{
+			Log.e(TAG, "setting up still image capture request failed");
+			e.printStackTrace();
+			throw new RuntimeException();
+		}			
+			
+			return requestID;
 	}
 
 	public static boolean autoFocusHALv3()
@@ -1502,6 +1576,9 @@ public class HALv3
 				}
 				
 				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);
+				
+				if(++currentFrameIndex < totalFrames)
+					captureNextImageWithParams(im.getFormat(), pauseBetweenShots, expRequested, currentFrameIndex);
 			}
 
 			// Image should be closed after we are done with it

@@ -175,39 +175,36 @@ public class BestShotCapturePlugin extends PluginCapture
 			inCapture = true;
 			refreshPreferences();
 			takingAlready = true;
-			if (imagesTaken == 0)
-			{
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_NEXT_FRAME);
-			} else
-			{
-				new CountDownTimer(50, 50)
-				{
-					public void onTick(long millisUntilFinished)
-					{
-					}
+			
+			// play tick sound
+			MainScreen.getGUIManager().showCaptureIndication();
+			MainScreen.getInstance().playShutter();
 
-					public void onFinish()
-					{
-						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-								PluginManager.MSG_NEXT_FRAME);
-					}
-				}.start();
+			try
+			{
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 50, null);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
+				inCapture = false;
+				takingAlready = false;
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+						PluginManager.MSG_CONTROL_UNLOCKED);
+				MainScreen.getGUIManager().lockControls = false;
 			}
 		}
 	}
 
+	
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		Log.i("Bestshot", "1");
 		imagesTaken++;
-		int frame_len = paramArrayOfByte.length;
-		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 
 		if (frame == 0)
 		{
-			Log.i("Bestshot", "Load to heap failed");
+			Log.e("Bestshot", "Load to heap failed");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
@@ -225,16 +222,17 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
+		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
 		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{
-			paramCamera.startPreview();
+			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			Log.i("Bestshot", "StartPreview fail");
+			Log.e("Bestshot", "StartPreview fail");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
@@ -243,58 +241,23 @@ public class BestShotCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		if (imagesTaken < imageAmount)
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-		else
+		
+		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
-
+			
+			Log.e("Bestshot", "CAPTURE FINISHED");
+			
 			imagesTaken = 0;
 			inCapture = false;
 		}
 		inCapture = false;
-		takingAlready = false;
+		takingAlready = false;	
 	}
-
-//	@TargetApi(21)
-//	@Override
-//	public void onImageAvailable(Image im)
-//	{
-//		imagesTaken++;
-//		int frame = CameraController.getImageFrame(im, SessionID, imagesTaken == 1);
-//		int frame_len = CameraController.getImageLenght(im);
-//		boolean isYUV = CameraController.isYUVImage(im);
-//
-//		String frameName = "frame" + imagesTaken;
-//		String frameLengthName = "framelen" + imagesTaken;
-//
-//		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
-//		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
-//		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
-//				String.valueOf(CameraController.isFrontCamera()));
-//
-//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-//
-//		if (imagesTaken == imageAmount)
-//		{
-//			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-//					String.valueOf(imagesTaken));
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			inCapture = false;
-//		}
-//		inCapture = false;
-//		takingAlready = false;
-//	}
 
 	@TargetApi(21)
 	@Override
@@ -314,33 +277,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			takePicture();
 	}
 
-	@Override
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
-			try
-			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 50, new int[0]);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
-			return true;
-		}
-		return false;
-	}
-
+	
 	@Override
 	public void onPreviewFrame(byte[] data, Camera paramCamera)
 	{
