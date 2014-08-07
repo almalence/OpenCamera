@@ -1,5 +1,6 @@
 package com.almalence.plugins.capture.video;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -10,9 +11,12 @@ import javax.microedition.khronos.opengles.GL10;
 import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
 
+import android.content.ContentValues;
 import android.graphics.SurfaceTexture;
 import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
+import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 
 public class DROVideoEngine
@@ -178,7 +182,21 @@ public class DROVideoEngine
 							DROVideoEngine.this.encoder.close();
 							DROVideoEngine.this.encoder = null;
 
-							MediaScannerConnection.scanFile(MainScreen.getInstance(), new String[] { path }, null, null);
+							File fileSaved = new File(path);
+							File parent = fileSaved.getParentFile();
+							String parentPath = parent.toString().toLowerCase();
+							String parentName = parent.getName().toLowerCase();
+							
+							ContentValues values = new ContentValues();
+							values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+							values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+							values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+							values.put(VideoColumns.MIME_TYPE, "video/mp4");
+							values.put(VideoColumns.BUCKET_ID, parentPath.hashCode());
+							values.put(VideoColumns.BUCKET_DISPLAY_NAME, parentName);
+							values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+							
+							MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 						}
 					}
 

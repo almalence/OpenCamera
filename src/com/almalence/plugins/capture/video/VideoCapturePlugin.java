@@ -59,8 +59,9 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -538,25 +539,6 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 
 			});
-		}
-
-		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout) MainScreen.getInstance().findViewById(
-				R.id.specialPluginsLayout2);
-		for (int i = 0; i < specialLayout2.getChildCount(); i++)
-			specialView2.add(specialLayout2.getChildAt(i));
-
-		for (int j = 0; j < specialView2.size(); j++)
-		{
-			View view = specialView2.get(j);
-			int view_id = view.getId();
-			if (view_id == this.buttonsLayout.getId())
-			{
-				if (view.getParent() != null)
-					((ViewGroup) view.getParent()).removeView(view);
-
-				specialLayout.removeView(view);
-			}
 		}
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -1312,12 +1294,18 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		MainScreen.getGUIManager().startProcessingAnimation();
 
-		values = new ContentValues(7);
-		values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-		values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-		values.put(ImageColumns.MIME_TYPE, "video/mp4");
-		values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+		File parent = fileSaved.getParentFile();
+		String path = parent.toString().toLowerCase();
+		String name = parent.getName().toLowerCase();
+		
+		values = new ContentValues();
+		values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+		values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+		values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(VideoColumns.MIME_TYPE, "video/mp4");
+		values.put(VideoColumns.BUCKET_ID, path.hashCode());
+		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
+		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 	}
 
 	protected void doExportVideo()
@@ -1351,8 +1339,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingTimeView.setText("00:00");
 		mRecorded = 0;
 
-		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-		MediaScannerConnection.scanFile(MainScreen.getInstance(), filesSavedNames, null, null);
+		MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 
 		try
 		{
@@ -2184,12 +2171,20 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.stop(); // stop the recording
 
 			ContentValues values = null;
-			values = new ContentValues(7);
-			values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-			values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-			values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-			values.put(ImageColumns.MIME_TYPE, "video/mp4");
-			values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+			values = new ContentValues();
+			File parent = fileSaved.getParentFile();
+			String path = parent.toString().toLowerCase();
+			String name = parent.getName().toLowerCase();
+			
+			values = new ContentValues();
+			values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+			values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+			values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+			values.put(VideoColumns.MIME_TYPE, "video/mp4");
+			values.put(VideoColumns.BUCKET_ID, path.hashCode());
+			values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
+			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+			
 
 			filesList.add(fileSaved);
 		} catch (RuntimeException e)

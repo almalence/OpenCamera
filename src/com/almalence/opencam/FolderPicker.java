@@ -342,7 +342,7 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			PreferenceManager.getDefaultSharedPreferences(this).edit().putString("saveToPref", "" + this.old_value)
+			PreferenceManager.getDefaultSharedPreferences(this).edit().putString(getResources().getString(R.string.Preference_SaveToValue), "" + this.old_value)
 					.commit();
 		}
 
