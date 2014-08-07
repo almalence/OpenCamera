@@ -2053,7 +2053,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public boolean isPurchasedAll()
 	{
-		return unlockAllPurchased||unlockAllSubscriptionMonth||unlockAllSubscriptionYear;
+		return unlockAllPurchased;
 	}
 	
 	public boolean isPurchasedHDR()
@@ -2088,7 +2088,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchaseAll()
 	{
-		if(MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2108,7 +2108,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchaseHDR()
 	{
-		if(MainScreen.thiz.isPurchasedHDR() || MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedHDR() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2128,7 +2128,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchasePanorama()
 	{
-		if(MainScreen.thiz.isPurchasedPanorama() || MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedPanorama() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2150,7 +2150,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchaseMoving()
 	{
-		if(MainScreen.thiz.isPurchasedMoving() || MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedMoving() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2172,7 +2172,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchasedUnlockAllSubscriptionMonth()
 	{
-		if(MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedUnlockAllSubscriptionMonth() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2194,7 +2194,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchasedUnlockAllSubscriptionYear()
 	{
-		if(MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedUnlockAllSubscriptionYear() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 
@@ -2216,7 +2216,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	
 	public void purchaseGroupshot()
 	{
-		if(MainScreen.thiz.isPurchasedGroupshot() || MainScreen.thiz.isPurchasedAll())
+		if(isPurchasedGroupshot() || isPurchasedAll())
 			return;
 		String payload = "";
 		try 

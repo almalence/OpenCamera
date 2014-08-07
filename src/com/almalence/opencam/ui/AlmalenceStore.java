@@ -312,20 +312,20 @@ public class AlmalenceStore
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getInstance().getResources()
 						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedAll())
+				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText("");
+					price.setText(MainScreen.getInstance().titleSubscriptionYear);
 				break;
 			case 7:
 				// subscription month
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getInstance().getResources()
 						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedAll())
+				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText("");
+					price.setText(MainScreen.getInstance().titleSubscriptionMonth);
 				break;
 			default:
 				break;
