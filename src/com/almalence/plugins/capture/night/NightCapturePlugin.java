@@ -1061,48 +1061,10 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	
-//	@TargetApi(21)
-//	@Override
-//	public void onImageAvailable(Image im)
-//	{
-//		compressed_frame[frameNumber] = CameraController.getImageFrame(im, SessionID, frameNumber == 0);
-//		compressed_frame_len[frameNumber] = CameraController.getImageLenght(im);
-//		boolean isYUV = CameraController.isYUVImage(im);
-//
-//		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-//				String.valueOf(compressed_frame[frameNumber]));
-//		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-//				String.valueOf(compressed_frame_len[frameNumber]));
-//		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
-//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
-//				String.valueOf(CameraController.isFrontCamera()));
-//
-//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-//				String.valueOf(frameNumber + 1));
-//
-//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-//
-//		String message = MainScreen.getInstance().getResources().getString(R.string.capturing);
-//		message += " ";
-//		message += frameNumber + 1 + "/";
-//		message += total_frames;
-//		capturingDialog.setText(message);
-//		capturingDialog.show();
-//
-//		if (++frameNumber == total_frames)
-//		{
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			takingAlready = false;
-//			inCapture = false;
-//		}
-//	}
-	
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
+		Log.e("Night", "onImageTaken");
 		compressed_frame[frameNumber] = frame;
 		compressed_frame_len[frameNumber] = frame_len;
 
@@ -1124,9 +1086,24 @@ public class NightCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		
 		
-		if (++frameNumber >= total_frames)
-		{			
+		try
+		{
 			CameraController.startCameraPreview();
+		} catch (RuntimeException e)
+		{
+			Log.e("Night", "StartPreview fail");
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+					String.valueOf(SessionID));
+
+			frameNumber = 0;
+			MainScreen.getInstance().muteShutter(false);
+			takingAlready = false;
+			inCapture = false;
+			return;
+		}
+		
+		if (++frameNumber == total_frames)
+		{			
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			takingAlready = false;
@@ -1161,7 +1138,7 @@ public class NightCapturePlugin extends PluginCapture
 				// play tick sound
 				MainScreen.getGUIManager().showCaptureIndication();
 				MainScreen.getInstance().playShutter();
-				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, 0, new int[0]);
+				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, 0, null);
 			} catch (RuntimeException e)
 			{
 				Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");
@@ -1174,9 +1151,9 @@ public class NightCapturePlugin extends PluginCapture
 	// and takePicture
 	// or to collect frames in super mode
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
-		if (OpenGLPreference)
+		if (OpenGLPreference && !inCapture)
 		{
 			if (data1 == null)
 				data1 = data;
@@ -1189,9 +1166,12 @@ public class NightCapturePlugin extends PluginCapture
 				else if (dataS.length < data2.length)
 					dataS = new byte[data2.length];
 
-				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-				int imageWidth = params.getPreviewSize().width;
-				int imageHeight = params.getPreviewSize().height;
+//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				int imageWidth = params.getPreviewSize().width;
+//				int imageHeight = params.getPreviewSize().height;
+				
+				int imageWidth = MainScreen.getPreviewWidth();
+				int imageHeight = MainScreen.getPreviewHeight();
 
 				ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 				if (CameraController.isFrontCamera())
@@ -1206,6 +1186,12 @@ public class NightCapturePlugin extends PluginCapture
 				data1 = data2;
 				data2 = null;
 			}
+		}
+		else if(inCapture && data1 != null)
+		{
+			data1 = null;
+			data2 = null;
+			dataS = null;
 		}
 
 		if (Integer.parseInt(ModePreference) == 1 && nVFframesToBuffer != 0)
@@ -1260,142 +1246,6 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(21)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		if (OpenGLPreference)
-		{
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("NightCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			int imageWidth = im.getWidth();
-			int imageHeight = im.getHeight();
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-
-			byte[] data = YuvImage.CreateSingleYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
-
-			if (data1 == null)
-				data1 = data;
-			else if (data2 == null)
-			{
-				data2 = data;
-
-				if (dataS == null)
-					dataS = new byte[data2.length];
-				else if (dataS.length < data2.length)
-					dataS = new byte[data2.length];
-
-				ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
-				if (CameraController.isFrontCamera())
-				{
-					dataRotated = new byte[dataS.length];
-					ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
-
-					yuvData = dataRotated;
-				} else
-					yuvData = dataS;
-
-				data1 = data2;
-				data2 = null;
-			}
-		}
-
-		if (Integer.parseInt(ModePreference) == 1 && nVFframesToBuffer != 0)
-		{
-			Log.e("CapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			int imageWidth = im.getWidth();
-			int imageHeight = im.getHeight();
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight, 0);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			byte[] data = YuvImage.GetByteFrame(0);
-
-			if (CameraController.isFrontCamera())
-			{
-				byte[] rotatedFrame = new byte[data.length];
-				ImageConversion.TransformNV21(data, rotatedFrame, imageWidth, imageHeight, 1, 0, 0);
-
-				data = rotatedFrame;
-			}
-			System.gc();
-
-			// swap-out frame data to the heap
-			compressed_frame[HI_SPEED_FRAMES - nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
-			compressed_frame_len[HI_SPEED_FRAMES - nVFframesToBuffer] = imageWidth * 2 * imageHeight * 2 + 2
-					* ((imageWidth * 2 + 1) / 2) * ((imageHeight * 2 + 1) / 2);
-
-			PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-					String.valueOf(compressed_frame[frameNumber]));
-			PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-					String.valueOf(compressed_frame_len[frameNumber]));
-
-			PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
-					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(frameNumber + 1));
-
-			if (frameNumber == 0)
-			{
-				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
-				MainScreen.setImageWidth(imageWidth);
-				MainScreen.setImageHeight(imageHeight);
-				MainScreen.setSaveImageWidth(imageWidth * 2);
-				MainScreen.setSaveImageHeight(imageHeight * 2);
-			}
-
-			++frameNumber;
-			--nVFframesToBuffer;
-
-			// all frames captured - initiate processing
-			if (nVFframesToBuffer == 0)
-			{
-				PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(true));
-				// play tick sound
-				MainScreen.getInstance().playShutter();
-
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-						String.valueOf(SessionID));
-
-				MainScreen.getGUIManager().stopCaptureIndication();
-
-				takingAlready = false;
-				inCapture = false;
-			}
-		}
-	}
 
 	/******************************************************************************************************
 	 * OpenGL layer functions

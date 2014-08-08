@@ -36,8 +36,9 @@ public interface PluginManagerInterface
 
 	public void onAutoFocus(boolean focused);
 
-	public void onPreviewFrame(byte[] data, Camera paramCamera);
+	public void onPreviewFrame(byte[] data);
 
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
 
 }

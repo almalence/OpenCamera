@@ -141,7 +141,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public enum ShutterButton
 	{
-		DEFAULT, RECORDER_START, RECORDER_STOP, RECORDER_RECORDING, RECORDER_PAUSED
+		DEFAULT, RECORDER_START_WITH_PAUSE, RECORDER_START, RECORDER_STOP_WITH_PAUSE, RECORDER_STOP, RECORDER_RECORDING_WITH_PAUSE, RECORDER_RECORDING, RECORDER_PAUSED
 	}
 
 	public enum SettingsType
@@ -419,12 +419,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private ElementAdapter	   isoAdapter;
 	private ElementAdapter	   meteringmodeAdapter;
 
-	private Map<Integer, View> sceneModeButtons;
-	private Map<Integer, View> wbModeButtons;
-	private Map<Integer, View> focusModeButtons;
-	private Map<Integer, View> flashModeButtons;
-	private Map<Integer, View> isoButtons;
-	private Map<Integer, View> meteringModeButtons;
+	private Map<Integer, View>					sceneModeButtons;
+	private Map<Integer, View>					wbModeButtons;
+	private Map<Integer, View>					focusModeButtons;
+	private Map<Integer, View>					flashModeButtons;
+	private Map<Integer, View>					isoButtons;
+	private Map<Integer, View>					meteringModeButtons;
 
 	// Camera settings values which is exist at current device
 	private List<View>		   activeScene;
@@ -750,7 +750,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			hideModeList();
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
+		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
 	}
 
@@ -5639,20 +5639,34 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		RotateImageView additionalButton = (RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional);
 		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
 
-		// photo
-		if (id == ShutterButton.DEFAULT)
+		// 1 button
+		if (id == ShutterButton.DEFAULT || id == ShutterButton.RECORDER_START || id == ShutterButton.RECORDER_STOP
+				|| id == ShutterButton.RECORDER_RECORDING)
 		{
 			buttonShutterContainer.setOrientation(LinearLayout.VERTICAL);
 			buttonShutterContainer.setPadding(0, 0, 0, 0);
 
 			additionalButton.setVisibility(View.GONE);
 
-			mainButton.setImageResource(R.drawable.button_shutter);
+			if (id == ShutterButton.DEFAULT)
+			{
+				mainButton.setImageResource(R.drawable.button_shutter);
+			} else if (id == ShutterButton.RECORDER_START)
+			{
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+			} else if (id == ShutterButton.RECORDER_STOP)
+			{
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+			} else if (id == ShutterButton.RECORDER_RECORDING)
+			{
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+			}
+
 			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
 			mainButton.getLayoutParams().width = dp;
 			mainButton.getLayoutParams().height = dp;
 		}
-		// video
+		// video with pause (2 butons)
 		else
 		{
 			buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
@@ -5664,11 +5678,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mainButton.getLayoutParams().width = dp;
 			mainButton.getLayoutParams().height = dp;
 
-			if (id == ShutterButton.RECORDER_START)
+			if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
-			} else if (id == ShutterButton.RECORDER_STOP)
+			} else if (id == ShutterButton.RECORDER_STOP_WITH_PAUSE)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
@@ -5676,7 +5690,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
-			} else if (id == ShutterButton.RECORDER_RECORDING)
+			} else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
 			}
@@ -5719,7 +5733,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
 			}
-			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout)).getVisibility() == View.VISIBLE)
+			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			{
 				hideStore();
 				res++;

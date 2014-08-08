@@ -1285,15 +1285,9 @@ public class PluginManager implements PluginManagerInterface
 			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 			pluginList.get(activeCapture).onImageTaken(frame, paramArrayOfByte, frame_len, false);
 		}
-//			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte, paramCamera);
 	}
 
-	public void onImageAvailable(Image im)
-	{
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onImageAvailable(im);
-	}
-	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		if (null != pluginList.get(activeCapture))
@@ -1307,24 +1301,9 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
 
-	public void onPreviewAvailable(Image im)
-	{
-		if (isRestarting)
-		{
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
-			pluginsLayout.requestLayout();
-			isRestarting = false;
-		}
-
-		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onPreviewAvailable(im);
-
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPreviewAvailable(im);
-	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 		// prevents plugin's views to disappear
 		if (isRestarting)
@@ -1335,10 +1314,10 @@ public class PluginManager implements PluginManagerInterface
 		}
 
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onPreviewFrame(data, paramCamera);
+			pluginList.get(activeVF.get(i)).onPreviewFrame(data);
 
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
+			pluginList.get(activeCapture).onPreviewFrame(data);
 	}
 
 	public void onFrameAvailable()

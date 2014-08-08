@@ -2120,6 +2120,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
+		Log.e(TAG, "onPictureTaken");
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
@@ -2149,9 +2150,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data, Camera camera)
 	{		
-		pluginManager.onPreviewFrame(data, paramCamera);
+		pluginManager.onPreviewFrame(data);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 		
 		if (evLatency > 0)

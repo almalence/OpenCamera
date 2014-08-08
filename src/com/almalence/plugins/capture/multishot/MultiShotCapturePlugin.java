@@ -212,7 +212,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 	}
 }

@@ -1515,7 +1515,31 @@ public class HALv3
 			Image im = ir.acquireNextImage();
 			// if(iPreviewFrameID == im.getTimestamp())
 			if (ir.getSurface() == CameraController.mPreviewSurface)
-				PluginManager.getInstance().onPreviewAvailable(im);
+			{
+				ByteBuffer Y = im.getPlanes()[0].getBuffer();
+				ByteBuffer U = im.getPlanes()[1].getBuffer();
+				ByteBuffer V = im.getPlanes()[2].getBuffer();
+
+				if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
+				{
+					Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
+					return;
+				}
+
+				int imageWidth = im.getWidth();
+				int imageHeight = im.getHeight();
+				// Note: android documentation guarantee that:
+				// - Y pixel stride is always 1
+				// - U and V strides are the same
+				// So, passing all these parameters is a bit overkill
+
+				byte[] data = YuvImage.CreateSingleYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
+						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
+						im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
+				
+				PluginManager.getInstance().onPreviewFrame(data);
+			}
 			else
 			{
 				Log.e("HALv3", "onImageAvailable");

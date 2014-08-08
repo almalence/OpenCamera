@@ -236,14 +236,6 @@ public abstract class Plugin
 	{
 	}
 
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
-	{
-	}
-
-	public void onImageAvailable(Image im)
-	{
-	}
-	
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		
@@ -254,11 +246,7 @@ public abstract class Plugin
 	{
 	}
 
-	public void onPreviewAvailable(Image im)
-	{
-	}
-
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 	}
 

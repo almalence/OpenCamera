@@ -568,28 +568,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// onPreviewFrame is used only to provide an exact delay between setExposure
 	// and takePicture
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
-	{
-//		if (evLatency > 0)
-//		{
-//			previewWorking = true;
-//			if (--evLatency == 0)
-//			{
-//				if (cdt != null)
-//				{
-//					cdt.cancel();
-//					cdt = null;
-//				}
-//				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-//						PluginManager.MSG_TAKE_PICTURE);
-//			}
-//			return;
-//		}
-	}
-
-	@TargetApi(21)
-	@Override
-	public void onPreviewAvailable(Image im)
+	public void onPreviewFrame(byte[] data)
 	{
 //		if (evLatency > 0)
 //		{

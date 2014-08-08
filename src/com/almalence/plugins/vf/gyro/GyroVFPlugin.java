@@ -200,7 +200,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 		if (!this.mPrefHardwareGyroscope)
 		{

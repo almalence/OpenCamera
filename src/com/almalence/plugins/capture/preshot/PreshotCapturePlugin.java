@@ -381,7 +381,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] _data, Camera _camera)
+	public void onPreviewFrame(byte[] data)
 	{
 		if (isSlowMode || !isBuffering)
 			return;
@@ -392,56 +392,12 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			if (frmCnt == 0)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
-
-			PreShot.InsertToBuffer(_data, MainScreen.getGUIManager().getDisplayOrientation());
-		}
-		frmCnt++;
-	}
-
-	@TargetApi(21)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		if (isSlowMode || !isBuffering)
-			return;
-
-		if (0 == frmCnt % (preview_fps / Integer.parseInt(FPS)))
-		{
-			System.gc();
-
-			if (frmCnt == 0)
-				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
-
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("PreShotCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			int imageWidth = im.getWidth();
-			int imageHeight = im.getHeight();
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight, 0);
-
-			if (status != 0)
-				Log.e("PreShotCapturePlugin", "Error while cropping: " + status);
-
-			byte[] data = YuvImage.GetByteFrame(0);
 
 			PreShot.InsertToBuffer(data, MainScreen.getGUIManager().getDisplayOrientation());
 		}
 		frmCnt++;
 	}
+
 
 	void StartCaptureSequence()
 	{

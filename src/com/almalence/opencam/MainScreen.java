@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -421,7 +420,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
-		preview.setZOrderMediaOverlay(true);
 		preview.setOnClickListener(this);
 		preview.setOnTouchListener(this);
 		preview.setKeepScreenOn(true);
@@ -1316,16 +1314,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			e.printStackTrace();
 		}		
 		
-//		try
-//		{
-//			HALv3.getInstance().configurePreviewRequest();
-//			
-//		}
-//		catch (Exception e)
-//		{
-//			Log.d("MainScreen", "setting up preview failed");
-//			e.printStackTrace();
-//		}
 		// ^^ HALv3 code -------------------------------------------------------------------		
 	}
 		
@@ -1756,7 +1744,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 	
 	public static int getPreviewHeight(){
-		return thiz.previewWidth;
+		return thiz.previewHeight;
 	}
 	
 	public static void setPreviewHeight(int iHeight){
