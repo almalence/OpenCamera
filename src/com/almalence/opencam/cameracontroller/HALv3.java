@@ -244,10 +244,10 @@ public class HALv3
 				imageAvailableListener,  null);
 
 		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener,
-				 new Handler(backgroundThread.getLooper()));
+				 						null);
 
 		MainScreen.getJPEGImageReader().setOnImageAvailableListener(imageAvailableListener,
-				 new Handler(backgroundThread.getLooper()));
+				 						null);
 	}
 
 	public static void populateCameraDimensionsHALv3()

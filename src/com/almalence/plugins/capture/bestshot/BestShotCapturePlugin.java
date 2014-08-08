@@ -224,8 +224,8 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(frameData, SessionID, -1);
+		if (imagesTaken == 1 && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{
@@ -266,7 +266,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

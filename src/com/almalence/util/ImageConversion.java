@@ -142,7 +142,7 @@ public class ImageConversion
 		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize);
 		bitmap.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
 
-		File saveDir = PluginManager.getInstance().GetSaveDir(false);
+		File saveDir = PluginManager.getInstance().getSaveDir(false);
 		Calendar d = Calendar.getInstance();
 
 		File file = new File(saveDir, String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",

@@ -235,8 +235,8 @@ public class BurstCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(frameData, SessionID, -1);
+		if (imagesTaken == 1 && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{
@@ -274,7 +274,7 @@ public class BurstCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

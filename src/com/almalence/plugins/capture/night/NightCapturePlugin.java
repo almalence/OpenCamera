@@ -1060,38 +1060,7 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
-	{
-		compressed_frame[frameNumber] = SwapHeap.SwapToHeap(paramArrayOfByte);
-		compressed_frame_len[frameNumber] = paramArrayOfByte.length;
-
-		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame[frameNumber]));
-		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame_len[frameNumber]));
-
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-				String.valueOf(frameNumber + 1));
-
-		if (frameNumber == 0)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
-
-		String message = MainScreen.getInstance().getResources().getString(R.string.capturing);
-		message += " ";
-		message += frameNumber + 1 + "/";
-		message += total_frames;
-		capturingDialog.setText(message);
-		capturingDialog.show();
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_NEXT_FRAME);
-	}
-
+	
 //	@TargetApi(21)
 //	@Override
 //	public void onImageAvailable(Image im)
@@ -1130,13 +1099,48 @@ public class NightCapturePlugin extends PluginCapture
 //			inCapture = false;
 //		}
 //	}
+	
+	@Override
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	{
+		compressed_frame[frameNumber] = frame;
+		compressed_frame_len[frameNumber] = frame_len;
+
+		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
+				String.valueOf(compressed_frame[frameNumber]));
+		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
+				String.valueOf(compressed_frame_len[frameNumber]));
+
+		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
+				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
+				String.valueOf(CameraController.isFrontCamera()));
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+				String.valueOf(frameNumber + 1));
+		
+		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
+
+		if (frameNumber == 0 && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+		
+		
+		if (++frameNumber >= total_frames)
+		{			
+			CameraController.startCameraPreview();
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+
+			takingAlready = false;
+			inCapture = false;
+		}
+
+	}
 
 	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
 		if (result.getSequenceId() == requestID && frameNumber == 0)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
 
 	public void captureFrame()
@@ -1234,7 +1238,7 @@ public class NightCapturePlugin extends PluginCapture
 					String.valueOf(frameNumber + 1));
 
 			if (frameNumber == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			++frameNumber;
 			--nVFframesToBuffer;
@@ -1365,7 +1369,7 @@ public class NightCapturePlugin extends PluginCapture
 
 			if (frameNumber == 0)
 			{
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 				MainScreen.setImageWidth(imageWidth);
 				MainScreen.setImageHeight(imageHeight);
 				MainScreen.setSaveImageWidth(imageWidth * 2);

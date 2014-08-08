@@ -238,6 +238,7 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_FOCUS_CHANGED						= 63;
 	public static final int				MSG_FLASH_CHANGED						= 64;
 	public static final int				MSG_ISO_CHANGED							= 65;
+	public static final int				MSG_AEWB_CHANGED						= 66;
 
 	// OpenGL layer messages
 	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
@@ -398,7 +399,7 @@ public class PluginManager implements PluginManagerInterface
 		listExport.add(testExportPlugin);
 
 		// parsing configuration file to setup modes
-		ParseConfig();
+		parseConfig();
 	}
 
 	public void setupDefaultMode()
@@ -510,7 +511,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	// parse config to get camera and modes configurations
-	void ParseConfig()
+	void parseConfig()
 	{
 		try
 		{
@@ -656,8 +657,8 @@ public class PluginManager implements PluginManagerInterface
 		if (delayedCaptureFlashPrefCommon || delayedCaptureSoundPrefCommon)
 		{
 			releaseSoundPlayers();
-			countdownHandler.removeCallbacks(FlashOff);
-			finalcountdownHandler.removeCallbacks(FlashBlink);
+			countdownHandler.removeCallbacks(flashOff);
+			finalcountdownHandler.removeCallbacks(flashBlink);
 		}
 		// stops timer before exit to be sure it's canceled
 		if (timer != null)
@@ -754,7 +755,8 @@ public class PluginManager implements PluginManagerInterface
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
 			if (null != pluginList.get(activeCapture)
-					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE)
+					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE
+					&& MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility() == View.GONE)
 				pluginList.get(activeCapture).onShutterClick();
 		} else
 		{
@@ -1646,7 +1648,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	public boolean addToSharedMem_ExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID, final int num)
+	public boolean addToSharedMemExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID, final int num)
 	{
 		try
 		{
@@ -1705,7 +1707,7 @@ public class PluginManager implements PluginManagerInterface
 
 	@SuppressLint("NewApi")
 	@TargetApi(21)
-	public boolean addToSharedMem_ExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
+	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{
 		String exposure_time = String.valueOf(result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
 		String sensitivity = String.valueOf(result.get(CaptureResult.SENSOR_SENSITIVITY));
@@ -1730,7 +1732,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID)
+	public boolean addToSharedMemExifTagsFromCamera(final long SessionID)
 	{
 		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		if (params == null)
@@ -1928,7 +1930,7 @@ public class PluginManager implements PluginManagerInterface
 
 	// get file saving directory
 	// toInternalMemory - should be true only if force save to internal
-	public File GetSaveDir(boolean forceSaveToInternalMemory)
+	public File getSaveDir(boolean forceSaveToInternalMemory)
 	{
 		File dcimDir, saveDir = null, memcardDir;
 		boolean usePhoneMem = true;
@@ -1940,7 +1942,7 @@ public class PluginManager implements PluginManagerInterface
 			abcDir = String.format("%tF", rightNow);
 		}
 
-		if ((Integer.parseInt(MainScreen.getSaveTo()) == 1))
+		if (Integer.parseInt(MainScreen.getSaveTo()) == 1)
 		{
 			dcimDir = Environment.getExternalStorageDirectory();
 
@@ -2020,8 +2022,8 @@ public class PluginManager implements PluginManagerInterface
 				MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
 				MainScreen.getInstance().getResources()
 						.openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
-		countdownHandler.removeCallbacks(FlashOff);
-		finalcountdownHandler.removeCallbacks(FlashBlink);
+		countdownHandler.removeCallbacks(flashOff);
+		finalcountdownHandler.removeCallbacks(flashBlink);
 
 		timer = new CountDownTimer(delayInterval * 1000 + 500, 1000)
 		{
@@ -2051,7 +2053,7 @@ public class PluginManager implements PluginManagerInterface
 							e.printStackTrace();
 							Log.e("Self-timer", "Torch exception: " + e.getMessage());
 						}
-						countdownHandler.postDelayed(FlashOff, 50);
+						countdownHandler.postDelayed(flashOff, 50);
 					}
 				}
 			}
@@ -2061,8 +2063,8 @@ public class PluginManager implements PluginManagerInterface
 				countdownView.clearAnimation();
 				countdownLayout.setVisibility(View.GONE);
 
-				countdownHandler.removeCallbacks(FlashOff);
-				finalcountdownHandler.removeCallbacks(FlashBlink);
+				countdownHandler.removeCallbacks(flashOff);
+				finalcountdownHandler.removeCallbacks(flashBlink);
 				if (CameraController.getInstance().getSupportedFlashModes() != null)
 					CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
 
@@ -2115,7 +2117,7 @@ public class PluginManager implements PluginManagerInterface
 		}
 	}
 
-	private Runnable	FlashOff	= new Runnable()
+	private Runnable	flashOff	= new Runnable()
 									{
 										public void run()
 										{
@@ -2124,7 +2126,7 @@ public class PluginManager implements PluginManagerInterface
 										}
 									};
 
-	private Runnable	FlashBlink	= new Runnable()
+	private Runnable	flashBlink	= new Runnable()
 									{
 										boolean	isFlashON	= false;
 
@@ -2204,7 +2206,7 @@ public class PluginManager implements PluginManagerInterface
 		// save fused result
 		try
 		{
-			File saveDir = GetSaveDir(false);
+			File saveDir = getSaveDir(false);
 
 			Calendar d = Calendar.getInstance();
 
@@ -2279,7 +2281,7 @@ public class PluginManager implements PluginManagerInterface
 					{
 						// save always if not working saving to sdcard
 						e.printStackTrace();
-						saveDir = GetSaveDir(true);
+						saveDir = getSaveDir(true);
 						if (MainScreen.getForceFilename() == null)
 						{
 							file = new File(saveDir, fileFormat);
@@ -2565,6 +2567,7 @@ public class PluginManager implements PluginManagerInterface
 						}
 					} catch (Exception e)
 					{
+						e.printStackTrace();
 					}
 					if (tag_scene != null)
 					{
@@ -2780,7 +2783,7 @@ public class PluginManager implements PluginManagerInterface
 	public String getFileFormat()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
+		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
 		Calendar d = Calendar.getInstance();
 		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
 				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
@@ -2825,6 +2828,7 @@ public class PluginManager implements PluginManagerInterface
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
+		int mDisplayOrientation = Integer.parseInt(resultOrientation);
 		if (os != null)
 		{
 			if (!isYUV)
@@ -2840,7 +2844,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 			os.close();
 
-			int mDisplayOrientation = MainScreen.getGUIManager().getDisplayOrientation();
+			
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 			switch (mDisplayOrientation)
@@ -2850,15 +2854,29 @@ public class PluginManager implements PluginManagerInterface
 				exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 				break;
 			case 90:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-						: ExifInterface.ORIENTATION_ROTATE_90;
+				if (cameraMirrored) 
+				{
+					mDisplayOrientation = 270;
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+				}
+				else
+				{
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+				}
 				break;
 			case 180:
 				exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 				break;
 			case 270:
-				exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-						: ExifInterface.ORIENTATION_ROTATE_270;
+				if (cameraMirrored) 
+				{
+					mDisplayOrientation = 90;
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+				}
+				else
+				{
+					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+				}
 				break;
 			}
 			ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
@@ -2870,8 +2888,7 @@ public class PluginManager implements PluginManagerInterface
 		values.put(ImageColumns.DISPLAY_NAME, file.getName());
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-		values.put(ImageColumns.ORIENTATION, (!orientationLandscape && !cameraMirrored) ? 90
-				: (!orientationLandscape && cameraMirrored) ? -90 : 0);
+		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
 		values.put(ImageColumns.DATA, file.getAbsolutePath());
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -2905,7 +2922,6 @@ public class PluginManager implements PluginManagerInterface
 		message.arg2 = arg2;
 		message.what = what;
 		MainScreen.getMessageHandler().sendMessage(message);
-
 	}
 	
 	public void sendMessage(int what, int arg1)

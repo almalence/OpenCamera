@@ -391,7 +391,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			System.gc();
 
 			if (frmCnt == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			PreShot.InsertToBuffer(_data, MainScreen.getGUIManager().getDisplayOrientation());
 		}
@@ -410,7 +410,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			System.gc();
 
 			if (frmCnt == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			ByteBuffer Y = im.getPlanes()[0].getBuffer();
 			ByteBuffer U = im.getPlanes()[1].getBuffer();
@@ -488,20 +488,20 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		inCapture = false;
 
-		if (0 == PreShot.GetImageCount())
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		if (0 == PreShot.GetImageCount() && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
-		PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getGUIManager().getDisplayOrientation());
+		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 
 		takingAlready = false;
-		paramCamera.startPreview();
-
+		
 		try
 		{
+			CameraController.startCameraPreview();
 			if (isBuffering)
 			{
 				ProcessPauseBetweenShots();
@@ -511,41 +511,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			Log.i("Preshot capture", "StartPreview fail");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_NEXT_FRAME);
-		}
-	}
-
-	@TargetApi(21)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		inCapture = false;
-
-		ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-		int frame_len = jpeg.limit();
-		byte[] jpegByteArray = new byte[frame_len];
-		jpeg.get(jpegByteArray, 0, frame_len);
-
-		if (0 == PreShot.GetImageCount())
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-
-		PreShot.InsertToBuffer(jpegByteArray, MainScreen.getGUIManager().getDisplayOrientation());
-
-		takingAlready = false;
-		CameraController.startCameraPreview();
-
-		try
-		{
-			if (isBuffering)
-			{
-				ProcessPauseBetweenShots();
-			}
-		} catch (RuntimeException e)
-		{
-			Log.i("Preshot capture", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_NEXT_FRAME);
-		}
+		}		
 	}
 
 	void ProcessPauseBetweenShots()
@@ -600,7 +566,6 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		// only requesting exposure change here
 		try
 		{
 			if (isBuffering)

@@ -522,7 +522,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
 				d.get(Calendar.SECOND));
 
-		File saveDir = PluginManager.getInstance().GetSaveDir(false);
+		File saveDir = PluginManager.getInstance().getSaveDir(false);
 		file = new File(saveDir, fileFormat + ".jpg");
 		FileOutputStream os = null;
 		try
@@ -532,7 +532,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		{
 			// save always if not working saving to sdcard
 			e.printStackTrace();
-			saveDir = PluginManager.getInstance().GetSaveDir(true);
+			saveDir = PluginManager.getInstance().getSaveDir(true);
 			file = new File(saveDir, fileFormat + ".jpg");
 			try
 			{

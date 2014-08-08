@@ -813,7 +813,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private static File getOutputMediaFile()
 	{
-		File saveDir = PluginManager.getInstance().GetSaveDir(false);
+		File saveDir = PluginManager.getInstance().getSaveDir(false);
 
 		Calendar d = Calendar.getInstance();
 		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
@@ -2407,7 +2407,7 @@ public class VideoCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		try
 		{
@@ -2439,7 +2439,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		frame = SwapHeap.SwapToHeap(jpegByteArray);
 
-		PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(jpegByteArray, SessionID, -1);
+		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
 
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));

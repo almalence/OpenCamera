@@ -232,7 +232,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			try
 			{
-				File saveDir = PluginManager.getInstance().GetSaveDir(false);
+				File saveDir = PluginManager.getInstance().getSaveDir(false);
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
@@ -257,7 +257,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					{
 						// save always if not working saving to sdcard
 						e.printStackTrace();
-						saveDir = PluginManager.getInstance().GetSaveDir(true);
+						saveDir = PluginManager.getInstance().getSaveDir(true);
 						file = new File(saveDir, fileFormat + evmark + ".jpg");
 						os = new FileOutputStream(file);
 					}

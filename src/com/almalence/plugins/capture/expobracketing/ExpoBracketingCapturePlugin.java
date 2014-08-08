@@ -339,7 +339,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (evIdx[frame_num] == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

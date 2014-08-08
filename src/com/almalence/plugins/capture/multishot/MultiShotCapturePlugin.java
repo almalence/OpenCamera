@@ -105,35 +105,28 @@ public class MultiShotCapturePlugin extends PluginCapture
 			inCapture = true;
 			takingAlready = true;
 			refreshPreferences();
-
-			if (imagesTaken == 0 || pauseBetweenShots == 0)
+			
+			try
 			{
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pauseBetweenShots, null);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
+				inCapture = false;
+				takingAlready = false;
 				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_NEXT_FRAME);
-			} else
-			{
-				new CountDownTimer(pauseBetweenShots, pauseBetweenShots)
-				{
-					public void onTick(long millisUntilFinished)
-					{
-					}
-
-					public void onFinish()
-					{
-						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-								PluginManager.MSG_NEXT_FRAME);
-					}
-				}.start();
+						PluginManager.MSG_CONTROL_UNLOCKED);
+				MainScreen.getGUIManager().lockControls = false;
 			}
 		}
 	}
 
+
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		imagesTaken++;
-		int frame_len = paramArrayOfByte.length;
-		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 
 		if (frame == 0)
 		{
@@ -157,13 +150,13 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(false));
+		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		if (imagesTaken == 1 && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		try
 		{
-			paramCamera.startPreview();
+			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
 			Log.i(TAG, "StartPreview fail");
@@ -176,11 +169,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		if (imagesTaken < imageAmount)
-		{
-			inCapture = false;
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-		} else
+		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
@@ -201,75 +190,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 				}
 			}.start();
 		}
-		takingAlready = false;
+		takingAlready = false;		
 	}
-
-//	@TargetApi(21)
-//	@Override
-//	public void onImageAvailable(Image im)
-//	{
-//		imagesTaken++;
-//
-//		int frame = CameraController.getImageFrame(im, SessionID, false);
-//		int frame_len = CameraController.getImageLenght(im);
-//
-//		if (frame == 0)
-//		{
-//			Log.e(TAG, "Load to heap failed");
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			inCapture = false;
-//			return;
-//		}
-//		String frameName = "frame" + imagesTaken;
-//		String frameLengthName = "framelen" + imagesTaken;
-//
-//		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
-//		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
-//		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
-//				String.valueOf(CameraController.isFrontCamera()));
-//
-//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(true));
-//
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.e(TAG, "StartPreview fail");
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			inCapture = false;
-//			return;
-//		}
-//		if (imagesTaken < imageAmount)
-//		{
-//			inCapture = false;
-//			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
-//		} else
-//		{
-//			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-//					String.valueOf(imagesTaken));
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			inCapture = false;
-//		}
-//
-//		takingAlready = false;
-//	}
 
 	@TargetApi(21)
 	@Override
@@ -278,7 +200,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 
@@ -287,34 +209,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		if (takingAlready)
 			takePicture();
-	}
-
-	@Override
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
-			try
-			{
-				requestID = CameraController.captureImage(1, CameraController.YUV);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
-
-			return true;
-		}
-		return false;
 	}
 
 	@Override

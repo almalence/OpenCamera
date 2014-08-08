@@ -163,7 +163,7 @@ public class SequenceCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		try
 		{
@@ -283,7 +283,7 @@ public class SequenceCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

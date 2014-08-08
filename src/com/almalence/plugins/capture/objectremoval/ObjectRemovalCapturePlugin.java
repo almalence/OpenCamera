@@ -161,7 +161,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(false));
 
 		if (imagesTaken == 1)
-			PluginManager.getInstance().addToSharedMem_ExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
 
 		try
 		{
@@ -280,7 +280,7 @@ public class ObjectRemovalCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 	}
 

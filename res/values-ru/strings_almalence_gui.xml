@@ -38,7 +38,7 @@
     <string name="Pref_Common_DelayedCapture_Title">Съемка по таймеру</string>
     <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру на главном экране</string>
     <string name="Pref_ShowHelp_Title">Показывать помощь</string>
-    <string name="Pref_WhowHelp_Summary">Показывать помощь при запуске режима (режимы панорамы, удаление движущихся объектов, групповой снимок)</string>
+    <string name="Pref_WhowHelp_Summary">Показывать помощь при запуске режима (режимы панорамы, Smart multishot)</string>
     
     <string name="almalence_gui_selected">выбран</string>
     
