@@ -351,7 +351,7 @@ public abstract class Plugin
 			ii++;
 		}
 
-		// default to about 5Mpix if nothing is set in preferences or maximum
+		// default to about 8Mpix if nothing is set in preferences or maximum
 		// resolution is above memory limits
 		if (defaultCaptureMpix > 0)
 		{

@@ -30,6 +30,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 import android.hardware.Camera;
 import android.media.Image;
+import android.preference.PreferenceFragment;
 
 public abstract class PluginCapture extends Plugin
 {

@@ -1,36 +1,26 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/Pref_NightCapture_Preference_Title"
-        				android:key="Pref_NightCapture_Category">   
-        <ListPreference
-						android:title="@string/Pref_NightCapture_ImageSize_Title"
-						android:key="imageSizePrefNightBack"
-						android:defaultValue="0"
-						android:entries="@array/dimsArrayNight"
-						android:entryValues="@array/dimsValuesNight" />
-        <ListPreference
-						android:title="@string/Pref_NightCapture_ImageSize_Title"
-						android:key="imageSizePrefNightFront"
-						android:defaultValue="0"
-						android:entries="@array/dimsArrayNight"
-						android:entryValues="@array/dimsValuesNight" />
+    <PreferenceCategory
+        android:key="Pref_NightCapture_Category"
+        android:title="@string/Pref_NightCapture_Preference_Title" >
         <CheckBoxPreference
-						android:title="@string/Pref_NightCapture_NightVision_Title"
-						android:defaultValue="true"
-						android:summary="@string/Pref_NightCapture_NightVision_Summary"
-						android:key="openglPref" />
-		
-        <!-- -+-  -->
-    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
-    	    android:title="@string/moreText"
-    	    android:fragment="com.almalence.opencam.Fragment" 
-            >
-			 <extra 
-			     android:name="type" 
-			     android:value="capture_night_more" />
-    	</PreferenceScreen>
-    	<!--  -+- -->
-		<!-- +++
+            android:defaultValue="true"
+            android:key="openglPref"
+            android:summary="@string/Pref_NightCapture_NightVision_Summary"
+            android:title="@string/Pref_NightCapture_NightVision_Title" />
+
+        <!-- -+- -->
+        <PreferenceScreen
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:fragment="com.almalence.opencam.Fragment"
+            android:title="@string/moreText" >
+            <extra
+                android:name="type"
+                android:value="capture_night_more" />
+        </PreferenceScreen>
+        <!-- -+- -->
+        <!--
+        +++
 		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"
     	    android:fragment="com.almalence.opencam_plus.Fragment" 
@@ -39,6 +29,8 @@
 			     android:name="type" 
 			     android:value="capture_night_more" />
     	</PreferenceScreen>
-		+++ -->
-	</PreferenceCategory>
+		+++
+        -->
+    </PreferenceCategory>
+
 </PreferenceScreen>

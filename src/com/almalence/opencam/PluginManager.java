@@ -828,6 +828,10 @@ public class PluginManager implements PluginManagerInterface
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_more);
 			MainScreen.getInstance().onAdvancePreferenceCreate(pf);
+		} else if ("general_image_size".equals(settings))
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
+			MainScreen.getInstance().onPreferenceCreate(pf);
 		} else if ("vf_settings".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_vf_common);
@@ -1083,17 +1087,17 @@ public class PluginManager implements PluginManagerInterface
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 			MainScreen.getInstance().setShowStore(true);
-//			new CountDownTimer(800, 800)
-//			{
-//				public void onTick(long millisUntilFinished)
-//				{
-//				}
-//
-//				public void onFinish()
-//				{
-//					MainScreen.getInstance().showStore= true;
-//				}
-//			}.start();
+			// new CountDownTimer(800, 800)
+			// {
+			// public void onTick(long millisUntilFinished)
+			// {
+			// }
+			//
+			// public void onFinish()
+			// {
+			// MainScreen.getInstance().showStore= true;
+			// }
+			// }.start();
 			// -+- -->
 		}
 	}
@@ -1135,7 +1139,6 @@ public class PluginManager implements PluginManagerInterface
 		if ("general_settings".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences);
-			MainScreen.getInstance().onPreferenceCreate(pf);
 		}
 	}
 

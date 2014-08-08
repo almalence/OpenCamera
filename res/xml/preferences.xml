@@ -1,19 +1,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-        
-	<ListPreference
-		android:title="@string/Pref_Common_ImageSize_Title"
-		android:summary="@string/Pref_Common_ImageSize_Summary"
-		android:key="imageSizePrefCommonFront"
-		android:defaultValue="0"
-		android:entries="@array/dimsArrayCommon"
-		android:entryValues="@array/dimsValuesCommon" />
-	<ListPreference
-		android:title="@string/Pref_Common_ImageSize_Title"
-		android:summary="@string/Pref_Common_ImageSize_Summary"
-		android:key="imageSizePrefCommonBack"
-		android:defaultValue="0"
-		android:entries="@array/dimsArrayCommon"
-		android:entryValues="@array/dimsValuesCommon" />
+	    <!-- -+-  -->
+    <PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
+        	android:fragment="com.almalence.opencam.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_image_size" />
+	</PreferenceScreen>
+	<!--  -+- -->
+	<!-- +++
+	<PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
+        	android:fragment="com.almalence.opencam_plus.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_image_size" />
+	</PreferenceScreen>
+	+++ -->
+	
 	<ListPreference
 		android:title="@string/Pref_Common_VolumeButton_Title"
 		android:key="volumeButtonPrefCommon"
