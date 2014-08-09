@@ -127,7 +127,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private int							previewWidth;
 	private int							previewHeight;
 
-	private volatile boolean			isFirstFrame					= true;
+	private volatile boolean			isFirstFrame					= false;
 
 	private volatile boolean			coordsRecorded;
 	private volatile boolean			previewRestartFlag;
@@ -328,10 +328,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if (this.modeSweep)
 		{
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
+
+			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
+					/ getFrameSizeInBytes(this.previewWidth, this.previewHeight));
+			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 		}
 		else
 		{
 			this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+
+			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
+					/ getFrameSizeInBytes(this.pictureWidth, this.pictureHeight));
+			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 		}
 	}
 
@@ -608,7 +616,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				if (this.capturing)
 				{
 					this.stopCapture();
-				} else
+				}
+				else
 				{
 					this.isFirstFrame = true;
 					this.capturing = true;
@@ -670,19 +679,22 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}.start();
 
 			return true;
-		} else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		}
+		else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
 		{
 			this.stopCapture();
 
 			return true;
-		} else if (command == PluginManager.MSG_BAD_FRAME)
+		}
+		else if (command == PluginManager.MSG_BAD_FRAME)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
 					MainScreen.getInstance().getResources()
 							.getString(R.string.plugin_capture_panoramaaugmented_badframe), Toast.LENGTH_SHORT).show();
 			return true;
-		} else if (command == PluginManager.MSG_OUT_OF_MEMORY)
+		}
+		else if (command == PluginManager.MSG_OUT_OF_MEMORY)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
@@ -690,7 +702,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 							.getString(R.string.plugin_capture_panoramaaugmented_outofmemory), Toast.LENGTH_LONG)
 					.show();
 			return true;
-		} else if (command == PluginManager.MSG_NOTIFY_LIMIT_REACHED)
+		}
+		else if (command == PluginManager.MSG_NOTIFY_LIMIT_REACHED)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
@@ -725,13 +738,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		switch (overlap)
 		{
 		case 0:
-			AugmentedPanoramaEngine.setFrameIntersection(0.70f);
+			this.engine.setFrameIntersection(0.70f);
 			break;
 		case 1:
-			AugmentedPanoramaEngine.setFrameIntersection(0.50f);
+			this.engine.setFrameIntersection(0.50f);
 			break;
 		case 2:
-			AugmentedPanoramaEngine.setFrameIntersection(0.30f);
+			this.engine.setFrameIntersection(0.30f);
 			break;
 		default:
 			break;
@@ -1000,19 +1013,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
-
-		final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(this.pictureWidth,
-				this.pictureHeight));
-		this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
-
-		this.engine.ViewportCreationTime();
 	}
 	
 	private void takePictureUnimode(final Object image)
 	{
 		if (this.modeSweep)
 		{
-			this.engine.onFrameAdded(image, true);
+			this.engine.recordCoordinates();
+			this.engine.onFrameAdded(image, false, true);
 			this.isFirstFrame = false;
 		}
 		else
@@ -1248,7 +1256,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
-			goodPlace = this.engine.onFrameAdded(paramArrayOfByte, false);
+			goodPlace = this.engine.onFrameAdded(paramArrayOfByte, false, false);
 
 			if (this.isFirstFrame)
 			{
