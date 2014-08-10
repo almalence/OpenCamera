@@ -90,7 +90,7 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.A
 public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 																	// AutoFocusCallback
 {
-	private static final String			TAG								= "PanoramaAugmentedCapturePlugin";
+	private static final String			TAG								= "Almalence";
 
 	private static final String			PREFERENCES_KEY_RESOLUTION		= "pref_plugin_capture_panoramaaugmented_imageheight2_";
 	private static final String			PREFERENCES_KEY_USE_DEVICE_GYRO	= "pref_plugin_capture_panoramaaugmented_usehardwaregyro";
@@ -1050,6 +1050,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
 						|| this.isFirstFrame)
 				{
+					Log.e(TAG, "Taking picture using PREVIEW OLD");
 					this.takePictureUnimode(data);
 				}
 			}
@@ -1105,6 +1106,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
 						|| this.isFirstFrame)
 				{
+					Log.e(TAG, "Taking picture using PREVIEW HALv3");
 					this.takePictureUnimode(im);
 				}
 			}
@@ -1256,6 +1258,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
+			Log.e(TAG, "Taking picture using PICTURE OLD");
 			goodPlace = this.engine.onFrameAdded(paramArrayOfByte, false, false);
 
 			if (this.isFirstFrame)
@@ -1303,6 +1306,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
+			Log.e(TAG, "Taking picture using PICTURE HALv3");
 			goodPlace = this.engine.onFrameAdded(im, false);
 		}
 
@@ -1357,8 +1361,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("pano_mirror" + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
-			PluginManager.getInstance().addToSharedMem("pano_width" + SessionID, String.valueOf(this.pictureHeight));
-			PluginManager.getInstance().addToSharedMem("pano_height" + SessionID, String.valueOf(this.pictureWidth));
+			if (this.modeSweep)
+			{
+				PluginManager.getInstance().addToSharedMem("pano_width" + SessionID, String.valueOf(this.previewHeight));
+				PluginManager.getInstance().addToSharedMem("pano_height" + SessionID, String.valueOf(this.previewWidth));
+			}
+			else
+			{
+				PluginManager.getInstance().addToSharedMem("pano_width" + SessionID, String.valueOf(this.pictureHeight));
+				PluginManager.getInstance().addToSharedMem("pano_height" + SessionID, String.valueOf(this.pictureWidth));
+			}
 			PluginManager.getInstance().addToSharedMem("pano_frames_count" + SessionID, String.valueOf(frames.size()));
 			PluginManager.getInstance().addToSharedMem("pano_camera_fov" + SessionID,
 					String.valueOf((int) (this.viewAngleY + 0.5f)));

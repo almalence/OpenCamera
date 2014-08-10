@@ -1315,10 +1315,17 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								final int in_width;
 								final int in_height;
-								if (!rotate)
+								if (rotate)
 								{
 									in_width = AugmentedPanoramaEngine.this.height;
 									in_height = AugmentedPanoramaEngine.this.width;
+									
+									yuv_rotated = yuv_address;
+								}
+								else
+								{
+									in_width = AugmentedPanoramaEngine.this.width;
+									in_height = AugmentedPanoramaEngine.this.height;
 									
 									yuv_rotated = YuvImage.AllocateMemoryForYUV(
 											AugmentedPanoramaEngine.this.height,
@@ -1327,14 +1334,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 											AugmentedPanoramaEngine.this.width,
 											AugmentedPanoramaEngine.this.height,
 											0, 0, 1);
-									SwapHeap.FreeFromHeap(yuv_address);
-								}
-								else
-								{
-									in_width = AugmentedPanoramaEngine.this.height;
-									in_height = AugmentedPanoramaEngine.this.width;
-									
-									yuv_rotated = yuv_address;
 								}
 								
 								ImageConversion.convertNV21toGLN(yuv_rotated,
@@ -1354,7 +1353,24 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								});
 							}
 							
-							AugmentedFrameTaken.this.nv21address = yuv_rotated;
+							if (rotate)
+							{
+								AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
+										AugmentedPanoramaEngine.this.height,
+										AugmentedPanoramaEngine.this.width);
+								ImageConversion.TransformNV21N(yuv_address,
+										AugmentedFrameTaken.this.nv21address,
+										AugmentedPanoramaEngine.this.height,
+										AugmentedPanoramaEngine.this.width,
+										0, 0, 1);
+								SwapHeap.FreeFromHeap(yuv_address);
+							}
+							else
+							{
+								AugmentedFrameTaken.this.nv21address = yuv_address;
+								SwapHeap.FreeFromHeap(yuv_rotated);
+							}
+							
 						}
 					}
 				}).start();
@@ -1452,14 +1468,19 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, this.texture[0]);
 
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
 
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_REPEAT);
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_REPEAT);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_CLAMP_TO_EDGE);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
 
 					GLES10.glTexImage2D(GLES10.GL_TEXTURE_2D, 0, GLES10.GL_RGBA,
-							AugmentedPanoramaEngine.this.textureWidth, AugmentedPanoramaEngine.this.textureHeight,
+							AugmentedPanoramaEngine.this.textureWidth,
+							AugmentedPanoramaEngine.this.textureHeight,
 							0, GLES10.GL_RGBA, GLES10.GL_UNSIGNED_BYTE, this.rgba_buffer);
 					this.rgba_buffer = null;
 
