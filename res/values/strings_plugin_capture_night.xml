@@ -25,7 +25,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Night capture</string>
 	<string name="Pref_NightCapture_Preference_Summary">Low light capturing</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Image size (hi-speed mode)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Image size (Night hi-speed mode)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Focus mode</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Select suitable focus mode</string>

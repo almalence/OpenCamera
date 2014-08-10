@@ -109,7 +109,7 @@ public class NightCapturePlugin extends PluginCapture
 	private int					nVFframesToBuffer;
 
 	// shared between activities
-	private static int			CapIdx;
+	public static int			CapIdx;
 	private static int			total_frames;
 	private static int[]		compressed_frame		= new int[HI_SPEED_FRAMES];
 	private static int[]		compressed_frame_len	= new int[HI_SPEED_FRAMES];
@@ -142,9 +142,9 @@ public class NightCapturePlugin extends PluginCapture
 	float						currHalfWidth;
 	float						currHalfHeight;
 
-	int							captureIndex			= -1;
-	int							imgCaptureWidth			= 0;
-	int							imgCaptureHeight		= 0;
+	static int					captureIndex			= -1;
+	static int					imgCaptureWidth			= 0;
+	static int					imgCaptureHeight		= 0;
 
 	float						cameraDist;
 
@@ -156,6 +156,21 @@ public class NightCapturePlugin extends PluginCapture
 	private static String		ImageSizeIdxPreference;
 
 	private static List<Long>	ResolutionsMPixList;
+	public static List<Long> getResolutionsMPixList()
+	{
+		return ResolutionsMPixList;
+	}
+
+	public static List<String> getResolutionsIdxesList()
+	{
+		return ResolutionsIdxesList;
+	}
+
+	public static List<String> getResolutionsNamesList()
+	{
+		return ResolutionsNamesList;
+	}
+
 	private static List<String>	ResolutionsIdxesList;
 	private static List<String>	ResolutionsNamesList;
 
@@ -393,7 +408,7 @@ public class NightCapturePlugin extends PluginCapture
 		selectImageDimension();
 	}
 
-	private void selectImageDimensionNight()
+	public static void selectImageDimensionNight()
 	{
 		int mode = Integer.parseInt(ModePreference);
 
@@ -494,7 +509,7 @@ public class NightCapturePlugin extends PluginCapture
 			}
 		}
 
-		// default to about 5Mpix if nothing is set in preferences or maximum
+		// default to about 8Mpix if nothing is set in preferences or maximum
 		// resolution is above memory limits
 		if (defaultCaptureMpix > 0 && !prefFound)
 		{
@@ -505,6 +520,7 @@ public class NightCapturePlugin extends PluginCapture
 		}
 
 		captureIndex = captureIdx;
+		CapIdx = captureIdx;
 		imgCaptureWidth = captureWidth;
 		imgCaptureHeight = captureHeight;
 	}
@@ -595,8 +611,6 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 			CameraController.getInstance().setJpegQuality(100);
-
-			// CameraController.getInstance().applyCameraParameters();
 		}
 
 		byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
@@ -821,57 +835,6 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		final PreferenceActivity mPref = prefActivity;
 
-		CharSequence[] entries;
-		CharSequence[] entryValues;
-
-		if (ResolutionsIdxesList != null)
-		{
-			entries = ResolutionsNamesList.toArray(new CharSequence[ResolutionsNamesList.size()]);
-			entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
-
-			PreferenceCategory cat = (PreferenceCategory) prefActivity.findPreference("Pref_NightCapture_Category");
-			ListPreference lp = (ListPreference) prefActivity.findPreference("imageSizePrefNightBack");
-			ListPreference lp2 = (ListPreference) prefActivity.findPreference("imageSizePrefNightFront");
-
-			if (CameraController.getCameraIndex() == 0 && lp2 != null)
-				cat.removePreference(lp2);
-			else if (lp != null && lp2 != null)
-			{
-				cat.removePreference(lp);
-				lp = lp2;
-			}
-			if (lp != null)
-			{
-				lp.setEntries(entries);
-				lp.setEntryValues(entryValues);
-
-				// set currently selected image size
-				int idx;
-				for (idx = 0; idx < ResolutionsIdxesList.size(); ++idx)
-				{
-					if (Integer.parseInt(ResolutionsIdxesList.get(idx)) == CapIdx)
-					{
-						break;
-					}
-				}
-				if (idx < ResolutionsIdxesList.size())
-				{
-					lp.setValueIndex(idx);
-					lp.setSummary(entries[idx]);
-					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-					{
-						// @Override
-						public boolean onPreferenceChange(Preference preference, Object newValue)
-						{
-							int value = Integer.parseInt(newValue.toString());
-							CapIdx = value;
-							return true;
-						}
-					});
-				}
-			}
-		}
-
 		Preference fp = prefActivity.findPreference(nightCaptureFocusPref);
 		if (fp != null)
 		{
@@ -903,56 +866,6 @@ public class NightCapturePlugin extends PluginCapture
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
 		final PreferenceFragment mPref = prefActivity;
-
-		CharSequence[] entries;
-		CharSequence[] entryValues;
-
-		if (ResolutionsIdxesList != null)
-		{
-			entries = ResolutionsNamesList.toArray(new CharSequence[ResolutionsNamesList.size()]);
-			entryValues = ResolutionsIdxesList.toArray(new CharSequence[ResolutionsIdxesList.size()]);
-
-			PreferenceCategory cat = (PreferenceCategory) prefActivity.findPreference("Pref_NightCapture_Category");
-			ListPreference lp = (ListPreference) prefActivity.findPreference("imageSizePrefNightBack");
-			ListPreference lp2 = (ListPreference) prefActivity.findPreference("imageSizePrefNightFront");
-
-			if (CameraController.getCameraIndex() == 0 && lp2 != null)
-				cat.removePreference(lp2);
-			else if (lp != null && lp2 != null)
-			{
-				cat.removePreference(lp);
-				lp = lp2;
-			}
-			if (lp != null)
-			{
-				lp.setEntries(entries);
-				lp.setEntryValues(entryValues);
-
-				// set currently selected image size
-				int idx;
-				for (idx = 0; idx < ResolutionsIdxesList.size(); ++idx)
-				{
-					if (Integer.parseInt(ResolutionsIdxesList.get(idx)) == CapIdx)
-					{
-						break;
-					}
-				}
-				if (idx < ResolutionsIdxesList.size())
-				{
-					lp.setValueIndex(idx);
-					lp.setSummary(entries[idx]);
-					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-					{
-						public boolean onPreferenceChange(Preference preference, Object newValue)
-						{
-							int value = Integer.parseInt(newValue.toString());
-							CapIdx = value;
-							return true;
-						}
-					});
-				}
-			}
-		}
 
 		Preference fp = prefActivity.findPreference(nightCaptureFocusPref);
 		if (fp != null)

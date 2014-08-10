@@ -44,11 +44,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.util.Util;
 
 public class Thumbnail
@@ -321,7 +322,7 @@ public class Thumbnail
 
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
-			String selection = ImageColumns.MIME_TYPE + "='image/jpeg'";
+			String selection = ImageColumns.DATA + " like '" + PluginManager.getSaveDir(false).getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
 			String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
 
 			Cursor cursor = null;
@@ -350,10 +351,9 @@ public class Thumbnail
 		try
 		{
 			Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
-
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
-			String selection = ImageColumns.MIME_TYPE + "='image/jpeg'";
+			String selection = ImageColumns.DATA + " like '" + PluginManager.getSaveDir(false).getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
 			String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
 
 			Cursor cursor = null;
@@ -419,31 +419,81 @@ public class Thumbnail
 
 	private static Media getLastVideoThumbnail(ContentResolver resolver)
 	{
-		Uri baseUri = Video.Media.EXTERNAL_CONTENT_URI;
+		
+		Media internalMedia = null;
+		Media externalMedia = null;
 
-		Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
-		String[] projection = new String[] { VideoColumns._ID, MediaColumns.DATA, VideoColumns.DATE_TAKEN };
-		String selection = ImageColumns.MIME_TYPE + "='video/mp4'";
-		String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
-
-		Cursor cursor = null;
 		try
 		{
-			cursor = resolver.query(query, projection, selection, null, order);
-			if (cursor != null && cursor.moveToFirst())
+			Uri baseUri = Video.Media.INTERNAL_CONTENT_URI;
+
+			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
+			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
+			String selection = VideoColumns.DATA + " like '" + PluginManager.getSaveDir(false).getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";
+			String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
+
+			Cursor cursor = null;
+
+			try
 			{
-				Log.d(TAG, "getLastVideoThumbnail: " + cursor.getString(1));
-				long id = cursor.getLong(0);
-				return new Media(id, 0, cursor.getLong(2), ContentUris.withAppendedId(baseUri, id));
+				cursor = resolver.query(query, projection, selection, null, order);
+				if (cursor != null && cursor.moveToFirst())
+				{
+					final long id = cursor.getLong(0);
+					internalMedia = new Media(id, 0, cursor.getLong(2), ContentUris.withAppendedId(baseUri, id));
+				}
+			} finally
+			{
+				if (cursor != null)
+				{
+					cursor.close();
+				}
 			}
-		} finally
+		} catch (Exception e)
 		{
-			if (cursor != null)
-			{
-				cursor.close();
-			}
+
 		}
-		return null;
+
+		try
+		{
+			Uri baseUri = Video.Media.EXTERNAL_CONTENT_URI;
+			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
+			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
+			String selection = VideoColumns.DATA + " like '" + PluginManager.getSaveDir(false).getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";
+			String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
+
+			Cursor cursor = null;
+
+			try
+			{
+				cursor = resolver.query(query, projection, selection, null, order);
+				if (cursor != null && cursor.moveToFirst())
+				{
+					final long id = cursor.getLong(0);
+					externalMedia = new Media(id, 0, cursor.getLong(2), ContentUris.withAppendedId(baseUri, id));
+				}
+			} finally
+			{
+				if (cursor != null)
+				{
+					cursor.close();
+				}
+			}
+		} catch (Exception e)
+		{
+
+		}
+
+		if (internalMedia == null)
+		{
+			return externalMedia;
+		} else if (externalMedia == null)
+		{
+			return internalMedia;
+		} else
+		{
+			return internalMedia.dateTaken > externalMedia.dateTaken ? internalMedia : externalMedia;
+		}
 	}
 
 	public static Bitmap createVideoThumbnail(FileDescriptor fd, int targetWidth)

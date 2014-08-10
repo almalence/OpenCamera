@@ -2,7 +2,7 @@
 		<ListPreference
 			android:title="@string/pref_advanced_saving_saveToPref_title"
 			android:summary="@string/pref_advanced_saving_saveToPref_summary"
-			android:key="saveToPref"
+			android:key="@string/Preference_SaveToValue"
 			android:defaultValue="0"
 			android:entries="@array/saveArray"
 			android:entryValues="@array/saveValues" /> 
