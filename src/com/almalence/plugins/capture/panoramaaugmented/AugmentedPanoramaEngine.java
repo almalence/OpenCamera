@@ -18,6 +18,9 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -43,7 +46,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
-
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
 import android.annotation.TargetApi;
@@ -241,6 +243,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 	public void reset(final int width, final int height, float verticalViewAngleR)
 	{
+		Log.i(TAG, String.format("AugmentedPanoramaEngine.reset(%d, %d, %f)",
+				width, height, verticalViewAngleR));
+		
 		synchronized (this.activatedSync)
 		{
 			this.width = width;
@@ -789,8 +794,9 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				if (args.length >= 2 && (Boolean)args[1])
 				{
 					final int yuv_address = SwapHeap.SwapToHeap((byte[])image);
+					
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, (byte[])image, yuv_address, rotate);
+							position, topVec, transform, yuv_address, rotate);
 				}
 				else
 				{
@@ -830,11 +836,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					if (status != 0)
 						Log.e("Panorama", "Error while cropping: " + status);
 
-					byte[] yuv = YuvImage.GetByteFrame(0);
+					//byte[] yuv = YuvImage.GetByteFrame(0);
 					int yuv_address = YuvImage.GetFrame(0);
 
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, yuv, yuv_address, rotate);
+							position, topVec, transform, yuv_address, rotate);
 				}
 				else if (im.getFormat() == ImageFormat.JPEG)
 				{
@@ -845,7 +851,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					jpeg.get(jpegByteArray, 0, frame_len);
 
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, jpegByteArray, 0, rotate);
+							position, topVec, transform, jpegByteArray);
 				}
 				else
 				{
@@ -1277,8 +1283,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		 * For YUV input
 		 */
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final byte[] img_data,
-				final int yuv_address, final boolean rotate)
+				final Vector3d topVec, final float[] rotation, final int yuv_address, final boolean rotate)
 		{
 			this(angleShift, position, topVec, rotation);
 
@@ -1295,6 +1300,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 						synchronized (AugmentedFrameTaken.this.nv21addressSync)
 						{
+							final int yuv_rotated;
+							
 							synchronized (AugmentedFrameTaken.this.glSync)
 							{
 								synchronized (syncObject)
@@ -1306,10 +1313,34 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										AugmentedPanoramaEngine.this.textureWidth
 											* AugmentedPanoramaEngine.this.textureHeight * 4);
 								
-								ImageConversion.convertNV21toGL(img_data,
+								final int in_width;
+								final int in_height;
+								if (!rotate)
+								{
+									in_width = AugmentedPanoramaEngine.this.height;
+									in_height = AugmentedPanoramaEngine.this.width;
+									
+									yuv_rotated = YuvImage.AllocateMemoryForYUV(
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width);
+									ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
+											AugmentedPanoramaEngine.this.width,
+											AugmentedPanoramaEngine.this.height,
+											0, 0, 1);
+									SwapHeap.FreeFromHeap(yuv_address);
+								}
+								else
+								{
+									in_width = AugmentedPanoramaEngine.this.height;
+									in_height = AugmentedPanoramaEngine.this.width;
+									
+									yuv_rotated = yuv_address;
+								}
+								
+								ImageConversion.convertNV21toGLN(yuv_rotated,
 										AugmentedFrameTaken.this.rgba_buffer.array(),
-										AugmentedPanoramaEngine.this.width,
-										AugmentedPanoramaEngine.this.height,
+										in_width,
+										in_height,
 										AugmentedPanoramaEngine.this.textureWidth,
 										AugmentedPanoramaEngine.this.textureHeight);
 
@@ -1322,22 +1353,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									}
 								});
 							}
-
-							if (rotate)
-							{
-								final int yuv_rotated = YuvImage.AllocateMemoryForYUV(
-										AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.width);
-								ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
-										AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.width,
-										0, 0, 1);
-								AugmentedFrameTaken.this.nv21address = yuv_rotated;
-							}
-							else
-							{
-								AugmentedFrameTaken.this.nv21address = yuv_address;
-							}
+							
+							AugmentedFrameTaken.this.nv21address = yuv_rotated;
 						}
 					}
 				}).start();

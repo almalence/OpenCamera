@@ -1020,7 +1020,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if (this.modeSweep)
 		{
 			this.engine.recordCoordinates();
-			this.engine.onFrameAdded(image, false, true);
+			this.engine.onFrameAdded(image, true, true);
 			this.isFirstFrame = false;
 		}
 		else

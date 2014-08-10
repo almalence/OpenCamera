@@ -47,6 +47,8 @@ public class ImageConversion
 
 	public static native void convertNV21toGL(byte[] ain, byte[] aout, int width, int height, int outWidth,
 			int outHeight);
+	public static native void convertNV21toGLN(int ain, byte[] aout, int width, int height, int outWidth,
+			int outHeight);
 
 	static
 	{

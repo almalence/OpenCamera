@@ -641,6 +641,10 @@ void NV21_to_RGB_scaled_rotated
 		bgr = 0;
 		stride -= 2;
 	}
+	else if (stride == 4)
+	{
+		bgr = 0;
+	}
 
 	const int tripleHeight = (outHeight - 1) * stride;
 	int yoffset = tripleHeight;

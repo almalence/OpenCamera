@@ -187,6 +187,15 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_util_ImageConversion_JpegCo
 	return (jint)out;
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_convertNV21toGLN(
+		JNIEnv *env, jclass clazz, jint ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
+{
+	jbyte *cImageOut = env->GetByteArrayElements(aout, 0);
+
+	NV21_to_RGB_scaled_rotated((unsigned char*)ain, width, height, 0, 0, width, height, outWidth, outHeight, 4, (unsigned char*)cImageOut);
+
+	env->ReleaseByteArrayElements(aout, cImageOut, 0);
+}
 
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_convertNV21toGL(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
