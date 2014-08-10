@@ -1769,7 +1769,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			glView = new GLLayer(MainScreen.getMainContext(), version);
 			glView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 1);
+			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 0);
+			preview.bringToFront();
 			glView.setZOrderMediaOverlay(true);
 		}
 	}
@@ -1778,6 +1779,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if (glView != null)
 		{
+			//preview.getHolder().getSurface().lockCanvas(null).drawColor(Color.BLACK);
 			glView.onPause();
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).removeView(glView);
 			glView = null;

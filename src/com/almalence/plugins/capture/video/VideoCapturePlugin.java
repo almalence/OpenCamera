@@ -308,14 +308,14 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					} else
+					}
+					else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
 						timeLapseButton.setVisibility(View.VISIBLE);
 
 						droEngine.onPause();
-						MainScreen.getInstance().hideOpenGLLayer();
 
 						Camera camera = CameraController.getCamera();
 						if (camera != null)
@@ -336,8 +336,10 @@ public class VideoCapturePlugin extends PluginCapture
 								e.printStackTrace();
 							}
 						CameraController.startCameraPreview();
+						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();

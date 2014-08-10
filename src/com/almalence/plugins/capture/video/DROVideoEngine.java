@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -183,8 +184,8 @@ public class DROVideoEngine
 
 							File fileSaved = new File(path);
 							File parent = fileSaved.getParentFile();
-							String parentPath = parent.toString().toLowerCase();
-							String parentName = parent.getName().toLowerCase();
+							String parentPath = parent.toString().toLowerCase(Locale.US);
+							String parentName = parent.getName().toLowerCase(Locale.US);
 							
 							ContentValues values = new ContentValues();
 							values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
