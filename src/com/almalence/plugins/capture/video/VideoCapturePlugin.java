@@ -1030,32 +1030,9 @@ public class VideoCapturePlugin extends PluginCapture
 		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 
-		final Camera.Size sz;
-		if (!this.modeDRO())
-		{
-			boolean aspect169 = true;
-			switch (ImageSizeIdxPreference)
-			{
-			case 0:
-			case 1:
-			case 4:
-				aspect169 = false;
-				break;
-			case 2:
-			case 3:
-			case 5:
-				aspect169 = true;
-				break;
-			default:
-				break;
-			}
+		final Camera.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 
-			sz = getBestPreviewSizeNormal(aspect169);
-		} else
-		{
-			sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
-		}
-
+		Log.i(TAG, String.format("Preview size: %dx%d", sz.width, sz.height));
 		cp.setPreviewSize(sz.width, sz.height);
 
 		CameraController.getInstance().setCameraParameters(cp);
@@ -1069,7 +1046,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		} else
+		}
+		else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}
