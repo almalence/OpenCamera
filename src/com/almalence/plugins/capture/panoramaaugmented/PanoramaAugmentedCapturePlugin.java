@@ -332,6 +332,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
 					/ getFrameSizeInBytes(this.previewWidth, this.previewHeight));
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
+			this.engine.setDistanceLimit(0.15f);
+			
+			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+			cp.setRecordingHint(true);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 		else
 		{
@@ -340,6 +345,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
 					/ getFrameSizeInBytes(this.pictureWidth, this.pictureHeight));
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
+			this.engine.setDistanceLimit(0.1f);
+			
+			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+			cp.setRecordingHint(false);
+			CameraController.getInstance().setCameraParameters(cp);
 		}
 	}
 
@@ -375,6 +385,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				}
 			}
 		}
+		
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		cp.setRecordingHint(false);
+		CameraController.getInstance().setCameraParameters(cp);
 	}
 
 	@Override
@@ -1049,7 +1063,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				final int state = this.engine.getPictureTakingState(
+				final int state = this.engine.getPictureTakingState(this.modeSweep ? true :
 						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
@@ -1105,7 +1119,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				final int state = this.engine.getPictureTakingState(
+				final int state = this.engine.getPictureTakingState(this.modeSweep ? true :
 						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE

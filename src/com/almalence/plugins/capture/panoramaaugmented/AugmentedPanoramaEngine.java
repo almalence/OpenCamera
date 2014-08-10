@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -65,14 +62,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	public static final int				STATE_TAKINGPICTURE		= 2;
 
 	private static final int			TIP_FRAMES_COUNT		= 2;
-
-	public static final float			FRAME_MISS_DISTANCE		= 0.1f;		// maximum
-																				// allowed
-																				// miss
-																				// from
-																				// ideal
-																				// frame
-																				// position
 
 	public static final long			FRAME_WHITE_FADE_IN		= 500;
 	public static final long			FRAME_WHITE_FADE_OUT	= 400;
@@ -235,10 +224,18 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private volatile boolean						bViewportCreated		= false;
 	private volatile boolean						bCreateViewportNow		= false;
 	private volatile int							framesMax;
+	
+	private volatile float distanceLimit = 0.1f;
+	
 
 	public void setFrameIntersection(final float intersection)
 	{
 		this.frameIntersectionPart = intersection;
+	}
+	
+	public void setDistanceLimit(final float value)
+	{
+		this.distanceLimit = value;
 	}
 
 	public void reset(final int width, final int height, float verticalViewAngleR)
@@ -392,7 +389,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 						if (frame != null)
 						{
-							if (frame.distance() < 0.1f)
+							if (frame.distance() < this.distanceLimit)
 							{
 								target = i;
 							}
@@ -768,7 +765,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		synchronized (this.stateSynch)
 		{
 			goodPlace = (framesCount == 0)
-					|| (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < FRAME_MISS_DISTANCE);
+					|| (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < this.distanceLimit);
 		}
 
 		if (goodPlace)
@@ -1175,7 +1172,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						+ Util.mathSquare(this.position.y - AugmentedPanoramaEngine.this.currentVector.y)
 						+ Util.mathSquare(this.position.z - AugmentedPanoramaEngine.this.currentVector.z));
 
-				drot = (float) Math.sqrt(Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.x
+				drot = (float)Math.sqrt(Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.x
 						- AugmentedPanoramaEngine.this.topVector.x)
 						+ Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.y
 								- AugmentedPanoramaEngine.this.topVector.y)
@@ -1183,7 +1180,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								- AugmentedPanoramaEngine.this.topVector.z));
 			}
 
-			final float sizeDim = (float) Math.sqrt(AugmentedPanoramaEngine.this.width
+			final float sizeDim = (float)Math.sqrt(AugmentedPanoramaEngine.this.width
 					* AugmentedPanoramaEngine.this.height);
 
 			this.distance = dpos / sizeDim + drot;
