@@ -395,6 +395,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 							this.stopCapture();
 							PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 
 									String.valueOf(SessionID));
+							
+							if (PluginManager.getInstance().getProcessingCounter() == 0)
+							{
+								modeSwitcher.setEnabled(true);
+							}
 						}
 
 						return true;
