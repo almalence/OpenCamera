@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,9 +75,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Switch;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
@@ -100,6 +101,7 @@ import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 import com.coremedia.iso.IsoFile;
+import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
@@ -1227,7 +1229,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					stopRecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
 			this.startRecording();
@@ -2022,7 +2024,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					pauseDRORecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
 			if (onPause)
@@ -2042,7 +2044,7 @@ public class VideoCapturePlugin extends PluginCapture
 					{
 						pauseRecording();
 					}
-				}, 2500 - delta);
+				}, 1500 - delta);
 			}
 		}
 	}
@@ -2152,23 +2154,11 @@ public class VideoCapturePlugin extends PluginCapture
 	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
 	{
 
-		final FileInputStream fisOne = new FileInputStream(new File(secondFile));
-		final FileInputStream fisTwo = new FileInputStream(new File(firstFile));
 		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
-
-		append(fisOne, fisTwo, fos);
-
-		fisOne.close();
-		fisTwo.close();
-		fos.close();
-	}
-
-	public static void append(final FileInputStream fisOne, final FileInputStream fisTwo, final FileOutputStream out)
-			throws IOException
-	{
-
-		final Movie movieOne = MovieCreator.build(Channels.newChannel(fisOne));
-		final Movie movieTwo = MovieCreator.build(Channels.newChannel(fisTwo));
+		final FileChannel fc = fos.getChannel();
+		
+		final Movie movieOne = MovieCreator.build(firstFile);
+		final Movie movieTwo = MovieCreator.build(secondFile);
 		final Movie finalMovie = new Movie();
 
 		final List<Track> movieOneTracks = movieOne.getTracks();
@@ -2176,13 +2166,14 @@ public class VideoCapturePlugin extends PluginCapture
 
 		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
 		{
-			finalMovie.addTrack(new AppendTrack(movieTwoTracks.get(i), movieOneTracks.get(i)));
+			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
 		}
 
-		final IsoFile isoFile = new DefaultMp4Builder().build(finalMovie);
-		isoFile.getBox(out.getChannel());
+		final Container container = new DefaultMp4Builder().build(finalMovie);
+		container.writeContainer(fc); 
+		fc.close();
+		fos.close();
 	}
-
 	// append video
 
 	public void takePicture()
