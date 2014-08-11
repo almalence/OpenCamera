@@ -68,6 +68,23 @@ public class CapturePlugin extends PluginCapture
 		super("com.almalence.plugins.capture", 0, 0, 0, null);
 	}
 
+	void UpdateEv(boolean isDro, int ev)
+	{
+		if (isDro)
+		{
+			// for still-image DRO - set Ev just a bit lower (-0.5Ev or less) than for standard shot
+			float expStep = CameraController.getInstance().getExposureCompensationStep();
+			int diff = (int) Math.floor(0.5 / expStep);
+			if (diff < 1)
+				diff = 1;
+			ev -= diff;
+		}
+		
+		int minValue = CameraController.getInstance().getMinExposureCompensation();
+		if (ev >= minValue)
+			CameraController.getInstance().setCameraExposureCompensation(ev);
+	}
+	
 	@Override
 	public void onCreate()
 	{
@@ -82,19 +99,13 @@ public class CapturePlugin extends PluginCapture
 		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
 		{
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+			public void onCheckedChanged(CompoundButton buttonView, boolean isDro)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int currEv = prefs.getInt(MainScreen.sEvPref, 0);
-				int newEv = currEv;
-				int minValue = CameraController.getInstance().getMinExposureCompensation();
-				float expStep = CameraController.getInstance().getExposureCompensationStep();
-				if (isChecked)
+				int ev = prefs.getInt(MainScreen.sEvPref, 0);
+				UpdateEv(isDro, ev);
+				if (isDro)
 				{
-					int diff = (int) Math.round(0.5 / expStep);
-					if (diff < 1)
-						diff = 1;
-					newEv -= diff;
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
 				} else
@@ -102,9 +113,6 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
 				}
-
-				if (newEv >= minValue)
-					CameraController.getInstance().setCameraExposureCompensation(newEv);
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeStandardPref", ModePreference);
@@ -129,13 +137,9 @@ public class CapturePlugin extends PluginCapture
 		if (ModePreference.compareTo("0") == 0)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			int currEv = prefs.getInt(MainScreen.sEvPref, 0);
-			int newEv = currEv;
-			int minValue = CameraController.getInstance().getMinExposureCompensation();
-			newEv -= 1;
-
-			if (newEv >= minValue)
-				CameraController.getInstance().setCameraExposureCompensation(newEv);
+			int ev = prefs.getInt(MainScreen.sEvPref, 0);
+			// FixMe: why not setting exposure if we are in dro-off mode?
+			UpdateEv(true, ev);
 		}
 	}
 

@@ -99,11 +99,12 @@ public class DROVideoEngine
 	private volatile boolean	forceUpdate			= false;
 	private volatile int		uv_desat			= 9;
 	private volatile int		dark_uv_desat		= 5;
+	private volatile float		dark_noise_pass		= 0.45f;
 	private volatile float		mix_factor			= 0.1f;
-	private volatile float		gamma				= 0.5f;
+	private volatile float		gamma				= 0.65f; // 0.5f;
 	private volatile float		max_black_level		= 64.0f;
 	private volatile float		black_level_atten	= 0.5f;
-	private volatile float		max_amplify			= 4.0f;
+	private volatile float		max_amplify			= 2.0f;
 	private volatile float[]	min_limit			= new float[] { 0.5f, 0.5f, 0.5f };
 	private volatile float[]	max_limit			= new float[] { 3.0f, 2.0f, 2.0f };
 
@@ -381,7 +382,7 @@ public class DROVideoEngine
 
 				RealtimeDRO.render(this.instance, MainScreen.getInstance().glGetPreviewTexture(), this.transform,
 						this.previewWidth, this.previewHeight, true, this.local, this.max_amplify, this.forceUpdate,
-						this.uv_desat, this.dark_uv_desat, this.mix_factor, this.gamma, this.max_black_level,
+						this.uv_desat, this.dark_uv_desat, this.dark_noise_pass, this.mix_factor, this.gamma, this.max_black_level,
 						this.black_level_atten, this.min_limit, this.max_limit, this.texture_out);
 
 				t = System.currentTimeMillis() - t;

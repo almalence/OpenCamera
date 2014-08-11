@@ -147,8 +147,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	jfloat max_amplify,
 	jboolean local_mapping,
 	jint filterStrength,
-	jint strongFilter,
-	jint pullUV
+	jint pullUV,
+	jfloat dark_noise_pass,
+	jfloat gamma
 )
 {
 	int i, x, y;
@@ -188,9 +189,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 				float max_limit[3] = {3.0f,2.0f,2.0f};
 
 				if (local_mapping)
-					Dro_ComputeToneTable(hist_loc[x][y], lookup_table[x][y], 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
+					Dro_ComputeToneTable(hist_loc[x][y], lookup_table[x][y], gamma, 64, 0.5f, min_limit, max_limit, max_amplify);
 				else
-					Dro_ComputeToneTable(hist, lookup_table[x][y], 0.5, 64, 0.5f, min_limit, max_limit, max_amplify);
+					Dro_ComputeToneTable(hist, lookup_table[x][y], gamma, 64, 0.5f, min_limit, max_limit, max_amplify);
 			}
 
 
@@ -200,8 +201,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 				local_mapping ? NULL:lookup_table[0][0],
 				local_mapping ? lookup_table:NULL,
 				filterStrength,
-				strongFilter,
 				pullUV, 5,
+				dark_noise_pass,
 				sx, sy);
 	}
 
@@ -253,6 +254,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_video_Realt
 	jboolean force_update,
     jint uv_desat,
     jint dark_uv_desat,
+    jfloat dark_noise_pass,
     jfloat mix_factor,
     jfloat gamma,				// default = 0.5
     jfloat max_black_level,		// default = 16
@@ -278,6 +280,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_video_Realt
                         force_update,
                         uv_desat,
                         dark_uv_desat,
+                        dark_noise_pass,
                         mix_factor,
                         gamma,
                         max_black_level,
