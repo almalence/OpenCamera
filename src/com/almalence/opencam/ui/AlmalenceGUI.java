@@ -1005,6 +1005,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 		// -+- -->
+		
+		//added immersive full-screen mode support
+		//guiView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
 
 	private void initOrientationListener()
