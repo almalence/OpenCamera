@@ -346,7 +346,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		
 		if (this.modeSweep)
 		{
-			this.engine.setFrameIntersection(1.5f * intersection);
+			this.engine.setFrameIntersection(1.4f * intersection);
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
