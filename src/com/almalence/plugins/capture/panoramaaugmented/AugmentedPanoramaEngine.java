@@ -1296,9 +1296,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
 
 						synchronized (AugmentedFrameTaken.this.nv21addressSync)
-						{
-							final int yuv_rotated;
-							
+						{							
 							synchronized (AugmentedFrameTaken.this.glSync)
 							{
 								synchronized (syncObject)
@@ -1312,6 +1310,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								final int in_width;
 								final int in_height;
+								final int yuv_rotated;
 								if (rotate)
 								{
 									in_width = AugmentedPanoramaEngine.this.height;
@@ -1350,6 +1349,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										in_height,
 										AugmentedPanoramaEngine.this.textureWidth,
 										AugmentedPanoramaEngine.this.textureHeight);
+								SwapHeap.FreeFromHeap(yuv_rotated);
 								
 								ImageConversion.addCornersRGBA8888(
 										AugmentedFrameTaken.this.rgba_buffer.array(),
@@ -1365,8 +1365,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									}
 								});
 							}
-							
-							SwapHeap.FreeFromHeap(yuv_rotated);
 						}
 					}
 				}).start();

@@ -325,8 +325,28 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	
 	private void setMode()
 	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		final int overlap = Integer.parseInt(prefs.getString(sFrameOverlapPref, "1"));
+		final float intersection;
+		switch (overlap)
+		{
+		case 0:
+			intersection = 0.70f;
+			break;
+		case 1:
+			intersection = 0.50f;
+			break;
+		case 2:
+			intersection = 0.30f;
+			break;
+		default:
+			intersection = 0.50f;
+			break;
+		}
+		
 		if (this.modeSweep)
 		{
+			this.engine.setFrameIntersection(1.5f * intersection);
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
@@ -340,6 +360,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 		else
 		{
+			this.engine.setFrameIntersection(intersection);
 			this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
@@ -752,22 +773,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
 
 		this.prefMemoryRelax = prefs.getBoolean(sMemoryPref, false);
-
-		int overlap = Integer.parseInt(prefs.getString(sFrameOverlapPref, "1"));
-		switch (overlap)
-		{
-		case 0:
-			this.engine.setFrameIntersection(0.70f);
-			break;
-		case 1:
-			this.engine.setFrameIntersection(0.50f);
-			break;
-		case 2:
-			this.engine.setFrameIntersection(0.30f);
-			break;
-		default:
-			break;
-		}
 
 		aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
 	}
