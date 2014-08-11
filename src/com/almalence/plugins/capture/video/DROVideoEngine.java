@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -13,7 +14,6 @@ import com.almalence.util.FpsMeasurer;
 
 import android.content.ContentValues;
 import android.graphics.SurfaceTexture;
-import android.media.MediaScannerConnection;
 import android.opengl.GLES20;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
@@ -25,21 +25,21 @@ public class DROVideoEngine
 
 	private static final int			GL_TEXTURE_EXTERNAL_OES	= 0x00008d65;
 
-	private static final String			SHADER_VERTEX			= "attribute vec2 vPosition;\n"
-																		+ "attribute vec2 vTexCoord;\n"
-																		+ "varying vec2 texCoord;\n"
-																		+ "void main() {\n"
-																		+ "  texCoord = vTexCoord;\n"
-																		+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
-																		+ "}";
+	private static final String			SHADER_VERTEX = "attribute vec2 vPosition;\n"
+														+ "attribute vec2 vTexCoord;\n"
+														+ "varying vec2 texCoord;\n"
+														+ "void main() {\n"
+														+ "  texCoord = vTexCoord;\n"
+														+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
+														+ "}";
 
-	private static final String			SHADER_FRAGMENT			= "#extension GL_OES_EGL_image_external:enable\n"
-																		+ "precision mediump float;\n"
-																		+ "uniform samplerExternalOES sTexture;\n"
-																		+ "varying vec2 texCoord;\n"
-																		+ "void main() {\n"
-																		+ "  gl_FragColor = texture2D(sTexture, texCoord);\n"
-																		+ "}";
+	private static final String			SHADER_FRAGMENT	= "#extension GL_OES_EGL_image_external:enable\n"
+														+ "precision mediump float;\n"
+														+ "uniform samplerExternalOES sTexture;\n"
+														+ "varying vec2 texCoord;\n"
+														+ "void main() {\n"
+														+ "  gl_FragColor = texture2D(sTexture, texCoord);\n"
+														+ "}";
 
 	private static final FloatBuffer	VERTEX_BUFFER;
 	private static final FloatBuffer	UV_BUFFER;
@@ -184,8 +184,8 @@ public class DROVideoEngine
 
 							File fileSaved = new File(path);
 							File parent = fileSaved.getParentFile();
-							String parentPath = parent.toString().toLowerCase();
-							String parentName = parent.getName().toLowerCase();
+							String parentPath = parent.toString().toLowerCase(Locale.US);
+							String parentName = parent.getName().toLowerCase(Locale.US);
 							
 							ContentValues values = new ContentValues();
 							values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
@@ -301,10 +301,14 @@ public class DROVideoEngine
 		this.texture_out = tex[0];
 
 		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
+				GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 		this.hProgram = loadShader(SHADER_VERTEX, SHADER_FRAGMENT);
 	}
@@ -337,7 +341,8 @@ public class DROVideoEngine
 				final SurfaceTexture surfaceTexture = MainScreen.getInstance().glGetSurfaceTexture();
 				surfaceTexture.updateTexImage();
 				surfaceTexture.getTransformMatrix(this.transform);
-			} catch (final Exception e)
+			}
+			catch (final Exception e)
 			{
 				return;
 			}
@@ -391,7 +396,8 @@ public class DROVideoEngine
 				{
 					this.encoder.encode(this.texture_out);
 				}
-			} else
+			}
+			else
 			{
 				throw new RuntimeException("Unable to create DRO instance.");
 			}

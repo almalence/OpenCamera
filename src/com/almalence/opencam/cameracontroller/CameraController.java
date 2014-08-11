@@ -37,6 +37,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ui.AlmalenceGUI;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -207,6 +208,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<String>					ResolutionsIdxesListVF;
 	protected static List<String>					ResolutionsNamesListVF;
 
+	protected static List<Camera.Size> 				SupportedPreviewSizesList;
+	
 	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
 			"1:1"																	};
 
@@ -760,6 +763,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsMPixListIC = CameraController.ResolutionsMPixList;
 		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
 		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
+		
+		CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
 
 		pluginManager.selectImageDimension(); // updates SX, SY values
 
@@ -890,9 +895,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
 		if (!CameraController.isHALv3)
 		{
-			List<Camera.Size> sizes = CameraController.camera.getParameters().getSupportedPreviewSizes();
-			for (Camera.Size sz : sizes)
-				previewSizes.add(this.new Size(sz.width, sz.height));
+			if (CameraController.SupportedPreviewSizesList != null)
+			{
+				List<Camera.Size> sizes = SupportedPreviewSizesList;
+				for (Camera.Size sz : sizes)
+					previewSizes.add(this.new Size(sz.width, sz.height));
+			} else
+			{
+				Log.e(TAG, "SupportedPreviewSizesList == null");
+			}
 		} else
 			HALv3.fillPreviewSizeList(previewSizes);
 
@@ -1862,8 +1873,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		mFocusState = state;
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_FOCUS_STATE_CHANGED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_STATE_CHANGED);
 	}
 
 	public static int getFocusState()

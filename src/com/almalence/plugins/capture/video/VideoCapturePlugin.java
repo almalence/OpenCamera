@@ -154,7 +154,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private boolean								videoStabilization				= false;
 
-	private static final int					QUALITY_4K						= 4096;
+	public static final int						QUALITY_4K						= 4096;
 
 	ImageView									rotateToLandscapeNotifier;
 	boolean										showRotateToLandscapeNotifier	= false;
@@ -308,14 +308,14 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					} else
+					}
+					else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
 						timeLapseButton.setVisibility(View.VISIBLE);
 
 						droEngine.onPause();
-						MainScreen.getInstance().hideOpenGLLayer();
 
 						Camera camera = CameraController.getCamera();
 						if (camera != null)
@@ -336,8 +336,10 @@ public class VideoCapturePlugin extends PluginCapture
 								e.printStackTrace();
 							}
 						CameraController.startCameraPreview();
+						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();
@@ -1030,32 +1032,9 @@ public class VideoCapturePlugin extends PluginCapture
 		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 
-		final Camera.Size sz;
-		if (!this.modeDRO())
-		{
-			boolean aspect169 = true;
-			switch (ImageSizeIdxPreference)
-			{
-			case 0:
-			case 1:
-			case 4:
-				aspect169 = false;
-				break;
-			case 2:
-			case 3:
-			case 5:
-				aspect169 = true;
-				break;
-			default:
-				break;
-			}
+		final Camera.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 
-			sz = getBestPreviewSizeNormal(aspect169);
-		} else
-		{
-			sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
-		}
-
+		Log.i(TAG, String.format("Preview size: %dx%d", sz.width, sz.height));
 		cp.setPreviewSize(sz.width, sz.height);
 
 		CameraController.getInstance().setCameraParameters(cp);
@@ -1069,7 +1048,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		} else
+		}
+		else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}
@@ -1297,7 +1277,7 @@ public class VideoCapturePlugin extends PluginCapture
 		File parent = fileSaved.getParentFile();
 		String path = parent.toString().toLowerCase();
 		String name = parent.getName().toLowerCase();
-		
+
 		values = new ContentValues();
 		values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
 		values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
@@ -1784,100 +1764,6 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreferenceCreate(PreferenceFragment pf)
 	{
-		CharSequence[] entries = new CharSequence[6];
-		CharSequence[] entryValues = new CharSequence[6];
-
-		int idx = 0;
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_QCIF)
-				|| this.qualityQCIFSupported)
-		{
-			entries[idx] = "176 x 144";
-			entryValues[idx] = "0";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_CIF)
-				|| this.qualityCIFSupported)
-		{
-			entries[idx] = "352 x 288";
-			entryValues[idx] = "1";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_1080P)
-				|| this.quality1080Supported)
-		{
-			entries[idx] = "1080p";
-			entryValues[idx] = "2";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_720P)
-				|| this.quality720Supported)
-		{
-			entries[idx] = "720p";
-			entryValues[idx] = "3";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_480P)
-				|| this.quality480Supported)
-		{
-			entries[idx] = "480p";
-			entryValues[idx] = "4";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), QUALITY_4K) || this.quality4KSupported)
-		{
-			entries[idx] = "4K";
-			entryValues[idx] = "5";
-			idx++;
-		}
-
-		CharSequence[] entriesFin = new CharSequence[idx];
-		CharSequence[] entryValuesFin = new CharSequence[idx];
-
-		for (int i = 0; i < idx; i++)
-		{
-			entriesFin[i] = entries[i];
-			entryValuesFin[i] = entryValues[i];
-		}
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int imageSizePrefVideo = Integer.parseInt(prefs.getString(
-				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
-		if (pf != null)
-		{
-			ListPreference lp = (ListPreference) pf.findPreference("imageSizePrefVideoBack");
-			ListPreference lp2 = (ListPreference) pf.findPreference("imageSizePrefVideoFront");
-
-			PreferenceCategory cat = (PreferenceCategory) pf.findPreference("Pref_VideoCapture_Category");
-			if (CameraController.getCameraIndex() == 0 && lp2 != null && cat != null)
-			{
-				cat.removePreference(lp2);
-			} else if (lp != null && lp2 != null && cat != null)
-			{
-				cat.removePreference(lp);
-				lp = lp2;
-			} else if (lp == null)
-				lp = lp2;
-
-			lp.setEntries(entriesFin);
-			lp.setEntryValues(entryValuesFin);
-
-			for (idx = 0; idx < entryValuesFin.length; ++idx)
-			{
-				if (Integer.valueOf(entryValuesFin[idx].toString()) == imageSizePrefVideo)
-				{
-					lp.setValueIndex(idx);
-					break;
-				}
-			}
-		} else
-		{
-			for (idx = 0; idx < entryValuesFin.length; ++idx)
-			{
-				if (Integer.valueOf(entryValuesFin[idx].toString()) == imageSizePrefVideo)
-					break;
-			}
-		}
-
 		if (pf != null && !MainScreen.getCameraController().isVideoStabilizationSupported())
 		{
 			PreferenceCategory cat = (PreferenceCategory) pf.findPreference("Pref_VideoCapture_Category");
@@ -2175,7 +2061,7 @@ public class VideoCapturePlugin extends PluginCapture
 			File parent = fileSaved.getParentFile();
 			String path = parent.toString().toLowerCase();
 			String name = parent.getName().toLowerCase();
-			
+
 			values = new ContentValues();
 			values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
 			values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
@@ -2184,7 +2070,6 @@ public class VideoCapturePlugin extends PluginCapture
 			values.put(VideoColumns.BUCKET_ID, path.hashCode());
 			values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
 			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
-			
 
 			filesList.add(fileSaved);
 		} catch (RuntimeException e)
@@ -2414,7 +2299,6 @@ public class VideoCapturePlugin extends PluginCapture
 					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
 				}
 
-				
 			}
 		});
 		timeLapseDialog.show();
