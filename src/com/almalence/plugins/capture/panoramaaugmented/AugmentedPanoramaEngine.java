@@ -1318,6 +1318,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									in_height = AugmentedPanoramaEngine.this.width;
 									
 									yuv_rotated = yuv_address;
+									
+									AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width);
+									ImageConversion.TransformNV21N(yuv_address,
+											AugmentedFrameTaken.this.nv21address,
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											0, 0, 1);
 								}
 								else
 								{
@@ -1331,12 +1340,19 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 											AugmentedPanoramaEngine.this.width,
 											AugmentedPanoramaEngine.this.height,
 											0, 0, 1);
+									
+									AugmentedFrameTaken.this.nv21address = yuv_address;
 								}
 								
 								ImageConversion.convertNV21toGLN(yuv_rotated,
 										AugmentedFrameTaken.this.rgba_buffer.array(),
 										in_width,
 										in_height,
+										AugmentedPanoramaEngine.this.textureWidth,
+										AugmentedPanoramaEngine.this.textureHeight);
+								
+								ImageConversion.addCornersRGBA8888(
+										AugmentedFrameTaken.this.rgba_buffer.array(),
 										AugmentedPanoramaEngine.this.textureWidth,
 										AugmentedPanoramaEngine.this.textureHeight);
 
@@ -1350,24 +1366,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								});
 							}
 							
-							if (rotate)
-							{
-								AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
-										AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.width);
-								ImageConversion.TransformNV21N(yuv_address,
-										AugmentedFrameTaken.this.nv21address,
-										AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.width,
-										0, 0, 1);
-								SwapHeap.FreeFromHeap(yuv_address);
-							}
-							else
-							{
-								AugmentedFrameTaken.this.nv21address = yuv_address;
-								SwapHeap.FreeFromHeap(yuv_rotated);
-							}
-							
+							SwapHeap.FreeFromHeap(yuv_rotated);
 						}
 					}
 				}).start();

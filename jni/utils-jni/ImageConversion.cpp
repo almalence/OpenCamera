@@ -48,15 +48,6 @@ jbyte NightGamma[511] =
 	255,255,255,255,255,255,255
 };
 
-inline int min(int a, int b)
-{
-	return (a > b ? b : a);
-}
-inline int max(int a, int b)
-{
-	return (a > b ? a : b);
-}
-
 // summation with tone-curve applied after
 // used in night-mode viewfinder
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_sumByteArraysNV21
@@ -281,103 +272,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_native
 
 	free (data_rgba);
 
-	// make nice corners and edges,
-	// apply softbox-like effect
-	int edge = (outWidth < outHeight ? outWidth:outHeight)/60;
-	int corner = (outWidth < outHeight ? outWidth:outHeight)/60;
-	for (int j = 0; j < outWidth; j++)
-	{
-		int thr = 2*(outHeight/3) - (outHeight/3) * (j+outWidth-(outWidth-j)*(outWidth-j)/outWidth) / (outWidth*2);
-
-		for (int i = 0; i < outHeight; i++)
-		{
-			if ((j>corner) && (j<outWidth-1-corner) && (i>edge+1) && (i<outHeight-1-edge))
-				continue;
-			if ((j>edge+1) && (j<outWidth-2-edge) && (i>corner) && (i<outHeight-1-corner))
-				continue;
-
-			int offset = (j+i*outWidth)*4;
-
-			// soft-box-like effect
-			int eclr  = 228 + ( i>thr ? (outHeight-i)*(200-228)/(outHeight-thr) : i*(255-228)/thr );
-			int sbclr = 128 + ( i>thr ? (outHeight-i)*(0-128)/(outHeight-thr) : i*(255-128)/thr );
-
-			float r = 0;
-			float e = 0;
-			int ecorner = 0;
-
-			if ((i<corner) && (j<corner))
-				r = (float)(corner-j)*(corner-j)+(float)(corner-i)*(corner-i);
-			if ((i<corner) && (j>outWidth-1-corner))
-				r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(corner-i)*(corner-i);
-			if ((i>outHeight-1-corner) && (j>outWidth-1-corner))
-				r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
-			if ((i>outHeight-1-corner) && (j<corner))
-				r = (float)(corner-j)*(corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
-
-			if (r>(corner-edge)*(corner-edge))
-			{
-				if (r<corner*corner)
-				{
-					e = edge-(corner-sqrtf(r));
-					ecorner = 1;
-				}
-				else
-				{
-					rgb_bytes[offset+0] = 0;
-					rgb_bytes[offset+1] = 0;
-					rgb_bytes[offset+2] = 0;
-					rgb_bytes[offset+3] = 0;
-					continue;
-				}
-			}
-			else if (i<edge)
-				e = edge-i;
-			else if (j<edge)
-				e = edge-j;
-			else if (j>outWidth-1-edge)
-				e = j-outWidth+1+edge;
-			else if (i>outHeight-1-edge)
-				e = i-outHeight+1+edge;
-
-			if (e>0)	// edges
-			{
-				if ((e<=1) && (r>0))	// anti-aliasing inner corners
-				{
-					rgb_bytes[offset+0] = ((int)rgb_bytes[offset+0]+eclr)/2;
-					rgb_bytes[offset+1] = ((int)rgb_bytes[offset+1]+eclr)/2;
-					rgb_bytes[offset+2] = ((int)rgb_bytes[offset+2]+eclr)/2;
-				}
-				else if (e>edge-2)	// anti-aliasing outer edge of a frame
-				{
-					int clr;
-
-					if (ecorner)
-						clr = max(0, 255-(int)((e-(edge-2))*255));
-					else
-						clr = 0;
-					rgb_bytes[offset+0] = (eclr*clr)>>8;
-					rgb_bytes[offset+1] = (eclr*clr)>>8;
-					rgb_bytes[offset+2] = (eclr*clr)>>8;
-					rgb_bytes[offset+3] = clr;
-				}
-				else
-				{
-					rgb_bytes[offset+0] = eclr;
-					rgb_bytes[offset+1] = eclr;
-					rgb_bytes[offset+2] = eclr;
-					rgb_bytes[offset+3] = 255;
-				}
-
-				continue;
-			}
-
-			// inner part of the image - soft-box effect
-			rgb_bytes[offset+0] = ((int)rgb_bytes[offset+0]*7+sbclr)/8;
-			rgb_bytes[offset+1] = ((int)rgb_bytes[offset+1]*7+sbclr)/8;
-			rgb_bytes[offset+2] = ((int)rgb_bytes[offset+2]*7+sbclr)/8;
-		}
-	}
+	addRoundCornersRGBA8888(rgb_bytes, outWidth, outHeight);
 
 	if (mirror)
 	{
@@ -387,6 +282,13 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_native
 	env->ReleaseByteArrayElements(rgb_out, (jbyte*)rgb_bytes, JNI_COMMIT);
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_addCornersRGBA8888(JNIEnv* env, jclass,
+		jbyteArray rgb_out, jint outWidth, jint outHeight)
+{
+	unsigned char *rgb_bytes = (unsigned char *)env->GetByteArrayElements(rgb_out, 0);
+	addRoundCornersRGBA8888(rgb_bytes, outWidth, outHeight);
+	env->ReleaseByteArrayElements(rgb_out, (jbyte*)rgb_bytes, JNI_COMMIT);
+}
 
 extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_HeapUtil_getMemoryInfo(JNIEnv* env, jclass)
 {

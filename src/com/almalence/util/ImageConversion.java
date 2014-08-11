@@ -49,7 +49,10 @@ public class ImageConversion
 			int outHeight);
 	public static native void convertNV21toGLN(int ain, byte[] aout, int width, int height, int outWidth,
 			int outHeight);
+	
+	public static native void addCornersRGBA8888(byte[] rgb_out, int outWidth, int outHeight);
 
+	
 	static
 	{
 		System.loadLibrary("utils-image");
