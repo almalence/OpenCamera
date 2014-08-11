@@ -397,8 +397,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			String msg;
 			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			Log.e("NightCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			Log.e("NightCapturePlugin", msg);
+			Log.e("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+			Log.e("MultishotCapturePlugin", msg);
 		}
 
 		// find index selected in preferences
