@@ -31,7 +31,7 @@
  SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, MISUSE OR
  INABILITY TO USE THE SOFTWARE OR RELATED DOCUMENTATION.
 
- COPYRIGHT 2010-2012, ALMALENCE, INC.
+ COPYRIGHT 2010-2014, ALMALENCE, INC.
 
  ---------------------------------------------------------------------------
 
@@ -122,11 +122,7 @@ int SuperZoom_StartStreaming
 	int		sy,
 	int		sxo,
 	int		syo,
-	int     SensorGain,
-	int     DeGhostGain,
 	int     DeGhostFrames,
-	int     kelvin1,
-	int     kelvin2,
 	int		noSres,
 	int     cameraIndex
 );
@@ -147,6 +143,10 @@ int SuperZoom_ResolveFrame
 	int		*h_out,
 	int		 nImages,
 	int      nRefImage,
+	int      SensorGain,
+	int      MovObjGain,
+	int      kelvin1,
+	int      kelvin2,
 	int		 enh_edges
 );
 

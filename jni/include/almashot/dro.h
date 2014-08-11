@@ -31,7 +31,7 @@
  SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, MISUSE OR
  INABILITY TO USE THE SOFTWARE OR RELATED DOCUMENTATION.
 
- COPYRIGHT 2012, ALMALENCE, INC.
+ COPYRIGHT 2012-2014, ALMALENCE, INC.
 
  ---------------------------------------------------------------------------
 
@@ -78,32 +78,62 @@ void Dro_GetHistogramNV21
 // Input:
 //         hist - pointer to histogram with 256 elements
 // Output:
-//         lookup_table[256] - filled with tone-table multipliers (in q5.10 fixed-point format)
+//         lookup_table - filled with tone-table multipliers (in q5.10 fixed-point format)
 //
 // Parameters:
 //         gamma        - Defines how 'bright' the output image will be. Lower values cause brighter output.
 //                        Default: 0.5
 //         max_black_level - threshold for black level correction. Default: 16
 //         black_level_atten - how much to attenuate black level. Default: 0.5
-//         min_limit[3] - Minimum limit on contrast reduction. Range: [0..0.9]. Default: 0.5
+//         min_limit[3] - Minimum limit on contrast reduction. Range: [0..0.9]. Default: {0.5, 0.5, 0.5}
+//         max_limit[3] - Maximum limit on contrast enhancement. Range: [1..10]. Default:
 //                        [0] - for shadows, [1] - for midtones, [2] - for highlights.
-//         max_limit[3] - Maximum limit on contrast enhancement. Range: [1..10].
-//                        [0] - for shadows, default: 4 - for hdr-like effects, 3 for more balanced results
-//                        [1] - for midtones, default: 2
-//                        [2] - for highlights, default: 2
+//                        {4.0, 2.0, 2.0} - for hdr-like effects;
+//                        {3.0, 2.0, 2.0} - for more balanced results.
 //         global_limit - Maximum limit on total brightness amplification. Recommended: 4
-// Return:
-//         pointer to lookup_table.
-Int32 *Dro_ComputeToneTable
+void Dro_ComputeToneTable
 (
-	Uint32 *hist,
-	Int32 *lookup_table,
+	Uint32 hist[256],
+	Int32 lookup_table[256],
 	float gamma,
 	float max_black_level,
 	float black_level_atten,
 	float min_limit[3],
 	float max_limit[3],
 	float global_limit
+);
+
+
+// ComputeToneTableLocal - same as ComputeToneTable, but compute 3x3 tone tables.
+// Input:
+//         hist_loc - 3x3 histograms each with 256 elements
+// Output:
+//         lookup_table_loc - filled with multipliers for each of 3x3 image areas
+//
+// Parameters:
+//         gamma        - Defines how 'bright' the output image will be. Lower values cause brighter output.
+//                        Default: 0.5
+//         max_black_level - threshold for black level correction. Default: 16
+//         black_level_atten - how much to attenuate black level. Default: 0.5
+//         min_limit[3] - Minimum limit on contrast reduction. Range: [0..0.9]. Default: {0.5, 0.5, 0.5}
+//         max_limit[3] - Maximum limit on contrast enhancement. Range: [1..10]. Default:
+//                        [0] - for shadows, [1] - for midtones, [2] - for highlights.
+//                        {4.0, 2.0, 2.0} - for hdr-like effects;
+//                        {3.0, 2.0, 2.0} - for more balanced results.
+//         global_limit - Maximum limit on total brightness amplification. Recommended: 4
+//         mix_factor   - Defines the level of inter-dependence of image areas. Range: [0..1].
+//                        Recommended: 0.2
+void Dro_ComputeToneTableLocal
+(
+	Uint32 hist_loc[3][3][256],
+	Int32 lookup_table_loc[3][3][256],
+	float gamma,
+	float max_black_level,
+	float black_level_atten,
+	float min_limit[3],
+	float max_limit[3],
+	float global_limit,
+	float mix_factor
 );
 
 
@@ -156,33 +186,11 @@ int Dro_ApplyToneTableFilteredNV21
 	Int32 lookup_table[256],
 	Int32 lookup_local[3][3][256],
 	int filter,
-	int strong_filter,
 	int uv_desat,
 	int dark_uv_desat,
+	float dark_noise_pass,
 	int sx,
 	int sy
-);
-
-// Description:
-//    Detects if a new histogram is sufficiently different from the base one.
-//    If so - new histogram is copied into base.
-//    It is further detected if scene is changed.
-//
-// Return:
-//
-// 0 = no tone table update is needed
-//     hist_base remain untouched
-//
-// 1 = tone update is needed, but no scene change (slowly advance to the new table)
-//     hist_base updated with the new hist
-//
-// 2 = tone update is needed, scene change (switch to the new table immediately)
-//     hist_base updated with the new hist
-//
-int Dro_CheckToneUpdateNeeded
-(
-	Uint32 *hist,
-	Uint32 *hist_base
 );
 
 
@@ -237,12 +245,13 @@ void Dro_StreamingRender
 	int force_update,
 	int uv_desat,
 	int dark_uv_desat,
+	float dark_noise_pass,
 	float mix_factor,
 	float gamma,				// default = 0.5
 	float max_black_level,		// default = 16
 	float black_level_atten,	// default = 0.5
-	float min_limit[3],			// default = 0.5 0.5 0.5
-	float max_limit[3],			// default = 3 2 2
+	float min_limit[3],			// default = {0.5, 0.5, 0.5}
+	float max_limit[3],			// default = {3.0, 2.0, 2.0}
 	unsigned int texture_out
 );
 

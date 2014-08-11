@@ -40,8 +40,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	private long			sessionID				= 0;
 
 	private static boolean	DROLocalTMPreference	= true;
-	private static int		prefStrongFilter		= 0;
-	private static int		prefPullYUV				= 9;
+	private static int		prefPullYUV				= 7; // 9;
 
 	public SimpleProcessingPlugin()
 	{
@@ -99,7 +98,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 					inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 
 				int yuv = AlmaShotDRO.DroProcess(inputYUV, mImageWidth, mImageHeight, 1.5f, DROLocalTMPreference, 0,
-						prefStrongFilter, prefPullYUV);
+						prefPullYUV, 0.35f, 0.6f);
 
 				AlmaShotDRO.Release();
 

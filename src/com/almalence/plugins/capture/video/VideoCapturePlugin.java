@@ -45,7 +45,6 @@ import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
-import android.media.MediaScannerConnection;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -54,12 +53,10 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
@@ -79,6 +76,7 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Switch;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
@@ -100,7 +98,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 import com.almalence.ui.RotateImageView;
-import com.almalence.ui.Switch.Switch;
 import com.almalence.util.Util;
 import com.coremedia.iso.IsoFile;
 import com.googlecode.mp4parser.authoring.Movie;
@@ -197,7 +194,7 @@ public class VideoCapturePlugin extends PluginCapture
 																											// On
 																											// 1=DRO
 																											// Off
-	private Switch								modeSwitcher;
+	private com.almalence.ui.Switch.Switch								modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
@@ -249,7 +246,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
@@ -308,14 +305,14 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					} else
+					}
+					else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
 						timeLapseButton.setVisibility(View.VISIBLE);
 
 						droEngine.onPause();
-						MainScreen.getInstance().hideOpenGLLayer();
 
 						Camera camera = CameraController.getCamera();
 						if (camera != null)
@@ -336,8 +333,10 @@ public class VideoCapturePlugin extends PluginCapture
 								e.printStackTrace();
 							}
 						CameraController.startCameraPreview();
+						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();
@@ -541,6 +540,19 @@ public class VideoCapturePlugin extends PluginCapture
 			});
 		}
 
+		for (int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			if (view_id == this.buttonsLayout.getId())
+			{
+				if (view.getParent() != null)
+					((ViewGroup) view.getParent()).removeView(view);
+
+				specialLayout.removeView(view);
+			}
+		}
+		
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
@@ -1030,32 +1042,9 @@ public class VideoCapturePlugin extends PluginCapture
 		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 
-		final Camera.Size sz;
-		if (!this.modeDRO())
-		{
-			boolean aspect169 = true;
-			switch (ImageSizeIdxPreference)
-			{
-			case 0:
-			case 1:
-			case 4:
-				aspect169 = false;
-				break;
-			case 2:
-			case 3:
-			case 5:
-				aspect169 = true;
-				break;
-			default:
-				break;
-			}
+		final Camera.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 
-			sz = getBestPreviewSizeNormal(aspect169);
-		} else
-		{
-			sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
-		}
-
+		Log.i(TAG, String.format("Preview size: %dx%d", sz.width, sz.height));
 		cp.setPreviewSize(sz.width, sz.height);
 
 		CameraController.getInstance().setCameraParameters(cp);
@@ -1069,7 +1058,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		} else
+		}
+		else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}

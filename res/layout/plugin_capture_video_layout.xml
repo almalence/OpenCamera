@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/utilityButtons"
+	    android:id="@+id/videoUtilityButtons"
 	    android:layout_width="fill_parent"
 	    android:layout_height="@dimen/videobuttons_size"			       
 	    android:orientation="horizontal"	        
