@@ -37,6 +37,7 @@ import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
 public class ImageConversion
 {
 	public static native int JpegConvert(byte[] in, int sx, int sy, boolean rotate, boolean mirrored, int rotationDegree);
+	public static native int JpegConvertN(int in, int length, int sx, int sy, boolean rotate, boolean mirrored, int rotationDegree);
 
 	public static native void sumByteArraysNV21(byte[] data1, byte[] data2, byte[] out, int width, int height);
 
@@ -59,19 +60,8 @@ public class ImageConversion
 		System.loadLibrary("utils-jni");
 	}
 
-	public static void resizeJpeg2RGBA(final byte[] jpeg, final byte[] rgb_out, final int inWidth, final int inHeight,
-			final int outWidth, int outHeight, boolean mirror)
-	{
-		if (jpeg == null || rgb_out == null)
-		{
-			throw new IllegalArgumentException("Input and output buffers must not be null.");
-		}
-
-		nativeresizeJpeg2RGBA(jpeg, rgb_out, inWidth, inHeight, outWidth, outHeight, mirror);
-	}
-
-	private static native void nativeresizeJpeg2RGBA(byte[] jpeg, byte[] rgb_out, int inHeight, int inWidth,
-			int outWidth, int outHeight, boolean mirror);
+	public static native void resizeJpeg2RGBA(int jpeg, int jpeg_length, byte[] rgb_out,
+			int inHeight, int inWidth, int outWidth, int outHeight, boolean mirror);
 
 	/**
 	 * Lets use this method to check pointers for NULL. Maybe move it to

@@ -18,7 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -41,7 +40,6 @@ import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CaptureResult;
-import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -64,7 +62,6 @@ import android.widget.RelativeLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
-import com.almalence.YuvImage;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -292,6 +289,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	public void onCreate()
 	{
@@ -355,9 +353,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(true);
 			
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-			cp.setRecordingHint(true);
-			CameraController.getInstance().setCameraParameters(cp);
+			if (!CameraController.isUseHALv3())
+			{
+				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+				cp.setRecordingHint(true);
+				CameraController.getInstance().setCameraParameters(cp);
+			}
 		}
 		else
 		{
@@ -370,9 +371,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(false);
 			
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-			cp.setRecordingHint(false);
-			CameraController.getInstance().setCameraParameters(cp);
+			if (!CameraController.isUseHALv3())
+			{
+				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+				cp.setRecordingHint(false);
+				CameraController.getInstance().setCameraParameters(cp);
+			}
 		}
 	}
 
@@ -409,9 +413,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 		
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		cp.setRecordingHint(false);
-		CameraController.getInstance().setCameraParameters(cp);
+		if (!CameraController.isUseHALv3())
+		{
+			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+			cp.setRecordingHint(false);
+			CameraController.getInstance().setCameraParameters(cp);
+		}
 	}
 
 	@Override
@@ -1057,11 +1064,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
-	public void onPreviewFrame(final byte[] data, final Camera paramCamera)
+	public void onPreviewFrame(final byte[] data)
 	{
 		this.previewRestartFlag = false;
 
-		if (!this.prefHardwareGyroscope)
+		if (!this.prefHardwareGyroscope && this.sensorSoftGyroscope != null)
 		{
 			this.sensorSoftGyroscope.NewData(data);
 		}
@@ -1078,62 +1085,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				{
 					Log.e(TAG, "Taking picture using PREVIEW OLD");
 					this.takePictureUnimode(data);
-				}
-			}
-		}
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		this.previewRestartFlag = false;
-
-		if (!this.prefHardwareGyroscope)
-		{
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("PanoramaCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			int imageWidth = im.getWidth();
-			int imageHeight = im.getHeight();
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, 
-					im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight, 1);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			byte[] data = YuvImage.GetByteFrame(1);
-			this.sensorSoftGyroscope.NewData(data);
-			YuvImage.RemoveFrame(1);
-			System.gc();
-		}
-
-		synchronized (this.engine)
-		{
-			if (!this.takingAlready)
-			{
-				final int state = this.engine.getPictureTakingState(this.modeSweep ? true :
-						CameraController.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
-
-				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
-						|| this.isFirstFrame)
-				{
-					Log.e(TAG, "Taking picture using PREVIEW HALv3");
-					this.takePictureUnimode(im);
 				}
 			}
 		}
@@ -1268,9 +1219,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = true;
 		this.engine.recordCoordinates();
 	}
-
+	
 	@Override
-	public void onPictureTaken(final byte[] paramArrayOfByte, final Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		final boolean goodPlace;
 
@@ -1284,12 +1235,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
-			Log.e(TAG, "Taking picture using PICTURE OLD");
-			goodPlace = this.engine.onFrameAdded(paramArrayOfByte, false, false);
-
-			if (this.isFirstFrame)
+			if (isYUV)
 			{
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+				goodPlace = this.engine.onFrameAdded(frame, true, true);
+			}
+			else
+			{
+				goodPlace = this.engine.onFrameAdded(frame, false, frame_len);
+			}
+
+			if (this.isFirstFrame && !isYUV)
+			{
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 				this.isFirstFrame = false;
 			}
 		}
@@ -1315,54 +1272,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
-
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		final boolean goodPlace;
-
-		synchronized (this.engine)
-		{
-			this.takingAlready = false;
-			this.engine.notifyAll();
-
-			if (!this.coordsRecorded)
-			{
-				this.engine.recordCoordinates();
-			}
-
-			Log.e(TAG, "Taking picture using PICTURE HALv3");
-			goodPlace = this.engine.onFrameAdded(im, false);
-		}
-
-		final boolean done = this.engine.isCircular();
-		final boolean oom = this.engine.isMax();
-
-		if (oom && !done)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_OUT_OF_MEMORY);
-		else if (done)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_NOTIFY_LIMIT_REACHED);
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_NEXT_FRAME);
-
-		if (!goodPlace)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_BAD_FRAME);
-
-		if (done || oom)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_FORCE_FINISH_CAPTURE);
-	}
-
-	@TargetApi(19)
+	
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.getSequenceId() == requestID)
 		{
 			if (this.isFirstFrame)
 			{

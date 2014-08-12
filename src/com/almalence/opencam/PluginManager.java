@@ -77,6 +77,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -200,7 +201,9 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_NOTIFY_LIMIT_REACHED				= 14;
 	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
 
+	public static final int				MSG_CAMERA_CONFIGURED					= 160;
 	public static final int				MSG_CAMERA_READY						= 161;
+	public static final int				MSG_CAMERA_STOPED						= 162;
 
 	// For HALv3 code version
 	public static final int				MSG_CAMERA_OPENED						= 16;
@@ -1280,44 +1283,24 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onShutter();
 	}
 
+
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPictureTaken(paramArrayOfByte, paramCamera);
+			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, isYUV);
 	}
 
-	public void onImageAvailable(Image im)
-	{
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onImageAvailable(im);
-	}
-
-	@TargetApi(19)
-	public void onCaptureCompleted(CaptureResult result)
+	@TargetApi(21)
+	public void onCaptureCompleted(TotalCaptureResult result)
 	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
 
-	public void onPreviewAvailable(Image im)
-	{
-		if (isRestarting)
-		{
-			RelativeLayout pluginsLayout = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
-			pluginsLayout.requestLayout();
-			isRestarting = false;
-		}
-
-		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onPreviewAvailable(im);
-
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPreviewAvailable(im);
-	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 		// prevents plugin's views to disappear
 		if (isRestarting)
@@ -1328,10 +1311,10 @@ public class PluginManager implements PluginManagerInterface
 		}
 
 		for (int i = 0; i < activeVF.size(); i++)
-			pluginList.get(activeVF.get(i)).onPreviewFrame(data, paramCamera);
+			pluginList.get(activeVF.get(i)).onPreviewFrame(data);
 
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onPreviewFrame(data, paramCamera);
+			pluginList.get(activeCapture).onPreviewFrame(data);
 	}
 
 	public void onFrameAvailable()
@@ -1695,7 +1678,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	@SuppressLint("NewApi")
-	@TargetApi(19)
+	@TargetApi(21)
 	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{
 		String exposure_time = String.valueOf(result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
@@ -1721,7 +1704,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	public boolean addToSharedMem_ExifTagsFromCamera(final long SessionID)
+	public boolean addToSharedMemExifTagsFromCamera(final long SessionID)
 	{
 		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
 		if (params == null)

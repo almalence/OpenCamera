@@ -46,8 +46,6 @@ import com.almalence.util.Util;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
 import android.annotation.TargetApi;
-import android.graphics.ImageFormat;
-import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
@@ -788,78 +786,42 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
 
-			final boolean rotate = args.length >= 1 ? (Boolean)args[0] : false;
+			final boolean isYUV = args.length >= 1 ? (Boolean)args[0] : true;
 			
 			final AugmentedFrameTaken frame;
 			
-			if (image instanceof byte[])
+			if (image instanceof Integer)
 			{
-				if (args.length >= 2 && (Boolean)args[1])
+				final int im = (Integer)image;
+				
+				if (isYUV)
 				{
-					final int yuv_address = SwapHeap.SwapToHeap((byte[])image);
-					
+					final boolean rotate = args.length >= 2 ? (Boolean)args[1] : false;
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, yuv_address, rotate);
+							position, topVec, transform, im, rotate);
 				}
 				else
 				{
-					final byte[] jpeg_copy = new byte[((byte[])image).length];
-					System.arraycopy(image, 0, jpeg_copy, 0, ((byte[])image).length);
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, jpeg_copy);
+							position, topVec, transform, im, (Integer)args[2]);
 				}
-				
 			}
-			else if (image instanceof Image)
+			else if (image instanceof byte[]) // Should not be used
 			{
-				final Image im = (Image)image;
+				final int ptr = SwapHeap.SwapToHeap((byte[])image);
 				
-				if (im.getFormat() == ImageFormat.YUV_420_888)
+				if (isYUV)
 				{
-					ByteBuffer Y = im.getPlanes()[0].getBuffer();
-					ByteBuffer U = im.getPlanes()[1].getBuffer();
-					ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-					if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-					{
-						Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-						return false;
-					}
-
-					// Note: android documentation guarantee that:
-					// - Y pixel stride is always 1
-					// - U and V strides are the same
-					// So, passing all these parameters is a bit overkill
-					int status = YuvImage.CreateYUVImage(Y, U, V,
-							im.getPlanes()[0].getPixelStride(),	im.getPlanes()[0].getRowStride(),
-							im.getPlanes()[1].getPixelStride(),	im.getPlanes()[1].getRowStride(),
-							im.getPlanes()[2].getPixelStride(), im.getPlanes()[2].getRowStride(),
-							MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-					if (status != 0)
-						Log.e("Panorama", "Error while cropping: " + status);
-
-					//byte[] yuv = YuvImage.GetByteFrame(0);
-					int yuv_address = YuvImage.GetFrame(0);
-
+					final boolean rotate = args.length >= 2 ? (Boolean)args[1] : false;
 					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, yuv_address, rotate);
-				}
-				else if (im.getFormat() == ImageFormat.JPEG)
-				{
-					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-					int frame_len = jpeg.limit();
-					byte[] jpegByteArray = new byte[frame_len];
-					jpeg.get(jpegByteArray, 0, frame_len);
-
-					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, jpegByteArray);
+							position, topVec, transform, ptr, rotate);
 				}
 				else
 				{
-					frame = null;
+					frame = new AugmentedFrameTaken(targetFrame.angle,
+							position, topVec, transform, ptr, ((byte[])image).length);
 				}
+				
 			}
 			else
 			{
@@ -1447,7 +1409,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		 * For JPEG input
 		 */
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final byte[] img_data)
+				final Vector3d topVec, final float[] rotation, final int jpeg, final int jpeg_length)
 		{
 			this(angleShift, position, topVec, rotation);
 
@@ -1475,7 +1437,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										AugmentedPanoramaEngine.this.textureWidth
 											* AugmentedPanoramaEngine.this.textureHeight * 4);
 
-								ImageConversion.resizeJpeg2RGBA(img_data,
+								ImageConversion.resizeJpeg2RGBA(jpeg,
+										jpeg_length,
 										AugmentedFrameTaken.this.rgba_buffer.array(),
 										AugmentedPanoramaEngine.this.width,
 										AugmentedPanoramaEngine.this.height,
@@ -1493,7 +1456,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								});
 							}
 
-							AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(img_data,
+							AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvertN(jpeg, jpeg_length,
 									AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, true,
 									CameraController.isFrontCamera(), 90);
 						}

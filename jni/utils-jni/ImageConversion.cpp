@@ -178,6 +178,36 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_util_ImageConversion_JpegCo
 	return (jint)out;
 }
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_util_ImageConversion_JpegConvertN
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint jpeg,
+	jint jpeg_length,
+	jint sx,
+	jint sy,
+	jboolean jrot,
+	jboolean mirror,
+	jint rotationDegree
+)
+{
+	int data_length;
+	unsigned char *data;
+
+	unsigned char* out = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+
+	if (out != NULL)
+	{
+		if (JPEG2NV21(out, (unsigned char*)jpeg, jpeg_length, sx, sy, jrot, mirror, rotationDegree) == 0)
+		{
+			free(out);
+			out = NULL;
+		}
+	}
+
+	return (jint)out;
+}
+
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_convertNV21toGLN(
 		JNIEnv *env, jclass clazz, jint ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
 {
@@ -200,28 +230,23 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_conver
 	env->ReleaseByteArrayElements(aout, cImageOut, 0);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_nativeresizeJpeg2RGBA(
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_resizeJpeg2RGBA(
 		JNIEnv *env, jclass clazz,
-		jbyteArray jpeg,
+		jint jpeg,
+		jint jpeg_length,
 		jbyteArray rgb_out,
 		jint inHeight, jint inWidth,
 		jint outWidth, jint outHeight,
 		jboolean mirror)
 {
-	unsigned int* data_rgba = (unsigned int*)malloc(inHeight*inWidth*sizeof(unsigned int));
+	unsigned char * data_rgba = (unsigned char*)malloc(inHeight*inWidth*sizeof(unsigned int));
 	if (data_rgba == NULL)
 	{
 		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "nativeresizeJpeg2RGBA(): malloc() returned NULL");
 		return;
 	}
 
-	jbyte *cImageIn = env->GetByteArrayElements(jpeg, 0);
-
-	JPEG2RGBA((unsigned char*)data_rgba, (unsigned char*)cImageIn, env->GetArrayLength(jpeg));
-
-	env->ReleaseByteArrayElements(jpeg, cImageIn, 0);
-
-
+	JPEG2RGBA(data_rgba, (unsigned char*)jpeg, jpeg_length);
 
 	unsigned char *rgb_bytes = (unsigned char *)env->GetByteArrayElements(rgb_out, 0);
 
