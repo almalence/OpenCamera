@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,9 +75,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Switch;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
@@ -100,6 +101,7 @@ import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 import com.coremedia.iso.IsoFile;
+import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
@@ -116,6 +118,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private volatile boolean					isRecording;
 	private boolean								onPause;
+	private boolean								lockPauseButton = false;
 
 	private static int							CameraIDPreference;
 
@@ -194,7 +197,7 @@ public class VideoCapturePlugin extends PluginCapture
 																											// On
 																											// 1=DRO
 																											// Off
-	private com.almalence.ui.Switch.Switch								modeSwitcher;
+	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
@@ -221,32 +224,11 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
-	private void setExposureParameters()
-	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-		final int currEv = prefs.getInt(MainScreen.sEvPref, 0);
-		int newEv = currEv;
-		final int minValue = CameraController.getInstance().getMinExposureCompensation();
-		float expStep = CameraController.getInstance().getExposureCompensationStep();
-
-		if (this.modeDRO())
-		{
-			if (expStep < 0.3f)
-				expStep = 0.33f; // there is a bug in Nexus 5 (android 4.4.2)
-			int cmpns = -(int) (0.8f / expStep);
-			if (cmpns == 0)
-				cmpns = -1; // on Ascend P6 Ev compensation step is 1.0
-			newEv -= cmpns;
-		}
-
-		CameraController.getInstance().setCameraExposureCompensation(Math.max(minValue, newEv));
-	}
-
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher,
+				null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
@@ -267,8 +249,6 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					ModePreference = "1";
 				}
-
-				VideoCapturePlugin.this.setExposureParameters();
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeVideoDROPref", ModePreference);
@@ -305,8 +285,7 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					}
-					else
+					} else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
@@ -335,8 +314,7 @@ public class VideoCapturePlugin extends PluginCapture
 						CameraController.startCameraPreview();
 						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				}
-				catch (final Exception e)
+				} catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();
@@ -552,7 +530,7 @@ public class VideoCapturePlugin extends PluginCapture
 				specialLayout.removeView(view);
 			}
 		}
-		
+
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
@@ -1022,8 +1000,6 @@ public class VideoCapturePlugin extends PluginCapture
 			cp.setPreviewFrameRate(30);
 			cp.setRecordingHint(true);
 
-			this.setExposureParameters();
-
 			CameraController.getInstance().setCameraParameters(cp);
 		}
 	}
@@ -1058,8 +1034,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		}
-		else
+		} else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}
@@ -1227,7 +1202,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					stopRecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
 			this.startRecording();
@@ -2022,9 +1997,14 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					pauseDRORecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
+			if (lockPauseButton)
+			{
+				return;
+			}
+
 			if (onPause)
 			{
 				startVideoRecording();
@@ -2033,6 +2013,7 @@ public class VideoCapturePlugin extends PluginCapture
 			// Pause video recording, merge files and remove last.
 			else
 			{
+				lockPauseButton = true;
 				long now = SystemClock.uptimeMillis();
 				long delta = now - mRecordingStartTime;
 				Handler handler = new Handler();
@@ -2042,19 +2023,25 @@ public class VideoCapturePlugin extends PluginCapture
 					{
 						pauseRecording();
 					}
-				}, 2500 - delta);
+				}, 1500 - delta);
 			}
 		}
 	}
 
 	private void pauseDRORecording()
 	{
-		this.onPause = !this.onPause;
-		this.droEngine.setPaused(this.onPause);
 		if (onPause)
 		{
+			mRecordingStartTime = SystemClock.uptimeMillis();
+			showRecordingUI(isRecording);
+			onPause = false;
+			showRecordingUI(isRecording);
+		} else
+		{
+			onPause = true;
 			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_PAUSED);
 		}
+		this.droEngine.setPaused(this.onPause);
 	}
 
 	private void pauseRecording()
@@ -2082,6 +2069,8 @@ public class VideoCapturePlugin extends PluginCapture
 			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 
 			filesList.add(fileSaved);
+			
+			lockPauseButton = false;
 		} catch (RuntimeException e)
 		{
 			// Note that a RuntimeException is intentionally thrown to the
@@ -2152,23 +2141,11 @@ public class VideoCapturePlugin extends PluginCapture
 	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
 	{
 
-		final FileInputStream fisOne = new FileInputStream(new File(secondFile));
-		final FileInputStream fisTwo = new FileInputStream(new File(firstFile));
 		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
+		final FileChannel fc = fos.getChannel();
 
-		append(fisOne, fisTwo, fos);
-
-		fisOne.close();
-		fisTwo.close();
-		fos.close();
-	}
-
-	public static void append(final FileInputStream fisOne, final FileInputStream fisTwo, final FileOutputStream out)
-			throws IOException
-	{
-
-		final Movie movieOne = MovieCreator.build(Channels.newChannel(fisOne));
-		final Movie movieTwo = MovieCreator.build(Channels.newChannel(fisTwo));
+		final Movie movieOne = MovieCreator.build(firstFile);
+		final Movie movieTwo = MovieCreator.build(secondFile);
 		final Movie finalMovie = new Movie();
 
 		final List<Track> movieOneTracks = movieOne.getTracks();
@@ -2176,11 +2153,13 @@ public class VideoCapturePlugin extends PluginCapture
 
 		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
 		{
-			finalMovie.addTrack(new AppendTrack(movieTwoTracks.get(i), movieOneTracks.get(i)));
+			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
 		}
 
-		final IsoFile isoFile = new DefaultMp4Builder().build(finalMovie);
-		isoFile.getBox(out.getChannel());
+		final Container container = new DefaultMp4Builder().build(finalMovie);
+		container.writeContainer(fc);
+		fc.close();
+		fos.close();
 	}
 
 	// append video

@@ -37,12 +37,15 @@ import java.util.List;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -182,8 +185,7 @@ public class AlmalenceStore
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_LOCKED);
 
 		MainScreen.getGUIManager().lockControls = true;
 
@@ -197,10 +199,28 @@ public class AlmalenceStore
 
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);
-				
+
 		final RelativeLayout pagerLayoutMain = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain));
 		pagerLayoutMain.setVisibility(View.VISIBLE);
 		pagerLayoutMain.bringToFront();
+
+		// We need this timer, to show store on top, after we return from google
+		// play.
+		// In MainScreen there is 50ms timer, which brings main buttons on top,
+		// after MainScreen activity resumed.
+		// So this timer "blocks" timer from MainScreen if we want to show
+		// store.
+		new CountDownTimer(60, 60)
+		{
+			public void onTick(long millisUntilFinished)
+			{
+			}
+
+			public void onFinish()
+			{
+				pagerLayoutMain.bringToFront();
+			}
+		}.start();
 	}
 
 	public void hideStore()
@@ -211,8 +231,7 @@ public class AlmalenceStore
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 
 		MainScreen.getGUIManager().lockControls = false;
 	}
@@ -312,7 +331,8 @@ public class AlmalenceStore
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getInstance().getResources()
 						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
+				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear()
+						|| MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
 					price.setText(MainScreen.getInstance().titleSubscriptionYear);
@@ -322,7 +342,8 @@ public class AlmalenceStore
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getInstance().getResources()
 						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
+				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth()
+						|| MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
 					price.setText(MainScreen.getInstance().titleSubscriptionMonth);
@@ -331,16 +352,16 @@ public class AlmalenceStore
 				break;
 			}
 
-//			item.setOnTouchListener(new OnTouchListener()
-//			{
-//				@Override
-//				public boolean onTouch(View v, MotionEvent event)
-//				{
-//					if (event.getAction() == MotionEvent.ACTION_CANCEL)
-//						purchasePressed(v);
-//					return false;
-//				}
-//			});
+			// item.setOnTouchListener(new OnTouchListener()
+			// {
+			// @Override
+			// public boolean onTouch(View v, MotionEvent event)
+			// {
+			// if (event.getAction() == MotionEvent.ACTION_CANCEL)
+			// purchasePressed(v);
+			// return false;
+			// }
+			// });
 
 			item.setOnClickListener(new OnClickListener()
 			{

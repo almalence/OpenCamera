@@ -10,7 +10,7 @@
 	<string name="Pref_NightCapture_Preference_Title">Ночная съемка</string>
 	<string name="Pref_NightCapture_Preference_Summary">Съемка при слабом освещении</string>	
 	
-	<string name="Pref_NightCapture_ImageSize_Title">Размер снимка(hi-speed)</string>
+	<string name="Pref_NightCapture_ImageSize_Title">Размер снимка (Ночь hi-speed)</string>
 	
 	<string name="Pref_NightCapture_FocusMode_Title">Режим фокусировки</string>
     <string name="Pref_NightCapture_FocusMode_Summary">Выберите подходящий режим фокусировки</string>

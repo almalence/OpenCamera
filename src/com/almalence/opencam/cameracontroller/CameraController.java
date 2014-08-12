@@ -1812,6 +1812,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			HALv3.setCameraExposureCompensationHALv3(iEV);
+		
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
 	}
 
 	public void setCameraFocusAreas(List<Area> focusAreas)
