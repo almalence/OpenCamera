@@ -1276,16 +1276,16 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onShutter();
 	}
 
-	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
-	{
-		if (null != pluginList.get(activeCapture))
-		{
-			int frame_len = paramArrayOfByte.length;
-			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-			pluginList.get(activeCapture).onImageTaken(frame, paramArrayOfByte, frame_len, false);
-		}
-	}
+//	@Override
+//	public void onPictureTaken(byte[] paramArrayOfByte, boolean isYUV)
+//	{
+//		if (null != pluginList.get(activeCapture))
+//		{
+//			int frame_len = paramArrayOfByte.length;
+//			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+//			pluginList.get(activeCapture).onImageTaken(frame, paramArrayOfByte, frame_len, isYUV);
+//		}
+//	}
 
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)

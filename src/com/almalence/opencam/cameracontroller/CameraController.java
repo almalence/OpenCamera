@@ -40,6 +40,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+import com.almalence.util.ImageConversion;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -1983,22 +1984,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			synchronized (SYNC_OBJECT)
 			{
-				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-				{
-					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-					camera.setPreviewCallback(null);
-					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-					return 0;
-				}
+				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+//				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+//				{
+//					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+//					camera.setPreviewCallback(null);
+//					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+//					return 0;
+//				}
 
-				return -1;
+//				return -1;
+				return 0;
 			}
 		} else
 			return HALv3.captureImageHALv3(nFrames, format);
 	}
 
 	// Experimental code to take multiple images. Works only with HALv3
-	// interface in API 19
+	// interface in API 19(currently minimum API version for Android L increased to 21)
 	protected static int		pauseBetweenShots	= 0;
 
 	protected static final int	MAX_HDR_FRAMES		= 4;
@@ -2006,6 +2009,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static int		total_frames;
 	protected static int		frame_num;
+	
+	protected static boolean	takePreviewFrame 	= false;
+	
+	protected static boolean	takeYUVFrame 		= false;
 
 	public static int captureImagesWithParams(int nFrames, int format, int pause, int[] evRequested)
 	{
@@ -2017,25 +2024,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		if (!CameraController.isHALv3)
 		{
+			takeYUVFrame = (format == CameraController.YUV);
 			if (evRequested != null && evRequested.length >= total_frames)
 				CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
 			else
 				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-			
 			return 0;
-			
-//			synchronized (SYNC_OBJECT)
-//			{
-//				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-//				{
-//					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-//					camera.setPreviewCallback(null);
-//					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-//					return 0;
-//				}
-//
-//				return -1;
-//			}
 		} else
 			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested);
 	}
@@ -2117,6 +2111,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.cancelAutoFocusHALv3();
 	}
 
+	
+	//Callback always contains JPEG frame.
+	//So, we have to convert JPEG to YUV if capture plugin has requested YUV frame.
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
@@ -2124,7 +2121,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
-		pluginManager.onPictureTaken(paramArrayOfByte, paramCamera);
+		if(!CameraController.takeYUVFrame) //if JPEG frame requested
+		{
+			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, false);
+		}
+		else //is YUV frame requested
+		{
+			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
+			int frameLen = MainScreen.getImageWidth()*MainScreen.getImageHeight()+2*((MainScreen.getImageWidth()+1)/2)*((MainScreen.getImageHeight()+1)/2);
+			byte[] frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+		}
+		
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 		
 		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
@@ -2154,6 +2163,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{		
 		pluginManager.onPreviewFrame(data);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		
+		if(takePreviewFrame)
+		{
+			takePreviewFrame = false;
+			if(CameraController.takeYUVFrame)
+			{
+				int frame = SwapHeap.SwapToHeap(data);
+				pluginManager.onImageTaken(frame, data, data.length, true);
+			}
+			else
+			{
+				int jpegData = 0;
+//				int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
+//				pluginManager.onImageTaken(yuvFrame, null, 0, true);
+			}
+			
+//			pluginManager.onPictureTaken(data, true);
+			CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
+			return;
+		}
 		
 		if (evLatency > 0)
 		{
@@ -2434,7 +2463,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.e(TAG, "MSG_TAKE_IMAGE");
 				synchronized (SYNC_OBJECT)
 				{
-					if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+					int imageWidth = MainScreen.getImageWidth();
+					int imageHeight = MainScreen.getImageHeight();
+					int previewWidth = MainScreen.getPreviewWidth();
+					int previewHeight = MainScreen.getPreviewHeight();
+					
+					if(imageWidth == previewWidth && imageHeight == previewHeight)
+						takePreviewFrame = true;
+					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 						camera.setPreviewCallback(null);
@@ -2442,7 +2478,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}
 				}
 				break;
-			default:			 
+			default:
 			break;
 		}
 

@@ -251,67 +251,6 @@ public class CapturePlugin extends PluginCapture
 		return false;
 	}
 
-//	@Override
-//	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
-//	{
-//		int frame_len = paramArrayOfByte.length;
-//		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-//
-//		if (frame == 0)
-//		{
-//		}
-//		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-//		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-//		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
-//				String.valueOf(CameraController.isFrontCamera()));
-//
-//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-//		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
-//
-//		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
-//
-//		try
-//		{
-//			paramCamera.startPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.i("Capture", "StartPreview fail");
-//		}
-//
-//		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//				String.valueOf(SessionID));
-//
-//		takingAlready = false;
-//		inCapture = false;
-//	}
-
-//	@TargetApi(21)
-//	@Override
-//	public void onImageAvailable(Image im)
-//	{
-//		int frame = CameraController.getImageFrame(im, SessionID, true);
-//		int frame_len = CameraController.getImageLenght(im);
-//		boolean isYUV = CameraController.isYUVImage(im);
-//
-//		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-//		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-//		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-//				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
-//				String.valueOf(CameraController.isFrontCamera()));
-//
-//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-//
-//		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-//		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
-//
-//		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//				String.valueOf(SessionID));
-//
-//		takingAlready = false;
-//	}
 
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)

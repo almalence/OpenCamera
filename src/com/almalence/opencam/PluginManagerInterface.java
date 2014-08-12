@@ -38,7 +38,7 @@ public interface PluginManagerInterface
 
 	public void onPreviewFrame(byte[] data);
 
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera);
+//	public void onPictureTaken(byte[] paramArrayOfByte, boolean isYUV);
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
 
 }
