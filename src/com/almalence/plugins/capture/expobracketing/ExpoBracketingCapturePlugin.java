@@ -152,7 +152,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPause()
+	public void onPause() 
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
@@ -192,7 +192,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		try
 		{
-			byte[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+			int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 			if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
 			{
 				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
@@ -263,148 +263,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (arg1 == PluginManager.MSG_SET_EXPOSURE)
-		{
-			try
-			{
-				if (UseLumaAdaptation && LumaAdaptationAvailable)
-					CameraController.getInstance().setLumaAdaptation(evRequested);
-				else
-					CameraController.getInstance().setCameraExposureCompensation(evRequested);
-			} catch (RuntimeException e)
-			{
-				Log.i("ExpoBracketing", "setExpo fail in MSG_SET_EXPOSURE");
-			}
-
-			if (previewMode)
-			{
-				// message to capture image will be emitted 2 or 3 frames after
-				// setExposure
-				evLatency = 10; // the minimum value at which Galaxy Nexus is
-								// changing exposure in a stable way
-
-				// Note 3 need more time to change exposure.
-				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 20;
-			} else
-			{
-				new CountDownTimer(500, 500)
-				{
-					public void onTick(long millisUntilFinished)
-					{
-					}
-
-					public void onFinish()
-					{
-						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-								PluginManager.MSG_TAKE_PICTURE);
-					}
-				}.start();
-			}
-
-			return true;
-		} else if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-			if (++frame_num < total_frames)
-			{
-				// re-open preview (closed once frame is captured)
-				try
-				{
-					// remaining frames
-					if (RefocusPreference)
-					{
-						takingAlready = false;
-						aboutToTakePicture = true;
-						CameraController.autoFocus();
-					} else
-						CaptureFrame();
-				} catch (RuntimeException e)
-				{
-					Log.i("ExpoBracketing", "RuntimeException in MSG_NEXT_FRAME");
-					// motorola's sometimes fail to restart preview after
-					// onPictureTaken (fixed),
-					// especially on night scene
-					// just repost our request and try once more (takePicture
-					// latency issues?)
-					--frame_num;
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-							PluginManager.MSG_NEXT_FRAME);
-				}
-			} else
-			{
-				takingAlready = false;
-				inCapture = false;
-				previewWorking = true;
-				if (cdt != null)
-				{
-					cdt.cancel();
-					cdt = null;
-				}
-
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-						String.valueOf(SessionID));
-
-				CameraController.getInstance().resetExposureCompensation();
-			}
-			return true;
-		} else if (arg1 == PluginManager.MSG_TAKE_PICTURE)
-		{
-			// some models (acer liquid, HTC aria) seem to either ignore
-			// exposure setting
-			// that we called couple frames before or simply auto change expo
-			// back to 0Ev after we've
-			// others (motorola's) will not react to exposure change that quick,
-			// and takePicture
-			// will happen with previously set exposure
-			// let's try to set the exposure two times, catching possible throws
-			// on differing models
-			try
-			{
-				if (UseLumaAdaptation && LumaAdaptationAvailable)
-					CameraController.getInstance().setLumaAdaptation(evRequested);
-				else
-					CameraController.getInstance().setCameraExposureCompensation(evRequested);
-			} catch (RuntimeException e)
-			{
-				Log.i("ExpoBracketing", "setExpo fail before takePicture");
-			}
-
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
-			try
-			{
-				if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-					requestID = CameraController.captureImagesWithParams(3, CameraController.YUV, 0, evValues);
-				else
-					requestID = CameraController.captureImage(1, CameraController.JPEG);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e("MainScreen takePicture() failed", "takePicture: " + e.getMessage());
-				takingAlready = false;
-				inCapture = false;
-				previewWorking = true;
-				if (cdt != null)
-				{
-					cdt.cancel();
-					cdt = null;
-				}
-
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-						String.valueOf(SessionID));
-
-				CameraController.getInstance().resetExposureCompensation();
-			}
-			return true;
-		}
-		return false;
-	}
-
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		int n = evIdx[frame_num];
 		if (cm7_crap && (total_frames == 3))
@@ -416,145 +276,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			else
 				n = evIdx[1];
 		}
-
-		compressed_frame[n] = SwapHeap.SwapToHeap(paramArrayOfByte);
-		compressed_frame_len[n] = paramArrayOfByte.length;
-		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
-		PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
-				String.valueOf(compressed_frame_len[n]));
-
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
-
-		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, n + 1);
-
-		if (compressed_frame[n] == 0)
-		{
-			NotEnoughMemory();
-		}
-
-		try
-		{
-			paramCamera.startPreview();
-		} catch (RuntimeException e)
-		{
-			takingAlready = false;
-			inCapture = false;
-			previewWorking = true;
-			if (cdt != null)
-			{
-				cdt.cancel();
-				cdt = null;
-			}
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			CameraController.getInstance().resetExposureCompensation();
-			return;
-		}
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_NEXT_FRAME);
-
-		// if preview not working
-		if (previewMode)
-			return;
-		previewWorking = false;
-		// start timer to check if onpreviewframe working
-		cdt = new CountDownTimer(5000, 5000)
-		{
-			public void onTick(long millisUntilFinished)
-			{
-			}
-
-			public void onFinish()
-			{
-				if (!previewWorking)
-				{
-					Log.e("ExpoBracketing", "previewMode DISABLED!");
-					previewMode = false;
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext());
-					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean(sExpoPreviewModePref, false);
-					prefsEditor.commit();
-					evLatency = 0;
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-							PluginManager.MSG_TAKE_PICTURE);
-				}
-			}
-		};
-		cdt.start();
-
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		int frame = 0;
-		int frame_len = 0;
-		boolean isYUV = false;
-
-		int n = evIdx[frame_num];
-		if (cm7_crap && (total_frames == 3))
-		{
-			if (frame_num == 0)
-				n = evIdx[0];
-			else if (frame_num == 1)
-				n = evIdx[2];
-			else
-				n = evIdx[1];
-		}
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			Log.e("CapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			compressed_frame[n] = YuvImage.GetFrame(0);
-			compressed_frame_len[n] = MainScreen.getImageWidth() * MainScreen.getImageHeight()
-					+ MainScreen.getImageWidth() * ((MainScreen.getImageHeight() + 1) / 2);
-			isYUV = true;
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			Log.e("CapturePlugin", "JPEG Image received");
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			compressed_frame[n] = SwapHeap.SwapToHeap(jpegByteArray);
-			compressed_frame_len[n] = frame_len;
-
-			if (n == 0)
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-		}
+		
+		compressed_frame[n] = frame;
+		compressed_frame_len[n] = frame_len;
 
 		PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
 		PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
@@ -608,11 +332,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.getSequenceId() == requestID)
 		{
 			if (evIdx[frame_num] == 0)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
@@ -817,11 +541,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		// only requesting exposure change here
-		evRequested = evValues[cur_ev];
-		cur_ev += 1;
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_SET_EXPOSURE);
+		MainScreen.getGUIManager().showCaptureIndication();
+		MainScreen.getInstance().playShutter();
+		
+		boolean isHDRMode = PluginManager.getInstance().getActiveModeID().equals("hdrmode");
+		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)
@@ -844,43 +568,22 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// onPreviewFrame is used only to provide an exact delay between setExposure
 	// and takePicture
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
-		if (evLatency > 0)
-		{
-			previewWorking = true;
-			if (--evLatency == 0)
-			{
-				if (cdt != null)
-				{
-					cdt.cancel();
-					cdt = null;
-				}
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_TAKE_PICTURE);
-			}
-			return;
-		}
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		if (evLatency > 0)
-		{
-			previewWorking = true;
-			if (--evLatency == 0)
-			{
-				if (cdt != null)
-				{
-					cdt.cancel();
-					cdt = null;
-				}
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_TAKE_PICTURE);
-			}
-			return;
-		}
+//		if (evLatency > 0)
+//		{
+//			previewWorking = true;
+//			if (--evLatency == 0)
+//			{
+//				if (cdt != null)
+//				{
+//					cdt.cancel();
+//					cdt = null;
+//				}
+//				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+//						PluginManager.MSG_TAKE_PICTURE);
+//			}
+//			return;
+//		}
 	}
 }

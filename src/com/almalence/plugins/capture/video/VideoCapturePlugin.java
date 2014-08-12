@@ -227,8 +227,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher,
-				null, false);
+		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
@@ -285,7 +284,8 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					} else
+					}
+					else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
@@ -314,7 +314,8 @@ public class VideoCapturePlugin extends PluginCapture
 						CameraController.startCameraPreview();
 						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();
@@ -530,7 +531,7 @@ public class VideoCapturePlugin extends PluginCapture
 				specialLayout.removeView(view);
 			}
 		}
-
+		
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
@@ -1034,7 +1035,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		} else
+		}
+		else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}
@@ -2143,7 +2145,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
 		final FileChannel fc = fos.getChannel();
-
+		
 		final Movie movieOne = MovieCreator.build(firstFile);
 		final Movie movieTwo = MovieCreator.build(secondFile);
 		final Movie finalMovie = new Movie();
@@ -2157,11 +2159,10 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		final Container container = new DefaultMp4Builder().build(finalMovie);
-		container.writeContainer(fc);
+		container.writeContainer(fc); 
 		fc.close();
 		fos.close();
 	}
-
 	// append video
 
 	public void takePicture()
@@ -2294,16 +2295,8 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		if (paramArrayOfByte == null)
-			return;
-		int frame_len = paramArrayOfByte.length;
-		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-
-		if (frame == 0)
-		{
-		}
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
@@ -2312,11 +2305,13 @@ public class VideoCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		
+		if(!isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{
-			paramCamera.startPreview();
+			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
 			Log.i("View capture still image", "StartPreview fail");
@@ -2327,44 +2322,10 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		int frame = 0;
-		int frame_len = 0;
 
-		Log.e("CapturePlugin", "JPEG Image received");
-		ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-		frame_len = jpeg.limit();
-		byte[] jpegByteArray = new byte[frame_len];
-		jpeg.get(jpegByteArray, 0, frame_len);
-
-		frame = SwapHeap.SwapToHeap(jpegByteArray);
-
-		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-
-		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(false));
-
-		CameraController.startCameraPreview();
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-		takingAlready = false;
-	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 	}
 

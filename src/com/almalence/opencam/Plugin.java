@@ -236,24 +236,18 @@ public abstract class Plugin
 	{
 	}
 
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
+		
 	}
-
-	public void onImageAvailable(Image im)
+	
+	public void onPreviewFrame(byte[] data)
 	{
+		
 	}
 
 	@TargetApi(19)
 	public void onCaptureCompleted(CaptureResult result)
-	{
-	}
-
-	public void onPreviewAvailable(Image im)
-	{
-	}
-
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
 	{
 	}
 

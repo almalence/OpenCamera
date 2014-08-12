@@ -781,9 +781,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 		return goodPlace;
 	}
-
-	@TargetApi(19)
-	public boolean onImageAvailable(Image im)
+	
+	public boolean onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		final boolean goodPlace;
 		final int framesCount;
@@ -813,55 +812,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
 
-			if (im.getFormat() == ImageFormat.YUV_420_888)
+			final AugmentedFrameTaken frameTaken = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
+					transform, frameData, frame, isYUV);
+
+			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
-				ByteBuffer Y = im.getPlanes()[0].getBuffer();
-				ByteBuffer U = im.getPlanes()[1].getBuffer();
-				ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-				if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-				{
-					Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-					return false;
-				}
-
-				// Note: android documentation guarantee that:
-				// - Y pixel stride is always 1
-				// - U and V strides are the same
-				// So, passing all these parameters is a bit overkill
-				int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-						im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-				if (status != 0)
-					Log.e("Panorama", "Error while cropping: " + status);
-
-				byte[] yuv = YuvImage.GetByteFrame(0);
-				int yuv_address = YuvImage.GetFrame(0);
-
-				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
-						transform, yuv, yuv_address, true);
-
-				synchronized (AugmentedPanoramaEngine.this.frames)
-				{
-					AugmentedPanoramaEngine.this.frames.add(frame);
-				}
-			} else if (im.getFormat() == ImageFormat.JPEG)
-			{
-				ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-				int frame_len = jpeg.limit();
-				byte[] jpegByteArray = new byte[frame_len];
-				jpeg.get(jpegByteArray, 0, frame_len);
-
-				final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
-						transform, jpegByteArray, 0, false);
-
-				synchronized (AugmentedPanoramaEngine.this.frames)
-				{
-					AugmentedPanoramaEngine.this.frames.add(frame);
-				}
+				AugmentedPanoramaEngine.this.frames.add(frameTaken);
 			}
 		}
 

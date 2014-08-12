@@ -154,29 +154,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private ImageReader					mImageReaderYUV;
 	private ImageReader					mImageReaderJPEG;
 
-	private boolean						captureYUVFrames		= false;										// Used
-																												// for
-																												// HALv3
-																												// to
-																												// init
-																												// YUV
-																												// or
-																												// JPEG
-																												// surfaces
-																												// for
-																												// capturing.
-																												// Both
-																												// type
-																												// of
-																												// surfaces
-																												// are
-																												// not
-																												// supported
-																												// in
-																												// current
-																												// version
-																												// of
-																												// HALv3
+	private boolean						captureYUVFrames		= false;
 
 	public GUI							guiManager				= null;
 
@@ -239,12 +217,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private static boolean				isCreating				= false;
 	private static boolean				mApplicationStarted		= false;
+	private static boolean 				mCameraStarted 			= false;
 
-	public static final String			EXTRA_ITEM				= "WidgetModeID";								// Clicked
-																												// mode
-																												// id
-																												// from
-																												// widget.
+	// Clicked mode id from widget.
+	public static final String			EXTRA_ITEM				= "WidgetModeID";
+																				
 	public static final String			EXTRA_TORCH				= "WidgetTorchMode";
 	public static final String			EXTRA_BARCODE			= "WidgetBarcodeMode";
 	public static final String			EXTRA_SHOP				= "WidgetGoShopping";
@@ -602,7 +579,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz.guiManager;
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public static void createImageReaders()
 	{
 		// ImageReader for preview frames in YUV format
@@ -953,7 +930,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			stopImageReaders();
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	private void stopImageReaders()
 	{
 		// IamgeReader should be closed
@@ -1292,11 +1269,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							* sz.height
 							* ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters()
 									.getPreviewFormat()) / 8);
+			
+			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
+			
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 		}
 
-		if (!CameraController.isUseHALv3())
-			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
+	}
+	
+	
+	private void onCameraConfigured()
+	{
 		PluginManager.getInstance().setCameraPictureSize();
 		PluginManager.getInstance().setupCameraParameters();
 
@@ -1382,7 +1366,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	@SuppressLint("NewApi")
-	@TargetApi(19)
+	@TargetApi(21)
 	private void configureHALv3Camera(boolean captureYUVFrames)
 	{
 		List<Surface> sfl = new ArrayList<Surface>();
@@ -1410,22 +1394,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
-			HALv3.getCamera2().configureOutputs(sfl);
+			HALv3.getCamera2().createCaptureSession(sfl,
+					HALv3.captureSessionStateListener,
+					null);
 		} catch (Exception e)
 		{
 			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
 			e.printStackTrace();
 		}
 
-		try
-		{
-			HALv3.getInstance().configurePreviewRequest();
-
-		} catch (Exception e)
-		{
-			Log.d("MainScreen", "setting up preview failed");
-			e.printStackTrace();
-		}
 		// ^^ HALv3 code
 		// -------------------------------------------------------------------
 	}
@@ -1499,7 +1476,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return mCameraSurface;
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public Surface getPreviewYUVSurface()
 	{
 		return mImageReaderPreviewYUV.getSurface();
@@ -1719,34 +1696,43 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		switch (msg.what)
 		{
-		case MSG_RETURN_CAPTURED:
-			this.setResult(RESULT_OK);
-			this.finish();
-			break;
-		case PluginManager.MSG_CAMERA_READY:
+			case MSG_RETURN_CAPTURED:
+				this.setResult(RESULT_OK);
+				this.finish();
+				break;	
+			case PluginManager.MSG_CAMERA_CONFIGURED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_CONFIGURED");
+				onCameraConfigured();
+				break;
+			case PluginManager.MSG_CAMERA_READY:
 			{
 				configureCamera();
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();
-			}
-			break;
-		case PluginManager.MSG_CAMERA_OPENED:
-		case PluginManager.MSG_SURFACE_READY:
+			}	break;
+			case PluginManager.MSG_CAMERA_OPENED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED");
+				if(mCameraStarted)
+					break;
+			case PluginManager.MSG_SURFACE_READY:
 			{
 				// if both surface is created and camera device is opened
 				// - ready to set up preview and other things
 				if (surfaceCreated && (HALv3.getCamera2() != null))
 				{
-					Log.e("MainScreen",
-							"case PluginManager.MSG_CAMERA_OPENED and case PluginManager.MSG_SURFACE_READY:");
+					Log.e("MainScreen", "case PluginManager.MSG_SURFACE_READY");
 					configureCamera();
 					PluginManager.getInstance().onGUICreate();
 					MainScreen.getGUIManager().onGUICreate();
+					mCameraStarted = true;
 				}
-			}
-			break;
-		default:
-			PluginManager.getInstance().handleMessage(msg);
+			}	break;
+			case PluginManager.MSG_CAMERA_STOPED:
+				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_STOPED");
+				mCameraStarted = false;
+				break;
+			default:
+			PluginManager.getInstance().handleMessage(msg); 
 			break;
 		}
 

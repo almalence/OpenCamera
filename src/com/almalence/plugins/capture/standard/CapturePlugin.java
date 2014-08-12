@@ -255,93 +255,10 @@ public class CapturePlugin extends PluginCapture
 		return false;
 	}
 
+
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		int frame_len = paramArrayOfByte.length;
-		int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-
-		if (frame == 0)
-		{
-		}
-		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-		PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
-
-		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
-
-		try
-		{
-			paramCamera.startPreview();
-		} catch (RuntimeException e)
-		{
-			Log.i("Capture", "StartPreview fail");
-		}
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-				String.valueOf(SessionID));
-
-		takingAlready = false;
-		inCapture = false;
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		int frame = 0;
-		int frame_len = 0;
-		boolean isYUV = false;
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			Log.e("CapturePlugin", "YUV Image received");
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("CapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e("CapturePlugin", "Error while cropping: " + status);
-
-			frame = YuvImage.GetFrame(0);
-			frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
-					* ((MainScreen.getImageHeight() + 1) / 2);
-			isYUV = true;
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			Log.e("CapturePlugin", "JPEG Image received");
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			frame = SwapHeap.SwapToHeap(jpegByteArray);
-
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-		}
-
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
@@ -353,18 +270,28 @@ public class CapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
+		
+		try
+		{
+			CameraController.startCameraPreview();
+		} catch (RuntimeException e)
+		{
+			Log.e("Capture", "StartPreview fail");
+		}
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 				String.valueOf(SessionID));
 
 		takingAlready = false;
+		inCapture = false;
 	}
+	
 
-	@TargetApi(19)
+	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.get(CaptureResult.REQUEST_ID) == requestID)
+		if (result.getSequenceId() == requestID)
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
@@ -379,7 +306,7 @@ public class CapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera paramCamera)
+	public void onPreviewFrame(byte[] data)
 	{
 	}
 

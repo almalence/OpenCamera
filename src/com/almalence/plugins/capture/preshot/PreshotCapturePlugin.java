@@ -390,7 +390,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] _data, Camera _camera)
+	public void onPreviewFrame(byte[] data)
 	{
 		if (isSlowMode || !isBuffering)
 			return;
@@ -405,61 +405,13 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			//??? should it be 0? frmCnt seems never to be 0! 
 			if (frmCnt == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
-
-			PreShot.InsertToBuffer(_data, MainScreen.getGUIManager().getDisplayOrientation());
-		}
-		frmCnt++;
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onPreviewAvailable(Image im)
-	{
-		if (isSlowMode || !isBuffering)
-			return;
-
-		long t2 = System.currentTimeMillis();
-		long timelapse = t2-t1;
-		
-		if (0 == cnt || timelapse>fpsInterval)
-		{
-			t1 = System.currentTimeMillis();
-			System.gc();
-
-			if (frmCnt == 0)
-				PluginManager.getInstance().addToSharedMem_ExifTagsFromCamera(SessionID);
-
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e("PreShotCapturePlugin", "Oops, YUV ByteBuffers isDirect failed");
-				return;
-			}
-
-			int imageWidth = im.getWidth();
-			int imageHeight = im.getHeight();
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), imageWidth, imageHeight, 0);
-
-			if (status != 0)
-				Log.e("PreShotCapturePlugin", "Error while cropping: " + status);
-
-			byte[] data = YuvImage.GetByteFrame(0);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			PreShot.InsertToBuffer(data, MainScreen.getGUIManager().getDisplayOrientation());
 		}
 		frmCnt++;
 	}
+
 
 	void StartCaptureSequence()
 	{
@@ -506,54 +458,20 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		inCapture = false;
 
-		if (0 == PreShot.GetImageCount())
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(paramArrayOfByte, SessionID, -1);
+		if (0 == PreShot.GetImageCount() && !isYUV)
+			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
-		PreShot.InsertToBuffer(paramArrayOfByte, MainScreen.getGUIManager().getDisplayOrientation());
-
-		takingAlready = false;
-		paramCamera.startPreview();
-
-		try
-		{
-			if (isBuffering)
-			{
-				ProcessPauseBetweenShots();
-			}
-		} catch (RuntimeException e)
-		{
-			Log.i("Preshot capture", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_NEXT_FRAME);
-		}
-	}
-
-	@TargetApi(19)
-	@Override
-	public void onImageAvailable(Image im)
-	{
-		inCapture = false;
-
-		ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-		int frame_len = jpeg.limit();
-		byte[] jpegByteArray = new byte[frame_len];
-		jpeg.get(jpegByteArray, 0, frame_len);
-
-		if (0 == PreShot.GetImageCount())
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(jpegByteArray, SessionID, -1);
-
-		PreShot.InsertToBuffer(jpegByteArray, MainScreen.getGUIManager().getDisplayOrientation());
+		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 
 		takingAlready = false;
-		CameraController.startCameraPreview();
-
+		
 		try
 		{
+			CameraController.startCameraPreview();
 			if (isBuffering)
 			{
 				ProcessPauseBetweenShots();
@@ -618,7 +536,6 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		// only requesting exposure change here
 		try
 		{
 			if (isBuffering)
