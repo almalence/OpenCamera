@@ -224,28 +224,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
-	private void setExposureParameters()
-	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-		final int currEv = prefs.getInt(MainScreen.sEvPref, 0);
-		int newEv = currEv;
-		final int minValue = CameraController.getInstance().getMinExposureCompensation();
-		float expStep = CameraController.getInstance().getExposureCompensationStep();
-
-		if (this.modeDRO())
-		{
-			if (expStep < 0.3f)
-				expStep = 0.33f; // there is a bug in Nexus 5 (android 4.4.2)
-			int cmpns = -(int) (0.8f / expStep);
-			if (cmpns == 0)
-				cmpns = -1; // on Ascend P6 Ev compensation step is 1.0
-			newEv -= cmpns;
-		}
-
-		CameraController.getInstance().setCameraExposureCompensation(Math.max(minValue, newEv));
-	}
-
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
@@ -271,8 +249,6 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					ModePreference = "1";
 				}
-
-				VideoCapturePlugin.this.setExposureParameters();
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeVideoDROPref", ModePreference);
@@ -1023,8 +999,6 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			cp.setPreviewFrameRate(30);
 			cp.setRecordingHint(true);
-
-			this.setExposureParameters();
 
 			CameraController.getInstance().setCameraParameters(cp);
 		}
