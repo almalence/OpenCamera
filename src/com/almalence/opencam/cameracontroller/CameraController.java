@@ -1149,6 +1149,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			return true;
 	}
+	
+	public boolean isExposureLock()
+	{
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null)
+				return false;
+
+			return cameraParameters.getAutoExposureLock();
+		} else
+			return true;
+	}
 
 	public boolean isWhiteBalanceLockSupported()
 	{
@@ -1159,7 +1171,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return cameraParameters.isAutoWhiteBalanceLockSupported();
 		} else
-			return true;
+			return false;
+	}
+	
+	public boolean isWhiteBalanceLock()
+	{
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null)
+				return false;
+
+			return cameraParameters.getAutoWhiteBalanceLock();
+		} else
+			return false;
 	}
 
 	public boolean isZoomSupported()

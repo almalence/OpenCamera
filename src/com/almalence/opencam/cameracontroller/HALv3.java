@@ -24,6 +24,7 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -922,60 +923,13 @@ public class HALv3
 
 //			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
-			if (pause[0] > 0)
+			if (Array.getLength(pause) > 0 && pause[0] > 0)
 			{
 				totalFrames = nFrames;
 				currentFrameIndex = 0;
 				pauseBetweenShots = pause;
 				expRequested = evRequested;
 				captureNextImageWithParams(format, pause[currentFrameIndex], evRequested, currentFrameIndex);
-//				new CountDownTimer(nFrames * pause, pause)
-//				{
-//					int	index	= 0;
-//
-//					public void onTick(long millisUntilFinished)
-//					{
-//						Log.e(TAG, "onTick " + index + " millisUntilFinished =  " + millisUntilFinished);
-//						if (evRequested != null && evRequested.length > index)
-//						{
-//							stillRequestBuilder
-//									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-//							// setCameraExposureCompensationHALv3(evRequested[index]);
-//						}
-//
-//						try
-//						{
-//							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-//									captureListener, null);
-//						} catch (CameraAccessException e)
-//						{
-//							e.printStackTrace();
-//						}
-//
-//						index++;
-//					}
-//
-//					public void onFinish()
-//					{
-//						Log.e(TAG, "onFinish index = " + index);
-//						if (evRequested != null && evRequested.length > index)
-//						{
-//							stillRequestBuilder
-//									.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
-//							// setCameraExposureCompensationHALv3(evRequested[index]);
-//						}
-//
-//						try
-//						{
-//							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-//									captureListener, null);
-//						} catch (CameraAccessException e)
-//						{
-//							e.printStackTrace();
-//						}
-//					}
-//				}.start();
-
 			} else
 			{
 				if (evRequested != null && evRequested.length >= nFrames)
@@ -993,86 +947,6 @@ public class HALv3
 							e.printStackTrace();
 						}
 					 }
-
-//					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[0]);
-//					// setCameraExposureCompensationHALv3(evRequested[0]);
-//					// final long expt = exposureTime;
-//					// stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-//					// CameraMetadata.CONTROL_AE_MODE_OFF);
-//					// stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME,
-//					// expt);
-//					Log.e(TAG, "evRequested != null");
-//					new CountDownTimer(500 * nFrames, 500)
-//					{
-//						int	index	= 1;
-//
-//						public void onTick(long millisUntilFinished)
-//						{
-//							if (index >= nFrames)
-//								return;
-//
-//							Log.e(TAG, "onTick " + index + " millisUntilFinished =  " + millisUntilFinished);
-//							if (evRequested != null && evRequested.length > index)
-//							{
-//								// long expTime = index == 2 ? expt/2 : index ==
-//								// 3 ? expt*2 : expt;
-//								// Log.e(TAG, "Exp Time = " + expTime);
-//								// stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-//								// CameraMetadata.CONTROL_AE_MODE_OFF);
-//								// stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME,
-//								// expTime);
-//
-//								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
-//										evRequested[index]);
-//								// setCameraExposureCompensationHALv3(evRequested[index]);
-//							}
-//
-//							try
-//							{
-//								HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-//										captureListener, null);
-//							} catch (CameraAccessException e)
-//							{
-//								e.printStackTrace();
-//							}
-//
-//							index++;
-//						}
-//
-//						public void onFinish()
-//						{
-//							if (index > nFrames)
-//								return;
-//
-//							Log.e(TAG, "onFinish index = " + index);
-//							if (evRequested != null && evRequested.length > index)
-//							{
-//								// long expTime = index == 2 ? expt/2 : index ==
-//								// 3 ? expt*2 : expt;
-//								//
-//								// Log.e(TAG, "Exp Time = " + expTime);
-//								//
-//								// stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-//								// CameraMetadata.CONTROL_AE_MODE_OFF);
-//								// stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME,
-//								// expTime);
-//
-//								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
-//										evRequested[index]);
-//								// setCameraExposureCompensationHALv3(evRequested[index]);
-//							}
-//
-//							try
-//							{
-//								HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-//										captureListener, null);
-//							} catch (CameraAccessException e)
-//							{
-//								e.printStackTrace();
-//							}
-//						}
-//					}.start();
-//					Log.e(TAG, "CountDownTimer started");
 				} else
 				{
 					for (int n = 0; n < nFrames; ++n)
