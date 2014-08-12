@@ -2305,7 +2305,6 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseDialog.show();
 	}
 
-
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
@@ -2317,8 +2316,6 @@ public class VideoCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
-		
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		
 		if(!isYUV)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
@@ -2335,6 +2332,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 		takingAlready = false;
 	}
+
+
 
 	@Override
 	public void onPreviewFrame(byte[] data)

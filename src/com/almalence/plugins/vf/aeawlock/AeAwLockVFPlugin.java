@@ -26,6 +26,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +41,7 @@ import android.widget.RelativeLayout;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -90,14 +92,10 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public void onGUICreate()
 	{
-		Camera camera = CameraController.getInstance().getCamera();
-		if (null == camera)
-			return;
 		refreshPreferences();
 
 		if (showAEAWLock)
 		{
-
 			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			buttonsLayout = inflator.inflate(R.layout.plugin_vf_aeawlock_layout, null, false);
 			buttonsLayout.setVisibility(View.VISIBLE);
@@ -299,5 +297,41 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			if (cp != null)
 				cp.setEnabled(false);
 		}
+	}
+	
+	@Override
+	public boolean onBroadcast(int arg1, int arg2)
+	{
+		if (arg1 == PluginManager.MSG_AEWB_CHANGED)
+		{
+			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+			if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
+			{
+				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
+				if (aeLockButton!=null)
+					aeLockButton.setImageDrawable(icon);
+			}
+			else
+			{
+				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
+				if (aeLockButton!=null)
+					aeLockButton.setImageDrawable(icon);
+			}
+			if (CameraController.getInstance().isWhiteBalanceLockSupported()
+					&& params.getAutoWhiteBalanceLock())
+			{
+				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
+				if (awLockButton!=null)
+					awLockButton.setImageDrawable(icon);
+			}
+			else
+			{
+				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
+				if (awLockButton!=null)
+					awLockButton.setImageDrawable(icon);
+			}
+			return true;
+		}
+		return false;
 	}
 }

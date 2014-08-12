@@ -1,6 +1,5 @@
 package com.almalence.plugins.capture.video;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import android.annotation.SuppressLint;
@@ -38,7 +37,7 @@ public class AudioRecorder
 	private volatile long			time				= 0;
 	private volatile long			timeOrigin			= 0;
 
-	public AudioRecorder(final MediaMuxer muxer) throws IOException
+	public AudioRecorder(final MediaMuxer muxer)
 	{
 		this.muxer = muxer;
 
@@ -110,7 +109,7 @@ public class AudioRecorder
 		private int					iBufferSize;
 		private long				timeLast	= 0;
 
-		public EncodingThread() throws IOException
+		public EncodingThread()
 		{
 			final int iMinBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT);
 

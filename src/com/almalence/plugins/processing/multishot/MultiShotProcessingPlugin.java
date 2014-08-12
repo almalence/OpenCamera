@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.almalence.SwapHeap;
@@ -67,6 +68,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private static int								SEQUENCE						= 1;
 	private static int								OBJECT_REMOVAL					= 2;
 	private static int								CANCELLED						= -2;
+	private static int								WAITING							= -1;
 
 	private View									mButtonsLayout;
 
@@ -93,9 +95,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
 
-		RotateImageView buttonObjectRemoval = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
-		RotateImageView buttonGroupShot = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonGroupShot);
-		RotateImageView buttonSequence = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonSequence);
+		LinearLayout buttonObjectRemoval = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
+		LinearLayout buttonGroupShot = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonGroupShot);
+		LinearLayout buttonSequence = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonSequence);
 
 		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.blockingLayout);
 
@@ -129,15 +131,22 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		});
 
+		
+		mButtonsLayout.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+			}
+		});
+		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
-
-		buttonObjectRemoval.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-		buttonGroupShot.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-		buttonSequence.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+		
+		mButtonsLayout.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -167,6 +176,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		groupShotProcessingPlugin.onStart();
 		sequenceProcessingPlugin.onStart();
 		objectRemovalProcessingPlugin.onStart();
+		
+		selectedPlugin = CANCELLED;
 	}
 
 	@Override
@@ -174,7 +185,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	{
 		this.sessionID = SessionID;
 
-		selectedPlugin = -1;
+		selectedPlugin = WAITING;
 
 		MainScreen.getInstance().runOnUiThread(new Runnable()
 		{
@@ -190,7 +201,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		prepareDataForProcessing();
 
-		while (selectedPlugin == -1)
+		while (selectedPlugin == WAITING)
 		{
 			try
 			{
@@ -265,6 +276,17 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 				for (int i = 0; i < imagesAmount; ++i)
 				{
+					if (selectedPlugin != WAITING)
+					{
+						MainScreen.getInstance().runOnUiThread(new Runnable()
+						{
+							public void run()
+							{
+								MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+							}
+						});
+					}
+					
 					String index = String.format("_%02d", i);
 					File file = new File(saveDir, fileFormat + index + ".jpg");
 
@@ -282,7 +304,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					}
 
 					PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i),
-							mYUVBufferList.get(i), file);
+							isYUV ? mYUVBufferList.get(i) : 0, file);
 				}
 			} catch (IOException e)
 			{
@@ -373,6 +395,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
+			if (selectedPlugin == CANCELLED)
+			{
+				return false;
+			}
+			
 			MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			mButtonsLayout.setVisibility(View.GONE);
 
@@ -387,6 +414,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			return res;
 		}
+		
 		return super.onKeyDown(keyCode, event);
 	}
 
@@ -408,7 +436,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	@Override
 	public void onOrientationChanged(int orientation)
 	{
-		RotateLayout rotateLayout =  (RotateLayout)MainScreen.getInstance().findViewById(R.id.rotateLayout);
+		RotateLayout rotateLayout = (RotateLayout) MainScreen.getInstance().findViewById(R.id.rotateLayout);
 		if (rotateLayout != null)
 		{
 			rotateLayout.setAngle(orientation - 90);

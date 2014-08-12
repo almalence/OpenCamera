@@ -545,7 +545,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		MainScreen.getInstance().playShutter();
 		
 		boolean isHDRMode = PluginManager.getInstance().getActiveModeID().equals("hdrmode");
-		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, 0, evValues);
+		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)

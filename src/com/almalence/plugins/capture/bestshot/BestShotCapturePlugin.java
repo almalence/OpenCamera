@@ -19,6 +19,8 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.bestshot;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -27,7 +29,6 @@ import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -182,7 +183,9 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, 50, null);
+				int[] pause = new int[imageAmount];
+				Arrays.fill(pause, 50);
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null);
 			} catch (Exception e)
 			{
 				e.printStackTrace();

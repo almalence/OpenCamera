@@ -128,6 +128,13 @@ public class ImageAdapter extends BaseAdapter
 
 	public void finalize()
 	{
+		try
+		{
+			super.finalize();
+		} catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
 		cache.clear();
 	}
 
@@ -194,16 +201,7 @@ public class ImageAdapter extends BaseAdapter
 
 		Matrix matrix = new Matrix();
 		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
-		if (mCameraMirrored)
-		{
-			if (mIsLandscape)
-			{
-				matrix.preScale(-1, 1);
-			} else
-			{
-				matrix.preScale(1, -1);
-			}
-		}
+
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
 
@@ -236,16 +234,7 @@ public class ImageAdapter extends BaseAdapter
 
 		Matrix matrix = new Matrix();
 		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
-		if (mCameraMirrored)
-		{
-			if (mIsLandscape)
-			{
-				matrix.preScale(-1, 1);
-			} else
-			{
-				matrix.preScale(1, -1);
-			}
-		}
+
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
 

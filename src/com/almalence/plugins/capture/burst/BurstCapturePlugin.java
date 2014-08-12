@@ -19,6 +19,8 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.burst;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -195,7 +197,9 @@ public class BurstCapturePlugin extends PluginCapture
 
 		try
 		{
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pauseBetweenShots, null);
+			int[] pause = new int[imageAmount];
+			Arrays.fill(pause, pauseBetweenShots);
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null);
 		} catch (Exception e)
 		{
 			e.printStackTrace();

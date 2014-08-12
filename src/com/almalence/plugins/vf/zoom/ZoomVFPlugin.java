@@ -255,8 +255,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 		}
 
 		String modeName = prefs.getString("defaultModeName", null);
-		if (modeName != null && modeName.compareTo("video") == 0 && MainScreen.isDeviceModelProhibited())
-			zoomPanel.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -264,9 +262,6 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		String modeName = prefs.getString("defaultModeName", null);
-		if (!isEnabled
-				|| (modeName != null && modeName.compareTo("video") == 0 && MainScreen.isDeviceModelProhibited()))
-			return;
 
 		zoomCurrent = 0;
 
@@ -310,11 +305,11 @@ public class ZoomVFPlugin extends PluginViewfinder
 		if (!isEnabled)
 			return false;
 
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_ZOOM_OUT)
 		{
 			this.zoomModify(-1);
 			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_ZOOM_IN)
 		{
 			this.zoomModify(1);
 			return true;

@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.R;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
+import com.almalence.ui.RotateDialog;
 //-+- -->
 import com.almalence.ui.RotateLayout;
 
