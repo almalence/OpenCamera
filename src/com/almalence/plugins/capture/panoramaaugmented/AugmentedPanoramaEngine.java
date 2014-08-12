@@ -827,7 +827,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			AugmentedPanoramaEngine.this.stateSynch.notify();
 		}
 
-		return goodPlace;		
+		return goodPlace;
 	}
 
 	@Override

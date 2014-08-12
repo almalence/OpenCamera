@@ -188,7 +188,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		CameraController.getInstance().setJpegQuality(jpegQuality);
 
-		CameraController.getInstance().applyCameraParameters();
+//		CameraController.getInstance().applyCameraParameters();
 
 		try
 		{
@@ -330,7 +330,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 			CameraController.getInstance().resetExposureCompensation();
 		}
-	}	
+	}
 
 	@TargetApi(21)
 	@Override

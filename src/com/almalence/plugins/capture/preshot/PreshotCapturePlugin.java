@@ -25,6 +25,7 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.media.Image;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -300,6 +301,10 @@ public class PreshotCapturePlugin extends PluginCapture
 	public static int	imW			= 0;
 	public static int	imH			= 0;
 
+	private long t1 = 0;
+	private int cnt = 0;
+	private double fpsInterval = 0;
+	
 	// starts buffering to native buffer
 	void StartBuffering()
 	{
@@ -309,11 +314,12 @@ public class PreshotCapturePlugin extends PluginCapture
 
 		MainScreen.getInstance().muteShutter(true);
 
-		isBuffering = true;
 		if (!isSlowMode)
 		{
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getInstance().getPreviewFrameRate();
+			if (Build.MODEL.contains("HTC One"))
+				preview_fps = 30;
 
 			imW = MainScreen.getPreviewWidth();
 			imH = MainScreen.getPreviewHeight();
@@ -331,6 +337,9 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 			}
 			PluginManager.getInstance().addToSharedMem("IsSlowMode" + SessionID, "false");
+			cnt = frmCnt % (preview_fps / Integer.parseInt(FPS))*10;
+			fpsInterval = 1000.0/Integer.parseInt(FPS);
+			t1 = System.currentTimeMillis();
 		} else
 		{
 			// full size code
@@ -352,11 +361,11 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			StartCaptureSequence();
 		}
+		isBuffering = true;
 	}
 
 	void StopBuffering()
 	{
-
 		MainScreen.getGUIManager().stopCaptureIndication();
 
 		MainScreen.getInstance().muteShutter(false);
@@ -386,10 +395,15 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (isSlowMode || !isBuffering)
 			return;
 
-		if (0 == frmCnt % (preview_fps / Integer.parseInt(FPS)))
+		long t2 = System.currentTimeMillis();
+		long timelapse = t2-t1;
+		
+		if (0 == cnt || timelapse>fpsInterval)
 		{
+			t1 = System.currentTimeMillis();
 			System.gc();
 
+			//??? should it be 0? frmCnt seems never to be 0! 
 			if (frmCnt == 0)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
@@ -467,7 +481,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			Log.i("Preshot capture", "StartPreview fail");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_NEXT_FRAME);
-		}		
+		}
 	}
 
 	void ProcessPauseBetweenShots()

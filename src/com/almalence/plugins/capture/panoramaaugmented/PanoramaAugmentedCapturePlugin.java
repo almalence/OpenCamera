@@ -1141,7 +1141,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		if (done || oom)
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_FORCE_FINISH_CAPTURE);		
+					PluginManager.MSG_FORCE_FINISH_CAPTURE);
 	}
 
 	@TargetApi(21)
