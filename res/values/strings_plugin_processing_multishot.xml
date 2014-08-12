@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-	<string name="Pref_MultiShot_Preference_Title">Multi shot processing</string>
+	<string name="Pref_MultiShot_Preference_Title">Smart multishot processing</string>
 	<string name="Pref_MultiShot_Preference_Summary">Process multishot</string>	
 	
 	<string name="Pref_MultiShot_Save">Save original frames</string>

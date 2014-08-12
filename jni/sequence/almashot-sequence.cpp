@@ -114,54 +114,6 @@ void NV21toARGB(
     }
 }
 
-// Decode from JPEG to NV21 using skia lib
-/*int decodeFromJpeg(unsigned char *data, int len, int idx, int sx, int sy)
-{
-	int x, y;
-	Uint32 * pix;
-	Uint32 p1, p2;
-
-	SkBitmap bm;
-	SkBitmap::Config pref = SkBitmap::kARGB_8888_Config;
-
-	if (SkImageDecoder::DecodeMemory(data, len, &bm, pref, SkImageDecoder::kDecodePixels_Mode))
-	{
-		pix = (Uint32 *)bm.getPixels();
-
-		for (y=0; y<sy; ++y)
-		{
-			for (x=0; x<sx; x+=2)
-			{
-				p1 = pix[x+y*sx];
-				p2 = pix[x+1+y*sx];
-
-				inputFrame[idx][x+y*sx]             = CSC_Y(BMP_R(p1), BMP_G(p1), BMP_B(p1));
-				inputFrame[idx][x+1+y*sx]           = CSC_Y(BMP_R(p2), BMP_G(p2), BMP_B(p2));
-				inputFrame[idx][sx*sy+x+(y/2)*sx]   = CSC_V(BMP_R(p1), BMP_G(p1), BMP_B(p1));
-				inputFrame[idx][sx*sy+x+1+(y/2)*sx] = CSC_U(BMP_R(p2), BMP_G(p2), BMP_B(p2));
-			}
-
-			++y;
-			if (y<sy)
-			{
-				for (x=0; x<sx; x+=2)
-				{
-					p1 = pix[x+y*sx];
-					p2 = pix[x+1+y*sx];
-
-					inputFrame[idx][x+y*sx]   = CSC_Y(BMP_R(p1), BMP_G(p1), BMP_B(p1));
-					inputFrame[idx][x+1+y*sx] = CSC_Y(BMP_R(p2), BMP_G(p2), BMP_B(p2));
-				}
-			}
-		}
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-*/
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_Initialize
 (
@@ -251,7 +203,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
-	//#pragma omp parallel for num_threads(10)
+	#pragma omp parallel for num_threads(10)
 	for (i=0; i<nFrames; ++i)
 	{
 		// decode from jpeg
@@ -425,7 +377,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	MovObj_Process(&instance, inputFrame, OutPic, layout, NULL, 256, sx, sy, nFrames,
 			sensitivity, minSize,	// sensitivity and min size of moving object
 			5, ghosting,//ghosting,
-			1, // extraBorder
+			0, // 1, // extraBorder
 			use_sports_mode, sports_mode_order,
 			0, 0, 2,	// 2 = keep aspect ratio in output
 			&base_area[0], &base_area[1], &base_area[2], &base_area[3],

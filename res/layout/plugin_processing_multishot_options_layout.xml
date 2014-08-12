@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:visibility="gone">
 
     <com.almalence.ui.RotateLayout
         android:id="@+id/rotateLayout"
@@ -24,6 +25,7 @@
             android:padding="30dp" >
 
             <LinearLayout
+                android:id="@+id/buttonObjectRemoval"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -32,7 +34,6 @@
                 android:orientation="horizontal" >
 
                 <com.almalence.ui.RotateImageView
-                    android:id="@+id/buttonObjectRemoval"
                     android:layout_width="@dimen/multishotOptionsImageSize"
                     android:layout_height="@dimen/multishotOptionsImageSize"
                     android:layout_gravity="left"
@@ -49,6 +50,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/buttonGroupShot"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -57,7 +59,6 @@
                 android:orientation="horizontal" >
 
                 <com.almalence.ui.RotateImageView
-                    android:id="@+id/buttonGroupShot"
                     android:layout_width="@dimen/multishotOptionsImageSize"
                     android:layout_height="@dimen/multishotOptionsImageSize"
                     android:layout_gravity="left"
@@ -74,6 +75,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/buttonSequence"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
@@ -81,7 +83,6 @@
                 android:orientation="horizontal" >
 
                 <com.almalence.ui.RotateImageView
-                    android:id="@+id/buttonSequence"
                     android:layout_width="@dimen/multishotOptionsImageSize"
                     android:layout_height="@dimen/multishotOptionsImageSize"
                     android:background="@android:color/transparent"

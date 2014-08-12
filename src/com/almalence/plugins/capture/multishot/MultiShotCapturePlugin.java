@@ -19,6 +19,8 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.multishot;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -26,10 +28,17 @@ import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
-import android.os.Message;
+import android.os.Debug;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+//-+- -->
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginCapture;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.R;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -39,13 +48,6 @@ import android.util.Log;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-//-+- -->
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 
 /***
  * Implements group shot capture plugin - captures predefined number of images
@@ -54,16 +56,51 @@ import com.almalence.YuvImage;
 public class MultiShotCapturePlugin extends PluginCapture
 {
 
-	private static final String	TAG					= "MultiShotCapturePlugin";
+	private static final String					TAG					= "MultiShotCapturePlugin";
+
+	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
+	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
+	private static final long					MPIX_8				= 3504 * 2336;
+	private static final long					MPIX_1080			= 1920 * 1088;
+
+	private static List<CameraController.Size>	ResolutionsSizesList;							;
+	private static List<Long>					ResolutionsMPixList;
+	private static List<String>					ResolutionsIdxesList;
+	private static List<String>					ResolutionsNamesList;
+
+	private static int							captureIndex		= -1;
+
+	public static int getCaptureIndex()
+	{
+		return captureIndex;
+	}
+
+	private static int	imgCaptureWidth		= 0;
+	private static int	imgCaptureHeight	= 0;
+
+	public static List<Long> getResolutionsMPixList()
+	{
+		return ResolutionsMPixList;
+	}
+
+	public static List<String> getResolutionsIdxesList()
+	{
+		return ResolutionsIdxesList;
+	}
+
+	public static List<String> getResolutionsNamesList()
+	{
+		return ResolutionsNamesList;
+	}
 
 	// defaul val. value should come from config
-	private int					imageAmount			= 1;
-	private int					pauseBetweenShots	= 0;
-	private int					imagesTaken			= 0;
+	private int		imageAmount			= 8;
+	private int[]	pauseBetweenShots	= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int		imagesTaken			= 0;
 
 	public MultiShotCapturePlugin()
 	{
-		super("com.almalence.plugins.multishotcapture", R.xml.preferences_capture_multishot, 0, 0, null);
+		super("com.almalence.plugins.multishotcapture", 0, 0, 0, null);
 	}
 
 	@Override
@@ -72,8 +109,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
-
-		refreshPreferences();
 
 		MainScreen.setCaptureYUVFrames(true);
 	}
@@ -84,13 +119,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
 				MainScreen.getInstance().getResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_object, "multiShotShowHelp");
-	}
-
-	private void refreshPreferences()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		imageAmount = Integer.parseInt(prefs.getString("multiShotImagesAmount", "7"));
-		pauseBetweenShots = Integer.parseInt(prefs.getString("multiShotPauseBetweenShots", "750"));
 	}
 
 	public boolean delayedCaptureSupported()
@@ -104,7 +132,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			inCapture = true;
 			takingAlready = true;
-			refreshPreferences();
 			
 			try
 			{
@@ -132,8 +159,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -161,8 +187,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "StartPreview fail");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -190,7 +215,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 				}
 			}.start();
 		}
-		takingAlready = false;		
+		takingAlready = false;
 	}
 
 	@TargetApi(21)
@@ -214,5 +239,216 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
+	}
+
+	@Override
+	public void selectImageDimension()
+	{
+		selectImageDimensionMultishot();
+		setCameraImageSize();
+	}
+
+	private void setCameraImageSize()
+	{
+		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
+		{
+			MainScreen.setSaveImageWidth(imgCaptureWidth);
+			MainScreen.setSaveImageHeight(imgCaptureHeight);
+
+			MainScreen.setImageWidth(imgCaptureWidth);
+			MainScreen.setImageHeight(imgCaptureHeight);
+		}
+	}
+
+	public static void selectImageDimensionMultishot()
+	{
+		populateCameraDimensions();
+
+		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
+		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
+												// x 4 - compressed input jpegs,
+												// 1Mb - safe reserve
+
+		if (maxMpix < MIN_MPIX_SUPPORTED)
+		{
+			String msg;
+			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
+			Log.e("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+			Log.e("MultishotCapturePlugin", msg);
+		}
+
+		// find index selected in preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int prefIdx = Integer.parseInt(prefs.getString(
+				CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
+						: "imageSizePrefSmartMultishotFront", "-1"));
+
+		// ----- Find max-resolution capture dimensions
+		int minMPIX = MIN_MPIX_PREVIEW;
+
+		int defaultCaptureIdx = -1;
+		long defaultCaptureMpix = 0;
+		int defaultCaptureWidth = 0;
+		int defaultCaptureHeight = 0;
+		long captureMpix = 0;
+		int captureWidth = 0;
+		int captureHeight = 0;
+		int captureIdx = -1;
+		boolean prefFound = false;
+
+		// figure default resolution
+		for (int ii = 0; ii < ResolutionsSizesList.size(); ++ii)
+		{
+			CameraController.Size s = ResolutionsSizesList.get(ii);
+			long mpix = (long) s.getWidth() * s.getHeight();
+
+			if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > defaultCaptureMpix) && (mpix <= MPIX_8))
+			{
+				defaultCaptureIdx = ii;
+				defaultCaptureMpix = mpix;
+				defaultCaptureWidth = s.getWidth();
+				defaultCaptureHeight = s.getHeight();
+			}
+		}
+
+		for (int ii = 0; ii < ResolutionsSizesList.size(); ++ii)
+		{
+			CameraController.Size s = ResolutionsSizesList.get(ii);
+			long mpix = (long) s.getWidth() * s.getHeight();
+
+			if ((ii == prefIdx) && (mpix >= minMPIX))
+			{
+				prefFound = true;
+				captureIdx = ii;
+				captureMpix = mpix;
+				captureWidth = s.getWidth();
+				captureHeight = s.getHeight();
+				break;
+			}
+
+			if (mpix > captureMpix)
+			{
+				captureIdx = ii;
+				captureMpix = mpix;
+				captureWidth = s.getWidth();
+				captureHeight = s.getHeight();
+			}
+		}
+
+		// default to about 8Mpix if nothing is set in preferences or maximum
+		// resolution is above memory limits
+		if (defaultCaptureMpix > 0 && !prefFound)
+		{
+			captureIdx = defaultCaptureIdx;
+			captureMpix = defaultCaptureMpix;
+			captureWidth = defaultCaptureWidth;
+			captureHeight = defaultCaptureHeight;
+		}
+
+		captureIndex = captureIdx;
+		imgCaptureWidth = captureWidth;
+		imgCaptureHeight = captureHeight;
+	}
+
+	public static void populateCameraDimensions()
+	{
+		ResolutionsMPixList = new ArrayList<Long>();
+		ResolutionsIdxesList = new ArrayList<String>();
+		ResolutionsNamesList = new ArrayList<String>();
+
+		List<CameraController.Size> cs;
+		int minMPIX = MIN_MPIX_PREVIEW;
+		cs = CameraController.getInstance().getResolutionsSizeList();
+		ResolutionsSizesList = new ArrayList<CameraController.Size>(cs);
+
+		List<CameraController.Size> csPreview = CameraController.getInstance().getSupportedPreviewSizes();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int prefIdx = Integer.parseInt(prefs.getString("imageSizePrefSmartMultishotBack", "-1"));
+		for (int i = 0; i < ResolutionsSizesList.size(); i++)
+		{
+			CameraController.Size s = ResolutionsSizesList.get(i);
+			CameraController.Size sPreview = csPreview.get(0);
+
+			if (s.getHeight() * s.getWidth() < sPreview.getHeight() * sPreview.getWidth())
+			{
+				ResolutionsSizesList.add(i, sPreview);
+				if (sPreview.getHeight() * sPreview.getWidth() > MPIX_1080) {
+					if (prefIdx == -1) {
+						SharedPreferences.Editor prefEditor = prefs.edit();
+						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i));
+						prefEditor.commit();
+					}
+				}
+				break;
+			}
+
+			if ((ResolutionsSizesList.size() - 1 == i)
+					&& (s.getHeight() * s.getWidth() != sPreview.getHeight() * sPreview.getWidth()))
+			{
+				ResolutionsSizesList.add(sPreview);
+				if (sPreview.getHeight() * sPreview.getWidth() > MPIX_1080) {
+					if (prefIdx == -1) {
+						SharedPreferences.Editor prefEditor = prefs.edit();
+						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i + 1));
+						prefEditor.commit();
+					}
+				}
+				break;
+			}
+		}
+
+		for (int i = 0; i < ResolutionsSizesList.size(); i++)
+		{
+			CameraController.Size s = ResolutionsSizesList.get(i);
+			CameraController.Size sPreview = csPreview.get(1);
+
+			if (s.getHeight() * s.getWidth() < sPreview.getHeight() * sPreview.getWidth())
+			{
+				ResolutionsSizesList.add(i, sPreview);
+				break;
+			}
+
+			if ((ResolutionsSizesList.size() - 1 == i)
+					&& (s.getHeight() * s.getWidth() != sPreview.getHeight() * sPreview.getWidth()))
+			{
+				ResolutionsSizesList.add(sPreview);
+				break;
+			}
+		}
+
+		CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
+
+		for (int ii = 0; ii < ResolutionsSizesList.size(); ++ii)
+		{
+			CameraController.Size s = ResolutionsSizesList.get(ii);
+
+			if ((long) s.getWidth() * s.getHeight() < minMPIX)
+				continue;
+
+			Long lmpix = (long) s.getWidth() * s.getHeight();
+			float mpix = (float) lmpix / 1000000.f;
+			float ratio = (float) s.getWidth() / s.getHeight();
+
+			// find good location in a list
+			int loc;
+			for (loc = 0; loc < ResolutionsMPixList.size(); ++loc)
+				if (ResolutionsMPixList.get(loc) < lmpix)
+					break;
+
+			int ri = 0;
+			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+				ri = 1;
+			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
+				ri = 2;
+			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
+				ri = 3;
+			if (Math.abs(ratio - 1) == 0)
+				ri = 4;
+
+			ResolutionsNamesList.add(loc, String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
+			ResolutionsIdxesList.add(loc, String.format("%d", ii));
+			ResolutionsMPixList.add(loc, lmpix);
+		}
 	}
 }

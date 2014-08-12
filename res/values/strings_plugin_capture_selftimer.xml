@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1 image</string>
     <string name="Res_SelfTimerCapture_Capture_2">2 images</string>
     <string name="Res_SelfTimerCapture_Capture_3">3 images</string>
+    
+    <string name="selfTimerTitle">Self timer</string>
 </resources>

@@ -635,6 +635,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 		// -+- -->
+		
+		//added immersive full-screen mode support
+		//guiView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
 
 	private void initOrientationListener()
@@ -698,7 +701,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 
-				selfTimer.setOrientation();
+				if (selfTimer!=null)
+					selfTimer.setOrientation();
 			}
 		};
 	}
@@ -1050,6 +1054,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
+		
+		if (MainScreen.getInstance().isShowStore())
+		{
+			showStore();
+			MainScreen.getInstance().setShowStore(false);
+		}
 	}
 
 	@Override
@@ -1140,9 +1150,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 	}
 
-	// onGUICreate called when main layout is rendered and size's variables is
-	// available
-	// @Override
 	public void createPluginViews()
 	{
 		createPluginViews(PluginType.ViewFinder);
@@ -5931,7 +5938,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		t = new UpdateThumbnailButtonTask(MainScreen.getInstance());
 		t.execute();
 
-		new CountDownTimer(3000, 3000)
+		new CountDownTimer(1000, 1000)
 		{
 			public void onTick(long millisUntilFinished)
 			{

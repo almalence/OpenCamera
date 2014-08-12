@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,9 +36,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -45,23 +46,20 @@ import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.Image;
 import android.media.MediaRecorder;
-import android.media.MediaScannerConnection;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Message;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
+import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -73,11 +71,11 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,9 +99,9 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 import com.almalence.ui.RotateImageView;
-import com.almalence.ui.Switch.Switch;
 import com.almalence.util.Util;
 import com.coremedia.iso.IsoFile;
+import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
 import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
@@ -155,11 +153,12 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private boolean								videoStabilization				= false;
 
-	private static final int					QUALITY_4K						= 4096;
+	public static final int						QUALITY_4K						= 4096;
 
 	ImageView									rotateToLandscapeNotifier;
 	boolean										showRotateToLandscapeNotifier	= false;
 	private View								rotatorLayout;
+	private TimeLapseDialog						timeLapseDialog;
 
 	private boolean								displayTakePicture;
 	private ContentValues						values;
@@ -197,7 +196,7 @@ public class VideoCapturePlugin extends PluginCapture
 																											// On
 																											// 1=DRO
 																											// Off
-	private Switch								modeSwitcher;
+	private com.almalence.ui.Switch.Switch								modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
@@ -249,7 +248,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
+		modeSwitcher = (com.almalence.ui.Switch.Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
@@ -308,14 +307,14 @@ public class VideoCapturePlugin extends PluginCapture
 						timeLapseButton.setVisibility(View.GONE);
 						MainScreen.getInstance().showOpenGLLayer(2);
 						MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-					} else
+					}
+					else
 					{
 						if (displayTakePicture)
 							takePictureButton.setVisibility(View.VISIBLE);
 						timeLapseButton.setVisibility(View.VISIBLE);
 
 						droEngine.onPause();
-						MainScreen.getInstance().hideOpenGLLayer();
 
 						Camera camera = CameraController.getCamera();
 						if (camera != null)
@@ -336,8 +335,10 @@ public class VideoCapturePlugin extends PluginCapture
 								e.printStackTrace();
 							}
 						CameraController.startCameraPreview();
+						MainScreen.getInstance().hideOpenGLLayer();
 					}
-				} catch (final Exception e)
+				}
+				catch (final Exception e)
 				{
 					Log.e(TAG, Util.toString(e.getStackTrace(), '\n'));
 					e.printStackTrace();
@@ -366,7 +367,13 @@ public class VideoCapturePlugin extends PluginCapture
 		isRecording = false;
 		prefs.edit().putBoolean("videorecording", false).commit();
 
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+		}
 
 		onPreferenceCreate((PreferenceFragment) null);
 
@@ -535,12 +542,19 @@ public class VideoCapturePlugin extends PluginCapture
 			});
 		}
 
-		List<View> specialView2 = new ArrayList<View>();
-		RelativeLayout specialLayout2 = (RelativeLayout) MainScreen.getInstance().findViewById(
-				R.id.specialPluginsLayout2);
-		for (int i = 0; i < specialLayout2.getChildCount(); i++)
-			specialView2.add(specialLayout2.getChildAt(i));
+		for (int j = 0; j < specialView.size(); j++)
+		{
+			View view = specialView.get(j);
+			int view_id = view.getId();
+			if (view_id == this.buttonsLayout.getId())
+			{
+				if (view.getParent() != null)
+					((ViewGroup) view.getParent()).removeView(view);
 
+				specialLayout.removeView(view);
+			}
+		}
+		
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
 
@@ -569,12 +583,6 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 		timeLapseButton.invalidate();
 		timeLapseButton.requestLayout();
-
-		if (MainScreen.isDeviceModelProhibited())
-		{
-			takePictureButton.setVisibility(View.GONE);
-			displayTakePicture = false;
-		}
 
 		if (this.modeDRO())
 		{
@@ -737,8 +745,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		CameraController.startCameraPreview();
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_PREVIEW_CHANGED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_PREVIEW_CHANGED);
 	}
 
 	@Override
@@ -783,6 +790,11 @@ public class VideoCapturePlugin extends PluginCapture
 					rotateToLandscapeNotifier.clearAnimation();
 				}
 			}
+		}
+
+		if (timeLapseDialog != null)
+		{
+			timeLapseDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
 		}
 	}
 
@@ -1032,32 +1044,9 @@ public class VideoCapturePlugin extends PluginCapture
 		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 
-		final Camera.Size sz;
-		if (!this.modeDRO())
-		{
-			boolean aspect169 = true;
-			switch (ImageSizeIdxPreference)
-			{
-			case 0:
-			case 1:
-			case 4:
-				aspect169 = false;
-				break;
-			case 2:
-			case 3:
-			case 5:
-				aspect169 = true;
-				break;
-			default:
-				break;
-			}
+		final Camera.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 
-			sz = getBestPreviewSizeNormal(aspect169);
-		} else
-		{
-			sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
-		}
-
+		Log.i(TAG, String.format("Preview size: %dx%d", sz.width, sz.height));
 		cp.setPreviewSize(sz.width, sz.height);
 
 		CameraController.getInstance().setCameraParameters(cp);
@@ -1071,7 +1060,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (aspect169)
 		{
 			return selectMaxPreviewSize(16.0f / 9.0f);
-		} else
+		}
+		else
 		{
 			return selectMaxPreviewSize(4.0f / 3.0f);
 		}
@@ -1239,7 +1229,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					stopRecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
 			this.startRecording();
@@ -1268,7 +1258,13 @@ public class VideoCapturePlugin extends PluginCapture
 					.putBoolean("videorecording", false).commit();
 
 			// change shutter icon
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+			}
 
 			onPreExportVideo();
 			Runnable runnable = new Runnable()
@@ -1290,12 +1286,18 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		MainScreen.getGUIManager().startProcessingAnimation();
 
-		values = new ContentValues(7);
-		values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-		values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-		values.put(ImageColumns.MIME_TYPE, "video/mp4");
-		values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+		File parent = fileSaved.getParentFile();
+		String path = parent.toString().toLowerCase();
+		String name = parent.getName().toLowerCase();
+
+		values = new ContentValues();
+		values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+		values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+		values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(VideoColumns.MIME_TYPE, "video/mp4");
+		values.put(VideoColumns.BUCKET_ID, path.hashCode());
+		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
+		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 	}
 
 	protected void doExportVideo()
@@ -1329,8 +1331,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingTimeView.setText("00:00");
 		mRecorded = 0;
 
-		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-		MediaScannerConnection.scanFile(MainScreen.getInstance(), filesSavedNames, null, null);
+		MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 
 		try
 		{
@@ -1377,8 +1378,7 @@ public class VideoCapturePlugin extends PluginCapture
 				public void onFinish()
 				{
 					shutterOff = false;
-					if (!MainScreen.isDeviceModelProhibited())
-						MainScreen.getGUIManager().lockControls = false;
+					MainScreen.getGUIManager().lockControls = false;
 				}
 			}.start();
 		} else
@@ -1428,7 +1428,13 @@ public class VideoCapturePlugin extends PluginCapture
 				.putBoolean("videorecording", false).commit();
 
 		// change shutter icon
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
+		}
 
 		onPreExportVideo();
 		Runnable runnable = new Runnable()
@@ -1581,8 +1587,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 				MainScreen.getGUIManager().lockControls = false;
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance()
+						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			}
 
 			lastUseProfile = useProfile;
@@ -1688,8 +1694,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("Video", "On shutter pressed " + e.getMessage());
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
@@ -1726,8 +1731,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Toast.makeText(MainScreen.getInstance(), "Failed to start video recording", Toast.LENGTH_LONG).show();
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
@@ -1736,7 +1740,13 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		// change shutter icon
-		MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+		if (swChecked)
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+		} else
+		{
+			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP_WITH_PAUSE);
+		}
 
 		// inform the user that recording has started
 		isRecording = true;
@@ -1758,8 +1768,7 @@ public class VideoCapturePlugin extends PluginCapture
 			public void onFinish()
 			{
 				shutterOff = false;
-				if (!MainScreen.isDeviceModelProhibited())
-					MainScreen.getGUIManager().lockControls = false;
+				MainScreen.getGUIManager().lockControls = false;
 			}
 		}.start();
 	}
@@ -1767,100 +1776,6 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreferenceCreate(PreferenceFragment pf)
 	{
-		CharSequence[] entries = new CharSequence[6];
-		CharSequence[] entryValues = new CharSequence[6];
-
-		int idx = 0;
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_QCIF)
-				|| this.qualityQCIFSupported)
-		{
-			entries[idx] = "176 x 144";
-			entryValues[idx] = "0";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_CIF)
-				|| this.qualityCIFSupported)
-		{
-			entries[idx] = "352 x 288";
-			entryValues[idx] = "1";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_1080P)
-				|| this.quality1080Supported)
-		{
-			entries[idx] = "1080p";
-			entryValues[idx] = "2";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_720P)
-				|| this.quality720Supported)
-		{
-			entries[idx] = "720p";
-			entryValues[idx] = "3";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_480P)
-				|| this.quality480Supported)
-		{
-			entries[idx] = "480p";
-			entryValues[idx] = "4";
-			idx++;
-		}
-		if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), QUALITY_4K) || this.quality4KSupported)
-		{
-			entries[idx] = "4K";
-			entryValues[idx] = "5";
-			idx++;
-		}
-
-		CharSequence[] entriesFin = new CharSequence[idx];
-		CharSequence[] entryValuesFin = new CharSequence[idx];
-
-		for (int i = 0; i < idx; i++)
-		{
-			entriesFin[i] = entries[i];
-			entryValuesFin[i] = entryValues[i];
-		}
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int imageSizePrefVideo = Integer.parseInt(prefs.getString(
-				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
-		if (pf != null)
-		{
-			ListPreference lp = (ListPreference) pf.findPreference("imageSizePrefVideoBack");
-			ListPreference lp2 = (ListPreference) pf.findPreference("imageSizePrefVideoFront");
-
-			PreferenceCategory cat = (PreferenceCategory) pf.findPreference("Pref_VideoCapture_Category");
-			if (CameraController.getCameraIndex() == 0 && lp2 != null && cat != null)
-			{
-				cat.removePreference(lp2);
-			} else if (lp != null && lp2 != null && cat != null)
-			{
-				cat.removePreference(lp);
-				lp = lp2;
-			} else if (lp == null)
-				lp = lp2;
-
-			lp.setEntries(entriesFin);
-			lp.setEntryValues(entryValuesFin);
-
-			for (idx = 0; idx < entryValuesFin.length; ++idx)
-			{
-				if (Integer.valueOf(entryValuesFin[idx].toString()) == imageSizePrefVideo)
-				{
-					lp.setValueIndex(idx);
-					break;
-				}
-			}
-		} else
-		{
-			for (idx = 0; idx < entryValuesFin.length; ++idx)
-			{
-				if (Integer.valueOf(entryValuesFin[idx].toString()) == imageSizePrefVideo)
-					break;
-			}
-		}
-
 		if (pf != null && !MainScreen.getCameraController().isVideoStabilizationSupported())
 		{
 			PreferenceCategory cat = (PreferenceCategory) pf.findPreference("Pref_VideoCapture_Category");
@@ -1979,11 +1894,23 @@ public class VideoCapturePlugin extends PluginCapture
 		// show recording shutter
 		if (showRecording)
 		{
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_STOP_WITH_PAUSE);
+			}
 			showRecording = false;
 		} else
 		{
-			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING);
+			if (swChecked)
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING);
+			} else
+			{
+				MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_RECORDING_WITH_PAUSE);
+			}
 			showRecording = true;
 		}
 	}
@@ -2097,7 +2024,7 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					pauseDRORecording();
 				}
-			}, 2500 - delta);
+			}, 1500 - delta);
 		} else
 		{
 			if (onPause)
@@ -2117,7 +2044,7 @@ public class VideoCapturePlugin extends PluginCapture
 					{
 						pauseRecording();
 					}
-				}, 2500 - delta);
+				}, 1500 - delta);
 			}
 		}
 	}
@@ -2142,12 +2069,19 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.stop(); // stop the recording
 
 			ContentValues values = null;
-			values = new ContentValues(7);
-			values.put(ImageColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-			values.put(ImageColumns.DISPLAY_NAME, fileSaved.getName());
-			values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-			values.put(ImageColumns.MIME_TYPE, "video/mp4");
-			values.put(ImageColumns.DATA, fileSaved.getAbsolutePath());
+			values = new ContentValues();
+			File parent = fileSaved.getParentFile();
+			String path = parent.toString().toLowerCase();
+			String name = parent.getName().toLowerCase();
+
+			values = new ContentValues();
+			values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+			values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+			values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+			values.put(VideoColumns.MIME_TYPE, "video/mp4");
+			values.put(VideoColumns.BUCKET_ID, path.hashCode());
+			values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
+			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 
 			filesList.add(fileSaved);
 		} catch (RuntimeException e)
@@ -2220,23 +2154,11 @@ public class VideoCapturePlugin extends PluginCapture
 	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
 	{
 
-		final FileInputStream fisOne = new FileInputStream(new File(secondFile));
-		final FileInputStream fisTwo = new FileInputStream(new File(firstFile));
 		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
-
-		append(fisOne, fisTwo, fos);
-
-		fisOne.close();
-		fisTwo.close();
-		fos.close();
-	}
-
-	public static void append(final FileInputStream fisOne, final FileInputStream fisTwo, final FileOutputStream out)
-			throws IOException
-	{
-
-		final Movie movieOne = MovieCreator.build(Channels.newChannel(fisOne));
-		final Movie movieTwo = MovieCreator.build(Channels.newChannel(fisTwo));
+		final FileChannel fc = fos.getChannel();
+		
+		final Movie movieOne = MovieCreator.build(firstFile);
+		final Movie movieTwo = MovieCreator.build(secondFile);
 		final Movie finalMovie = new Movie();
 
 		final List<Track> movieOneTracks = movieOne.getTracks();
@@ -2244,13 +2166,14 @@ public class VideoCapturePlugin extends PluginCapture
 
 		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
 		{
-			finalMovie.addTrack(new AppendTrack(movieTwoTracks.get(i), movieOneTracks.get(i)));
+			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
 		}
 
-		final IsoFile isoFile = new DefaultMp4Builder().build(finalMovie);
-		isoFile.getBox(out.getChannel());
+		final Container container = new DefaultMp4Builder().build(finalMovie);
+		container.writeContainer(fc); 
+		fc.close();
+		fos.close();
 	}
-
 	// append video
 
 	public void takePicture()
@@ -2290,11 +2213,9 @@ public class VideoCapturePlugin extends PluginCapture
 		measurementVal = Integer.valueOf(prefs.getString("timelapseMeasurementVal", "0"));
 
 		// show time lapse settings
-		final Dialog d = new Dialog(MainScreen.getInstance());
-		d.setTitle("Time lapse");
-		d.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
-		final Button bSet = (Button) d.findViewById(R.id.button1);
-		final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+		timeLapseDialog = new TimeLapseDialog(MainScreen.getInstance());
+		timeLapseDialog.setContentView(R.layout.plugin_capture_video_timelapse_dialog);
+		final NumberPicker np = (NumberPicker) timeLapseDialog.findViewById(R.id.numberPicker1);
 		np.setMaxValue(16);
 		np.setMinValue(0);
 		np.setValue(interval);
@@ -2302,7 +2223,7 @@ public class VideoCapturePlugin extends PluginCapture
 		np.setWrapSelectorWheel(false);
 		np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-		final NumberPicker np2 = (NumberPicker) d.findViewById(R.id.numberPicker2);
+		final NumberPicker np2 = (NumberPicker) timeLapseDialog.findViewById(R.id.numberPicker2);
 		np2.setMaxValue(2);
 		np2.setMinValue(0);
 		np2.setValue(measurementVal);
@@ -2310,7 +2231,7 @@ public class VideoCapturePlugin extends PluginCapture
 		np2.setDisplayedValues(stringMeasurement);
 		np2.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-		final android.widget.Switch sw = (android.widget.Switch) d.findViewById(R.id.timelapse_switcher);
+		final Switch sw = (Switch) timeLapseDialog.findViewById(R.id.timelapse_switcher);
 
 		// disable/enable controls in dialog
 		sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -2324,7 +2245,6 @@ public class VideoCapturePlugin extends PluginCapture
 				} else
 				{
 					swChecked = true;
-					bSet.setEnabled(true);
 				}
 			}
 		});
@@ -2334,7 +2254,6 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
 			{
-				bSet.setEnabled(true);
 				sw.setChecked(true);
 			}
 		});
@@ -2343,7 +2262,6 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
 			{
-				bSet.setEnabled(true);
 				sw.setChecked(true);
 			}
 		});
@@ -2352,20 +2270,16 @@ public class VideoCapturePlugin extends PluginCapture
 		if (!swChecked)
 		{
 			sw.setChecked(false);
-			bSet.setEnabled(false);
 		} else
 		{
-			bSet.setEnabled(true);
 			sw.setChecked(true);
 		}
 
-		// set button in dialog pressed
-		bSet.setOnClickListener(new OnClickListener()
+		timeLapseDialog.setOnDismissListener(new OnDismissListener()
 		{
 			@Override
-			public void onClick(View v)
+			public void onDismiss(DialogInterface dialog)
 			{
-				d.dismiss();
 				if (swChecked)
 				{
 					measurementVal = np2.getValue();
@@ -2378,14 +2292,17 @@ public class VideoCapturePlugin extends PluginCapture
 					editor.commit();
 
 					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
+
+					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				} else
 				{
 					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
+					MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START_WITH_PAUSE);
 				}
 
 			}
 		});
-		d.show();
+		timeLapseDialog.show();
 	}
 
 
@@ -2414,10 +2331,9 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.i("View capture still image", "StartPreview fail");
 		}
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-				String.valueOf(SessionID));
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
-		takingAlready = false;		
+		takingAlready = false;
 	}
 
 	@Override

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_SmartMultishot_ImageSize_Title">Размер снимка (Smart Multishot)</string>
+    <string name="MultiShot_Help_Header">Smart multishot помощь</string>
+    <string name="MultiShot_Help">1. Держите телефон ровно, не сдвигайте\n2. Нажмите кнопку спуска для начала съемки\n3. Дождитесь конца съемки серии снимков и завершения обработки\n</string>
+</resources>

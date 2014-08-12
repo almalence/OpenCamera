@@ -2002,7 +2002,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// Experimental code to take multiple images. Works only with HALv3
 	// interface in API 19(currently minimum API version for Android L increased to 21)
-	protected static int		pauseBetweenShots	= 0;
+	protected static int[]		pauseBetweenShots	= new int[0];
 
 	protected static final int	MAX_HDR_FRAMES		= 4;
 	protected static int[]		evValues			= new int[MAX_HDR_FRAMES];
@@ -2014,7 +2014,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	protected static boolean	takeYUVFrame 		= false;
 
-	public static int captureImagesWithParams(int nFrames, int format, int pause, int[] evRequested)
+	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -2214,6 +2214,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 
 	// ===============  Captured Image data manipulation ======================
+	@TargetApi(19)
 	public static int getImageFrame(Image im)
 	{
 		int frame = 0;
@@ -2258,6 +2259,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	// ===============  Captured Image data manipulation ======================
+	@TargetApi(19)
 	public static byte[] getImageFrameData(Image im)
 	{
 		byte[] frameData = new byte[0];
@@ -2300,11 +2302,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return frameData;
 	}
 	
+	@TargetApi(19)
 	public static boolean isYUVImage(Image im)
 	{
 		return im.getFormat() == ImageFormat.YUV_420_888;
 	}
 	
+	@TargetApi(19)
 	public static int getImageLenght(Image im)
 	{
 		if (im.getFormat() == ImageFormat.YUV_420_888)
@@ -2433,7 +2437,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.e(TAG, "MSG_NEXT_FRAME");
 				if (++frame_num < total_frames)
 				{
-					if(pauseBetweenShots == 0)
+					if(pauseBetweenShots[frame_num] == 0)
 					{
 						if (evValues != null && evValues.length >= total_frames)
 							CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
@@ -2442,7 +2446,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}
 					else
 					{
-						new CountDownTimer(pauseBetweenShots, pauseBetweenShots)
+						new CountDownTimer(pauseBetweenShots[frame_num], pauseBetweenShots[frame_num])
 						{
 							public void onTick(long millisUntilFinished)
 							{

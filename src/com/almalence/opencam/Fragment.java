@@ -109,7 +109,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				}
 			});
 
-		ListPreference saveToPreference = (ListPreference) this.findPreference("saveToPref");
+		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(R.string.Preference_SaveToValue));
 		if (saveToPreference != null)
 			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{

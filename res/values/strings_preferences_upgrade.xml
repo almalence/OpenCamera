@@ -20,4 +20,6 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">Done!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Incorrect promo code</string>
 	
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Year subscription</string>
+	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Month subscription</string>
 </resources>

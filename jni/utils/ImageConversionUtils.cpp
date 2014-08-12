@@ -274,7 +274,7 @@ int DecodeAndRotateMultipleJpegs
 		}
 	}
 
-	////#pragma omp parallel for num_threads(10)
+	#pragma omp parallel for num_threads(10)
 	for (i=0; i<nFrames; ++i)
 	{
 		// decode from jpeg

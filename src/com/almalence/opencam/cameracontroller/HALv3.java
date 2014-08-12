@@ -84,7 +84,7 @@ public class HALv3
 	
 	private static int 						totalFrames 		= 0;
 	private static int 						currentFrameIndex 	= 0;
-	private static int 						pauseBetweenShots 	= 0;
+	private static int[] 					pauseBetweenShots 	= new int[0];
 	private static int[] 					expRequested 		= null;
 
 	public static HALv3 getInstance()
@@ -873,7 +873,7 @@ public class HALv3
 	}
 
 	
-	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int pause,
+	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
 			final int[] evRequested)
 	{
 		int requestID = -1;
@@ -922,13 +922,13 @@ public class HALv3
 
 //			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
-			if (pause > 0)
+			if (pause[0] > 0)
 			{
 				totalFrames = nFrames;
 				currentFrameIndex = 0;
 				pauseBetweenShots = pause;
 				expRequested = evRequested;
-				captureNextImageWithParams(format, pause, evRequested, currentFrameIndex);
+				captureNextImageWithParams(format, pause[currentFrameIndex], evRequested, currentFrameIndex);
 //				new CountDownTimer(nFrames * pause, pause)
 //				{
 //					int	index	= 0;
@@ -1602,7 +1602,7 @@ public class HALv3
 				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);
 				
 				if(++currentFrameIndex < totalFrames)
-					captureNextImageWithParams(im.getFormat(), pauseBetweenShots, expRequested, currentFrameIndex);
+					captureNextImageWithParams(im.getFormat(), pauseBetweenShots[currentFrameIndex], expRequested, currentFrameIndex);
 			}
 
 			// Image should be closed after we are done with it

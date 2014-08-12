@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="Pref_MultiShot_Capture_Category_Title">Multi shot capture</string>
-    <string name="Pref_MultiShot_Capture_Preference_Title">Multi shoot mode</string>
-    <string name="Pref_MultiShot_Capture_Preference_Summary">Set number of images in capture</string>
-
-    <string name="Pref_MultiShot_Capture_ImagesAmount_Title">Number of images</string>
-    
-    <string name="Preference_MultiShotImagesAmountPref">multiShotImagesAmount</string>
-    <string name="Preference_MultiShotPauseBetweenShotsPref">multiShotPauseBetweenShots</string>
-    
-    <string name="MultiShot_Help_Header">Multi shot help</string>
+    <string name="Pref_SmartMultishot_ImageSize_Title">Image size (Smart Multishot)</string>
+    <string name="MultiShot_Help_Header">Smart multishot help</string>
     <string name="MultiShot_Help">1. Hold device still and do not move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n</string>
-    
-    <string name="Pref_MultiShot_Capture_PauseBetweenShots_Title"> Pause between shots</string>
-    <string name="Res_MultiShot_Capture_5">5 images</string>
-    <string name="Res_MultiShot_Capture_6">6 images</string>
-    <string name="Res_MultiShot_Capture_7">7 images</string>
-    <string name="Res_MultiShot_Capture_8">8 images</string>
 </resources>

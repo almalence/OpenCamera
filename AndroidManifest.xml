@@ -113,6 +113,6 @@
 	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
 	-->
 
-	<uses-sdk 	android:minSdkVersion="19"
+	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="19"/>
 </manifest> 
