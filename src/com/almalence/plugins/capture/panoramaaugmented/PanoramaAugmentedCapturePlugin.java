@@ -346,13 +346,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		
 		if (this.modeSweep)
 		{
-			this.engine.setFrameIntersection(1.4f * intersection);
+			this.engine.setFrameIntersection(1.5f * intersection);
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
 					/ getFrameSizeInBytes(this.previewWidth, this.previewHeight));
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
-			this.engine.setDistanceLimit(0.15f);
+			this.engine.setDistanceLimit(0.1f);
+			this.engine.setMiniDisplayMode(true);
 			
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			cp.setRecordingHint(true);
@@ -367,6 +368,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					/ getFrameSizeInBytes(this.pictureWidth, this.pictureHeight));
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 			this.engine.setDistanceLimit(0.1f);
+			this.engine.setMiniDisplayMode(false);
 			
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			cp.setRecordingHint(false);

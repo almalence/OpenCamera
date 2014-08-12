@@ -226,6 +226,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private volatile int							framesMax;
 	
 	private volatile float distanceLimit = 0.1f;
+	private volatile boolean miniDisplayMode = false;
 	
 
 	public void setFrameIntersection(final float intersection)
@@ -236,6 +237,11 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	public void setDistanceLimit(final float value)
 	{
 		this.distanceLimit = value;
+	}
+	
+	public void setMiniDisplayMode(final boolean value)
+	{
+		this.miniDisplayMode = value;
 	}
 
 	public void reset(final int width, final int height, float verticalViewAngleR)
@@ -283,7 +289,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final float[] vertices = { -this.width / 2.0f, this.height / 2.0f, 0.0f, this.width / 2.0f, this.height / 2.0f,
 					0.0f, this.width / 2.0f, -this.height / 2.0f, 0.0f, -this.width / 2.0f, -this.height / 2.0f, 0.0f, };
 
-			ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
+			final ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 			byteBuf.order(ByteOrder.nativeOrder());
 			this.vertexBuffer = byteBuf.asFloatBuffer();
 			this.vertexBuffer.put(vertices);
@@ -909,6 +915,40 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		this.iSurfaceWidth = width;
 		this.iSurfaceHeight = height;
 	}
+	
+	private void drawAim()
+	{
+		GLES10.glPushMatrix();
+		GLES10.glLoadIdentity();
+		GLES10.glTranslatef(0.0f, 0.0f, -this.radiusGL);
+
+		//GLES10.glMultMatrixf(this.transform, 0);
+
+		final float scale = 0.25f;
+		GLES10.glScalef(scale, scale, scale);
+
+		GLES10.glVertexPointer(3, GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.this.vertexBuffer);
+		GLES10.glTexCoordPointer(2, GL10.GL_FLOAT, 0, FRAME_TEXTURE_UV);
+		GLES10.glNormalPointer(GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.FRAME_NORMALS);
+
+		GLES10.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		GLES10.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		GLES10.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+
+		GLES10.glFrontFace(GL10.GL_CW);
+
+		//GLES10.glDrawElements(GL10.GL_LINE_STRIP, 6,
+		//		GL10.GL_UNSIGNED_BYTE, AugmentedPanoramaEngine.FRAME_INDICES_BUFFER);
+		GLES10.glDrawElements(GL10.GL_LINE_LOOP, 5, GL10.GL_UNSIGNED_BYTE, FRAME_LINE_INDICES_BUFFER);
+
+		GLES10.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		GLES10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		GLES10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		GLES10.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+
+		GLES10.glPopMatrix();
+	}
 
 	@Override
 	public void onDrawFrame(final GL10 gl)
@@ -956,10 +996,28 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 				if (this.capturing.get() && !this.isCircular())
 				{
+					float mind = 0.0f;
+					int mint = 0;
+					if (this.targetFrames != null)
+					{
+						mind = this.targetFrames[0].distance();
+						mint = this.targetFrames[0].texture;
+					}
+					
 					for (final AugmentedFrameTarget frame : this.targetFrames)
 					{
-						frame.distance();
+						if (frame.distance() <= mind)
+						{
+							mind = frame.distance;
+							mint = frame.texture;
+						}
 						frame.draw(gl);
+					}
+					
+					if (this.miniDisplayMode)
+					{
+						GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, mint);
+						this.drawAim();
 					}
 				}
 			}
@@ -1094,7 +1152,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					this.colorBuffer.clear();
 
-					// *
 					part = Math.min((System.currentTimeMillis() - AugmentedPanoramaEngine.this.capture_time)
 							/ (float) FRAME_WHITE_FADE_IN, 1.0f);
 
@@ -1107,7 +1164,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						this.colorBuffer.put(this.colors_taking);
 					}
 					this.colorBuffer.position(0);
-					// */
 				}
 			}
 
@@ -1122,10 +1178,17 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			gl.glMultMatrixf(this.transform, 0);
 
-			// make appearance a bit more stable - do not change scale if
-			// distance is small
-			float scale = Math.max(0.5f, 1.0f - Math.max(0.1f, this.distance - 0.1f));
-			scale += part * 0.1f;
+			final float scale;
+			if (AugmentedPanoramaEngine.this.miniDisplayMode)
+			{
+				scale = 0.25f;
+			}
+			else
+			{
+				// make appearance a bit more stable - do not change scale if
+				// distance is small
+				scale = Math.max(0.5f, 1.0f - Math.max(0.1f, this.distance - 0.1f)) + part * 0.1f;
+			}
 			gl.glScalef(scale, scale, scale);
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, this.texture);
@@ -1532,7 +1595,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			gl.glMultMatrixf(this.transform, 0);
 
-			float scale = Math.max(0.20f, 1.0f - this.distance);
+			final float scale;
+			if (AugmentedPanoramaEngine.this.miniDisplayMode)
+			{
+				scale = 0.25f;
+			}
+			else
+			{
+				scale = Math.max(0.20f, 1.0f - this.distance);
+			}
 			gl.glScalef(scale, scale, scale);
 
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.this.vertexBuffer);
