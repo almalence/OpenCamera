@@ -118,6 +118,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private volatile boolean					isRecording;
 	private boolean								onPause;
+	private boolean								lockPauseButton = false;
 
 	private static int							CameraIDPreference;
 
@@ -196,7 +197,7 @@ public class VideoCapturePlugin extends PluginCapture
 																											// On
 																											// 1=DRO
 																											// Off
-	private com.almalence.ui.Switch.Switch								modeSwitcher;
+	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
@@ -223,28 +224,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
-	private void setExposureParameters()
-	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-		final int currEv = prefs.getInt(MainScreen.sEvPref, 0);
-		int newEv = currEv;
-		final int minValue = CameraController.getInstance().getMinExposureCompensation();
-		float expStep = CameraController.getInstance().getExposureCompensationStep();
-
-		if (this.modeDRO())
-		{
-			if (expStep < 0.3f)
-				expStep = 0.33f; // there is a bug in Nexus 5 (android 4.4.2)
-			int cmpns = -(int) (0.8f / expStep);
-			if (cmpns == 0)
-				cmpns = -1; // on Ascend P6 Ev compensation step is 1.0
-			newEv -= cmpns;
-		}
-
-		CameraController.getInstance().setCameraExposureCompensation(Math.max(minValue, newEv));
-	}
-
 	private void createModeSwitcher()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
@@ -269,8 +248,6 @@ public class VideoCapturePlugin extends PluginCapture
 				{
 					ModePreference = "1";
 				}
-
-				VideoCapturePlugin.this.setExposureParameters();
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeVideoDROPref", ModePreference);
@@ -1023,8 +1000,6 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			cp.setPreviewFrameRate(30);
 			cp.setRecordingHint(true);
-
-			this.setExposureParameters();
 
 			CameraController.getInstance().setCameraParameters(cp);
 		}
@@ -2027,6 +2002,11 @@ public class VideoCapturePlugin extends PluginCapture
 			}, 1500 - delta);
 		} else
 		{
+			if (lockPauseButton)
+			{
+				return;
+			}
+
 			if (onPause)
 			{
 				startVideoRecording();
@@ -2035,6 +2015,7 @@ public class VideoCapturePlugin extends PluginCapture
 			// Pause video recording, merge files and remove last.
 			else
 			{
+				lockPauseButton = true;
 				long now = SystemClock.uptimeMillis();
 				long delta = now - mRecordingStartTime;
 				Handler handler = new Handler();
@@ -2051,12 +2032,18 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void pauseDRORecording()
 	{
-		this.onPause = !this.onPause;
-		this.droEngine.setPaused(this.onPause);
 		if (onPause)
 		{
+			mRecordingStartTime = SystemClock.uptimeMillis();
+			showRecordingUI(isRecording);
+			onPause = false;
+			showRecordingUI(isRecording);
+		} else
+		{
+			onPause = true;
 			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_PAUSED);
 		}
+		this.droEngine.setPaused(this.onPause);
 	}
 
 	private void pauseRecording()
@@ -2084,6 +2071,8 @@ public class VideoCapturePlugin extends PluginCapture
 			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 
 			filesList.add(fileSaved);
+			
+			lockPauseButton = false;
 		} catch (RuntimeException e)
 		{
 			// Note that a RuntimeException is intentionally thrown to the
