@@ -62,6 +62,8 @@ import android.widget.RelativeLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
+
+import com.almalence.SwapHeap;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -1048,12 +1050,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		SessionID = curDate.getTime();
 	}
 	
-	private void takePictureUnimode(final Object image)
+	private void takePictureUnimode(final int image)
 	{
 		if (this.modeSweep)
 		{
 			this.engine.recordCoordinates();
-			this.engine.onFrameAdded(image, true, true);
+			this.engine.onFrameAdded(true, image, true);
 			this.isFirstFrame = false;
 		}
 		else
@@ -1084,7 +1086,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 						|| this.isFirstFrame)
 				{
 					Log.e(TAG, "Taking picture using PREVIEW OLD");
-					this.takePictureUnimode(data);
+					this.takePictureUnimode(SwapHeap.SwapToHeap(data));
 				}
 			}
 		}
@@ -1237,19 +1239,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			if (isYUV)
 			{
-				goodPlace = this.engine.onFrameAdded(frame, true, true);
+				goodPlace = this.engine.onFrameAdded(true, frame, true);
 			}
 			else
 			{
-				goodPlace = this.engine.onFrameAdded(frame, false, frame_len);
+				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);
 			}
 
 			if (this.isFirstFrame && !isYUV)
 			{
 				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
-				this.isFirstFrame = false;
 			}
 		}
+		
+		this.isFirstFrame = false;
 
 		final boolean done = this.engine.isCircular();
 		final boolean oom = this.engine.isMax();

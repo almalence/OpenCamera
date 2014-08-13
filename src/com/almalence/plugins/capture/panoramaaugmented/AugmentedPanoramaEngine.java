@@ -755,7 +755,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	}
 
 	@TargetApi(19)
-	public boolean onFrameAdded(final Object image, final Object... args)
+	public boolean onFrameAdded(final boolean isYUV, final int image, final Object... args)
 	{
 		final boolean goodPlace;
 		final int framesCount;
@@ -785,55 +785,23 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final Vector3d topVec = new Vector3d(this.last_topVec);
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
-
-			final boolean isYUV = args.length >= 1 ? (Boolean)args[0] : true;
 			
 			final AugmentedFrameTaken frame;
 			
-			if (image instanceof Integer)
+			if (isYUV)
 			{
-				final int im = (Integer)image;
-				
-				if (isYUV)
-				{
-					final boolean rotate = args.length >= 2 ? (Boolean)args[1] : false;
-					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, im, rotate);
-				}
-				else
-				{
-					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, im, (Integer)args[2]);
-				}
-			}
-			else if (image instanceof byte[]) // Should not be used
-			{
-				final int ptr = SwapHeap.SwapToHeap((byte[])image);
-				
-				if (isYUV)
-				{
-					final boolean rotate = args.length >= 2 ? (Boolean)args[1] : false;
-					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, ptr, rotate);
-				}
-				else
-				{
-					frame = new AugmentedFrameTaken(targetFrame.angle,
-							position, topVec, transform, ptr, ((byte[])image).length);
-				}
-				
+				final boolean rotate = args.length >= 1 ? (Boolean)args[0] : false;
+				frame = new AugmentedFrameTaken(targetFrame.angle,
+						position, topVec, transform, image, rotate);
 			}
 			else
 			{
-				frame = null;
+				frame = new AugmentedFrameTaken(targetFrame.angle,
+						position, topVec, transform, image, (Integer)args[0]);
 			}
-
-			if (frame != null)
+			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
-				synchronized (AugmentedPanoramaEngine.this.frames)
-				{
-					AugmentedPanoramaEngine.this.frames.add(frame);
-				}
+				AugmentedPanoramaEngine.this.frames.add(frame);
 			}
 		}
 
