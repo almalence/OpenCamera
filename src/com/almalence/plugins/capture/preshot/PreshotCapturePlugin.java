@@ -313,7 +313,8 @@ public class PreshotCapturePlugin extends PluginCapture
 		SessionID = curDate.getTime();
 
 		MainScreen.getInstance().muteShutter(true);
-
+		
+		isBuffering = true;
 		if (!isSlowMode)
 		{
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
@@ -361,7 +362,6 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			StartCaptureSequence();
 		}
-		isBuffering = true;
 	}
 
 	void StopBuffering()
