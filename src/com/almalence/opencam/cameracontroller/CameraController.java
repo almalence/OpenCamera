@@ -1983,31 +1983,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// ------------ CAPTURE AND FOCUS FUNCTION ----------------------------
 
-	public static int captureImage(int nFrames, int format)
-	{
-		// In old camera interface we can capture only JPEG images, so image
-		// format parameter will be ignored.
-		if (!CameraController.isHALv3)
-		{
-			synchronized (SYNC_OBJECT)
-			{
-				takeYUVFrame = (format == CameraController.YUV);
-				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-//				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-//				{
-//					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-//					camera.setPreviewCallback(null);
-//					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-//					return 0;
-//				}
-
-//				return -1;
-				return 0;
-			}
-		} else
-			return HALv3.captureImageHALv3(nFrames, format);
-	}
-
 	// Experimental code to take multiple images. Works only with HALv3
 	// interface in API 19(currently minimum API version for Android L increased to 21)
 	protected static int[]		pauseBetweenShots	= new int[0];
@@ -2021,14 +1996,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean	takePreviewFrame 	= false;
 	
 	protected static boolean	takeYUVFrame 		= false;
+	
+	protected static boolean	resultInHeap 		= false;
 
-	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested)
+	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, boolean resInHeap)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
 
 		total_frames = nFrames;
 		frame_num = 0;
+		
+		resultInHeap = resInHeap;
 		
 		if (!CameraController.isHALv3)
 		{
@@ -2039,7 +2018,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
 			return 0;
 		} else
-			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested);
+			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, resultInHeap);
 	}
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
@@ -2131,14 +2110,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if(!CameraController.takeYUVFrame) //if JPEG frame requested
 		{
-			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+			int frame = 0;
+			if(resultInHeap)
+				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, false);
 		}
 		else //is YUV frame requested
 		{
 			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
 			int frameLen = MainScreen.getImageWidth()*MainScreen.getImageHeight()+2*((MainScreen.getImageWidth()+1)/2)*((MainScreen.getImageHeight()+1)/2);
-			byte[] frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+			
+			byte[] frameData = null;
+			if(!resultInHeap)
+				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 		
@@ -2177,7 +2161,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			takePreviewFrame = false;
 			if(CameraController.takeYUVFrame)
 			{
-				int frame = SwapHeap.SwapToHeap(data);
+				int frame = 0;
+				if(resultInHeap)
+					frame = SwapHeap.SwapToHeap(data);
 				pluginManager.onImageTaken(frame, data, data.length, true);
 			}
 			else

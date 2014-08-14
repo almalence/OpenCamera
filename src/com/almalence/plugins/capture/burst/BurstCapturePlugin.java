@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -199,7 +199,7 @@ public class BurstCapturePlugin extends PluginCapture
 		{
 			int[] pause = new int[imageAmount];
 			Arrays.fill(pause, pauseBetweenShots);
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null);
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, true);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -239,7 +239,7 @@ public class BurstCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		if (imagesTaken == 1 && !isYUV)
+		if (imagesTaken == 1 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try

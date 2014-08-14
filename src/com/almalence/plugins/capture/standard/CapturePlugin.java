@@ -24,7 +24,7 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -238,9 +238,9 @@ public class CapturePlugin extends PluginCapture
 			try
 			{
 				if (ModePreference.compareTo("0") == 0)
-					requestID = CameraController.captureImage(1, CameraController.YUV);
+					requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0], new int[0], true);
 				else
-					requestID = CameraController.captureImage(1, CameraController.JPEG);
+					requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
 			} catch (Exception e)
 			{
 				e.printStackTrace();

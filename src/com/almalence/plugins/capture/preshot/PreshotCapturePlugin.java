@@ -462,7 +462,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		inCapture = false;
 
-		if (0 == PreShot.GetImageCount() && !isYUV)
+		if (0 == PreShot.GetImageCount() && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
@@ -547,7 +547,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				MainScreen.getGUIManager().showCaptureIndication();
 				MainScreen.getInstance().playShutter();
 
-				requestID = CameraController.captureImage(1, CameraController.JPEG);
+				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
 				counter++;
 			}
 		} catch (RuntimeException e)

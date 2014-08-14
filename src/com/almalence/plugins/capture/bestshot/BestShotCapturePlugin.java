@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -185,7 +185,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			{
 				int[] pause = new int[imageAmount];
 				Arrays.fill(pause, 50);
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null);
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, true);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -227,7 +227,7 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1 && !isYUV)
+		if (imagesTaken == 1 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try

@@ -44,17 +44,17 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
-import android2.hardware.camera2.CameraCaptureSession;
-import android2.hardware.camera2.CameraCharacteristics;
-import android2.hardware.camera2.CameraDevice;
-import android2.hardware.camera2.CameraManager;
-import android2.hardware.camera2.CaptureRequest;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.CameraMetadata;
-import android2.hardware.camera2.CameraAccessException;
-import android2.hardware.camera2.TotalCaptureResult;
-import android2.hardware.camera2.params.MeteringRectangle;
-import android2.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
@@ -63,8 +63,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android2.util.Range;
-import android2.util.Size;
+import android.util.Range;
+import android.util.Size;
 import android.widget.Toast;
 
 //HALv3 camera's objects
@@ -87,6 +87,9 @@ public class HALv3
 	private static int 						currentFrameIndex 	= 0;
 	private static int[] 					pauseBetweenShots 	= new int[0];
 	private static int[] 					expRequested 		= null;
+	
+	protected static boolean				resultInHeap 		= false;
+	
 
 	public static HALv3 getInstance()
 	{
@@ -796,86 +799,9 @@ public class HALv3
 		return range[range.length - 1].getUpper();
 	}
 
-	public static int captureImageHALv3(int nFrames, int format)
-	{
-		int requestID = -1;
-		CaptureRequest.Builder stillRequestBuilder = null;
-		try
-		{
-			stillRequestBuilder = HALv3.getInstance().camDevice
-					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
-			if (zoomLevel >= 1.0f)
-			{
-				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
-			}
 
-			// no re-focus needed, already focused in preview, so keeping the
-			// same focusing mode for snapshot
-			// stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-			// CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from
-			// current position
-			// stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-			// CaptureRequest.CONTROL_AF_MODE_OFF);
-			// Log.e("CameraController", "captureImage 2");
-			if (format == CameraController.JPEG)
-			{
-				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
-				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-				// Log.e("CameraController", "captureImage 3.1");
-			} else
-			{
-				Log.e("HALv3", "Capture " + nFrames + " YUV");
-				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
-				// Log.e("CameraController", "captureImage 3.2");
-			}
-
-			// Google: throw: "Burst capture implemented yet", when to expect
-			// implementation?
-			/*
-			 * List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
-			 * for (int n=0; n<NUM_FRAMES; ++n)
-			 * requests.add(stillRequestBuilder.build());
-			 * 
-			 * camDevice.captureBurst(requests, new captureListener() , null);
-			 */
-
-			// requests for SZ input frames
-			for (int n = 0; n < nFrames; ++n)
-			{
-				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-						captureListener, null);
-			}
-			// Log.e("CameraController", "captureImage 4");
-			// One more capture for comparison with a standard frame
-			// stillRequestBuilder.set(CaptureRequest.EDGE_MODE,
-			// CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			// stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-			// CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-			// // set crop area for the scaler to have interpolation applied by
-			// camera HW
-			// stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION,
-			// zoomCrop);
-			// camDevice.capture(stillRequestBuilder.build(), new
-			// captureListener() , null);
-		} catch (CameraAccessException e)
-		{
-			Log.e("MainScreen", "setting up still image capture request failed");
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-
-		return requestID;
-	}
-
-	
 	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
-			final int[] evRequested)
+			final int[] evRequested, final boolean resInHeap)
 	{
 		int requestID = -1;
 		final CaptureRequest.Builder stillRequestBuilder;
@@ -923,6 +849,7 @@ public class HALv3
 
 //			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
+			resultInHeap = resInHeap;
 			if (Array.getLength(pause) > 0 && pause[0] > 0)
 			{
 				totalFrames = nFrames;
@@ -1453,8 +1380,10 @@ public class HALv3
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: " + status);
 
-					frameData = YuvImage.GetByteFrame(0);
-					frame = YuvImage.GetFrame(0);
+					if(!resultInHeap)
+						frameData = YuvImage.GetByteFrame(0);
+					else
+						frame = YuvImage.GetFrame(0);
 					
 					
 					frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
@@ -1470,7 +1399,11 @@ public class HALv3
 					frameData = new byte[frame_len];
 					jpeg.get(frameData, 0, frame_len);
 
-					frame = SwapHeap.SwapToHeap(frameData);
+					if(resultInHeap)
+					{
+						frame = SwapHeap.SwapToHeap(frameData);
+						frameData = null;
+					}
 				}
 				
 				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);

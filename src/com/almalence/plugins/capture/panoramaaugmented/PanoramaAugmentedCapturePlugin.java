@@ -39,7 +39,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -58,6 +58,7 @@ import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -1073,7 +1074,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		try
 		{
 			Log.e(TAG, "Perform CAPTURE Panorama");
-			requestID = CameraController.captureImage(1, CameraController.YUV);
+			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0], new int[0], false);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -1113,9 +1114,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
+			if(frame == 0)
+				frame = SwapHeap.SwapToHeap(frameData);
 			goodPlace = this.engine.onImageTaken(frame, frameData, frame_len, isYUV);
 
-			if (this.isFirstFrame && !isYUV)
+			if (this.isFirstFrame && !isYUV && frameData != null)
 			{
 				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 				this.isFirstFrame = false;
