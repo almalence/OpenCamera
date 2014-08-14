@@ -39,7 +39,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;

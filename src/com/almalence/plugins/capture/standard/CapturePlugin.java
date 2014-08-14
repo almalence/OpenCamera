@@ -24,7 +24,7 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Message;
 import android.preference.PreferenceManager;

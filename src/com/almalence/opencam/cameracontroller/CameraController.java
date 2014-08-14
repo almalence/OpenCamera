@@ -2122,7 +2122,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			byte[] frameData = null;
 			if(!resultInHeap)
+			{				
 				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
+				yuvFrame = 0;
+			}
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 		
