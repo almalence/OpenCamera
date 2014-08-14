@@ -40,41 +40,41 @@ import com.almalence.opencam.R;
  import com.almalence.opencam_plus.R;
  +++ --> */
 
-public class AppWidgetNotifier
+public class AppEditorNotifier
 {
-	private static final int	DAYS_UNTIL_PROMPT		= 0;
-	private static final int	LAUNCHES_UNTIL_PROMPT	= 2;
+//	private static final int	DAYS_UNTIL_PROMPT		= 5;
+//	private static final int	LAUNCHES_UNTIL_PROMPT	= 30;
 
 	public static void app_launched(Activity mContext)
 	{
-		SharedPreferences prefs = mContext.getSharedPreferences("appwidgetnotifier", 0);
-		if (prefs.getBoolean("dontshowagainwidgetnotifier", false))
+		SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
+		if (prefs.getBoolean("dontshowagaineditornotifier", false))
 		{
 			return;
 		}
 
-		SharedPreferences.Editor editor = prefs.edit();
-
-		// Increment launch counter
-		long launch_count = prefs.getLong("launch_count_widgetnotifier", 0) + 1;
-		editor.putLong("launch_count_widgetnotifier", launch_count);
-
-		// Get date of first launch
-		Long date_firstLaunch = prefs.getLong("date_firstlaunch_widgetnotifier", 0);
-		if (date_firstLaunch == 0)
-		{
-			date_firstLaunch = System.currentTimeMillis();
-			editor.putLong("date_firstlaunch_widgetnotifier", date_firstLaunch);
-		}
-
-		editor.commit();
+//		SharedPreferences.Editor editor = prefs.edit();
+//
+//		// Increment launch counter
+//		long launch_count = prefs.getLong("launch_count_editornotifier", 0) + 1;
+//		editor.putLong("launch_count_editornotifier", launch_count);
+//
+//		// Get date of first launch
+//		Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
+//		if (date_firstLaunch == 0)
+//		{
+//			date_firstLaunch = System.currentTimeMillis();
+//			editor.putLong("date_firstlaunch_editornotifier", date_firstLaunch);
+//		}
+//
+//		editor.commit();
 	}
 
-	public static final boolean isABCWidgetInstalled(Activity activity)
+	public static final boolean isABCEditorInstalled(Activity activity)
 	{
 		try
 		{
-			activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
+			activity.getPackageManager().getInstallerPackageName("com.almalence.opencameditor");
 		} catch (IllegalArgumentException e)
 		{
 			return false;
@@ -83,37 +83,37 @@ public class AppWidgetNotifier
 		return true;
 	}
 
-	public static boolean showNotifierDialogIfNeeded(final Activity mContext)
+	public static boolean showEditorNotifierDialogIfNeeded(final Activity mContext)
 	{
 		// check if installed
-		if (isABCWidgetInstalled(MainScreen.getInstance()))
+		if (isABCEditorInstalled(MainScreen.getInstance()))
 		{
 			return false;
 		}
 
-		final SharedPreferences prefs = mContext.getSharedPreferences("appwidgetnotifier", 0);
-		if (prefs.getBoolean("dontshowagainwidgetnotifier", false))
+		final SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
+		if (prefs.getBoolean("dontshowagaineditornotifier", false))
 		{
 			return false;
 		}
 
-		final long launch_count = prefs.getLong("launch_count_widgetnotifier", 0) + 1;
-		final Long date_firstLaunch = prefs.getLong("date_firstlaunch_widgetnotifier", 0);
+//		final long launch_count = prefs.getLong("launch_count_editornotifier", 0) + 1;
+//		final Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
+//
+//		if (launch_count >= LAUNCHES_UNTIL_PROMPT)
+//		{
+//			if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+//			{
+//				showEditorNotifierDialog(mContext, prefs);
+//
+//				return true;
+//			}
+//		}
 
-		if (launch_count >= LAUNCHES_UNTIL_PROMPT)
-		{
-			if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
-			{
-				showNotifierDialog(mContext, prefs);
-
-				return true;
-			}
-		}
-
-		return false;
+		return true;
 	}
 
-	private static void showNotifierDialog(final Activity mContext, final SharedPreferences prefs)
+	private static void showEditorNotifierDialog(final Activity mContext, final SharedPreferences prefs)
 	{
 		final float density = mContext.getResources().getDisplayMetrics().density;
 
@@ -122,11 +122,11 @@ public class AppWidgetNotifier
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
 		ImageView img = new ImageView(mContext);
-		img.setImageResource(R.drawable.widget_adv);
+		img.setImageResource(R.drawable.editor_adv);
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);
-		tv.setText(MainScreen.getInstance().getResources().getString(R.string.widgetAdvText));
+		tv.setText(MainScreen.getInstance().getResources().getString(R.string.editorAdvText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
@@ -155,11 +155,11 @@ public class AppWidgetNotifier
 		{
 			public void onClick(View v)
 			{
-				MainScreen.callStoreInstall(mContext, "com.almalence.opencamwidget");
+				MainScreen.callStoreInstall(mContext, "com.almalence.opencameditor");
 
 				if (prefs != null)
 				{
-					prefs.edit().putBoolean("dontshowagainwidgetnotifier", true).commit();
+					prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
 
 					mContext.finish();
 				}
@@ -174,7 +174,7 @@ public class AppWidgetNotifier
 			{
 				if (prefs != null)
 				{
-					prefs.edit().putBoolean("dontshowagainwidgetnotifier", true).commit();
+					prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
 
 					mContext.finish();
 				}

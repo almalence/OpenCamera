@@ -2850,20 +2850,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	// -+- -->
 
-	// widget ad code
-	public static void callStoreWidgetInstall(Activity act)
+	//installing packages from play store
+	public static void callStoreInstall(Activity act, String id)
 	{
 		try
 		{
 			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("market://details?id=com.almalence.opencamwidget"));
+			intent.setData(Uri.parse("market://details?id="+id));
 			act.startActivity(intent);
 		} catch (ActivityNotFoundException e)
 		{
 			return;
 		}
 	}
-
+	
 	private void resetOrSaveSettings()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());

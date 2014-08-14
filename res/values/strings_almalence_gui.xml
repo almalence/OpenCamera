@@ -17,6 +17,8 @@
     <string name="Pref_Common_UseHALv3_Summary">Not stable mode. Can work on limited number of devices (Google Nexus 5, 7)</string>    
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
+    <string name="Pref_Common_Gallery_Title">Allow to select external gallaries</string>
+    <string name="Pref_Common_Gallery_Summary">Do not use ABC Editor as default viewer if installed</string>
     <string name="Pref_Common_JPEGQuality_Title">Jpeg quality</string>
     <string name="Pref_Common_VolumeButton_Title">Volume button</string>
     <string name="Pref_SaveConfiguration_Title">Save configuration</string>
