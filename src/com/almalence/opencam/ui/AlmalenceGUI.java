@@ -1454,8 +1454,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						@Override
 						public void onClick(View v)
-						{
-							MainScreen.setAutoFocusLock(true);
+						{							
 							try
 							{
 								RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
@@ -1477,6 +1476,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								afMode = supported_focus[0];
 
 							CameraController.getInstance().setCameraFocusMode(afMode);
+							MainScreen.setAutoFocusLock(true);
 
 							preferences
 									.edit()
