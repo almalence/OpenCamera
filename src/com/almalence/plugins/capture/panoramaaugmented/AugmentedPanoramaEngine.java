@@ -852,8 +852,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		GLES10.glLoadIdentity();
 		GLES10.glTranslatef(0.0f, 0.0f, -this.radiusGL);
 
-		//GLES10.glMultMatrixf(this.transform, 0);
-
 		final float scale = 0.25f;
 		GLES10.glScalef(scale, scale, scale);
 
@@ -867,11 +865,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 		GLES10.glFrontFace(GL10.GL_CW);
 
-		//GLES10.glDrawElements(GL10.GL_LINE_STRIP, 6,
-		//		GL10.GL_UNSIGNED_BYTE, AugmentedPanoramaEngine.FRAME_INDICES_BUFFER);
 		GLES10.glDrawElements(GL10.GL_LINE_LOOP, 5, GL10.GL_UNSIGNED_BYTE, FRAME_LINE_INDICES_BUFFER);
-
-		GLES10.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 		GLES10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		GLES10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);

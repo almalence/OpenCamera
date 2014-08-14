@@ -1085,7 +1085,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
 						|| this.isFirstFrame)
 				{
-					Log.e(TAG, "Taking picture using PREVIEW OLD");
 					this.takePictureUnimode(SwapHeap.SwapToHeap(data));
 				}
 			}
