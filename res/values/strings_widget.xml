@@ -15,4 +15,8 @@
 	<string name="widgetShopText">To activate widget you need to unlock any premium feature.</string>
 	<string name="widgetGoShopText">Shop</string>
 	<string name="widgetActivation">Widget activation</string>
+	<string name="widgetAdvText">Do you know that you can launch A Better Camera straight into desired mode (be it video or hdr or else)? \nAll you need is our free Widget.</string>
+	<string name="widgetInstallText">Install</string>
+	<string name="widgetNoText">No</string>
+	<string name="editorAdvText">You can edit your images in our FREE ABC Editor! Filters, effects and much more!</string>
 </resources>
