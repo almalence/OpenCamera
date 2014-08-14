@@ -357,7 +357,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		List<CameraController.Size> cs;
 		int minMPIX = MIN_MPIX_PREVIEW;
-		cs = CameraController.getInstance().getResolutionsSizeList();
+		cs = CameraController.getResolutionsSizeList();
 		ResolutionsSizesList = new ArrayList<CameraController.Size>(cs);
 
 		List<CameraController.Size> csPreview = CameraController.getInstance().getSupportedPreviewSizes();

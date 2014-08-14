@@ -778,7 +778,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
 		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
 
-		CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
+		if(!CameraController.isHALv3)
+			CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
 		
 		pluginManager.selectImageDimension(); // updates SX, SY values
 
