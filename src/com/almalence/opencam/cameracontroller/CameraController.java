@@ -24,7 +24,11 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -47,6 +51,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
@@ -1941,6 +1946,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		cp.setPictureSize(width, height);
+		setCameraParameters(cp);
 	}
 
 	public void setJpegQuality(int quality)
@@ -1952,6 +1958,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		cp.setJpegQuality(quality);
+		setCameraParameters(cp);
 	}
 
 	public float getHorizontalViewAngle()
@@ -2110,6 +2117,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if(!CameraController.takeYUVFrame) //if JPEG frame requested
 		{
+
+			
 			int frame = 0;
 			if(resultInHeap)
 				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
@@ -2123,7 +2132,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			byte[] frameData = null;
 			if(!resultInHeap)
 			{				
-				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
+				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
 				yuvFrame = 0;
 			}
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);

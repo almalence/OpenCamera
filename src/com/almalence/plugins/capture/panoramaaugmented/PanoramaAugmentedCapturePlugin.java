@@ -18,6 +18,11 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -433,6 +438,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
+		
+		MainScreen.setImageWidth(this.pictureWidth);
+		MainScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 		CameraController.getInstance().setJpegQuality(100);
@@ -1114,9 +1122,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
+			
 			if(frame == 0)
 				frame = SwapHeap.SwapToHeap(frameData);
 			goodPlace = this.engine.onImageTaken(frame, frameData, frame_len, isYUV);
+//			goodPlace = this.engine.onPictureTaken(frameData);
 
 			if (this.isFirstFrame && !isYUV && frameData != null)
 			{
