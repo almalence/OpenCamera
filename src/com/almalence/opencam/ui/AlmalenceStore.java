@@ -315,7 +315,7 @@ public class AlmalenceStore
 				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText(MainScreen.getInstance().titleSubscriptionYear);
+					price.setText("");//MainScreen.getInstance().titleSubscriptionYear);
 				break;
 			case 7:
 				// subscription month
@@ -325,7 +325,7 @@ public class AlmalenceStore
 				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText(MainScreen.getInstance().titleSubscriptionMonth);
+					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
 				break;
 			default:
 				break;

@@ -1991,24 +1991,36 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return unlockAllPurchased;
 	}
 
+	//controls subscription status request
+	private boolean subscriptionStatusRequest = false;
+	private long timeLastSubscriptionCheck = 0; //should check each 32 days 32*24*60*60*1000
+	private long days32 = 32*24*60*60*1000L;
+	
 	private void createBillingHandler()
 	{
 		try
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			
+			timeLastSubscriptionCheck = prefs.getLong("timeLastSubscriptionCheck", 0);
+			if ( (System.currentTimeMillis() - timeLastSubscriptionCheck)>days32)
+				subscriptionStatusRequest = true;
+			else
+				subscriptionStatusRequest = false;
+			
+			Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check timeLastSubscriptionCheck= " + timeLastSubscriptionCheck + " diff is " + (System.currentTimeMillis() - timeLastSubscriptionCheck) + " days32 =" + Long.toString(days32));
+
 			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
 			{
 				hdrPurchased = true;
 				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_hdr", true);
-				prefsEditor.commit();
+				prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
 			}
 			if (isInstalled("com.almalence.panorama.smoothpanorama"))
 			{
 				panoramaPurchased = true;
 				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_panorama", true);
-				prefsEditor.commit();
+				prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
 			}
 
 			String base64EncodedPublicKeyGoogle = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
@@ -2046,9 +2058,25 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
 
-						// subscription
-						additionalSkuList.add(SKU_SUBSCRIPTION_MONTH);
-						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
+						if (subscriptionStatusRequest)
+						{
+							Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check.");
+							
+							// subscription month
+							additionalSkuList.add(SKU_SUBSCRIPTION_MONTH);
+							//reset subscription status
+							unlockAllSubscriptionMonth = false;
+							prefs.edit().putBoolean("subscription_unlock_all_month",false).commit();
+						
+							// subscription year
+							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
+							//reset subscription status
+							unlockAllSubscriptionYear = false;
+							prefs.edit().putBoolean("subscription_unlock_all_year",false).commit();
+							
+							timeLastSubscriptionCheck = System.currentTimeMillis();
+							prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
+						}
 
 						// for sale
 						additionalSkuList.add(SKU_SALE1);
@@ -2149,7 +2177,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				groupShotPurchased = true;
 				prefsEditor.putBoolean("plugin_almalence_groupshot",true).commit();
 			}
-			
 			if (inventory.hasPurchase(SKU_SUBSCRIPTION_MONTH))
 			{
 				unlockAllSubscriptionMonth = true;
@@ -2419,8 +2446,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			hdrPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_hdr", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_PANORAMA))
 		{
@@ -2428,8 +2454,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			panoramaPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_panorama", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_UNLOCK_ALL))
 		{
@@ -2437,8 +2462,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			unlockAllPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("unlock_all_forever", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("unlock_all_forever", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON))
 		{
@@ -2446,8 +2470,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			unlockAllPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("unlock_all_forever", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("unlock_all_forever", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_MOVING_SEQ))
 		{
@@ -2455,8 +2478,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			objectRemovalBurstPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_GROUPSHOT))
 		{
@@ -2464,8 +2486,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			groupShotPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_groupshot", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("plugin_almalence_groupshot", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_SUBSCRIPTION_MONTH))
 		{
@@ -2473,8 +2494,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			unlockAllSubscriptionMonth = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_month", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("subscription_unlock_all_month", true).commit();
+			
+			timeLastSubscriptionCheck = System.currentTimeMillis();
+			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
 		}
 		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
 		{
@@ -2482,8 +2505,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			unlockAllSubscriptionYear = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_year", true);
-			prefsEditor.commit();
+			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
+			
+			timeLastSubscriptionCheck = System.currentTimeMillis();
+			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
 		}
 	}
 
