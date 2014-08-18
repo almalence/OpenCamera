@@ -2478,6 +2478,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					int previewWidth = MainScreen.getPreviewWidth();
 					int previewHeight = MainScreen.getPreviewHeight();
 					
+					// play tick sound
+					MainScreen.getGUIManager().showCaptureIndication();
+					MainScreen.getInstance().playShutter();
+					
 					if(imageWidth == previewWidth && imageHeight == previewHeight)
 						takePreviewFrame = true;
 					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
@@ -2485,6 +2489,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 						camera.setPreviewCallback(null);
 						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					
 					}
 				}
 				break;

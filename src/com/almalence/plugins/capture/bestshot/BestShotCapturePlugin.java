@@ -177,10 +177,6 @@ public class BestShotCapturePlugin extends PluginCapture
 			refreshPreferences();
 			takingAlready = true;
 			
-			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
 			try
 			{
 				int[] pause = new int[imageAmount];

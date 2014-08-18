@@ -544,9 +544,6 @@ public class PreshotCapturePlugin extends PluginCapture
 					return;
 				inCapture = true;
 
-				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
-
 				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
 				counter++;
 			}

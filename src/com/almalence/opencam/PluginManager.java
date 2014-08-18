@@ -2731,6 +2731,32 @@ public class PluginManager implements PluginManagerInterface
 					{
 						file.delete();
 						modifiedFile.renameTo(file);
+						
+						File[] fList = new File(Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/").listFiles();
+						for (File f : fList) {
+						    if (f.getAbsolutePath().contains("tmp_raw_img")) {
+						        String fName = file.getAbsolutePath().replace("jpg", "raw");
+						        
+						        File resRawFile = new File(fName);
+						        
+						        InputStream in = new FileInputStream(f);
+								OutputStream out = new FileOutputStream(resRawFile);
+
+								// Transfer bytes from in to out
+								byte[] buf = new byte[1024];
+								int len;
+								while ((len = in.read(buf)) > 0)
+								{
+									out.write(buf, 0, len);
+								}
+								in.close();
+								out.close();
+								
+								f.delete();
+								break;
+						    }
+						}
+						File rawFile = new File(CapturePlugin.CAMERA_IMAGE_BUCKET_NAME);
 					} else
 					{
 						copyToForceFileName(modifiedFile);
