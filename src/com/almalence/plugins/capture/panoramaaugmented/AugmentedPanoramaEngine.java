@@ -1279,6 +1279,13 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, 0, 0,
 										1);
 								AugmentedFrameTaken.this.nv21address = yuv_rotated;
+								
+//								int frameLen = AugmentedPanoramaEngine.this.width*AugmentedPanoramaEngine.this.height+2*((AugmentedPanoramaEngine.this.width+1)/2)*((AugmentedPanoramaEngine.this.height+1)/2);
+//								byte[] yuvRotated = new byte[frameLen];
+//								ImageConversion.TransformNV21(img_data, yuvRotated,
+//										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, 0, 0,
+//										1);
+//								AugmentedFrameTaken.this.nv21address = SwapHeap.SwapToHeap(yuvRotated);
 							}
 						}
 					}
