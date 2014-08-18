@@ -77,7 +77,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	public GyroVFPlugin()
 	{
 		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.almalence_plugin_vf_level_on,
-				"Gyrovertical");
+				"Level");
 
 		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);

@@ -302,4 +302,7 @@ public abstract class GUI
 	public void hideStore()
 	{
 	}
+	
+	public void openGallery()
+	{}
 }
