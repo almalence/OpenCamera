@@ -85,13 +85,14 @@ public class AppEditorNotifier
 
 	public static boolean showEditorNotifierDialogIfNeeded(final Activity mContext)
 	{
+		final SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
 		// check if installed
 		if (isABCEditorInstalled(MainScreen.getInstance()))
 		{
+			prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
 			return false;
 		}
 
-		final SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
 		if (prefs.getBoolean("dontshowagaineditornotifier", false))
 		{
 			return false;
@@ -109,6 +110,7 @@ public class AppEditorNotifier
 //				return true;
 //			}
 //		}
+		showEditorNotifierDialog(mContext, prefs);
 
 		return true;
 	}
@@ -156,14 +158,6 @@ public class AppEditorNotifier
 			public void onClick(View v)
 			{
 				MainScreen.callStoreInstall(mContext, "com.almalence.opencameditor");
-
-				if (prefs != null)
-				{
-					prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
-
-					mContext.finish();
-				}
-
 				dialog.dismiss();
 			}
 		});
@@ -173,13 +167,10 @@ public class AppEditorNotifier
 			public void onClick(View v)
 			{
 				if (prefs != null)
-				{
 					prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
 
-					mContext.finish();
-				}
-
 				dialog.dismiss();
+				MainScreen.getInstance().guiManager.openGallery();
 			}
 		});
 

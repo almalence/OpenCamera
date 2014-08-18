@@ -5799,7 +5799,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		return res > 0 ? true : false;
 	}
 
-	private void openGallery()
+	public void openGallery()
 	{
 		if (mThumbnail == null)
 			return;
@@ -5820,12 +5820,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (AppEditorNotifier.isABCEditorInstalled(MainScreen.getInstance()))
 			{
 				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));//com.almalence.opencameditor
-				//Intent LaunchIntent = MainScreen.getInstance().getPackageManager().getLaunchIntentForPackage("com.almalence.opencameditor");
-				//MainScreen.getInstance().startActivity(LaunchIntent);
 			}			
 			//if not installed - show that we have editor and let user install it of run standard dialog
 			else
-				AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance());
+			{
+				//if not - show default gallery
+				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance()))
+					openExternalGallery(uri);
+			}
 		}
 	}
 	
