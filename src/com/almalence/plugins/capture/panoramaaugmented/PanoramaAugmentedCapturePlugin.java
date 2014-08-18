@@ -1082,7 +1082,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		try
 		{
 			Log.e(TAG, "Perform CAPTURE Panorama");
-			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0], new int[0], false);
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
