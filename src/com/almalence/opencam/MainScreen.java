@@ -2102,224 +2102,126 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								summarySubscriptionMonth	= "";
 	public String								summarySubscriptionYear		= "";
 
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
-																			{
-																				public void onQueryInventoryFinished(
-																						IabResult result,
-																						Inventory inventory)
-																				{
-																					if (inventory == null)
-																					{
-																						Log.e("Main billing",
-																								"mGotInventoryListener inventory null ");
-																						return;
-																					}
+	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		
+		= new IabHelper.QueryInventoryFinishedListener()
+			{
+				public void onQueryInventoryFinished(
+						IabResult result,
+						Inventory inventory)
+				{
+					if (inventory == null)
+					{
+						Log.e("Main billing","mGotInventoryListener inventory null ");
+				return;
+			}
+			
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
+							.getMainContext());
 
-																					SharedPreferences prefs = PreferenceManager
-																							.getDefaultSharedPreferences(MainScreen
-																									.getMainContext());
+			Editor prefsEditor = prefs.edit();
+			if (inventory.hasPurchase(SKU_HDR))
+			{
+				hdrPurchased = true;
+				prefsEditor.putBoolean("plugin_almalence_hdr",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_PANORAMA))
+			{
+				panoramaPurchased = true;
+				prefsEditor.putBoolean("plugin_almalence_panorama",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_UNLOCK_ALL))
+			{
+				unlockAllPurchased = true;
+				prefsEditor.putBoolean("unlock_all_forever",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_UNLOCK_ALL_COUPON))
+			{
+				unlockAllPurchased = true;
+				prefsEditor.putBoolean("unlock_all_forever",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_MOVING_SEQ))
+			{
+				objectRemovalBurstPurchased = true;
+				prefsEditor.putBoolean("plugin_almalence_moving_burst",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_GROUPSHOT))
+			{
+				groupShotPurchased = true;
+				prefsEditor.putBoolean("plugin_almalence_groupshot",true).commit();
+			}
+			
+			if (inventory.hasPurchase(SKU_SUBSCRIPTION_MONTH))
+			{
+				unlockAllSubscriptionMonth = true;
+				prefsEditor.putBoolean("subscription_unlock_all_month",true).commit();
+			}
+			if (inventory.hasPurchase(SKU_SUBSCRIPTION_YEAR))
+			{
+				unlockAllSubscriptionYear = true;
+				prefsEditor.putBoolean("subscription_unlock_all_year",true).commit();
+			}
+			
+			try
+			{
+				String[] separated = inventory.getSkuDetails(SKU_SALE1).getPrice().split(",");
+				int price1 = Integer.valueOf(separated[0]);
+				String[] separated2 = inventory.getSkuDetails(SKU_SALE2).getPrice().split(",");
+				int price2 = Integer.valueOf(separated2[0]);
 
-																					if (inventory.hasPurchase(SKU_HDR))
-																					{
-																						hdrPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor.putBoolean(
-																								"plugin_almalence_hdr",
-																								true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_PANORAMA))
-																					{
-																						panoramaPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_panorama",
-																										true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_UNLOCK_ALL))
-																					{
-																						unlockAllPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
-																					{
-																						unlockAllPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_MOVING_SEQ))
-																					{
-																						objectRemovalBurstPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_moving_burst",
-																										true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_GROUPSHOT))
-																					{
-																						groupShotPurchased = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_groupshot",
-																										true);
-																						prefsEditor.commit();
-																					}
+				if (price1 < price2)
+					bOnSale = true;
+				else
+					bOnSale = false;
 
-																					if (inventory
-																							.hasPurchase(SKU_SUBSCRIPTION_MONTH))
-																					{
-																						unlockAllSubscriptionMonth = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor
-																								.putBoolean(
-																										"subscription_unlock_all_month",
-																										true);
-																						prefsEditor.commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-																					{
-																						unlockAllSubscriptionYear = true;
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor
-																								.putBoolean(
-																										"subscription_unlock_all_year",
-																										true);
-																						prefsEditor.commit();
-																					}
+				prefsEditor.putBoolean("bOnSale", bOnSale).commit();
 
-																					try
-																					{
-
-																						String[] separated = inventory
-																								.getSkuDetails(
-																										SKU_SALE1)
-																								.getPrice().split(",");
-																						int price1 = Integer
-																								.valueOf(separated[0]);
-																						String[] separated2 = inventory
-																								.getSkuDetails(
-																										SKU_SALE2)
-																								.getPrice().split(",");
-																						int price2 = Integer
-																								.valueOf(separated2[0]);
-
-																						if (price1 < price2)
-																							bOnSale = true;
-																						else
-																							bOnSale = false;
-
-																						Editor prefsEditor = prefs
-																								.edit();
-																						prefsEditor.putBoolean(
-																								"bOnSale", bOnSale);
-																						prefsEditor.commit();
-
-																						Log.e("Main billing SALE",
-																								"Sale status is "
-																										+ bOnSale);
-																					} catch (Exception e)
-																					{
-																						Log.e("Main billing SALE",
-																								"No sale data available");
-																						bOnSale = false;
-																					}
-
-																					try
-																					{
-																						titleUnlockAll = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL)
-																								.getPrice();
-																						titleUnlockAllCoupon = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL_COUPON)
-																								.getPrice();
-																						titleUnlockHDR = inventory
-																								.getSkuDetails(SKU_HDR)
-																								.getPrice();
-																						titleUnlockPano = inventory
-																								.getSkuDetails(
-																										SKU_PANORAMA)
-																								.getPrice();
-																						titleUnlockMoving = inventory
-																								.getSkuDetails(
-																										SKU_MOVING_SEQ)
-																								.getPrice();
-																						titleUnlockGroup = inventory
-																								.getSkuDetails(
-																										SKU_GROUPSHOT)
-																								.getPrice();
-
-																						titleSubscriptionMonth = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_MONTH)
-																								.getPrice();
-																						titleSubscriptionYear = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_YEAR)
-																								.getPrice();
-
-																						summaryUnlockAll = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL)
-																								.getDescription();
-																						summaryUnlockHDR = inventory
-																								.getSkuDetails(SKU_HDR)
-																								.getDescription();
-																						summaryUnlockPano = inventory
-																								.getSkuDetails(
-																										SKU_PANORAMA)
-																								.getDescription();
-																						summaryUnlockMoving = inventory
-																								.getSkuDetails(
-																										SKU_MOVING_SEQ)
-																								.getDescription();
-																						summaryUnlockGroup = inventory
-																								.getSkuDetails(
-																										SKU_GROUPSHOT)
-																								.getDescription();
-
-																						summarySubscriptionMonth = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_MONTH)
-																								.getDescription();
-																						summarySubscriptionYear = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_YEAR)
-																								.getDescription();
-																					} catch (Exception e)
-																					{
-																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-																								"Error Getting data for store!!!!!!!!");
-																					}
-																				}
-																			};
+				Log.e("Main billing SALE","Sale status is "+ bOnSale);
+			} catch (Exception e)
+			{
+				Log.e("Main billing SALE","No sale data available");
+				bOnSale = false;
+			}
+			
+			try
+			{
+				titleUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getPrice();
+				titleUnlockAllCoupon = inventory.getSkuDetails(SKU_UNLOCK_ALL_COUPON).getPrice();
+				titleUnlockHDR = inventory.getSkuDetails(SKU_HDR).getPrice();
+				titleUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getPrice();
+				titleUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getPrice();
+				titleUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getPrice();
+			
+				summaryUnlockAll = inventory.getSkuDetails(SKU_UNLOCK_ALL).getDescription();
+				summaryUnlockHDR = inventory.getSkuDetails(SKU_HDR).getDescription();
+				summaryUnlockPano = inventory.getSkuDetails(SKU_PANORAMA).getDescription();
+				summaryUnlockMoving = inventory.getSkuDetails(SKU_MOVING_SEQ).getDescription();
+				summaryUnlockGroup = inventory.getSkuDetails(SKU_GROUPSHOT).getDescription();
+			} catch (Exception e)
+			{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+					"Error Getting data for store!!!!!!!!");
+			}
+			
+			try
+			{
+				titleSubscriptionMonth = inventory.getSkuDetails(SKU_SUBSCRIPTION_MONTH).getPrice();
+				summarySubscriptionMonth = inventory.getSkuDetails(SKU_SUBSCRIPTION_MONTH).getDescription();
+			}catch (Exception e)
+			{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+					"Error Getting data for store SubscriptionMonth!!!!!!!!");
+			}
+			try
+			{
+				titleSubscriptionYear = inventory.getSkuDetails(SKU_SUBSCRIPTION_YEAR).getPrice();
+				summarySubscriptionYear = inventory.getSkuDetails(SKU_SUBSCRIPTION_YEAR).getDescription();
+			} catch (Exception e)
+			{
+				Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+					"Error Getting data for store SubscriptionYear!!!!!!!!");
+			}			
+			}
+			};
 
 	private int									HDR_REQUEST					= 100;
 	private int									PANORAMA_REQUEST			= 101;
@@ -2484,18 +2386,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	// Callback for when purchase from preferences is finished
-	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-																				{
-																					public void onIabPurchaseFinished(
-																							IabResult result,
-																							Purchase purchase)
-																					{
-																						showStore = true;
-																						purchaseFinished(result,
-																								purchase);
-																					}
+	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	
+		= new IabHelper.OnIabPurchaseFinishedListener()
+		{
+			public void onIabPurchaseFinished(
+					IabResult result,
+					Purchase purchase)
+			{
+				showStore = true;
+				purchaseFinished(result,
+						purchase);
+			}
 
-																				};
+		};
 
 	private void purchaseFinished(IabResult result, Purchase purchase)
 	{
@@ -2596,16 +2499,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	IabHelper.OnIabPurchaseFinishedListener	mPurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-																		{
-																			public void onIabPurchaseFinished(
-																					IabResult result, Purchase purchase)
-																			{
+	IabHelper.OnIabPurchaseFinishedListener	mPurchaseFinishedListener	= 
+			new IabHelper.OnIabPurchaseFinishedListener()
+			{
+				public void onIabPurchaseFinished(
+						IabResult result, Purchase purchase)
+				{
 
-																				guiManager.showStore();
-																				purchaseFinished(result, purchase);
-																			}
-																		};
+					guiManager.showStore();
+					purchaseFinished(result, purchase);
+				}
+			};
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
