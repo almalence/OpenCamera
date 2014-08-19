@@ -18,6 +18,12 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -39,7 +45,8 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
+import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -62,8 +69,8 @@ import android.widget.RelativeLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
-
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -558,6 +565,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
+		
+		MainScreen.setImageWidth(this.pictureWidth);
+		MainScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 		CameraController.getInstance().setJpegQuality(100);
@@ -892,7 +902,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 						ad.show();
 
 						return false;
-					} else
+					}
+					else
 					{
 						return true;
 					}
@@ -1068,6 +1079,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onPreviewFrame(final byte[] data)
 	{
+		Log.e(TAG, "onPreviewFrame()");
 		this.previewRestartFlag = false;
 
 		if (!this.prefHardwareGyroscope && this.sensorSoftGyroscope != null)
@@ -1196,9 +1208,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		try
 		{
 			Log.e(TAG, "Perform CAPTURE Panorama");
-			requestID = CameraController.captureImage(1, CameraController.YUV);
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			e.printStackTrace();
 
@@ -1236,6 +1248,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 			}
 
+			if (frame == 0)
+			{
+				frame = SwapHeap.SwapToHeap(frameData);
+				frame_len = frameData.length;
+			}
+
 			if (isYUV)
 			{
 				goodPlace = this.engine.onFrameAdded(true, frame, true);
@@ -1245,7 +1263,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);
 			}
 
-			if (this.isFirstFrame && !isYUV)
+			if (this.isFirstFrame && !isYUV && frameData != null)
 			{
 				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			}

@@ -25,7 +25,7 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Debug;
@@ -135,7 +135,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pauseBetweenShots, null);
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pauseBetweenShots, null, true);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -178,7 +178,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1 && !isYUV)
+		if (imagesTaken == 1 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		try
 		{
@@ -357,7 +357,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		List<CameraController.Size> cs;
 		int minMPIX = MIN_MPIX_PREVIEW;
-		cs = CameraController.getInstance().getResolutionsSizeList();
+		cs = CameraController.getResolutionsSizeList();
 		ResolutionsSizesList = new ArrayList<CameraController.Size>(cs);
 
 		List<CameraController.Size> csPreview = CameraController.getInstance().getSupportedPreviewSizes();

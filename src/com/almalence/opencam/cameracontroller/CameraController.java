@@ -24,7 +24,11 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -47,6 +51,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
@@ -566,7 +571,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
-		if (null == mainContext.getSystemService("camera"))
+		if (!(Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7")) || null == mainContext.getSystemService("camera"))
 		{
 			isHALv3 = false;
 			isHALv3Supported = false;
@@ -778,7 +783,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
 		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
 
-		CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
+		if(!CameraController.isHALv3)
+			CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
 		
 		pluginManager.selectImageDimension(); // updates SX, SY values
 
@@ -1940,6 +1946,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		cp.setPictureSize(width, height);
+		setCameraParameters(cp);
 	}
 
 	public void setJpegQuality(int quality)
@@ -1951,6 +1958,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		cp.setJpegQuality(quality);
+		setCameraParameters(cp);
 	}
 
 	public float getHorizontalViewAngle()
@@ -1982,31 +1990,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// ------------ CAPTURE AND FOCUS FUNCTION ----------------------------
 
-	public static int captureImage(int nFrames, int format)
-	{
-		// In old camera interface we can capture only JPEG images, so image
-		// format parameter will be ignored.
-		if (!CameraController.isHALv3)
-		{
-			synchronized (SYNC_OBJECT)
-			{
-				takeYUVFrame = (format == CameraController.YUV);
-				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-//				if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-//				{
-//					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-//					camera.setPreviewCallback(null);
-//					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-//					return 0;
-//				}
-
-//				return -1;
-				return 0;
-			}
-		} else
-			return HALv3.captureImageHALv3(nFrames, format);
-	}
-
 	// Experimental code to take multiple images. Works only with HALv3
 	// interface in API 19(currently minimum API version for Android L increased to 21)
 	protected static int[]		pauseBetweenShots	= new int[0];
@@ -2020,14 +2003,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean	takePreviewFrame 	= false;
 	
 	protected static boolean	takeYUVFrame 		= false;
+	
+	protected static boolean	resultInHeap 		= false;
 
-	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested)
+	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, boolean resInHeap)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
 
 		total_frames = nFrames;
 		frame_num = 0;
+		
+		resultInHeap = resInHeap;
 		
 		if (!CameraController.isHALv3)
 		{
@@ -2038,7 +2025,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
 			return 0;
 		} else
-			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested);
+			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, resultInHeap);
 	}
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
@@ -2130,14 +2117,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if(!CameraController.takeYUVFrame) //if JPEG frame requested
 		{
-			int frame = SwapHeap.SwapToHeap(paramArrayOfByte);
+
+			
+			int frame = 0;
+			if(resultInHeap)
+				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, false);
 		}
 		else //is YUV frame requested
 		{
 			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
 			int frameLen = MainScreen.getImageWidth()*MainScreen.getImageHeight()+2*((MainScreen.getImageWidth()+1)/2)*((MainScreen.getImageHeight()+1)/2);
-			byte[] frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+			
+			byte[] frameData = null;
+			if(!resultInHeap)
+			{				
+				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+				yuvFrame = 0;
+			}
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 		
@@ -2176,7 +2173,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			takePreviewFrame = false;
 			if(CameraController.takeYUVFrame)
 			{
-				int frame = SwapHeap.SwapToHeap(data);
+				int frame = 0;
+				if(resultInHeap)
+					frame = SwapHeap.SwapToHeap(data);
 				pluginManager.onImageTaken(frame, data, data.length, true);
 			}
 			else
@@ -2479,6 +2478,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					int previewWidth = MainScreen.getPreviewWidth();
 					int previewHeight = MainScreen.getPreviewHeight();
 					
+					// play tick sound
+					MainScreen.getGUIManager().showCaptureIndication();
+					MainScreen.getInstance().playShutter();
+					
 					if(imageWidth == previewWidth && imageHeight == previewHeight)
 						takePreviewFrame = true;
 					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
@@ -2486,6 +2489,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 						camera.setPreviewCallback(null);
 						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					
 					}
 				}
 				break;

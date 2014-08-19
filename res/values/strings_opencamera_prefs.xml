@@ -33,5 +33,6 @@
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
+    <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
     
 </resources>

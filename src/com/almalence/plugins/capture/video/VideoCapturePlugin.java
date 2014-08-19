@@ -2174,7 +2174,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		try
 		{
-			CameraController.captureImage(1, CameraController.JPEG);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -2306,7 +2306,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
 		
-		if(!isYUV)
+		if(!isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try

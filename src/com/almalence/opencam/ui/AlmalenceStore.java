@@ -41,6 +41,7 @@ import com.almalence.opencam.R;
 import com.almalence.ui.RotateImageView;
 
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -95,9 +96,7 @@ public class AlmalenceStore
 		imgWhatNewNext.setVisibility(View.INVISIBLE);
 		imgWhatNewPrev.setVisibility(View.INVISIBLE);
 		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
-		text_whatsnew.setText("version 3.24" + "\n- exif tags fixed" + "\n- auto backup/sharing fixed"
-				+ "\n- fixed work from 3rd party apps" + "\n- UI corrections" + "\n- video on some devices improved"
-				+ "\n- stability fixes");
+		text_whatsnew.setText(MainScreen.getInstance().getResources().getString(R.string.storeWhatsnew));
 
 		page.addView(whatsnew);
 		pages.add(page);
@@ -108,7 +107,7 @@ public class AlmalenceStore
 		final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
 		final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
 		TextView text_features = (TextView) features.findViewById(R.id.text_features);
-		text_features.setText("BLA BLA BLA BLA");
+		text_features.setText(MainScreen.getInstance().getResources().getString(R.string.storeFeatures));
 
 		page.addView(features);
 		pages.add(page);
@@ -118,11 +117,7 @@ public class AlmalenceStore
 		RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
 		final ImageView imgTipsPrev = (ImageView) tips.findViewById(R.id.storeTips);
 		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
-		text_tips
-				.setText("ABC tips and tricks"
-						+ "\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you'd like."
-						+ "\n\nSwipe left/write on main scree to see more/less info on the screen - histogram, grids, info controls, top quick settings menu."
-						+ "\n\nPull down top menu to see all quick settings.");
+		text_tips.setText(MainScreen.getInstance().getResources().getString(R.string.storeTips));
 
 		page.addView(tips);
 		pages.add(page);
@@ -201,6 +196,26 @@ public class AlmalenceStore
 		final RelativeLayout pagerLayoutMain = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain));
 		pagerLayoutMain.setVisibility(View.VISIBLE);
 		pagerLayoutMain.bringToFront();
+
+
+		// We need this timer, to show store on top, after we return from google
+		// play.
+		// In MainScreen there is timer, which brings main buttons on top,
+		// after MainScreen activity resumed.
+		// So this timer "blocks" timer from MainScreen if we want to show
+		// store.
+		new CountDownTimer(600, 10)
+		{
+			public void onTick(long millisUntilFinished)
+			{
+				pagerLayoutMain.bringToFront();
+			}
+
+			public void onFinish()
+			{
+				pagerLayoutMain.bringToFront();
+			}
+		}.start();
 	}
 
 	public void hideStore()
@@ -315,7 +330,7 @@ public class AlmalenceStore
 				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText(MainScreen.getInstance().titleSubscriptionYear);
+					price.setText("");//MainScreen.getInstance().titleSubscriptionYear);
 				break;
 			case 7:
 				// subscription month
@@ -325,7 +340,7 @@ public class AlmalenceStore
 				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
-					price.setText(MainScreen.getInstance().titleSubscriptionMonth);
+					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
 				break;
 			default:
 				break;

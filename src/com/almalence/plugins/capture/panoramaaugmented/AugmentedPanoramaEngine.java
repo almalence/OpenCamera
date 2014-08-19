@@ -799,6 +799,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				frame = new AugmentedFrameTaken(targetFrame.angle,
 						position, topVec, transform, image, (Integer)args[0]);
 			}
+			
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
 				AugmentedPanoramaEngine.this.frames.add(frame);
@@ -907,14 +908,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					GLU.gluLookAt(gl, 0.0f, 0.0f, 0.0f,
 							this.currentVector.x, this.currentVector.y, this.currentVector.z,
 							this.topVector.x, this.topVector.y, this.topVector.z);
+				}
 
-					synchronized (this.frames)
+				synchronized (this.frames)
+				{
+					for (final AugmentedFrameTaken frame : this.frames)
 					{
-						for (final AugmentedFrameTaken frame : this.frames)
-						{
-							frame.distance();
-							frame.draw(gl);
-						}
+						frame.distance();
+						frame.draw(gl);
 					}
 				}
 

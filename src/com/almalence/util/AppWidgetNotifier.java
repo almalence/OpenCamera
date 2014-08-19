@@ -126,17 +126,17 @@ public class AppWidgetNotifier
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);
-		tv.setText("Do you know that you can launch A Better Camera straight into desired mode (be it video or hdr or else)? \nAll you need is our free Widget.");
+		tv.setText(MainScreen.getInstance().getResources().getString(R.string.widgetAdvText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button b1 = new Button(mContext);
-		b1.setText("Install");
+		b1.setText(MainScreen.getInstance().getResources().getString(R.string.widgetInstallText));
 		ll.addView(b1);
 
 		Button b3 = new Button(mContext);
-		b3.setText("No");
+		b3.setText(MainScreen.getInstance().getResources().getString(R.string.widgetNoText));
 		ll.addView(b3);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -155,7 +155,7 @@ public class AppWidgetNotifier
 		{
 			public void onClick(View v)
 			{
-				MainScreen.callStoreWidgetInstall(mContext);
+				MainScreen.callStoreInstall(mContext, "com.almalence.opencamwidget");
 
 				if (prefs != null)
 				{

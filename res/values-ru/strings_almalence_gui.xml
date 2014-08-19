@@ -16,13 +16,13 @@
     <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
+	<string name="Pref_Common_Gallery_Title">Разрешить выбор внешних галерей</string>
+    <string name="Pref_Common_Gallery_Summary">Не использовать редакто ABC по умолчанию, если он установлен</string>
     <string name="Pref_Common_JPEGQuality_Title">Качество jpeg</string>
     <string name="blockingText">Подождите, идет обработка...</string>
 	<string name="helpTextDontShow">Не показывать</string>
-
 	<string name="Pref_Common_HeadsetTap_Title">Кнопки наушников</string>
     <string name="Pref_Common_HeadsetTap_Summary">Использовать кнопки наушников для съемки</string>
-    
     <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
     <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>
     <string name="Pref_SaveConfiguration_ShootingMode_Title">Режимы съемки</string>

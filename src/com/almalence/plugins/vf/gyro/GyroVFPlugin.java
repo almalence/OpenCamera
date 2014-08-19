@@ -76,8 +76,8 @@ public class GyroVFPlugin extends PluginViewfinder
 
 	public GyroVFPlugin()
 	{
-		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.almalence_plugin_vf_level_on,
-				"Gyrovertical");
+		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.gui_almalence_settings_gyro,
+				"Level");
 
 		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -182,7 +182,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 		if (mGyroState == ON)
 		{
-			quickControlIconID = R.drawable.almalence_plugin_vf_level_on;
+			quickControlIconID = R.drawable.gui_almalence_settings_gyro;
 			if (mHorizonIndicatorContainer != null)
 			{
 				mHorizonIndicatorContainer.setVisibility(View.VISIBLE);
@@ -234,7 +234,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			editor.putBoolean("PrefGyroVF", false);
 		} else
 		{
-			quickControlIconID = R.drawable.almalence_plugin_vf_level_on;
+			quickControlIconID = R.drawable.gui_almalence_settings_gyro;
 			editor.putBoolean("PrefGyroVF", true);
 		}
 		editor.commit();

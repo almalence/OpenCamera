@@ -34,7 +34,7 @@ import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLU;
@@ -1003,7 +1003,7 @@ public class NightCapturePlugin extends PluginCapture
 		
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (frameNumber == 0 && !isYUV)
+		if (frameNumber == 0 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		
 		
@@ -1056,11 +1056,7 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				// play tick sound
-				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
-				
-				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null);
+				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null, true);
 			} catch (RuntimeException e)
 			{
 				Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");

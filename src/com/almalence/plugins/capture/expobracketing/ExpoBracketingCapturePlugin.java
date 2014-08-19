@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -541,11 +541,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		MainScreen.getGUIManager().showCaptureIndication();
-		MainScreen.getInstance().playShutter();
-		
 		boolean isHDRMode = PluginManager.getInstance().getActiveModeID().equals("hdrmode");
-		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues);
+		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues, true);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)

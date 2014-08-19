@@ -239,16 +239,16 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_util_ImageConversion_resize
 		jint outWidth, jint outHeight,
 		jboolean mirror)
 {
-	unsigned char * data_rgba = (unsigned char*)malloc(inHeight*inWidth*sizeof(unsigned int));
+	unsigned int * data_rgba = (unsigned int*)malloc(inHeight*inWidth*sizeof(unsigned int));
 	if (data_rgba == NULL)
 	{
 		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "nativeresizeJpeg2RGBA(): malloc() returned NULL");
 		return;
 	}
 
-	JPEG2RGBA(data_rgba, (unsigned char*)jpeg, jpeg_length);
+	JPEG2RGBA((unsigned char*)data_rgba, (unsigned char*)jpeg, jpeg_length);
 
-	unsigned char *rgb_bytes = (unsigned char *)env->GetByteArrayElements(rgb_out, 0);
+	unsigned char * rgb_bytes = (unsigned char*)env->GetByteArrayElements(rgb_out, 0);
 
 	const int tripleHeight = (outHeight - 1) * 4;
 	int yoffset = tripleHeight;

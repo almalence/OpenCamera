@@ -18,24 +18,17 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.standard;
 
-import java.nio.ByteBuffer;
-
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
-import android.media.Image;
-import android.os.Message;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-
-import com.almalence.YuvImage;
-import com.almalence.SwapHeap;
+import android2.hardware.camera2.CaptureResult;
 
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
@@ -62,6 +55,7 @@ public class CapturePlugin extends PluginCapture
 {
 	private static String	ModePreference; // 0=DRO On 1=DRO Off
 	private Switch			modeSwitcher;
+	public static final String CAMERA_IMAGE_BUCKET_NAME = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/tmp_raw_img" ;
 
 	public CapturePlugin()
 	{
@@ -140,6 +134,14 @@ public class CapturePlugin extends PluginCapture
 			int ev = prefs.getInt(MainScreen.sEvPref, 0);
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, ev);
+		}
+		else {
+			Camera.Parameters params = CameraController.getCamera().getParameters();
+			params.set("rawsave-mode", "1");
+			long dateTaken = System.currentTimeMillis();
+            String mRawCaptureFileName = CAMERA_IMAGE_BUCKET_NAME;
+            params.set("rawfname", mRawCaptureFileName + ".raw");
+            CameraController.getInstance().setCameraParameters(params);
 		}
 	}
 
@@ -227,20 +229,12 @@ public class CapturePlugin extends PluginCapture
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
 			Log.e("CapturePlugin", "next frame message received");
-			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
-			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
-
 			try
 			{
 				if (ModePreference.compareTo("0") == 0)
-					requestID = CameraController.captureImage(1, CameraController.YUV);
+					requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0], new int[0], true);
 				else
-					requestID = CameraController.captureImage(1, CameraController.JPEG);
+					requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
 			} catch (Exception e)
 			{
 				e.printStackTrace();

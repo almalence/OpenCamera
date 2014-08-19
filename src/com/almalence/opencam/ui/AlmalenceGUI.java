@@ -122,6 +122,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
  import com.almalence.opencam_plus.R;
  +++ --> */
 
+import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 
 /***
@@ -1453,8 +1454,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						@Override
 						public void onClick(View v)
-						{
-							MainScreen.setAutoFocusLock(true);
+						{							
 							try
 							{
 								RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
@@ -1476,6 +1476,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								afMode = supported_focus[0];
 
 							CameraController.getInstance().setCameraFocusMode(afMode);
+							MainScreen.setAutoFocusLock(true);
 
 							preferences
 									.edit()
@@ -5798,7 +5799,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		return res > 0 ? true : false;
 	}
 
-	private void openGallery()
+	public void openGallery()
 	{
 		if (mThumbnail == null)
 			return;
@@ -5806,7 +5807,32 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Uri uri = this.mThumbnail.getUri();
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_STOP_CAPTURE);
-
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean isAllowedExternal =  prefs.getBoolean(MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
+		if (isAllowedExternal)
+		{
+			openExternalGallery(uri);
+		}
+		else
+		{
+			//if installed - run ABC Editor
+			if (AppEditorNotifier.isABCEditorInstalled(MainScreen.getInstance()))
+			{
+				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));//com.almalence.opencameditor
+			}			
+			//if not installed - show that we have editor and let user install it of run standard dialog
+			else
+			{
+				//if not - show default gallery
+				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance()))
+					openExternalGallery(uri);
+			}
+		}
+	}
+	
+	private void openExternalGallery(Uri uri)
+	{
 		try
 		{
 			MainScreen.getInstance().startActivity(new Intent(Intent.ACTION_VIEW, uri));
