@@ -41,6 +41,7 @@ import com.almalence.opencam.R;
 import com.almalence.ui.RotateImageView;
 
 import android.content.SharedPreferences;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
