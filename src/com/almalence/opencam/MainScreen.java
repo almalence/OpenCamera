@@ -2008,7 +2008,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			else
 				subscriptionStatusRequest = false;
 			
-			Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check timeLastSubscriptionCheck= " + timeLastSubscriptionCheck + " diff is " + (System.currentTimeMillis() - timeLastSubscriptionCheck) + " days32 =" + Long.toString(days32));
+			//Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check timeLastSubscriptionCheck= " + timeLastSubscriptionCheck + " diff is " + (System.currentTimeMillis() - timeLastSubscriptionCheck) + " days32 =" + Long.toString(days32));
 
 			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
 			{
@@ -2060,7 +2060,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 						if (subscriptionStatusRequest)
 						{
-							Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check.");
+							//Log.e("Main billing!!!!!!!!!!!!!!", "Subscription check.");
 							
 							// subscription month
 							additionalSkuList.add(SKU_SUBSCRIPTION_MONTH);
