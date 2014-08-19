@@ -195,6 +195,26 @@ public class AlmalenceStore
 		final RelativeLayout pagerLayoutMain = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain));
 		pagerLayoutMain.setVisibility(View.VISIBLE);
 		pagerLayoutMain.bringToFront();
+
+
+		// We need this timer, to show store on top, after we return from google
+		// play.
+		// In MainScreen there is timer, which brings main buttons on top,
+		// after MainScreen activity resumed.
+		// So this timer "blocks" timer from MainScreen if we want to show
+		// store.
+		new CountDownTimer(600, 10)
+		{
+			public void onTick(long millisUntilFinished)
+			{
+				pagerLayoutMain.bringToFront();
+			}
+
+			public void onFinish()
+			{
+				pagerLayoutMain.bringToFront();
+			}
+		}.start();
 	}
 
 	public void hideStore()
