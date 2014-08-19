@@ -1079,7 +1079,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onPreviewFrame(final byte[] data)
 	{
-		Log.e(TAG, "onPreviewFrame()");
 		this.previewRestartFlag = false;
 
 		if (!this.prefHardwareGyroscope && this.sensorSoftGyroscope != null)
@@ -1097,7 +1096,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE
 						|| this.isFirstFrame)
 				{
-					this.takePictureUnimode(SwapHeap.SwapToHeap(data));
+					this.takePictureUnimode(this.modeSweep ? SwapHeap.SwapToHeap(data) : 0);
 				}
 			}
 		}
@@ -1118,12 +1117,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!this.capturing)
 			{
 				this.takingAlready = false;
-				aboutToTakePicture = false;
+				this.aboutToTakePicture = false;
 				return;
 			}
 		}
-
-		takingAlready = true;
 
 		this.takingAlready = true;
 
