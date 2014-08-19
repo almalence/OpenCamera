@@ -191,10 +191,6 @@ public class BurstCapturePlugin extends PluginCapture
 		inCapture = true;
 		takingAlready = true;
 		
-		// play tick sound
-		MainScreen.getGUIManager().showCaptureIndication();
-		MainScreen.getInstance().playShutter();
-
 		try
 		{
 			int[] pause = new int[imageAmount];

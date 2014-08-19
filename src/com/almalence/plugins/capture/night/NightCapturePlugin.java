@@ -1056,10 +1056,6 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				// play tick sound
-				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
-				
 				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null, true);
 			} catch (RuntimeException e)
 			{
