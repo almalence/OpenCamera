@@ -77,11 +77,15 @@ public class AugmentedRotationListener implements SensorEventListener
 
 	private final boolean				remap;
 	private final boolean				softGyro;
+	
+	private boolean						updateDrift;
+	
 
 	public AugmentedRotationListener(final boolean remap, final boolean softGyro)
 	{
 		this.remap = remap;
 		this.softGyro = softGyro;
+		this.updateDrift = true;
 		this.filt_magnetic[0] = this.filt_magnetic[1] = this.filt_magnetic[2] = 0;
 	}
 
@@ -130,7 +134,7 @@ public class AugmentedRotationListener implements SensorEventListener
 						break;
 
 					case Sensor.TYPE_GYROSCOPE:
-						VfGyroSensor.FixDrift(event.values);
+						VfGyroSensor.FixDrift(event.values, updateDrift);
 						this.gyroFunction(event);
 						accelerometerValueIsFresh = false;
 						break;
@@ -146,6 +150,11 @@ public class AugmentedRotationListener implements SensorEventListener
 		}
 	}
 
+	public void setUpdateDrift(boolean updateDrift)
+	{
+		this.updateDrift = updateDrift;
+	}
+	
 	public void setReceiver(final AugmentedRotationReceiver receiver)
 	{
 		synchronized (this.receiverSynchObject)

@@ -396,7 +396,8 @@ JNIEXPORT jlong JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfG
 (
 	JNIEnv* env,
 	jobject,
-	jfloatArray vals
+	jfloatArray vals,
+	jboolean updateDrift
 )
 {
 	float * gyro_data;
@@ -412,7 +413,7 @@ JNIEXPORT jlong JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfG
 		if (fabsf(gyro_data[i]) >= MAX_DRIFT_RADS)
 			break;
 
-	if (i==3)
+	if ((i==3) && updateDrift)
 	{
 		// independent drift compensation for each axis
 		for (i=0; i<3; ++i)

@@ -218,6 +218,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					SensorManager.SENSOR_DELAY_GAME);
 		}
 		this.rotationListener.setReceiver(this.engine);
+		this.rotationListener.setUpdateDrift(true);
 	}
 
 	private void deinitSensors()
@@ -353,7 +354,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		
 		if (this.modeSweep)
 		{
-			this.engine.setFrameIntersection(1.5f * intersection);
+			float sweep_intersection;
+			sweep_intersection = 1.5f * intersection;
+			if (sweep_intersection > 0.9f) sweep_intersection = 0.9f;
+			this.engine.setFrameIntersection(sweep_intersection);
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames()
@@ -1054,6 +1058,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void startCapture()
 	{
 		this.modeSwitcher.setEnabled(false);
+		this.rotationListener.setUpdateDrift(false);
 		
 		lockAEWB();
 
@@ -1310,6 +1315,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.capturing = false;
 
 		unlockAEWB();
+
+		this.rotationListener.setUpdateDrift(true);
 
 		final LinkedList<AugmentedFrameTaken> frames = this.engine.retrieveFrames();
 
