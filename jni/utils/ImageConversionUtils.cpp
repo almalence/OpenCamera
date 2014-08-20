@@ -23,6 +23,7 @@ by Almalence Inc. All Rights Reserved.
 
 #include <setjmp.h>
 #include "jpeglib.h"
+#include <math.h>
 
 #include "ImageConversionUtils.h"
 
@@ -641,6 +642,10 @@ void NV21_to_RGB_scaled_rotated
 		bgr = 0;
 		stride -= 2;
 	}
+	else if (stride == 4)
+	{
+		bgr = 0;
+	}
 
 	const int tripleHeight = (outHeight - 1) * stride;
 	int yoffset = tripleHeight;
@@ -767,4 +772,108 @@ void NV21_to_Gray_scaled
     }
 }
 
+void addRoundCornersRGBA8888
+(
+	unsigned char * const rgb_bytes,
+	const int outWidth,
+	const int outHeight
+)
+{
+	// make nice corners and edges,
+	// apply softbox-like effect
+	int edge = (outWidth < outHeight ? outWidth:outHeight)/60;
+	int corner = (outWidth < outHeight ? outWidth:outHeight)/60;
+	for (int j = 0; j < outWidth; j++)
+	{
+		int thr = 2*(outHeight/3) - (outHeight/3) * (j+outWidth-(outWidth-j)*(outWidth-j)/outWidth) / (outWidth*2);
 
+		for (int i = 0; i < outHeight; i++)
+		{
+			if ((j>corner) && (j<outWidth-1-corner) && (i>edge+1) && (i<outHeight-1-edge))
+				continue;
+			if ((j>edge+1) && (j<outWidth-2-edge) && (i>corner) && (i<outHeight-1-corner))
+				continue;
+
+			int offset = (j+i*outWidth)*4;
+
+			// soft-box-like effect
+			int eclr  = 228 + ( i>thr ? (outHeight-i)*(200-228)/(outHeight-thr) : i*(255-228)/thr );
+			int sbclr = 128 + ( i>thr ? (outHeight-i)*(0-128)/(outHeight-thr) : i*(255-128)/thr );
+
+			float r = 0;
+			float e = 0;
+			int ecorner = 0;
+
+			if ((i<corner) && (j<corner))
+				r = (float)(corner-j)*(corner-j)+(float)(corner-i)*(corner-i);
+			if ((i<corner) && (j>outWidth-1-corner))
+				r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(corner-i)*(corner-i);
+			if ((i>outHeight-1-corner) && (j>outWidth-1-corner))
+				r = (float)(outWidth-1-corner-j)*(outWidth-1-corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
+			if ((i>outHeight-1-corner) && (j<corner))
+				r = (float)(corner-j)*(corner-j)+(float)(outHeight-1-corner-i)*(outHeight-1-corner-i);
+
+			if (r>(corner-edge)*(corner-edge))
+			{
+				if (r<corner*corner)
+				{
+					e = edge-(corner-sqrtf(r));
+					ecorner = 1;
+				}
+				else
+				{
+					rgb_bytes[offset+0] = 0;
+					rgb_bytes[offset+1] = 0;
+					rgb_bytes[offset+2] = 0;
+					rgb_bytes[offset+3] = 0;
+					continue;
+				}
+			}
+			else if (i<edge)
+				e = edge-i;
+			else if (j<edge)
+				e = edge-j;
+			else if (j>outWidth-1-edge)
+				e = j-outWidth+1+edge;
+			else if (i>outHeight-1-edge)
+				e = i-outHeight+1+edge;
+
+			if (e>0)	// edges
+			{
+				if ((e<=1) && (r>0))	// anti-aliasing inner corners
+				{
+					rgb_bytes[offset+0] = ((int)rgb_bytes[offset+0]+eclr)/2;
+					rgb_bytes[offset+1] = ((int)rgb_bytes[offset+1]+eclr)/2;
+					rgb_bytes[offset+2] = ((int)rgb_bytes[offset+2]+eclr)/2;
+				}
+				else if (e>edge-2)	// anti-aliasing outer edge of a frame
+				{
+					int clr;
+
+					if (ecorner)
+						clr = max(0, 255-(int)((e-(edge-2))*255));
+					else
+						clr = 0;
+					rgb_bytes[offset+0] = (eclr*clr)>>8;
+					rgb_bytes[offset+1] = (eclr*clr)>>8;
+					rgb_bytes[offset+2] = (eclr*clr)>>8;
+					rgb_bytes[offset+3] = clr;
+				}
+				else
+				{
+					rgb_bytes[offset+0] = eclr;
+					rgb_bytes[offset+1] = eclr;
+					rgb_bytes[offset+2] = eclr;
+					rgb_bytes[offset+3] = 255;
+				}
+
+				continue;
+			}
+
+			// inner part of the image - soft-box effect
+			rgb_bytes[offset+0] = ((int)rgb_bytes[offset+0]*7+sbclr)/8;
+			rgb_bytes[offset+1] = ((int)rgb_bytes[offset+1]*7+sbclr)/8;
+			rgb_bytes[offset+2] = ((int)rgb_bytes[offset+2]*7+sbclr)/8;
+		}
+	}
+}
