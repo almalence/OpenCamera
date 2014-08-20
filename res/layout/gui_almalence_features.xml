@@ -14,13 +14,11 @@
 		    android:layout_marginBottom="5dip"
 		    android:layout_above="@+id/storeTips"
 		    >
-		<TextView
+		<WebView
 	        android:id="@+id/text_features"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:textSize="24sp"
-	        android:textColor="@android:color/black"/>
+	        />
 	</ScrollView>
 	<ImageView
 		android:id="@+id/storeTips"

@@ -43,12 +43,9 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
-
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
 
 import android.annotation.TargetApi;
-import android.graphics.ImageFormat;
-import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
@@ -64,14 +61,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 	private static final int			TIP_FRAMES_COUNT		= 2;
 
-	public static final float			FRAME_MISS_DISTANCE		= 0.1f;		// maximum
-																				// allowed
-																				// miss
-																				// from
-																				// ideal
-																				// frame
-																				// position
-
 	public static final long			FRAME_WHITE_FADE_IN		= 500;
 	public static final long			FRAME_WHITE_FADE_OUT	= 400;
 
@@ -82,7 +71,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	private static final FloatBuffer	FRAME_TEXTURE_UV;
 	private static final FloatBuffer	FRAME_NORMALS;
 
-	private static float				FrameIntersectionPart	= 0.50f;		// how
+	private volatile float				frameIntersectionPart	= 0.50f;		// how
 																				// much
 																				// panorama
 																				// frames
@@ -181,7 +170,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		return out;
 	}
 
-	private final AtomicBoolean						activated				= new AtomicBoolean(false);
+	private boolean									activated				= false;
+	private final Object activatedSync = new Object();
 
 	private final LinkedList<AugmentedFrameTaken>	frames					= new LinkedList<AugmentedFrameTaken>();
 
@@ -229,65 +219,86 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 	private int										iSurfaceWidth			= 0;
 	private int										iSurfaceHeight			= 0;
-	private boolean									bViewportCreated		= false;
-	private boolean									bCreateViewportNow		= false;
-	private GL10									gl10					= null;
+	private volatile boolean						bViewportCreated		= false;
+	private volatile boolean						bCreateViewportNow		= false;
 	private volatile int							framesMax;
+	
+	private volatile float distanceLimit = 0.1f;
+	private volatile boolean miniDisplayMode = false;
+	
 
-	public static void setFrameIntersection(float Intersection)
+	public void setFrameIntersection(final float intersection)
 	{
-		FrameIntersectionPart = Intersection;
+		this.frameIntersectionPart = intersection;
+	}
+	
+	public void setDistanceLimit(final float value)
+	{
+		this.distanceLimit = value;
+	}
+	
+	public void setMiniDisplayMode(final boolean value)
+	{
+		this.miniDisplayMode = value;
 	}
 
 	public void reset(final int width, final int height, float verticalViewAngleR)
 	{
-		this.width = width;
-		this.height = height;
+		Log.i(TAG, String.format("AugmentedPanoramaEngine.reset(%d, %d, %f)",
+				width, height, verticalViewAngleR));
+		
+		synchronized (this.activatedSync)
+		{
+			this.width = width;
+			this.height = height;
 
-		this.halfWidth = this.width / 2;
-		this.halfHeight = this.height / 2;
+			this.halfWidth = this.width / 2;
+			this.halfHeight = this.height / 2;
 
-		// in case view angle is unknown - use some default value
-		if (verticalViewAngleR == 0)
-			verticalViewAngleR = 45;
+			// in case view angle is unknown - use some default value
+			if (verticalViewAngleR == 0)
+				verticalViewAngleR = 45;
 
-		this.verticalViewAngle = verticalViewAngleR;
+			this.verticalViewAngle = verticalViewAngleR;
 
-		// using halfWidth here since we are operating on portrait-oriented
-		// frames
-		// and halfWidth correspond to a camera verticalViewAngle
-		// this is the radius to the center of a frame
-		this.radius = (float) (this.halfWidth / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
+			// using halfWidth here since we are operating on portrait-oriented
+			// frames
+			// and halfWidth correspond to a camera verticalViewAngle
+			// this is the radius to the center of a frame
+			this.radius = (float) (this.halfWidth / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
-		// but for GL we need radius to be calculated like that to properly fit
-		// the frame on screen
-		this.radiusGL = (float) (this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
+			// but for GL we need radius to be calculated like that to properly fit
+			// the frame on screen
+			this.radiusGL = (float) (this.halfHeight / Math.tan(Math.toRadians(verticalViewAngle / 2.0f)));
 
-		final float HalfTileShiftAngle = (float) Math.atan2((0.5f - FrameIntersectionPart / 2) * this.width,
-				this.radius);
+			final float HalfTileShiftAngle = (float) Math.atan2((0.5f - this.frameIntersectionPart / 2) * this.width,
+					this.radius);
 
-		// this is the radius to the intersection of neighbor frames
-		// somehow setting it to the same value as radius to the center gives a
-		// more precise results
-		this.radiusEdge = this.radius;
+			// this is the radius to the intersection of neighbor frames
+			// somehow setting it to the same value as radius to the center gives a
+			// more precise results
+			this.radiusEdge = this.radius;
 
-		final int circle_frames = (int) Math.ceil(2.0f * Math.PI / (2.0f * HalfTileShiftAngle));
-		this.angleShift = (float) (2.0f * Math.PI / circle_frames);
+			final int circle_frames = (int) Math.ceil(2.0f * Math.PI / (2.0f * HalfTileShiftAngle));
+			this.angleShift = (float) (2.0f * Math.PI / circle_frames);
 
-		this.angleTotal = 0.0f;
+			this.angleTotal = 0.0f;
 
-		final float[] vertices = { -this.width / 2.0f, this.height / 2.0f, 0.0f, this.width / 2.0f, this.height / 2.0f,
-				0.0f, this.width / 2.0f, -this.height / 2.0f, 0.0f, -this.width / 2.0f, -this.height / 2.0f, 0.0f, };
+			final float[] vertices = { -this.width / 2.0f, this.height / 2.0f, 0.0f, this.width / 2.0f, this.height / 2.0f,
+					0.0f, this.width / 2.0f, -this.height / 2.0f, 0.0f, -this.width / 2.0f, -this.height / 2.0f, 0.0f, };
 
-		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
-		byteBuf.order(ByteOrder.nativeOrder());
-		this.vertexBuffer = byteBuf.asFloatBuffer();
-		this.vertexBuffer.put(vertices);
-		this.vertexBuffer.position(0);
+			final ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
+			byteBuf.order(ByteOrder.nativeOrder());
+			this.vertexBuffer = byteBuf.asFloatBuffer();
+			this.vertexBuffer.put(vertices);
+			this.vertexBuffer.position(0);
 
-		this.optimizeTextureDimensions();
+			this.optimizeTextureDimensions();
 
-		this.activated.set(true);
+			this.activated = true;
+		}
+		
+		this.bCreateViewportNow = true;
 	}
 
 	public void setMaxFrames(final int count)
@@ -308,13 +319,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		if (this.textureHeight >= MAX_TEXTURE_SIZE)
 		{
 			this.textureHeight = MAX_TEXTURE_SIZE;
-		} else
+		}
+		else
 		{
 			this.textureHeight = AugmentedPanoramaEngine.pow2roundup(this.textureHeight);
 		}
 
-		this.textureWidth = AugmentedPanoramaEngine
-				.pow2roundup((int) (this.width * ((float) this.textureHeight / this.height)));
+		this.textureWidth = AugmentedPanoramaEngine.pow2roundup(
+				(int)(this.width * ((float) this.textureHeight / this.height)));
 	}
 
 	@Override
@@ -325,7 +337,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			if (transform.length == 16)
 			{
 				System.arraycopy(transform, 0, this.transform, 0, 16);
-			} else if (transform.length == 9)
+			}
+			else if (transform.length == 9)
 			{
 				System.arraycopy(transform, 0, this.transform, 0, 3);
 				System.arraycopy(transform, 3, this.transform, 4, 3);
@@ -340,7 +353,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.transform[14] = 0;
 
 				this.transform[15] = 1;
-			} else
+			}
+			else
 			{
 				throw new RuntimeException();
 			}
@@ -379,7 +393,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 						if (frame != null)
 						{
-							if (frame.distance() < 0.1f)
+							if (frame.distance() < this.distanceLimit)
 							{
 								target = i;
 							}
@@ -394,7 +408,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						if (target == -1)
 						{
 							this.state = STATE_STANDBY;
-						} else
+						}
+						else
 						{
 							this.state = STATE_CLOSEENOUGH;
 							this.currentlyTargetedTarget = target;
@@ -434,7 +449,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 							this.pictureTakingInDelay = false;
 						else
 							return this.state;
-					} else
+					}
+					else
 					{
 						this.delay_time = System.currentTimeMillis();
 						this.pictureTakingInDelay = true;
@@ -449,7 +465,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.capture_time = System.currentTimeMillis();
 
 				return STATE_TAKINGPICTURE;
-			} else
+			}
+			else
 			{
 				return this.state;
 			}
@@ -492,7 +509,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					try
 					{
 						this.stateSynch.wait();
-					} catch (final InterruptedException e)
+					}
+					catch (final InterruptedException e)
 					{
 						e.printStackTrace();
 						Thread.currentThread().interrupt();
@@ -545,14 +563,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				@Override
 				public int compare(final AugmentedFrameTaken frame1, final AugmentedFrameTaken frame2)
 				{
-					return (int) frame1.angleShift - (int) frame2.angleShift;
+					return (int)frame1.angleShift - (int)frame2.angleShift;
 				}
 			});
 
 			try
 			{
 				syncObject.wait();
-			} catch (InterruptedException e)
+			}
+			catch (InterruptedException e)
 			{
 				e.printStackTrace();
 
@@ -578,7 +597,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			if (frames_count > 0)
 			{
 				frame = this.frames.removeLast();
-			} else
+			}
+			else
 			{
 				this.state = STATE_STANDBY;
 				frame = null;
@@ -643,7 +663,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			{
 				angle += Math.signum(angle) * (float) Math.PI / 2.0f;
 			}
-		} else
+		}
+		else
 		{
 			angle = 0.0f;
 		}
@@ -686,7 +707,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			}
 
 			return angle;
-		} else
+		}
+		else
 		{
 			return Float.POSITIVE_INFINITY;
 		}
@@ -716,7 +738,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				this.targetFrames[1].move(1);
 
 				this.addToBeginning = false;
-			} else
+			}
+			else
 			{
 				this.addToBeginning = (this.currentlyTargetedTarget == 0);
 			}
@@ -731,7 +754,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 	}
 
-	public boolean onPictureTaken(final byte[] jpeg)
+	@TargetApi(19)
+	public boolean onFrameAdded(final boolean isYUV, final int image, final Object... args)
 	{
 		final boolean goodPlace;
 		final int framesCount;
@@ -745,7 +769,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		synchronized (this.stateSynch)
 		{
 			goodPlace = (framesCount == 0)
-					|| (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < FRAME_MISS_DISTANCE);
+					|| (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < this.distanceLimit);
 		}
 
 		if (goodPlace)
@@ -761,63 +785,24 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final Vector3d topVec = new Vector3d(this.last_topVec);
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
-
-			final byte[] jpeg_copy = new byte[jpeg.length];
-			System.arraycopy(jpeg, 0, jpeg_copy, 0, jpeg.length);
-			final AugmentedFrameTaken frame = new AugmentedFrameTaken(targetFrame.angle, position, topVec, transform,
-					jpeg_copy, 0, false);
-
+			
+			final AugmentedFrameTaken frame;
+			
+			if (isYUV)
+			{
+				final boolean rotate = args.length >= 1 ? (Boolean)args[0] : false;
+				frame = new AugmentedFrameTaken(targetFrame.angle,
+						position, topVec, transform, image, rotate);
+			}
+			else
+			{
+				frame = new AugmentedFrameTaken(targetFrame.angle,
+						position, topVec, transform, image, (Integer)args[0]);
+			}
+			
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
 				AugmentedPanoramaEngine.this.frames.add(frame);
-			}
-		}
-
-		synchronized (AugmentedPanoramaEngine.this.stateSynch)
-		{
-			AugmentedPanoramaEngine.this.state = STATE_STANDBY;
-			AugmentedPanoramaEngine.this.stateSynch.notify();
-		}
-
-		return goodPlace;
-	}
-	
-	public boolean onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
-	{
-		final boolean goodPlace;
-		final int framesCount;
-		synchronized (this.frames)
-		{
-			framesCount = this.frames.size();
-		}
-
-		final AugmentedFrameTarget targetFrame = this.targetFrames[this.addToBeginning ? 0 : 1];
-
-		synchronized (this.stateSynch)
-		{
-			goodPlace = (framesCount == 0) || (this.state == STATE_TAKINGPICTURE && targetFrame.distance() < 0.2f);
-		}
-
-		if (goodPlace)
-		{
-			this.angleTotal += this.angleShift;
-
-			if (framesCount > 0)
-			{
-				this.targetFrames[this.currentlyTargetedTarget].move();
-			}
-
-			final Vector3d position = new Vector3d(this.last_position);
-			final Vector3d topVec = new Vector3d(this.last_topVec);
-			final float[] transform = new float[16];
-			System.arraycopy(this.last_transform, 0, transform, 0, 16);
-
-			final AugmentedFrameTaken frameTaken = new AugmentedFrameTaken(targetFrame.angle, position, topVec,
-					transform, frameData, frame, isYUV);
-
-			synchronized (AugmentedPanoramaEngine.this.frames)
-			{
-				AugmentedPanoramaEngine.this.frames.add(frameTaken);
 			}
 		}
 
@@ -848,54 +833,82 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 	}
 
-	public void ViewportCreationTime()
-	{
-		bCreateViewportNow = true;
-	}
-
 	@Override
-	public void onSurfaceChanged(GL10 gl, int width, int height)
+	public void onSurfaceChanged(final GL10 gl, final int width, int height)
 	{
 		if (height == 0)
 		{
 			height = 1;
 		}
 
-		bViewportCreated = false;
+		this.bViewportCreated = false;
 
-		iSurfaceWidth = width;
-		iSurfaceHeight = height;
-		gl10 = gl;
+		this.iSurfaceWidth = width;
+		this.iSurfaceHeight = height;
+	}
+	
+	private void drawAim()
+	{
+		GLES10.glPushMatrix();
+		GLES10.glLoadIdentity();
+		GLES10.glTranslatef(0.0f, 0.0f, -this.radiusGL);
+
+		final float scale = 0.25f;
+		GLES10.glScalef(scale, scale, scale);
+
+		GLES10.glVertexPointer(3, GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.this.vertexBuffer);
+		GLES10.glTexCoordPointer(2, GL10.GL_FLOAT, 0, FRAME_TEXTURE_UV);
+		GLES10.glNormalPointer(GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.FRAME_NORMALS);
+
+		GLES10.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		GLES10.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		GLES10.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+
+		GLES10.glFrontFace(GL10.GL_CW);
+
+		GLES10.glDrawElements(GL10.GL_LINE_LOOP, 5, GL10.GL_UNSIGNED_BYTE, FRAME_LINE_INDICES_BUFFER);
+
+		GLES10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		GLES10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		GLES10.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+
+		GLES10.glPopMatrix();
 	}
 
 	@Override
 	public void onDrawFrame(final GL10 gl)
 	{
-		if (bCreateViewportNow && (!bViewportCreated))
+		if (this.bCreateViewportNow || (!this.bViewportCreated))
 		{
-			gl10.glViewport(0, 0, iSurfaceWidth, iSurfaceHeight);
-			gl10.glMatrixMode(GL10.GL_PROJECTION);
+			GLES10.glViewport(0, 0, this.iSurfaceWidth, this.iSurfaceHeight);
+			GLES10.glMatrixMode(GL10.GL_PROJECTION);
+			GLES10.glLoadIdentity();
 
-			GLU.gluPerspective(gl10, this.verticalViewAngle, (float) iSurfaceWidth / (float) iSurfaceHeight,
-					radiusGL / 10.0f, radiusGL * 10.0f);
+			GLU.gluPerspective(gl, this.verticalViewAngle,
+					(float)this.iSurfaceWidth / (float)this.iSurfaceHeight,
+					this.radiusGL / 10.0f, this.radiusGL * 10.0f);
 
-			gl10.glMatrixMode(GL10.GL_MODELVIEW);
-			gl10.glLoadIdentity();
+			GLES10.glMatrixMode(GL10.GL_MODELVIEW);
+			GLES10.glLoadIdentity();
 
-			bCreateViewportNow = false;
-			bViewportCreated = true;
+			this.bCreateViewportNow = false;
+			this.bViewportCreated = true;
 		}
 
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		if (this.activated.get())
+		synchronized (this.activatedSync)
 		{
-			gl.glLoadIdentity();
-
-			synchronized (this.currentVector)
+			if (this.activated)
 			{
-				GLU.gluLookAt(gl, 0.0f, 0.0f, 0.0f, this.currentVector.x, this.currentVector.y, this.currentVector.z,
-						this.topVector.x, this.topVector.y, this.topVector.z);
+				gl.glLoadIdentity();
+
+				synchronized (this.currentVector)
+				{
+					GLU.gluLookAt(gl, 0.0f, 0.0f, 0.0f,
+							this.currentVector.x, this.currentVector.y, this.currentVector.z,
+							this.topVector.x, this.topVector.y, this.topVector.z);
+				}
 
 				synchronized (this.frames)
 				{
@@ -905,14 +918,32 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						frame.draw(gl);
 					}
 				}
-			}
 
-			if (this.capturing.get() && !this.isCircular())
-			{
-				for (final AugmentedFrameTarget frame : this.targetFrames)
+				if (this.capturing.get() && !this.isCircular())
 				{
-					frame.distance();
-					frame.draw(gl);
+					float mind = 0.0f;
+					int mint = 0;
+					if (this.targetFrames != null)
+					{
+						mind = this.targetFrames[0].distance();
+						mint = this.targetFrames[0].texture;
+					}
+					
+					for (final AugmentedFrameTarget frame : this.targetFrames)
+					{
+						if (frame.distance() <= mind)
+						{
+							mind = frame.distance;
+							mint = frame.texture;
+						}
+						frame.draw(gl);
+					}
+					
+					if (this.miniDisplayMode)
+					{
+						GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, mint);
+						this.drawAim();
+					}
 				}
 			}
 		}
@@ -1046,7 +1077,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					this.colorBuffer.clear();
 
-					// *
 					part = Math.min((System.currentTimeMillis() - AugmentedPanoramaEngine.this.capture_time)
 							/ (float) FRAME_WHITE_FADE_IN, 1.0f);
 
@@ -1059,7 +1089,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						this.colorBuffer.put(this.colors_taking);
 					}
 					this.colorBuffer.position(0);
-					// */
 				}
 			}
 
@@ -1067,15 +1096,24 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			gl.glTranslatef(this.position.x, this.position.y, this.position.z);
 
-			gl.glRotatef(-this.angle, AugmentedPanoramaEngine.this.initialTopVector.x,
-					AugmentedPanoramaEngine.this.initialTopVector.y, AugmentedPanoramaEngine.this.initialTopVector.z);
+			gl.glRotatef(-this.angle,
+					AugmentedPanoramaEngine.this.initialTopVector.x,
+					AugmentedPanoramaEngine.this.initialTopVector.y,
+					AugmentedPanoramaEngine.this.initialTopVector.z);
 
 			gl.glMultMatrixf(this.transform, 0);
 
-			// make appearance a bit more stable - do not change scale if
-			// distance is small
-			float scale = Math.max(0.5f, 1.0f - Math.max(0.1f, this.distance - 0.1f));
-			scale += part * 0.1f;
+			final float scale;
+			if (AugmentedPanoramaEngine.this.miniDisplayMode)
+			{
+				scale = 0.25f;
+			}
+			else
+			{
+				// make appearance a bit more stable - do not change scale if
+				// distance is small
+				scale = Math.max(0.5f, 1.0f - Math.max(0.1f, this.distance - 0.1f)) + part * 0.1f;
+			}
 			gl.glScalef(scale, scale, scale);
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, this.texture);
@@ -1122,7 +1160,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 						+ Util.mathSquare(this.position.y - AugmentedPanoramaEngine.this.currentVector.y)
 						+ Util.mathSquare(this.position.z - AugmentedPanoramaEngine.this.currentVector.z));
 
-				drot = (float) Math.sqrt(Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.x
+				drot = (float)Math.sqrt(Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.x
 						- AugmentedPanoramaEngine.this.topVector.x)
 						+ Util.mathSquare(AugmentedPanoramaEngine.this.initialTopVector.y
 								- AugmentedPanoramaEngine.this.topVector.y)
@@ -1130,7 +1168,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								- AugmentedPanoramaEngine.this.topVector.z));
 			}
 
-			final float sizeDim = (float) Math.sqrt(AugmentedPanoramaEngine.this.width
+			final float sizeDim = (float)Math.sqrt(AugmentedPanoramaEngine.this.width
 					* AugmentedPanoramaEngine.this.height);
 
 			this.distance = dpos / sizeDim + drot;
@@ -1160,8 +1198,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			this.angle += Math.toDegrees(AugmentedPanoramaEngine.this.angleShift * shift);
 
-			this.position
-					.set(rotateVectorAroundAxis((float) Math.toRadians(this.angle),
+			this.position.set(rotateVectorAroundAxis((float) Math.toRadians(this.angle),
 							AugmentedPanoramaEngine.this.initialTopVector,
 							AugmentedPanoramaEngine.this.initialDirectionVector));
 
@@ -1207,14 +1244,137 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			synchronized (this.nv21addressSync)
 			{
-				return nv21address;
+				return this.nv21address;
+			}
+		}
+		
+		private AugmentedFrameTaken(final float angleShift, final Vector3d position,
+				final Vector3d topVec, final float[] rotation)
+		{
+			this.angleShift = angleShift;
+			
+			this.vTop = new Vector3d(topVec);
+
+			gluInvertMatrix(rotation, this.transform);
+
+			this.position = new Vector3d(position);
+
+			this.transform[12] = position.x;
+			this.transform[13] = position.y;
+			this.transform[14] = position.z;
+		}
+		
+		/**
+		 * For YUV input
+		 */
+		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
+				final Vector3d topVec, final float[] rotation, final int yuv_address, final boolean rotate)
+		{
+			this(angleShift, position, topVec, rotation);
+
+			final Object syncObject = new Object();
+			synchronized (syncObject)
+			{
+				new Thread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						// warrant the proper priority for jpeg decoding
+						android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+
+						synchronized (AugmentedFrameTaken.this.nv21addressSync)
+						{							
+							synchronized (AugmentedFrameTaken.this.glSync)
+							{
+								synchronized (syncObject)
+								{
+									syncObject.notify();
+								}
+
+								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
+										AugmentedPanoramaEngine.this.textureWidth
+											* AugmentedPanoramaEngine.this.textureHeight * 4);
+								
+								final int in_width;
+								final int in_height;
+								final int yuv_rotated;
+								if (rotate)
+								{
+									in_width = AugmentedPanoramaEngine.this.height;
+									in_height = AugmentedPanoramaEngine.this.width;
+									
+									yuv_rotated = yuv_address;
+									
+									AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width);
+									ImageConversion.TransformNV21N(yuv_address,
+											AugmentedFrameTaken.this.nv21address,
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											0, 0, 1);
+								}
+								else
+								{
+									in_width = AugmentedPanoramaEngine.this.width;
+									in_height = AugmentedPanoramaEngine.this.height;
+									
+									yuv_rotated = YuvImage.AllocateMemoryForYUV(
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width);
+									ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
+											AugmentedPanoramaEngine.this.width,
+											AugmentedPanoramaEngine.this.height,
+											0, 0, 1);
+									
+									AugmentedFrameTaken.this.nv21address = yuv_address;
+								}
+								
+								ImageConversion.convertNV21toGLN(yuv_rotated,
+										AugmentedFrameTaken.this.rgba_buffer.array(),
+										in_width,
+										in_height,
+										AugmentedPanoramaEngine.this.textureWidth,
+										AugmentedPanoramaEngine.this.textureHeight);
+								SwapHeap.FreeFromHeap(yuv_rotated);
+								
+								ImageConversion.addCornersRGBA8888(
+										AugmentedFrameTaken.this.rgba_buffer.array(),
+										AugmentedPanoramaEngine.this.textureWidth,
+										AugmentedPanoramaEngine.this.textureHeight);
+
+								MainScreen.getInstance().queueGLEvent(new Runnable()
+								{
+									@Override
+									public void run()
+									{
+										AugmentedFrameTaken.this.createTexture();
+									}
+								});
+							}
+						}
+					}
+				}).start();
+
+				try
+				{
+					syncObject.wait();
+				}
+				catch (final InterruptedException e)
+				{
+					Thread.currentThread().interrupt();
+				}
 			}
 		}
 
-		public AugmentedFrameTaken(final float angleShift, final Vector3d position, final Vector3d topVec,
-				final float[] rotation, final byte[] img_data, final int yuv_address, final boolean isYUV)
+		/**
+		 * For JPEG input
+		 */
+		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
+				final Vector3d topVec, final float[] rotation, final int jpeg, final int jpeg_length)
 		{
-			this.angleShift = angleShift;
+			this(angleShift, position, topVec, rotation);
 
 			final Object syncObject = new Object();
 			synchronized (syncObject)
@@ -1236,25 +1396,18 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									syncObject.notify();
 								}
 
-								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer
-										.allocate(AugmentedPanoramaEngine.this.textureWidth
-												* AugmentedPanoramaEngine.this.textureHeight * 4);
+								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
+										AugmentedPanoramaEngine.this.textureWidth
+											* AugmentedPanoramaEngine.this.textureHeight * 4);
 
-								if (!isYUV)
-									ImageConversion.resizeJpeg2RGBA(img_data,
-											AugmentedFrameTaken.this.rgba_buffer.array(),
-											AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.textureWidth,
-											AugmentedPanoramaEngine.this.textureHeight,
-											CameraController.isFrontCamera());
-								else
-								{
-									ImageConversion.convertNV21toGL(img_data,
-											AugmentedFrameTaken.this.rgba_buffer.array(),
-											AugmentedPanoramaEngine.this.width, AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.textureWidth,
-											AugmentedPanoramaEngine.this.textureHeight);
-								}
+								ImageConversion.resizeJpeg2RGBA(jpeg,
+										jpeg_length,
+										AugmentedFrameTaken.this.rgba_buffer.array(),
+										AugmentedPanoramaEngine.this.width,
+										AugmentedPanoramaEngine.this.height,
+										AugmentedPanoramaEngine.this.textureWidth,
+										AugmentedPanoramaEngine.this.textureHeight,
+										CameraController.isFrontCamera());
 
 								MainScreen.getInstance().queueGLEvent(new Runnable()
 								{
@@ -1266,51 +1419,22 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								});
 							}
 
-							if (!isYUV)
-							{
-								AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvert(img_data,
-										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, true,
-										CameraController.isFrontCamera(), 90);
-							} else
-							{
-								int yuv_rotated = YuvImage.AllocateMemoryForYUV(AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.width);
-								ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
-										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, 0, 0,
-										1);
-								AugmentedFrameTaken.this.nv21address = yuv_rotated;
-								
-//								int frameLen = AugmentedPanoramaEngine.this.width*AugmentedPanoramaEngine.this.height+2*((AugmentedPanoramaEngine.this.width+1)/2)*((AugmentedPanoramaEngine.this.height+1)/2);
-//								byte[] yuvRotated = new byte[frameLen];
-//								ImageConversion.TransformNV21(img_data, yuvRotated,
-//										AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, 0, 0,
-//										1);
-//								AugmentedFrameTaken.this.nv21address = SwapHeap.SwapToHeap(yuvRotated);
-							}
+							AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvertN(jpeg, jpeg_length,
+									AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, true,
+									CameraController.isFrontCamera(), 90);
 						}
 					}
 				}).start();
 
 				try
 				{
-					Log.e(TAG, "AugmentedFrameTaken(): before syncObject.wait()");
 					syncObject.wait();
-					Log.e(TAG, "AugmentedFrameTaken(): after syncObject.wait()");
-				} catch (final InterruptedException e)
+				}
+				catch (final InterruptedException e)
 				{
 					Thread.currentThread().interrupt();
 				}
 			}
-
-			this.vTop = new Vector3d(topVec);
-
-			gluInvertMatrix(rotation, this.transform);
-
-			this.position = new Vector3d(position);
-
-			this.transform[12] = position.x;
-			this.transform[13] = position.y;
-			this.transform[14] = position.z;
 		}
 
 		private void createTexture()
@@ -1327,15 +1451,20 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				{
 					GLES10.glBindTexture(GLES10.GL_TEXTURE_2D, this.texture[0]);
 
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_MIN_FILTER, GLES10.GL_LINEAR);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_MAG_FILTER, GLES10.GL_LINEAR);
 
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_REPEAT);
-					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D, GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_REPEAT);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_WRAP_S, GLES10.GL_CLAMP_TO_EDGE);
+					GLES10.glTexParameterf(GLES10.GL_TEXTURE_2D,
+							GLES10.GL_TEXTURE_WRAP_T, GLES10.GL_CLAMP_TO_EDGE);
 
 					GLES10.glTexImage2D(GLES10.GL_TEXTURE_2D, 0, GLES10.GL_RGBA,
-							AugmentedPanoramaEngine.this.textureWidth, AugmentedPanoramaEngine.this.textureHeight, 0,
-							GLES10.GL_RGBA, GLES10.GL_UNSIGNED_BYTE, this.rgba_buffer);
+							AugmentedPanoramaEngine.this.textureWidth,
+							AugmentedPanoramaEngine.this.textureHeight,
+							0, GLES10.GL_RGBA, GLES10.GL_UNSIGNED_BYTE, this.rgba_buffer);
 					this.rgba_buffer = null;
 
 					final ByteBuffer colorBuffer = ByteBuffer.allocateDirect(3 * TARGET_FRAME_TEXTURE_PIXELS);
@@ -1354,14 +1483,16 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					if (GLES10.glGetError() == GLES10.GL_NO_ERROR)
 					{
 						this.textureAllocated = true;
-					} else
+					}
+					else
 					{
 						GLES10.glDeleteTextures(2, this.texture, 0);
 
 						Log.e("Almalence", "Error creating texture");
 						this.textureAllocated = false;
 					}
-				} else
+				}
+				else
 				{
 					Log.e("Almalence", "Error generating texture");
 					this.textureAllocated = false;
@@ -1390,7 +1521,15 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			gl.glMultMatrixf(this.transform, 0);
 
-			float scale = Math.max(0.20f, 1.0f - this.distance);
+			final float scale;
+			if (AugmentedPanoramaEngine.this.miniDisplayMode)
+			{
+				scale = 0.25f;
+			}
+			else
+			{
+				scale = Math.max(0.20f, 1.0f - this.distance);
+			}
 			gl.glScalef(scale, scale, scale);
 
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, AugmentedPanoramaEngine.this.vertexBuffer);
@@ -1460,14 +1599,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 					}
 				}
 			}
-		}
-
-		@Override
-		public void finalize() throws Throwable
-		{
-			this.destroy();
-
-			super.finalize();
 		}
 	}
 }
