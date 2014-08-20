@@ -676,6 +676,26 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		this.engine.onDrawFrame(gl);
 	}
+	
+	private void setFocused()
+	{
+		int fm = CameraController.getInstance().getFocusMode();
+		int fs = CameraController.getFocusState();
+		if (!takingAlready
+				&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
+				&& !(fm == CameraParameters.AF_MODE_INFINITY || fm == CameraParameters.AF_MODE_FIXED
+						|| fm == CameraParameters.AF_MODE_EDOF
+						|| fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
+				&& !MainScreen.getAutoFocusLock())
+		{
+			//aboutToTakePicture = true;
+			this.focused = false;
+		}
+		else if (!takingAlready)
+		{
+			this.focused = true;
+		}
+	}
 
 	@Override
 	public void onShutterClick()
@@ -690,24 +710,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				}
 				else
 				{
-					this.isFirstFrame = true;
-					int fm = CameraController.getInstance().getFocusMode();
-					int fs = CameraController.getFocusState();
-					if (!takingAlready
-							&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
-							&& !(fm == CameraParameters.AF_MODE_INFINITY || fm == CameraParameters.AF_MODE_FIXED
-									|| fm == CameraParameters.AF_MODE_EDOF
-									|| fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-							&& !MainScreen.getAutoFocusLock())
-					{
-						//aboutToTakePicture = true;
-						this.focused = false;
-					}
-					else if (!takingAlready)
-					{
-						this.focused = true;
-					}
-					
 					this.startCapture();
 				}
 			}
@@ -1067,7 +1069,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void startCapture()
 	{
-		this.capturing = true;
+		this.isFirstFrame = true;
+		
+		this.setFocused();
 		
 		this.modeSwitcher.setEnabled(false);
 		this.rotationListener.setUpdateDrift(false);
@@ -1076,6 +1080,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
+		
+		this.capturing = true;
 	}
 	
 	private void takePictureUnimode(final int image)
@@ -1145,7 +1151,26 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.takingAlready = true;
 
-		this.takePictureReal();
+		this.coordsRecorded = false;
+		try
+		{
+			Log.e(TAG, "Perform CAPTURE Panorama");
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+
+			this.engine.onCameraError();
+
+			this.stopCapture();
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 
+					String.valueOf(SessionID));
+			
+			takingAlready = false;
+			capturing = false;
+			//aboutToTakePicture = false;
+		}
 	}
 
 	private void lockAEWB()
@@ -1218,30 +1243,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 				PluginManager.MSG_AEWB_CHANGED);
-	}
-
-	private void takePictureReal()
-	{
-		this.coordsRecorded = false;
-		try
-		{
-			Log.e(TAG, "Perform CAPTURE Panorama");
-			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-
-			this.engine.onCameraError();
-
-			this.stopCapture();
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 
-					String.valueOf(SessionID));
-			
-			takingAlready = false;
-			capturing = false;
-			//aboutToTakePicture = false;
-		}
 	}
 
 	@Override
