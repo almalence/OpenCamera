@@ -1707,10 +1707,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				break;
 			case PluginManager.MSG_CAMERA_READY:
 			{
-				Log.e("MainScreen", "Camera ready.");
-				configureCamera();
-				PluginManager.getInstance().onGUICreate();
-				MainScreen.getGUIManager().onGUICreate();
+				if(!CameraController.isCameraCreated())
+					Log.e("MainScreen", " +++++++++++++++++++ Camera not ready. Stop configuration");
+				else
+				{
+					Log.e("MainScreen", " +++++++++++++++++++ Camera ready");
+					configureCamera();
+					PluginManager.getInstance().onGUICreate();
+					MainScreen.getGUIManager().onGUICreate();
+				}
 			}	break;
 			case PluginManager.MSG_CAMERA_OPENED:
 				Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED");
