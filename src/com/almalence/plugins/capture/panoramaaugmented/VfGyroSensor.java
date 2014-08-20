@@ -324,7 +324,7 @@ public class VfGyroSensor implements Closeable, Handler.Callback
 
 	public native long Get(float[] values); // return value is timestamp
 
-	public static native void FixDrift(float[] values);
+	public static native void FixDrift(float[] values, boolean updateDrift);
 
 	static
 	{
