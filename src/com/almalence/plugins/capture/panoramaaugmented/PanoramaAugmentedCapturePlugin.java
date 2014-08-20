@@ -124,7 +124,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private boolean						remapOrientation;
 
 	private volatile boolean			capturing;
-	private boolean						aboutToTakePicture				= false;
+	//private boolean						aboutToTakePicture				= false;
 
 	private AugmentedRotationListener	rotationListener;
 
@@ -150,6 +150,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private Switch						modeSwitcher;
 	private boolean						modeSweep = true;
+	private boolean focused = false;
 
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -690,7 +691,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				else
 				{
 					this.isFirstFrame = true;
-					this.capturing = true;
 					int fm = CameraController.getInstance().getFocusMode();
 					int fs = CameraController.getFocusState();
 					if (!takingAlready
@@ -699,11 +699,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 									|| fm == CameraParameters.AF_MODE_EDOF
 									|| fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 							&& !MainScreen.getAutoFocusLock())
-						aboutToTakePicture = true;
+					{
+						//aboutToTakePicture = true;
+						this.focused = false;
+					}
 					else if (!takingAlready)
 					{
-						this.startCapture();
+						this.focused = true;
 					}
+					
+					this.startCapture();
 				}
 			}
 		}
@@ -1062,6 +1067,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void startCapture()
 	{
+		this.capturing = true;
+		
 		this.modeSwitcher.setEnabled(false);
 		this.rotationListener.setUpdateDrift(false);
 		
@@ -1073,16 +1080,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	
 	private void takePictureUnimode(final int image)
 	{
-		if (this.modeSweep)
+		if (this.focused)
 		{
-			this.engine.recordCoordinates();
-			this.engine.onFrameAdded(true, image, true);
-			this.isFirstFrame = false;
-		}
-		else
-		{
-			this.takingAlready = true;
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			if (this.modeSweep)
+			{
+				this.engine.recordCoordinates();
+				this.engine.onFrameAdded(true, image, true);
+				this.isFirstFrame = false;
+			}
+			else
+			{
+				this.takingAlready = true;
+				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+			}
 		}
 	}
 
@@ -1115,8 +1125,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onAutoFocus(final boolean success)
 	{
-		if (aboutToTakePicture)
-			startCapture();
+		this.focused = true;
+		//if (aboutToTakePicture)
+			//startCapture();
 	}
 
 	@Override
@@ -1127,7 +1138,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!this.capturing)
 			{
 				this.takingAlready = false;
-				this.aboutToTakePicture = false;
+				//this.aboutToTakePicture = false;
 				return;
 			}
 		}
@@ -1229,7 +1240,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			
 			takingAlready = false;
 			capturing = false;
-			aboutToTakePicture = false;
+			//aboutToTakePicture = false;
 		}
 	}
 
@@ -1318,6 +1329,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void stopCapture()
 	{
 		this.capturing = false;
+		this.focused = false;
 
 		unlockAEWB();
 
