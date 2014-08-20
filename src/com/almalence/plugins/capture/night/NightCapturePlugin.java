@@ -637,15 +637,8 @@ public class NightCapturePlugin extends PluginCapture
 				{
 					if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
 					{
-						CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED); // should
-																											// set
-																											// to
-																											// hyperfocal
-																											// distance
-																											// as
-																											// per
-																											// android
-																											// doc
+						// should set to hyperfocal distance as per android doc
+						CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED); 
 						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
@@ -1116,9 +1109,12 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			if (CameraController.isFrontCamera())
 			{
-				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-				int imageWidth = params.getPreviewSize().width;
-				int imageHeight = params.getPreviewSize().height;
+//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+//				int imageWidth = params.getPreviewSize().width;
+//				int imageHeight = params.getPreviewSize().height;
+				
+				int imageWidth = MainScreen.getPreviewWidth();
+				int imageHeight = MainScreen.getPreviewHeight();
 
 				byte[] rotatedFrame = new byte[data.length];
 				ImageConversion.TransformNV21(data, rotatedFrame, imageWidth, imageHeight, 1, 0, 0);
@@ -1140,9 +1136,13 @@ public class NightCapturePlugin extends PluginCapture
 					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(frameNumber + 1));
-
+			
+			
 			if (frameNumber == 0)
+			{
+				PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(true));
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+			}
 
 			++frameNumber;
 			--nVFframesToBuffer;

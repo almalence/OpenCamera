@@ -122,7 +122,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			yuv = SwapHeap.SwapToHeap(dataRotated);
 		}
 
-		PluginManager.getInstance().addToSharedMem("resultfromshared" + sessionID, "false");
+		PluginManager.getInstance().addToSharedMem("resultfromshared" + sessionID, "true");
 		PluginManager.getInstance().addToSharedMem("resultcrop0" + sessionID,
 				String.valueOf(NightProcessingPlugin.crop[0]));
 		PluginManager.getInstance().addToSharedMem("resultcrop1" + sessionID,
@@ -147,6 +147,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));
+		
+		Log.e("NightProcessing", "nightPreview. images amount = " + imagesAmount);
 
 		int[] compressed_frame = new int[imagesAmount];
 		int[] compressed_frame_len = new int[imagesAmount];

@@ -1698,7 +1698,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				GridView gridview = (GridView) guiView.findViewById(R.id.meteringmodeGrid);
 				gridview.setAdapter(meteringmodeAdapter);
 
-				int initValue = preferences.getInt(MainScreen.sMeteringModePref, MainScreen.sDefaultValue);
+				int initValue = preferences.getInt(MainScreen.sMeteringModePref, MainScreen.sDefaultMeteringValue);
 				if (!activeMeteringNames.contains(initValue))
 					initValue = activeMeteringNames.get(0);
 

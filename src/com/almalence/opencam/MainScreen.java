@@ -281,6 +281,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int					sDefaultValue			= CameraParameters.SCENE_MODE_AUTO;
 	public static int					sDefaultFocusValue		= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -1706,6 +1707,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				break;
 			case PluginManager.MSG_CAMERA_READY:
 			{
+				Log.e("MainScreen", "Camera ready.");
 				configureCamera();
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();

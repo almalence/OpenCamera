@@ -850,7 +850,7 @@ public class HALv3
 //			HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
 			resultInHeap = resInHeap;
-			if (Array.getLength(pause) > 0 && pause[0] > 0)
+			if (Array.getLength(pause) > 0)
 			{
 				totalFrames = nFrames;
 				currentFrameIndex = 0;
@@ -969,6 +969,20 @@ public class HALv3
 					}
 				}.start();
 
+			}
+			else
+			{
+				if (evRequested != null && evRequested.length > index)
+					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+
+				try
+				{
+					HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+							captureListener, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 		catch (CameraAccessException e)

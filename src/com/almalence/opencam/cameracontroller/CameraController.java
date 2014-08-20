@@ -717,6 +717,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 				} catch (RuntimeException e)
 				{
+					Log.e(TAG, "Unable to open camera");
 					CameraController.camera = null;
 				}
 
@@ -738,6 +739,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					camera.setDisplayOrientation(90);
 				} catch (RuntimeException e)
 				{
+					Log.e(TAG, "Unable to set display orientation for camera");
 					e.printStackTrace();
 				}
 
@@ -746,6 +748,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					camera.setPreviewDisplay(holder);
 				} catch (IOException e)
 				{
+					Log.e(TAG, "Unable to set preview display for camera");
 					e.printStackTrace();
 				}
 			}
@@ -762,6 +765,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.camera.setDisplayOrientation(90);
 			} catch (RuntimeException e)
 			{
+				Log.e(TAG, "Unable to set display orientation for camera");
 				e.printStackTrace();
 			}
 
@@ -770,6 +774,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.camera.setPreviewDisplay(holder);
 			} catch (IOException e)
 			{
+				Log.e(TAG, "Unable to set preview display for camera");
 				e.printStackTrace();
 			}
 		}
