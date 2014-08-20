@@ -50,6 +50,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.webkit.WebView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -106,8 +107,10 @@ public class AlmalenceStore
 		RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
 		final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
 		final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
-		TextView text_features = (TextView) features.findViewById(R.id.text_features);
-		text_features.setText(MainScreen.getInstance().getResources().getString(R.string.storeFeatures));
+		//TextView text_features = (TextView) features.findViewById(R.id.text_features);
+		//text_features.setText(MainScreen.getInstance().getResources().getString(R.string.storeFeatures));
+		WebView wv = (WebView)features.findViewById(R.id.text_features);
+		wv.loadUrl("file:///android_asset/www/features.html");
 
 		page.addView(features);
 		pages.add(page);

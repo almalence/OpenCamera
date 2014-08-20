@@ -19,6 +19,14 @@ by Almalence Inc. All Rights Reserved.
 #ifndef __IMAGECONVERSION_UTILS_H__
 #define __IMAGECONVERSION_UTILS_H__
 
+inline int min(int a, int b)
+{
+	return (a > b ? b : a);
+}
+inline int max(int a, int b)
+{
+	return (a > b ? a : b);
+}
 
 enum {
 	PIXELS_BGRA,
@@ -148,6 +156,13 @@ void NV21_to_Gray_scaled
 	int outWidth,
 	int outHeight,
 	unsigned char *buffer
+);
+
+void addRoundCornersRGBA8888
+(
+	unsigned char * const rgb_bytes,
+	const int outWidth,
+	const int outHeight
 );
 
 #endif // __IMAGECONVERSION_UTILS_H__
