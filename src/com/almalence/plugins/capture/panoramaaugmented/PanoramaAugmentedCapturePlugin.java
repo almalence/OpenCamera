@@ -554,6 +554,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void setCameraPictureSize()
 	{
 		final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
+		if(picture_sizes.size() == 0)
+		{
+			Log.e(TAG, "Picture sizes list is empty");
+			return;
+		}
 
 		if (Build.MODEL.contains("HTC One X"))
 		{
