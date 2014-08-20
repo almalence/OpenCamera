@@ -61,7 +61,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
 	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
 	private static final long					MPIX_8				= 3504 * 2336;
-	private static final long					MPIX_1080			= 1920 * 1088;
+	private static final long					MPIX_1080			= 1920 * 1080;
 
 	private static List<CameraController.Size>	ResolutionsSizesList;							;
 	private static List<Long>					ResolutionsMPixList;
@@ -372,7 +372,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			if (s.getHeight() * s.getWidth() < sPreview.getHeight() * sPreview.getWidth())
 			{
 				ResolutionsSizesList.add(i, sPreview);
-				if (sPreview.getHeight() * sPreview.getWidth() > MPIX_1080) {
+				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080) {
 					if (prefIdx == -1) {
 						SharedPreferences.Editor prefEditor = prefs.edit();
 						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i));
@@ -386,7 +386,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 					&& (s.getHeight() * s.getWidth() != sPreview.getHeight() * sPreview.getWidth()))
 			{
 				ResolutionsSizesList.add(sPreview);
-				if (sPreview.getHeight() * sPreview.getWidth() > MPIX_1080) {
+				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080) {
 					if (prefIdx == -1) {
 						SharedPreferences.Editor prefEditor = prefs.edit();
 						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i + 1));
