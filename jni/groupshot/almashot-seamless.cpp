@@ -438,7 +438,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	return ret;
 }
 
-extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Preview
+extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Preview
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -472,21 +472,21 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_plugins_processing_groups
 
 	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);
 
-	jbyteArray jpixels = NULL;
-	Uint8 * pixels;
+	jintArray jpixels = NULL;
+	Uint32 * pixels;
 
-	jpixels = env->NewByteArray(outWidth * outHeight * 4);
+	jpixels = env->NewIntArray(outWidth * outHeight * 4);
 	LOGD("alloc %d byte argb memory", outWidth * outHeight * 4);
-	pixels = (Uint8 *)env->GetByteArrayElements(jpixels, NULL);
+	pixels = (Uint32 *)env->GetIntArrayElements(jpixels, NULL);
 
 	NV21_to_RGB_scaled(outBuffer, inWidth, inHeight, 0, 0, inWidth, inHeight, outWidth, outHeight, 4, (Uint8 *)pixels);
 
 	free(outBuffer);
 
-	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, JNI_ABORT);
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_ABORT);
 
 	LOGD("Preview - end");
-	return (jbyte *)jpixels;
+	return jpixels;
 }
 
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_RealView

@@ -232,7 +232,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			sequenceProcessingPlugin.onStartProcessing(sessionID);
 		} else if (selectedPlugin == OBJECT_REMOVAL)
 		{
-			ObjectRemovalProcessingPlugin.setmJpegBufferList(mJpegBufferList);
+//			ObjectRemovalProcessingPlugin.setYUVBufferList(mYUVBufferList);
 			objectRemovalProcessingPlugin.onStartProcessing(sessionID);
 		}
 	}
