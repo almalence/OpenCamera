@@ -2417,7 +2417,7 @@ public class PluginManager implements PluginManagerInterface
 					tmpFile.createNewFile();
 					copyFromForceFileName(tmpFile);
 				}
-
+				
 				// Set tag_model using ExifInterface.
 				// If we try set tag_model using ExifDriver, then standard
 				// gallery of android (Nexus 4) will crash on this file.
@@ -2430,6 +2430,7 @@ public class PluginManager implements PluginManagerInterface
 				{
 					ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
 					ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
+					ei.setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL + "");
 				}
 				ei.saveAttributes();
 
