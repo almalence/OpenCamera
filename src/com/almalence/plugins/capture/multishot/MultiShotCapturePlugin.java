@@ -29,7 +29,6 @@ import android.os.Debug;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -43,6 +42,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+
 //-+- -->
 /***
  * Implements group shot capture plugin - captures predefined number of images
@@ -127,23 +127,23 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			inCapture = true;
 			takingAlready = true;
-			
+
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pauseBetweenShots, null, true);
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
+						pauseBetweenShots, null, true);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
 				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
 				inCapture = false;
 				takingAlready = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance()
+						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 				MainScreen.getGUIManager().lockControls = false;
 			}
 		}
 	}
-
 
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
@@ -367,8 +367,10 @@ public class MultiShotCapturePlugin extends PluginCapture
 			if (s.getHeight() * s.getWidth() < sPreview.getHeight() * sPreview.getWidth())
 			{
 				ResolutionsSizesList.add(i, sPreview);
-				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080) {
-					if (prefIdx == -1) {
+				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080)
+				{
+					if (prefIdx == -1)
+					{
 						SharedPreferences.Editor prefEditor = prefs.edit();
 						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i));
 						prefEditor.commit();
@@ -381,8 +383,10 @@ public class MultiShotCapturePlugin extends PluginCapture
 					&& (s.getHeight() * s.getWidth() != sPreview.getHeight() * sPreview.getWidth()))
 			{
 				ResolutionsSizesList.add(sPreview);
-				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080) {
-					if (prefIdx == -1) {
+				if (sPreview.getHeight() * sPreview.getWidth() >= MPIX_1080)
+				{
+					if (prefIdx == -1)
+					{
 						SharedPreferences.Editor prefEditor = prefs.edit();
 						prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(i + 1));
 						prefEditor.commit();
