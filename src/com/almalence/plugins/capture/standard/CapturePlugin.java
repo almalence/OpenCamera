@@ -135,14 +135,6 @@ public class CapturePlugin extends PluginCapture
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, ev);
 		}
-		else {
-			Camera.Parameters params = CameraController.getCamera().getParameters();
-			params.set("rawsave-mode", "1");
-			long dateTaken = System.currentTimeMillis();
-            String mRawCaptureFileName = CAMERA_IMAGE_BUCKET_NAME;
-            params.set("rawfname", mRawCaptureFileName + ".raw");
-            CameraController.getInstance().setCameraParameters(params);
-		}
 	}
 
 	@Override
