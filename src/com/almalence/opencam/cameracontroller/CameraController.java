@@ -2493,8 +2493,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					MainScreen.getGUIManager().showCaptureIndication();
 					MainScreen.getInstance().playShutter();
 					
-					if(imageWidth == previewWidth && imageHeight == previewHeight)
-						takePreviewFrame = true;
+					if(imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
+						takePreviewFrame = true; //Temporary make capture by preview frames only for YUV requests to avoid slow YUV to JPEG conversion
 					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
