@@ -2430,7 +2430,7 @@ public class PluginManager implements PluginManagerInterface
 				{
 					ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
 					ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-					ei.setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL + "");
+					ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
 				}
 				ei.saveAttributes();
 

@@ -119,7 +119,7 @@ public class FocusVFPlugin extends PluginViewfinder
 																							// format
 	private int					mFocusMode;
 	private int					mDefaultFocusMode;
-	private int					mOverrideFocusMode;
+	private int					mOverrideFocusMode				= -1;
 	private SharedPreferences	mPreferences;
 	private Handler				mHandler;
 
@@ -830,10 +830,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		boolean useFocus = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(
 				"UseFocus", true);
 		return !(focusMode == CameraParameters.AF_MODE_INFINITY || focusMode == CameraParameters.AF_MODE_FIXED
-				|| focusMode == CameraParameters.AF_MODE_EDOF // EDOF likely
-																// needs
-																// auto-focus
-																// call
+				|| focusMode == CameraParameters.AF_MODE_EDOF // EDOF likely needs auto-focus call
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 				|| !useFocus || mFocusDisabled);
 	}
 

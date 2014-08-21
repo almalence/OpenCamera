@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import android.util.Log;
+
 import com.almalence.plugins.export.standard.ExifDriver.Values.ExifValue;
 import com.almalence.plugins.export.standard.ExifDriver.Values.UndefinedValueAccessException;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
@@ -445,7 +447,16 @@ public class ExifDriver
 			int components = readUInt(_data, entryStart + 4, 4, originalAlign);
 			// If the totalLength is >4 it does not fit in directory
 			int totalLength = 0;
-			Object dType = COMP_WIDTHS[datatype];
+			Object dType = COMP_WIDTHS[0];
+			if(datatype > COMP_WIDTHS.length)
+			{
+				Log.e("EXIF_TAG", "Error in exifDriver. Tag " + tag + ", datatype = " + datatype);
+				if(tag == 274)
+					dType = COMP_WIDTHS[3];
+			}
+			else
+				dType = COMP_WIDTHS[datatype];
+			
 			if (dType != null)
 			{
 				totalLength = components * (Integer) dType;

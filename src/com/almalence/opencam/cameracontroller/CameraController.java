@@ -209,7 +209,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Image size index for capturing
 	private static int								CapIdx;
 
-	public static final int							MIN_MPIX_SUPPORTED				= 1280 * 960;
+	public static final int							MIN_MPIX_SUPPORTED				= 1280 * 720;
 
 	// Lists of resolutions, their indexes and names (for capturing and preview)
 	protected static List<Long>						ResolutionsMPixList;
@@ -2008,6 +2008,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static int		total_frames;
 	protected static int		frame_num;
+	protected static int		frameFormat 		= CameraController.JPEG;
 	
 	protected static boolean	takePreviewFrame 	= false;
 	
@@ -2022,6 +2023,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		total_frames = nFrames;
 		frame_num = 0;
+		frameFormat = format;
 		
 		resultInHeap = resInHeap;
 		
@@ -2491,8 +2493,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					MainScreen.getGUIManager().showCaptureIndication();
 					MainScreen.getInstance().playShutter();
 					
-					if(imageWidth == previewWidth && imageHeight == previewHeight)
-						takePreviewFrame = true;
+					if(imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
+						takePreviewFrame = true; //Temporary make capture by preview frames only for YUV requests to avoid slow YUV to JPEG conversion
 					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
