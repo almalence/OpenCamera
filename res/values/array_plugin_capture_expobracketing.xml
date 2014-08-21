@@ -4,7 +4,7 @@
 <string-array name="evArrayExpoBracketing">
    <item>@string/Pref_ExpoBracketing_Expo</item>
    <item>[-1   +1]</item>
-   <item>[-2 0 +2]</item>
+   <item>[-2, 0, +2]</item>
 </string-array>
  
 <string-array name="evValuesExpoBracketing">

@@ -453,7 +453,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 			// we do not need overly wide dynamic range, limit to [-3Ev..+3Ev]
 			// some models report range that they can not really handle
-			if ((min_ev * ev_step < -3) && (max_ev * ev_step > 3))
+			if ((min_ev * ev_step < -3) && (max_ev * ev_step > 3) && PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
 			{
 				max_ev = (int) Math.floor(3 / ev_step);
 				min_ev = -max_ev;
@@ -542,7 +542,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void CaptureFrame()
 	{
 		boolean isHDRMode = PluginManager.getInstance().getActiveModeID().equals("hdrmode");
-		requestID = CameraController.captureImagesWithParams(3, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues, true);
+		requestID = CameraController.captureImagesWithParams(total_frames, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues, true);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)
