@@ -864,6 +864,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			int currSizeHeight = s.height;
 			int highestSizeWidth = sHighest.width;
 			int highestSizeHeight = sHighest.height;
+			
+			if(Build.MODEL.contains("GT-I9190") && isFrontCamera() && (currSizeWidth*currSizeHeight == 1920*1080))
+				continue;
 
 			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
 			{
