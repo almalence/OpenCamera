@@ -190,10 +190,12 @@ public class AlmaCLRShot
 			int[] PointOfData = new int[mNumOfFrame];
 			int[] LengthOfData = new int[mNumOfFrame];
 
+			int data_lenght = mInputFrameSize.getWidth() * mInputFrameSize.getHeight() + 2
+					* ((mInputFrameSize.getWidth() + 1) / 2) * ((mInputFrameSize.getHeight() + 1) / 2);
 			for (int i = 0; i < mNumOfFrame; i++)
 			{
 				PointOfData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
-				LengthOfData[i] = inputFrame.get(i).length;
+				LengthOfData[i] = data_lenght;
 				if (PointOfData[i] == 0)
 				{
 					Log.d(TAG, "Out of Memory in Native");

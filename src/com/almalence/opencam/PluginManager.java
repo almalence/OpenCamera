@@ -499,7 +499,6 @@ public class PluginManager implements PluginManagerInterface
 	private void restartMainScreen()
 	{
 		// disable old plugins
-		Log.e("PluginManager", " ++++++++++++++++++++++++++++++++++++++++++++++++++  restartMainScreen!");
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
 		onStop();
@@ -531,7 +530,6 @@ public class PluginManager implements PluginManagerInterface
 	public void switchMode(Mode mode)
 	{
 		// disable old plugins
-		Log.e("PluginManager", " ++++++++++++++++++++++++++++++++++++++++++++++++++  switchMode!");
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
 		onStop();

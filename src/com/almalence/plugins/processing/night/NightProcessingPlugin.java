@@ -81,6 +81,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	@Override
 	public void onStartProcessing(long SessionID)
 	{
+		Log.e("NightProcessing", "+++++++++++++++++++++++++++++++++++++ onStartProcessing");
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,

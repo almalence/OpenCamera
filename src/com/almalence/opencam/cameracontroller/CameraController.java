@@ -624,7 +624,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.camera.stopPreview();
 				CameraController.camera.release();
 				CameraController.camera = null;
-				Log.e(TAG, " ++++++++++++++++++++++++++++++++++++++++++++++++++  Camera released! camera = null!");
 			}
 		} else
 			HALv3.onPauseHALv3();
@@ -704,7 +703,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					Log.e(TAG, " ++++++++++++++++++++++++++++++++++++++++++++++++++  Try to open camera!");
 					if (Camera.getNumberOfCameras() > 0)
 						camera = Camera.open(CameraController.CameraIndex);
 					else
@@ -728,8 +726,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					Toast.makeText(mainContext, "Unable to start camera", Toast.LENGTH_LONG).show();
 					return;
 				}
-				else
-					Log.e(TAG, " ++++++++++++++++++++++++++++++++++++++++++++++++++  Camera opened successfully!");
 			}
 
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
