@@ -113,7 +113,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
 				MainScreen.getInstance().getResources().getString(R.string.MultiShot_Help),
-				R.drawable.plugin_help_object, "multiShotShowHelp");
+				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}
 
 	public boolean delayedCaptureSupported()
