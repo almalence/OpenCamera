@@ -393,6 +393,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 	}
+	
+	@Override
+	public void onCameraSetup()
+	{
+		setMode();
+	}
 
 	@Override
 	public void onResume()
@@ -427,7 +433,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 		
-		if (!CameraController.isUseHALv3())
+		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
 		{
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			cp.setRecordingHint(false);
@@ -644,7 +650,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		this.setMode();
+//		this.setMode();
 
 		if (!this.prefHardwareGyroscope)
 		{

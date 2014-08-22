@@ -2410,7 +2410,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		switch(msg.what)
 		{
 			case MSG_SET_EXPOSURE:
-				Log.e(TAG, "MSG_SET_EXPOSURE");
 				try
 				{
 //					if (UseLumaAdaptation && LumaAdaptationAvailable)
@@ -2450,7 +2449,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return true;
 				
 			case MSG_NEXT_FRAME:
-				Log.e(TAG, "MSG_NEXT_FRAME");
 				if (++frame_num < total_frames)
 				{
 					if(Array.getLength(pauseBetweenShots) < frame_num)
@@ -2480,7 +2478,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				break;
 			case MSG_TAKE_IMAGE:
-				Log.e(TAG, "MSG_TAKE_IMAGE");
 				synchronized (SYNC_OBJECT)
 				{
 					int imageWidth = MainScreen.getImageWidth();

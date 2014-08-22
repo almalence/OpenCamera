@@ -1325,6 +1325,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				if (!CameraController.isUseHALv3())
 				{
+					if(!CameraController.isCameraCreated())
+						return;
 					// exceptions sometimes happen here when resuming after
 					// processing
 					try
