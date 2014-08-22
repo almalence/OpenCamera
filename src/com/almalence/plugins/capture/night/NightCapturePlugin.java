@@ -155,7 +155,13 @@ public class NightCapturePlugin extends PluginCapture
 	private static boolean		OpenGLPreference;
 	private static String		ImageSizeIdxPreference;
 
+	public static String getImageSizeIdxPreference()
+	{
+		return ImageSizeIdxPreference;
+	}
+
 	private static List<Long>	ResolutionsMPixList;
+
 	public static List<Long> getResolutionsMPixList()
 	{
 		return ResolutionsMPixList;
@@ -520,6 +526,10 @@ public class NightCapturePlugin extends PluginCapture
 		}
 
 		captureIndex = captureIdx;
+		if (ImageSizeIdxPreference == "-1")
+		{
+			ImageSizeIdxPreference = String.valueOf(captureIdx);
+		}
 		CapIdx = captureIdx;
 		imgCaptureWidth = captureWidth;
 		imgCaptureHeight = captureHeight;
@@ -638,7 +648,7 @@ public class NightCapturePlugin extends PluginCapture
 					if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
 					{
 						// should set to hyperfocal distance as per android doc
-						CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED); 
+						CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_FIXED);
 						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
@@ -974,7 +984,6 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
@@ -993,21 +1002,19 @@ public class NightCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(frameNumber + 1));
-		
+
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
 		if (frameNumber == 0 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
-		
-		
+
 		try
 		{
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
 			Log.e("Night", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			frameNumber = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -1015,9 +1022,9 @@ public class NightCapturePlugin extends PluginCapture
 			inCapture = false;
 			return;
 		}
-		
+
 		if (++frameNumber == total_frames)
-		{			
+		{
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			takingAlready = false;
@@ -1049,7 +1056,8 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null, true);
+				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0],
+						null, true);
 			} catch (RuntimeException e)
 			{
 				Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");
@@ -1077,10 +1085,11 @@ public class NightCapturePlugin extends PluginCapture
 				else if (dataS.length < data2.length)
 					dataS = new byte[data2.length];
 
-//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//				int imageWidth = params.getPreviewSize().width;
-//				int imageHeight = params.getPreviewSize().height;
-				
+				// Camera.Parameters params =
+				// CameraController.getInstance().getCameraParameters();
+				// int imageWidth = params.getPreviewSize().width;
+				// int imageHeight = params.getPreviewSize().height;
+
 				int imageWidth = MainScreen.getPreviewWidth();
 				int imageHeight = MainScreen.getPreviewHeight();
 
@@ -1097,8 +1106,7 @@ public class NightCapturePlugin extends PluginCapture
 				data1 = data2;
 				data2 = null;
 			}
-		}
-		else if(inCapture && data1 != null)
+		} else if (inCapture && data1 != null)
 		{
 			data1 = null;
 			data2 = null;
@@ -1109,10 +1117,11 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			if (CameraController.isFrontCamera())
 			{
-//				Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-//				int imageWidth = params.getPreviewSize().width;
-//				int imageHeight = params.getPreviewSize().height;
-				
+				// Camera.Parameters params =
+				// CameraController.getInstance().getCameraParameters();
+				// int imageWidth = params.getPreviewSize().width;
+				// int imageHeight = params.getPreviewSize().height;
+
 				int imageWidth = MainScreen.getPreviewWidth();
 				int imageHeight = MainScreen.getPreviewHeight();
 
@@ -1136,8 +1145,7 @@ public class NightCapturePlugin extends PluginCapture
 					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(frameNumber + 1));
-			
-			
+
 			if (frameNumber == 0)
 			{
 				PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(true));
@@ -1162,7 +1170,6 @@ public class NightCapturePlugin extends PluginCapture
 			}
 		}
 	}
-
 
 	/******************************************************************************************************
 	 * OpenGL layer functions

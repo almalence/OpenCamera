@@ -1423,7 +1423,7 @@ public class HALv3
 				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);
 				
 				if(++currentFrameIndex < totalFrames)
-					captureNextImageWithParams(im.getFormat(), pauseBetweenShots[currentFrameIndex], expRequested, currentFrameIndex);
+					captureNextImageWithParams(CameraController.frameFormat, pauseBetweenShots[currentFrameIndex], expRequested, currentFrameIndex);
 			}
 
 			// Image should be closed after we are done with it

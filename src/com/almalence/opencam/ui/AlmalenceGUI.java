@@ -3036,7 +3036,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (restart)
 		{
-			Log.e("GUI", " ++++++++++++++++++++++++++++++++++++++++++++++++++  AlmalenceGUI cameraSwitched!");
 			MainScreen.getInstance().pauseMain();
 			MainScreen.getInstance().resumeMain();
 		}

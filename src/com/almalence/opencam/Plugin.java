@@ -251,8 +251,6 @@ public abstract class Plugin
 	{
 	}
 
-	private int		MIN_MPIX_SUPPORTED	= 1280 * 960;
-
 	private long	MPIX_8				= 3504 * 2336;	// Actually 8.2 mpix,
 														// some reserve for
 														// unusual cameras;
@@ -304,7 +302,7 @@ public abstract class Plugin
 		{
 			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((mpix >= MIN_MPIX_SUPPORTED) && (mpix < maxMpix))
+			if ((mpix >= CameraController.MIN_MPIX_SUPPORTED) && (mpix < maxMpix))
 			{
 				if (mpix > defaultCaptureMpix && mpix <= MPIX_8)
 				{
@@ -324,7 +322,7 @@ public abstract class Plugin
 			long mpix = (long) s.getWidth() * s.getHeight();
 
 			if ((Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii)) == prefIdx)
-					&& (mpix >= MIN_MPIX_SUPPORTED))
+					&& (mpix >= CameraController.MIN_MPIX_SUPPORTED))
 			{
 				prefFound = true;
 				CaptureIdx = ii;

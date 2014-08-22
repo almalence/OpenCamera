@@ -34,6 +34,7 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -137,7 +138,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		}
 
 		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-		mYUVBufferList.clear();
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
@@ -160,17 +160,17 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (imagesAmount == 0)
 				imagesAmount = 1;
 
-			mJpegBufferList.clear();
+			mYUVBufferList.clear();
 			for (int i = 1; i <= imagesAmount; i++)
 			{
 				byte[] in = SwapHeap.CopyFromHeap(
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
 
-				mJpegBufferList.add(i - 1, in);
+				mYUVBufferList.add(i - 1, in);
 			}
 
-			getDisplaySize(mJpegBufferList.get(0));
+			getDisplaySize(mYUVBufferList.get(0));
 			Size preview = new Size(mDisplayWidth, mDisplayHeight);
 
 			PluginManager.getInstance()
@@ -180,7 +180,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
 
 			// frames!!! should be taken from heap
-			mAlmaCLRShot.addInputFrame(mJpegBufferList, input, isYUV);
+			mAlmaCLRShot.addInputFrame(mYUVBufferList, input, isYUV);
 
 			mAlmaCLRShot.initialize(preview, mAngle,
 			/*
@@ -231,14 +231,12 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	public static int				mDisplayWidth;
 	public static int				mDisplayHeight;
 
-	public static ArrayList<byte[]>	mJpegBufferList;
+	public static ArrayList<byte[]>	mYUVBufferList;
 
-	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList)
+	public static void setYUVBufferList(ArrayList<byte[]> YUVBufferList)
 	{
-		ObjectRemovalProcessingPlugin.mJpegBufferList = mJpegBufferList;
+		ObjectRemovalProcessingPlugin.mYUVBufferList = YUVBufferList;
 	}
-
-	public static ArrayList<Integer>	mYUVBufferList		= new ArrayList<Integer>();
 
 	Paint								paint				= null;
 
@@ -425,7 +423,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (released)
 				return false;
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
-			mJpegBufferList.clear();
+			mYUVBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_CONTROL_UNLOCKED);

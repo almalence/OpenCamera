@@ -499,7 +499,6 @@ public class PluginManager implements PluginManagerInterface
 	private void restartMainScreen()
 	{
 		// disable old plugins
-		Log.e("PluginManager", " ++++++++++++++++++++++++++++++++++++++++++++++++++  restartMainScreen!");
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
 		onStop();
@@ -531,7 +530,6 @@ public class PluginManager implements PluginManagerInterface
 	public void switchMode(Mode mode)
 	{
 		// disable old plugins
-		Log.e("PluginManager", " ++++++++++++++++++++++++++++++++++++++++++++++++++  switchMode!");
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().pauseMain();
 		onStop();
@@ -2430,7 +2428,7 @@ public class PluginManager implements PluginManagerInterface
 				{
 					ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
 					ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-					ei.setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL + "");
+					ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
 				}
 				ei.saveAttributes();
 
