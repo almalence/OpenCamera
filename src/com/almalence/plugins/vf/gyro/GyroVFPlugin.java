@@ -190,7 +190,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			initSensors();
 		} else
 		{
-			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
+			quickControlIconID = R.drawable.gui_almalence_settings_gyro_off;
 			if (mHorizonIndicatorContainer != null)
 			{
 				mHorizonIndicatorContainer.setVisibility(View.GONE);
@@ -230,7 +230,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 		if (mGyroState == ON)
 		{
-			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
+			quickControlIconID = R.drawable.gui_almalence_settings_gyro_off;
 			editor.putBoolean("PrefGyroVF", false);
 		} else
 		{
