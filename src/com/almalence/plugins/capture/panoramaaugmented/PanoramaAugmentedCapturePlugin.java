@@ -436,8 +436,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
 		{
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-			cp.setRecordingHint(false);
-			CameraController.getInstance().setCameraParameters(cp);
+			if (cp!= null)
+			{
+				cp.setRecordingHint(false);
+				CameraController.getInstance().setCameraParameters(cp);
+			}
 		}
 	}
 

@@ -393,7 +393,7 @@
 		android:layout_height="wrap_content"	 
 		android:layout_marginTop="@dimen/buttonsLayoutMarginTop"
 		android:layout_above="@+id/mainButtons"
-		android:layout_below="@+id/paramsLayout">
+		android:layout_below="@+id/topPanel">
 			<LinearLayout
 		 	 	android:id="@+id/evLayout"
 		 	 	android:background="@drawable/ev_background"

@@ -150,275 +150,615 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, MORE
 	}
 
-	private OrientationEventListener orientListener;
+	private OrientationEventListener			orientListener;
 
 	// certain quick control visible
-	private boolean	 				 quickControlsVisible		= false;
+	private boolean								quickControlsVisible		= false;
 
 	// Quick control customization variables
-	private ElementAdapter			 quickControlAdapter;
-	private List<View>				 quickControlChangeres;
-	private View					 currentQuickView			= null;											
-	// Current quick control to replace If qc customization layout is showing now
-	private boolean					 quickControlsChangeVisible	= false;											
+	private ElementAdapter						quickControlAdapter;
+	private List<View>							quickControlChangeres;
+	private View								currentQuickView			= null;
+	// Current quick control to replace If qc customization layout is showing
+	// now
+	private boolean								quickControlsChangeVisible	= false;
 
 	// Settings layout
-	private ElementAdapter			 settingsAdapter;
-	private List<View>				 settingsViews;
-	private boolean					 settingsControlsVisible	= false;
+	private ElementAdapter						settingsAdapter;
+	private List<View>							settingsViews;
+	private boolean								settingsControlsVisible		= false;
 	// If quick settings layout is showing now
 
 	// Mode selector layout
-	private ElementAdapter			 modeAdapter;
-	private List<View>				 modeViews;
-	private boolean					 modeSelectorVisible		= false;
+	private ElementAdapter						modeAdapter;
+	private List<View>							modeViews;
+	private boolean								modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
-	private AlmalenceStore			store;
+	private AlmalenceStore						store;
 
-	private SelfTimer				selfTimer;
+	private SelfTimer							selfTimer;
 
 	// Assoc list for storing association between mode button and mode ID
-	private Map<View, String>		buttonModeViewAssoc;
+	private Map<View, String>					buttonModeViewAssoc;
 
-	private Thumbnail				mThumbnail;
-	private RotateImageView			thumbnailView;
+	private Thumbnail							mThumbnail;
+	private RotateImageView						thumbnailView;
 
-	private RotateImageView			shutterButton;
+	private RotateImageView						shutterButton;
 
-	private static final Integer	ICON_EV						= R.drawable.gui_almalence_settings_exposure;
-	private static final Integer	ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
-	private static final Integer	ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
+	private static final Integer				ICON_EV						= R.drawable.gui_almalence_settings_exposure;
+	private static final Integer				ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
+	private static final Integer				ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
 
-	private static final int		FOCUS_AF_LOCK				= 10;
+	private static final int					FOCUS_AF_LOCK				= 10;
 
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
-	private static final Map<Integer, Integer>	ICONS_SCENE	= new HashMap<Integer, Integer>()
-	{
-		{
-			put(CameraParameters.SCENE_MODE_AUTO, 			R.drawable.gui_almalence_settings_scene_auto);
-			put(CameraParameters.SCENE_MODE_ACTION,			R.drawable.gui_almalence_settings_scene_action);
-			put(CameraParameters.SCENE_MODE_PORTRAIT, 		R.drawable.gui_almalence_settings_scene_portrait);
-			put(CameraParameters.SCENE_MODE_LANDSCAPE, 		R.drawable.gui_almalence_settings_scene_landscape);
-			put(CameraParameters.SCENE_MODE_NIGHT, 			R.drawable.gui_almalence_settings_scene_night);
-			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,	R.drawable.gui_almalence_settings_scene_nightportrait);
-			put(CameraParameters.SCENE_MODE_THEATRE, 		R.drawable.gui_almalence_settings_scene_theater);
-			put(CameraParameters.SCENE_MODE_BEACH, 			R.drawable.gui_almalence_settings_scene_beach);
-			put(CameraParameters.SCENE_MODE_SNOW, 			R.drawable.gui_almalence_settings_scene_snow);
-			put(CameraParameters.SCENE_MODE_SUNSET, 		R.drawable.gui_almalence_settings_scene_sunset);
-			put(CameraParameters.SCENE_MODE_STEADYPHOTO, 	R.drawable.gui_almalence_settings_scene_steadyphoto);
-			put(CameraParameters.SCENE_MODE_FIREWORKS, 		R.drawable.gui_almalence_settings_scene_fireworks);
-			put(CameraParameters.SCENE_MODE_SPORTS, 		R.drawable.gui_almalence_settings_scene_sports);
-			put(CameraParameters.SCENE_MODE_PARTY, 			R.drawable.gui_almalence_settings_scene_party);
-			put(CameraParameters.SCENE_MODE_CANDLELIGHT, 	R.drawable.gui_almalence_settings_scene_candlelight);
-			put(CameraParameters.SCENE_MODE_BARCODE, 		R.drawable.gui_almalence_settings_scene_barcode);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_SCENE					= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(CameraParameters.SCENE_MODE_AUTO,
+																							R.drawable.gui_almalence_settings_scene_auto);
+																					put(CameraParameters.SCENE_MODE_ACTION,
+																							R.drawable.gui_almalence_settings_scene_action);
+																					put(CameraParameters.SCENE_MODE_PORTRAIT,
+																							R.drawable.gui_almalence_settings_scene_portrait);
+																					put(CameraParameters.SCENE_MODE_LANDSCAPE,
+																							R.drawable.gui_almalence_settings_scene_landscape);
+																					put(CameraParameters.SCENE_MODE_NIGHT,
+																							R.drawable.gui_almalence_settings_scene_night);
+																					put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
+																							R.drawable.gui_almalence_settings_scene_nightportrait);
+																					put(CameraParameters.SCENE_MODE_THEATRE,
+																							R.drawable.gui_almalence_settings_scene_theater);
+																					put(CameraParameters.SCENE_MODE_BEACH,
+																							R.drawable.gui_almalence_settings_scene_beach);
+																					put(CameraParameters.SCENE_MODE_SNOW,
+																							R.drawable.gui_almalence_settings_scene_snow);
+																					put(CameraParameters.SCENE_MODE_SUNSET,
+																							R.drawable.gui_almalence_settings_scene_sunset);
+																					put(CameraParameters.SCENE_MODE_STEADYPHOTO,
+																							R.drawable.gui_almalence_settings_scene_steadyphoto);
+																					put(CameraParameters.SCENE_MODE_FIREWORKS,
+																							R.drawable.gui_almalence_settings_scene_fireworks);
+																					put(CameraParameters.SCENE_MODE_SPORTS,
+																							R.drawable.gui_almalence_settings_scene_sports);
+																					put(CameraParameters.SCENE_MODE_PARTY,
+																							R.drawable.gui_almalence_settings_scene_party);
+																					put(CameraParameters.SCENE_MODE_CANDLELIGHT,
+																							R.drawable.gui_almalence_settings_scene_candlelight);
+																					put(CameraParameters.SCENE_MODE_BARCODE,
+																							R.drawable.gui_almalence_settings_scene_barcode);
+																				}
+																			};
 
-	private static final Map<Integer, Integer>	ICONS_WB = new HashMap<Integer, Integer>()
-	{
-		{
-			put(CameraParameters.WB_MODE_AUTO, 			   R.drawable.gui_almalence_settings_wb_auto);
-			put(CameraParameters.WB_MODE_INCANDESCENT,     R.drawable.gui_almalence_settings_wb_incandescent);
-			put(CameraParameters.WB_MODE_FLUORESCENT, 	   R.drawable.gui_almalence_settings_wb_fluorescent);
-			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, R.drawable.gui_almalence_settings_wb_warmfluorescent);
-			put(CameraParameters.WB_MODE_DAYLIGHT, 		   R.drawable.gui_almalence_settings_wb_daylight);
-			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,  R.drawable.gui_almalence_settings_wb_cloudydaylight);
-			put(CameraParameters.WB_MODE_TWILIGHT, 		   R.drawable.gui_almalence_settings_wb_twilight);
-			put(CameraParameters.WB_MODE_SHADE, 		   R.drawable.gui_almalence_settings_wb_shade);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_WB					= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(CameraParameters.WB_MODE_AUTO,
+																							R.drawable.gui_almalence_settings_wb_auto);
+																					put(CameraParameters.WB_MODE_INCANDESCENT,
+																							R.drawable.gui_almalence_settings_wb_incandescent);
+																					put(CameraParameters.WB_MODE_FLUORESCENT,
+																							R.drawable.gui_almalence_settings_wb_fluorescent);
+																					put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
+																							R.drawable.gui_almalence_settings_wb_warmfluorescent);
+																					put(CameraParameters.WB_MODE_DAYLIGHT,
+																							R.drawable.gui_almalence_settings_wb_daylight);
+																					put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
+																							R.drawable.gui_almalence_settings_wb_cloudydaylight);
+																					put(CameraParameters.WB_MODE_TWILIGHT,
+																							R.drawable.gui_almalence_settings_wb_twilight);
+																					put(CameraParameters.WB_MODE_SHADE,
+																							R.drawable.gui_almalence_settings_wb_shade);
+																				}
+																			};
 
-	private static final Map<Integer, Integer>	ICONS_FOCUS	= new HashMap<Integer, Integer>()
-	{
-		{
-			put(CameraParameters.AF_MODE_AUTO, 				 R.drawable.gui_almalence_settings_focus_auto);
-			put(CameraParameters.AF_MODE_INFINITY, 			 R.drawable.gui_almalence_settings_focus_infinity);
-			put(CameraParameters.AF_MODE_NORMAL, 			 R.drawable.gui_almalence_settings_focus_normal);
-			put(CameraParameters.AF_MODE_MACRO, 			 R.drawable.gui_almalence_settings_focus_macro);
-			put(CameraParameters.AF_MODE_FIXED, 			 R.drawable.gui_almalence_settings_focus_fixed);
-			put(CameraParameters.AF_MODE_EDOF, 				 R.drawable.gui_almalence_settings_focus_edof);
-			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,   R.drawable.gui_almalence_settings_focus_continiuousvideo);
-			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, R.drawable.gui_almalence_settings_focus_continiuouspicture);
-			put(FOCUS_AF_LOCK, 								 R.drawable.gui_almalence_settings_focus_aflock);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_FOCUS					= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(CameraParameters.AF_MODE_AUTO,
+																							R.drawable.gui_almalence_settings_focus_auto);
+																					put(CameraParameters.AF_MODE_INFINITY,
+																							R.drawable.gui_almalence_settings_focus_infinity);
+																					put(CameraParameters.AF_MODE_NORMAL,
+																							R.drawable.gui_almalence_settings_focus_normal);
+																					put(CameraParameters.AF_MODE_MACRO,
+																							R.drawable.gui_almalence_settings_focus_macro);
+																					put(CameraParameters.AF_MODE_FIXED,
+																							R.drawable.gui_almalence_settings_focus_fixed);
+																					put(CameraParameters.AF_MODE_EDOF,
+																							R.drawable.gui_almalence_settings_focus_edof);
+																					put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
+																							R.drawable.gui_almalence_settings_focus_continiuousvideo);
+																					put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
+																							R.drawable.gui_almalence_settings_focus_continiuouspicture);
+																					put(FOCUS_AF_LOCK,
+																							R.drawable.gui_almalence_settings_focus_aflock);
+																				}
+																			};
 
-	private static final Map<Integer, Integer>	ICONS_FLASH	= new HashMap<Integer, Integer>()
-	{
-		{
-			put(CameraParameters.FLASH_MODE_OFF,    R.drawable.gui_almalence_settings_flash_off);
-			put(CameraParameters.FLASH_MODE_AUTO,   R.drawable.gui_almalence_settings_flash_auto);
-			put(CameraParameters.FLASH_MODE_SINGLE, R.drawable.gui_almalence_settings_flash_on);
-			put(CameraParameters.FLASH_MODE_REDEYE, R.drawable.gui_almalence_settings_flash_redeye);
-			put(CameraParameters.FLASH_MODE_TORCH,  R.drawable.gui_almalence_settings_flash_torch);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_FLASH					= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(CameraParameters.FLASH_MODE_OFF,
+																							R.drawable.gui_almalence_settings_flash_off);
+																					put(CameraParameters.FLASH_MODE_AUTO,
+																							R.drawable.gui_almalence_settings_flash_auto);
+																					put(CameraParameters.FLASH_MODE_SINGLE,
+																							R.drawable.gui_almalence_settings_flash_on);
+																					put(CameraParameters.FLASH_MODE_REDEYE,
+																							R.drawable.gui_almalence_settings_flash_redeye);
+																					put(CameraParameters.FLASH_MODE_TORCH,
+																							R.drawable.gui_almalence_settings_flash_torch);
+																				}
+																			};
 
-	private static final Map<Integer, Integer>	ICONS_ISO = new HashMap<Integer, Integer>()
-	{
-		{
-			put(CameraParameters.ISO_AUTO, R.drawable.gui_almalence_settings_iso_auto);
-			put(CameraParameters.ISO_50,   R.drawable.gui_almalence_settings_iso_50);
-			put(CameraParameters.ISO_100,  R.drawable.gui_almalence_settings_iso_100);
-			put(CameraParameters.ISO_200,  R.drawable.gui_almalence_settings_iso_200);
-			put(CameraParameters.ISO_400,  R.drawable.gui_almalence_settings_iso_400);
-			put(CameraParameters.ISO_800,  R.drawable.gui_almalence_settings_iso_800);
-			put(CameraParameters.ISO_1600, R.drawable.gui_almalence_settings_iso_1600);
-			put(CameraParameters.ISO_3200, R.drawable.gui_almalence_settings_iso_3200);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_ISO					= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(CameraParameters.ISO_AUTO,
+																							R.drawable.gui_almalence_settings_iso_auto);
+																					put(CameraParameters.ISO_50,
+																							R.drawable.gui_almalence_settings_iso_50);
+																					put(CameraParameters.ISO_100,
+																							R.drawable.gui_almalence_settings_iso_100);
+																					put(CameraParameters.ISO_200,
+																							R.drawable.gui_almalence_settings_iso_200);
+																					put(CameraParameters.ISO_400,
+																							R.drawable.gui_almalence_settings_iso_400);
+																					put(CameraParameters.ISO_800,
+																							R.drawable.gui_almalence_settings_iso_800);
+																					put(CameraParameters.ISO_1600,
+																							R.drawable.gui_almalence_settings_iso_1600);
+																					put(CameraParameters.ISO_3200,
+																							R.drawable.gui_almalence_settings_iso_3200);
+																				}
+																			};
 
-	private static final Map<String, Integer>	ICONS_DEFAULT_ISO = new HashMap<String, Integer>()
-	{
-		{
-			put(MainScreen.getInstance().getResources().getString(R.string.isoAutoDefaultSystem), R.drawable.gui_almalence_settings_iso_auto);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso50DefaultSystem),   R.drawable.gui_almalence_settings_iso_50);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso100DefaultSystem),  R.drawable.gui_almalence_settings_iso_100);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso200DefaultSystem),  R.drawable.gui_almalence_settings_iso_200);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso400DefaultSystem),  R.drawable.gui_almalence_settings_iso_400);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso800DefaultSystem),  R.drawable.gui_almalence_settings_iso_800);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso1600DefaultSystem), R.drawable.gui_almalence_settings_iso_1600);
-			put(MainScreen.getInstance().getResources().getString(R.string.iso3200DefaultSystem), R.drawable.gui_almalence_settings_iso_3200);
-		}
-	};
+	private static final Map<String, Integer>	ICONS_DEFAULT_ISO			= new HashMap<String, Integer>()
+																			{
+																				{
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.isoAutoDefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_auto);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso50DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_50);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso100DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_100);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso200DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_200);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso400DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_400);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso800DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_800);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso1600DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_1600);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso3200DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_3200);
+																				}
+																			};
 
-	private static final Map<Integer, Integer>	ICONS_METERING = new HashMap<Integer, Integer>()
-	{
-		{
-			put(0, R.drawable.gui_almalence_settings_metering_auto);
-			put(1, R.drawable.gui_almalence_settings_metering_matrix);
-			put(2, R.drawable.gui_almalence_settings_metering_center);
-			put(3, R.drawable.gui_almalence_settings_metering_spot);
-		}
-	};
+	private static final Map<Integer, Integer>	ICONS_METERING				= new HashMap<Integer, Integer>()
+																			{
+																				{
+																					put(0,
+																							R.drawable.gui_almalence_settings_metering_auto);
+																					put(1,
+																							R.drawable.gui_almalence_settings_metering_matrix);
+																					put(2,
+																							R.drawable.gui_almalence_settings_metering_center);
+																					put(3,
+																							R.drawable.gui_almalence_settings_metering_spot);
+																				}
+																			};
 
 	// List of localized names for camera parameters values
-	private static final Map<Integer, String>	NAMES_SCENE	= new HashMap<Integer, String>()
-	{
-		{
-			put(CameraParameters.SCENE_MODE_AUTO,           MainScreen.getInstance().getResources().getString(R.string.sceneAuto));
-			put(CameraParameters.SCENE_MODE_ACTION,         MainScreen.getInstance().getResources().getString(R.string.sceneAction));
-			put(CameraParameters.SCENE_MODE_PORTRAIT,       MainScreen.getInstance().getResources().getString(R.string.scenePortrait));
-			put(CameraParameters.SCENE_MODE_LANDSCAPE,      MainScreen.getInstance().getResources().getString(R.string.sceneLandscape));
-			put(CameraParameters.SCENE_MODE_NIGHT,          MainScreen.getInstance().getResources().getString(R.string.sceneNight));
-			put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT, MainScreen.getInstance().getResources().getString(R.string.sceneNightPortrait));
-			put(CameraParameters.SCENE_MODE_THEATRE,		MainScreen.getInstance().getResources().getString(R.string.sceneTheatre));
-			put(CameraParameters.SCENE_MODE_BEACH,			MainScreen.getInstance().getResources().getString(R.string.sceneBeach));
-			put(CameraParameters.SCENE_MODE_SNOW,			MainScreen.getInstance().getResources().getString(R.string.sceneSnow));
-			put(CameraParameters.SCENE_MODE_SUNSET,			MainScreen.getInstance().getResources().getString(R.string.sceneSunset));
-			put(CameraParameters.SCENE_MODE_STEADYPHOTO,	MainScreen.getInstance().getResources().getString(R.string.sceneSteadyPhoto));
-			put(CameraParameters.SCENE_MODE_FIREWORKS,		MainScreen.getInstance().getResources().getString(R.string.sceneFireworks));
-			put(CameraParameters.SCENE_MODE_SPORTS,			MainScreen.getInstance().getResources().getString(R.string.sceneSports));
-			put(CameraParameters.SCENE_MODE_PARTY,			MainScreen.getInstance().getResources().getString(R.string.sceneParty));
-			put(CameraParameters.SCENE_MODE_CANDLELIGHT,	MainScreen.getInstance().getResources().getString(R.string.sceneCandlelight));
-			put(CameraParameters.SCENE_MODE_BARCODE,		MainScreen.getInstance().getResources().getString(R.string.sceneBarcode));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_SCENE					= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(CameraParameters.SCENE_MODE_AUTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneAuto));
+																					put(CameraParameters.SCENE_MODE_ACTION,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneAction));
+																					put(CameraParameters.SCENE_MODE_PORTRAIT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.scenePortrait));
+																					put(CameraParameters.SCENE_MODE_LANDSCAPE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneLandscape));
+																					put(CameraParameters.SCENE_MODE_NIGHT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneNight));
+																					put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneNightPortrait));
+																					put(CameraParameters.SCENE_MODE_THEATRE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneTheatre));
+																					put(CameraParameters.SCENE_MODE_BEACH,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneBeach));
+																					put(CameraParameters.SCENE_MODE_SNOW,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneSnow));
+																					put(CameraParameters.SCENE_MODE_SUNSET,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneSunset));
+																					put(CameraParameters.SCENE_MODE_STEADYPHOTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneSteadyPhoto));
+																					put(CameraParameters.SCENE_MODE_FIREWORKS,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneFireworks));
+																					put(CameraParameters.SCENE_MODE_SPORTS,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneSports));
+																					put(CameraParameters.SCENE_MODE_PARTY,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneParty));
+																					put(CameraParameters.SCENE_MODE_CANDLELIGHT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneCandlelight));
+																					put(CameraParameters.SCENE_MODE_BARCODE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.sceneBarcode));
+																				}
+																			};
 
-	private static final Map<Integer, String>	NAMES_WB = new HashMap<Integer, String>()
-	{
-		{
-			put(CameraParameters.WB_MODE_AUTO,             MainScreen.getInstance().getResources().getString(R.string.wbAuto));
-			put(CameraParameters.WB_MODE_INCANDESCENT,     MainScreen.getInstance().getResources().getString(R.string.wbIncandescent));
-			put(CameraParameters.WB_MODE_FLUORESCENT,      MainScreen.getInstance().getResources().getString(R.string.wbFluorescent));
-			put(CameraParameters.WB_MODE_WARM_FLUORESCENT, MainScreen.getInstance().getResources().getString(R.string.wbWarmFluorescent));
-			put(CameraParameters.WB_MODE_DAYLIGHT,  	   MainScreen.getInstance().getResources().getString(R.string.wbDaylight));
-			put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,  MainScreen.getInstance().getResources().getString(R.string.wbCloudyDaylight));
-			put(CameraParameters.WB_MODE_TWILIGHT,		   MainScreen.getInstance().getResources().getString(R.string.wbTwilight));
-			put(CameraParameters.WB_MODE_SHADE, 		   MainScreen.getInstance().getResources().getString(R.string.wbShade));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_WB					= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(CameraParameters.WB_MODE_AUTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbAuto));
+																					put(CameraParameters.WB_MODE_INCANDESCENT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbIncandescent));
+																					put(CameraParameters.WB_MODE_FLUORESCENT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbFluorescent));
+																					put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbWarmFluorescent));
+																					put(CameraParameters.WB_MODE_DAYLIGHT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbDaylight));
+																					put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbCloudyDaylight));
+																					put(CameraParameters.WB_MODE_TWILIGHT,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbTwilight));
+																					put(CameraParameters.WB_MODE_SHADE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.wbShade));
+																				}
+																			};
 
-	private static final Map<Integer, String>	NAMES_FOCUS	= new HashMap<Integer, String>()
-	{
-		{
-			put(CameraParameters.AF_MODE_AUTO,               MainScreen.getInstance().getResources().getString(R.string.focusAuto));
-			put(CameraParameters.AF_MODE_INFINITY,           MainScreen.getInstance().getResources().getString(R.string.focusInfinity));
-			put(CameraParameters.AF_MODE_NORMAL,             MainScreen.getInstance().getResources().getString(R.string.focusNormal));
-			put(CameraParameters.AF_MODE_MACRO,              MainScreen.getInstance().getResources().getString(R.string.focusMacro));
-			put(CameraParameters.AF_MODE_FIXED,              MainScreen.getInstance().getResources().getString(R.string.focusFixed));
-			put(CameraParameters.AF_MODE_EDOF,	             MainScreen.getInstance().getResources().getString(R.string.focusEdof));
-			put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,   MainScreen.getInstance().getResources().getString(R.string.focusContinuousVideo));
-			put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE, MainScreen.getInstance().getResources().getString(R.string.focusContinuousPicture));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_FOCUS					= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(CameraParameters.AF_MODE_AUTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusAuto));
+																					put(CameraParameters.AF_MODE_INFINITY,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusInfinity));
+																					put(CameraParameters.AF_MODE_NORMAL,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusNormal));
+																					put(CameraParameters.AF_MODE_MACRO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusMacro));
+																					put(CameraParameters.AF_MODE_FIXED,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusFixed));
+																					put(CameraParameters.AF_MODE_EDOF,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusEdof));
+																					put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusContinuousVideo));
+																					put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.focusContinuousPicture));
+																				}
+																			};
 
-	private static final Map<Integer, String>	NAMES_FLASH	= new HashMap<Integer, String>()
-	{
-		{
-			put(CameraParameters.FLASH_MODE_OFF,    MainScreen.getInstance().getResources().getString(R.string.flashOff));
-			put(CameraParameters.FLASH_MODE_AUTO,   MainScreen.getInstance().getResources().getString(R.string.flashAuto));
-			put(CameraParameters.FLASH_MODE_SINGLE,	MainScreen.getInstance().getResources().getString(R.string.flashOn));
-			put(CameraParameters.FLASH_MODE_REDEYE,	MainScreen.getInstance().getResources().getString(R.string.flashRedEye));
-			put(CameraParameters.FLASH_MODE_TORCH,  MainScreen.getInstance().getResources().getString(R.string.flashTorch));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_FLASH					= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(CameraParameters.FLASH_MODE_OFF,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.flashOff));
+																					put(CameraParameters.FLASH_MODE_AUTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.flashAuto));
+																					put(CameraParameters.FLASH_MODE_SINGLE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.flashOn));
+																					put(CameraParameters.FLASH_MODE_REDEYE,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.flashRedEye));
+																					put(CameraParameters.FLASH_MODE_TORCH,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.flashTorch));
+																				}
+																			};
 
-	private static final Map<Integer, String>	NAMES_ISO = new HashMap<Integer, String>()
-	{
-		{
-			put(CameraParameters.ISO_AUTO, MainScreen.getInstance().getResources().getString(R.string.isoAuto));
-			put(CameraParameters.ISO_50,   MainScreen.getInstance().getResources().getString(R.string.iso50));
-			put(CameraParameters.ISO_100,  MainScreen.getInstance().getResources().getString(R.string.iso100));
-			put(CameraParameters.ISO_200,  MainScreen.getInstance().getResources().getString(R.string.iso200));
-			put(CameraParameters.ISO_400,  MainScreen.getInstance().getResources().getString(R.string.iso400));
-			put(CameraParameters.ISO_800,  MainScreen.getInstance().getResources().getString(R.string.iso800));
-			put(CameraParameters.ISO_1600, MainScreen.getInstance().getResources().getString(R.string.iso1600));
-			put(CameraParameters.ISO_3200, MainScreen.getInstance().getResources().getString(R.string.iso3200));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_ISO					= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(CameraParameters.ISO_AUTO,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.isoAuto));
+																					put(CameraParameters.ISO_50,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso50));
+																					put(CameraParameters.ISO_100,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso100));
+																					put(CameraParameters.ISO_200,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso200));
+																					put(CameraParameters.ISO_400,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso400));
+																					put(CameraParameters.ISO_800,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso800));
+																					put(CameraParameters.ISO_1600,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso1600));
+																					put(CameraParameters.ISO_3200,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso3200));
+																				}
+																			};
 
-	private static final Map<Integer, String>	NAMES_METERING = new HashMap<Integer, String>()
-	{
-		{
-			put(0, MainScreen.getInstance().getResources().getString(R.string.meteringAutoSystem));
-			put(1, MainScreen.getInstance().getResources().getString(R.string.meteringMatrixSystem));
-			put(2, MainScreen.getInstance().getResources().getString(R.string.meteringCenterSystem));
-			put(3, MainScreen.getInstance().getResources().getString(R.string.meteringSpotSystem));
-		}
-	};
+	private static final Map<Integer, String>	NAMES_METERING				= new HashMap<Integer, String>()
+																			{
+																				{
+																					put(0,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.meteringAutoSystem));
+																					put(1,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.meteringMatrixSystem));
+																					put(2,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.meteringCenterSystem));
+																					put(3,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.meteringSpotSystem));
+																				}
+																			};
 
-	private static final Map<String, String>	UNLOCK_MODE_PREFERENCES	= new HashMap<String, String>()
-	{
-		{
-			put("hdrmode", "plugin_almalence_hdr");
-			put("movingobjects", "plugin_almalence_moving_burst");
-			put("sequence", "plugin_almalence_hdr");
-			put("groupshot", "plugin_almalence_groupshot");
-			put("panorama_augmented", "plugin_almalence_panorama");
-		}
-	};
+	private static final Map<String, String>	UNLOCK_MODE_PREFERENCES		= new HashMap<String, String>()
+																			{
+																				{
+																					put("hdrmode",
+																							"plugin_almalence_hdr");
+																					put("movingobjects",
+																							"plugin_almalence_moving_burst");
+																					put("sequence",
+																							"plugin_almalence_hdr");
+																					put("groupshot",
+																							"plugin_almalence_groupshot");
+																					put("panorama_augmented",
+																							"plugin_almalence_panorama");
+																				}
+																			};
 
 	// Defining for top menu buttons (camera parameters settings)
-	private static final int   MODE_EV		= R.id.evButton;
-	private static final int   MODE_SCENE	= R.id.sceneButton;
-	private static final int   MODE_WB		= R.id.wbButton;
-	private static final int   MODE_FOCUS	= R.id.focusButton;
-	private static final int   MODE_FLASH	= R.id.flashButton;
-	private static final int   MODE_ISO		= R.id.isoButton;
-	private static final int   MODE_CAM		= R.id.camerachangeButton;
-	private static final int   MODE_MET		= R.id.meteringButton;
+	private static final int					MODE_EV						= R.id.evButton;
+	private static final int					MODE_SCENE					= R.id.sceneButton;
+	private static final int					MODE_WB						= R.id.wbButton;
+	private static final int					MODE_FOCUS					= R.id.focusButton;
+	private static final int					MODE_FLASH					= R.id.flashButton;
+	private static final int					MODE_ISO					= R.id.isoButton;
+	private static final int					MODE_CAM					= R.id.camerachangeButton;
+	private static final int					MODE_MET					= R.id.meteringButton;
 
-	private Map<Integer, View> topMenuButtons;
-	
+	private Map<Integer, View>					topMenuButtons;
+
 	// Each plugin may have one top menu (and appropriate quick control) button
-	private Map<String, View>  topMenuPluginButtons;
-
+	private Map<String, View>					topMenuPluginButtons;
 
 	// Current quick controls
-	private View			   quickControl1		= null;
-	private View			   quickControl2		= null;
-	private View			   quickControl3		= null;
-	private View			   quickControl4		= null;
+	private View								quickControl1				= null;
+	private View								quickControl2				= null;
+	private View								quickControl3				= null;
+	private View								quickControl4				= null;
 
-	private ElementAdapter	   scenemodeAdapter;
-	private ElementAdapter	   wbmodeAdapter;
-	private ElementAdapter	   focusmodeAdapter;
-	private ElementAdapter	   flashmodeAdapter;
-	private ElementAdapter	   isoAdapter;
-	private ElementAdapter	   meteringmodeAdapter;
+	private ElementAdapter						scenemodeAdapter;
+	private ElementAdapter						wbmodeAdapter;
+	private ElementAdapter						focusmodeAdapter;
+	private ElementAdapter						flashmodeAdapter;
+	private ElementAdapter						isoAdapter;
+	private ElementAdapter						meteringmodeAdapter;
 
 	private Map<Integer, View>					sceneModeButtons;
 	private Map<Integer, View>					wbModeButtons;
@@ -428,99 +768,100 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private Map<Integer, View>					meteringModeButtons;
 
 	// Camera settings values which is exist at current device
-	private List<View>		   activeScene;
-	private List<View>		   activeWB;
-	private List<View>		   activeFocus;
-	private List<View>		   activeFlash;
-	private List<View>		   activeISO;
-	private List<View>		   activeMetering;
+	private List<View>							activeScene;
+	private List<View>							activeWB;
+	private List<View>							activeFocus;
+	private List<View>							activeFlash;
+	private List<View>							activeISO;
+	private List<View>							activeMetering;
 
-	private List<Integer>	   activeSceneNames;
-	private List<Integer>	   activeWBNames;
-	private List<Integer>	   activeFocusNames;
-	private List<Integer>	   activeFlashNames;
-	private List<Integer>	   activeISONames;
-	private List<Integer>	   activeMeteringNames;
+	private List<Integer>						activeSceneNames;
+	private List<Integer>						activeWBNames;
+	private List<Integer>						activeFocusNames;
+	private List<Integer>						activeFlashNames;
+	private List<Integer>						activeISONames;
+	private List<Integer>						activeMeteringNames;
 
-	private boolean		       isEVEnabled				= true;
-	private boolean			   isSceneEnabled			= true;
-	private boolean			   isWBEnabled				= true;
-	private boolean			   isFocusEnabled			= true;
-	private boolean			   isFlashEnabled			= true;
-	private boolean			   isIsoEnabled				= true;
-	private boolean			   isCameraChangeEnabled	= true;
-	private boolean			   isMeteringEnabled		= true;
+	private boolean								isEVEnabled					= true;
+	private boolean								isSceneEnabled				= true;
+	private boolean								isWBEnabled					= true;
+	private boolean								isFocusEnabled				= true;
+	private boolean								isFlashEnabled				= true;
+	private boolean								isIsoEnabled				= true;
+	private boolean								isCameraChangeEnabled		= true;
+	private boolean								isMeteringEnabled			= true;
 
 	// GUI Layout
-	private View			   guiView;
+	private View								guiView;
 
 	// Current camera parameters
-	private int				   mEV						= 0;
-	private int				   mSceneMode				= -1;
-	private int				   mFlashMode				= -1;
-	private int				   mFocusMode				= -1;
-	private int				   mWB						= -1;
-	private int				   mISO						= -1;
-	private int				   mMeteringMode			= -1;
+	private int									mEV							= 0;
+	private int									mSceneMode					= -1;
+	private int									mFlashMode					= -1;
+	private int									mFocusMode					= -1;
+	private int									mWB							= -1;
+	private int									mISO						= -1;
+	private int									mMeteringMode				= -1;
 
-	private float			   fScreenDensity;
+	private float								fScreenDensity;
 
-	private int				   iInfoViewMaxHeight;
-	private int				   iInfoViewMaxWidth;
-	private int				   iInfoViewHeight;
+	private int									iInfoViewMaxHeight;
+	private int									iInfoViewMaxWidth;
+	private int									iInfoViewHeight;
 
-	private int				   iCenterViewMaxHeight;
-	private int				   iCenterViewMaxWidth;
+	private int									iCenterViewMaxHeight;
+	private int									iCenterViewMaxWidth;
 
 	// indicates if it's first launch - to show hint layer.
-	private boolean			   isFirstLaunch		 	= true;
+	private boolean								isFirstLaunch				= true;
 
-	private static int		   iScreenType				= MainScreen.getInstance().getResources().getInteger(R.integer.screen_type);
+	private static int							iScreenType					= MainScreen.getInstance().getResources()
+																					.getInteger(R.integer.screen_type);
 
 	public AlmalenceGUI()
 	{
 
-		mThumbnail            = null;
-		topMenuButtons        = new HashMap<Integer, View>();
-		topMenuPluginButtons  = new HashMap<String, View>();
+		mThumbnail = null;
+		topMenuButtons = new HashMap<Integer, View>();
+		topMenuPluginButtons = new HashMap<String, View>();
 
-		scenemodeAdapter      = new ElementAdapter();
-		wbmodeAdapter         = new ElementAdapter();
-		focusmodeAdapter      = new ElementAdapter();
-		flashmodeAdapter      = new ElementAdapter();
-		isoAdapter            = new ElementAdapter();
-		meteringmodeAdapter   = new ElementAdapter();
+		scenemodeAdapter = new ElementAdapter();
+		wbmodeAdapter = new ElementAdapter();
+		focusmodeAdapter = new ElementAdapter();
+		flashmodeAdapter = new ElementAdapter();
+		isoAdapter = new ElementAdapter();
+		meteringmodeAdapter = new ElementAdapter();
 
-		sceneModeButtons      = new HashMap<Integer, View>();
-		wbModeButtons         = new HashMap<Integer, View>();
-		focusModeButtons      = new HashMap<Integer, View>();
-		flashModeButtons      = new HashMap<Integer, View>();
-		isoButtons            = new HashMap<Integer, View>();
-		meteringModeButtons   = new HashMap<Integer, View>();
+		sceneModeButtons = new HashMap<Integer, View>();
+		wbModeButtons = new HashMap<Integer, View>();
+		focusModeButtons = new HashMap<Integer, View>();
+		flashModeButtons = new HashMap<Integer, View>();
+		isoButtons = new HashMap<Integer, View>();
+		meteringModeButtons = new HashMap<Integer, View>();
 
-		activeScene           = new ArrayList<View>();
-		activeWB              = new ArrayList<View>();
-		activeFocus           = new ArrayList<View>();
-		activeFlash           = new ArrayList<View>();
-		activeISO             = new ArrayList<View>();
-		activeMetering        = new ArrayList<View>();
+		activeScene = new ArrayList<View>();
+		activeWB = new ArrayList<View>();
+		activeFocus = new ArrayList<View>();
+		activeFlash = new ArrayList<View>();
+		activeISO = new ArrayList<View>();
+		activeMetering = new ArrayList<View>();
 
-		activeSceneNames      = new ArrayList<Integer>();
-		activeWBNames         = new ArrayList<Integer>();
-		activeFocusNames      = new ArrayList<Integer>();
-		activeFlashNames      = new ArrayList<Integer>();
-		activeISONames        = new ArrayList<Integer>();
-		activeMeteringNames   = new ArrayList<Integer>();
+		activeSceneNames = new ArrayList<Integer>();
+		activeWBNames = new ArrayList<Integer>();
+		activeFocusNames = new ArrayList<Integer>();
+		activeFlashNames = new ArrayList<Integer>();
+		activeISONames = new ArrayList<Integer>();
+		activeMeteringNames = new ArrayList<Integer>();
 
-		settingsAdapter       = new ElementAdapter();
-		settingsViews         = new ArrayList<View>();
+		settingsAdapter = new ElementAdapter();
+		settingsViews = new ArrayList<View>();
 
-		quickControlAdapter   = new ElementAdapter();
+		quickControlAdapter = new ElementAdapter();
 		quickControlChangeres = new ArrayList<View>();
 
-		modeAdapter           = new ElementAdapter();
-		modeViews             = new ArrayList<View>();
-		buttonModeViewAssoc   = new HashMap<View, String>();
+		modeAdapter = new ElementAdapter();
+		modeViews = new ArrayList<View>();
+		buttonModeViewAssoc = new HashMap<View, String>();
 
 	}
 
@@ -636,9 +977,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 		// -+- -->
-		
-		//added immersive full-screen mode support
-		//guiView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+		// added immersive full-screen mode support
+		// guiView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 	}
 
 	private void initOrientationListener()
@@ -702,7 +1043,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 
-				if (selfTimer!=null)
+				if (selfTimer != null)
 					selfTimer.setOrientation();
 			}
 		};
@@ -757,6 +1098,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
+		
+		lockControls = false;
+		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
+		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
+		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 	}
 
 	@Override
@@ -1055,7 +1402,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
-		
+
 		if (MainScreen.getInstance().isShowStore())
 		{
 			showStore();
@@ -1323,7 +1670,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int scene_name : supported_scene)
 			{
-				if(sceneModeButtons.containsKey(scene_name))
+				if (sceneModeButtons.containsKey(scene_name))
 				{
 					if (scene_name != CameraParameters.SCENE_MODE_NIGHT)
 						activeScene.add(sceneModeButtons.get(Integer.valueOf(scene_name)));
@@ -1375,7 +1722,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int wb_name : supported_wb)
 			{
-				if(wbModeButtons.containsKey(wb_name))
+				if (wbModeButtons.containsKey(wb_name))
 				{
 					activeWB.add(wbModeButtons.get(Integer.valueOf(wb_name)));
 					activeWBNames.add(Integer.valueOf(wb_name));
@@ -1426,7 +1773,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int focus_name : supported_focus)
 			{
-				if(focusModeButtons.containsKey(focus_name))
+				if (focusModeButtons.containsKey(focus_name))
 				{
 					activeFocus.add(focusModeButtons.get(Integer.valueOf(focus_name)));
 					activeFocusNames.add(Integer.valueOf(focus_name));
@@ -1454,7 +1801,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						@Override
 						public void onClick(View v)
-						{							
+						{
 							try
 							{
 								RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
@@ -1542,8 +1889,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						afMode = supported_focus[0];
 
 					CameraController.getInstance().setCameraFocusMode(afMode);
-				}
-				else
+				} else
 					CameraController.getInstance().setCameraFocusMode(mFocusMode);
 			} else
 			{
@@ -1566,7 +1912,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			for (int flash_name : supported_flash)
 			{
-				if(flashModeButtons.containsKey(flash_name))
+				if (flashModeButtons.containsKey(flash_name))
 				{
 					activeFlash.add(flashModeButtons.get(Integer.valueOf(flash_name)));
 					activeFlashNames.add(Integer.valueOf(flash_name));
@@ -1620,7 +1966,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (supported_iso != null)
 				for (int iso_name : supported_iso)
 				{
-					if(isoButtons.containsKey(iso_name))
+					if (isoButtons.containsKey(iso_name))
 					{
 						activeISO.add(isoButtons.get(Integer.valueOf(iso_name)));
 						activeISONames.add(Integer.valueOf(iso_name));
@@ -1683,7 +2029,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			while (it.hasNext())
 			{
 				int metering_name = it.next();
-				if(meteringModeButtons.containsKey(metering_name))
+				if (meteringModeButtons.containsKey(metering_name))
 				{
 					activeMetering.add(meteringModeButtons.get(metering_name));
 					activeMeteringNames.add(metering_name);
@@ -2635,7 +2981,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		((RelativeLayout) guiView.findViewById(R.id.qcLayout)).setVisibility(View.VISIBLE);
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).setBackgroundResource(R.drawable.blacktransparentlayertop);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.setBackgroundResource(R.drawable.blacktransparentlayertop);
 
 		Set<Integer> topmenu_keys = topMenuButtons.keySet();
 		Iterator<Integer> it = topmenu_keys.iterator();
@@ -2667,7 +3014,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		currentQuickView.setBackgroundResource(R.drawable.transparent_background);
 		currentQuickView = null;
 
-		((LinearLayout) guiView.findViewById(R.id.paramsLayout)).setBackgroundResource(R.drawable.blacktransparentlayertop);
+		((LinearLayout) guiView.findViewById(R.id.paramsLayout))
+				.setBackgroundResource(R.drawable.blacktransparentlayertop);
 
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_EV), isEVEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_SCENE), isSceneEnabled);
@@ -5807,30 +6155,31 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Uri uri = this.mThumbnail.getUri();
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_STOP_CAPTURE);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean isAllowedExternal =  prefs.getBoolean(MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
+		boolean isAllowedExternal = prefs.getBoolean(
+				MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
 		if (isAllowedExternal)
 		{
 			openExternalGallery(uri);
-		}
-		else
+		} else
 		{
-			//if installed - run ABC Editor
+			// if installed - run ABC Editor
 			if (AppEditorNotifier.isABCEditorInstalled(MainScreen.getInstance()))
 			{
-				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));//com.almalence.opencameditor
-			}			
-			//if not installed - show that we have editor and let user install it of run standard dialog
+				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));// com.almalence.opencameditor
+			}
+			// if not installed - show that we have editor and let user install
+			// it of run standard dialog
 			else
 			{
-				//if not - show default gallery
+				// if not - show default gallery
 				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance()))
 					openExternalGallery(uri);
 			}
 		}
 	}
-	
+
 	private void openExternalGallery(Uri uri)
 	{
 		try
