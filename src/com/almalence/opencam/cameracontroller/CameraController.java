@@ -1788,7 +1788,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraFocusMode(int mode)
 	{
-		Log.e(TAG, "SET CAMERA FOCUS MODE");
 		if (!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
@@ -1796,7 +1795,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters params = CameraController.camera.getParameters();
 				if (params != null)
 				{
-					params.setFocusMode(CameraController.mode_focus.get(mode));
+					String focusmode = CameraController.mode_focus.get(mode);
+					params.setFocusMode(focusmode);
 					setCameraParameters(params);
 					MainScreen.setAutoFocusLock(false);
 				}
@@ -1814,7 +1814,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters params = CameraController.camera.getParameters();
 				if (params != null)
 				{
-					params.setFlashMode(CameraController.mode_flash.get(mode));
+					String flashmode = CameraController.mode_flash.get(mode);
+					params.setFlashMode(flashmode);
 					setCameraParameters(params);
 				}
 			}

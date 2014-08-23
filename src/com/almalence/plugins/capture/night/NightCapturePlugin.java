@@ -267,10 +267,10 @@ public class NightCapturePlugin extends PluginCapture
 		MainScreen.getInstance().muteShutter(false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
+		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, MainScreen.sDefaultValue);
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-				: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
-		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_SINGLE);
+				: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
 
 		MainScreen.setCaptureYUVFrames(true);
 	}
