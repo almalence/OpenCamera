@@ -1533,18 +1533,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						isoModes.add(isoList[i]);
 				} else
 					return new int[0];
-
-				int[] iso = new int[isoModes.size()];
+				
+				int supportedISOCount = 0;
 				for (int i = 0; i < isoModes.size(); i++)
 				{
 					String mode = isoModes.get(i);
 					if (CameraController.key_iso.containsKey(mode))
-					{
-						if (CameraController.key_iso.containsKey(mode))
-							iso[i] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
-						else if (CameraController.key_iso2.containsKey(mode))
-							iso[i] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
-					}
+						supportedISOCount++;
+					else if (CameraController.key_iso2.containsKey(mode))
+						supportedISOCount++;
+				}
+
+				int[] iso = new int[supportedISOCount];
+				for (int i = 0, index = 0; i < isoModes.size(); i++)
+				{
+					String mode = isoModes.get(i);
+					if (CameraController.key_iso.containsKey(mode))
+						iso[index++] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
+					else if (CameraController.key_iso2.containsKey(mode))
+						iso[index++] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
 				}
 
 				return iso;
@@ -1733,7 +1740,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (iso == null)
 						iso = params.get("iso-speed");
 
-					return CameraController.key_iso.get(iso);
+					if(CameraController.key_iso.containsKey(iso))
+						return CameraController.key_iso.get(iso);
+					else if(CameraController.key_iso2.containsKey(iso))
+						return CameraController.key_iso2.get(iso);
 				}
 			}
 		} else
@@ -1831,7 +1841,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
 						else if (params.get(CameraParameters.isoParam2) != null)
 							params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
-						this.setCameraParameters(params);
 					}
 				}
 			}

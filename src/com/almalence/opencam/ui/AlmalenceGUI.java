@@ -4245,6 +4245,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (newMode != -1 && sceneModeButtons.containsKey(newMode))
 		{
+			if(newMode != CameraParameters.SCENE_MODE_AUTO)
+				CameraController.getInstance().setCameraISO(CameraParameters.ISO_AUTO);
 			CameraController.getInstance().setCameraSceneMode(newMode);
 			mSceneMode = newMode;
 		} else if (sceneModeButtons.containsKey(CameraParameters.SCENE_MODE_AUTO))
@@ -4470,8 +4472,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (newMode != -1)
 		{
-			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-					&& CameraController.getInstance().isSceneModeSupported())
+			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && CameraController.getInstance().isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
 			CameraController.getInstance().setCameraISO(newMode);
