@@ -42,6 +42,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -393,6 +394,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 	}
+	
+	@Override
+	public void onCameraSetup()
+	{
+		setMode();
+	}
 
 	@Override
 	public void onResume()
@@ -427,7 +434,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 		
-		if (!CameraController.isUseHALv3())
+		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
 		{
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 			if (cp!= null)
@@ -647,7 +654,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		this.setMode();
+//		this.setMode();
 
 		if (!this.prefHardwareGyroscope)
 		{
@@ -1093,6 +1100,27 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (this.modeSweep)
 			{
+//				File saveDir = PluginManager.getSaveDir(false);
+//				String fileName = "panorama_sweep_frame.jpg";
+//				File file;
+//				file = new File(saveDir, fileName);
+//				OutputStream os = null;
+//				try
+//				{
+//					os = new FileOutputStream(file);
+//				} catch (FileNotFoundException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				com.almalence.YuvImage image2 = new com.almalence.YuvImage(image, 0x00000011, MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight(), null);
+//				// to avoid problems with SKIA
+//				int cropHeight = image2.getHeight() - image2.getHeight() % 16;
+//				Log.e(TAG, "Compress file: " + file.getAbsolutePath());
+//				if (!image2.compressToJpeg(new Rect(0, 0, image2.getWidth(), cropHeight), 100, os))
+//					Log.e(TAG, "------------------------- CAN'T SAVE INPUT FRAME");
+//				else
+//					Log.e(TAG, "------------------------- SAVED INPUT FRAME");
 				this.engine.recordCoordinates();
 				this.engine.onFrameAdded(true, image, true);
 				this.isFirstFrame = false;

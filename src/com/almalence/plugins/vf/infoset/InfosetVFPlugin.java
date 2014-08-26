@@ -92,100 +92,53 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private float						currentBatteryLevel			= -1;
 	private int							currentBatteryStatus		= -1;
 
-	private BroadcastReceiver			mBatInfoReceiver			= new BroadcastReceiver()
-																	{
-																		@Override
-																		public void onReceive(Context arg0,
-																				Intent batteryStatus)
-																		{
-																			if (batteryInfoImage == null)
-																				return;
+	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context arg0, Intent batteryStatus)
+		{
+			if (batteryInfoImage == null)
+				return;
 
-																			int level = batteryStatus.getIntExtra(
-																					BatteryManager.EXTRA_LEVEL, -1);
-																			int scale = batteryStatus.getIntExtra(
-																					BatteryManager.EXTRA_SCALE, -1);
+			int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-																			float batteryPct = level / (float) scale;
+			float batteryPct = level / (float) scale;
 
-																			int status = batteryStatus.getIntExtra(
-																					BatteryManager.EXTRA_STATUS, -1);
-																			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
-																					|| status == BatteryManager.BATTERY_STATUS_FULL;
+			int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
 
-																			if (status != currentBatteryStatus
-																					&& isCharging)
-																			{
-																				batteryInfoImage
-																						.setImageDrawable(MainScreen
-																								.getMainContext()
-																								.getResources()
-																								.getDrawable(
-																										R.drawable.battery_charging));
-																				currentBatteryStatus = status;
-																			} else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING
-																					|| status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
-																			{
-																				if (currentBatteryLevel != batteryPct
-																						|| currentBatteryStatus != status)
-																				{
-																					currentBatteryLevel = batteryPct;
+			if (status != currentBatteryStatus && isCharging)
+			{
+				batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_charging));
+				currentBatteryStatus = status;
+			} else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING || status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
+			{
+				if (currentBatteryLevel != batteryPct || currentBatteryStatus != status)
+				{
+					currentBatteryLevel = batteryPct;
 
-																					if (currentBatteryLevel > 0.8f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_full));
-																					else if (currentBatteryLevel <= 0.8f
-																							&& currentBatteryLevel > 0.6f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_75));
-																					else if (currentBatteryLevel <= 0.6f
-																							&& currentBatteryLevel > 0.4f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_50));
-																					else if (currentBatteryLevel <= 0.4f
-																							&& currentBatteryLevel > 0.15f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_25));
-																					else if (currentBatteryLevel <= 0.15f
-																							&& currentBatteryLevel > 0.05f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_10));
-																					else if (currentBatteryLevel <= 0.05f)
-																						batteryInfoImage
-																								.setImageDrawable(MainScreen
-																										.getMainContext()
-																										.getResources()
-																										.getDrawable(
-																												R.drawable.battery_empty));
-																				}
+					if (currentBatteryLevel > 0.8f)
+						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_full));
+					else if (currentBatteryLevel <= 0.8f && currentBatteryLevel > 0.6f)
+						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_75));
+					else if (currentBatteryLevel <= 0.6f && currentBatteryLevel > 0.4f)
+						batteryInfoImage .setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_50));
+					else if (currentBatteryLevel <= 0.4f && currentBatteryLevel > 0.15f)
+						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_25));
+					else if (currentBatteryLevel <= 0.15f && currentBatteryLevel > 0.05f)
+						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_10));
+					else if (currentBatteryLevel <= 0.05f)
+						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_empty));
+				}
 
-																				if (currentBatteryStatus != status)
-																				{
-																					currentBatteryStatus = status;
-																				}
-																			}
-																		}
-																	};
+				if (currentBatteryStatus != status)
+				{
+					currentBatteryStatus = status;
+				}
+			}
+		}
+	};
 
 	public InfosetVFPlugin()
 	{

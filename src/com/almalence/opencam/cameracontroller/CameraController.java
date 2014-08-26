@@ -1533,18 +1533,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						isoModes.add(isoList[i]);
 				} else
 					return new int[0];
-
-				int[] iso = new int[isoModes.size()];
+				
+				int supportedISOCount = 0;
 				for (int i = 0; i < isoModes.size(); i++)
 				{
 					String mode = isoModes.get(i);
 					if (CameraController.key_iso.containsKey(mode))
-					{
-						if (CameraController.key_iso.containsKey(mode))
-							iso[i] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
-						else if (CameraController.key_iso2.containsKey(mode))
-							iso[i] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
-					}
+						supportedISOCount++;
+					else if (CameraController.key_iso2.containsKey(mode))
+						supportedISOCount++;
+				}
+
+				int[] iso = new int[supportedISOCount];
+				for (int i = 0, index = 0; i < isoModes.size(); i++)
+				{
+					String mode = isoModes.get(i);
+					if (CameraController.key_iso.containsKey(mode))
+						iso[index++] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
+					else if (CameraController.key_iso2.containsKey(mode))
+						iso[index++] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
 				}
 
 				return iso;
@@ -1733,7 +1740,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (iso == null)
 						iso = params.get("iso-speed");
 
-					return CameraController.key_iso.get(iso);
+					if(CameraController.key_iso.containsKey(iso))
+						return CameraController.key_iso.get(iso);
+					else if(CameraController.key_iso2.containsKey(iso))
+						return CameraController.key_iso2.get(iso);
 				}
 			}
 		} else
@@ -1778,7 +1788,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setCameraFocusMode(int mode)
 	{
-		Log.e(TAG, "SET CAMERA FOCUS MODE");
 		if (!CameraController.isHALv3)
 		{
 			if (CameraController.camera != null)
@@ -1786,7 +1795,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters params = CameraController.camera.getParameters();
 				if (params != null)
 				{
-					params.setFocusMode(CameraController.mode_focus.get(mode));
+					String focusmode = CameraController.mode_focus.get(mode);
+					params.setFocusMode(focusmode);
 					setCameraParameters(params);
 					MainScreen.setAutoFocusLock(false);
 				}
@@ -1804,7 +1814,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters params = CameraController.camera.getParameters();
 				if (params != null)
 				{
-					params.setFlashMode(CameraController.mode_flash.get(mode));
+					String flashmode = CameraController.mode_flash.get(mode);
+					params.setFlashMode(flashmode);
 					setCameraParameters(params);
 				}
 			}
@@ -1831,7 +1842,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
 						else if (params.get(CameraParameters.isoParam2) != null)
 							params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
-						this.setCameraParameters(params);
 					}
 				}
 			}
@@ -2410,7 +2420,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		switch(msg.what)
 		{
 			case MSG_SET_EXPOSURE:
-				Log.e(TAG, "MSG_SET_EXPOSURE");
 				try
 				{
 //					if (UseLumaAdaptation && LumaAdaptationAvailable)
@@ -2450,7 +2459,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return true;
 				
 			case MSG_NEXT_FRAME:
-				Log.e(TAG, "MSG_NEXT_FRAME");
 				if (++frame_num < total_frames)
 				{
 					if(Array.getLength(pauseBetweenShots) < frame_num)
@@ -2480,7 +2488,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				break;
 			case MSG_TAKE_IMAGE:
-				Log.e(TAG, "MSG_TAKE_IMAGE");
 				synchronized (SYNC_OBJECT)
 				{
 					int imageWidth = MainScreen.getImageWidth();

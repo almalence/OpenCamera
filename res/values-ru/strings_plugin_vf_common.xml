@@ -7,5 +7,8 @@
 	<string name="Pref_KeepScreenOn_Summary">Всегда оставаться в активном режиме во время работы камеры. Отлкючение режима сна по таймеру. (Может привести к быстрому расходу батареи)</string>
 
 	<string name="Pref_MaxScreenBrightness">Максимальная яркость</string>
-	<string name="Pref_MaxScreenBrightness_Summary">Установить максимальную яркость экрана</string>	
+	<string name="Pref_MaxScreenBrightness_Summary">Установить максимальную яркость экрана</string>
+	
+	<string name="Pref_Common_DismissKeyguard_Title">Игнорировать блокировку</string>
+	<string name="Pref_Common_DismissKeyguard_Summary">Обходить блокировку экрана слайдером при запуске.</string>	
 </resources>
