@@ -35,7 +35,7 @@ static Uint8 *OutPic = NULL;
 
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_Initialize
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_Initialize
 (
 	JNIEnv* env,
 	jobject thiz
@@ -58,7 +58,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_Release
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_Release
 (
 	JNIEnv* env,
 	jobject thiz
@@ -77,7 +77,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_ConvertFromJpeg
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_ConvertFromJpeg
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -105,7 +105,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_BlurLessPreview
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_BlurLessPreview
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -137,7 +137,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_BlurLessProcess
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_BlurLessProcess
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -175,7 +175,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_SuperZoomPreview
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_SuperZoomPreview
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -222,7 +222,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_SuperZoomProcess
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_SuperZoomProcess
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -260,7 +260,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_convertPreview(
+extern "C" JNIEXPORT void JNICALL Java_com_mobiroo_n_almalence_plugins_processing_night_AlmaShotNight_convertPreview(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
 {
 	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);

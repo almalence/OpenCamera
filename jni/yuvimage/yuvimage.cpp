@@ -25,7 +25,7 @@ by Almalence Inc. All Rights Reserved.
 #include "YuvToJpegEncoder.h"
 
 extern "C" {
-JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
+JNIEXPORT jboolean JNICALL Java_com_mobiroo_n_almalence_YuvImage_SaveJpegFreeOut
 (
 	JNIEnv* env, jobject, jint jout,
 	int format, int width, int height, jintArray offsets,
@@ -35,7 +35,7 @@ JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
 
 };
 
-JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
+JNIEXPORT jboolean JNICALL Java_com_mobiroo_n_almalence_YuvImage_SaveJpegFreeOut
 (
 	JNIEnv* env, jobject, jint jout,
 	int format, int width, int height, jintArray offsets,

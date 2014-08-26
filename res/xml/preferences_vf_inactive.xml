@@ -5,7 +5,7 @@
     <PreferenceCategory android:title="@string/Pref_Inactive_Preference_Title" 
         				android:summary="@string/Pref_Inactive_Preference_Summary">
 		<PreferenceScreen
-			 android:fragment="com.almalence.opencam.Fragment"
+			 android:fragment="com.mobiroo.n.almalence.opencam.Fragment"
 			 android:title="@string/Pref_Inactive_Title"
 			 android:summary="@string/Pref_Inactive_Summary">
 			 <extra android:name="type" android:value="vf_inactive_settings"/>
@@ -20,7 +20,7 @@
     <PreferenceCategory android:title="@string/Pref_Inactive_Preference_Title" 
         				android:summary="@string/Pref_Inactive_Preference_Summary">
 		<PreferenceScreen
-			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:fragment="com.mobiroo.n.almalence.opencam_plus.Fragment"
 			 android:title="@string/Pref_Inactive_Title"
 			 android:summary="@string/Pref_Inactive_Summary">
 			 <extra android:name="type" android:value="vf_inactive_settings"/>

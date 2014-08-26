@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:visibility="invisible" >
     
-    <com.almalence.ui.RotateImageView
+    <com.mobiroo.n.almalence.ui.RotateImageView
         android:id="@+id/horizon_indicator_aim"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -13,7 +13,7 @@
         android:layout_margin="10dp"
         android:src="@drawable/plugin_vf_gyro_level_side_strips" />
     
-    <com.almalence.ui.RotateImageView
+    <com.mobiroo.n.almalence.ui.RotateImageView
         android:id="@+id/horizon_indicator_aim_top_down"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -27,13 +27,13 @@
         android:layout_height="fill_parent"
         android:gravity="center" >
 
-        <com.almalence.ui.RotateImageView
+        <com.mobiroo.n.almalence.ui.RotateImageView
             android:id="@+id/horizon_indicator_mark_horizontal"
             android:layout_width="192dp"
             android:layout_height="192dp"
             android:src="@drawable/plugin_vf_gyro_level_circle" />
         
-        <com.almalence.ui.RotateImageView
+        <com.mobiroo.n.almalence.ui.RotateImageView
             android:id="@+id/horizon_indicator_mark_top_down"
             android:layout_width="192dp"
             android:layout_height="192dp"

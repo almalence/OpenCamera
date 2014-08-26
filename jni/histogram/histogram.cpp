@@ -99,7 +99,7 @@ inline void makeRGBHistogram(unsigned char *yuv420sp, int w, int h, int histHeig
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_vf_histogram_Histogram_createHistogram(
+extern "C" JNIEXPORT void JNICALL Java_com_mobiroo_n_almalence_plugins_vf_histogram_Histogram_createHistogram(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jintArray afacts, jint width,	jint height, jint histWidth, jint histHeight)
 {
 	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);
@@ -112,7 +112,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_vf_histogram_Histog
 }
 
 
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_vf_histogram_Histogram_createRGBHistogram(
+extern "C" JNIEXPORT void JNICALL Java_com_mobiroo_n_almalence_plugins_vf_histogram_Histogram_createRGBHistogram(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jintArray afactsR, jintArray afactsG, jintArray afactsB, jint width, jint height, jint histWidth, jint histHeight)
 {
 	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);

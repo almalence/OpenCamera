@@ -42,7 +42,7 @@ by Almalence Inc. All Rights Reserved.
 static int almashot_inited = 0;
 static void* instance = NULL;
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_panorama_AlmashotPanorama_initialize
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_panorama_AlmashotPanorama_initialize
 (
 	JNIEnv* env,
 	jclass
@@ -63,7 +63,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_panorama
 	return err;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_panorama_AlmashotPanorama_release
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_panorama_AlmashotPanorama_release
 (
 	JNIEnv*,
 	jclass
@@ -89,7 +89,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_panorama
 	return result;
 }
 
-extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_panorama_AlmashotPanorama_process
+extern "C" JNIEXPORT jintArray JNICALL Java_com_mobiroo_n_almalence_plugins_processing_panorama_AlmashotPanorama_process
 (
 	JNIEnv* env,
 	jclass,

@@ -25,21 +25,21 @@
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
-	    <vf 		id="com.almalence.plugins.histogramvf"/> 
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>   
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/> 
+	    <vf 		id="com.mobiroo.n.almalence.plugins.barcodescannervf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.capture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.capture" />    
 	
-	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.simpleprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 	
 		<sku/>
 		
@@ -51,19 +51,19 @@
 	
 	    <icon		id="gui_almalence_mode_selftimer"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>      
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.barcodescannervf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>      
 	
-	    <capture 	id="com.almalence.plugins.selftimercapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.selftimercapture" />    
 	
-	    <processing	id="com.almalence.plugins.simpleprocessing"/>    
+	    <processing	id="com.mobiroo.n.almalence.plugins.simpleprocessing"/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku/>
 		
@@ -75,21 +75,21 @@
 	    
 	    <icon		id="gui_almalence_mode_burst"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-		<vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.barcodescannervf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>   
 	
-	    <capture 	id="com.almalence.plugins.burstcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.burstcapture" />    
 	
-	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.simpleprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 	
 		<sku/>
 		
@@ -101,19 +101,19 @@
 	
 	    <icon		id="gui_almalence_mode_expobracketing"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.expobracketingcapture" />    
 	
-	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.simpleprocessing" />    
 		
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 	
 		<sku/>
 		
@@ -125,19 +125,19 @@
 	
 	    <icon		id="gui_almalence_mode_hdr"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.expobracketingcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.expobracketingcapture" />    
 	
-	    <processing	id="com.almalence.plugins.hdrprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.hdrprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 	
 		<sku 		id="plugin_almalence_hdr"/>
 		
@@ -149,19 +149,19 @@
 	
 	    <icon		id="gui_almalence_mode_night"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-		<vf 		id="com.almalence.plugins.zoomvf"/>
-		<vf 		id="com.almalence.plugins.focusvf"/>
-		<vf 		id="com.almalence.plugins.infosetvf"/>
-		<vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 		
-	    <capture 	id="com.almalence.plugins.nightcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.nightcapture" />    
 	
-	    <processing	id="com.almalence.plugins.nightprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.nightprocessing" />    
 	
 	    <filter/>    
 	
-		<export 	id="com.almalence.plugins.export"/>
+		<export 	id="com.mobiroo.n.almalence.plugins.export"/>
 		
 		<howtotext  id=""/>
 
@@ -172,19 +172,19 @@
 	
 	    <icon		id="gui_almalence_mode_video"/>
 	    
-	    <vf 		id="com.almalence.plugins.zoomvf"/>   
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.videocapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.videocapture" />    
 	
-	    <processing	id="com.almalence.plugins.simpleprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.simpleprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku/>
 		
@@ -196,21 +196,21 @@
 	
 	    <icon		id="gui_almalence_mode_backintime"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>   
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.barcodescannervf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.preshotcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.preshotcapture" />    
 	
-	    <processing id="com.almalence.plugins.preshotprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.preshotprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export     id="com.almalence.plugins.export"/>
+	    <export     id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku/>
 		
@@ -222,20 +222,20 @@
 	
 	    <icon		id="gui_almalence_mode_moving"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>   
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	
-	    <capture 	id="com.almalence.plugins.objectremovalcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.objectremovalcapture" />    
 	
-	    <processing id="com.almalence.plugins.objectremovalprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.objectremovalprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku		id="plugin_almalence_moving_burst"/>
 		
@@ -247,20 +247,20 @@
 	
 	    <icon		id="gui_almalence_mode_groupshot"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>   
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	    
-	    <capture 	id="com.almalence.plugins.groupshotcapture" />
+	    <capture 	id="com.mobiroo.n.almalence.plugins.groupshotcapture" />
 	
-	    <processing id="com.almalence.plugins.groupshotprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.groupshotprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku		id="plugin_almalence_groupshot"/>
 		
@@ -272,20 +272,20 @@
 	
 	    <icon		id="gui_almalence_mode_sequence"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>   
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	    
-	    <capture 	id="com.almalence.plugins.sequencecapture" />
+	    <capture 	id="com.mobiroo.n.almalence.plugins.sequencecapture" />
 	
-	    <processing id="com.almalence.plugins.sequenceprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.sequenceprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku		id="plugin_almalence_moving_burst"/>
 		
@@ -297,19 +297,19 @@
 	
 	    <icon		id="gui_almalence_mode_panorama"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>
 	    
-	    <capture 	id="com.almalence.plugins.panoramacapture_augmented" />
+	    <capture 	id="com.mobiroo.n.almalence.plugins.panoramacapture_augmented" />
 	
-	    <processing id="com.almalence.plugins.panoramaprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.panoramaprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku		id="plugin_almalence_panorama"/>
 		
@@ -321,18 +321,18 @@
 	
 	    <icon		id="gui_almalence_mode_hiresportrait"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
 	
-	    <capture 	id="com.almalence.plugins.hiresportraitcapture" />
+	    <capture 	id="com.mobiroo.n.almalence.plugins.hiresportraitcapture" />
 	
-	    <processing id="com.almalence.plugins.hiresportraitprocessing"/>    
+	    <processing id="com.mobiroo.n.almalence.plugins.hiresportraitprocessing"/>    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 
 		<sku		id=""/>
 		
@@ -343,20 +343,20 @@
 	    
 	    <icon		id="gui_almalence_mode_bestshot"/>
 	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-		<vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
+	    <vf 		id="com.mobiroo.n.almalence.plugins.gridvf"/>
+		<vf 		id="com.mobiroo.n.almalence.plugins.zoomvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.histogramvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.focusvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.infosetvf"/>
+	    <vf 		id="com.mobiroo.n.almalence.plugins.aeawlockvf"/>   
 	    
-	    <capture 	id="com.almalence.plugins.bestshotcapture" />    
+	    <capture 	id="com.mobiroo.n.almalence.plugins.bestshotcapture" />    
 	
-	    <processing	id="com.almalence.plugins.bestshotprocessing" />    
+	    <processing	id="com.mobiroo.n.almalence.plugins.bestshotprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.export"/>
+	    <export 	id="com.mobiroo.n.almalence.plugins.export"/>
 	
 		<sku/>
 		

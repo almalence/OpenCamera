@@ -14,7 +14,7 @@
         android:layout_centerInParent="true"
         android:scaleType="fitCenter" />
     
-    <com.almalence.plugins.processing.sequence.OrderControl
+    <com.mobiroo.n.almalence.plugins.processing.sequence.OrderControl
          android:id="@+id/seqView"
 		 android:layout_width="fill_parent"
 		 android:layout_height="128dp"

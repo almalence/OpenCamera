@@ -14,7 +14,7 @@
 		android:orientation="vertical"		    
 		android:background="@android:color/transparent"	  	
 		android:visibility="gone">
-		<com.almalence.ui.RotateImageView
+		<com.mobiroo.n.almalence.ui.RotateImageView
 				android:id="@+id/selectModeIcon"
 				android:paddingTop="2dp"
    		    	android:paddingBottom="2dp"
@@ -24,7 +24,7 @@
 				android:layout_height="@dimen/mainButtonHeight"
 				android:layout_width="@dimen/mainButtonHeight"	
 				android:scaleType="fitXY">
-		</com.almalence.ui.RotateImageView>
+		</com.mobiroo.n.almalence.ui.RotateImageView>
 		<TextView android:id="@+id/selectModeText"
    		    	  android:layout_width="wrap_content"
    		    	  android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
 		 	 	    android:orientation="vertical"
 		 	 	    android:layout_centerInParent="true"
 		 	 	    android:gravity="center">
-	            <com.almalence.ui.RotateImageView
+	            <com.mobiroo.n.almalence.ui.RotateImageView
 					android:id="@+id/buttonGallery"								
 					android:layout_gravity="center_horizontal"
 					android:src="@drawable/gui_almalence_gallery"									
@@ -93,7 +93,7 @@
 					android:layout_width="@dimen/paramsLayoutHeight"
 					android:scaleType="fitCenter"
 			   		android:onClick="onButtonClick">
-				</com.almalence.ui.RotateImageView>
+				</com.mobiroo.n.almalence.ui.RotateImageView>
 				</LinearLayout>
 				<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
 		 	 	    android:layout_width="match_parent"
@@ -120,7 +120,7 @@
 	 	 	    android:gravity="bottom"	    			 	 	    
 				android:layout_weight="1">
 				
-	 	 	<com.almalence.ui.RotateImageView
+	 	 	<com.mobiroo.n.almalence.ui.RotateImageView
 				android:id="@+id/buttonShutter"
 				android:src="@drawable/button_shutter"				
 				android:background="@android:color/transparent"			
@@ -133,7 +133,7 @@
 				android:paddingTop="0dp"
 		   		android:layout_gravity="center_horizontal"
 		   		android:onClick="onButtonClick">
-		 	</com.almalence.ui.RotateImageView>
+		 	</com.mobiroo.n.almalence.ui.RotateImageView>
 		 	</LinearLayout>	 	
 		 	
 	 	 	<LinearLayout android:layout_height="@dimen/paramsLayoutHeight"
@@ -141,7 +141,7 @@
 	 	 	    android:orientation="vertical"
 	 	 	    android:gravity="center"	    			 	 	    
 				android:layout_weight="1">
-	 	 	<com.almalence.ui.RotateImageView
+	 	 	<com.mobiroo.n.almalence.ui.RotateImageView
 				android:id="@+id/buttonSelectMode"
 				android:src="@drawable/button_selectmode"
 				android:layout_gravity="center_horizontal"
@@ -150,7 +150,7 @@
 				android:layout_width="@dimen/paramsLayoutHeight"	
 				android:scaleType="fitXY"							
 		   		android:onClick="onButtonClick">
-		 	</com.almalence.ui.RotateImageView>
+		 	</com.mobiroo.n.almalence.ui.RotateImageView>
 		 	</LinearLayout>
  	</LinearLayout>
 	 	      
@@ -234,7 +234,7 @@
 		android:background="@drawable/blacktransparentlayertop"    
 		android:layout_gravity="top"		
 		android:layout_alignParentTop="true">
-		 	<com.almalence.ui.RotateImageView android:id="@+id/evButton"
+		 	<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/evButton"
 					android:background="@android:color/transparent"
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -242,7 +242,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
-		 	<com.almalence.ui.RotateImageView android:id="@+id/sceneButton"
+		 	<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/sceneButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -250,7 +250,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>		 	
-			<com.almalence.ui.RotateImageView android:id="@+id/wbButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/wbButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -258,7 +258,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.ui.RotateImageView android:id="@+id/focusButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/focusButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -266,7 +266,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.ui.RotateImageView android:id="@+id/flashButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/flashButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -274,7 +274,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.ui.RotateImageView android:id="@+id/isoButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/isoButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -282,7 +282,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>
-			<com.almalence.ui.RotateImageView android:id="@+id/meteringButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/meteringButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -290,7 +290,7 @@
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>			
-			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
+			<com.mobiroo.n.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"
 					android:layout_width="0dip"
@@ -324,7 +324,7 @@
 					    android:gravity="center"/>					
 	</RelativeLayout>
 	 
-	<com.almalence.ui.RotateImageView 
+	<com.mobiroo.n.almalence.ui.RotateImageView 
 	    android:id="@+id/Unlock"
 		android:background="@android:color/transparent"
 		android:src="@drawable/unlock"					
@@ -618,8 +618,8 @@
 	</RelativeLayout>
 
 <!-- -+-  -->
-	<com.almalence.ui.Panel
-	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
+	<com.mobiroo.n.almalence.ui.Panel
+	    xmlns:my="http://schemas.android.com/apk/res/com.mobiroo.n.almalence.opencam"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/topPanel"
@@ -650,11 +650,11 @@
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
-	</com.almalence.ui.Panel>
+	</com.mobiroo.n.almalence.ui.Panel>
 <!--  -+- -->	
 <!-- +++
-	<com.almalence.ui.Panel
-	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
+	<com.mobiroo.n.almalence.ui.Panel
+	    xmlns:my="http://schemas.android.com/apk/res/com.mobiroo.n.almalence.opencam_plus"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/topPanel"
@@ -685,7 +685,7 @@
 			<include
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
-	</com.almalence.ui.Panel>
+	</com.mobiroo.n.almalence.ui.Panel>
 +++ -->	
 
 

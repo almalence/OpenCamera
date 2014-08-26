@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.almalence.opencam"
+    xmlns:app="http://schemas.android.com/apk/res/com.mobiroo.n.almalence.opencam"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:minWidth="250dp"
     android:padding="10dp" >
 
-    <com.almalence.plugins.vf.barcodescanner.RotateLayout
+    <com.mobiroo.n.almalence.plugins.vf.barcodescanner.RotateLayout
         android:id="@+id/rotateLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -130,6 +130,6 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </com.almalence.plugins.vf.barcodescanner.RotateLayout>
+    </com.mobiroo.n.almalence.plugins.vf.barcodescanner.RotateLayout>
 
 </LinearLayout>

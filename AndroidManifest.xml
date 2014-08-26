@@ -2,14 +2,14 @@
 
 <!-- +++
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	  package="com.almalence.opencam_plus"
+	  package="com.mobiroo.n.almalence.opencam_plus"
       android:installLocation="auto"
       android:versionCode="61"
       android:versionName="3.24">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	  package="com.almalence.opencam"
+	  package="com.mobiroo.n.almalence.opencam"
       android:installLocation="auto"
       android:versionCode="73"
       android:versionName="3.24">
@@ -51,20 +51,20 @@
         				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
    		<!-- +++
-		<activity android:name="com.almalence.opencam_plus.Preferences"
+		<activity android:name="com.mobiroo.n.almalence.opencam_plus.Preferences"
 				        android:label="@string/app_name"
 				        android:icon="@drawable/gui_almalence_settings_more_settings"
 				        android:hardwareAccelerated="true"/>
 		+++ -->
 		<!-- -+-  -->
-		<activity android:name="com.almalence.opencam.Preferences"
+		<activity android:name="com.mobiroo.n.almalence.opencam.Preferences"
 				        android:label="@string/app_name"
 				        android:icon="@drawable/gui_almalence_settings_more_settings"
 				        android:hardwareAccelerated="true"/>
 		<!--  -+- -->
 				
 		
-		<activity android:name="com.almalence.plugins.processing.hdr.ActivityAdjustments"
+		<activity android:name="com.mobiroo.n.almalence.plugins.processing.hdr.ActivityAdjustments"
 		    						android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 		
 		<activity android:name=".FolderPicker"

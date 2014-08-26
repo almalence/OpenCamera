@@ -37,7 +37,7 @@ void __attribute__((constructor)) initialize_openmp() {}
 void __attribute__((destructor)) release_openmp() {}
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bestshot_AlmaShotBestShot_Initialize
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_bestshot_AlmaShotBestShot_Initialize
 (
 	JNIEnv* env,
 	jobject thiz
@@ -59,7 +59,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bests
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot_AlmaShotBestShot_Release
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_bestshot_AlmaShotBestShot_Release
 (
 	JNIEnv*,
 	jobject
@@ -78,7 +78,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bestshot_AlmaShotBestShot_ConvertFromJpeg
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_bestshot_AlmaShotBestShot_ConvertFromJpeg
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -111,7 +111,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bests
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot_AlmaShotBestShot_BestShotProcess
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_bestshot_AlmaShotBestShot_BestShotProcess
 (
 	JNIEnv* env,
 	jobject thiz,

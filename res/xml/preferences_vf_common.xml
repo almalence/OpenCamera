@@ -21,7 +21,7 @@
             android:key="maxScreenBrightnessPref" />
 	    
 	    <PreferenceScreen 
-            android:fragment="com.almalence.opencam.Fragment" 
+            android:fragment="com.mobiroo.n.almalence.opencam.Fragment" 
             android:title="@string/moreText" 
             >
 			 <extra 
@@ -54,7 +54,7 @@
             android:key="maxScreenBrightnessPref" />
 	    
 	    <PreferenceScreen 
-            android:fragment="com.almalence.opencam_plus.Fragment" 
+            android:fragment="com.mobiroo.n.almalence.opencam_plus.Fragment" 
             android:title="@string/moreText" 
             >
 			 <extra 

@@ -74,7 +74,7 @@ Uint8 scratch[SCRATCH_SIZE];
 extern "C"
 {
 
-JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_Initialize
+JNIEXPORT void JNICALL Java_com_mobiroo_n_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_Initialize
 (
 	JNIEnv* env,
 	jobject thiz
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPor
 }
 
 
-JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_Release
+JNIEXPORT void JNICALL Java_com_mobiroo_n_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_Release
 (
 	JNIEnv* env,
 	jobject thiz
@@ -112,7 +112,7 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPor
 // Note:
 // input: NV21 data from VF
 // return: 0 = ok, 1 = no memory
-JNIEXPORT int JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_SetFrontFrame
+JNIEXPORT int JNICALL Java_com_mobiroo_n_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_SetFrontFrame
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -154,7 +154,7 @@ JNIEXPORT int JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPort
 // input: NV21 data from VF
 // return: distance in percentages of frame half-width (0=perfect alignment, 100=displaced half-way
 // ToDo: return confidence measure
-JNIEXPORT int JNICALL Java_com_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_CheckRearAlignment
+JNIEXPORT int JNICALL Java_com_mobiroo_n_almalence_plugins_capture_hiresportrait_HiresPortraitCapturePlugin_CheckRearAlignment
 (
 	JNIEnv* env,
 	jobject thiz,

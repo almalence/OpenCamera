@@ -65,7 +65,7 @@ float fd_midy[MAX_GS_FRAMES][MAX_FACE_DETECTED];
 float fd_eyedist[MAX_GS_FRAMES][MAX_FACE_DETECTED];
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Initialize
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_Initialize
 (
 	JNIEnv* env,
 	jobject thiz
@@ -92,7 +92,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_group
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Release
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_Release
 (
 	JNIEnv* env,
 	jobject,
@@ -125,7 +125,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_ConvertAndDetectFacesFromJpegs
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_ConvertAndDetectFacesFromJpegs
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -191,7 +191,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_GetFaces
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_GetFaces
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -225,7 +225,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_getInputFrame
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_getInputFrame
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -235,7 +235,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	return (jint)inputFrame[index];
 }
 
-extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_NV21toARGB
+extern "C" JNIEXPORT jintArray JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_NV21toARGB
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -290,7 +290,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_gro
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Align
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_Align
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -322,7 +322,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	return ret;
 }
 
-extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_Preview
+extern "C" JNIEXPORT jbyte* JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_Preview
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -373,7 +373,7 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_plugins_processing_groups
 	return (jbyte *)jpixels;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupshot_AlmaShotSeamless_RealView
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_groupshot_AlmaShotSeamless_RealView
 (
 	JNIEnv* env,
 	jobject thiz,

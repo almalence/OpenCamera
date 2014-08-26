@@ -300,7 +300,7 @@ void Preview_YUV2ARGB(Uint8 *pview_yuv, Uint32 *pview, int sx, int sy)
 // -------------------------------------------------------------------------------
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_Initialize
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_Initialize
 (
 	JNIEnv* env,
 	jobject thiz
@@ -325,7 +325,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_simpl
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_Release
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_Release
 (
 	JNIEnv* env,
 	jobject thiz
@@ -353,7 +353,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_ConvertFromJpeg
+extern "C" JNIEXPORT jstring JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_ConvertFromJpeg
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -434,7 +434,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_simpl
 	return env->NewStringUTF(status);
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_GetInputFrameNV21
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_GetInputFrameNV21
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -451,7 +451,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	else return -1;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_RotateResult
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_RotateResult
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -466,7 +466,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	return (jint)result_yuv;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_AlmaShotDRO_DroProcess
+extern "C" JNIEXPORT jint JNICALL Java_com_mobiroo_n_almalence_plugins_processing_simple_AlmaShotDRO_DroProcess
 (
 	JNIEnv* env,
 	jobject thiz,

@@ -14,7 +14,7 @@
 		    android:background="@android:color/transparent"
 		    android:gravity="left"
 		    android:layout_weight="1">
-					<com.almalence.ui.RotateImageView
+					<com.mobiroo.n.almalence.ui.RotateImageView
 					android:id="@+id/buttonPauseVideo"
 					android:src="@drawable/plugin_capture_video_timelapse_inactive"
 					android:background="@android:color/transparent"			
@@ -28,7 +28,7 @@
 					android:layout_marginLeft="10dp"				
 			   		android:layout_gravity="left"		   		
 			   		android:onClick="onButtonClick">
-			 	</com.almalence.ui.RotateImageView>
+			 	</com.mobiroo.n.almalence.ui.RotateImageView>
 		 	</LinearLayout>
 		 	
 	    	<LinearLayout
@@ -38,7 +38,7 @@
 		    android:background="@android:color/transparent"
 		    android:gravity="right"
 		    android:layout_weight="1">
-			 	<com.almalence.ui.RotateImageView
+			 	<com.mobiroo.n.almalence.ui.RotateImageView
 					android:id="@+id/buttonCaptureImage"
 					android:src="@drawable/plugin_capture_video_takeimage"				
 					android:background="@android:color/transparent"			
@@ -52,6 +52,6 @@
 					android:paddingTop="0dp"
 			   		android:layout_gravity="right"		   				   		
 			   		android:onClick="onButtonClick">
-			 	</com.almalence.ui.RotateImageView>
+			 	</com.mobiroo.n.almalence.ui.RotateImageView>
 			 </LinearLayout>
 </LinearLayout>
