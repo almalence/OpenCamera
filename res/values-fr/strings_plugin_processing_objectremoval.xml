@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">Traitement de la suppression d\'objet en cours</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">Traiter les objets en déplacement</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">Enregistrer les clichés originaux</string>
-	
-</resources>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Sekvenční snímek - zpracování</string>
-	<string name="Pref_Sequence_Preference_Summary">Zpracovat sekvenční snímek</string>	
-	
-	<string name="Pref_Sequence_Save">Uložit originální snímky</string>
-	
-</resources>

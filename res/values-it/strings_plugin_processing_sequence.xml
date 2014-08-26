@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Elaborazione foto sequenziali in corso</string>
-	<string name="Pref_Sequence_Preference_Summary">Elabora foto sequenziali</string>	
-	
-	<string name="Pref_Sequence_Save">Salva fotogrammi originali</string>
-	
-</resources>

@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Procesando secuencia de fotos</string>
-	<string name="Pref_Sequence_Preference_Summary">Procesar secuencia de fotos</string>	
-	
-	<string name="Pref_Sequence_Save">Guardar cuadros originales</string>
-	
-</resources>

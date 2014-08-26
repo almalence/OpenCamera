@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">オブジェクト削除処理中</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">オブジェクト削除を処理</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">元フレームを保存</string>
-	
-</resources>

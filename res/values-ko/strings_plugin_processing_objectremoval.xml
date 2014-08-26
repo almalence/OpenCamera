@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">객체 제거 처리 중</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">객체 이동 처리</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">원본 프레임 저장</string>
-	
-</resources>

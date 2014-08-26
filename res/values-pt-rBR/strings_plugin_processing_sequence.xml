@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Processamento de fotos sequenciais</string>
-	<string name="Pref_Sequence_Preference_Summary">Processar fotos sequenciais</string>	
-	
-	<string name="Pref_Sequence_Save">Salvar quadros originais</string>
-	
-</resources>

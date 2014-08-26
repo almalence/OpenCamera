@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">Verarbeitung der Objektentfernung</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">Entfernung von Objekten</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">Ausgangsbilder speichern</string>
-	
-</resources>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_GroupShot_Preference_Title">Przetwarzanie zdjęcia grupowego</string>
-	<string name="Pref_GroupShot_Preference_Summary">Proces przetwarzania zdjęcia</string>	
-	
-	<string name="Pref_GroupShot_Save">Zapisz oryginalne zdjęcia</string>
-	
-</resources>

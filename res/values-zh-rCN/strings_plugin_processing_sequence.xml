@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">顺序照片处理</string>
-	<string name="Pref_Sequence_Preference_Summary">处理顺序照片</string>	
-	
-	<string name="Pref_Sequence_Save">保存原始图像</string>
-	
-</resources>

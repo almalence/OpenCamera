@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">Przetwarzanie usuwania obiektu</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">Proces przenoszenia obiektów</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">Zapisz oryginalne zdjęcia</string>
-	
-</resources>

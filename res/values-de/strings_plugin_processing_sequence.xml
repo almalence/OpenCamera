@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Sequenzfoto wird verarbeitet</string>
-	<string name="Pref_Sequence_Preference_Summary">Sequenzfoto verarbeiten</string>	
-	
-	<string name="Pref_Sequence_Save">Ausgangsbilder speichern</string>
-	
-</resources>

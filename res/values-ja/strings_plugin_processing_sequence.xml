@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">シーケンス写真を処理中</string>
-	<string name="Pref_Sequence_Preference_Summary">シーケンス写真を処理</string>	
-	
-	<string name="Pref_Sequence_Save">オリジナルフレームを保存</string>
-	
-</resources>
