@@ -156,8 +156,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public static final int						QUALITY_4K						= 4096;
 
-	ImageView									rotateToLandscapeNotifier;
-	boolean										showRotateToLandscapeNotifier	= false;
+	private ImageView							rotateToLandscapeNotifier;
+	private boolean								showRotateToLandscapeNotifier	= false;
+	private boolean								showLandscapeNotification = true;
 	private View								rotatorLayout;
 	private TimeLapseDialog						timeLapseDialog;
 
@@ -749,7 +750,7 @@ public class VideoCapturePlugin extends PluginCapture
 			timeLapseButton.requestLayout();
 		}
 
-		if (rotatorLayout != null)
+		if (rotatorLayout != null && showLandscapeNotification)
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
 			{
@@ -835,6 +836,8 @@ public class VideoCapturePlugin extends PluginCapture
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_SHOW_V2);
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
 		}
+		
+		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
 	}
 
 	@Override
