@@ -166,25 +166,31 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		if (mode == 1)
 		{
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.SuperZoomPreview start");
 			AlmaShotNight.SuperZoomPreview(compressed_frame, NightProcessingPlugin.HI_SPEED_FRAMES, mImageWidth,
 					mImageHeight, mImageWidth * 2, mImageHeight * 2, Integer.parseInt(NoisePreference),
 					Integer.parseInt(GhostPreference), SaturatedColors ? 1 : 0, 1);
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.SuperZoomPreview success");
 		} else
 		{
 			boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
 			if (!isYUV)
 			{
+				Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg start");
 				AlmaShotNight.ConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
 						mImageHeight);
 				Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
 			} else
 			{
+				Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames start");
 				AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 				Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 			}
 
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview start");
 			AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight, Integer.parseInt(NoisePreference),
 					Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0, imagesAmount);
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview success");
 		}
 		System.gc();
 	}
