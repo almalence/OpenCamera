@@ -96,6 +96,9 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+//		
+//		Log.e("NightProcessing", "Image size " + mImageWidth + "x" + mImageHeight);
+//		Log.e("NightProcessing", "Image save size " + iSaveImageWidth + "x" + iSaveImageHeight);
 
 		AlmaShotNight.Initialize();
 

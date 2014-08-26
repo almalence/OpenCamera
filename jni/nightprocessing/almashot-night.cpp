@@ -305,15 +305,18 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 		yuv[i] = (Uint8*)frames[i];
 	}
 
-	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "b: %d (%d %d %d %d)  %d   %dx%d", (int)yuv, (int)yuv[0], (int)yuv[1], (int)yuv[2], (int)yuv[3], sensorGainPref, sx, sy);
+//	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "b: %d (%d %d %d %d)  %d   %dx%d", (int)yuv, (int)yuv[0], (int)yuv[1], (int)yuv[2], (int)yuv[3], sensorGainPref, sx, sy);
 	//SuperZoom_Preview(&instance, yuv, pview_yuv, sx, sy, sxo, syo, -1, -1, nFrames,
+//	__android_log_print(ANDROID_LOG_ERROR, "Night processin", "SuperZoom_Preview: sx=%d sy=%d sxo=%d syo=%d sxo/4=%d syo/4=%d nFrames=%d SensorGain=0 DeGhostGain=%d DeGhostFrames\%d \
+//			kelvin1=%d kelvin2=%d SizeGuaranteeMode=%d noSres=%d postFilter=%d postSharpen=%d largeDisplacements=%d nBaseFrame=NULL cameraIndex=0 externalBuffers=0", sx, sy, sxo, syo, sxo/4, syo/4, nFrames, deghTable[DeGhostPref], 1,
+//			-1, 9+saturated*9*16+1, 1, 1, 64*nTable[sensorGainPref], 2, 1);
 	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
 		0, // 256*nTable[sensorGainPref],
 		deghTable[DeGhostPref], 1,
 		-1, 9+saturated*9*16+1,	// hack to get brightening (pass enh. level in kelvin2 parameter)
 		1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);
 
-	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Preview completed");
+//	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Preview completed");
 
 	env->ReleaseIntArrayElements(in, (jint*)frames, JNI_ABORT);
 

@@ -18,6 +18,11 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.night;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -656,6 +661,8 @@ public class NightCapturePlugin extends PluginCapture
 						CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+						editor.putString(nightCaptureFocusPref, "1");
+						FocusPreference = "1";
 					}
 				} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 				{
