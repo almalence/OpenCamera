@@ -24,6 +24,10 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -1316,11 +1320,13 @@ public class HALv3
 		}
 	};
 
+	public static int blabla = 0;
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
 		@Override
 		public void onImageAvailable(ImageReader ir)
 		{
+			blabla++;
 			// Contrary to what is written in Aptina presentation
 			// acquireLatestImage is not working as described
 			// Google: Also, not working as described in android docs (should
@@ -1347,11 +1353,31 @@ public class HALv3
 				// - Y pixel stride is always 1
 				// - U and V strides are the same
 				// So, passing all these parameters is a bit overkill
-
+				
 				byte[] data = YuvImage.CreateSingleYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
 						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
 						im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
+				
+//				if(blabla == 1)
+//				{
+//					File saveDir = PluginManager.getSaveDir(false);
+//					File file = new File(saveDir, "PREVIEW_FRAME.jpg");
+//					OutputStream os = null;
+//					try
+//					{
+//						int yuv = SwapHeap.SwapToHeap(data);
+//						os = new FileOutputStream(file);
+//						com.almalence.YuvImage out;
+//						out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, imageWidth, imageHeight, null);
+//						if(out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
+//							Log.e(TAG, "++++++++++++++++++++++++++++++++++++++ FRAME SAVED");
+//					} catch (FileNotFoundException e)
+//					{
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
 				
 				PluginManager.getInstance().onPreviewFrame(data);
 			}
