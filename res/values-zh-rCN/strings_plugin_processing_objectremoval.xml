@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">对象删除处理</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">处理移动对象</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">储存原始图像</string>
-	
-</resources>

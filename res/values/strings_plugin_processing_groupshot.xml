@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_GroupShot_Preference_Title">Group shot processing</string>
-	<string name="Pref_GroupShot_Preference_Summary">Process group shot</string>	
-	
-	<string name="Pref_GroupShot_Save">Save original frames</string>
-	
-</resources>

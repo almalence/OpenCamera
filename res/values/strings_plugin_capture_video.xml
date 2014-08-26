@@ -18,4 +18,7 @@
     
     <string name="Pref_Video_DRO_ON">HDR On</string>
     <string name="Pref_Video_DRO_OFF">HDR Off</string>
+    
+    <string name="Pref_Video_ShowLandscapeNotification_Title">Show notification</string>
+    <string name="Pref_Video_ShowLandscapeNotification_Summary">Enables notification to hold device in landscape orientation</string>
 </resources>

@@ -5,13 +5,16 @@
     <string name="Pref_Video_Preference_Title">Съемка</string>
     <string name="Pref_Video_Preference_Summary">видеосъемка</string>
     
+    <string name="Pref_Video_Stabilization_Title">Видео стабилизация</string>
+    
     <string name="Pref_Video_ImageSize_Title">Разрешение видео</string>
     <string name="Pref_Video_None">None</string>
-    
-    <string name="Pref_Video_Stabilization_Title">Видео стабилизация</string>
     
     <string name="setVideoText">Установить</string>
     
     <string name="Pref_Video_StartStandard_Title">Стандартная видео камера</string>
     <string name="Pref_Video_StartStandard_Summary">Использовать стандартную камеру для записи видео</string>
+    
+    <string name="Pref_Video_ShowLandscapeNotification_Title">Показывать уведомление</string>
+    <string name="Pref_Video_ShowLandscapeNotification_Summary">Активировать уведомление о повороте устройства в альбомную ориентацию</string>
 </resources>

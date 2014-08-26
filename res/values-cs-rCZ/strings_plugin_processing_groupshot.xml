@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_GroupShot_Preference_Title">Skupinový snímek - zpracování</string>
-	<string name="Pref_GroupShot_Preference_Summary">Zpracovat skupinový snímek</string>	
-	
-	<string name="Pref_GroupShot_Save">Uložit originální snímky</string>
-	
-</resources>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_ObjectRemoval_Preference_Title">Odstranění objektu - zpracování</string>
-	<string name="Pref_ObjectRemoval_Preference_Summary">Zpracovat pohybující se objekty</string>	
-	
-	<string name="Pref_ObjectRemoval_Save">Uložit originální snímky</string>
-	
-</resources>

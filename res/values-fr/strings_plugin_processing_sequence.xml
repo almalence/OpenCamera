@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">Traitement de la photo séquence</string>
-	<string name="Pref_Sequence_Preference_Summary">Traiter la photo séquence</string>	
-	
-	<string name="Pref_Sequence_Save">Enregistrer les clichés originaux</string>
-	
-</resources>

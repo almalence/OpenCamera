@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Sequence_Preference_Title">시퀀스 사진 처리</string>
-	<string name="Pref_Sequence_Preference_Summary">시퀀스 사진을 처리합니다</string>	
-	
-	<string name="Pref_Sequence_Save">원래 액자 저장</string>
-	
-</resources>

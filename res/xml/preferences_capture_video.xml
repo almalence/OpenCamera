@@ -11,5 +11,12 @@
             android:defaultValue="false"
             android:summary="@string/Pref_Video_StartStandard_Summary"
             android:key="videoStartStandardPref" />
+    	
+    	<CheckBoxPreference
+            android:title="@string/Pref_Video_ShowLandscapeNotification_Title"
+            android:defaultValue="true"
+            android:summary="@string/Pref_Video_ShowLandscapeNotification_Summary"
+            android:key="showLandscapeNotification" />
+    	
 </PreferenceCategory>
 </PreferenceScreen>
