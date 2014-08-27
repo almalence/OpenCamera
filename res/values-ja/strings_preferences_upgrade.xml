@@ -10,9 +10,6 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">拡張現実を使った素晴らしいパノラマ撮影</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">動くオブジェクト</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">いらない部分の削除や動きをひとつの写真に合成</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">グループショットをアンロック</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">あなたの写真からベストな顔を選択</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">いらない部分の削除や動きをひとつの写真に合成 あなたの写真からベストな顔を選択</string>
 	
 </resources>

@@ -2124,7 +2124,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockAllCoupon		= "$3.95";
 	public String								titleUnlockHDR				= "$2.99";
 	public String								titleUnlockPano				= "$2.99";
-	public String								titleUnlockMoving			= "$2.99";
+	public String								titleUnlockMoving			= "$3.99";
 	public String								titleUnlockGroup			= "$2.99";
 	public String								titleSubscriptionMonth		= "$0.99";
 	public String								titleSubscriptionYear		= "$4.99";
@@ -2437,7 +2437,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void purchaseMoving()
+	public void purchaseMultishot()
 	{
 		if (isPurchasedMoving() || isPurchasedAll())
 			return;
@@ -2488,22 +2488,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void purchaseGroupshot()
-	{
-		if (isPurchasedGroupshot() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_GROUPSHOT, GROUPSHOT_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
+//	public void purchaseGroupshot()
+//	{
+//		if (isPurchasedGroupshot() || isPurchasedAll())
+//			return;
+//		String payload = "";
+//		try
+//		{
+//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_GROUPSHOT, GROUPSHOT_REQUEST,
+//					mPreferencePurchaseFinishedListener, payload);
+//		} catch (Exception e)
+//		{
+//			e.printStackTrace();
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
+//	}
 
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()

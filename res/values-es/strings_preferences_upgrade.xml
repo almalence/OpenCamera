@@ -10,9 +10,6 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Toma fabulosas fotos panorámicas con la ayuda de realidad aumentada.</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Objetos en movimiento</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Elimina objetos no deseados o combina movimientos en una sola foto</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Desbloquear disparos múltiples</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Selecciona los mejores rostros en tu foto</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Elimina objetos no deseados, combina movimientos en una sola foto, selecciona los mejores rostros en tu foto</string>
 	
 </resources>

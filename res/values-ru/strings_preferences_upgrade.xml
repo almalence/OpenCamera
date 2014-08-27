@@ -10,17 +10,14 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Снимайте великолепные панорамы (высотой более 1000pix), в режиме проводки или с помощью дополненной реальности</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Движущиеся объекты</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Удаляйте ненужные объекты или совмещайте движения в едином кадре</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Групповой снимок</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Выбирайте лучшие выражения лиц на вашем фото</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Удаляйте ненужные объекты, совмещайте движения в едином кадре, выбирайте лучшие выражения лиц на вашем фото</string>
 	
 	<string name="Pref_Upgrde_PromoCode_Preference_Title">Promo код</string>
 	<string name="Pref_Upgrde_PromoCode_Text">Введите promo код</string>
 	<string name="Pref_Upgrde_PromoCode_DoneText">Принять!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Неправильный promo код</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Подписка на год</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Подписка на год (3 месяца БЕСПЛАТНО!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Подписка на месяц</string>
 	
 	<string name="storeWhatsnew">version 3.24\n- exif tags fixed\n- auto backup/sharing fixed\n- fixed work from 3rd party apps\n- UI corrections\n- video on some devices improved\n- stability fixes</string>

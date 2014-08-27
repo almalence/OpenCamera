@@ -10,9 +10,6 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Scatta straordinarie foto panoramiche con l\'ausilio della realtà aumentata</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Oggetti in movimento</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Rimuovi oggetti indesiderati o combina oggetti in movimento in un\'unica foto</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Sblocca Foto di gruppo</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Seleziona sulla foto i volti migliori</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Rimuovi oggetti indesiderati, combina oggetti in movimento in un\'unica foto, seleziona sulla foto i volti migliori</string>
 	
 </resources>

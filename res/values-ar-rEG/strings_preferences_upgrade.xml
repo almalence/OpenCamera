@@ -10,9 +10,5 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">تصوير مناظر بانوراما رائعة ، سواء في وضع الكنس أو بمساعدة تقنية الواقع المعزز</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">إزالة الكائن/الصورة التسلسلية</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">إزالة الكائنات غير المرغوب فيها أو جمع الحركة في صورة واحدة</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">فتح اللقطة المجمعة</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">تحديد أفضل الوجوه في صورتك</string>
-	
+	<string name="Pref_Upgrde_Moving_Preference_Summary">إزالة الكائنات غير المرغوب فيها أو جمع الحركة في صورة واحدةتحديد أفضل الوجوه في صورتك</string>
 </resources>

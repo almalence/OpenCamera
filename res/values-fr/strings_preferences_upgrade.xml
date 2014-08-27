@@ -10,7 +10,7 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Prendre de larges panoramas grâce à la fonctionnalité de réalité augmentée</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Objets en mouvement</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Supprimez les objets non désirés ou combinez les mouvements dans une même photo</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Supprimez les objets non désirés, combinez les mouvements dans une même photo, sélectionnez les meilleurs visages sur votre photo</string>
 	
 	<string name="Pref_Upgrde_Groupshot_Preference_Title">Déverrouiller les prises de vue de groupe</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Sélectionnez les meilleurs visages sur votre photo</string>
