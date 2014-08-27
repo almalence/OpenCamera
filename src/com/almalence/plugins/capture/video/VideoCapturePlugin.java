@@ -194,10 +194,12 @@ public class VideoCapturePlugin extends PluginCapture
 	private boolean								quality1080Supported			= false;
 	private boolean								quality4KSupported				= false;
 
-	private volatile String						ModePreference;											// 0=DRO
-																											// On
-																											// 1=DRO
-																											// Off
+	private volatile String						ModePreference;					// 0=DRO
+																				// On
+																				// 1=DRO
+																				// Off
+	private boolean								camera2Preference;				
+	
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
@@ -847,6 +849,8 @@ public class VideoCapturePlugin extends PluginCapture
 		prefs.edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		
+		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
 
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
@@ -1769,6 +1773,9 @@ public class VideoCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
+		
+		camera2Preference = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 
 		CameraIDPreference = 0;
 

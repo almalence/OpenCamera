@@ -571,7 +571,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
-		if (!(Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7")) || null == mainContext.getSystemService("camera"))
+		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
+		if (!(isNexus && Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
 		{
 			isHALv3 = false;
 			isHALv3Supported = false;
