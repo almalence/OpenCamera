@@ -2224,6 +2224,17 @@ public class MainScreen extends Activity implements View.OnClickListener,
         OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
         
         
+        //Mobiroo
+        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_MOBIROO, "plugin_almalence_hdr_mobiroo");
+        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_MOBIROO, "plugin_almalence_panorama_mobiroo");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_MOBIROO, "unlock_all_forever_mobiroo");
+        OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_MOBIROO, "unlock_all_forever_coupon_mobiroo");
+        OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_MOBIROO, "plugin_almalence_moving_burst_mobiroo");
+        OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_MOBIROO, "plugin_almalence_groupshot_mobiroo");
+        
+        OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_MOBIROO, "abc_sale_controller1_mobiroo");
+        OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_MOBIROO, "abc_sale_controller2_mobiroo");
+        
         //Samsung store
 //        OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018387");
 //        OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018389");
