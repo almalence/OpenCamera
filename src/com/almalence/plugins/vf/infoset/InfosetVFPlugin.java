@@ -270,7 +270,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			batteryInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(R.drawable.battery_empty));
-			batteryInfoImage.setRotation(mDeviceOrientation);
+			batteryInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(batteryInfoImage);
 		}
@@ -281,7 +281,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			sceneInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			sceneInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(MainScreen.getInstance().getSceneIcon(CameraParameters.SCENE_MODE_AUTO)));
-			sceneInfoImage.setRotation(mDeviceOrientation);
+			sceneInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(sceneInfoImage);
 		}
@@ -292,7 +292,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			wbInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			wbInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(MainScreen.getInstance().getWBIcon(CameraParameters.WB_MODE_AUTO)));
-			wbInfoImage.setRotation(mDeviceOrientation);
+			wbInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(wbInfoImage);
 		}
@@ -303,7 +303,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			focusInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			focusInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(MainScreen.getInstance().getFocusIcon(CameraParameters.AF_MODE_AUTO)));
-			focusInfoImage.setRotation(mDeviceOrientation);
+			focusInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(focusInfoImage);
 		}
@@ -314,7 +314,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			flashInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			flashInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(MainScreen.getInstance().getFlashIcon(CameraParameters.FLASH_MODE_SINGLE)));
-			flashInfoImage.setRotation(mDeviceOrientation);
+			flashInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(flashInfoImage);
 		}
@@ -325,7 +325,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			isoInfoImage = (RotateImageView) v.findViewById(R.id.infoImage);
 			isoInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 					.getDrawable(MainScreen.getInstance().getISOIcon(CameraParameters.ISO_AUTO)));
-			isoInfoImage.setRotation(mDeviceOrientation);
+			isoInfoImage.setOrientation(mDeviceOrientation);
 
 			addInfoView(isoInfoImage);
 		}
