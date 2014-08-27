@@ -52,11 +52,30 @@ import android.widget.TextView;
 @SuppressWarnings("deprecation")
 public class FolderPicker extends Activity implements OnItemClickListener, OnClickListener
 {
-	private static final String[]	MOUNT_POINT_FOLDERNAMES	= new String[] { "sd-ext", "external_sd", "external_SD",
-			"sdcard-ext", "extSdCard", "sdcard", "bootsdcard", "emmc", "extSdCard", "ExtSDCard", "sdcard0", "sdcard1",
-			"sdcard2", "ext_sdcard", "MicroSD"				};
+	private static final String[]	MOUNT_POINT_FOLDERNAMES	= new String[] 
+		{	"sd-ext", 
+			"external_sd", 
+			"external_SD",
+			"sdcard-ext", 
+			"extSdCard", 
+			"sdcard", 
+			"bootsdcard", 
+			"emmc", 
+			"extSdCard", 
+			"ExtSDCard", 
+			"sdcard0", 
+			"sdcard1",
+			"sdcard2", 
+			"ext_sdcard", 
+			"MicroSD"				
+			};
 
-	private static final String[]	ROOT_CANDIDATES			= new String[] { "/storage", "/mnt", "/Removable", "/" };
+	private static final String[]	ROOT_CANDIDATES			= new String[] 
+		{ 	"/storage", 
+			"/mnt", 
+			"/Removable", 
+			"/" 
+		};
 
 	private static final String		TEMP_DIR				= "FLDRPICKTMPDIR";
 
