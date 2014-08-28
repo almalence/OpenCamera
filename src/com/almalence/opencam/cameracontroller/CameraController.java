@@ -59,6 +59,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -175,6 +176,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//Message handler for multishot capturing with pause between shots
 	//and different exposure compensations
 	private Handler 								messageHandler;
+	private Handler 								pauseHandler;
 	
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
@@ -269,6 +271,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		mainContext = context;
 		
 		messageHandler = new Handler(this);
+		pauseHandler = new Handler(this);
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -2402,6 +2405,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private boolean				previewMode				= false;
 	private boolean				previewWorking			= false;
 	private CountDownTimer		cdt						= null;
+	private long lastCaptureStarted = 0;
 	
 	public static final int				MSG_SET_EXPOSURE						= 01;
 	public static final int				MSG_NEXT_FRAME							= 02;
@@ -2471,20 +2475,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}
 					else
 					{
-						new CountDownTimer(pauseBetweenShots[frame_num], pauseBetweenShots[frame_num])
+						pauseHandler.postDelayed(new Runnable()
 						{
-							public void onTick(long millisUntilFinished)
-							{
-							}
-			
-							public void onFinish()
+							public void run()
 							{
 								if (evValues != null && evValues.length >= total_frames)
 									CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
 								else
 									CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
 							}
-						}.start();
+						}, pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
 					}
 				}
 				break;
@@ -2500,6 +2500,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					MainScreen.getGUIManager().showCaptureIndication();
 					MainScreen.getInstance().playShutter();
 					
+					lastCaptureStarted = SystemClock.uptimeMillis();
 					if(imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
 						takePreviewFrame = true; //Temporary make capture by preview frames only for YUV requests to avoid slow YUV to JPEG conversion
 					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
