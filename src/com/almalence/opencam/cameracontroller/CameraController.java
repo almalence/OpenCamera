@@ -794,8 +794,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		pluginManager.selectImageDimension(); // updates SX, SY values
 
-		if (CameraController.isHALv3)
-			HALv3.setupImageReadersHALv3();
+//		if (CameraController.isHALv3)
+//			HALv3.setupImageReadersHALv3();
 
 		if (!CameraController.isHALv3)
 		{
@@ -937,6 +937,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.fillPreviewSizeList(previewSizes);
 
 		return previewSizes;
+	}
+	
+	public void setCameraPreviewSize(CameraController.Size sz)
+	{
+		if(!CameraController.isHALv3)
+		{
+			Camera.Parameters params = this.getCameraParameters();
+			if(params != null)
+			{
+				params.setPreviewSize(sz.mWidth, sz.mHeight);
+				setCameraParameters(params);
+			}
+		}
+		else
+		{
+			HALv3.setupImageReadersHALv3(sz);
+		}
 	}
 
 	public List<CameraController.Size> getSupportedPictureSizes()

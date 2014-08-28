@@ -276,7 +276,7 @@ public class VideoCapturePlugin extends PluginCapture
 					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 					if (cp != null)
 					{
-						setCameraPreviewSize(cp);
+						setCameraPreviewSize();
 						CameraController.Size sz = CameraController.getInstance().new Size(
 								MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight());
 						MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);
@@ -718,7 +718,7 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (cp != null)
 		{
-			setCameraPreviewSize(cp);
+			setCameraPreviewSize();
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(
 					CameraController.getInstance().new Size(sz.width, sz.height));
@@ -1013,31 +1013,23 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void setCameraPreviewSize(Camera.Parameters cp)
+	public void setCameraPreviewSize()
 	{
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
-		if (cp == null)
-			Log.e("VideoCapturePlugin",
-					"MainScreen.setCameraPreviewSize CameraController.getInstance().getCameraParameters returned null!");
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int ImageSizeIdxPreference = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefVideoBack" : "imageSizePrefVideoFront", "2"));
 
-		final Camera.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
+		final CameraController.Size sz = getBestPreviewSizeDRO(ImageSizeIdxPreference);
 
-		Log.i(TAG, String.format("Preview size: %dx%d", sz.width, sz.height));
-		cp.setPreviewSize(sz.width, sz.height);
-
-		CameraController.getInstance().setCameraParameters(cp);
-		MainScreen.setPreviewWidth(sz.width);
-		MainScreen.setPreviewHeight(sz.height);
+		Log.i(TAG, String.format("Preview size: %dx%d", sz.getWidth(), sz.getHeight()));
+		
+		CameraController.getInstance().setCameraPreviewSize(sz);
+		MainScreen.setPreviewWidth(sz.getWidth());
+		MainScreen.setPreviewHeight(sz.getHeight());
 	}
 
 	// Get optimal supported preview size with aspect ration 16:9 or 4:3
-	private static Camera.Size getBestPreviewSizeNormal(final boolean aspect169)
+	private static CameraController.Size getBestPreviewSizeNormal(final boolean aspect169)
 	{
 		if (aspect169)
 		{
@@ -1049,7 +1041,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
-	private static Camera.Size getBestPreviewSizeDRO(final int quality)
+	private static CameraController.Size getBestPreviewSizeDRO(final int quality)
 	{
 		final int width;
 		final int height;
@@ -1084,14 +1076,13 @@ public class VideoCapturePlugin extends PluginCapture
 			return getBestPreviewSizeNormal(false);
 		}
 
-		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		final List<Camera.Size> sizes = cp.getSupportedPreviewSizes();
+		final List<CameraController.Size> sizes = CameraController.getInstance().getSupportedPreviewSizes();
 
-		Camera.Size size_best = sizes.get(0);
-		for (final Camera.Size size : sizes)
+		CameraController.Size size_best = sizes.get(0);
+		for (final CameraController.Size size : sizes)
 		{
-			if (Math.sqrt(sqr(size.width - width) + sqr(size.height - height)) < Math.sqrt(sqr(size_best.width - width)
-					+ sqr(size_best.height - height)))
+			if (Math.sqrt(sqr(size.getWidth() - width) + sqr(size.getHeight() - height)) < Math.sqrt(sqr(size_best.getWidth() - width)
+					+ sqr(size_best.getHeight() - height)))
 			{
 				size_best = size;
 			}
@@ -1105,27 +1096,25 @@ public class VideoCapturePlugin extends PluginCapture
 		return v * v;
 	}
 
-	private static Camera.Size selectMaxPreviewSize(final float ratioDisplay)
+	private static CameraController.Size selectMaxPreviewSize(final float ratioDisplay)
 	{
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		final List<CameraController.Size> sizes = CameraController.getInstance().getSupportedPreviewSizes();
 
-		final List<Camera.Size> sizes = cp.getSupportedPreviewSizes();
-
-		Camera.Size size_best = sizes.get(0);
-		float size_ratio_best = size_best.width / (float) size_best.height;
+		CameraController.Size size_best = sizes.get(0);
+		float size_ratio_best = size_best.getWidth() / (float) size_best.getHeight();
 		float size_ratio_best_comp = size_ratio_best > ratioDisplay ? size_ratio_best / ratioDisplay : ratioDisplay
 				/ size_ratio_best;
-		int pixels_best = size_best.width * size_best.height;
+		int pixels_best = size_best.getWidth() * size_best.getHeight();
 
-		for (final Camera.Size size : sizes)
+		for (final CameraController.Size size : sizes)
 		{
-			final float size_ratio = size.width / (float) size.height;
+			final float size_ratio = size.getWidth() / (float) size.getHeight();
 			final float size_ratio_comp = size_ratio > ratioDisplay ? size_ratio / ratioDisplay : ratioDisplay
 					/ size_ratio;
 
 			if (size_ratio_comp == size_ratio_best_comp)
 			{
-				final int pixels = size.width * size.height;
+				final int pixels = size.getWidth() * size.getHeight();
 
 				if (pixels >= pixels_best)
 				{
@@ -1135,7 +1124,7 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 			} else if (size_ratio_comp < size_ratio_best_comp)
 			{
-				final int pixels = size.width * size.height;
+				final int pixels = size.getWidth() * size.getHeight();
 				size_best = size;
 				size_ratio_best_comp = size_ratio_comp;
 				pixels_best = pixels;
@@ -1393,7 +1382,7 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 		if (cp != null)
 		{
-			setCameraPreviewSize(cp);
+			setCameraPreviewSize();
 			CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(),
 					MainScreen.getPreviewHeight());
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);

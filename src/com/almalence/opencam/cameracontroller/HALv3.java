@@ -94,6 +94,8 @@ public class HALv3
 	
 	protected static boolean				resultInHeap 		= false;
 	
+	private static int						MAX_SUPPORTED_PREVIEW_SIZE = 1920*1088;
+	
 
 	public static HALv3 getInstance()
 	{
@@ -233,13 +235,13 @@ public class HALv3
 		// -----------------------------------------------------------------
 	}
 
-	public static void setupImageReadersHALv3()
+	public static void setupImageReadersHALv3(CameraController.Size sz)
 	{
 		Log.e(TAG, "setupImageReadersHALv3()");
 
-		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
-		MainScreen.setPreviewWidth(1280);
-		MainScreen.setPreviewHeight(720);
+		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
+		MainScreen.setPreviewWidth(sz.getWidth());
+		MainScreen.setPreviewHeight(sz.getHeight());
 
 		// HALv3 code
 		// -------------------------------------------------------------------
@@ -312,7 +314,8 @@ public class HALv3
 	{
 		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
 		for (Size sz : cs)
-			previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+			if(sz.getWidth()*sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
+				previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
 	}
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)

@@ -548,11 +548,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
-	public void setCameraPreviewSize(Camera.Parameters params)
+	public void setCameraPreviewSize()
 	{
-		final Camera camera = CameraController.getCamera();
-		if (camera == null)
-			return;
+//		final Camera camera = CameraController.getCamera();
+//		if (camera == null)
+//			return;
 
 		final CameraController.Size previewSize = this.getOptimalPreviewSize(CameraController.getInstance()
 				.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
@@ -560,9 +560,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.previewWidth = previewSize.getWidth();
 		this.previewHeight = previewSize.getHeight();
 
-		params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
-
-		CameraController.getInstance().setCameraParameters(params);
+		CameraController.getInstance().setCameraPreviewSize(previewSize);
+		MainScreen.setPreviewWidth(previewSize.getWidth());
+		MainScreen.setPreviewHeight(previewSize.getHeight());
 	}
 
 	@Override
@@ -596,12 +596,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 		CameraController.getInstance().setJpegQuality(100);
 		
-		if(CameraController.isUseHALv3())
-		{
-			previewWidth = 1280;
-			previewHeight = 720;
-		}
-
 		try
 		{
 			try
