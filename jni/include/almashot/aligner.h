@@ -31,7 +31,7 @@
  SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, MISUSE OR
  INABILITY TO USE THE SOFTWARE OR RELATED DOCUMENTATION.
 
- COPYRIGHT 2010-2012, ALMALENCE, INC.
+ COPYRIGHT 2010-2014, ALMALENCE, INC.
 
  ---------------------------------------------------------------------------
 
@@ -69,6 +69,9 @@ void AlmaShot_EstimateGlobalTranslation
 );
 
 
+// estimationMethod:
+// 0 = small displacements only
+// 1 = large displacements
 void AlmaShot_EstimateTranslationAndRotation
 (
 	Uint8 ** in,
@@ -81,8 +84,40 @@ void AlmaShot_EstimateTranslationAndRotation
 	int nBaseFrame,
 	int nFrames,
 	int nRef,
-	int estimateLargeTranslation,
+	int estimationMethod,
 	Uint8 * scratch
+);
+
+
+int AlmaShot_DigestInitialize
+(
+	void **instance,
+	int sx,
+	int sy
+);
+
+void AlmaShot_DigestRelease(void *instance);
+
+
+// Return: strength of the weakest corner included in the digest
+// (indication of both how sharp the frame is and if it has strong features for matching)
+int AlmaShot_ComputeDigest
+(
+	void *instance,
+	Uint8 * Y,
+	Uint8 *digest_img
+);
+
+// Return: strength of the weakest corner for the digest_img
+int AlmaShot_EstimateTranslationAndRotationQuick
+(
+	void *instance,
+	Uint8 * in,
+	Int32 *dx,
+	Int32 *dy,
+	Int32 *rot,
+	Uint8 * digest_ref,
+	Uint8 * digest_img
 );
 
 

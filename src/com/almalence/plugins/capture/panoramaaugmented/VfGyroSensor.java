@@ -37,7 +37,7 @@ import android.os.Message;
 public class VfGyroSensor implements Closeable, Handler.Callback
 {
 	private static final boolean	SMOOTH_MOTION		= true;
-	private static final boolean	EARLY_TIMESTAMP		= false;
+	private static final boolean	EARLY_TIMESTAMP		= true; // false;
 
 	// custom VF GYRO sensor type
 	public static final int			TYPE_VF_GYROSCOPE	= Sensor.TYPE_GYROSCOPE | 0x01000000;
