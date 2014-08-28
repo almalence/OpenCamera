@@ -10,9 +10,6 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Fotografe belos panoramas com a ajuda da realidade aumentada</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Mover objetos</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Remova objetos indesejados ou combine movimento numa única foto</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">Destravar foto de grupos</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Selecione os melhores rostos na sua foto</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Remova objetos indesejados, combine movimento numa única foto, selecione os melhores rostos na sua foto</string>
 	
 </resources>

@@ -10,9 +10,6 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">在擴增實境幫助下拍攝大全景</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">移動對象</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">移除不想要的對象或將運動合併到一張照片上</string>
-	
-	<string name="Pref_Upgrde_Groupshot_Preference_Title">解鎖群攝</string>
-	<string name="Pref_Upgrde_Groupshot_Preference_Summary">選擇照片上拍得最好的臉</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">移除不想要的對象或將運動合併到一張照片上 選擇照片上拍得最好的臉</string>
 	
 </resources>

@@ -10,7 +10,7 @@
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Twórz wspaniałem panoramy z pomocą rozszerzonej rzeczywistości</string>
 	
 	<string name="Pref_Upgrde_Moving_Preference_Title">Poruszające się obiekty</string>
-	<string name="Pref_Upgrde_Moving_Preference_Summary">Usuwanie niepożądanych obiektów lub łączenie ruchów w jedno zdjęcie</string>
+	<string name="Pref_Upgrde_Moving_Preference_Summary">Usuwanie niepożądanych obiektów, łączenie ruchów w jedno zdjęcie, wybierz najlepsze twarze na zdjęciu</string>
 	
 	<string name="Pref_Upgrde_Groupshot_Preference_Title">Zdjęcie grupowe</string>
 	<string name="Pref_Upgrde_Groupshot_Preference_Summary">Wybierz najlepsze twarze na zdjęciu</string>
