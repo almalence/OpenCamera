@@ -2185,7 +2185,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera)
-	{		
+	{
 		pluginManager.onPreviewFrame(data);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 		

@@ -183,7 +183,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	private void saveFrames(final int[] images, final int offset, final int count, final int input_width,
 			final int input_height)
 	{
-		File saveDir = PluginManager.getInstance().getSaveDir(false);
+		File saveDir = PluginManager.getSaveDir(false);
 
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));

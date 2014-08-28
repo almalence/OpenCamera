@@ -41,6 +41,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -131,17 +132,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private int							pictureWidth;
 	private int							pictureHeight;
-	private int							previewWidth;
-	private int							previewHeight;
+	private int							previewWidth				= -1;
+	private int							previewHeight				= -1;
 
-	private volatile boolean			isFirstFrame					= false;
+	private volatile boolean			isFirstFrame				= false;
 
 	private volatile boolean			coordsRecorded;
 	private volatile boolean			previewRestartFlag;
 
-	private boolean						showGyroWarnOnce				= false;
+	private boolean						showGyroWarnOnce			= false;
 
-	private int							aewblock						= 1;
+	private int							aewblock					= 1;
 	private boolean						aeLockedByPanorama			= false;
 	private boolean						wbLockedByPanorama			= false;
 
@@ -182,6 +183,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void deinit()
 	{
 		deinitSensors();
+		
+		previewWidth	= -1;
+		previewHeight	= -1;
 	}
 
 	private void initSensors()
@@ -591,6 +595,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 		CameraController.getInstance().setJpegQuality(100);
+		
+		if(CameraController.isUseHALv3())
+		{
+			previewWidth = 1280;
+			previewHeight = 720;
+		}
 
 		try
 		{
@@ -1094,6 +1104,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.capturing = true;
 	}
 	
+
 	private void takePictureUnimode(final int image)
 	{
 		if (this.focused)
@@ -1101,26 +1112,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (this.modeSweep)
 			{
 //				File saveDir = PluginManager.getSaveDir(false);
-//				String fileName = "panorama_sweep_frame.jpg";
-//				File file;
-//				file = new File(saveDir, fileName);
+//				File file = new File(saveDir, "PANORAMA_PREVIEW_FRAME_" + (CameraController.isUseHALv3()? "NEW" : "OLD") + ".jpg");
 //				OutputStream os = null;
 //				try
 //				{
 //					os = new FileOutputStream(file);
+//					com.almalence.YuvImage out;
+//					out = new com.almalence.YuvImage(image, ImageFormat.NV21, MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight(), null);
+//					if(out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
+//						Log.e(TAG, "++++++++++++++++++++++++++++++++++++++ PANORAMA FRAME SAVED. Width x Height = " + MainScreen.getPreviewWidth() + " x " + MainScreen.getPreviewHeight());
 //				} catch (FileNotFoundException e)
 //				{
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-//				com.almalence.YuvImage image2 = new com.almalence.YuvImage(image, 0x00000011, MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight(), null);
-//				// to avoid problems with SKIA
-//				int cropHeight = image2.getHeight() - image2.getHeight() % 16;
-//				Log.e(TAG, "Compress file: " + file.getAbsolutePath());
-//				if (!image2.compressToJpeg(new Rect(0, 0, image2.getWidth(), cropHeight), 100, os))
-//					Log.e(TAG, "------------------------- CAN'T SAVE INPUT FRAME");
-//				else
-//					Log.e(TAG, "------------------------- SAVED INPUT FRAME");
 				this.engine.recordCoordinates();
 				this.engine.onFrameAdded(true, image, true);
 				this.isFirstFrame = false;
