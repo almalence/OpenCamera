@@ -94,6 +94,8 @@ public class HALv3
 	
 	protected static boolean				resultInHeap 		= false;
 	
+	private static int						MAX_SUPPORTED_PREVIEW_SIZE = 1920*1088;
+	
 
 	public static HALv3 getInstance()
 	{
@@ -233,13 +235,13 @@ public class HALv3
 		// -----------------------------------------------------------------
 	}
 
-	public static void setupImageReadersHALv3()
+	public static void setupImageReadersHALv3(CameraController.Size sz)
 	{
 		Log.e(TAG, "setupImageReadersHALv3()");
 
-		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
-		MainScreen.setPreviewWidth(1280);
-		MainScreen.setPreviewHeight(720);
+		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
+		MainScreen.setPreviewWidth(sz.getWidth());
+		MainScreen.setPreviewHeight(sz.getHeight());
 
 		// HALv3 code
 		// -------------------------------------------------------------------
@@ -312,7 +314,8 @@ public class HALv3
 	{
 		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
 		for (Size sz : cs)
-			previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+			if(sz.getWidth()*sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
+				previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
 	}
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
@@ -1122,7 +1125,6 @@ public class HALv3
 		@Override
 		public void onConfigured(final CameraCaptureSession session)
 		{
-			Log.e(TAG, "CaptureSession configured SUCCESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			HALv3.getInstance().mCaptureSession = session;
 			
 			try
@@ -1320,13 +1322,11 @@ public class HALv3
 		}
 	};
 
-	public static int blabla = 0;
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
 		@Override
 		public void onImageAvailable(ImageReader ir)
 		{
-			blabla++;
 			// Contrary to what is written in Aptina presentation
 			// acquireLatestImage is not working as described
 			// Google: Also, not working as described in android docs (should
@@ -1358,26 +1358,6 @@ public class HALv3
 						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
 						im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
-				
-//				if(blabla == 1)
-//				{
-//					File saveDir = PluginManager.getSaveDir(false);
-//					File file = new File(saveDir, "PREVIEW_FRAME.jpg");
-//					OutputStream os = null;
-//					try
-//					{
-//						int yuv = SwapHeap.SwapToHeap(data);
-//						os = new FileOutputStream(file);
-//						com.almalence.YuvImage out;
-//						out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, imageWidth, imageHeight, null);
-//						if(out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
-//							Log.e(TAG, "++++++++++++++++++++++++++++++++++++++ FRAME SAVED");
-//					} catch (FileNotFoundException e)
-//					{
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
 				
 				PluginManager.getInstance().onPreviewFrame(data);
 			}

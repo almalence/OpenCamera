@@ -364,19 +364,22 @@ public abstract class Plugin
 		MainScreen.setSaveImageHeight(CaptureHeight);
 	}
 
-	public void setCameraPreviewSize(Camera.Parameters cp)
+	public void setCameraPreviewSize()
 	{
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
 		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		cp.setPreviewSize(os.getWidth(), os.getHeight());
-		try
-		{
-			CameraController.getInstance().setCameraParameters(cp);
-		} catch (RuntimeException e)
-		{
-			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
-		}
+		CameraController.getInstance().setCameraPreviewSize(os);
+		MainScreen.setPreviewWidth(os.getWidth());
+		MainScreen.setPreviewHeight(os.getHeight());
+//		cp.setPreviewSize(os.getWidth(), os.getHeight());
+//		try
+//		{
+//			CameraController.getInstance().setCameraParameters(cp);
+//		} catch (RuntimeException e)
+//		{
+//			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
+//		}
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)

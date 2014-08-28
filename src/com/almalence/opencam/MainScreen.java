@@ -1247,15 +1247,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.e("MainScreen", "configureCamera()");
 
 		CameraController.getInstance().updateCameraFeatures();
+		
+		// ----- Select preview dimensions with ratio correspondent to
+		// full-size image
+		PluginManager.getInstance().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
 		if (CameraController.isUseHALv3())
 			configureHALv3Camera(captureYUVFrames);
 		else
 		{
-			// ----- Select preview dimensions with ratio correspondent to
-			// full-size image
-			PluginManager.getInstance().setCameraPreviewSize(CameraController.getInstance().getCameraParameters());
-
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 
 			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
@@ -1383,7 +1383,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
-		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
+		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
 
 		// configure camera with all the surfaces to be ever used
 		try

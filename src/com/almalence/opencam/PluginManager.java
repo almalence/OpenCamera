@@ -1249,10 +1249,10 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).selectImageDimension();
 	}
 
-	public void setCameraPreviewSize(Camera.Parameters cp)
+	public void setCameraPreviewSize()
 	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).setCameraPreviewSize(cp);
+			pluginList.get(activeCapture).setCameraPreviewSize();
 	}
 
 	public void setCameraPictureSize()

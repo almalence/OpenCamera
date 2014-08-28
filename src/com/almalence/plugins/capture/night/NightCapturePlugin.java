@@ -482,34 +482,6 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
-	@Override
-	public void setCameraPreviewSize(Camera.Parameters cp)
-	{
-		// for super mode
-		nVFframesToBuffer = 0;
-
-		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
-
-		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		cp.setPreviewSize(os.getWidth(), os.getHeight());
-
-		if (FocusPreference.compareTo("0") == 0
-				&& !CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
-						CameraParameters.AF_MODE_FIXED))
-		{
-			FocusPreference = "1";
-
-			// Get the xml/preferences.xml preferences
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString(nightCaptureFocusPref, "1");
-			editor.commit();
-		}
-
-		CameraController.getInstance().setCameraParameters(cp);
-	}
-
-	@Override
 	public void setCameraPictureSize()
 	{
 		int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
