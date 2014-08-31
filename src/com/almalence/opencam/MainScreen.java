@@ -66,6 +66,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -138,9 +139,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static final int			MSG_RETURN_CAPTURED		= -1;
 
 	private static final int			MODE_GENERAL			= 0;
-	private static final int			MODE_NIGHT				= 1;
-	private static final int			MODE_SMART_MULTISHOT	= 2;
-	private static final int			MODE_VIDEO				= 3;
+	private static final int			MODE_SMART_MULTISHOT_AND_NIGHT	= 1;
+	private static final int			MODE_VIDEO				= 2;
+	
+	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
+	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
+	private static final long					MPIX_8				= 3504 * 2336;
 
 	public static MainScreen			thiz;
 	public Context						mainContext;
@@ -190,6 +194,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	// Common preferences
 	private String						imageSizeIdxPreference;
+	private String						multishotImageSizeIdxPreference;
 	private boolean						shutterPreference		= true;
 	private boolean						shotOnTapPreference		= false;
 
@@ -653,6 +658,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.imageSizeIdxPreference;
 	}
+	
+	public static String getMultishotImageSizeIndex()
+	{
+		return thiz.multishotImageSizeIdxPreference;
+	}
 
 	public static boolean isShutterSoundEnabled()
 	{
@@ -701,8 +711,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
 		setImageSizeOptions(prefActivity, MODE_GENERAL);
-		setImageSizeOptions(prefActivity, MODE_NIGHT);
-		setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT);
+		setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
 		setImageSizeOptions(prefActivity, MODE_VIDEO);
 	}
 
@@ -725,26 +734,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					new CharSequence[CameraController.getResolutionsNamesList().size()]);
 			entryValues = CameraController.getResolutionsIdxesList().toArray(
 					new CharSequence[CameraController.getResolutionsIdxesList().size()]);
-		} else if (mode == MODE_NIGHT)
-		{
-			opt1 = "imageSizePrefNightBack";
-			opt2 = "imageSizePrefNightFront";
-			NightCapturePlugin.selectImageDimensionNight();
-			currentIdx = Integer.parseInt(NightCapturePlugin.getImageSizeIdxPreference());
-			entries = NightCapturePlugin.getResolutionsNamesList().toArray(
-					new CharSequence[NightCapturePlugin.getResolutionsNamesList().size()]);
-			entryValues = NightCapturePlugin.getResolutionsIdxesList().toArray(
-					new CharSequence[NightCapturePlugin.getResolutionsIdxesList().size()]);
-		} else if (mode == MODE_SMART_MULTISHOT)
+		} else if (mode == MODE_SMART_MULTISHOT_AND_NIGHT)
 		{
 			opt1 = "imageSizePrefSmartMultishotBack";
 			opt2 = "imageSizePrefSmartMultishotFront";
-			MultiShotCapturePlugin.selectImageDimensionMultishot();
-			currentIdx = MultiShotCapturePlugin.getCaptureIndex();
-			entries = MultiShotCapturePlugin.getResolutionsNamesList().toArray(
-					new CharSequence[MultiShotCapturePlugin.getResolutionsNamesList().size()]);
-			entryValues = MultiShotCapturePlugin.getResolutionsIdxesList().toArray(
-					new CharSequence[MultiShotCapturePlugin.getResolutionsIdxesList().size()]);
+			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen.selectImageDimensionMultishot()));
+			entries = CameraController.MultishotResolutionsNamesList.toArray(
+					new CharSequence[CameraController.MultishotResolutionsNamesList.size()]);
+			entryValues = CameraController.MultishotResolutionsIdxesList.toArray(
+					new CharSequence[CameraController.MultishotResolutionsIdxesList.size()]);
 		} else if (mode == MODE_VIDEO)
 		{
 			opt1 = "imageSizePrefVideoBack";
@@ -1110,6 +1108,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		shotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
 				: MainScreen.sImageSizeFrontPref, "-1");
+		
+		multishotImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
+				: "imageSizePrefSmartMultishotFront", "-1");
 	}
 
 	@Override
@@ -1210,6 +1211,78 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
+	public static int selectImageDimensionMultishot()
+	{
+		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
+		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
+												// x 4 - compressed input jpegs,
+												// 1Mb - safe reserve
+
+		if (maxMpix < MIN_MPIX_SUPPORTED)
+		{
+			String msg;
+			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
+			Log.e("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+			Log.e("MultishotCapturePlugin", msg);
+		}
+
+		// find index selected in preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int prefIdx = Integer.parseInt(prefs.getString(
+				CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
+						: "imageSizePrefSmartMultishotFront", "-1"));
+
+		// ----- Find max-resolution capture dimensions
+		int minMPIX = MIN_MPIX_PREVIEW;
+
+		int defaultCaptureIdx = -1;
+		long defaultCaptureMpix = 0;
+		long captureMpix = 0;
+		int captureIdx = -1;
+		boolean prefFound = false;
+
+		// figure default resolution
+		for (int ii = 0; ii < CameraController.MultishotResolutionsSizeList.size(); ++ii)
+		{
+			CameraController.Size s = CameraController.MultishotResolutionsSizeList.get(ii);
+			long mpix = (long) s.getWidth() * s.getHeight();
+
+			if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > defaultCaptureMpix))
+			{
+				defaultCaptureIdx = ii;
+				defaultCaptureMpix = mpix;
+			}
+		}
+
+		for (int ii = 0; ii < CameraController.MultishotResolutionsSizeList.size(); ++ii)
+		{
+			CameraController.Size s = CameraController.MultishotResolutionsSizeList.get(ii);
+			long mpix = (long) s.getWidth() * s.getHeight();
+
+			if ((ii == prefIdx) && (mpix >= minMPIX))
+			{
+				prefFound = true;
+				captureIdx = ii;
+				captureMpix = mpix;
+				break;
+			}
+
+			if (mpix > captureMpix)
+			{
+				captureIdx = ii;
+				captureMpix = mpix;
+			}
+		}
+
+		if (defaultCaptureMpix > 0 && !prefFound)
+		{
+			captureIdx = defaultCaptureIdx;
+			captureMpix = defaultCaptureMpix;
+		}
+
+		return captureIdx;
+	}
+	
 	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -1218,6 +1291,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon", false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
+		
 
 		if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 		{

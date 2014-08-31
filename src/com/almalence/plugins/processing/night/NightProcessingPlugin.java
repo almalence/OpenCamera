@@ -183,23 +183,14 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight, Integer.parseInt(NoisePreference),
 				Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0, imagesAmount);
 		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview success");
-		
+
 		System.gc();
 	}
 
 	private void nightProcessing()
 	{
-		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode" + sessionID));
-
-		if (mode == 1)
-		{
-			yuv = AlmaShotNight.SuperZoomProcess(mImageWidth * 2, mImageHeight * 2, NightProcessingPlugin.crop,
-					mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
-		} else
-		{
-			yuv = AlmaShotNight.BlurLessProcess(mImageWidth, mImageHeight, NightProcessingPlugin.crop,
-					mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
-		}
+		yuv = AlmaShotNight.BlurLessProcess(mImageWidth, mImageHeight, NightProcessingPlugin.crop,
+				mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
 
 		AlmaShotNight.Release();
 	}

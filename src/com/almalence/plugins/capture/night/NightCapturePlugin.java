@@ -186,9 +186,6 @@ public class NightCapturePlugin extends PluginCapture
 	private int					preferenceFocusMode;
 	private int					preferenceFlashMode;
 
-	private static String		nightCaptureModePref;
-	private static String		hiResModeTitle;
-	private static String		hiSpeedModeTitle;
 	private static String		nightVisionLayerShowPref;
 	private static String		nightCaptureFocusPref;
 
@@ -204,9 +201,6 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 
-		nightCaptureModePref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureMode);
-		hiResModeTitle = MainScreen.getInstance().getResources().getString(R.string.NightCaptureModeHiRes);
-		hiSpeedModeTitle = MainScreen.getInstance().getResources().getString(R.string.NightCaptureModeHiSpeed);
 		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
 
@@ -332,10 +326,7 @@ public class NightCapturePlugin extends PluginCapture
 		String defaultFocus = "0";
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
-				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		selectImageDimensionNight();
 	}
 
 	@Override
@@ -344,117 +335,14 @@ public class NightCapturePlugin extends PluginCapture
 		String defaultFocus = "0";
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
-				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		selectImageDimension();
 	}
 
 	public static void selectImageDimensionNight()
 	{
-		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
-		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
-												// x 4 - compressed input jpegs,
-												// 1Mb - safe reserve
-
-		if (maxMpix < MIN_MPIX_SUPPORTED)
-		{
-			String msg;
-			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			Log.e("NightCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			Log.e("NightCapturePlugin", msg);
-		}
-
-		// find index selected in preferences
-		int prefIdx = -1;
-		try
-		{
-			prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
-		} catch (IndexOutOfBoundsException e)
-		{
-			prefIdx = -1;
-		}
-
-		// ----- Find max-resolution capture dimensions
-		List<CameraController.Size> cs;
-		int minMPIX = MIN_MPIX_SUPPORTED;
-		cs = CameraController.getInstance().getSupportedPictureSizes();
-		if (Build.MODEL.contains("HTC One X") && !CameraController.isFrontCamera())
-		{
-			CameraController.Size additional = null;
-			additional = CameraController.getInstance().new Size(3264, 2448);
-			additional.setWidth(3264);
-			additional.setHeight(2448);
-			cs.add(additional);
-		}
-
-		int defaultCaptureIdx = -1;
-		long defaultCaptureMpix = 0;
-		int defaultCaptureWidth = 0;
-		int defaultCaptureHeight = 0;
-		long captureMpix = 0;
-		int captureWidth = 0;
-		int captureHeight = 0;
-		int captureIdx = -1;
-		boolean prefFound = false;
-
-		// figure default resolution
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > defaultCaptureMpix) && (mpix <= MPIX_8))
-			{
-				defaultCaptureIdx = ii;
-				defaultCaptureMpix = mpix;
-				defaultCaptureWidth = s.getWidth();
-				defaultCaptureHeight = s.getHeight();
-			}
-		}
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((ii == prefIdx) && (mpix >= minMPIX))
-			{
-				prefFound = true;
-				captureIdx = ii;
-				captureMpix = mpix;
-				captureWidth = s.getWidth();
-				captureHeight = s.getHeight();
-				break;
-			}
-
-			if (mpix > captureMpix)
-			{
-				captureIdx = ii;
-				captureMpix = mpix;
-				captureWidth = s.getWidth();
-				captureHeight = s.getHeight();
-			}
-		}
-
-		// default to about 8Mpix if nothing is set in preferences or maximum
-		// resolution is above memory limits
-		if (defaultCaptureMpix > 0 && !prefFound)
-		{
-			captureIdx = defaultCaptureIdx;
-			captureMpix = defaultCaptureMpix;
-			captureWidth = defaultCaptureWidth;
-			captureHeight = defaultCaptureHeight;
-		}
-
-		captureIndex = captureIdx;
-		if (ImageSizeIdxPreference == "-1")
-		{
-			ImageSizeIdxPreference = String.valueOf(captureIdx);
-		}
-		CapIdx = captureIdx;
-		imgCaptureWidth = captureWidth;
-		imgCaptureHeight = captureHeight;
+		captureIndex = MainScreen.selectImageDimensionMultishot();
+		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
+		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}
 
 	@Override
@@ -563,139 +451,6 @@ public class NightCapturePlugin extends PluginCapture
 		else
 			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
 		MainScreen.getMessageHandler().sendMessage(msg);
-	}
-
-	// leave only top-most resolution for each aspect ratio for super mode
-	private static List<CameraController.Size> removeDuplicateResolutions(List<CameraController.Size> cs)
-	{
-		List<Long> mpix = new ArrayList<Long>();
-		List<Integer> ratIdx = new ArrayList<Integer>();
-		long[] riMaxMpix = new long[4];
-
-		for (int i = 0; i < 4; ++i)
-			riMaxMpix[i] = 0;
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-
-			if (lmpix > riMaxMpix[ri])
-				riMaxMpix[ri] = lmpix;
-
-			mpix.add(lmpix);
-			ratIdx.add(ri);
-		}
-
-		// remove lower-than-maximum resolutions
-		Iterator<CameraController.Size> it = cs.iterator();
-		while (it.hasNext())
-		{
-			CameraController.Size s = it.next();
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-
-			if (lmpix < riMaxMpix[ri])
-				it.remove();
-		}
-
-		return cs;
-	}
-
-	public static void populateCameraDimensions(int mode)
-	{
-		ResolutionsMPixList = new ArrayList<Long>();
-		ResolutionsIdxesList = new ArrayList<String>();
-		ResolutionsNamesList = new ArrayList<String>();
-
-		List<CameraController.Size> cs;
-		int minMPIX = MIN_MPIX_SUPPORTED;
-		if (mode == 1) // hi-speed mode
-		{
-			// hi-speed mode: leave only single top resolution for each aspect
-			// ratio
-			cs = removeDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
-			minMPIX = MIN_MPIX_PREVIEW;
-		} else
-		{
-			cs = CameraController.getInstance().getSupportedPictureSizes();
-			if (Build.MODEL.contains("HTC One X") && !CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
-
-		CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-
-			if ((long) s.getWidth() * s.getHeight() < minMPIX)
-				continue;
-
-			// superzoom supports 12mpix output at most
-			if ((mode == 1) && ((s.getWidth() > 4096 / 2) || (s.getHeight() > 3072 / 2)))
-				continue;
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			// find good location in a list
-			int loc;
-			for (loc = 0; loc < ResolutionsMPixList.size(); ++loc)
-				if (ResolutionsMPixList.get(loc) < lmpix)
-					break;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			if (mode == 1) // hi-speed mode
-				mpix *= 4;
-
-			ResolutionsNamesList.add(loc, String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
-			ResolutionsIdxesList.add(loc, String.format("%d", ii));
-			ResolutionsMPixList.add(loc, lmpix);
-		}
-
-		return;
-	}
-
-	@Override
-	public void onCameraParametersSetup()
-	{
-		populateCameraDimensions(1);
 	}
 
 	@Override

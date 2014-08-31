@@ -36,8 +36,6 @@ public final class AlmaShotNight
 	public static synchronized native String SuperZoomPreview(int[] frame, int nFrames, int sx, int sy, int sxo,
 			int syo, int sensorGainPref, int DeGhostPref, int saturated, int noSres);
 
-	public static synchronized native int SuperZoomProcess(int sx, int sy, int[] crop, boolean rotate, boolean mirror);
-
 	public static synchronized native void convertPreview(byte[] ain, byte[] aout, int width, int height, int outWidth,
 			int outHeight);
 
