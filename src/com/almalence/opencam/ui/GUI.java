@@ -303,6 +303,6 @@ public abstract class GUI
 	{
 	}
 	
-	public void openGallery()
+	public void openGallery(boolean isOpenExternal)
 	{}
 }

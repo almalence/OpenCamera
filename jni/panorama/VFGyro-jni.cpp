@@ -44,6 +44,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include <jni.h>
 #include <android/log.h>
 
@@ -51,7 +52,7 @@
 #include "almashot.h"
 #include "aligner.h"
 
-#define MAX_FRAME_PIXELS	520000	// max resolution 960x540 (eg 960x720 will be scaled down to 480x360)
+#define MAX_FRAME_PIXELS	172800	// max resolution 480*360 (eg 960x720 will be scaled down to 480x360)
 #define N_FRAMES			16
 
 #define PI					3.1415926535897932384f
@@ -59,8 +60,12 @@
 
 int params_updated = 1;
 int almashot_inited = 0;
+int digest_inited = 0;
+
+void *di;
 
 int64_t timestamp = 0;
+float old_raw_radians[3];
 float radians[3];
 
 int frame_width, frame_height;
@@ -68,6 +73,7 @@ int frame_width_ds, frame_height_ds;
 int ds = 0;
 float normX, normY, normZ;
 
+Uint8 *frame_digest[N_FRAMES];
 Uint8 frame_buf[N_FRAMES][MAX_FRAME_PIXELS];
 Int32 frame_sharp[N_FRAMES];
 Int32 frame_dx[N_FRAMES];
@@ -77,8 +83,6 @@ Int32 frame_rot[N_FRAMES];
 Uint8 scratch[SCRATCH_SIZE];
 
 int frame_idx, base_idx;
-//Uint8 cur_frame[MAX_FRAME_PIXELS];
-//Uint8 prev_frame[MAX_FRAME_PIXELS];
 
 extern "C"
 {
@@ -106,10 +110,6 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	}
 }
 
-// debug
-//Uint8 *dbg_ptr[1000];
-//int n_dbg = 0;
-
 JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGyroSensor_Release
 (
 	JNIEnv* env,
@@ -122,22 +122,12 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	{
 		AlmaShot_Release();
 		almashot_inited = 0;
+	}
 
-		//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "Released");
-
-		/*
-		// debug
-		for (int i=0; i<n_dbg; ++i)
-		{
-			char str[256];
-			FILE *f;
-
-			sprintf(str, "/sdcard/DCIM/ppp/%03d.bin", i);
-			f = fopen(str, "wb");
-			fwrite (dbg_ptr[i], frame_width_ds*frame_height_ds, 1, f);
-			fclose(f);
-		}
-		*/
+	if (digest_inited)
+	{
+		AlmaShot_DigestRelease(di);
+		digest_inited = 0;
 	}
 }
 
@@ -151,6 +141,8 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	jfloat vert_FOV
 )
 {
+	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "in SetFrameParameters");
+
 	if (!almashot_inited)
 	{
 		AlmaShot_Initialize(0);
@@ -166,9 +158,26 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	frame_width_ds = w>>ds;
 	frame_height_ds = h>>ds;
 
+	if (digest_inited)
+	{
+		AlmaShot_DigestRelease(di);
+		for (int i=0; i<N_FRAMES; ++i)
+			free(frame_digest[i]);
+	}
+	int digest_size = AlmaShot_DigestInitialize(&di, frame_width_ds, frame_height_ds);
+	// ToDo: memory check
+	for (int i=0; i<N_FRAMES; ++i)
+		frame_digest[i] = (Uint8*)malloc(digest_size);
+	digest_inited = 1;
+
+	// 1e9 - seconds to nano-seconds
 	normX = 1e9 * horz_FOV * PI/180 / 256 / frame_width_ds;
 	normY = 1e9 * vert_FOV * PI/180 / 256 / frame_height_ds;
 	normZ = 1e9 / 256 / 256;
+
+	radians[0] = 0;		// 0 here also means 'unstable' for justStability
+	radians[1] = 0;
+	radians[2] = 0;
 
 	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "SetFrameParameters: w:%d h:%d ds:%d hFOV:%3.2f vFOV:%3.2f", w, h, ds, horz_FOV, vert_FOV);
 	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "SetFrameParameters: normX:%3.2f normY:%3.2f normZ:%3.2f", normX, normY, normZ);
@@ -177,6 +186,28 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 }
 
 //#define ROLLING_BASE_FRAME
+
+
+/*
+int getTimeNsec() {
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    //return (int64_t) now.tv_sec*1000000000LL + now.tv_nsec;
+    return now.tv_nsec;
+}
+*/
+
+
+#define DS_INNER_LOOP(ds) \
+		for (x=0; x<frame_width_ds; ++x)											\
+		{																			\
+			sum = 0;																\
+			for (yy=0; yy<(1<<ds); ++yy)											\
+				for (xx=0; xx<(1<<ds); ++xx)										\
+					sum += cur_frame_in[x*(1<<ds)+xx + (y*(1<<ds)+yy)*frame_width];	\
+			frame_buf[frame_idx][x+y*frame_width_ds] = sum >> (2*ds);				\
+		}
+
 
 JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGyroSensor_Update
 (
@@ -199,40 +230,40 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	int prev_idx, old_base_idx;
 	Int32 best_sharp;
 
+	if (!almashot_inited) return;
+
 	cur_frame_in = (unsigned char*)env->GetByteArrayElements(data, NULL);
 
-	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "11: %d %d %d", ds, cur_frame_in, data);
+	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "Update enter: %d\n", getTimeNsec());
 
 	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "OMP --- N cores: %d Max Threads: %d\n", omp_get_num_procs(), omp_get_max_threads());
 
 	if (ds)
 	{
-		//#pragma omp parallel for
+		// omp makes things worse
+		//#pragma omp parallel for schedule(guided)
 		for (y=0; y<frame_height_ds; ++y)
 		{
 			int x, xx, yy;
 			int sum;
 
-			for (x=0; x<frame_width_ds; ++x)
-			{
-				sum = 0;
-				for (yy=0; yy<(1<<ds); ++yy)
-					for (xx=0; xx<(1<<ds); ++xx)
-						sum += cur_frame_in[x*(1<<ds)+xx + (y*(1<<ds)+yy)*frame_width];
-
-				frame_buf[frame_idx][x+y*frame_width_ds] = sum >> (2*ds);
-			}
+			// having these seemingly useless if's here
+			// tells compiler to generate more optimal code for these usual cases
+			// in this particular case the code for pre-defined 'ds' is 3 times faster
+			if (ds == 1)
+				DS_INNER_LOOP(1)
+			else if (ds==2)
+				DS_INNER_LOOP(2)
+			else if (ds==3)
+				DS_INNER_LOOP(3)
+			else
+				DS_INNER_LOOP(ds)
 		}
 	}
 	else
 		memcpy (frame_buf[frame_idx], cur_frame_in, frame_width_ds*frame_height_ds);
 
-	/*
-	// debug
-	dbg_ptr[n_dbg] = (Uint8*)malloc(frame_width_ds*frame_height_ds);
-	memcpy (dbg_ptr[n_dbg], cur_frame_in, frame_width_ds*frame_height_ds);
-	++n_dbg;
-	*/
+	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "Downsampling complete: %d\n", getTimeNsec());
 
 	// dt is in nano-seconds
 	dt = stamp-timestamp;
@@ -257,26 +288,68 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 		}
 		else
 		{
+			/*
+			// debug frame dump
+			{
+				static int count = 0;
+				char str[256];
+				FILE *f;
+
+				sprintf(str, "/sdcard/ref%04d_%dx%d.gray", count, frame_width_ds, frame_height_ds);
+				f = fopen(str, "wb");
+				fwrite (frame_buf[base_idx], frame_width_ds*frame_height_ds, 1, f);
+				fclose(f);
+
+				sprintf(str, "/sdcard/image%04d_%dx%d.gray", count, frame_width_ds, frame_height_ds);
+				f = fopen(str, "wb");
+				fwrite (frame_buf[frame_idx], frame_width_ds*frame_height_ds, 1, f);
+				fclose(f);
+
+				++count;
+			}
+			//*/
+
+#if 1
+			if (digest_inited)
+			{
+				AlmaShot_EstimateTranslationAndRotationQuick(di, frame_buf[frame_idx],
+						&dx[1], &dy[1], &rot[1],
+						frame_digest[base_idx], frame_digest[frame_idx]);
+			}
+			else
+				{ dx[1] = 0; dy[1] = 0; rot[1] = 0;}
+#else
 			in[0] = frame_buf[base_idx];
 			in[1] = frame_buf[frame_idx];
 
-			AlmaShot_EstimateTranslationAndRotation(in, dx, dy, rot, sharp, frame_width_ds, frame_height_ds, 0, 2, 3, 1, scratch); // 4, 1);
+			AlmaShot_EstimateTranslationAndRotation(
+					in, dx, dy, rot, sharp, frame_width_ds, frame_height_ds, 0, 2, 3, 1, scratch);
+#endif
 
 			frame_sharp[frame_idx] = sharp[1];
 			frame_dx[frame_idx] = dx[1];
 			frame_dy[frame_idx] = dy[1];
 			frame_rot[frame_idx] = rot[1];
 
+			float new_raw_radians[3];
+
 #ifdef ROLLING_BASE_FRAME
-			radians[0] = -(float)(dx[1]) * normX/dt;
-			radians[1] = (float)(dy[1]) * normY/dt;
-			radians[2] = (float)(rot[1]) * normZ/dt;
+			new_raw_radians[0] = -(float)(dx[1]) * normX/dt;
+			new_raw_radians[1] = (float)(dy[1]) * normY/dt;
+			new_raw_radians[2] = (float)(rot[1]) * normZ/dt;
 #else
 			// compute radians from dx,dy,rot and timestamp
-			radians[0] = -(float)(dx[1]-frame_dx[prev_idx]) * normX/dt;
-			radians[1] = (float)(dy[1]-frame_dy[prev_idx]) * normY/dt;
-			radians[2] = (float)(rot[1]-frame_rot[prev_idx]) * normZ/dt;
+			new_raw_radians[0] = -(float)(dx[1]-frame_dx[prev_idx]) * normX/dt;
+			new_raw_radians[1] = (float)(dy[1]-frame_dy[prev_idx]) * normY/dt;
+			new_raw_radians[2] = (float)(rot[1]-frame_rot[prev_idx]) * normZ/dt;
 #endif
+
+			// additional smoothing to avoid visual jitter
+			for (i=0; i<3; ++i)
+			{
+				radians[i] = (new_raw_radians[i] + old_raw_radians[i]) / 2;
+				old_raw_radians[i] = new_raw_radians[i];
+			}
 
 			//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "dx:%d dy:%d", dx[1]/256, dy[1]/256);
 			//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "rot:%d", rot[1]);
@@ -284,9 +357,12 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 
 #ifndef ROLLING_BASE_FRAME
 			// select new base frame if displacement is high or base frame is too many frames behind
-			if ((abs(dx[1]) > 256*frame_width_ds/8 ) ||
-				(abs(dy[1]) > 256*frame_height_ds/8) ||
-				(abs(rot[1]) > 2*PI/180*256*256 ) ||
+			//if ((abs(dx[1]) > 256*frame_width_ds/8 ) ||
+			//	(abs(dy[1]) > 256*frame_height_ds/8) ||
+			//	(abs(rot[1]) > PI/180*256*256 ) ||
+			if ((abs(dx[1]) > 256*frame_width_ds/32 ) ||
+				(abs(dy[1]) > 256*frame_height_ds/32) ||
+				(abs(rot[1]) > PI/180/2*256*256 ) ||
 				(((frame_idx+N_FRAMES-base_idx)&(N_FRAMES-1)) > N_FRAMES-2))
 			{
 				//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "dx:%d dy:%d rot:%d", (abs(dx[1]) > 256*frame_width_ds/8 ), (abs(dy[1]) > 256*frame_height_ds/8), (abs(rot[1]) > 2*PI/180*256*256 ));
@@ -300,9 +376,12 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 
 				for (i=(frame_idx+N_FRAMES-1)&(N_FRAMES-1), j=0; (i!=old_base_idx) && (j<4); ++j, i=(i+N_FRAMES-1)&(N_FRAMES-1))
 				{
-					if ((abs(frame_dx[i]-dx[1]) > 256*frame_width_ds/8 ) ||
-						(abs(frame_dy[i]-dy[1]) > 256*frame_height_ds/8) ||
-						(abs(frame_rot[i]-rot[1]) > 2*PI/180*256*256 ))
+					//if ((abs(frame_dx[i]-dx[1]) > 256*frame_width_ds/8 ) ||
+					//	(abs(frame_dy[i]-dy[1]) > 256*frame_height_ds/8) ||
+					//	(abs(frame_rot[i]-rot[1]) > 2*PI/180*256*256 ))
+					if ((abs(frame_dx[i]-dx[1]) > 256*frame_width_ds/32 ) ||
+						(abs(frame_dy[i]-dy[1]) > 256*frame_height_ds/32) ||
+						(abs(frame_rot[i]-rot[1]) > PI/180/2*256*256 ))
 							break;
 
 					if (frame_sharp[i] > best_sharp)
@@ -330,14 +409,18 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 	}
 	else
 	{
-		radians[0] = 0;		// 0 here also means 'unstable' for justStability
-		radians[1] = 0;
-		radians[2] = 0;
+		// 0 here also means 'unstable' for justStability
+		radians[0] = radians[1] = radians[2] = 0;
+		old_raw_radians[0] = old_raw_radians[1] = old_raw_radians[2] = 0;
 		base_idx = frame_idx;
 		frame_sharp[base_idx] = 0;
 		frame_dx[base_idx] = 0;
 		frame_dy[base_idx] = 0;
 		frame_rot[base_idx] = 0;
+
+		if (digest_inited)
+			AlmaShot_ComputeDigest(di, frame_buf[base_idx], frame_digest[base_idx]);
+
 		params_updated = 0;
 	}
 
@@ -346,6 +429,8 @@ JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_panoramaaugmented_VfGy
 #endif
 	frame_idx = (frame_idx+1)&(N_FRAMES-1);
 	timestamp = stamp;
+
+	//__android_log_print(ANDROID_LOG_INFO, "AlmaShot", "Update exit: %d\n", getTimeNsec());
 
 	env->ReleaseByteArrayElements(data, (jbyte*)cur_frame_in, JNI_ABORT);
 }
