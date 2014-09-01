@@ -59,6 +59,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -72,6 +73,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
+
+	private static final long						MPIX_1080						= 1920 * 1080;
+
 	// Android camera parameters constants
 	private static String							sceneAuto;
 	private static String							sceneAction;
@@ -171,11 +175,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Old camera interface
 	private static Camera							camera							= null;
 	private byte[]									pviewBuffer;
-	
-	//Message handler for multishot capturing with pause between shots
-	//and different exposure compensations
-	private Handler 								messageHandler;
-	
+
+	// Message handler for multishot capturing with pause between shots
+	// and different exposure compensations
+	private Handler									messageHandler;
+	private Handler									pauseHandler;
+
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
 
@@ -217,15 +222,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<String>					ResolutionsIdxesList;
 	protected static List<String>					ResolutionsNamesList;
 
-	protected static List<Long>						ResolutionsMPixListIC;
-	protected static List<String>					ResolutionsIdxesListIC;
-	protected static List<String>					ResolutionsNamesListIC;
+	public static List<Long>						MultishotResolutionsMPixList;
+	public static List<CameraController.Size>		MultishotResolutionsSizeList;
+	public static List<String>						MultishotResolutionsIdxesList;
+	public static List<String>						MultishotResolutionsNamesList;
 
-	protected static List<Long>						ResolutionsMPixListVF;
-	protected static List<String>					ResolutionsIdxesListVF;
-	protected static List<String>					ResolutionsNamesListVF;
-	
-	protected static List<Camera.Size> 				SupportedPreviewSizesList;
+	public static List<Integer>						FastIdxelist;											;
+
+	protected static List<Camera.Size>				SupportedPreviewSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
 			"1:1"																	};
@@ -267,8 +271,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		pluginManager = pluginManagerBase;
 		appInterface = app;
 		mainContext = context;
-		
+
 		messageHandler = new Handler(this);
+		pauseHandler = new Handler(this);
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -780,22 +785,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 
+		if (!CameraController.isHALv3)
+			CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters()
+					.getSupportedPreviewSizes();
+
 		if (CameraController.isHALv3)
+		{
 			HALv3.populateCameraDimensionsHALv3();
-		else
+		} else
+		{
 			populateCameraDimensions();
+			populateCameraDimensionsForMultishots();
+		}
 
-		CameraController.ResolutionsMPixListIC = CameraController.ResolutionsMPixList;
-		CameraController.ResolutionsIdxesListIC = CameraController.ResolutionsIdxesList;
-		CameraController.ResolutionsNamesListIC = CameraController.ResolutionsNamesList;
-
-		if(!CameraController.isHALv3)
-			CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters().getSupportedPreviewSizes();
-		
 		pluginManager.selectImageDimension(); // updates SX, SY values
 
-//		if (CameraController.isHALv3)
-//			HALv3.setupImageReadersHALv3();
+		// if (CameraController.isHALv3)
+		// HALv3.setupImageReadersHALv3();
 
 		if (!CameraController.isHALv3)
 		{
@@ -842,6 +848,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.ResolutionsSizeList = new ArrayList<Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();
+		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		Camera.Parameters cp = getCameraParameters();
@@ -861,8 +868,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			int currSizeHeight = s.height;
 			int highestSizeWidth = sHighest.width;
 			int highestSizeHeight = sHighest.height;
-			
-			if(Build.MODEL.contains("GT-I9190") && isFrontCamera() && (currSizeWidth*currSizeHeight == 1920*1080))
+
+			if (Build.MODEL.contains("GT-I9190") && isFrontCamera() && (currSizeWidth * currSizeHeight == 1920 * 1080))
 				continue;
 
 			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
@@ -892,6 +899,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static void fillResolutionsList(int ii, int currSizeWidth, int currSizeHeight)
 	{
+		boolean needAdd = true;
+		boolean isFast = false;
+
 		Long lmpix = (long) currSizeWidth * currSizeHeight;
 		float mpix = (float) lmpix / 1000000.f;
 		float ratio = (float) currSizeWidth / currSizeHeight;
@@ -912,11 +922,166 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (Math.abs(ratio - 1) == 0)
 			ri = 4;
 
-		CameraController.ResolutionsNamesList.add(loc, String.format("%3.1f Mpix  " + RATIO_STRINGS[ri], mpix));
-		CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
-		CameraController.ResolutionsMPixList.add(loc, lmpix);
-		CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(currSizeWidth,
-				currSizeHeight));
+		for (int i = 0; i < CameraController.SupportedPreviewSizesList.size(); i++)
+		{
+			if (currSizeWidth == CameraController.SupportedPreviewSizesList.get(i).width
+					&& currSizeHeight == CameraController.SupportedPreviewSizesList.get(i).height)
+			{
+				isFast = true;
+			}
+		}
+
+		String newName;
+		if (isFast)
+		{
+			newName = String.format("%3.1f Mpix  " + RATIO_STRINGS[ri] + " (fast)", mpix);
+		} else
+		{
+			newName = String.format("%3.1f Mpix  " + RATIO_STRINGS[ri], mpix);
+		}
+
+		for (int i = 0; i < CameraController.ResolutionsNamesList.size(); i++)
+		{
+			if (newName.equals(CameraController.ResolutionsNamesList.get(i)))
+			{
+				Long lmpixInArray = (long) (CameraController.ResolutionsSizeList.get(i).getWidth() * CameraController.ResolutionsSizeList
+						.get(i).getHeight());
+				if (Math.abs(lmpixInArray - lmpix) / lmpix < 0.1)
+				{
+					needAdd = false;
+					break;
+				}
+			}
+		}
+
+		if (needAdd)
+		{
+			if (isFast)
+			{
+				CameraController.FastIdxelist.add(ii);
+			}
+			CameraController.ResolutionsNamesList.add(loc, newName);
+			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
+			CameraController.ResolutionsMPixList.add(loc, lmpix);
+			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(currSizeWidth,
+					currSizeHeight));
+		}
+	}
+
+	public void populateCameraDimensionsForMultishots()
+	{
+		CameraController.MultishotResolutionsMPixList = new ArrayList<Long>(CameraController.ResolutionsMPixList);
+		CameraController.MultishotResolutionsSizeList = new ArrayList<CameraController.Size>(
+				CameraController.ResolutionsSizeList);
+		CameraController.MultishotResolutionsIdxesList = new ArrayList<String>(CameraController.ResolutionsIdxesList);
+		CameraController.MultishotResolutionsNamesList = new ArrayList<String>(CameraController.ResolutionsNamesList);
+
+		if (CameraController.SupportedPreviewSizesList != null && CameraController.SupportedPreviewSizesList.size() > 0)
+		{
+			fillResolutionsListMultishot(MultishotResolutionsIdxesList.size(),
+					CameraController.SupportedPreviewSizesList.get(0).width,
+					CameraController.SupportedPreviewSizesList.get(0).height);
+		}
+
+		if (CameraController.SupportedPreviewSizesList != null && CameraController.SupportedPreviewSizesList.size() > 1)
+		{
+			fillResolutionsListMultishot(MultishotResolutionsIdxesList.size(),
+					CameraController.SupportedPreviewSizesList.get(1).width,
+					CameraController.SupportedPreviewSizesList.get(1).height);
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		String prefIdx = prefs.getString("imageSizePrefSmartMultishotBack", "-1");
+
+		if (prefIdx.equals("-1"))
+		{
+			int maxFastIdx = -1;
+			long maxMpx = 0;
+			for (int i = 0; i < CameraController.FastIdxelist.size(); i++)
+			{
+				for (int j = 0; j < CameraController.MultishotResolutionsMPixList.size(); j++)
+				{
+					if (CameraController.FastIdxelist.get(i) == Integer
+							.parseInt(CameraController.MultishotResolutionsIdxesList.get(j))
+							&& CameraController.MultishotResolutionsMPixList.get(j) > maxMpx)
+					{
+						maxMpx = CameraController.MultishotResolutionsMPixList.get(j);
+						maxFastIdx = j;
+					}
+				}
+			}
+			if (CameraController.SupportedPreviewSizesList != null
+					&& CameraController.SupportedPreviewSizesList.size() > 0 && maxMpx >= MPIX_1080)
+			{
+				SharedPreferences.Editor prefEditor = prefs.edit();
+				prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(maxFastIdx));
+				prefEditor.commit();
+			}
+		}
+
+		return;
+	}
+
+	protected static void fillResolutionsListMultishot(int ii, int currSizeWidth, int currSizeHeight)
+	{
+		boolean needAdd = true;
+		boolean isFast = true;
+
+		Long lmpix = (long) currSizeWidth * currSizeHeight;
+		float mpix = (float) lmpix / 1000000.f;
+		float ratio = (float) currSizeWidth / currSizeHeight;
+
+		// find good location in a list
+		int loc;
+		for (loc = 0; loc < CameraController.MultishotResolutionsMPixList.size(); ++loc)
+			if (CameraController.MultishotResolutionsMPixList.get(loc) < lmpix)
+				break;
+
+		int ri = 0;
+		if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+			ri = 1;
+		if (Math.abs(ratio - 3 / 2.f) < 0.12f)
+			ri = 2;
+		if (Math.abs(ratio - 16 / 9.f) < 0.15f)
+			ri = 3;
+		if (Math.abs(ratio - 1) == 0)
+			ri = 4;
+
+		String newName;
+		if (isFast)
+		{
+			newName = String.format("%3.1f Mpix  " + RATIO_STRINGS[ri] + " (fast)", mpix);
+		} else
+		{
+			newName = String.format("%3.1f Mpix  " + RATIO_STRINGS[ri], mpix);
+		}
+
+		for (int i = 0; i < CameraController.MultishotResolutionsNamesList.size(); i++)
+		{
+			if (newName.equals(CameraController.MultishotResolutionsNamesList.get(i)))
+			{
+				Long lmpixInArray = (long) (CameraController.MultishotResolutionsSizeList.get(i).getWidth() * MultishotResolutionsSizeList
+						.get(i).getHeight());
+				if (Math.abs(lmpixInArray - lmpix) / lmpix < 0.1)
+				{
+					needAdd = false;
+					break;
+				}
+			}
+		}
+
+		if (needAdd)
+		{
+			if (isFast)
+			{
+				CameraController.FastIdxelist.add(ii);
+			}
+			CameraController.MultishotResolutionsNamesList.add(loc, newName);
+			CameraController.MultishotResolutionsIdxesList.add(loc, String.format("%d", ii));
+			CameraController.MultishotResolutionsMPixList.add(loc, lmpix);
+			CameraController.MultishotResolutionsSizeList.add(loc, CameraController.getInstance().new Size(
+					currSizeWidth, currSizeHeight));
+		}
 	}
 
 	public List<CameraController.Size> getSupportedPreviewSizes()
@@ -938,19 +1103,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		return previewSizes;
 	}
-	
+
 	public void setCameraPreviewSize(CameraController.Size sz)
 	{
-		if(!CameraController.isHALv3)
+		if (!CameraController.isHALv3)
 		{
 			Camera.Parameters params = this.getCameraParameters();
-			if(params != null)
+			if (params != null)
 			{
 				params.setPreviewSize(sz.mWidth, sz.mHeight);
 				setCameraParameters(params);
 			}
-		}
-		else
+		} else
 		{
 			HALv3.setupImageReadersHALv3(sz);
 		}
@@ -1073,7 +1237,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		CameraController.camera = cam;
 	}
-	
+
 	public Camera.Parameters getCameraParameters()
 	{
 		if (CameraController.camera != null && CameraController.camera.getParameters() != null)
@@ -1162,7 +1326,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			return true;
 	}
-	
+
 	public boolean isExposureLock()
 	{
 		if (!CameraController.isHALv3)
@@ -1170,7 +1334,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (camera == null)
 				return false;
 
-			return  CameraController.camera.getParameters().getAutoExposureLock();
+			return CameraController.camera.getParameters().getAutoExposureLock();
 		} else
 			return true;
 	}
@@ -1186,7 +1350,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			return false;
 	}
-	
+
 	public boolean isWhiteBalanceLock()
 	{
 		if (!CameraController.isHALv3)
@@ -1551,7 +1715,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						isoModes.add(isoList[i]);
 				} else
 					return new int[0];
-				
+
 				int supportedISOCount = 0;
 				for (int i = 0; i < isoModes.size(); i++)
 				{
@@ -1758,9 +1922,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (iso == null)
 						iso = params.get("iso-speed");
 
-					if(CameraController.key_iso.containsKey(iso))
+					if (CameraController.key_iso.containsKey(iso))
 						return CameraController.key_iso.get(iso);
-					else if(CameraController.key_iso2.containsKey(iso))
+					else if (CameraController.key_iso2.containsKey(iso))
 						return CameraController.key_iso2.get(iso);
 				}
 			}
@@ -1953,8 +2117,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		mFocusState = state;
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_FOCUS_STATE_CHANGED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_STATE_CHANGED);
 	}
 
 	public static int getFocusState()
@@ -2027,7 +2190,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// ------------ CAPTURE AND FOCUS FUNCTION ----------------------------
 
 	// Experimental code to take multiple images. Works only with HALv3
-	// interface in API 19(currently minimum API version for Android L increased to 21)
+	// interface in API 19(currently minimum API version for Android L increased
+	// to 21)
 	protected static int[]		pauseBetweenShots	= new int[0];
 
 	protected static final int	MAX_HDR_FRAMES		= 4;
@@ -2035,13 +2199,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static int		total_frames;
 	protected static int		frame_num;
-	protected static int		frameFormat 		= CameraController.JPEG;
-	
-	protected static boolean	takePreviewFrame 	= false;
-	
-	protected static boolean	takeYUVFrame 		= false;
-	
-	protected static boolean	resultInHeap 		= false;
+	protected static int		frameFormat			= CameraController.JPEG;
+
+	protected static boolean	takePreviewFrame	= false;
+
+	protected static boolean	takeYUVFrame		= false;
+
+	protected static boolean	resultInHeap		= false;
 
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, boolean resInHeap)
 	{
@@ -2051,9 +2215,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		total_frames = nFrames;
 		frame_num = 0;
 		frameFormat = format;
-		
+
 		resultInHeap = resInHeap;
-		
+
 		if (!CameraController.isHALv3)
 		{
 			takeYUVFrame = (format == CameraController.YUV);
@@ -2143,9 +2307,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.cancelAutoFocusHALv3();
 	}
 
-	
-	//Callback always contains JPEG frame.
-	//So, we have to convert JPEG to YUV if capture plugin has requested YUV frame.
+	// Callback always contains JPEG frame.
+	// So, we have to convert JPEG to YUV if capture plugin has requested YUV
+	// frame.
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
@@ -2153,31 +2317,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
-		if(!CameraController.takeYUVFrame) //if JPEG frame requested
+		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
 
-			
 			int frame = 0;
-			if(resultInHeap)
+			if (resultInHeap)
 				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
 			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, false);
-		}
-		else //is YUV frame requested
+		} else
+		// is YUV frame requested
 		{
-			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
-			int frameLen = MainScreen.getImageWidth()*MainScreen.getImageHeight()+2*((MainScreen.getImageWidth()+1)/2)*((MainScreen.getImageHeight()+1)/2);
-			
+			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
+					MainScreen.getImageHeight(), false, false, 0);
+			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
+					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+
 			byte[] frameData = null;
-			if(!resultInHeap)
-			{				
+			if (!resultInHeap)
+			{
 				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
 				yuvFrame = 0;
 			}
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
-		
+
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
-		
+
 		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
 	}
 
@@ -2205,29 +2370,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		pluginManager.onPreviewFrame(data);
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
-		
-		if(takePreviewFrame)
+
+		if (takePreviewFrame)
 		{
 			takePreviewFrame = false;
-			if(CameraController.takeYUVFrame)
+			if (CameraController.takeYUVFrame)
 			{
 				int frame = 0;
-				if(resultInHeap)
+				if (resultInHeap)
 					frame = SwapHeap.SwapToHeap(data);
 				pluginManager.onImageTaken(frame, data, data.length, true);
-			}
-			else
+			} else
 			{
 				int jpegData = 0;
-//				int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(), MainScreen.getImageHeight(), false, false, 0);
-//				pluginManager.onImageTaken(yuvFrame, null, 0, true);
+				// int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte,
+				// MainScreen.getImageWidth(), MainScreen.getImageHeight(),
+				// false, false, 0);
+				// pluginManager.onImageTaken(yuvFrame, null, 0, true);
 			}
-			
-//			pluginManager.onPictureTaken(data, true);
+
+			// pluginManager.onPictureTaken(data, true);
 			CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
 			return;
 		}
-		
+
 		if (evLatency > 0)
 		{
 			previewWorking = true;
@@ -2255,9 +2421,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 
-
-
-	// ===============  Captured Image data manipulation ======================
+	// =============== Captured Image data manipulation ======================
 	@TargetApi(19)
 	public static int getImageFrame(Image im)
 	{
@@ -2298,11 +2462,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			frame = SwapHeap.SwapToHeap(jpegByteArray);
 		}
-		
+
 		return frame;
 	}
-	
-	// ===============  Captured Image data manipulation ======================
+
+	// =============== Captured Image data manipulation ======================
 	@TargetApi(19)
 	public static byte[] getImageFrameData(Image im)
 	{
@@ -2333,7 +2497,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.e(TAG, "Error while cropping: " + status);
 
 			frameData = YuvImage.GetByteFrame(0);
-			
+
 		} else if (im.getFormat() == ImageFormat.JPEG)
 		{
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
@@ -2342,16 +2506,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			frameData = new byte[frame_len];
 			jpeg.get(frameData, 0, frame_len);
 		}
-		
+
 		return frameData;
 	}
-	
+
 	@TargetApi(19)
 	public static boolean isYUVImage(Image im)
 	{
 		return im.getFormat() == ImageFormat.YUV_420_888;
 	}
-	
+
 	@TargetApi(19)
 	public static int getImageLenght(Image im)
 	{
@@ -2359,21 +2523,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
 					* ((MainScreen.getImageHeight() + 1) / 2);
-		}
-		else if (im.getFormat() == ImageFormat.JPEG)
+		} else if (im.getFormat() == ImageFormat.JPEG)
 		{
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 			return jpeg.limit();
 		}
-		
+
 		return 0;
 	}
-	
-	// ^^^^^^^^^^^^^^^^^^^^^  Image data manipulation  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	
-	
-	
+
+	// ^^^^^^^^^^^^^^^^^^^^^ Image data manipulation ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	public class Size
 	{
@@ -2412,123 +2572,123 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		// Not used
 	}
-	
-	
+
 	// set exposure based on onpreviewframe
-	private int					evLatency;
-	private boolean				previewMode				= false;
-	private boolean				previewWorking			= false;
-	private CountDownTimer		cdt						= null;
-	
-	public static final int				MSG_SET_EXPOSURE						= 01;
-	public static final int				MSG_NEXT_FRAME							= 02;
-	public static final int				MSG_TAKE_IMAGE							= 03;
-	
+	private int				evLatency;
+	private boolean			previewMode			= false;
+	private boolean			previewWorking		= false;
+	private CountDownTimer	cdt					= null;
+	private long			lastCaptureStarted	= 0;
+
+	public static final int	MSG_SET_EXPOSURE	= 01;
+	public static final int	MSG_NEXT_FRAME		= 02;
+	public static final int	MSG_TAKE_IMAGE		= 03;
+
 	public void sendMessage(int what)
 	{
-		Message message = new Message();		
+		Message message = new Message();
 		message.what = what;
 		messageHandler.sendMessage(message);
 	}
-	
-	//Handle messages only for old camera interface logic
+
+	// Handle messages only for old camera interface logic
 	@Override
-	public boolean handleMessage(Message msg) {
+	public boolean handleMessage(Message msg)
+	{
 
-		switch(msg.what)
+		switch (msg.what)
 		{
-			case MSG_SET_EXPOSURE:
-				try
-				{
-//					if (UseLumaAdaptation && LumaAdaptationAvailable)
-//						CameraController.getInstance().setLumaAdaptation(evValues[frame_num]);
-//					else
-						CameraController.getInstance().setCameraExposureCompensation(evValues[frame_num]);
-				} catch (RuntimeException e)
-				{
-					Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
-				}
+		case MSG_SET_EXPOSURE:
+			try
+			{
+				// if (UseLumaAdaptation && LumaAdaptationAvailable)
+				// CameraController.getInstance().setLumaAdaptation(evValues[frame_num]);
+				// else
+				CameraController.getInstance().setCameraExposureCompensation(evValues[frame_num]);
+			} catch (RuntimeException e)
+			{
+				Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
+			}
 
-				if (previewMode)
-				{
-					// message to capture image will be emitted 2 or 3 frames after
-					// setExposure
-					evLatency = 10; // the minimum value at which Galaxy Nexus is
-									// changing exposure in a stable way
+			if (previewMode)
+			{
+				// message to capture image will be emitted 2 or 3 frames after
+				// setExposure
+				evLatency = 10; // the minimum value at which Galaxy Nexus is
+								// changing exposure in a stable way
 
-					// Note 3 need more time to change exposure.
-					if (Build.MODEL.contains("SM-N900"))
-						evLatency = 20;
+				// Note 3 need more time to change exposure.
+				if (Build.MODEL.contains("SM-N900"))
+					evLatency = 20;
+			} else
+			{
+				new CountDownTimer(500, 500)
+				{
+					public void onTick(long millisUntilFinished)
+					{
+					}
+
+					public void onFinish()
+					{
+						CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+					}
+				}.start();
+			}
+
+			return true;
+
+		case MSG_NEXT_FRAME:
+			if (++frame_num < total_frames)
+			{
+				if (Array.getLength(pauseBetweenShots) < frame_num)
+				{
+					if (evValues != null && evValues.length >= total_frames)
+						CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+					else
+						CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
 				} else
 				{
-					new CountDownTimer(500, 500)
+					pauseHandler.postDelayed(new Runnable()
 					{
-						public void onTick(long millisUntilFinished)
+						public void run()
 						{
+							if (evValues != null && evValues.length >= total_frames)
+								CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
+							else
+								CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
 						}
+					}, pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
+				}
+			}
+			break;
+		case MSG_TAKE_IMAGE:
+			synchronized (SYNC_OBJECT)
+			{
+				int imageWidth = MainScreen.getImageWidth();
+				int imageHeight = MainScreen.getImageHeight();
+				int previewWidth = MainScreen.getPreviewWidth();
+				int previewHeight = MainScreen.getPreviewHeight();
 
-						public void onFinish()
-						{
-							CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-						}
-					}.start();
-				}
+				// play tick sound
+				MainScreen.getGUIManager().showCaptureIndication();
+				MainScreen.getInstance().playShutter();
 
-				return true;
-				
-			case MSG_NEXT_FRAME:
-				if (++frame_num < total_frames)
+				lastCaptureStarted = SystemClock.uptimeMillis();
+				if (imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
+					takePreviewFrame = true; // Temporary make capture by
+												// preview frames only for YUV
+												// requests to avoid slow YUV to
+												// JPEG conversion
+				else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 				{
-					if(Array.getLength(pauseBetweenShots) < frame_num)
-					{
-						if (evValues != null && evValues.length >= total_frames)
-							CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
-						else
-							CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-					}
-					else
-					{
-						new CountDownTimer(pauseBetweenShots[frame_num], pauseBetweenShots[frame_num])
-						{
-							public void onTick(long millisUntilFinished)
-							{
-							}
-			
-							public void onFinish()
-							{
-								if (evValues != null && evValues.length >= total_frames)
-									CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
-								else
-									CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
-							}
-						}.start();
-					}
+					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+					camera.setPreviewCallback(null);
+					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+
 				}
-				break;
-			case MSG_TAKE_IMAGE:
-				synchronized (SYNC_OBJECT)
-				{
-					int imageWidth = MainScreen.getImageWidth();
-					int imageHeight = MainScreen.getImageHeight();
-					int previewWidth = MainScreen.getPreviewWidth();
-					int previewHeight = MainScreen.getPreviewHeight();
-					
-					// play tick sound
-					MainScreen.getGUIManager().showCaptureIndication();
-					MainScreen.getInstance().playShutter();
-					
-					if(imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
-						takePreviewFrame = true; //Temporary make capture by preview frames only for YUV requests to avoid slow YUV to JPEG conversion
-					else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-					{
-						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-						camera.setPreviewCallback(null);
-						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
-					
-					}
-				}
-				break;
-			default:
+			}
+			break;
+		default:
 			break;
 		}
 

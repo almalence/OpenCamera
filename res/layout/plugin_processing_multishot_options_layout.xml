@@ -29,9 +29,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@android:color/transparent"
+                android:padding="8dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal" >
+                android:orientation="horizontal" 
+                android:background="@drawable/layout_border_multishot_option">
 
                 <com.almalence.ui.RotateImageView
                     android:layout_width="@dimen/multishotOptionsImageSize"
@@ -54,7 +55,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:background="@drawable/layout_border_multishot_option"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
@@ -78,7 +80,8 @@
                 android:id="@+id/buttonSequence"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:background="@drawable/layout_border_multishot_option"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 

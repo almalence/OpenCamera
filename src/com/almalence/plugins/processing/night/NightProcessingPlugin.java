@@ -51,8 +51,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	private int				yuv;
 	private static int[]	crop				= new int[4];
 
-	private static int		HI_SPEED_FRAMES		= 12;
-
 	private long			sessionID			= 0;
 
 	// night preferences
@@ -96,9 +94,11 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
-//		
-//		Log.e("NightProcessing", "Image size " + mImageWidth + "x" + mImageHeight);
-//		Log.e("NightProcessing", "Image save size " + iSaveImageWidth + "x" + iSaveImageHeight);
+		//
+		// Log.e("NightProcessing", "Image size " + mImageWidth + "x" +
+		// mImageHeight);
+		// Log.e("NightProcessing", "Image save size " + iSaveImageWidth + "x" +
+		// iSaveImageHeight);
 
 		AlmaShotNight.Initialize();
 
@@ -151,7 +151,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));
-		
+
 		Log.e("NightProcessing", "nightPreview. images amount = " + imagesAmount);
 
 		int[] compressed_frame = new int[imagesAmount];
@@ -165,52 +165,32 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 					"framelen" + (i + 1) + sessionID));
 		}
 
-		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode" + sessionID));
-
-		if (mode == 1)
+		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
+		if (!isYUV)
 		{
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.SuperZoomPreview start");
-			AlmaShotNight.SuperZoomPreview(compressed_frame, NightProcessingPlugin.HI_SPEED_FRAMES, mImageWidth,
-					mImageHeight, mImageWidth * 2, mImageHeight * 2, Integer.parseInt(NoisePreference),
-					Integer.parseInt(GhostPreference), SaturatedColors ? 1 : 0, 1);
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.SuperZoomPreview success");
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg start");
+			AlmaShotNight.ConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
+					mImageHeight);
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
 		} else
 		{
-			boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-			if (!isYUV)
-			{
-				Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg start");
-				AlmaShotNight.ConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
-						mImageHeight);
-				Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
-			} else
-			{
-				Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames start");
-				AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-				Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
-			}
-
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview start");
-			AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight, Integer.parseInt(NoisePreference),
-					Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0, imagesAmount);
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview success");
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames start");
+			AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
+			Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 		}
+
+		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview start");
+		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight, Integer.parseInt(NoisePreference),
+				Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0, imagesAmount);
+		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview success");
+
 		System.gc();
 	}
 
 	private void nightProcessing()
 	{
-		int mode = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("nightmode" + sessionID));
-
-		if (mode == 1)
-		{
-			yuv = AlmaShotNight.SuperZoomProcess(mImageWidth * 2, mImageHeight * 2, NightProcessingPlugin.crop,
-					mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
-		} else
-		{
-			yuv = AlmaShotNight.BlurLessProcess(mImageWidth, mImageHeight, NightProcessingPlugin.crop,
-					mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
-		}
+		yuv = AlmaShotNight.BlurLessProcess(mImageWidth, mImageHeight, NightProcessingPlugin.crop,
+				mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
 
 		AlmaShotNight.Release();
 	}

@@ -1,4 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/dimsArrayCommon"
@@ -17,29 +18,14 @@
         android:defaultValue="0"
         android:entries="@array/dimsArrayNight"
         android:entryValues="@array/dimsValuesNight"
-        android:key="imageSizePrefNightBack"
-        android:title="@string/Pref_NightCapture_ImageSize_Title" />
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/dimsArrayNight"
-        android:entryValues="@array/dimsValuesNight"
-        android:key="imageSizePrefNightFront"
-        android:title="@string/Pref_NightCapture_ImageSize_Title" />
-    
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/dimsArrayNight"
-        android:entryValues="@array/dimsValuesNight"
         android:key="imageSizePrefSmartMultishotBack"
-        android:title="@string/Pref_SmartMultishot_ImageSize_Title" />
+        android:title="@string/Pref_Comon_SmartMultishot_And_Night_ImageSize_Title" />
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/dimsArrayNight"
         android:entryValues="@array/dimsValuesNight"
         android:key="imageSizePrefSmartMultishotFront"
-        android:title="@string/Pref_SmartMultishot_ImageSize_Title" />
-    
-    
+        android:title="@string/Pref_Comon_SmartMultishot_And_Night_ImageSize_Title" />
     <ListPreference
         android:defaultValue="2"
         android:entries="@array/dimsArrayVideo"
@@ -52,4 +38,5 @@
         android:entryValues="@array/dimsValuesVideo"
         android:key="imageSizePrefVideoBack"
         android:title="@string/Pref_Video_ImageSize_Title" />
+
 </PreferenceScreen>

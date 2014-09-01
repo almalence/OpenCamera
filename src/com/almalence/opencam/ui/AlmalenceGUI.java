@@ -4002,7 +4002,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (quickControlsChangeVisible || settingsControlsVisible)
 				break;
 
-			openGallery();
+			openGallery(false);
 			break;
 
 		// TOP MENU BUTTONS - Scene mode, white balance, focus mode, flash mode,
@@ -6148,7 +6148,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		return res > 0 ? true : false;
 	}
 
-	public void openGallery()
+	public void openGallery(boolean isOpenExternal)
 	{
 		if (mThumbnail == null)
 			return;
@@ -6160,7 +6160,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean isAllowedExternal = prefs.getBoolean(
 				MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
-		if (isAllowedExternal)
+		if (isAllowedExternal || isOpenExternal)
 		{
 			openExternalGallery(uri);
 		} else

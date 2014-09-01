@@ -89,7 +89,6 @@ import com.almalence.YuvImage;
 
 public class NightCapturePlugin extends PluginCapture
 {
-	private static final int	HI_SPEED_FRAMES			= 12;
 	private static final int	HI_RES_FRAMES			= 8;
 	private static final int	MIN_MPIX_SUPPORTED		= 1280 * 960;
 	private static final int	MIN_MPIX_PREVIEW		= 600 * 400;
@@ -112,8 +111,8 @@ public class NightCapturePlugin extends PluginCapture
 	// shared between activities
 	public static int			CapIdx;
 	private static int			total_frames;
-	private static int[]		compressed_frame		= new int[HI_SPEED_FRAMES];
-	private static int[]		compressed_frame_len	= new int[HI_SPEED_FRAMES];
+	private static int[]		compressed_frame		= new int[HI_RES_FRAMES];
+	private static int[]		compressed_frame_len	= new int[HI_RES_FRAMES];
 
 	// Night vision variables
 	private GLCameraPreview		cameraPreview;
@@ -150,8 +149,6 @@ public class NightCapturePlugin extends PluginCapture
 	float						cameraDist;
 
 	// preferences
-	private static String		ModePreference;									// 0=hi-res
-																					// 1=hi-speed
 	private static String		FocusPreference;
 	private static boolean		OpenGLPreference;
 	private static String		ImageSizeIdxPreference;
@@ -185,13 +182,8 @@ public class NightCapturePlugin extends PluginCapture
 	private int					preferenceFocusMode;
 	private int					preferenceFlashMode;
 
-	private static String		nightCaptureModePref;
-	private static String		hiResModeTitle;
-	private static String		hiSpeedModeTitle;
 	private static String		nightVisionLayerShowPref;
 	private static String		nightCaptureFocusPref;
-
-	private Switch				modeSwitcher;
 
 	public NightCapturePlugin()
 	{
@@ -205,42 +197,10 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 
-		nightCaptureModePref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureMode);
-		hiResModeTitle = MainScreen.getInstance().getResources().getString(R.string.NightCaptureModeHiRes);
-		hiSpeedModeTitle = MainScreen.getInstance().getResources().getString(R.string.NightCaptureModeHiSpeed);
 		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
 
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ModePreference = prefs.getString(nightCaptureModePref, "1");
-		modeSwitcher.setTextOn(hiResModeTitle);
-		modeSwitcher.setTextOff(hiSpeedModeTitle);
-		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
-		modeSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				if (isChecked)
-					ModePreference = "0";
-				else
-					ModePreference = "1";
-
-				SharedPreferences.Editor editor = prefs.edit();
-				editor.putString(nightCaptureModePref, ModePreference);
-				editor.commit();
-
-				Message msg = new Message();
-				msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;
-				MainScreen.getMessageHandler().sendMessage(msg);
-			}
-		});
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override
@@ -288,40 +248,11 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onStop()
-	{
-		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
-	}
-
-	@Override
-	public void onExportFinished()
-	{
-		if (modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && !inCapture)
-			modeSwitcher.setEnabled(true);
-	}
-
-	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
-
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-
-		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
-				params);
-
-		this.modeSwitcher.setLayoutParams(params);
-		this.modeSwitcher.requestLayout();
-
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 
 	@Override
@@ -375,12 +306,10 @@ public class NightCapturePlugin extends PluginCapture
 	@SuppressLint("CommitPrefEdits")
 	private void getPrefs()
 	{
-		String defaultMode = "1";
 		String defaultFocus = "0";
 
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
 		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
 				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
@@ -390,150 +319,26 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onDefaultsSelect()
 	{
-		String defaultMode = "1";
 		String defaultFocus = "0";
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
-				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		selectImageDimensionNight();
 	}
 
 	@Override
 	public void onShowPreferences()
 	{
-		String defaultMode = "1";
 		String defaultFocus = "0";
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ModePreference = prefs.getString(nightCaptureModePref, defaultMode);
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
-				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		selectImageDimension();
 	}
 
 	public static void selectImageDimensionNight()
 	{
-		int mode = Integer.parseInt(ModePreference);
-
-		populateCameraDimensions(1);
-
-		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
-		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
-												// x 4 - compressed input jpegs,
-												// 1Mb - safe reserve
-
-		if (maxMpix < MIN_MPIX_SUPPORTED)
-		{
-			String msg;
-			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			Log.e("NightCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			Log.e("NightCapturePlugin", msg);
-		}
-
-		// find index selected in preferences
-		int prefIdx = -1;
-		try
-		{
-			if (mode == 1)
-				prefIdx = Integer.parseInt(NightCapturePlugin.ImageSizeIdxPreference);
-			else
-				prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
-		} catch (IndexOutOfBoundsException e)
-		{
-			prefIdx = -1;
-		}
-
-		// ----- Find max-resolution capture dimensions
-		List<CameraController.Size> cs;
-		int minMPIX = MIN_MPIX_SUPPORTED;
-		if (mode == 1) // super mode
-		{
-			cs = removeDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
-			minMPIX = MIN_MPIX_PREVIEW;
-		} else
-		{
-			cs = CameraController.getInstance().getSupportedPictureSizes();
-			if (Build.MODEL.contains("HTC One X") && !CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
-
-		int defaultCaptureIdx = -1;
-		long defaultCaptureMpix = 0;
-		int defaultCaptureWidth = 0;
-		int defaultCaptureHeight = 0;
-		long captureMpix = 0;
-		int captureWidth = 0;
-		int captureHeight = 0;
-		int captureIdx = -1;
-		boolean prefFound = false;
-
-		// figure default resolution
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > defaultCaptureMpix) && (mpix <= MPIX_8))
-			{
-				defaultCaptureIdx = ii;
-				defaultCaptureMpix = mpix;
-				defaultCaptureWidth = s.getWidth();
-				defaultCaptureHeight = s.getHeight();
-			}
-		}
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((ii == prefIdx) && (mpix >= minMPIX))
-			{
-				prefFound = true;
-				captureIdx = ii;
-				captureMpix = mpix;
-				captureWidth = s.getWidth();
-				captureHeight = s.getHeight();
-				break;
-			}
-
-			if (mpix > captureMpix)
-			{
-				captureIdx = ii;
-				captureMpix = mpix;
-				captureWidth = s.getWidth();
-				captureHeight = s.getHeight();
-			}
-		}
-
-		// default to about 8Mpix if nothing is set in preferences or maximum
-		// resolution is above memory limits
-		if (defaultCaptureMpix > 0 && !prefFound)
-		{
-			captureIdx = defaultCaptureIdx;
-			captureMpix = defaultCaptureMpix;
-			captureWidth = defaultCaptureWidth;
-			captureHeight = defaultCaptureHeight;
-		}
-
-		captureIndex = captureIdx;
-		if (ImageSizeIdxPreference == "-1")
-		{
-			ImageSizeIdxPreference = String.valueOf(captureIdx);
-		}
-		CapIdx = captureIdx;
-		imgCaptureWidth = captureWidth;
-		imgCaptureHeight = captureHeight;
+		captureIndex = MainScreen.selectImageDimensionMultishot();
+		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
+		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}
 
 	@Override
@@ -547,17 +352,8 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
-			int mode = Integer.parseInt(ModePreference);
-			if (mode == 1)
-			{
-				CapIdx = captureIndex;
-				MainScreen.setSaveImageWidth(imgCaptureWidth * 2);
-				MainScreen.setSaveImageHeight(imgCaptureHeight * 2);
-			} else
-			{
-				MainScreen.setSaveImageWidth(imgCaptureWidth);
-				MainScreen.setSaveImageHeight(imgCaptureHeight);
-			}
+			MainScreen.setSaveImageWidth(imgCaptureWidth);
+			MainScreen.setSaveImageHeight(imgCaptureHeight);
 
 			MainScreen.setImageWidth(imgCaptureWidth);
 			MainScreen.setImageHeight(imgCaptureHeight);
@@ -583,11 +379,8 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void setCameraPictureSize()
 	{
-		if (Integer.parseInt(ModePreference) != 1)
-		{
-			CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-			CameraController.getInstance().setJpegQuality(100);
-		}
+		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.getInstance().setJpegQuality(100);
 
 		int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
@@ -666,139 +459,6 @@ public class NightCapturePlugin extends PluginCapture
 		else
 			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
 		MainScreen.getMessageHandler().sendMessage(msg);
-	}
-
-	// leave only top-most resolution for each aspect ratio for super mode
-	private static List<CameraController.Size> removeDuplicateResolutions(List<CameraController.Size> cs)
-	{
-		List<Long> mpix = new ArrayList<Long>();
-		List<Integer> ratIdx = new ArrayList<Integer>();
-		long[] riMaxMpix = new long[4];
-
-		for (int i = 0; i < 4; ++i)
-			riMaxMpix[i] = 0;
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-
-			if (lmpix > riMaxMpix[ri])
-				riMaxMpix[ri] = lmpix;
-
-			mpix.add(lmpix);
-			ratIdx.add(ri);
-		}
-
-		// remove lower-than-maximum resolutions
-		Iterator<CameraController.Size> it = cs.iterator();
-		while (it.hasNext())
-		{
-			CameraController.Size s = it.next();
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-
-			if (lmpix < riMaxMpix[ri])
-				it.remove();
-		}
-
-		return cs;
-	}
-
-	public static void populateCameraDimensions(int mode)
-	{
-		ResolutionsMPixList = new ArrayList<Long>();
-		ResolutionsIdxesList = new ArrayList<String>();
-		ResolutionsNamesList = new ArrayList<String>();
-
-		List<CameraController.Size> cs;
-		int minMPIX = MIN_MPIX_SUPPORTED;
-		if (mode == 1) // hi-speed mode
-		{
-			// hi-speed mode: leave only single top resolution for each aspect
-			// ratio
-			cs = removeDuplicateResolutions(CameraController.getInstance().getSupportedPreviewSizes());
-			minMPIX = MIN_MPIX_PREVIEW;
-		} else
-		{
-			cs = CameraController.getInstance().getSupportedPictureSizes();
-			if (Build.MODEL.contains("HTC One X") && !CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
-
-		CharSequence[] ratioStrings = { " ", "4:3", "3:2", "16:9", "1:1" };
-
-		for (int ii = 0; ii < cs.size(); ++ii)
-		{
-			CameraController.Size s = cs.get(ii);
-
-			if ((long) s.getWidth() * s.getHeight() < minMPIX)
-				continue;
-
-			// superzoom supports 12mpix output at most
-			if ((mode == 1) && ((s.getWidth() > 4096 / 2) || (s.getHeight() > 3072 / 2)))
-				continue;
-
-			Long lmpix = (long) s.getWidth() * s.getHeight();
-			float mpix = (float) lmpix / 1000000.f;
-			float ratio = (float) s.getWidth() / s.getHeight();
-
-			// find good location in a list
-			int loc;
-			for (loc = 0; loc < ResolutionsMPixList.size(); ++loc)
-				if (ResolutionsMPixList.get(loc) < lmpix)
-					break;
-
-			int ri = 0;
-			if (Math.abs(ratio - 4 / 3.f) < 0.1f)
-				ri = 1;
-			if (Math.abs(ratio - 3 / 2.f) < 0.12f)
-				ri = 2;
-			if (Math.abs(ratio - 16 / 9.f) < 0.15f)
-				ri = 3;
-			if (Math.abs(ratio - 1) == 0)
-				ri = 4;
-
-			if (mode == 1) // hi-speed mode
-				mpix *= 4;
-
-			ResolutionsNamesList.add(loc, String.format("%3.1f Mpix  " + ratioStrings[ri], mpix));
-			ResolutionsIdxesList.add(loc, String.format("%d", ii));
-			ResolutionsMPixList.add(loc, lmpix);
-		}
-
-		return;
-	}
-
-	@Override
-	public void onCameraParametersSetup()
-	{
-		populateCameraDimensions(1);
 	}
 
 	@Override
@@ -887,20 +547,11 @@ public class NightCapturePlugin extends PluginCapture
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
-			int mode = Integer.parseInt(ModePreference);
-			if (mode == 1)
-			{
-				MainScreen.setSaveImageWidth(imgCaptureWidth * 2);
-				MainScreen.setSaveImageHeight(imgCaptureHeight * 2);
-			} else
-			{
-				MainScreen.setSaveImageWidth(imgCaptureWidth);
-				MainScreen.setSaveImageHeight(imgCaptureHeight);
-			}
+			MainScreen.setSaveImageWidth(imgCaptureWidth);
+			MainScreen.setSaveImageHeight(imgCaptureHeight);
 
 			inCapture = true;
 			takingAlready = false;
-			this.modeSwitcher.setEnabled(false);
 
 			LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
 
@@ -911,8 +562,6 @@ public class NightCapturePlugin extends PluginCapture
 			// reiniting for every shutter press
 			frameNumber = 0;
 			total_frames = HI_RES_FRAMES;
-
-			PluginManager.getInstance().addToSharedMem("nightmode" + SessionID, ModePreference);
 
 			if (FocusPreference.compareTo("0") == 0)
 			{
@@ -1011,26 +660,13 @@ public class NightCapturePlugin extends PluginCapture
 
 	public void captureFrame()
 	{
-		if (Integer.parseInt(ModePreference) == 1) // hi-speed mode
+		try
 		{
-			nVFframesToBuffer = HI_SPEED_FRAMES;
-			// play tick sound
-			MainScreen.getGUIManager().startContinuousCaptureIndication();
-			MainScreen.getInstance().playShutter();
-			return;
-		}
-
-		if (Integer.parseInt(ModePreference) == 0) // hi-res mode
+			requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null,
+					true);
+		} catch (RuntimeException e)
 		{
-			try
-			{
-				requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0],
-						null, true);
-			} catch (RuntimeException e)
-			{
-				Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");
-			}
-			return;
+			Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");
 		}
 	}
 
@@ -1079,63 +715,6 @@ public class NightCapturePlugin extends PluginCapture
 			data1 = null;
 			data2 = null;
 			dataS = null;
-		}
-
-		if (Integer.parseInt(ModePreference) == 1 && nVFframesToBuffer != 0)
-		{
-			if (CameraController.isFrontCamera())
-			{
-				// Camera.Parameters params =
-				// CameraController.getInstance().getCameraParameters();
-				// int imageWidth = params.getPreviewSize().width;
-				// int imageHeight = params.getPreviewSize().height;
-
-				int imageWidth = MainScreen.getPreviewWidth();
-				int imageHeight = MainScreen.getPreviewHeight();
-
-				byte[] rotatedFrame = new byte[data.length];
-				ImageConversion.TransformNV21(data, rotatedFrame, imageWidth, imageHeight, 1, 0, 0);
-
-				data = rotatedFrame;
-			}
-			System.gc();
-
-			// swap-out frame data to the heap
-			compressed_frame[HI_SPEED_FRAMES - nVFframesToBuffer] = SwapHeap.SwapToHeap(data);
-			compressed_frame_len[HI_SPEED_FRAMES - nVFframesToBuffer] = data.length;
-
-			PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-					String.valueOf(compressed_frame[frameNumber]));
-			PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-					String.valueOf(compressed_frame_len[frameNumber]));
-
-			PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
-					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(frameNumber + 1));
-
-			if (frameNumber == 0)
-			{
-				PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(true));
-				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
-			}
-
-			++frameNumber;
-			--nVFframesToBuffer;
-
-			// all frames captured - initiate processing
-			if (nVFframesToBuffer == 0)
-			{
-				// play tick sound
-				MainScreen.getInstance().playShutter();
-
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-				MainScreen.getGUIManager().stopCaptureIndication();
-
-				takingAlready = false;
-				inCapture = false;
-			}
 		}
 	}
 

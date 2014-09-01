@@ -42,32 +42,16 @@ import com.almalence.opencam.R;
 
 public class AppEditorNotifier
 {
-//	private static final int	DAYS_UNTIL_PROMPT		= 5;
+	private static int	DAYS_UNTIL_PROMPT		= 4;
 //	private static final int	LAUNCHES_UNTIL_PROMPT	= 30;
 
 	public static void app_launched(Activity mContext)
 	{
 		SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
-		if (prefs.getBoolean("dontshowagaineditornotifier", false))
-		{
-			return;
-		}
-
-//		SharedPreferences.Editor editor = prefs.edit();
-//
-//		// Increment launch counter
-//		long launch_count = prefs.getLong("launch_count_editornotifier", 0) + 1;
-//		editor.putLong("launch_count_editornotifier", launch_count);
-//
-//		// Get date of first launch
-//		Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
-//		if (date_firstLaunch == 0)
+//		if (prefs.getBoolean("showlatereditornotifier", false))
 //		{
-//			date_firstLaunch = System.currentTimeMillis();
-//			editor.putLong("date_firstlaunch_editornotifier", date_firstLaunch);
+//			return;
 //		}
-//
-//		editor.commit();
 	}
 
 	public static final boolean isABCEditorInstalled(Activity activity)
@@ -89,14 +73,30 @@ public class AppEditorNotifier
 		// check if installed
 		if (isABCEditorInstalled(MainScreen.getInstance()))
 		{
-			prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
+			//prefs.edit().putBoolean("showlatereditornotifier", true).commit();
 			return false;
 		}
 
-		if (prefs.getBoolean("dontshowagaineditornotifier", false))
+		
+		Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
+		if (date_firstLaunch == 0)
 		{
-			return false;
+			date_firstLaunch = System.currentTimeMillis();
+			prefs.edit().putLong("date_firstlaunch_editornotifier", date_firstLaunch).commit();
+			showEditorNotifierDialog(mContext, prefs);
+			return true;
 		}
+		
+		if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+		{
+			showEditorNotifierDialog(mContext, prefs);
+			return true;
+		}
+		
+//		if (prefs.getBoolean("showlatereditornotifier", false))
+//		{
+//			return false;
+//		}
 
 //		final long launch_count = prefs.getLong("launch_count_editornotifier", 0) + 1;
 //		final Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
@@ -149,7 +149,7 @@ public class AppEditorNotifier
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				mContext.finish();
+				MainScreen.getInstance().guiManager.openGallery(true);
 			}
 		});
 
@@ -166,11 +166,18 @@ public class AppEditorNotifier
 		{
 			public void onClick(View v)
 			{
-				if (prefs != null)
-					prefs.edit().putBoolean("dontshowagaineditornotifier", true).commit();
+//				if (prefs != null)
+//					prefs.edit().putBoolean("showlatereditornotifier", true).commit();
 
 				dialog.dismiss();
-				MainScreen.getInstance().guiManager.openGallery();
+				MainScreen.getInstance().guiManager.openGallery(true);
+				
+				if (DAYS_UNTIL_PROMPT == 4)
+					DAYS_UNTIL_PROMPT = 5;
+				else if (DAYS_UNTIL_PROMPT == 5)
+					DAYS_UNTIL_PROMPT = 10;
+				else if (DAYS_UNTIL_PROMPT == 10)
+					DAYS_UNTIL_PROMPT = 30;
 			}
 		});
 

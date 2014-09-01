@@ -324,44 +324,6 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_SuperZoomProcess
-(
-	JNIEnv* env,
-	jobject thiz,
-	jint sx,
-	jint sy,
-	jintArray jcrop,
-	jboolean jrot,
-	jboolean jmirror
-)
-{
-	Uint8 *OutPic, *OutNV21;
-	int *crop;
-
-	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
-
-	crop[0]=crop[1]=crop[2]=crop[3]=-1;
-
-	SuperZoom_Process(instance, &OutPic, NULL, &crop[0], &crop[1], &crop[2], &crop[3]);
-
-	OutNV21 = OutPic;
-	if (jrot)
-		OutNV21 = (Uint8 *)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-
-	TransformNV21(OutPic, OutNV21, sx, sy, crop, jmirror, 0, jrot);
-
-	if (jrot)
-	{
-		free(OutPic);
-		OutPic = OutNV21;
-	}
-
-	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
-
-	return (jint)OutPic;
-}
-
-
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_convertPreview(
 		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
 {
