@@ -37,10 +37,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
 import android2.hardware.camera2.CaptureResult;
-import android.media.Image;
 import android.opengl.GLES10;
 import android.opengl.GLU;
 import android.os.Build;
@@ -50,7 +47,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -571,6 +567,18 @@ public class NightCapturePlugin extends PluginCapture
 			Log.e("NightCapturePlugin", msg);
 		}
 	}
+	
+	@Override
+	public void setCameraPreviewSize()
+	{
+		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
+
+		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		Log.e("Night", "Optimal preview size = " + os.getWidth() + " x " + os.getHeight());
+		CameraController.getInstance().setCameraPreviewSize(os);
+		MainScreen.setPreviewWidth(os.getWidth());
+		MainScreen.setPreviewHeight(os.getHeight());
+	}
 
 	@Override
 	public void setCameraPictureSize()
@@ -1052,7 +1060,7 @@ public class NightCapturePlugin extends PluginCapture
 
 				int imageWidth = MainScreen.getPreviewWidth();
 				int imageHeight = MainScreen.getPreviewHeight();
-
+				
 				ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 				if (CameraController.isFrontCamera())
 				{
@@ -1062,7 +1070,7 @@ public class NightCapturePlugin extends PluginCapture
 					yuvData = dataRotated;
 				} else
 					yuvData = dataS;
-
+								
 				data1 = data2;
 				data2 = null;
 			}

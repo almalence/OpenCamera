@@ -242,6 +242,9 @@ public class HALv3
 		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
 		MainScreen.setPreviewWidth(sz.getWidth());
 		MainScreen.setPreviewHeight(sz.getHeight());
+//		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
+//		MainScreen.setPreviewWidth(1280);
+//		MainScreen.setPreviewHeight(720);
 
 		// HALv3 code
 		// -------------------------------------------------------------------
@@ -568,10 +571,16 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
 			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
+			}
+			
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -588,9 +597,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -610,9 +624,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -633,9 +652,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -655,9 +679,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -675,9 +704,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -737,9 +771,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 
@@ -792,9 +831,14 @@ public class HALv3
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
 						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
 						null);
-			} catch (CameraAccessException e)
+			}
+			catch (CameraAccessException e)
 			{
 				e.printStackTrace();
+			}
+			catch(IllegalStateException e2)
+			{
+				e2.printStackTrace();
 			}
 		}
 	}
@@ -1136,7 +1180,7 @@ public class HALv3
 						CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
-				session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
+				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureListener, null);
 				
 				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);

@@ -586,6 +586,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 1);
+//		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
+//				ImageFormat.YUV_420_888, 1);
 
 		// ImageReader for YUV still images
 		thiz.mImageReaderYUV = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.YUV_420_888, 1);
@@ -1384,6 +1386,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
+//		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
 
 		// configure camera with all the surfaces to be ever used
 		try
@@ -1756,6 +1759,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 0);
 			preview.bringToFront();
 			glView.setZOrderMediaOverlay(true);
+			glView.onResume();
 		}
 	}
 
@@ -1846,6 +1850,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewWidth(int iWidth)
 	{
+		Log.e("MainScreen", "setPreviewWidth = " + iWidth);
 		thiz.previewWidth = iWidth;
 	}
 
@@ -1856,6 +1861,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewHeight(int iHeight)
 	{
+		Log.e("MainScreen", "setPreviewHeight = " + iHeight);
 		thiz.previewHeight = iHeight;
 	}
 

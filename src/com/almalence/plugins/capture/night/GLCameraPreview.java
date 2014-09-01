@@ -28,8 +28,10 @@ import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.util.Log;
 
+import com.almalence.opencam.MainScreen;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
  +++ --> */
@@ -88,6 +90,7 @@ public class GLCameraPreview
 
 	public void setSurfaceSize(int width, int height)
 	{
+		Log.e("GLCameraPreview", "Surface size = " + width + " x " + height);
 		surfaceWidth = width;
 		surfaceHeight = height;
 
@@ -140,17 +143,24 @@ public class GLCameraPreview
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if (params == null)
-		{
-			return;
-		}
-
-		previewWidth = params.getPreviewSize().width;
-		previewHeight = params.getPreviewSize().height;
+		previewWidth = MainScreen.getPreviewWidth();
+		previewHeight = MainScreen.getPreviewHeight();
+		
+		Log.e("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
+		
+//		Camera camera = CameraController.getCamera();
+//		if (null == camera)
+//			return;
+//		Parameters params = CameraController.getInstance().getCameraParameters();
+//		if (params == null)
+//		{
+//			return;
+//		}
+//
+//		previewWidth = params.getPreviewSize().width;
+//		previewHeight = params.getPreviewSize().height;
+//		
+//		Log.e("GLCameraPreview", "Preview size from Camera.Parameters = " + previewWidth + " x " + previewHeight);
 
 		textureWidth = 512;
 		textureHeight = 512;
@@ -178,8 +188,7 @@ public class GLCameraPreview
 		else if (out.length < out_len)
 			out = new byte[out_len];
 
-		ImageConversion
-				.convertNV21toGL(yuv_data, out, previewWidth, previewHeight, previewHalfWidth, previewHalfHeight);
+		ImageConversion.convertNV21toGL(yuv_data, out, previewWidth, previewHeight, previewHalfWidth, previewHalfHeight);
 
 		// ...and bind it to our array
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
