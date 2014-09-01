@@ -577,14 +577,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
 		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
-		if (!(isNexus && Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
+		try
 		{
+			if (!(isNexus && Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
+			{
+				isHALv3 = false;
+				isHALv3Supported = false;
+				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
+						.commit();
+			} else
+				isHALv3Supported = true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 			isHALv3 = false;
 			isHALv3Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
 					.commit();
-		} else
-			isHALv3Supported = true;
+		}
 
 		if (CameraController.isHALv3Supported)
 			HALv3.onCreateHALv3();
