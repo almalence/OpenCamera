@@ -20,8 +20,7 @@
 	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Подписка на год (3 месяца БЕСПЛАТНО!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Подписка на месяц</string>
 	
-	<string name="storeWhatsnew">version 3.24\n- exif tags fixed\n- auto backup/sharing fixed\n- fixed work from 3rd party apps\n- UI corrections\n- video on some devices improved\n- stability fixes</string>
 	<string name="storeFeatures"></string>
-	<string name="storeTips">ABC tips and tricks\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you would like.\n\nSwipe left or write on main scree to see more or less info on the screen - histogram, grids, info controls, top quick settings menu.\n\nPull down top menu to see all quick settings.</string>
+	<string name="storeTips">Подсказки ABC\n\nПри долгом нажатии на любую настройку верхнего меню - вы получите возможность выбрать и назначить на это место другую настройку.\n\nЛистание главного экрана влево/вправо даст возможность увидеть больше элементов управления и информации на экране - гистограмма, сетки, информационные элементы, верхнее меню быстрого доступа к настройкам.\n\Потяните за верхнее меню, чтобы увидеть все быстрые настройки.</string>
 	
 </resources>

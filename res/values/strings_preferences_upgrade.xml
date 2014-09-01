@@ -20,7 +20,7 @@
 	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Year subscription (3 months free!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Month subscription</string>
 	
-	<string name="storeWhatsnew">version 3.24\n- exif tags fixed\n- auto backup/sharing fixed\n- fixed work from 3rd party apps\n- UI corrections\n- video on some devices improved\n- stability fixes</string>
+	<string name="storeWhatsnew">  version 3.25\n\n - pause for video added\n - level added\n - panorama improved\n - improved DRO\n - multishots combined\n - sweep panorama added\n - video fixed\n - stability fixes</string>
 	<string name="storeFeatures"></string>
 	<string name="storeTips">ABC tips and tricks\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you would like.\n\nSwipe left or write on main scree to see more or less info on the screen - histogram, grids, info controls, top quick settings menu.\n\nPull down top menu to see all quick settings.</string>
 	
