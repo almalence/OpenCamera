@@ -74,7 +74,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
 
-	private static final long						MPIX_1080						= 1920 * 1080;
+	protected static final long						MPIX_1080						= 1920 * 1080;
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -229,7 +229,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static List<Integer>						FastIdxelist;											;
 
-	protected static List<Camera.Size>				SupportedPreviewSizesList;
+	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
 			"1:1"																	};
@@ -796,13 +796,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 
-		if (!CameraController.isHALv3)
-			CameraController.SupportedPreviewSizesList = CameraController.camera.getParameters()
-					.getSupportedPreviewSizes();
+		CameraController.fillPreviewSizeList();
 
 		if (CameraController.isHALv3)
 		{
 			HALv3.populateCameraDimensionsHALv3();
+			HALv3.populateCameraDimensionsForMultishotsHALv3();
 		} else
 		{
 			populateCameraDimensions();
@@ -851,6 +850,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isCameraCreatedHALv3()
 	{
 		return HALv3.getInstance().camDevice != null;
+	}
+	
+	private static void fillPreviewSizeList()
+	{
+		CameraController.SupportedPreviewSizesList = new ArrayList<CameraController.Size>();
+		if(!isHALv3)
+		{
+			List<Camera.Size> list = CameraController.camera.getParameters().getSupportedPreviewSizes();
+			for(Camera.Size sz : list)
+				CameraController.SupportedPreviewSizesList.add(CameraController.getInstance().new Size(sz.width, sz.height));
+		}
+		else
+			CameraController.SupportedPreviewSizesList = HALv3.fillPreviewSizeList();
 	}
 
 	public void populateCameraDimensions()
@@ -935,8 +947,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		for (int i = 0; i < CameraController.SupportedPreviewSizesList.size(); i++)
 		{
-			if (currSizeWidth == CameraController.SupportedPreviewSizesList.get(i).width
-					&& currSizeHeight == CameraController.SupportedPreviewSizesList.get(i).height)
+			if (currSizeWidth == CameraController.SupportedPreviewSizesList.get(i).getWidth()
+					&& currSizeHeight == CameraController.SupportedPreviewSizesList.get(i).getHeight())
 			{
 				isFast = true;
 			}
@@ -990,15 +1002,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (CameraController.SupportedPreviewSizesList != null && CameraController.SupportedPreviewSizesList.size() > 0)
 		{
 			fillResolutionsListMultishot(MultishotResolutionsIdxesList.size(),
-					CameraController.SupportedPreviewSizesList.get(0).width,
-					CameraController.SupportedPreviewSizesList.get(0).height);
+					CameraController.SupportedPreviewSizesList.get(0).getWidth(),
+					CameraController.SupportedPreviewSizesList.get(0).getHeight());
 		}
 
 		if (CameraController.SupportedPreviewSizesList != null && CameraController.SupportedPreviewSizesList.size() > 1)
 		{
 			fillResolutionsListMultishot(MultishotResolutionsIdxesList.size(),
-					CameraController.SupportedPreviewSizesList.get(1).width,
-					CameraController.SupportedPreviewSizesList.get(1).height);
+					CameraController.SupportedPreviewSizesList.get(1).getWidth(),
+					CameraController.SupportedPreviewSizesList.get(1).getHeight());
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -1102,17 +1114,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.SupportedPreviewSizesList != null)
 			{
-				List<Camera.Size> sizes = SupportedPreviewSizesList;
-				for (Camera.Size sz : sizes)
-					previewSizes.add(this.new Size(sz.width, sz.height));
+				List<CameraController.Size> sizes = SupportedPreviewSizesList;
+				for (CameraController.Size sz : sizes)
+					previewSizes.add(this.new Size(sz.getWidth(), sz.getHeight()));
 			} else
 			{
 				Log.e(TAG, "SupportedPreviewSizesList == null");
 			}
+			
+			return previewSizes;
+			
 		} else
-			HALv3.fillPreviewSizeList(previewSizes);
-
-		return previewSizes;
+			return HALv3.fillPreviewSizeList();
 	}
 
 	public void setCameraPreviewSize(CameraController.Size sz)

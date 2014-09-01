@@ -42,6 +42,7 @@ import com.almalence.util.Util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -269,6 +270,7 @@ public class HALv3
 		CameraController.ResolutionsSizeList = new ArrayList<CameraController.Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
 		CameraController.ResolutionsNamesList = new ArrayList<String>();
+		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
@@ -312,13 +314,133 @@ public class HALv3
 
 		return;
 	}
-
-	public static void fillPreviewSizeList(List<CameraController.Size> previewSizes)
+	
+	public static void populateCameraDimensionsForMultishotsHALv3()
 	{
+		CameraController.MultishotResolutionsMPixList = new ArrayList<Long>(CameraController.ResolutionsMPixList);
+		CameraController.MultishotResolutionsSizeList = new ArrayList<CameraController.Size>(
+				CameraController.ResolutionsSizeList);
+		CameraController.MultishotResolutionsIdxesList = new ArrayList<String>(CameraController.ResolutionsIdxesList);
+		CameraController.MultishotResolutionsNamesList = new ArrayList<String>(CameraController.ResolutionsNamesList);
+
+		List<CameraController.Size> previewSizes = fillPreviewSizeList();
+		if (previewSizes != null && previewSizes.size() > 0)
+		{
+			fillResolutionsListMultishot(CameraController.MultishotResolutionsIdxesList.size(),
+					previewSizes.get(0).getWidth(),
+					previewSizes.get(0).getHeight());
+		}
+
+		if (previewSizes != null && previewSizes.size() > 1)
+		{
+			fillResolutionsListMultishot(CameraController.MultishotResolutionsIdxesList.size(),
+					previewSizes.get(1).getWidth(),
+					previewSizes.get(1).getHeight());
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		String prefIdx = prefs.getString("imageSizePrefSmartMultishotBack", "-1");
+
+		if (prefIdx.equals("-1"))
+		{
+			int maxFastIdx = -1;
+			long maxMpx = 0;
+			for (int i = 0; i < CameraController.FastIdxelist.size(); i++)
+			{
+				for (int j = 0; j < CameraController.MultishotResolutionsMPixList.size(); j++)
+				{
+					if (CameraController.FastIdxelist.get(i) == Integer
+							.parseInt(CameraController.MultishotResolutionsIdxesList.get(j))
+							&& CameraController.MultishotResolutionsMPixList.get(j) > maxMpx)
+					{
+						maxMpx = CameraController.MultishotResolutionsMPixList.get(j);
+						maxFastIdx = j;
+					}
+				}
+			}
+			if (previewSizes != null && previewSizes.size() > 0 && maxMpx >= CameraController.MPIX_1080)
+			{
+				SharedPreferences.Editor prefEditor = prefs.edit();
+				prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(maxFastIdx));
+				prefEditor.commit();
+			}
+		}
+
+		return;
+	}
+
+	protected static void fillResolutionsListMultishot(int ii, int currSizeWidth, int currSizeHeight)
+	{
+		boolean needAdd = true;
+		boolean isFast = true;
+
+		Long lmpix = (long) currSizeWidth * currSizeHeight;
+		float mpix = (float) lmpix / 1000000.f;
+		float ratio = (float) currSizeWidth / currSizeHeight;
+
+		// find good location in a list
+		int loc;
+		for (loc = 0; loc < CameraController.MultishotResolutionsMPixList.size(); ++loc)
+			if (CameraController.MultishotResolutionsMPixList.get(loc) < lmpix)
+				break;
+
+		int ri = 0;
+		if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+			ri = 1;
+		if (Math.abs(ratio - 3 / 2.f) < 0.12f)
+			ri = 2;
+		if (Math.abs(ratio - 16 / 9.f) < 0.15f)
+			ri = 3;
+		if (Math.abs(ratio - 1) == 0)
+			ri = 4;
+
+		String newName;
+		if (isFast)
+		{
+			newName = String.format("%3.1f Mpix  " + CameraController.RATIO_STRINGS[ri] + " (fast)", mpix);
+		} else
+		{
+			newName = String.format("%3.1f Mpix  " + CameraController.RATIO_STRINGS[ri], mpix);
+		}
+
+		for (int i = 0; i < CameraController.MultishotResolutionsNamesList.size(); i++)
+		{
+			if (newName.equals(CameraController.MultishotResolutionsNamesList.get(i)))
+			{
+				Long lmpixInArray = (long) (CameraController.MultishotResolutionsSizeList.get(i).getWidth() * CameraController.MultishotResolutionsSizeList
+						.get(i).getHeight());
+				if (Math.abs(lmpixInArray - lmpix) / lmpix < 0.1)
+				{
+					needAdd = false;
+					break;
+				}
+			}
+		}
+
+		if (needAdd)
+		{
+			if (isFast)
+			{
+				CameraController.FastIdxelist.add(ii);
+			}
+			CameraController.MultishotResolutionsNamesList.add(loc, newName);
+			CameraController.MultishotResolutionsIdxesList.add(loc, String.format("%d", ii));
+			CameraController.MultishotResolutionsMPixList.add(loc, lmpix);
+			CameraController.MultishotResolutionsSizeList.add(loc, CameraController.getInstance().new Size(
+					currSizeWidth, currSizeHeight));
+		}
+	}
+	
+	
+	public static List<CameraController.Size> fillPreviewSizeList()
+	{
+		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
 		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
 		for (Size sz : cs)
 			if(sz.getWidth()*sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
 				previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+		
+		return previewSizes;
 	}
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
@@ -910,6 +1032,7 @@ public class HALv3
 				captureNextImageWithParams(format, pause[currentFrameIndex], evRequested, currentFrameIndex);
 			} else
 			{
+				pauseBetweenShots = new int[totalFrames];
 				if (evRequested != null && evRequested.length >= nFrames)
 				{
 					 for (int n=0; n<nFrames; ++n)
@@ -1006,6 +1129,9 @@ public class HALv3
 
 					public void onFinish()
 					{
+						// play tick sound
+						MainScreen.getGUIManager().showCaptureIndication();
+						MainScreen.getInstance().playShutter();
 						if (evRequested != null && evRequested.length > index)
 							stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
 
@@ -1023,6 +1149,9 @@ public class HALv3
 			}
 			else
 			{
+				// play tick sound
+				MainScreen.getGUIManager().showCaptureIndication();
+				MainScreen.getInstance().playShutter();
 				if (evRequested != null && evRequested.length > index)
 					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
 
