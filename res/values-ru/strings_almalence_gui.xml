@@ -7,7 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Фронтальная камера</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Использовать фронтальную камеру</string>
     <string name="Pref_Common_ImageSize_Title">Размер снимка</string>
-    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Размер снимка (Smart Multishot и Ночь)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Размер снимка (Multishot, Ночь)</string>
     <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
     <string name="Pref_Common_Shutter_Title">Отключить звуки</string>
     <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>

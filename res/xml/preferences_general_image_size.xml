@@ -28,6 +28,18 @@
         android:title="@string/Pref_Comon_SmartMultishot_And_Night_ImageSize_Title" />
     <ListPreference
         android:defaultValue="2"
+        android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
+        android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"
+        android:key="imageSizePrefPanoramaBack"
+        android:title="@string/pref_plugin_capture_panoramaaugmented_imageheight_title" />
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
+        android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"
+        android:key="imageSizePrefPanoramaFront"
+        android:title="@string/pref_plugin_capture_panoramaaugmented_imageheight_title" />
+    <ListPreference
+        android:defaultValue="2"
         android:entries="@array/dimsArrayVideo"
         android:entryValues="@array/dimsValuesVideo"
         android:key="imageSizePrefVideoFront"

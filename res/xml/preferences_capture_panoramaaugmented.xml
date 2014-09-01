@@ -1,13 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
  
 <PreferenceCategory android:title="@string/pref_plugin_capture_panoramaaugmented_preference_title">   
-    	<ListPreference
-			android:title="@string/pref_plugin_capture_panoramaaugmented_imageheight_title"
-			android:key="pref_plugin_capture_panoramaaugmented_imageheight2_"
-			android:defaultValue="2"
-			android:entries="@array/plugin_capture_panoramaaugmented_dimsArray"
-			android:entryValues="@array/plugin_capture_panoramaaugmented_dimsValues"/>
-    	
     	<!-- -+-  -->
     	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"

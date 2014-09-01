@@ -230,6 +230,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<Integer>						FastIdxelist;											;
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
+	protected static List<CameraController.Size>	SupportedPictureSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
 			"1:1"																	};
@@ -579,7 +580,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
 		try
 		{
-			if (!(isNexus && Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
+			if (!(isNexus && Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext
+					.getSystemService("camera") != null))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -587,8 +589,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						.commit();
 			} else
 				isHALv3Supported = true;
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 			isHALv3 = false;
@@ -797,6 +798,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		CameraController.fillPreviewSizeList();
+		CameraController.fillPictureSizeList();
 
 		if (CameraController.isHALv3)
 		{
@@ -851,18 +853,31 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return HALv3.getInstance().camDevice != null;
 	}
-	
+
 	private static void fillPreviewSizeList()
 	{
 		CameraController.SupportedPreviewSizesList = new ArrayList<CameraController.Size>();
-		if(!isHALv3)
+		if (!isHALv3)
 		{
 			List<Camera.Size> list = CameraController.camera.getParameters().getSupportedPreviewSizes();
-			for(Camera.Size sz : list)
-				CameraController.SupportedPreviewSizesList.add(CameraController.getInstance().new Size(sz.width, sz.height));
-		}
-		else
+			for (Camera.Size sz : list)
+				CameraController.SupportedPreviewSizesList.add(CameraController.getInstance().new Size(sz.width,
+						sz.height));
+		} else
 			CameraController.SupportedPreviewSizesList = HALv3.fillPreviewSizeList();
+	}
+
+	private static void fillPictureSizeList()
+	{
+		CameraController.SupportedPictureSizesList = new ArrayList<CameraController.Size>();
+		if (!isHALv3)
+		{
+			List<Camera.Size> list = CameraController.camera.getParameters().getSupportedPictureSizes();
+			for (Camera.Size sz : list)
+				CameraController.SupportedPictureSizesList.add(CameraController.getInstance().new Size(sz.width,
+						sz.height));
+		} else
+			HALv3.fillPictureSizeList(CameraController.SupportedPictureSizesList);
 	}
 
 	public void populateCameraDimensions()
@@ -1121,9 +1136,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				Log.e(TAG, "SupportedPreviewSizesList == null");
 			}
-			
+
 			return previewSizes;
-			
+
 		} else
 			return HALv3.fillPreviewSizeList();
 	}
@@ -1149,7 +1164,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		List<CameraController.Size> pictureSizes = new ArrayList<CameraController.Size>();
 		if (!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
+			if (CameraController.SupportedPictureSizesList != null)
+			{
+				pictureSizes = new ArrayList<CameraController.Size>(CameraController.SupportedPictureSizesList);
+			} else if (CameraController.camera != null)
 			{
 				List<Camera.Size> sizes = CameraController.camera.getParameters().getSupportedPictureSizes();
 				for (Camera.Size sz : sizes)
