@@ -19,7 +19,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:gravity="start"
-	        android:textSize="24sp"
+	        android:textSize="18sp"
 	        android:textColor="@android:color/black"
 	        />
 	</ScrollView>
@@ -35,7 +35,7 @@
    	</ImageView>
    	<ImageView
 		android:id="@+id/storeStore"
-		android:src="@drawable/almalence_upgrade_whatsnew"
+		android:src="@drawable/almalence_upgrade_whatsnew_previous"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
 		android:layout_width="@dimen/paramsLayoutHeight"
