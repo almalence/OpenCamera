@@ -7,7 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Front camera</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Use front camera</string>
     <string name="Pref_Common_ImageSize_Title">Image size</string>
-    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Image size (Smart Multishot and Night)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Image size (Multishot, Night)</string>
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
     <string name="Pref_Common_Shutter_Title">Silent operation</string>
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>

@@ -53,6 +53,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -100,16 +101,15 @@ import android.widget.Toast;
 
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
-//<!-- -+-
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.plugins.capture.multishot.MultiShotCapturePlugin;
-import com.almalence.plugins.capture.night.NightCapturePlugin;
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppRater;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
+//<!-- -+-
 
 //-+- -->
 /* <!-- +++
@@ -136,71 +136,72 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	//
 	// Description<<
 
-	private static final int			MSG_RETURN_CAPTURED		= -1;
+	private static final int			MSG_RETURN_CAPTURED				= -1;
 
-	private static final int			MODE_GENERAL			= 0;
+	private static final int			MODE_GENERAL					= 0;
 	private static final int			MODE_SMART_MULTISHOT_AND_NIGHT	= 1;
-	private static final int			MODE_VIDEO				= 2;
-	
-	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
-	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
-	private static final long					MPIX_8				= 3504 * 2336;
+	private static final int			MODE_PANORAMA					= 2;
+	private static final int			MODE_VIDEO						= 3;
+
+	private static final int			MIN_MPIX_SUPPORTED				= 1280 * 960;
+	private static final int			MIN_MPIX_PREVIEW				= 600 * 400;
+	private static final long			MPIX_8							= 3504 * 2336;
 
 	public static MainScreen			thiz;
 	public Context						mainContext;
 	private Handler						messageHandler;
 
 	// Interface to HALv3 camera and Old style camera
-	private CameraController			cameraController		= null;
+	private CameraController			cameraController				= null;
 
 	// HALv3 camera's objects
 	private ImageReader					mImageReaderPreviewYUV;
 	private ImageReader					mImageReaderYUV;
 	private ImageReader					mImageReaderJPEG;
 
-	private boolean						captureYUVFrames		= false;
+	private boolean						captureYUVFrames				= false;
 
-	public GUI							guiManager				= null;
+	public GUI							guiManager						= null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
 	private GLLayer						glView;
 
-	private boolean						mPausing				= false;
+	private boolean						mPausing						= false;
 
-	private File						forceFilename			= null;
+	private File						forceFilename					= null;
 	private Uri							forceFilenameUri;
 
 	private SurfaceHolder				surfaceHolder;
 	private SurfaceView					preview;
-	private Surface						mCameraSurface			= null;
+	private Surface						mCameraSurface					= null;
 	private OrientationEventListener	orientListener;
-	private boolean						landscapeIsNormal		= false;
-	private boolean						surfaceCreated			= false;
+	private boolean						landscapeIsNormal				= false;
+	private boolean						surfaceCreated					= false;
 
 	// shared between activities
 	private int							imageWidth, imageHeight;
 	private int							previewWidth, previewHeight;
 	private int							saveImageWidth, saveImageHeight;
 
-	private CountDownTimer				screenTimer				= null;
-	private boolean						isScreenTimerRunning	= false;
+	private CountDownTimer				screenTimer						= null;
+	private boolean						isScreenTimerRunning			= false;
 
-	private static boolean				wantLandscapePhoto		= false;
-	private int							orientationMain			= 0;
-	private int							orientationMainPrevious	= 0;
+	private static boolean				wantLandscapePhoto				= false;
+	private int							orientationMain					= 0;
+	private int							orientationMainPrevious			= 0;
 
-	private SoundPlayer					shutterPlayer			= null;
+	private SoundPlayer					shutterPlayer					= null;
 
 	// Common preferences
 	private String						imageSizeIdxPreference;
 	private String						multishotImageSizeIdxPreference;
-	private boolean						shutterPreference		= true;
-	private boolean						shotOnTapPreference		= false;
+	private boolean						shutterPreference				= true;
+	private boolean						shotOnTapPreference				= false;
 
-	private boolean						showHelp				= false;
+	private boolean						showHelp						= false;
 
-	private boolean						keepScreenOn			= false;
+	private boolean						keepScreenOn					= false;
 
 	private String						saveToPath;
 	private String						saveToPreference;
@@ -208,7 +209,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private static boolean				maxScreenBrightnessPreference;
 
-	private static boolean				mAFLocked				= false;
+	private static boolean				mAFLocked						= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -220,35 +221,35 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	//
 	// Description<<
 
-	private static boolean				isCreating				= false;
-	private static boolean				mApplicationStarted		= false;
-	private static boolean				mCameraStarted			= false;
+	private static boolean				isCreating						= false;
+	private static boolean				mApplicationStarted				= false;
+	private static boolean				mCameraStarted					= false;
 
 	// Clicked mode id from widget.
-	public static final String			EXTRA_ITEM				= "WidgetModeID";
+	public static final String			EXTRA_ITEM						= "WidgetModeID";
 
-	public static final String			EXTRA_TORCH				= "WidgetTorchMode";
-	public static final String			EXTRA_BARCODE			= "WidgetBarcodeMode";
-	public static final String			EXTRA_SHOP				= "WidgetGoShopping";
+	public static final String			EXTRA_TORCH						= "WidgetTorchMode";
+	public static final String			EXTRA_BARCODE					= "WidgetBarcodeMode";
+	public static final String			EXTRA_SHOP						= "WidgetGoShopping";
 
-	private static boolean				launchTorch				= false;
-	private static boolean				launchBarcode			= false;
-	private static boolean				goShopping				= false;
+	private static boolean				launchTorch						= false;
+	private static boolean				launchBarcode					= false;
+	private static boolean				goShopping						= false;
 
-	private static int					prefFlash				= -1;
-	private static boolean				prefBarcode				= false;
+	private static int					prefFlash						= -1;
+	private static boolean				prefBarcode						= false;
 
-	private static final int			VOLUME_FUNC_SHUTTER		= 0;
-	private static final int			VOLUME_FUNC_EXPO		= 2;
-	private static final int			VOLUME_FUNC_NONE		= 3;
+	private static final int			VOLUME_FUNC_SHUTTER				= 0;
+	private static final int			VOLUME_FUNC_EXPO				= 2;
+	private static final int			VOLUME_FUNC_NONE				= 3;
 
-	private static List<Area>			mMeteringAreaMatrix5	= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaMatrix4	= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaMatrix1	= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaCenter		= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaSpot		= new ArrayList<Area>();
+	private static List<Area>			mMeteringAreaMatrix5			= new ArrayList<Area>();
+	private static List<Area>			mMeteringAreaMatrix4			= new ArrayList<Area>();
+	private static List<Area>			mMeteringAreaMatrix1			= new ArrayList<Area>();
+	private static List<Area>			mMeteringAreaCenter				= new ArrayList<Area>();
+	private static List<Area>			mMeteringAreaSpot				= new ArrayList<Area>();
 
-	private int							currentMeteringMode		= -1;
+	private int							currentMeteringMode				= -1;
 
 	public static String				sEvPref;
 	public static String				sSceneModePref;
@@ -283,10 +284,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static String				sDefaultModeName;
 
-	public static int					sDefaultValue			= CameraParameters.SCENE_MODE_AUTO;
-	public static int					sDefaultFocusValue		= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
-	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
-	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
+	public static int					sDefaultValue					= CameraParameters.SCENE_MODE_AUTO;
+	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -591,8 +592,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 1);
-//		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
-//				ImageFormat.YUV_420_888, 1);
+		// thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
+		// ImageFormat.YUV_420_888, 1);
 
 		// ImageReader for YUV still images
 		thiz.mImageReaderYUV = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.YUV_420_888, 1);
@@ -660,7 +661,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.imageSizeIdxPreference;
 	}
-	
+
 	public static String getMultishotImageSizeIndex()
 	{
 		return thiz.multishotImageSizeIdxPreference;
@@ -714,6 +715,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		setImageSizeOptions(prefActivity, MODE_GENERAL);
 		setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
+		setImageSizeOptions(prefActivity, MODE_PANORAMA);
 		setImageSizeOptions(prefActivity, MODE_VIDEO);
 	}
 
@@ -740,11 +742,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			opt1 = "imageSizePrefSmartMultishotBack";
 			opt2 = "imageSizePrefSmartMultishotFront";
-			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen.selectImageDimensionMultishot()));
-			entries = CameraController.MultishotResolutionsNamesList.toArray(
-					new CharSequence[CameraController.MultishotResolutionsNamesList.size()]);
-			entryValues = CameraController.MultishotResolutionsIdxesList.toArray(
-					new CharSequence[CameraController.MultishotResolutionsIdxesList.size()]);
+			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
+					.selectImageDimensionMultishot()));
+			entries = CameraController.MultishotResolutionsNamesList
+					.toArray(new CharSequence[CameraController.MultishotResolutionsNamesList.size()]);
+			entryValues = CameraController.MultishotResolutionsIdxesList
+					.toArray(new CharSequence[CameraController.MultishotResolutionsIdxesList.size()]);
+		} else if (mode == MODE_PANORAMA)
+		{
+			opt1 = "imageSizePrefPanoramaBack";
+			opt2 = "imageSizePrefPanoramaFront";
+			PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
+			currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
+			entries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
+					new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().size()]);
+			entryValues = PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().toArray(
+					new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size()]);
 		} else if (mode == MODE_VIDEO)
 		{
 			opt1 = "imageSizePrefVideoBack";
@@ -828,6 +841,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						break;
 					}
 				}
+				
 				if (mode == MODE_GENERAL)
 				{
 					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -836,6 +850,50 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						{
 							int value = Integer.parseInt(newValue.toString());
 							CameraController.setCameraImageSizeIndex(value);
+							return true;
+						}
+					});
+				}
+				
+				if (mode == MODE_PANORAMA) {
+					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+					{
+						// @Override
+						public boolean onPreferenceChange(Preference preference, Object newValue)
+						{
+							int value = Integer.parseInt(newValue.toString());
+							PanoramaAugmentedCapturePlugin.prefResolution = value;
+
+							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
+							{
+								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i).equals(newValue))
+								{
+									final int idx = i;
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist().get(idx);
+
+									// frames_fit_count may decrease when
+									// returning to main view due to slightly
+									// more memory used, so in text messages we
+									// report both exact and decreased count to
+									// the user
+									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin.getFrameSizeInBytes(
+											point.x, point.y));
+
+									{
+										Toast.makeText(
+												MainScreen.getInstance(),
+												String.format(
+														MainScreen
+																.getInstance()
+																.getString(
+																		R.string.pref_plugin_capture_panoramaaugmented_imageheight_warning),
+														frames_fit_count), Toast.LENGTH_SHORT).show();
+
+										return true;
+									}
+								}
+							}
+
 							return true;
 						}
 					});
@@ -1110,9 +1168,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		shotOnTapPreference = prefs.getBoolean(MainScreen.sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
 				: MainScreen.sImageSizeFrontPref, "-1");
-		
-		multishotImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
-				: "imageSizePrefSmartMultishotFront", "-1");
+
+		multishotImageSizeIdxPreference = prefs.getString(
+				CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
+						: "imageSizePrefSmartMultishotFront", "-1");
 	}
 
 	@Override
@@ -1284,7 +1343,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		return captureIdx;
 	}
-	
+
 	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -1293,7 +1352,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon", false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
-		
 
 		if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 		{
@@ -1323,7 +1381,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.e("MainScreen", "configureCamera()");
 
 		CameraController.getInstance().updateCameraFeatures();
-		
+
 		// ----- Select preview dimensions with ratio correspondent to
 		// full-size image
 		PluginManager.getInstance().setCameraPreviewSize();
@@ -1401,7 +1459,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				if (!CameraController.isUseHALv3())
 				{
-					if(!CameraController.isCameraCreated())
+					if (!CameraController.isCameraCreated())
 						return;
 					// exceptions sometimes happen here when resuming after
 					// processing
@@ -1460,7 +1518,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
-//		guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
+		// guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280,
+		// 720));
 
 		// configure camera with all the surfaces to be ever used
 		try
@@ -2568,22 +2627,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-//	public void purchaseGroupshot()
-//	{
-//		if (isPurchasedGroupshot() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_GROUPSHOT, GROUPSHOT_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
+	// public void purchaseGroupshot()
+	// {
+	// if (isPurchasedGroupshot() || isPurchasedAll())
+	// return;
+	// String payload = "";
+	// try
+	// {
+	// mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_GROUPSHOT,
+	// GROUPSHOT_REQUEST,
+	// mPreferencePurchaseFinishedListener, payload);
+	// } catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// Log.e("Main billing", "Purchase result " + e.getMessage());
+	// Toast.makeText(MainScreen.thiz, "Error during purchase " +
+	// e.getMessage(), Toast.LENGTH_LONG).show();
+	// }
+	// }
 
 	// Callback for when purchase from preferences is finished
 	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
