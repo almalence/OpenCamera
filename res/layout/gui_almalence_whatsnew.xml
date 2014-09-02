@@ -25,7 +25,7 @@
 	</ScrollView>
 	<ImageView
 		android:id="@+id/storeFeatures"
-		android:src="@drawable/almalence_upgrade_whatsnew"
+		android:src="@drawable/almalence_upgrade_tips"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
 		android:layout_width="@dimen/paramsLayoutHeight"
@@ -35,7 +35,7 @@
    	</ImageView>
    	<ImageView
 		android:id="@+id/storeStore"
-		android:src="@drawable/almalence_upgrade_whatsnew_previous"
+		android:src="@drawable/almalence_upgrade_market"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
 		android:layout_width="@dimen/paramsLayoutHeight"
