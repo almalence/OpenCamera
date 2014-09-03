@@ -323,7 +323,7 @@ public class AlmalenceStore
 				break;
 			case 1:
 				// subscription year
-				icon.setImageResource(R.drawable.store_promo);
+				icon.setImageResource(R.drawable.store_subscription);
 				description.setText(MainScreen.getInstance().getResources()
 						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())

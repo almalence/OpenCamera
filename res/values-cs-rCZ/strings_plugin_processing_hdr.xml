@@ -8,7 +8,7 @@
 	<string name="Pref_HDR_ColorViv_Title">Živost barev</string>
 	
 	<string name="Pref_HDR_LocalContrast_Title">Kontrast</string>
-	<string name="Pref_HDR_LocalContrast_Summary">Nastavení kontrastu HDR výstupu</string>
+	<string name="Pref_HDR_LocalContrast_Summary">Nastavte kontrast HDR výstupu</string>
 	
 	<string name="Pref_HDR_Microcontrast_Title">Mikro konstrast</string>
 	<string name="Pref_HDR_Microcontrast_Summary">Mikro konstrast jemných detailů</string>
@@ -49,7 +49,7 @@
     <string name="adjustments_preset_candy">Detailní</string>
     <string name="adjustments_preset_artistic">Umělecký</string>
     <string name="adjustments_preset_bnw">Černobílý</string>
-    <string name="adjustments_preset_vanilla">Vanila</string>
+    <string name="adjustments_preset_vanilla">Vanilla</string>
     <string name="adjustments_preset_xerox">Xerox</string>
     <string name="adjustments_preset_neon">Neon</string>
     <string name="adjustments_preset_custom">Vlastní</string>

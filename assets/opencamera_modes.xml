@@ -192,7 +192,7 @@
 	
 	    <export 	id="com.almalence.plugins.export"/>
 
-		<sku/>
+		<sku		id="plugin_almalence_video"/>
 		
 		<howtotext  id=""/>
 			

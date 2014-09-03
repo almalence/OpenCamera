@@ -134,11 +134,11 @@ public class AppEditorNotifier
 		ll.addView(tv);
 
 		Button b1 = new Button(mContext);
-		b1.setText(MainScreen.getInstance().getResources().getString(R.string.widgetInstallText));
+		b1.setText(MainScreen.getInstance().getResources().getString(R.string.editorInstallText));
 		ll.addView(b1);
 
 		Button b3 = new Button(mContext);
-		b3.setText(MainScreen.getInstance().getResources().getString(R.string.widgetNoText));
+		b3.setText(MainScreen.getInstance().getResources().getString(R.string.editorNoText));
 		ll.addView(b3);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

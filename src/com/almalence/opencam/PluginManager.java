@@ -1450,10 +1450,7 @@ public class PluginManager implements PluginManagerInterface
 
 			// <!-- -+-
 			// if mode free
-			Mode mode = getActiveMode();
-			if (mode.SKU != null)
-				if (!mode.SKU.isEmpty())
-					MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
+			controlPremiumContent();
 			// -+- -->
 
 			MainScreen.getGUIManager().lockControls = false;
@@ -1610,6 +1607,14 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
+	public void controlPremiumContent()
+	{
+		Mode mode = getActiveMode();
+		if (mode.SKU != null)
+			if (!mode.SKU.isEmpty())
+				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
+	}
+	
 	/******************************************************************************************************
 	 * Work with hash table
 	 ******************************************************************************************************/

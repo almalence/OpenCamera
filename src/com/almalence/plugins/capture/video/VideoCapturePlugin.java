@@ -1217,6 +1217,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.modeDRO())
 		{
+			PluginManager.getInstance().controlPremiumContent();
+			
 			this.droEngine.stopRecording();
 
 			MainScreen.getInstance().playShutter();

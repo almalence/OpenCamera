@@ -10,7 +10,7 @@
     <string name="Pref_Shooting_Inactive_Summary">Ostatní režimy nastavení</string>
     
     <string name="Pref_About_Title">O aplikaci</string>
-    <string name="Pref_About_Summary">Verze, licence, kontakt</string>
+    <string name="Pref_About_Summary">Verze, licence, vývojář</string>
     
     <string name="Pref_Only_Advanced">Jsou dostupné pouze pokročilé předvolby.</string>
 </resources>

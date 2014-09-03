@@ -3,10 +3,10 @@
 	
 	<string name="Pref_PreShot_Preference_Title">Předsnímek - focení</string>
 	
-	<string name="Pref_PreShot_ImageSize_Title">Velikost fotky</string>
+	<string name="Pref_PreShot_ImageSize_Title">Velikost fotek</string>
 	
 	<string name="Pref_PreShot_RefocusOnEachShot_Title">Zaostřit u každého snímku</string>
-	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Některá zařízení zapomenou místo ostření po vyfocení. Zaškrtněte pokud nejsou fotky zaostřené.</string>
+	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Některá zařízení zapomenou místo ostření po vyfocení, zaškrtněte, pokud nejsou fotky zaostřené</string>
 	
 	<string name="Pref_PreShot_Mode_Title">Režim</string>
 	<string name="Pref_PreShot_Mode_Summary">Režim snímání fotek</string>
@@ -14,14 +14,14 @@
 	<string name="Pref_PreShot_preshot_Title">Zobrazit snímky poslední(ch)...</string>
 	<string name="Pref_PreShot_preshot_Summary">Zobrazí snímky pouze několik sekund před ukončením snímání.</string>
 	
-	<string name="Pref_PreShot_fps_Title">Snímky za sekundu (u HiSpeed)</string>
+	<string name="Pref_PreShot_fps_Title">Snímky za sekundu (režim "Rychlost")</string>
 	<string name="Pref_PreShot_fps_Summary">Počet fotek snímaných za jednu sekundu</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">Pauza mezi snímky (u HiRes)</string>
-	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pauza po každém snímku - za účelem ostření.</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pauza mezi snímky (režim "Kvalita")</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pauza po každém snímku - za účelem ostření</string>
 	
-	<string name="Pref_PreShot_Low">HiSpeed - Rychlejší</string>
-	<string name="Pref_PreShot_High">HiRes - Kvalitnější</string>
+	<string name="Pref_PreShot_Low">"Rychlost"</string>
+	<string name="Pref_PreShot_High">"Kvalita"</string>
 	
 	<string name="Pref_PreShot_None">Žádné</string>
 	
@@ -34,4 +34,10 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">Autostart</string>
 	<string name="Pref_PreShot_Autostart_Summary">Začne snímat ihned po spuštění fotoaparátu</string>
+	
+	<string name="Preference_PreShotIntervalPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotPauseBetweenShotsPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotFPSPref">objectRemovalPauseBetweenShots</string>
+	<string name="Preference_PreShotModePref">objectRemovalPauseBetweenShots</string>
+	
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="single_mode_name">Jeden snímek</string>
+    <string name="single_mode_name">Klasický snímek</string>
     <string name="single_mode_howto"></string>
     
     <string name="selftimer_mode_name">Časovač</string>
@@ -26,6 +26,9 @@
     
     <string name="objectremoval_mode_name">Odstranění objektu</string>
     <string name="objectremoval_mode_howto"></string>
+    
+    <string name="multishot_mode_name">Chytrý multisnímek</string>
+	<string name="multishot_mode_howto"></string>
     
     <string name="groupshot_mode_name">Skupinový snímek</string>
     <string name="groupshot_mode_howto"></string>

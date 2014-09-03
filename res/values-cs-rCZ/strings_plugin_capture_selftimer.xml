@@ -8,13 +8,15 @@
 	
 	<string name="Pref_SelfTimer_ImagesAmount_Title">Počet snímků</string>
 	
-	<string name="Pref_SelfTimerCapture_Blinking_Title">Blikání při odpočítávání</string>
-	<string name="Pref_SelfTimerCapture_Blinking_Summary">Blesk bliká každou sekundu odpočtu</string>
+	<string name="Pref_SelfTimerCapture_Blinking_Title">Blesk při odpočtu</string>
+	<string name="Pref_SelfTimerCapture_Blinking_Summary">Blesk bliká každou sekundu při odpočtu</string>
 	
 	<string name="Pref_SelfTimerCapture_Sound_Title">Zvuk při odpočtu</string>
-	<string name="Pref_SelfTimerCapture_Sound_Summary">Vydat zvuk každou sekundu odpočtu</string>
+	<string name="Pref_SelfTimerCapture_Sound_Summary">Zařízení pípne každou sekundu při odpočtu</string>
 	
 	<string name="Res_SelfTimerCapture_Capture_1">1 fotka</string>
     <string name="Res_SelfTimerCapture_Capture_2">2 fotky</string>
     <string name="Res_SelfTimerCapture_Capture_3">3 fotky</string>
+    
+    <string name="selfTimerTitle">Časovač</string>
 </resources>
