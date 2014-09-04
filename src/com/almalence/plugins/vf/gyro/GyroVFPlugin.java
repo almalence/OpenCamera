@@ -11,7 +11,9 @@ import android.graphics.PorterDuff.Mode;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -20,6 +22,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginViewfinder;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener;
+import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
+import com.almalence.ui.RotateImageView;
+
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
@@ -27,14 +37,7 @@ import android.widget.RelativeLayout;
  import com.almalence.opencam_plus.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener;
-import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
-import com.almalence.ui.RotateImageView;
 
 public class GyroVFPlugin extends PluginViewfinder
 {
@@ -51,6 +54,8 @@ public class GyroVFPlugin extends PluginViewfinder
 	private VfGyroSensor				mVfGyroscope;
 	private AugmentedRotationListener	mAugmentedListener;
 	private AugmentedSurfaceView		mSurfacePreviewAugmented;
+
+	private static Handler				handler					= new Handler();
 
 	private float						viewAngleX				= 55.4f;
 	private float						viewAngleY				= 42.7f;
@@ -178,7 +183,20 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		mGyroState = prefs.getBoolean("PrefGyroVF", false);
-		mPrefHardwareGyroscope = prefs.getBoolean("PrefGyroTypeVF", true);
+
+		if (!prefs.contains("PrefGyroTypeVF"))
+		{
+			Editor editor = prefs.edit();
+			if (mGyroscope != null)
+			{
+				editor.putBoolean("PrefGyroTypeVF", true);
+			} else
+			{
+				editor.putBoolean("PrefGyroTypeVF", false);
+			}
+			editor.commit();
+		}
+		mPrefHardwareGyroscope = prefs.getBoolean("PrefGyroTypeVF", false);
 
 		if (mGyroState == ON)
 		{
@@ -202,24 +220,24 @@ public class GyroVFPlugin extends PluginViewfinder
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
+		if (mGyroState == OFF)
+			return;
+
 		if (!this.mPrefHardwareGyroscope)
 		{
 			this.mVfGyroscope.NewData(data);
 		}
 
-		if (mGyroState == OFF)
-			return;
-
-		if (mSurfacePreviewAugmented != null)
-		{
-			mSurfacePreviewAugmented.onDrawFrame();
-		}
 	}
 
 	@Override
 	public void onOrientationChanged(int orientation)
 	{
 		mOrientation = orientation;
+		if (mHorizonIndicatorMarkHorizontal != null)
+		{
+			mHorizonIndicatorMarkHorizontal.setRotation(orientation - 90);
+		}
 	}
 
 	@Override
@@ -248,6 +266,26 @@ public class GyroVFPlugin extends PluginViewfinder
 		releaseSensors();
 	}
 
+	private void updatehHardwareGyro()
+	{
+		if (mGyroState == OFF)
+			return;
+
+		Log.e("asdasd", "asdasd");
+		if (mSurfacePreviewAugmented != null)
+		{
+			mSurfacePreviewAugmented.onDrawFrame();
+		}
+		handler.postDelayed(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				updatehHardwareGyro();
+			}
+		}, 20);
+	}
+
 	private void initSensors()
 	{
 		if (mGyroState == ON)
@@ -261,6 +299,15 @@ public class GyroVFPlugin extends PluginViewfinder
 				if (mPrefHardwareGyroscope)
 				{
 					mSensorManager.registerListener(mAugmentedListener, mGyroscope, SensorManager.SENSOR_DELAY_GAME);
+					updatehHardwareGyro();
+					handler.postDelayed(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							updatehHardwareGyro();
+						}
+					}, 50);
 				}
 			}
 
@@ -321,6 +368,15 @@ public class GyroVFPlugin extends PluginViewfinder
 	public void updateHorizonIndicator(float verticalError, float horizontalError, final float sideErrorVertical,
 			final float sideErrorHorizontal)
 	{
+
+		if (mHorizonIndicatorContainer == null || mHorizonIndicatorContainer == null
+				|| mHorizonIndicatorMarkTopDown == null || mHorizonIndicatorMarkRotation == null
+				|| mHorizonIndicatorMarkHorizontal == null || mHorizonIndicatorAim == null
+				|| mHorizonIndicatorAimTopDown == null || mHorizonIndicatorMarkContainer == null)
+		{
+			return;
+		}
+
 		if (MainScreen.getGUIManager().lockControls)
 		{
 			mHorizonIndicatorContainer.setVisibility(View.GONE);
