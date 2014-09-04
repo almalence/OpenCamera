@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="Pref_Billing_Left">%1$s - zbývající počet fotek zdarma: %2$d</string>
+    <string name="trial_left">%1$s - zbývající počet fotek zdarma: %2$d</string>
+    <string name="trial_finished">%1$s - snímky zdarma vyčerpány, další snímky je třeba zakoupit</string>
     <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera  v3.19\n(©) Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera  v3.25\n(©) Almalence Inc.\n</string>
     <!--  -+- -->
     <!-- +++
     <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.19\n(©) Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) Almalence Inc.\n</string>
     +++ -->
     <string name="cannot_create_jpeg">Chyba: Není možné uložit fotku!</string>
     <string name="choose_folder_pick">Použít tuto složku</string>
@@ -30,25 +31,18 @@
     
     <string name="dimensions_none">Žádné</string>
     
-    <string name="already_unlocked">odemčeno</string>
+    <string name="already_unlocked">Již odemčeno</string>
     
     <string name="volumeBtnTakePic">Vyfotit</string>
     <string name="volumeBtnZoom">Zoom</string>
     <string name="volumeBtnExpoCorrection">Úprava expozice</string>
     <string name="volumeBtnNone">Žádná</string>
     
-    <string name="device_name_ss3_01">GT-I9300</string>
-    <string name="device_name_ss3_02">SHV-E210</string>
-    <string name="device_name_ss3_03">SGH-T999</string>
-    <string name="device_name_ss3_04">SGH-I747</string>
-    <string name="device_name_ss3_05">SGH-N064</string>
-    <string name="device_name_ss3_06">SGH-N035</string>
-    <string name="device_name_ss3_07">SCH-J021</string>
-    <string name="device_name_ss3_08">SCH-R530</string>
-    <string name="device_name_ss3_09">SCH-I535</string>
-    <string name="device_name_ss3_10">SPH-L710</string>
-    <string name="device_name_ss3_11">GT-I9308</string>
-    <string name="device_name_ss3_12">SCH-I939</string>
-    <string name="device_name_ss3_13">GT-I9305</string>
-
+    <string name="raterMain">Pokud se Vám tato aplikace líbí, ohodnoťte ji prosím.\n\nDěkujeme za Vaši podporu!</string>
+    <string name="raterRate">Ohodnotit A Better Camera</string>
+    <string name="raterNo">Ne, díky</string>
+    
+    <string name="raterSendReview"> Jelikož chceme i nadále tuto aplikaci vylepšovat, máme zájem o Váš názor, který nám můžete touto cestou sdělit.</string>
+    <string name="raterSend">Zaslat</string>
+    
 </resources>

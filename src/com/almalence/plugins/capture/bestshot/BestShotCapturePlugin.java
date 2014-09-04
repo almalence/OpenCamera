@@ -61,18 +61,17 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	private int				imagesTaken	= 0;
 
-	private static String	sImagesAmountPref;
+	//private static String	sImagesAmountPref;
 
 	public BestShotCapturePlugin()
 	{
-		super("com.almalence.plugins.bestshotcapture", R.xml.preferences_capture_bestshot, 0,
-				R.drawable.gui_almalence_mode_bestshot, "Best Shot images");
+		super("com.almalence.plugins.bestshotcapture", 0, 0, 0, null);
 	}
 
 	@Override
 	public void onCreate()
 	{
-		sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BestShotImagesAmount);
+		//sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BestShotImagesAmount);
 	}
 
 	@Override
@@ -81,80 +80,80 @@ public class BestShotCapturePlugin extends PluginCapture
 		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
-		refreshPreferences();
+//		refreshPreferences();
 
 		MainScreen.setCaptureYUVFrames(true);
 	}
 
-	private void refreshPreferences()
-	{
-		try
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
-		} catch (Exception e)
-		{
-			Log.v("Bestshot capture", "Cought exception " + e.getMessage());
-		}
+//	private void refreshPreferences()
+//	{
+//		try
+//		{
+//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
+//		} catch (Exception e)
+//		{
+//			Log.v("Bestshot capture", "Cought exception " + e.getMessage());
+//		}
+//
+//		switch (imageAmount)
+//		{
+//		case 3:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst3;
+//			break;
+//		case 5:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst5;
+//			break;
+//		case 10:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst10;
+//			break;
+//		default:
+//			break;
+//		}
+//	}
 
-		switch (imageAmount)
-		{
-		case 3:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-			break;
-		case 5:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-			break;
-		case 10:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void onQuickControlClick()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
-		int selected = 0;
-		switch (val)
-		{
-		case 3:
-			selected = 0;
-			break;
-		case 5:
-			selected = 1;
-			break;
-		case 10:
-			selected = 2;
-			break;
-		default:
-			break;
-		}
-		selected = (selected + 1) % 3;
-
-		Editor editor = prefs.edit();
-		switch (selected)
-		{
-		case 0:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-			editor.putString("BestshotImagesAmount", "3");
-			break;
-		case 1:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-			editor.putString("BestshotImagesAmount", "5");
-			break;
-		case 2:
-			quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-			editor.putString("BestshotImagesAmount", "10");
-			break;
-		default:
-			break;
-		}
-		editor.commit();
-	}
+//	@Override
+//	public void onQuickControlClick()
+//	{
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
+//		int selected = 0;
+//		switch (val)
+//		{
+//		case 3:
+//			selected = 0;
+//			break;
+//		case 5:
+//			selected = 1;
+//			break;
+//		case 10:
+//			selected = 2;
+//			break;
+//		default:
+//			break;
+//		}
+//		selected = (selected + 1) % 3;
+//
+//		Editor editor = prefs.edit();
+//		switch (selected)
+//		{
+//		case 0:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst3;
+//			editor.putString("BestshotImagesAmount", "3");
+//			break;
+//		case 1:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst5;
+//			editor.putString("BestshotImagesAmount", "5");
+//			break;
+//		case 2:
+//			quickControlIconID = R.drawable.gui_almalence_mode_burst10;
+//			editor.putString("BestshotImagesAmount", "10");
+//			break;
+//		default:
+//			break;
+//		}
+//		editor.commit();
+//	}
 
 	@Override
 	public void onGUICreate()
@@ -174,7 +173,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		if (!inCapture)
 		{
 			inCapture = true;
-			refreshPreferences();
+//			refreshPreferences();
 			takingAlready = true;
 			
 			try

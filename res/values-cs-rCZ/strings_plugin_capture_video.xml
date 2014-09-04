@@ -8,8 +8,17 @@
     <string name="Pref_Video_Stabilization_Title">Stabilizace videa</string>
     
     <string name="Pref_Video_ImageSize_Title">Rozlišení videa</string>
-    <string name="Pref_Video_None"></string>
+    <string name="Pref_Video_None">Žádné</string>
+    
+    <string name="setVideoText">Nastavit</string>
+    <string name="timeLapseTitle">Časosběr</string>
     
     <string name="Pref_Video_StartStandard_Title">Vestavěná aplikace</string>
     <string name="Pref_Video_StartStandard_Summary">Použít vestavěnou aplikaci pro natáčení videa</string>
+    
+    <string name="Pref_Video_DRO_ON">HDR Zap</string>
+    <string name="Pref_Video_DRO_OFF">HDR Vyp</string>
+    
+    <string name="Pref_Video_ShowLandscapeNotification_Title">Ukázat upozornění</string>
+    <string name="Pref_Video_ShowLandscapeNotification_Summary">Zapnout upozornění, abyste nenatáčeli video orientované na výšku</string>
 </resources>

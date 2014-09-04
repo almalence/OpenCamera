@@ -46,8 +46,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -95,8 +97,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -2745,7 +2749,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public void launchPurchase(String SKU, int requestID)
+	public void launchPurchase(int requestID)
 	{
 		try
 		{
@@ -2876,6 +2880,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		int left = ReadLaunches(projDir);
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
+		
+		if (left == 5)
+		{
+			//show subscription dialog
+			showSubscriptionDialog();
+			return;
+		}
 	}
 
 	// writes number of launches left into memory
@@ -2933,7 +2944,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			if (hdrPurchased)
 				return true;
-		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
+		}
+		if (mode.SKU.equals("plugin_almalence_video"))
+		{
+			if (hdrPurchased)
+				return true;
+		}else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
 		{
 			if (panoramaPurchased)
 				return true;
@@ -2960,7 +2976,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			toast.show();
 
 			// show appstore for this mode
-			launchPurchase(mode.SKU, 100);
+			launchPurchase(100);
 			return false;
 		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
 		{
@@ -2986,6 +3002,56 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			installed = false;
 		}
 		return installed;
+	}
+	
+	private void showSubscriptionDialog()
+	{
+		final float density = getResources().getDisplayMetrics().density;
+
+		LinearLayout ll = new LinearLayout(this);
+		ll.setOrientation(LinearLayout.VERTICAL);
+		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
+
+		ImageView img = new ImageView(this);
+		img.setImageResource(R.drawable.store_subscription);
+		ll.addView(img);
+
+		TextView tv = new TextView(this);
+		tv.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionText));
+		tv.setWidth((int) (250 * density));
+		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
+		ll.addView(tv);
+
+		Button bNo = new Button(this);
+		bNo.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionNoText));
+		ll.addView(bNo);
+		
+		Button bSubscribe = new Button(this);
+		bSubscribe.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionYesText));
+		ll.addView(bSubscribe);
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(ll);
+		final AlertDialog dialog = builder.create();
+
+		bSubscribe.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				purchasedUnlockAllSubscriptionYear();
+				dialog.dismiss();
+			}
+		});
+
+		bNo.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				dialog.dismiss();
+			}
+		});
+
+		dialog.show();
 	}
 
 	// -+- -->

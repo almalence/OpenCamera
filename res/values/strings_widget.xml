@@ -16,7 +16,9 @@
 	<string name="widgetGoShopText">Shop</string>
 	<string name="widgetActivation">Widget activation</string>
 	<string name="widgetAdvText">Do you know that you can launch A Better Camera straight into desired mode (be it video or hdr or else)? \nAll you need is our free Widget.</string>
-	<string name="widgetInstallText">Install Editor</string>
+	<string name="widgetInstallText">Install Widget</string>
 	<string name="widgetNoText">Remind later</string>
+	<string name="editorInstallText">Install Editor</string>
+	<string name="editorNoText">Remind later</string>
 	<string name="editorAdvText">You can edit your images in our FREE ABC Editor! Filters, effects and much more!</string>
 </resources>

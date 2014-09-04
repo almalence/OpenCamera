@@ -2,9 +2,12 @@
 <resources>
     <string name="Pref_Burst_Category_Title">Série snímků - focení</string>
     <string name="Pref_Burst_Preference_Title">Série snímků</string>
-    <string name="Pref_Burst_Preference_Summary">Nastavený počet fotek snímání</string>
+    <string name="Pref_Burst_Preference_Summary">Nastavte počet snímaných fotek</string>
 
     <string name="Pref_Burst_ImagesAmount_Title">Počet fotek v sérii</string>
+    
+    <string name="Preference_BurstImagesAmount">burstImagesAmount</string>
+    <string name="Preference_BurstPauseBetweenShots">burstPauseBetweenShots</string>
     
     <string name="Res_Burst_Images_Text"> fotek</string>
     <string name="Pref_Burst_PauseBetweenShots_Title"> Pauza mezi snímky</string>

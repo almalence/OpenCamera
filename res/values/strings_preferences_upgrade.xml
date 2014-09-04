@@ -3,8 +3,8 @@
 	<string name="Pref_Upgrde_All_Preference_Title">Unlock all forever</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Activate all features and modes, even future version additions</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">HDR</string>
-	<string name="Pref_Upgrde_HDR_Preference_Summary">Shoot great-looking high-dynamic range images</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR + HDR Video</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Take great-looking high-dynamic range images and videos</string>
 	
 	<string name="Pref_Upgrde_Panorama_Preference_Title">High-resolution panorama</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Shoot great panoramas with help of augmented-reality</string>
@@ -19,9 +19,11 @@
 	
 	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Year subscription (3 months free!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Month subscription</string>
+	<string name="subscriptionText">Use premium features FREE for 3 months - subscribe now!</string>
+	<string name="subscriptionYesText">Subscribe me!</string>
+	<string name="subscriptionNoText">Not now</string>
 	
-	<string name="storeWhatsnew">  version 3.25\n\n - pause for video added\n - level added\n - panorama improved\n - improved DRO\n - multishots combined\n - sweep panorama added\n - video fixed\n - stability fixes</string>
+	<string name="storeWhatsnew">  Version 3.25\n\n   New:\n    - HDR video\n    - pause for video\n    - level tool\n    - sweep panorama\n\n   Improved:\n    - panorama capture and processing\n    - DRO processing\n    - multishots combined in one mode\n\n   Bug fixes:\n    - video fixed\n    - stability fixes</string>
 	<string name="storeFeatures"></string>
-	<string name="storeTips">ABC tips and tricks\n\nIf you long press on any of the quick settings on the top bar you get a dropdown list that lets you select and change them to any setting you would like.\n\nSwipe left or write on main scree to see more or less info on the screen - histogram, grids, info controls, top quick settings menu.\n\nPull down top menu to see all quick settings.</string>
 	
 </resources>
