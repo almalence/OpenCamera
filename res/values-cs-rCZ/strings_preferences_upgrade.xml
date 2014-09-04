@@ -3,7 +3,7 @@
 	<string name="Pref_Upgrde_All_Preference_Title">Odemknout vše</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Aktivuje všechny současné i budoucí prémiové doplňky</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">HDR + HDR video</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR + HDR Video</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Vyfotíte nádherné fotky s vysokým dynamickým rozsahem</string>
 	
 	<string name="Pref_Upgrde_Panorama_Preference_Title">HD Panorama</string>
@@ -19,6 +19,10 @@
 	
 	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Roční předplatné (3 měsíce zdarma!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Měsíční předplatné</string>
+  
+  <string name="subscriptionText">Aktivujte si prémiové doplňky ZDARMA po dobu 3 měsíců!</string>
+	<string name="subscriptionYesText">Aktivovat!</string>
+	<string name="subscriptionNoText">Nyní ne</string>
 	
 	<string name="storeWhatsnew">verze 3.25\n\n- přidána možnost pozastavení videa\n- přidání úrovně\n- vylepšení panoramy\n- vylepšení DRO\n- zkombinování některých režimů\n- přidáno jednoduché panorama\n- oprava natáčení videa\n- vylepšení stability</string>
 	<string name="storeFeatures"></string>
