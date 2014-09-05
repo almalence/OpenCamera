@@ -2025,6 +2025,7 @@ public class VideoCapturePlugin extends PluginCapture
 					public void run()
 					{
 						pauseRecording();
+						Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getString(R.string.video_paused), Toast.LENGTH_SHORT).show();
 					}
 				}, 1500 - delta);
 			}
@@ -2043,6 +2044,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			onPause = true;
 			MainScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_PAUSED);
+			Toast.makeText(MainScreen.getInstance(), MainScreen.getInstance().getString(R.string.video_paused), Toast.LENGTH_SHORT).show();
 		}
 		this.droEngine.setPaused(this.onPause);
 	}

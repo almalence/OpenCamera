@@ -87,9 +87,10 @@ public class AppEditorNotifier
 			return true;
 		}
 		
-		if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+		if (System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 		{
-			showEditorNotifierDialog(mContext, prefs);
+			//showEditorNotifierDialog(mContext, prefs);
+			MainScreen.getInstance().guiManager.openGallery(true);
 			return true;
 		}
 		
@@ -133,13 +134,13 @@ public class AppEditorNotifier
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
-		Button b1 = new Button(mContext);
-		b1.setText(MainScreen.getInstance().getResources().getString(R.string.editorInstallText));
-		ll.addView(b1);
+		Button bInstall = new Button(mContext);
+		bInstall.setText(MainScreen.getInstance().getResources().getString(R.string.editorInstallText));
+		ll.addView(bInstall);
 
-		Button b3 = new Button(mContext);
-		b3.setText(MainScreen.getInstance().getResources().getString(R.string.editorNoText));
-		ll.addView(b3);
+		Button bLater = new Button(mContext);
+		bLater.setText(MainScreen.getInstance().getResources().getString(R.string.editorNoText));
+		ll.addView(bLater);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setView(ll);
@@ -153,7 +154,7 @@ public class AppEditorNotifier
 			}
 		});
 
-		b1.setOnClickListener(new OnClickListener()
+		bInstall.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -162,7 +163,7 @@ public class AppEditorNotifier
 			}
 		});
 
-		b3.setOnClickListener(new OnClickListener()
+		bLater.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
 			{
@@ -178,6 +179,8 @@ public class AppEditorNotifier
 					DAYS_UNTIL_PROMPT = 10;
 				else if (DAYS_UNTIL_PROMPT == 10)
 					DAYS_UNTIL_PROMPT = 30;
+				else if (DAYS_UNTIL_PROMPT == 30)
+					DAYS_UNTIL_PROMPT = 999;
 			}
 		});
 

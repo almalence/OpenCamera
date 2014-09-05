@@ -6046,7 +6046,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			} else if (id == ShutterButton.RECORDER_PAUSED)
 			{
 				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
 			} else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);

@@ -731,13 +731,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent)
 		{
+			float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
 			if (convertView == null)
 			{
 				convertView = new ImageView(MainScreen.getInstance());
 
-				GridView.LayoutParams layoutParams = new GridView.LayoutParams((int) (MainScreen.getInstance()
-						.getResources().getDisplayMetrics().density * 48), (int) (MainScreen.getInstance()
-						.getResources().getDisplayMetrics().density * 54));
+				
+				GridView.LayoutParams layoutParams = new GridView.LayoutParams((int) (density * 48), (int) (density * 54));
 
 				((ImageView) convertView).setLayoutParams(layoutParams);
 
@@ -755,10 +755,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			}
 
 			((ImageView) convertView).setPadding(
-					(int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * 5), (int) (MainScreen
-							.getInstance().getResources().getDisplayMetrics().density * 0), (int) (MainScreen
-							.getInstance().getResources().getDisplayMetrics().density * 5), (int) (MainScreen
-							.getInstance().getResources().getDisplayMetrics().density * 3));
+					(int) (density * 5), (int) (density * 0), (int) (density * 5), (int) (density * 3));
 
 			return convertView;
 		}

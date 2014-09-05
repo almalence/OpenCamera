@@ -17,4 +17,6 @@
     
     <string name="Pref_Video_ShowLandscapeNotification_Title">Показывать уведомление</string>
     <string name="Pref_Video_ShowLandscapeNotification_Summary">Активировать уведомление о повороте устройства в альбомную ориентацию</string>
+    
+    <string name="video_paused">Запись приостановлена</string>
 </resources>

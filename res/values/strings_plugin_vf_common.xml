@@ -10,5 +10,5 @@
 	<string name="Pref_MaxScreenBrightness_Summary">Force the screen to maximum brightness</string>
 	
 	<string name="Pref_Common_DismissKeyguard_Title">Dismiss keyguard</string>
-	<string name="Pref_Common_DismissKeyguard_Summary">Skip non sequre lock keyguard when device is turned on</string>
+	<string name="Pref_Common_DismissKeyguard_Summary">Skip non secure lock keyguard when device is turned on</string>
 </resources>
