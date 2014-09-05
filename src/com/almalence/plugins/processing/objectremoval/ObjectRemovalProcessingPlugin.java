@@ -350,8 +350,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		saveLayoutParams.setMargins((int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * 8),
-				(int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 0, 0);
+		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.objectremovalLayout)).addView(mSaveButton,
 				saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);

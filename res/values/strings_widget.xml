@@ -11,7 +11,7 @@
 	<string name="widgetTorchItem">Torch</string>
 	<string name="widgetSettingsItem">Settings</string>
 	<string name="widgetHideSettingsText">Hiding all settings buttons will make unable to configure current widget anymore!</string>
-	<string name="widgetAlert">Waring!</string>	
+	<string name="widgetAlert">Warning!</string>	
 	<string name="widgetShopText">To activate widget you need to unlock any premium feature.</string>
 	<string name="widgetGoShopText">Shop</string>
 	<string name="widgetActivation">Widget activation</string>

@@ -271,7 +271,6 @@ public class GyroVFPlugin extends PluginViewfinder
 		if (mGyroState == OFF)
 			return;
 
-		Log.e("asdasd", "asdasd");
 		if (mSurfacePreviewAugmented != null)
 		{
 			mSurfacePreviewAugmented.onDrawFrame();
@@ -407,6 +406,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			return;
 		}
 
+		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
 		if ((Math.abs(horizontalError) > 1.0f && (mOrientation == 0 || mOrientation == 180 || flat))
 				|| (Math.abs(verticalError) > 1.0f && (mOrientation == 90 || mOrientation == 270 || flat)))
 		{
@@ -439,10 +439,8 @@ public class GyroVFPlugin extends PluginViewfinder
 				}
 			}
 
-			final int marginVerticalValue = (int) (300.0f * Math.abs(verticalError) * MainScreen.getInstance()
-					.getResources().getDisplayMetrics().density);
-			final int marginHorizontalValue = (int) (300.0f * Math.abs(horizontalError) * MainScreen.getInstance()
-					.getResources().getDisplayMetrics().density);
+			final int marginVerticalValue = (int) (300.0f * Math.abs(verticalError) * density);
+			final int marginHorizontalValue = (int) (300.0f * Math.abs(horizontalError) * density);
 
 			int color = (255 - (marginVerticalValue + marginHorizontalValue) * 4);
 			if (color > 50)
@@ -481,10 +479,8 @@ public class GyroVFPlugin extends PluginViewfinder
 			mHorizonIndicatorMarkTopDown.setVisibility(View.GONE);
 			mHorizonIndicatorAim.setVisibility(View.VISIBLE);
 			mHorizonIndicatorAimTopDown.setVisibility(View.GONE);
-			final int marginVerticalValue = (int) (300.0f * Math.abs(verticalError) * MainScreen.getInstance()
-					.getResources().getDisplayMetrics().density);
-			final int marginHorizontalValue = (int) (300.0f * Math.abs(horizontalError) * MainScreen.getInstance()
-					.getResources().getDisplayMetrics().density);
+			final int marginVerticalValue = (int) (300.0f * Math.abs(verticalError) * density);
+			final int marginHorizontalValue = (int) (300.0f * Math.abs(horizontalError) * density);
 
 			rotateHorizonIndicator(sideErrorVertical, sideErrorHorizontal);
 

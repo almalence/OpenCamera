@@ -167,16 +167,15 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
 
 			thumbnails.clear();
+			int heightPixels = MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
 				if (isYUV)
 				{
 					thumbnails
 							.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
-									mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), MainScreen.getInstance()
-									.getResources().getDisplayMetrics().heightPixels
-									/ imagesAmount, (int) (iImageHeight * (((float) MainScreen.getInstance()
-									.getResources().getDisplayMetrics().heightPixels / imagesAmount) / iImageWidth)),
+									mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
+									/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
 									false));
 				} else
 				{
@@ -186,9 +185,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 					BitmapFactory.Options opts = new BitmapFactory.Options();
 					thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-							MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels / imagesAmount,
-							(int) (opts.outHeight * (((float) MainScreen.getInstance().getResources()
-									.getDisplayMetrics().heightPixels / imagesAmount) / opts.outWidth)), false));
+							heightPixels / imagesAmount,
+							(int) (opts.outHeight * (((float)heightPixels / imagesAmount) / opts.outWidth)), false));
 				}
 			}
 
@@ -385,8 +383,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		saveLayoutParams.setMargins((int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * 8),
-				(int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * 8), 0, 0);
+		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
 	}
