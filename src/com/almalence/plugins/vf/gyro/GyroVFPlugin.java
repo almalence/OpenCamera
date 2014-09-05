@@ -330,6 +330,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 	private void releaseSensors()
 	{
+		mGyroState = OFF;
 		if (mPrefHardwareGyroscope)
 		{
 			mSensorManager.unregisterListener(mAugmentedListener, mGyroscope);
