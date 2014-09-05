@@ -5994,17 +5994,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		RotateImageView mainButton = (RotateImageView) guiView.findViewById(R.id.buttonShutter);
 		RotateImageView additionalButton = (RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional);
+		RotateImageView buttonSelectMode = (RotateImageView) guiView.findViewById(R.id.buttonSelectMode);
 		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
 
+//		additionalButton.setVisibility(View.VISIBLE);
+//		buttonSelectMode.setVisibility(View.GONE);
+		
 		// 1 button
 		if (id == ShutterButton.DEFAULT || id == ShutterButton.RECORDER_START || id == ShutterButton.RECORDER_STOP
 				|| id == ShutterButton.RECORDER_RECORDING)
 		{
-			buttonShutterContainer.setOrientation(LinearLayout.VERTICAL);
-			buttonShutterContainer.setPadding(0, 0, 0, 0);
+//			buttonShutterContainer.setOrientation(LinearLayout.VERTICAL);
+//			buttonShutterContainer.setPadding(0, 0, 0, 0);
 
-			additionalButton.setVisibility(View.GONE);
-
+//			additionalButton.setVisibility(View.GONE);
+//			buttonSelectMode.setVisibility(View.VISIBLE);
 			if (id == ShutterButton.DEFAULT)
 			{
 				mainButton.setImageResource(R.drawable.button_shutter);
@@ -6019,21 +6023,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
 			}
 
-			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
-			mainButton.getLayoutParams().width = dp;
-			mainButton.getLayoutParams().height = dp;
+//			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
+//			mainButton.getLayoutParams().width = dp;
+//			mainButton.getLayoutParams().height = dp;
 		}
 		// video with pause (2 butons)
 		else
 		{
-			buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
-			buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
+//			buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
+//			buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
 
-			additionalButton.setVisibility(View.VISIBLE);
-
-			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
-			mainButton.getLayoutParams().width = dp;
-			mainButton.getLayoutParams().height = dp;
+//			int dp = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
+//			mainButton.getLayoutParams().width = dp;
+//			mainButton.getLayoutParams().height = dp;
 
 			if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
 			{
@@ -6598,4 +6600,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		help.bringToFront();
 	}
 
+	public View getMainView()
+	{
+		return guiView;
+	}
 }

@@ -73,6 +73,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -1215,6 +1216,12 @@ public class VideoCapturePlugin extends PluginCapture
 		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
+		RotateImageView additionalButton = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonShutterAdditional);
+		RotateImageView buttonSelectMode = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonSelectMode);
+
+		additionalButton.setVisibility(View.GONE);
+		buttonSelectMode.setVisibility(View.VISIBLE);
+		
 		if (this.modeDRO())
 		{
 			PluginManager.getInstance().controlPremiumContent();
@@ -1323,6 +1330,12 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
+		RotateImageView additionalButton = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonShutterAdditional);
+		RotateImageView buttonSelectMode = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonSelectMode);
+
+		additionalButton.setVisibility(View.VISIBLE);
+		buttonSelectMode.setVisibility(View.GONE);
+		
 		modeSwitcher.setVisibility(View.GONE);
 		if (this.modeDRO())
 		{
@@ -1377,6 +1390,7 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 			Log.e("video onShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 		}
+		
 		releaseMediaRecorder(); // release the MediaRecorder object
 		// camera.lock(); // take camera access back from MediaRecorder
 
