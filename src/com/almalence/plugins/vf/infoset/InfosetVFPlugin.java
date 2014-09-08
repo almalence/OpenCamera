@@ -343,11 +343,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useEVMonitor)
 		{
-			float iEV = CameraController.getInstance().getExposureCompensation();
-			String evString = (iEV > 0 ? "+" : "") + String.format("%.1f", iEV) + "EV";
 			View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);
 			evInfoText = (TextView) v.findViewById(R.id.infoText);
-			evInfoText.setText(evString);
 			evInfoText.setRotation(-mDeviceOrientation);
 
 			addInfoView(evInfoText);

@@ -197,7 +197,7 @@ public class SelfTimer
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		selfTimerControl = inflator.inflate(R.layout.selftimer_capture_layout, null, false);
@@ -239,9 +239,9 @@ public class SelfTimer
 				params);
 
 		selfTimerControl.setLayoutParams(params);
-		selfTimerControl.requestLayout();
+//		selfTimerControl.requestLayout();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);

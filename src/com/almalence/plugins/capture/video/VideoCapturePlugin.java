@@ -447,7 +447,7 @@ public class VideoCapturePlugin extends PluginCapture
 					this.modeSwitcher, params);
 
 			this.modeSwitcher.setLayoutParams(params);
-			this.modeSwitcher.requestLayout();
+//			this.modeSwitcher.requestLayout();
 		}
 
 		// Calculate right sizes for plugin's controls
@@ -468,9 +468,9 @@ public class VideoCapturePlugin extends PluginCapture
 				this.mRecordingTimeView, params);
 
 		this.mRecordingTimeView.setLayoutParams(params);
-		this.mRecordingTimeView.requestLayout();
+//		this.mRecordingTimeView.requestLayout();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		buttonsLayout = inflator.inflate(R.layout.plugin_capture_video_layout, null, false);
@@ -544,15 +544,15 @@ public class VideoCapturePlugin extends PluginCapture
 				this.buttonsLayout, params);
 
 		this.buttonsLayout.setLayoutParams(params);
-		this.buttonsLayout.requestLayout();
-
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
+//		this.buttonsLayout.requestLayout();
+//
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		if (snapshotSupported)
 		{
 			takePictureButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
 			takePictureButton.invalidate();
-			takePictureButton.requestLayout();
+//			takePictureButton.requestLayout();
 			displayTakePicture = true;
 		} else
 		{
@@ -561,8 +561,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		timeLapseButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-		timeLapseButton.invalidate();
-		timeLapseButton.requestLayout();
+//		timeLapseButton.invalidate();
+//		timeLapseButton.requestLayout();
 
 		if (this.modeDRO())
 		{
@@ -633,10 +633,10 @@ public class VideoCapturePlugin extends PluginCapture
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(this.rotatorLayout,
 				paramsRotator);
 
-		rotatorLayout.setLayoutParams(paramsRotator);
-		rotatorLayout.requestLayout();
+//		rotatorLayout.setLayoutParams(paramsRotator);
+//		rotatorLayout.requestLayout();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	@Override
@@ -741,15 +741,15 @@ public class VideoCapturePlugin extends PluginCapture
 			if (takePictureButton != null)
 			{
 				takePictureButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-				takePictureButton.invalidate();
-				takePictureButton.requestLayout();
+//				takePictureButton.invalidate();
+//				takePictureButton.requestLayout();
 			}
 		}
 		if (timeLapseButton != null)
 		{
 			timeLapseButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-			timeLapseButton.invalidate();
-			timeLapseButton.requestLayout();
+//			timeLapseButton.invalidate();
+//			timeLapseButton.requestLayout();
 		}
 
 		if (rotatorLayout != null && showLandscapeNotification)

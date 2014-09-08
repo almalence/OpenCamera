@@ -169,9 +169,9 @@ public class CapturePlugin extends PluginCapture
 				params);
 
 		this.modeSwitcher.setLayoutParams(params);
-		this.modeSwitcher.requestLayout();
-
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
+//		this.modeSwitcher.requestLayout();
+//
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.getGUIManager().showHelp("Dro help",

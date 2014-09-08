@@ -1098,7 +1098,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
-		
+
 		lockControls = false;
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
@@ -1266,9 +1266,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			store.ShowUnlockControl();
 	}
 
+	// our ViewHolder.
+	// caches our ImageView and TextView
+	static class ViewHolderItem
+	{
+		ImageView	imageViewItem;
+		TextView	textViewItem;
+	}
+
+	private static View	convertView	= null;
+
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
 	{
+		ViewHolderItem viewHolder;
+
 		paramMap.clear();
 		Set<Integer> keys = icons_map.keySet();
 		Iterator<Integer> it = keys.iterator();
@@ -1276,11 +1288,26 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			final int system_name = it.next();
 			final String value_name = names_map.get(system_name);
-			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-			View paramMode = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
-			// set some mode icon
-			((ImageView) paramMode.findViewById(R.id.imageView)).setImageResource(icons_map.get(system_name));
-			((TextView) paramMode.findViewById(R.id.textView)).setText(value_name);
+
+			View paramMode = convertView;
+			
+			if (paramMode == null)
+			{
+				LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+				paramMode = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
+
+				viewHolder = new ViewHolderItem();
+				viewHolder.imageViewItem = (ImageView) paramMode.findViewById(R.id.imageView);
+				viewHolder.textViewItem = ((TextView) paramMode.findViewById(R.id.textView));
+
+				paramMode.setTag(viewHolder);
+			} else
+			{
+				viewHolder = (ViewHolderItem) paramMode.getTag();
+			}
+
+			viewHolder.textViewItem.setText(value_name);
+			viewHolder.imageViewItem.setImageResource(icons_map.get(system_name));
 
 			if (system_name == CameraParameters.AF_MODE_AUTO)
 				paramMode.setOnTouchListener(new OnTouchListener()
@@ -1366,7 +1393,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			else
 				infoParams.rightMargin = 0;
 			infoLayout.setLayoutParams(infoParams);
-			infoLayout.requestLayout();
+//			infoLayout.requestLayout();
 		}
 
 		infoSet = prefs.getInt(MainScreen.sDefaultInfoSetPref, INFO_PARAMS);
@@ -4245,7 +4272,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (newMode != -1 && sceneModeButtons.containsKey(newMode))
 		{
-			if(newMode != CameraParameters.SCENE_MODE_AUTO)
+			if (newMode != CameraParameters.SCENE_MODE_AUTO)
 				CameraController.getInstance().setCameraISO(CameraParameters.ISO_AUTO);
 			CameraController.getInstance().setCameraSceneMode(newMode);
 			mSceneMode = newMode;

@@ -225,7 +225,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				params);
 
 		this.focusLayout.setLayoutParams(params);
-		this.focusLayout.requestLayout();
+//		this.focusLayout.requestLayout();
 	}
 
 	@Override
@@ -268,7 +268,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				.getInteger(R.integer.focusIndicator_cropFactor));
 		layout.height = (int) (len * MainScreen.getInstance().getResources()
 				.getInteger(R.integer.focusIndicator_cropFactor));
-		mFocusIndicator.requestLayout();
+//		mFocusIndicator.requestLayout();
 	}
 
 	/*

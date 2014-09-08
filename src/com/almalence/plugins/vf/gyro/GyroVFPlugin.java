@@ -83,13 +83,6 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.gui_almalence_settings_gyro,
 				MainScreen.getInstance().getResources().getString(R.string.Pref_TitleGyroVF));
-
-		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
-		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mVfGyroscope = new VfGyroSensor(null);
-		mSurfacePreviewAugmented = new AugmentedSurfaceView(this);
 	}
 
 	@Override
@@ -176,6 +169,12 @@ public class GyroVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
+		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mVfGyroscope = new VfGyroSensor(null);
+		mSurfacePreviewAugmented = new AugmentedSurfaceView(this);
 		updatePreferences();
 	}
 
@@ -282,7 +281,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			{
 				updatehHardwareGyro();
 			}
-		}, 20);
+		}, 50);
 	}
 
 	private void initSensors()
@@ -306,7 +305,7 @@ public class GyroVFPlugin extends PluginViewfinder
 						{
 							updatehHardwareGyro();
 						}
-					}, 50);
+					}, 500);
 				}
 			}
 
@@ -568,8 +567,8 @@ public class GyroVFPlugin extends PluginViewfinder
 				LayoutParams.WRAP_CONTENT);
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout,
 				params);
-		mHorizonLayout.requestLayout();
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
+//		mHorizonLayout.requestLayout();
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout

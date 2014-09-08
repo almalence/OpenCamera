@@ -180,9 +180,9 @@ public class PreshotCapturePlugin extends PluginCapture
 				params);
 
 		this.modeSwitcher.setLayoutParams(params);
-		this.modeSwitcher.requestLayout();
-
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
+//		this.modeSwitcher.requestLayout();
+//
+//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 
 	private void getPrefs()

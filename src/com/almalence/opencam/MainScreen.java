@@ -46,10 +46,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -845,7 +843,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						break;
 					}
 				}
-				
+
 				if (mode == MODE_GENERAL)
 				{
 					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -858,8 +856,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 					});
 				}
-				
-				if (mode == MODE_PANORAMA) {
+
+				if (mode == MODE_PANORAMA)
+				{
 					lp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 					{
 						// @Override
@@ -870,18 +869,21 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
 							{
-								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i).equals(newValue))
+								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i)
+										.equals(newValue))
 								{
 									final int idx = i;
-									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist().get(idx);
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist()
+											.get(idx);
 
 									// frames_fit_count may decrease when
 									// returning to main view due to slightly
 									// more memory used, so in text messages we
 									// report both exact and decreased count to
 									// the user
-									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin.getFrameSizeInBytes(
-											point.x, point.y));
+									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin
+											.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin
+											.getFrameSizeInBytes(point.x, point.y));
 
 									{
 										Toast.makeText(
@@ -1096,8 +1098,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							Log.e("GL", "glView onResume");
 						}
 
-						PluginManager.getInstance().onGUICreate();
-						MainScreen.getGUIManager().onGUICreate();
+						// PluginManager.getInstance().onGUICreate();
+						// MainScreen.getGUIManager().onGUICreate();
 					}
 					orientListener.enable();
 				}
@@ -1114,7 +1116,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			isScreenTimerRunning = true;
 		}
 
-		//Log.e("Density", "" + getResources().getDisplayMetrics().toString());
+		// Log.e("Density", "" + getResources().getDisplayMetrics().toString());
 
 		long memoryFree = getAvailableInternalMemory();
 		if (memoryFree < 30)
@@ -1261,8 +1263,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						if (!CameraController.isUseHALv3())
 						{
 							cameraController.setupCamera(holder);
-							PluginManager.getInstance().onGUICreate();
-							MainScreen.getGUIManager().onGUICreate();
+							// PluginManager.getInstance().onGUICreate();
+							// MainScreen.getGUIManager().onGUICreate();
 						} else
 						{
 							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
@@ -1415,6 +1417,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().setCameraPictureSize();
 		PluginManager.getInstance().setupCameraParameters();
 
+		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+
 		if (!CameraController.isUseHALv3())
 		{
 			try
@@ -1422,17 +1426,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				// Nexus 5 is giving preview which is too dark without this
 				if (Build.MODEL.contains("Nexus 5"))
 				{
-					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-					params.setPreviewFpsRange(7000, 30000);
-					cameraController.setCameraParameters(params);
+					cp.setPreviewFpsRange(7000, 30000);
+					cameraController.setCameraParameters(cp);
+					cp = CameraController.getInstance().getCameraParameters();
 				}
 			} catch (RuntimeException e)
 			{
 				Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 			}
 
-			previewWidth = CameraController.getInstance().getCameraParameters().getPreviewSize().width;
-			previewHeight = CameraController.getInstance().getCameraParameters().getPreviewSize().height;
+			previewWidth = cp.getPreviewSize().width;
+			previewHeight = cp.getPreviewSize().height;
 		}
 
 		try
@@ -1834,7 +1838,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			this.finish();
 			break;
 		case PluginManager.MSG_CAMERA_CONFIGURED:
-			//Log.e("MainScreen", "case PluginManager.MSG_CAMERA_CONFIGURED");
+			// Log.e("MainScreen", "case PluginManager.MSG_CAMERA_CONFIGURED");
 			onCameraConfigured();
 			break;
 		case PluginManager.MSG_CAMERA_READY:
@@ -1848,7 +1852,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 			break;
 		case PluginManager.MSG_CAMERA_OPENED:
-			//Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED");
+			// Log.e("MainScreen", "case PluginManager.MSG_CAMERA_OPENED");
 			if (mCameraStarted)
 				break;
 		case PluginManager.MSG_SURFACE_READY:
@@ -1857,7 +1861,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				// - ready to set up preview and other things
 				if (surfaceCreated && (HALv3.getCamera2() != null))
 				{
-					//Log.e("MainScreen", "case PluginManager.MSG_SURFACE_READY");
+					// Log.e("MainScreen",
+					// "case PluginManager.MSG_SURFACE_READY");
 					configureCamera();
 					PluginManager.getInstance().onGUICreate();
 					MainScreen.getGUIManager().onGUICreate();
@@ -1866,7 +1871,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 			break;
 		case PluginManager.MSG_CAMERA_STOPED:
-			//Log.e("MainScreen", "case PluginManager.MSG_CAMERA_STOPED");
+			// Log.e("MainScreen", "case PluginManager.MSG_CAMERA_STOPED");
 			mCameraStarted = false;
 			break;
 		default:
@@ -2177,7 +2182,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
 			// Create the helper, passing it our context and the public key to
 			// verify signatures with
-			//Log.v("Main billing", "Creating IAB helper.");
+			// Log.v("Main billing", "Creating IAB helper.");
 			Map<String, String> storeKeys = new HashMap<String, String>();
 			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
@@ -2185,7 +2190,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			mHelper.enableDebugLogging(true);
 
-			//Log.v("Main billing", "Starting setup.");
+			// Log.v("Main billing", "Starting setup.");
 			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
 			{
 				public void onIabSetupFinished(IabResult result)
@@ -2281,211 +2286,211 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								summarySubscriptionMonth	= "";
 	public String								summarySubscriptionYear		= "";
 
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= 
-			new IabHelper.QueryInventoryFinishedListener()
-			{
-				public void onQueryInventoryFinished(
-						IabResult result,
-						Inventory inventory)
-				{
-					if (inventory == null)
-					{
-						Log.e("Main billing",
-								"mGotInventoryListener inventory null ");
-						return;
-					}
+	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
+																			{
+																				public void onQueryInventoryFinished(
+																						IabResult result,
+																						Inventory inventory)
+																				{
+																					if (inventory == null)
+																					{
+																						Log.e("Main billing",
+																								"mGotInventoryListener inventory null ");
+																						return;
+																					}
 
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen
-									.getMainContext());
+																					SharedPreferences prefs = PreferenceManager
+																							.getDefaultSharedPreferences(MainScreen
+																									.getMainContext());
 
-					Editor prefsEditor = prefs.edit();
-					if (inventory.hasPurchase(SKU_HDR))
-					{
-						hdrPurchased = true;
-						prefsEditor.putBoolean(
-								"plugin_almalence_hdr",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_PANORAMA))
-					{
-						panoramaPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_panorama",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_UNLOCK_ALL))
-					{
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
-					{
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_MOVING_SEQ))
-					{
-						objectRemovalBurstPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_moving_burst",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_GROUPSHOT))
-					{
-						groupShotPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_groupshot",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_SUBSCRIPTION_MONTH))
-					{
-						unlockAllSubscriptionMonth = true;
-						prefsEditor
-								.putBoolean(
-										"subscription_unlock_all_month",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-					{
-						unlockAllSubscriptionYear = true;
-						prefsEditor
-								.putBoolean(
-										"subscription_unlock_all_year",
-										true).commit();
-					}
+																					Editor prefsEditor = prefs.edit();
+																					if (inventory.hasPurchase(SKU_HDR))
+																					{
+																						hdrPurchased = true;
+																						prefsEditor.putBoolean(
+																								"plugin_almalence_hdr",
+																								true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_PANORAMA))
+																					{
+																						panoramaPurchased = true;
+																						prefsEditor
+																								.putBoolean(
+																										"plugin_almalence_panorama",
+																										true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_UNLOCK_ALL))
+																					{
+																						unlockAllPurchased = true;
+																						prefsEditor.putBoolean(
+																								"unlock_all_forever",
+																								true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
+																					{
+																						unlockAllPurchased = true;
+																						prefsEditor.putBoolean(
+																								"unlock_all_forever",
+																								true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_MOVING_SEQ))
+																					{
+																						objectRemovalBurstPurchased = true;
+																						prefsEditor
+																								.putBoolean(
+																										"plugin_almalence_moving_burst",
+																										true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_GROUPSHOT))
+																					{
+																						groupShotPurchased = true;
+																						prefsEditor
+																								.putBoolean(
+																										"plugin_almalence_groupshot",
+																										true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_SUBSCRIPTION_MONTH))
+																					{
+																						unlockAllSubscriptionMonth = true;
+																						prefsEditor
+																								.putBoolean(
+																										"subscription_unlock_all_month",
+																										true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
+																					{
+																						unlockAllSubscriptionYear = true;
+																						prefsEditor
+																								.putBoolean(
+																										"subscription_unlock_all_year",
+																										true).commit();
+																					}
 
-					try
-					{
-						String[] separated = inventory
-								.getSkuDetails(
-										SKU_SALE1)
-								.getPrice().split(",");
-						int price1 = Integer
-								.valueOf(separated[0]);
-						String[] separated2 = inventory
-								.getSkuDetails(
-										SKU_SALE2)
-								.getPrice().split(",");
-						int price2 = Integer
-								.valueOf(separated2[0]);
+																					try
+																					{
+																						String[] separated = inventory
+																								.getSkuDetails(
+																										SKU_SALE1)
+																								.getPrice().split(",");
+																						int price1 = Integer
+																								.valueOf(separated[0]);
+																						String[] separated2 = inventory
+																								.getSkuDetails(
+																										SKU_SALE2)
+																								.getPrice().split(",");
+																						int price2 = Integer
+																								.valueOf(separated2[0]);
 
-						if (price1 < price2)
-							bOnSale = true;
-						else
-							bOnSale = false;
+																						if (price1 < price2)
+																							bOnSale = true;
+																						else
+																							bOnSale = false;
 
-						prefsEditor.putBoolean(
-								"bOnSale", bOnSale)
-								.commit();
+																						prefsEditor.putBoolean(
+																								"bOnSale", bOnSale)
+																								.commit();
 
-//						Log.e("Main billing SALE",
-//								"Sale status is "
-//										+ bOnSale);
-					} catch (Exception e)
-					{
-						Log.e("Main billing SALE",
-								"No sale data available");
-						bOnSale = false;
-					}
+																						// Log.e("Main billing SALE",
+																						// "Sale status is "
+																						// +
+																						// bOnSale);
+																					} catch (Exception e)
+																					{
+																						Log.e("Main billing SALE",
+																								"No sale data available");
+																						bOnSale = false;
+																					}
 
-					try
-					{
-						titleUnlockAll = inventory
-								.getSkuDetails(
-										SKU_UNLOCK_ALL)
-								.getPrice();
-						titleUnlockAllCoupon = inventory
-								.getSkuDetails(
-										SKU_UNLOCK_ALL_COUPON)
-								.getPrice();
-						titleUnlockHDR = inventory
-								.getSkuDetails(SKU_HDR)
-								.getPrice();
-						titleUnlockPano = inventory
-								.getSkuDetails(
-										SKU_PANORAMA)
-								.getPrice();
-						titleUnlockMoving = inventory
-								.getSkuDetails(
-										SKU_MOVING_SEQ)
-								.getPrice();
-						titleUnlockGroup = inventory
-								.getSkuDetails(
-										SKU_GROUPSHOT)
-								.getPrice();
+																					try
+																					{
+																						titleUnlockAll = inventory
+																								.getSkuDetails(
+																										SKU_UNLOCK_ALL)
+																								.getPrice();
+																						titleUnlockAllCoupon = inventory
+																								.getSkuDetails(
+																										SKU_UNLOCK_ALL_COUPON)
+																								.getPrice();
+																						titleUnlockHDR = inventory
+																								.getSkuDetails(SKU_HDR)
+																								.getPrice();
+																						titleUnlockPano = inventory
+																								.getSkuDetails(
+																										SKU_PANORAMA)
+																								.getPrice();
+																						titleUnlockMoving = inventory
+																								.getSkuDetails(
+																										SKU_MOVING_SEQ)
+																								.getPrice();
+																						titleUnlockGroup = inventory
+																								.getSkuDetails(
+																										SKU_GROUPSHOT)
+																								.getPrice();
 
-						summaryUnlockAll = inventory
-								.getSkuDetails(
-										SKU_UNLOCK_ALL)
-								.getDescription();
-						summaryUnlockHDR = inventory
-								.getSkuDetails(SKU_HDR)
-								.getDescription();
-						summaryUnlockPano = inventory
-								.getSkuDetails(
-										SKU_PANORAMA)
-								.getDescription();
-						summaryUnlockMoving = inventory
-								.getSkuDetails(
-										SKU_MOVING_SEQ)
-								.getDescription();
-						summaryUnlockGroup = inventory
-								.getSkuDetails(
-										SKU_GROUPSHOT)
-								.getDescription();
-					} catch (Exception e)
-					{
-						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-								"Error Getting data for store!!!!!!!!");
-					}
+																						summaryUnlockAll = inventory
+																								.getSkuDetails(
+																										SKU_UNLOCK_ALL)
+																								.getDescription();
+																						summaryUnlockHDR = inventory
+																								.getSkuDetails(SKU_HDR)
+																								.getDescription();
+																						summaryUnlockPano = inventory
+																								.getSkuDetails(
+																										SKU_PANORAMA)
+																								.getDescription();
+																						summaryUnlockMoving = inventory
+																								.getSkuDetails(
+																										SKU_MOVING_SEQ)
+																								.getDescription();
+																						summaryUnlockGroup = inventory
+																								.getSkuDetails(
+																										SKU_GROUPSHOT)
+																								.getDescription();
+																					} catch (Exception e)
+																					{
+																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+																								"Error Getting data for store!!!!!!!!");
+																					}
 
-					try
-					{
-						titleSubscriptionMonth = inventory
-								.getSkuDetails(
-										SKU_SUBSCRIPTION_MONTH)
-								.getPrice();
-						summarySubscriptionMonth = inventory
-								.getSkuDetails(
-										SKU_SUBSCRIPTION_MONTH)
-								.getDescription();
-					} catch (Exception e)
-					{
-						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-								"Error Getting data for store SubscriptionMonth!!!!!!!!");
-					}
-					try
-					{
-						titleSubscriptionYear = inventory
-								.getSkuDetails(
-										SKU_SUBSCRIPTION_YEAR)
-								.getPrice();
-						summarySubscriptionYear = inventory
-								.getSkuDetails(
-										SKU_SUBSCRIPTION_YEAR)
-								.getDescription();
-					} catch (Exception e)
-					{
-						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-								"Error Getting data for store SubscriptionYear!!!!!!!!");
-					}
-				}
-			};
+																					try
+																					{
+																						titleSubscriptionMonth = inventory
+																								.getSkuDetails(
+																										SKU_SUBSCRIPTION_MONTH)
+																								.getPrice();
+																						summarySubscriptionMonth = inventory
+																								.getSkuDetails(
+																										SKU_SUBSCRIPTION_MONTH)
+																								.getDescription();
+																					} catch (Exception e)
+																					{
+																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+																								"Error Getting data for store SubscriptionMonth!!!!!!!!");
+																					}
+																					try
+																					{
+																						titleSubscriptionYear = inventory
+																								.getSkuDetails(
+																										SKU_SUBSCRIPTION_YEAR)
+																								.getPrice();
+																						summarySubscriptionYear = inventory
+																								.getSkuDetails(
+																										SKU_SUBSCRIPTION_YEAR)
+																								.getDescription();
+																					} catch (Exception e)
+																					{
+																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+																								"Error Getting data for store SubscriptionYear!!!!!!!!");
+																					}
+																				}
+																			};
 
 	private int									HDR_REQUEST					= 100;
 	private int									PANORAMA_REQUEST			= 101;
@@ -2881,10 +2886,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		int left = ReadLaunches(projDir);
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
-		
+
 		if (left == 5)
 		{
-			//show subscription dialog
+			// show subscription dialog
 			showSubscriptionDialog();
 			return;
 		}
@@ -2950,7 +2955,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			if (hdrPurchased)
 				return true;
-		}else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
+		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
 		{
 			if (panoramaPurchased)
 				return true;
@@ -3004,7 +3009,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		return installed;
 	}
-	
+
 	private void showSubscriptionDialog()
 	{
 		final float density = getResources().getDisplayMetrics().density;
@@ -3026,7 +3031,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Button bNo = new Button(this);
 		bNo.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionNoText));
 		ll.addView(bNo);
-		
+
 		Button bSubscribe = new Button(this);
 		bSubscribe.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionYesText));
 		ll.addView(bSubscribe);

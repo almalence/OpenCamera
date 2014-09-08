@@ -235,9 +235,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 				params);
 
 		this.zoomPanel.setLayoutParams(params);
-		this.zoomPanel.requestLayout();
+//		this.zoomPanel.requestLayout();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
+//		((RelativeLayout) MainScreen.getInstasnce().findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	@Override

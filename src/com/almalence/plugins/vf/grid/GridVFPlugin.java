@@ -244,6 +244,6 @@ public class GridVFPlugin extends PluginViewfinder
 			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
 		}
 
-		grid.requestLayout();
+//		grid.requestLayout();
 	}
 }

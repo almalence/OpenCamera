@@ -161,12 +161,12 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
-			aeLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-			aeLockButton.invalidate();
-			aeLockButton.requestLayout();
-			awLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-			awLockButton.invalidate();
-			awLockButton.requestLayout();
+//			aeLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+//			aeLockButton.invalidate();
+//			aeLockButton.requestLayout();
+//			awLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+//			awLockButton.invalidate();
+//			awLockButton.requestLayout();
 		}
 	}
 
