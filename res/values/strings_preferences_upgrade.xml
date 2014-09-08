@@ -17,12 +17,12 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">Done!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Incorrect promo code</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Year subscription (3 months free!)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Subscription, 3 months free!</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Month subscription</string>
 	<string name="subscriptionText">Use premium features FREE for 3 months - subscribe now!</string>
 	<string name="subscriptionYesText">Subscribe me!</string>
 	<string name="subscriptionNoText">Not now</string>
-	
+	<string name="Pref_Upgrde_SubscriptionYear_Year">year</string>
 	<string name="storeWhatsnew">  Version 3.25\n\n   New:\n    - HDR video\n    - pause for video\n    - level tool\n    - sweep panorama\n\n   Improved:\n    - panorama capture and processing\n    - DRO processing\n    - multishots combined in one mode\n\n   Bug fixes:\n    - video fixed\n    - stability fixes</string>
 	<string name="storeFeatures"></string>
 	

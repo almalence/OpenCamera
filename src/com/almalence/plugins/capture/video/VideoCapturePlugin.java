@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +32,6 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -44,7 +41,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -73,13 +69,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.SwapHeap;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -1215,6 +1211,15 @@ public class VideoCapturePlugin extends PluginCapture
 		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
+		if (!swChecked)
+		{
+			RotateImageView additionalButton = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonShutterAdditional);
+			RotateImageView buttonSelectMode = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonSelectMode);
+	
+			additionalButton.setVisibility(View.GONE);
+			buttonSelectMode.setVisibility(View.VISIBLE);
+		}
+		
 		if (this.modeDRO())
 		{
 			PluginManager.getInstance().controlPremiumContent();
@@ -1323,6 +1328,15 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
+		if (!swChecked)
+		{
+			RotateImageView additionalButton = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonShutterAdditional);
+			RotateImageView buttonSelectMode = (RotateImageView) MainScreen.getInstance().guiManager.getMainView().findViewById(R.id.buttonSelectMode);
+	
+			additionalButton.setVisibility(View.VISIBLE);
+			buttonSelectMode.setVisibility(View.GONE);
+		}	
+		
 		modeSwitcher.setVisibility(View.GONE);
 		if (this.modeDRO())
 		{
@@ -1351,7 +1365,7 @@ public class VideoCapturePlugin extends PluginCapture
 				public void onFinish()
 				{
 					shutterOff = false;
-					MainScreen.getGUIManager().lockControls = false;
+					//MainScreen.getGUIManager().lockControls = false;
 				}
 			}.start();
 		} else
@@ -1377,6 +1391,7 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 			Log.e("video onShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 		}
+		
 		releaseMediaRecorder(); // release the MediaRecorder object
 		// camera.lock(); // take camera access back from MediaRecorder
 
@@ -1696,6 +1711,7 @@ public class VideoCapturePlugin extends PluginCapture
 			// Camera is available and unlocked, MediaRecorder is prepared,
 			// now you can start recording
 			mMediaRecorder.start();
+			MainScreen.getGUIManager().lockControls = true;
 
 		} catch (Exception e)
 		{
@@ -1741,7 +1757,7 @@ public class VideoCapturePlugin extends PluginCapture
 			public void onFinish()
 			{
 				shutterOff = false;
-				MainScreen.getGUIManager().lockControls = false;
+				//MainScreen.getGUIManager().lockControls = false;
 			}
 		}.start();
 	}

@@ -869,21 +869,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
 							{
-								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i)
-										.equals(newValue))
+								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i).equals(newValue))
 								{
 									final int idx = i;
-									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist()
-											.get(idx);
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist().get(idx);
 
 									// frames_fit_count may decrease when
 									// returning to main view due to slightly
 									// more memory used, so in text messages we
 									// report both exact and decreased count to
 									// the user
-									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin
-											.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin
-											.getFrameSizeInBytes(point.x, point.y));
+									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin.getFrameSizeInBytes(
+											point.x, point.y));
 
 									{
 										Toast.makeText(
@@ -2060,6 +2057,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	// subscription
 	static final String	SKU_SUBSCRIPTION_MONTH		= "subscription_unlock_all_month";
 	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
+	static final String	SKU_SUBSCRIPTION_YEAR_CTRL		= "subscription_unlock_all_year_controller";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
 	static final String	SKU_SALE2					= "abc_sale_controller2";
@@ -2075,6 +2073,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, "com.yandex.store", "subscription_unlock_all_month");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
+		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
 		OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
@@ -2088,6 +2087,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_month");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
+		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
@@ -2212,6 +2212,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
+						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_CTRL);
 
 						if (subscriptionStatusRequest)
 						{
@@ -2277,27 +2278,28 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleSubscriptionMonth		= "$0.99";
 	public String								titleSubscriptionYear		= "$4.99";
 
-	public String								summaryUnlockAll			= "";
-	public String								summaryUnlockHDR			= "";
-	public String								summaryUnlockPano			= "";
-	public String								summaryUnlockMoving			= "";
-	public String								summaryUnlockGroup			= "";
+//	public String								summaryUnlockAll			= "";
+//	public String								summaryUnlockHDR			= "";
+//	public String								summaryUnlockPano			= "";
+//	public String								summaryUnlockMoving			= "";
+//	public String								summaryUnlockGroup			= "";
+//
+//	public String								summarySubscriptionMonth	= "";
+//	public String								summarySubscriptionYear		= "";
 
-	public String								summarySubscriptionMonth	= "";
-	public String								summarySubscriptionYear		= "";
-
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
-																			{
-																				public void onQueryInventoryFinished(
-																						IabResult result,
-																						Inventory inventory)
-																				{
-																					if (inventory == null)
-																					{
-																						Log.e("Main billing",
-																								"mGotInventoryListener inventory null ");
-																						return;
-																					}
+	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= 
+			new IabHelper.QueryInventoryFinishedListener()
+			{
+				public void onQueryInventoryFinished(
+						IabResult result,
+						Inventory inventory)
+				{
+					if (inventory == null)
+					{
+						Log.e("Main billing",
+								"mGotInventoryListener inventory null ");
+						return;
+					}
 
 																					SharedPreferences prefs = PreferenceManager
 																							.getDefaultSharedPreferences(MainScreen
@@ -2434,61 +2436,61 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																										SKU_GROUPSHOT)
 																								.getPrice();
 
-																						summaryUnlockAll = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL)
-																								.getDescription();
-																						summaryUnlockHDR = inventory
-																								.getSkuDetails(SKU_HDR)
-																								.getDescription();
-																						summaryUnlockPano = inventory
-																								.getSkuDetails(
-																										SKU_PANORAMA)
-																								.getDescription();
-																						summaryUnlockMoving = inventory
-																								.getSkuDetails(
-																										SKU_MOVING_SEQ)
-																								.getDescription();
-																						summaryUnlockGroup = inventory
-																								.getSkuDetails(
-																										SKU_GROUPSHOT)
-																								.getDescription();
+//																						summaryUnlockAll = inventory
+//																								.getSkuDetails(
+//																										SKU_UNLOCK_ALL)
+//																								.getDescription();
+//																						summaryUnlockHDR = inventory
+//																								.getSkuDetails(SKU_HDR)
+//																								.getDescription();
+//																						summaryUnlockPano = inventory
+//																								.getSkuDetails(
+//																										SKU_PANORAMA)
+//																								.getDescription();
+//																						summaryUnlockMoving = inventory
+//																								.getSkuDetails(
+//																										SKU_MOVING_SEQ)
+//																								.getDescription();
+//																						summaryUnlockGroup = inventory
+//																								.getSkuDetails(
+//																										SKU_GROUPSHOT)
+//																								.getDescription();
 																					} catch (Exception e)
 																					{
 																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
 																								"Error Getting data for store!!!!!!!!");
 																					}
 
-																					try
-																					{
-																						titleSubscriptionMonth = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_MONTH)
-																								.getPrice();
-																						summarySubscriptionMonth = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_MONTH)
-																								.getDescription();
-																					} catch (Exception e)
-																					{
-																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-																								"Error Getting data for store SubscriptionMonth!!!!!!!!");
-																					}
-																					try
-																					{
-																						titleSubscriptionYear = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_YEAR)
-																								.getPrice();
-																						summarySubscriptionYear = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_YEAR)
-																								.getDescription();
-																					} catch (Exception e)
-																					{
-																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-																								"Error Getting data for store SubscriptionYear!!!!!!!!");
-																					}
+//																					try
+//																					{
+//																						titleSubscriptionMonth = inventory
+//																								.getSkuDetails(
+//																										SKU_SUBSCRIPTION_MONTH)
+//																								.getPrice();
+//																						summarySubscriptionMonth = inventory
+//																								.getSkuDetails(
+//																										SKU_SUBSCRIPTION_MONTH)
+//																								.getDescription();
+//																					} catch (Exception e)
+//																					{
+//																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+//																								"Error Getting data for store SubscriptionMonth!!!!!!!!");
+//																					}
+//																					try
+//																					{
+//																						titleSubscriptionYear = inventory
+//																								.getSkuDetails(
+//																										SKU_SUBSCRIPTION_YEAR)
+//																								.getPrice();
+//																						summarySubscriptionYear = inventory
+//																								.getSkuDetails(
+//																										SKU_SUBSCRIPTION_YEAR)
+//																								.getDescription();
+//																					} catch (Exception e)
+//																					{
+//																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+//																								"Error Getting data for store SubscriptionYear!!!!!!!!");
+//																					}
 																				}
 																			};
 
@@ -2832,7 +2834,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			public void onClick(View v)
 			{
 				String promo = editText.getText().toString();
-				if (promo.equalsIgnoreCase("appoftheday"))
+				if (promo.equalsIgnoreCase("appoftheday") || promo.equalsIgnoreCase("stelapps"))
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					unlockAllPurchased = true;
