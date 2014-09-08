@@ -7,12 +7,13 @@
     android:background="@drawable/store_element"    
     >
    
-    <RelativeLayout android:id="@+id/storeLayout2"
-        			android:layout_height="@dimen/gridStoreImageSize2x"
-	        		android:layout_width="@dimen/gridModeImageSize2x"
-	        		android:layout_alignParentTop="true"
-	        		android:layout_centerHorizontal="true"
-        			>
+    <RelativeLayout 
+        android:id="@+id/storeLayout2"
+		android:layout_height="@dimen/gridStoreImageSize2x"
+		android:layout_width="@dimen/gridModeImageSize2x"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		>
      
 	    <ImageView
 	        android:id="@+id/storeImage"
@@ -25,21 +26,23 @@
 	        >
 	    </ImageView>
 	     
-	    <RelativeLayout android:id="@+id/textStoreLayout"
-	        			android:layout_height="wrap_content"
-	        			android:layout_width="fill_parent"
-	        			android:layout_below="@+id/storeImage"
-	        			android:layout_centerInParent="true">
-	    <TextView
-	        android:id="@+id/storeText"
-	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
-	        android:layout_alignParentTop="true"
-	        android:layout_centerHorizontal="true"
-	        android:gravity="center"
-	        android:textColor="@android:color/black"        
-	        android:textSize="15sp">
-	    </TextView>
+	    <RelativeLayout 
+	        android:id="@+id/textStoreLayout"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:layout_below="@+id/storeImage"
+			android:layout_centerInParent="true">
+	    
+		    <TextView
+		        android:id="@+id/storeText"
+		        android:layout_height="wrap_content"
+		        android:layout_width="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:layout_centerHorizontal="true"
+		        android:gravity="center"
+		        android:textColor="@android:color/black"        
+		        android:textSize="14sp">
+		    </TextView>
 	    
 	    </RelativeLayout>
 	    
@@ -53,7 +56,7 @@
 	        android:gravity="center"
 	        android:padding="10dip"
 	        android:textColor="#57a25c"        
-	        android:textSize="13sp">
+	        android:textSize="12sp">
 	 </TextView>
 	    
 	 <ImageView
@@ -64,8 +67,7 @@
 	        android:layout_alignParentTop="true"	        
 	        android:src="@drawable/store_sale"
 	        android:background="@android:color/transparent"    
-	        android:visibility="gone"    
-	        >
+	        android:visibility="gone">
 	 </ImageView>
      
 </RelativeLayout>
