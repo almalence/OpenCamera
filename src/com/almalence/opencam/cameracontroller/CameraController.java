@@ -21,14 +21,9 @@
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
-
 //-+- -->
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -37,21 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginManagerInterface;
-import com.almalence.opencam.R;
-import com.almalence.util.ImageConversion;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
@@ -65,6 +49,27 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
+
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
+import com.almalence.util.ImageConversion;
+
+//<!-- -+-
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginManagerInterface;
+import com.almalence.opencam.R;
+//-+- -->
+/* <!-- +++
+import com.almalence.opencam_plus.ApplicationInterface;
+import com.almalence.opencam_plus.CameraParameters;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginManagerInterface;
+import com.almalence.opencam_plus.R;
++++ --> */
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback,
 		Camera.PreviewCallback, Camera.ShutterCallback, Handler.Callback

@@ -6001,7 +6001,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //		buttonSelectMode.setVisibility(View.GONE);
 		
 		// 1 button
-		if (id == ShutterButton.DEFAULT || id == ShutterButton.RECORDER_START || id == ShutterButton.RECORDER_STOP
+		if (id == ShutterButton.DEFAULT 
+				|| id == ShutterButton.RECORDER_START 
+				|| id == ShutterButton.RECORDER_STOP
 				|| id == ShutterButton.RECORDER_RECORDING)
 		{
 //			buttonShutterContainer.setOrientation(LinearLayout.VERTICAL);

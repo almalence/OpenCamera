@@ -46,10 +46,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -103,20 +101,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.HALv3;
-import com.almalence.opencam.ui.AlmalenceGUI;
-import com.almalence.opencam.ui.GLLayer;
-import com.almalence.opencam.ui.GUI;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppRater;
 import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.HALv3;
+import com.almalence.opencam.ui.AlmalenceGUI;
+import com.almalence.opencam.ui.GLLayer;
+import com.almalence.opencam.ui.GUI;
 //-+- -->
 /* <!-- +++
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.HALv3;
  import com.almalence.opencam_plus.ui.AlmalenceGUI;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
@@ -2836,7 +2835,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			public void onClick(View v)
 			{
 				String promo = editText.getText().toString();
-				if (promo.equalsIgnoreCase("appoftheday"))
+				if (promo.equalsIgnoreCase("appoftheday") || promo.equalsIgnoreCase("stelapps"))
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					unlockAllPurchased = true;
