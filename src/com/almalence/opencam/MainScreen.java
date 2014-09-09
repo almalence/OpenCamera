@@ -1081,9 +1081,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							glView.onResume();
 							Log.e("GL", "glView onResume");
 						}
-
-						PluginManager.getInstance().onGUICreate();
-						MainScreen.getGUIManager().onGUICreate();
 					} else if (surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
@@ -1094,9 +1091,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							glView.onResume();
 							Log.e("GL", "glView onResume");
 						}
-
-						// PluginManager.getInstance().onGUICreate();
-						// MainScreen.getGUIManager().onGUICreate();
 					}
 					orientListener.enable();
 				}
@@ -1260,8 +1254,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						if (!CameraController.isUseHALv3())
 						{
 							cameraController.setupCamera(holder);
-							// PluginManager.getInstance().onGUICreate();
-							// MainScreen.getGUIManager().onGUICreate();
 						} else
 						{
 							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
@@ -1366,8 +1358,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				Log.e("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
 				cameraController.setupCamera(holder);
-				// PluginManager.getInstance().onGUICreate();
-				// MainScreen.getGUIManager().onGUICreate();
 			}
 		}
 	}
@@ -1404,7 +1394,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+			onCameraConfigured();
 		}
 
 	}

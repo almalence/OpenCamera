@@ -55,6 +55,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -3073,80 +3074,89 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 ****************************************************************************************/
 	private void initSettingsMenu()
 	{
-		// Clear view list to recreate all settings buttons
-		settingsViews.clear();
-		if (settingsAdapter.Elements != null)
+		Handler h = new Handler();
+		h.postDelayed(new Runnable()
 		{
-			settingsAdapter.Elements.clear();
-			settingsAdapter.notifyDataSetChanged();
-		}
-
-		// Obtain all theoretical buttons we know
-		Set<Integer> keys = topMenuButtons.keySet();
-		Iterator<Integer> it = keys.iterator();
-		while (it.hasNext())
-		{
-			// If such camera feature is supported then add a button to settings
-			// menu
-			Integer id = it.next();
-			switch (id)
+			
+			@Override
+			public void run()
 			{
-			case R.id.evButton:
-				if (mEVSupported)
-					addQuickSetting(SettingsType.EV, false);
-				break;
-			case R.id.sceneButton:
-				if (mSceneModeSupported)
-					addQuickSetting(SettingsType.SCENE, false);
-				break;
-			case R.id.wbButton:
-				if (mWBSupported)
-					addQuickSetting(SettingsType.WB, false);
-				break;
-			case R.id.focusButton:
-				if (mFocusModeSupported)
-					addQuickSetting(SettingsType.FOCUS, false);
-				break;
-			case R.id.flashButton:
-				if (mFlashModeSupported)
-					addQuickSetting(SettingsType.FLASH, false);
-				break;
-			case R.id.isoButton:
-				if (mISOSupported)
-					addQuickSetting(SettingsType.ISO, false);
-				break;
-			case R.id.meteringButton:
-				if (mMeteringAreasSupported)
-					addQuickSetting(SettingsType.METERING, false);
-				break;
-			case R.id.camerachangeButton:
-				if (mCameraChangeSupported)
-					addQuickSetting(SettingsType.CAMERA, false);
-				break;
-			default:
-				break;
+				// Clear view list to recreate all settings buttons
+				settingsViews.clear();
+				if (settingsAdapter.Elements != null)
+				{
+					settingsAdapter.Elements.clear();
+					settingsAdapter.notifyDataSetChanged();
+				}
+				
+				// Obtain all theoretical buttons we know
+				Set<Integer> keys = topMenuButtons.keySet();
+				Iterator<Integer> it = keys.iterator();
+				while (it.hasNext())
+				{
+					// If such camera feature is supported then add a button to settings
+					// menu
+					Integer id = it.next();
+					switch (id)
+					{
+					case R.id.evButton:
+						if (mEVSupported)
+							addQuickSetting(SettingsType.EV, false);
+						break;
+					case R.id.sceneButton:
+						if (mSceneModeSupported)
+							addQuickSetting(SettingsType.SCENE, false);
+						break;
+					case R.id.wbButton:
+						if (mWBSupported)
+							addQuickSetting(SettingsType.WB, false);
+						break;
+					case R.id.focusButton:
+						if (mFocusModeSupported)
+							addQuickSetting(SettingsType.FOCUS, false);
+						break;
+					case R.id.flashButton:
+						if (mFlashModeSupported)
+							addQuickSetting(SettingsType.FLASH, false);
+						break;
+					case R.id.isoButton:
+						if (mISOSupported)
+							addQuickSetting(SettingsType.ISO, false);
+						break;
+					case R.id.meteringButton:
+						if (mMeteringAreasSupported)
+							addQuickSetting(SettingsType.METERING, false);
+						break;
+					case R.id.camerachangeButton:
+						if (mCameraChangeSupported)
+							addQuickSetting(SettingsType.CAMERA, false);
+						break;
+					default:
+						break;
+					}
+				}
+				
+				// Add quick conrols from plugins
+				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
+				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
+				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
+				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
+				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
+				
+				// The very last control is always MORE SETTINGS
+				addQuickSetting(SettingsType.MORE, false);
+				
+				settingsAdapter.Elements = settingsViews;
+				
+				final int degree = AlmalenceGUI.mDeviceOrientation >= 0 ? AlmalenceGUI.mDeviceOrientation % 360
+						: AlmalenceGUI.mDeviceOrientation % 360 + 360;
+				rotateSquareViews(degree, 0);
+				
+				GridView gridview = (GridView) guiView.findViewById(R.id.settingsGrid);
+				gridview.setAdapter(settingsAdapter);
+				settingsAdapter.notifyDataSetChanged();
 			}
-		}
-
-		// Add quick conrols from plugins
-		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
-		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
-		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
-		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
-		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
-
-		// The very last control is always MORE SETTINGS
-		addQuickSetting(SettingsType.MORE, false);
-
-		settingsAdapter.Elements = settingsViews;
-
-		final int degree = AlmalenceGUI.mDeviceOrientation >= 0 ? AlmalenceGUI.mDeviceOrientation % 360
-				: AlmalenceGUI.mDeviceOrientation % 360 + 360;
-		rotateSquareViews(degree, 0);
-
-		GridView gridview = (GridView) guiView.findViewById(R.id.settingsGrid);
-		gridview.setAdapter(settingsAdapter);
-		settingsAdapter.notifyDataSetChanged();
+		}, 2000);
 	}
 
 	private void createSettingSceneOnClick(View settingView)

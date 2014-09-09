@@ -288,6 +288,15 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		if (mGyroState == ON)
 		{
+			if (mSensorManager == null)
+			{
+				mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
+			}
+			if (mSensorManager == null)
+			{
+				return;
+			}
+
 			mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 
 			mAugmentedListener = new AugmentedRotationListener(remapOrientation, !mPrefHardwareGyroscope);
@@ -331,15 +340,19 @@ public class GyroVFPlugin extends PluginViewfinder
 		mGyroState = OFF;
 		if (mPrefHardwareGyroscope)
 		{
-			mSensorManager.unregisterListener(mAugmentedListener, mGyroscope);
+			if (mSensorManager != null)
+				mSensorManager.unregisterListener(mAugmentedListener, mGyroscope);
 		} else
 		{
 			if (null != mVfGyroscope)
 				mVfGyroscope.SetListener(null);
 		}
 
-		mSensorManager.unregisterListener(mAugmentedListener, mAccelerometer);
-		mSensorManager.unregisterListener(mAugmentedListener, mMagnetometer);
+		if (mSensorManager != null)
+		{
+			mSensorManager.unregisterListener(mAugmentedListener, mAccelerometer);
+			mSensorManager.unregisterListener(mAugmentedListener, mMagnetometer);
+		}
 	}
 
 	@Override
@@ -567,8 +580,9 @@ public class GyroVFPlugin extends PluginViewfinder
 				LayoutParams.WRAP_CONTENT);
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout,
 				params);
-//		mHorizonLayout.requestLayout();
-//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
+		// mHorizonLayout.requestLayout();
+		// ((RelativeLayout)
+		// MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout
