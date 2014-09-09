@@ -18,13 +18,9 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.preshot;
 
-import java.nio.ByteBuffer;
 import java.util.Date;
 
-import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
-import android.media.Image;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -36,7 +32,6 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.YuvImage;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -317,6 +312,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		isBuffering = true;
 		if (!isSlowMode)
 		{
+			PreShot.FreeBuffer();
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getInstance().getPreviewFrameRate();
 			if (Build.MODEL.contains("HTC One"))

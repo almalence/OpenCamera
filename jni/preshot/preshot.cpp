@@ -40,24 +40,24 @@ static int buf_size = 0;
 
 //cyclic buffer for storing image orientation
 static unsigned char *orient_buffer = NULL;
-static unsigned char *reserved_orient_buffer = NULL;
+//static unsigned char *reserved_orient_buffer = NULL;
 
 //cyclic buffer for storing data length
 static unsigned int *len_buffer = NULL;
-static unsigned int *reserved_len_buffer = NULL;
+//static unsigned int *reserved_len_buffer = NULL;
 
 //reserved cyclic buffer for storing data. reserved used while saving
-static unsigned char *frame_buffer_reserved = NULL;
+//static unsigned char *frame_buffer_reserved = NULL;
 
-static int buf_size_reserved = 0;
-static int elemSizeReserved = 0;
-static int isReservedAllocated=0;
+//static int buf_size_reserved = 0;
+//static int elemSizeReserved = 0;
+//static int isReservedAllocated=0;
 
 static int image_w = 0;
 static int image_h = 0;
 
-static int image_wReserved = 0;
-static int image_hReserved = 0;
+//static int image_wReserved = 0;
+//static int image_hReserved = 0;
 
 static int idxIN = 0;
 static int idxOUT = 0;
@@ -140,9 +140,9 @@ JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_Alloca
 	mem_usage(&mem_free);
 
 	desiredBufSize = secondsToAllocate*FPS+1;
-	if (!isReservedAllocated)
-		maxBufSize = mem_free/2/elemSize;
-	else
+//	if (!isReservedAllocated)
+//		maxBufSize = mem_free/2/elemSize;
+//	else
 		maxBufSize = mem_free*0.8/elemSize;
 
 	//count buf_size
@@ -405,29 +405,29 @@ JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_getOri
 	//return *(orient_buffer+TempidxOUT);
 }
 
-//check image orientation by index in reserved buffer
-//JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_isPortraitReserved
-JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_getOrientationReserved
-(
-	JNIEnv* env,
-	jobject pObj,
-	jint idx
-)
-{
-//	if (1 == *(reserved_orient_buffer+idx))
-//		return 1;
-//	else
+////check image orientation by index in reserved buffer
+////JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_isPortraitReserved
+//JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_getOrientationReserved
+//(
+//	JNIEnv* env,
+//	jobject pObj,
+//	jint idx
+//)
+//{
+////	if (1 == *(reserved_orient_buffer+idx))
+////		return 1;
+////	else
+////		return 0;
+//	if(0 == *(reserved_orient_buffer+idx))
 //		return 0;
-	if(0 == *(reserved_orient_buffer+idx))
-		return 0;
-	else if(1 == *(reserved_orient_buffer+idx))
-		return 90;
-	else if(2 == *(reserved_orient_buffer+idx))
-			return 180;
-	else if(3 == *(reserved_orient_buffer+idx))
-			return 270;
-	//return *(reserved_orient_buffer+idx);
-}
+//	else if(1 == *(reserved_orient_buffer+idx))
+//		return 90;
+//	else if(2 == *(reserved_orient_buffer+idx))
+//			return 180;
+//	else if(3 == *(reserved_orient_buffer+idx))
+//			return 270;
+//	//return *(reserved_orient_buffer+idx);
+//}
 
 //gets amount of images in buffer
 JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetImageCount
@@ -453,85 +453,84 @@ JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetIma
 }
 
 
-//allocate reserved buffer - can be used to store data while saving - not to waste time waiting for operation complete
-int AllocateBufferReserved()
-{
-	int i=0;
+////allocate reserved buffer - can be used to store data while saving - not to waste time waiting for operation complete
+//int AllocateBufferReserved()
+//{
+//	int i=0;
+//
+//	frame_buffer_reserved = (unsigned char *)malloc(sizeof(unsigned char )*buf_size_reserved*elemSize);
+//	if (!frame_buffer_reserved)
+//		return 0;
+//
+//	reserved_orient_buffer = (unsigned char *)malloc(sizeof(unsigned char )*buf_size_reserved);
+//	if (!reserved_orient_buffer)
+//		return 0;
+//
+//	reserved_len_buffer = (unsigned int*)malloc(sizeof(unsigned int)*buf_size_reserved);
+//	if (!reserved_len_buffer)
+//		return 0;
+//
+//	isReservedAllocated = 1;
+//	__android_log_print(ANDROID_LOG_ERROR, "Allocation", "Allocated reserved %d bufers of %d size", buf_size_reserved, elemSizeReserved);
+//
+//	return 1;
+//}
 
-	frame_buffer_reserved = (unsigned char *)malloc(sizeof(unsigned char )*buf_size_reserved*elemSize);
-	if (!frame_buffer_reserved)
-		return 0;
+////copy data from original buffer to reserved
+//JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_MakeCopy
+//(
+//	JNIEnv* env,
+//	jobject pObj
+//)
+//{
+//
+//	if (isReservedAllocated)
+//		return 0;
+//
+//	int imgCnt=0;
+//	if (idxIN > idxOUT)
+//	{
+//		imgCnt = idxIN - idxOUT;
+//	}
+//	else
+//	{
+//		imgCnt = buf_size - idxOUT + idxIN;
+//	}
+//
+//	buf_size_reserved = imgCnt;
+//	elemSizeReserved = elemSize;
+//
+//	image_wReserved = image_w;
+//	image_hReserved = image_h;
+//
+//	if (!AllocateBufferReserved())
+//		return 0;
+//
+//	int TempidxOUT = idxOUT;
+//
+//	int i=0;
+//	for (i=0; i<imgCnt; i++)
+//	{
+//		if (idxIN == TempidxOUT)
+//		{
+//			break;
+//		}
+//		memcpy (frame_buffer_reserved+i*elemSize, frame_buffer+TempidxOUT*elemSize, elemSize);
+//
+//		*(reserved_orient_buffer+i) = *(orient_buffer+TempidxOUT);
+//
+//		*(reserved_len_buffer+i) = *(len_buffer+TempidxOUT);
+//
+//		TempidxOUT++;
+//		if(TempidxOUT == (buf_size))
+//			TempidxOUT=0;
+//	}
+//
+//	return 1;
+//}
 
-	reserved_orient_buffer = (unsigned char *)malloc(sizeof(unsigned char )*buf_size_reserved);
-	if (!reserved_orient_buffer)
-		return 0;
-
-	reserved_len_buffer = (unsigned int*)malloc(sizeof(unsigned int)*buf_size_reserved);
-	if (!reserved_len_buffer)
-		return 0;
-
-	isReservedAllocated = 1;
-	__android_log_print(ANDROID_LOG_ERROR, "Allocation", "Allocated reserved %d bufers of %d size", buf_size_reserved, elemSizeReserved);
-
-	return 1;
-}
-
-//copy data from original buffer to reserved
-JNIEXPORT jint JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_MakeCopy
-(
-	JNIEnv* env,
-	jobject pObj
-)
-{
-
-	if (isReservedAllocated)
-		return 0;
-
-	int imgCnt=0;
-	if (idxIN > idxOUT)
-	{
-		imgCnt = idxIN - idxOUT;
-	}
-	else
-	{
-		imgCnt = buf_size - idxOUT + idxIN;
-	}
-
-	buf_size_reserved = imgCnt;
-	elemSizeReserved = elemSize;
-
-	image_wReserved = image_w;
-	image_hReserved = image_h;
-
-	if (!AllocateBufferReserved())
-		return 0;
-
-	int TempidxOUT = idxOUT;
-
-	int i=0;
-	for (i=0; i<imgCnt; i++)
-	{
-		if (idxIN == TempidxOUT)
-		{
-			break;
-		}
-		memcpy (frame_buffer_reserved+i*elemSize, frame_buffer+TempidxOUT*elemSize, elemSize);
-
-		*(reserved_orient_buffer+i) = *(orient_buffer+TempidxOUT);
-
-		*(reserved_len_buffer+i) = *(len_buffer+TempidxOUT);
-
-		TempidxOUT++;
-		if(TempidxOUT == (buf_size))
-			TempidxOUT=0;
-	}
-
-	return 1;
-}
-
-
-//get data from reserved buffer in JPEG format
-JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferReservedNV21
+//get data from buffer
+JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferNV21
 (
 	JNIEnv* env,
 	jobject pObj,
@@ -545,33 +544,30 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 
 	jbyteArray jdata;
 
-	jdata = env->NewByteArray(elemSizeReserved);
+	jdata = env->NewByteArray(elemSize);
 	data = (unsigned char*)env->GetByteArrayElements(jdata, NULL);
 
 	if (1 != mirrored)
 	{
-		//if (1 == *(reserved_orient_buffer+idx))
-		if (1 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 0, 0, 1);
-		else if(3 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 1);
-		else if(2 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 0);
+		if (1 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 0, 0, 1);
+		else if(3 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 1, 1, 1);
+		else if(2 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 1, 1, 0);
 		else
-			memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
-		//memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
+			memcpy (data, frame_buffer+idx*elemSize, elemSize);
 	}
 	else
 	{
-		//if (1 == *(reserved_orient_buffer+idx))
-		if (1 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 1);
-		else if(3 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 0, 0, 1);
-		else if(2 == *(reserved_orient_buffer+idx))
-			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 0);
+		if (1 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 1, 1, 1);
+		else if(3 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 0, 0, 1);
+		else if(2 == *(orient_buffer+idx))
+			TransformNV21(frame_buffer+idx*elemSize, data, image_w, image_h, NULL, 1, 1, 0);
 		else
-			memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
+			memcpy (data, frame_buffer+idx*elemSize, elemSize);
 	}
 
 	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
@@ -579,8 +575,79 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	return jdata;
 }
 
-//get data from reserved buffer in JPEG format without any rotation. ONLY FOR SLOW!!!
-JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferSimpleReservedNV21
+////get data from reserved buffer in JPEG format
+//JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferReservedNV21
+//(
+//	JNIEnv* env,
+//	jobject pObj,
+//	jint idx,
+//	jint W,
+//	jint H,
+//	jint mirrored
+//)
+//{
+//	unsigned char *data;
+//
+//	jbyteArray jdata;
+//
+//	jdata = env->NewByteArray(elemSizeReserved);
+//	data = (unsigned char*)env->GetByteArrayElements(jdata, NULL);
+//
+//	if (1 != mirrored)
+//	{
+//		//if (1 == *(reserved_orient_buffer+idx))
+//		if (1 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 0, 0, 1);
+//		else if(3 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 1);
+//		else if(2 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 0);
+//		else
+//			memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
+//		//memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
+//	}
+//	else
+//	{
+//		//if (1 == *(reserved_orient_buffer+idx))
+//		if (1 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 1);
+//		else if(3 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 0, 0, 1);
+//		else if(2 == *(reserved_orient_buffer+idx))
+//			TransformNV21(frame_buffer_reserved+idx*elemSizeReserved, data, image_wReserved, image_hReserved, NULL, 1, 1, 0);
+//		else
+//			memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, elemSizeReserved);
+//	}
+//
+//	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+//
+//	return jdata;
+//}
+
+////get data from reserved buffer in JPEG format without any rotation. ONLY FOR SLOW!!!
+//JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferSimpleReservedNV21
+//(
+//	JNIEnv* env,
+//	jobject pObj,
+//	jint idx,
+//	jint W,
+//	jint H
+//)
+//{
+//	unsigned char *data;
+//	jbyteArray jdata = env->NewByteArray(0);
+//
+//	jdata = env->NewByteArray(*(reserved_len_buffer + idx));
+//	data = (unsigned char*)env->GetByteArrayElements(jdata, NULL);
+//	memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, *(reserved_len_buffer + idx));
+//
+//	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+//
+//	return jdata;
+//}
+
+//get data from buffer in JPEG format without any rotation. ONLY FOR SLOW!!!
+JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_GetFromBufferSimpleNV21
 (
 	JNIEnv* env,
 	jobject pObj,
@@ -592,47 +659,46 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	unsigned char *data;
 	jbyteArray jdata = env->NewByteArray(0);
 
-	jdata = env->NewByteArray(*(reserved_len_buffer + idx));
+	jdata = env->NewByteArray(*(len_buffer + idx));
 	data = (unsigned char*)env->GetByteArrayElements(jdata, NULL);
-	memcpy (data, frame_buffer_reserved+idx*elemSizeReserved, *(reserved_len_buffer + idx));
+	memcpy (data, frame_buffer+idx*elemSize, *(len_buffer + idx));
 
 	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
 
 	return jdata;
 }
 
-
-//free reserved buffer
-JNIEXPORT jboolean JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_FreeBufferReserved
-(
-	JNIEnv* env,
-	jobject pObj
-)
-{
-	if (!frame_buffer_reserved)
-	{
-		return 0;
-	}
-
-	free(frame_buffer_reserved);
-	frame_buffer_reserved = 0;
-
-	if (!reserved_orient_buffer)
-	{
-		return 0;
-	}
-
-	free(reserved_orient_buffer);
-	reserved_orient_buffer = 0;
-
-	free(reserved_len_buffer);
-	reserved_len_buffer = 0;
-
-	isReservedAllocated = 0;
-	__android_log_print(ANDROID_LOG_ERROR, "Allocation", "Buffers reserved freed");
-
-	return 1;
-}
+////free reserved buffer
+//JNIEXPORT jboolean JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_FreeBufferReserved
+//(
+//	JNIEnv* env,
+//	jobject pObj
+//)
+//{
+//	if (!frame_buffer_reserved)
+//	{
+//		return 0;
+//	}
+//
+//	free(frame_buffer_reserved);
+//	frame_buffer_reserved = 0;
+//
+//	if (!reserved_orient_buffer)
+//	{
+//		return 0;
+//	}
+//
+//	free(reserved_orient_buffer);
+//	reserved_orient_buffer = 0;
+//
+//	free(reserved_len_buffer);
+//	reserved_len_buffer = 0;
+//
+//	isReservedAllocated = 0;
+//	__android_log_print(ANDROID_LOG_ERROR, "Allocation", "Buffers reserved freed");
+//
+//	return 1;
+//}
 
 }
 

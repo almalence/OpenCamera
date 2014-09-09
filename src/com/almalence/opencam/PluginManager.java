@@ -2042,8 +2042,9 @@ public class PluginManager implements PluginManagerInterface
 
 				countdownHandler.removeCallbacks(flashOff);
 				finalcountdownHandler.removeCallbacks(flashBlink);
-				if (CameraController.getInstance().getSupportedFlashModes() != null)
-					CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
+				if (delayedCaptureFlashPrefCommon)
+					if (CameraController.getInstance().getSupportedFlashModes() != null)
+						CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
 
 				Message msg = new Message();
 				msg.what = PluginManager.MSG_DELAYED_CAPTURE;

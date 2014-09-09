@@ -22,7 +22,7 @@
     <string name="video_mode_howto"></string>
     
     <string name="preshot_mode_name">Preshot</string>
-    <string name="preshot_mode_howto">Tap shutter to start/stop capture</string>
+    <string name="preshot_mode_howto">Нажмите кнопку съемки для запуска/остановки съемки</string>
     
     <string name="objectremoval_mode_name">Удаление объектов</string>
     <string name="objectremoval_mode_howto"></string>

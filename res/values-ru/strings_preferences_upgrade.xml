@@ -3,13 +3,13 @@
 	<string name="Pref_Upgrde_All_Preference_Title">Активировать все</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Активировать все режимы и возможности навсегда, даже добавляемые в будущем</string>
 	
-	<string name="Pref_Upgrde_HDR_Preference_Title">HDR</string>
-	<string name="Pref_Upgrde_HDR_Preference_Summary">Снимайте отличные кадры с широким динамическим диапазоном</string>
+	<string name="Pref_Upgrde_HDR_Preference_Title">HDR и HDR видео</string>
+	<string name="Pref_Upgrde_HDR_Preference_Summary">Снимайте отличные кадры с широким динамическим диапазоном и HDR видео</string>
 	
 	<string name="Pref_Upgrde_Panorama_Preference_Title">HD Панорама</string>
 	<string name="Pref_Upgrde_Panorama_Preference_Summary">Снимайте великолепные панорамы (высотой более 1000pix), в режиме проводки или с помощью дополненной реальности</string>
 	
-	<string name="Pref_Upgrde_Moving_Preference_Title">Движущиеся объекты</string>
+	<string name="Pref_Upgrde_Moving_Preference_Title">Multishot</string>
 	<string name="Pref_Upgrde_Moving_Preference_Summary">Удаляйте ненужные объекты, совмещайте движения в едином кадре, выбирайте лучшие выражения лиц на вашем фото</string>
 	
 	<string name="Pref_Upgrde_PromoCode_Preference_Title">Promo код</string>
