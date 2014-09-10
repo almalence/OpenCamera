@@ -2320,7 +2320,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!CameraController.isHALv3)
 		{
-			takeYUVFrame = (format == CameraController.YUV);
+			takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 			if (evRequested != null && evRequested.length >= total_frames)
 				CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
 			else
@@ -2712,7 +2712,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (previewMode)
 			{
-				// message to capture image will be emitted 2 or 3 frames after
+				// message to capture image will be emitted a few frames after
 				// setExposure
 				evLatency = 10; // the minimum value at which Galaxy Nexus is
 								// changing exposure in a stable way
@@ -2774,7 +2774,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				MainScreen.getInstance().playShutter();
 
 				lastCaptureStarted = SystemClock.uptimeMillis();
-				if (imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
+				if (imageWidth == previewWidth && imageHeight == previewHeight &&
+						((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
 					takePreviewFrame = true; // Temporary make capture by
 												// preview frames only for YUV
 												// requests to avoid slow YUV to

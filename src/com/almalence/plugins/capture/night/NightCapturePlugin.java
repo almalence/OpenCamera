@@ -81,10 +81,7 @@ public class NightCapturePlugin extends PluginCapture
 	private boolean				aboutToTakePicture		= false;
 
 	// shared between activities
-	public static int			CapIdx;
 	private static int			total_frames;
-	private static int[]		compressed_frame		= new int[HI_RES_FRAMES];
-	private static int[]		compressed_frame_len	= new int[HI_RES_FRAMES];
 
 	// Night vision variables
 	private GLCameraPreview		cameraPreview;
@@ -117,32 +114,6 @@ public class NightCapturePlugin extends PluginCapture
 	// preferences
 	private static String		FocusPreference;
 	private static boolean		OpenGLPreference;
-	private static String		ImageSizeIdxPreference;
-
-	public static String getImageSizeIdxPreference()
-	{
-		return ImageSizeIdxPreference;
-	}
-
-	private static List<Long>	ResolutionsMPixList;
-
-	public static List<Long> getResolutionsMPixList()
-	{
-		return ResolutionsMPixList;
-	}
-
-	public static List<String> getResolutionsIdxesList()
-	{
-		return ResolutionsIdxesList;
-	}
-
-	public static List<String> getResolutionsNamesList()
-	{
-		return ResolutionsNamesList;
-	}
-
-	private static List<String>	ResolutionsIdxesList;
-	private static List<String>	ResolutionsNamesList;
 
 	private int					preferenceSceneMode;
 	private int					preferenceFocusMode;
@@ -276,8 +247,6 @@ public class NightCapturePlugin extends PluginCapture
 
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		ImageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefNightBack"
-				: "imageSizePrefNightFront", "-1");
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
 	}
@@ -311,11 +280,7 @@ public class NightCapturePlugin extends PluginCapture
 	public void selectImageDimension()
 	{
 		selectImageDimensionNight();
-		setCameraImageSize();
-	}
 
-	private void setCameraImageSize()
-	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
 			MainScreen.setSaveImageWidth(imgCaptureWidth);
@@ -346,6 +311,8 @@ public class NightCapturePlugin extends PluginCapture
 	public void setCameraPictureSize()
 	{
 		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		
+		// ensure image data coming as intact as possible
 		CameraController.getInstance().setJpegQuality(100);
 
 		int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
@@ -569,13 +536,11 @@ public class NightCapturePlugin extends PluginCapture
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		Log.e("Night", "onImageTaken");
-		compressed_frame[frameNumber] = frame;
-		compressed_frame_len[frameNumber] = frame_len;
 
 		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame[frameNumber]));
+				String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
-				String.valueOf(compressed_frame_len[frameNumber]));
+				String.valueOf(frame_len));
 
 		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
@@ -584,6 +549,8 @@ public class NightCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(frameNumber + 1));
 
+		// FixMe: we are always requesting YUV, so isYUV is always true 
+		// do we really need the next two lines?
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
 		if (frameNumber == 0 && !isYUV && frameData != null)
@@ -624,14 +591,8 @@ public class NightCapturePlugin extends PluginCapture
 
 	public void captureFrames()
 	{
-		try
-		{
-			requestID = CameraController.captureImagesWithParams(total_frames, CameraController.YUV, new int[0], null,
-					true);
-		} catch (RuntimeException e)
-		{
-			Log.e("CameraTest", "takePicture fail in CaptureFrame (called after release?)");
-		}
+		requestID = CameraController.captureImagesWithParams(
+				total_frames, CameraController.YUV_RAW, new int[0], null, true);
 	}
 
 	// onPreviewFrame is used to collect frames for brightened VF output
@@ -675,9 +636,25 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
+	@Override
+	public void onAutoFocus(boolean paramBoolean)
+	{
+		if (inCapture) // disregard autofocus success (paramBoolean)
+		{
+			if (aboutToTakePicture)
+			{
+				captureFrames();
+				takingAlready = true;
+			}
+
+			aboutToTakePicture = false;
+		}
+	}
+
 	/******************************************************************************************************
 	 * OpenGL layer functions
 	 ******************************************************************************************************/
+	
 	@Override
 	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
 	{
@@ -747,24 +724,4 @@ public class NightCapturePlugin extends PluginCapture
 				}
 			}
 	}
-
-	/******************************************************************************************************
-	 * End of OpenGL layer functions
-	 ******************************************************************************************************/
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (inCapture) // disregard autofocus success (paramBoolean)
-		{
-			if (aboutToTakePicture)
-			{
-				captureFrames();
-				takingAlready = true;
-			}
-
-			aboutToTakePicture = false;
-		}
-	}
-
 }
