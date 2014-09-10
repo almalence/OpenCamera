@@ -76,6 +76,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 {
 	private static final String						TAG								= "CameraController";
 
+	// YUV_RAW is the same as YUV (ie NV21) except that
+	// noise filtering and edge enhancements are disabled if possible
+	public static final int							YUV_RAW							= 2;
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
 
@@ -239,8 +242,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
 
-	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
-			"1:1"																	};
+	protected static final CharSequence[]			RATIO_STRINGS
+													= { " ", "4:3", "3:2", "16:9", "1:1" };
 
 	// States of focus and capture
 	public static final int							FOCUS_STATE_IDLE				= 0;
@@ -1214,7 +1217,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void updateCameraFeatures()
 	{
-		cameraParameters = CameraController.camera.getParameters();
+		if (CameraController.camera != null)
+			cameraParameters = CameraController.camera.getParameters();
 
 		mEVSupported = getExposureCompensationSupported();
 		mSceneModeSupported = getSceneModeSupported();
