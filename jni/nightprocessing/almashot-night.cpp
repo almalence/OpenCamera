@@ -77,33 +77,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_ConvertFromJpeg
-(
-	JNIEnv* env,
-	jobject thiz,
-	jintArray in,
-	jintArray in_len,
-	jint nFrames,
-	jint sx,
-	jint sy
-)
-{
-	int *jpeg_length;
-	unsigned char * *jpeg;
-	char status[1024];
-
-	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
-	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
-
-	DecodeAndRotateMultipleJpegs(yuv, jpeg, jpeg_length, sx, sy, nFrames, 0, 0, 0, true);
-
-	env->ReleaseIntArrayElements(in, (jint*)jpeg, JNI_ABORT);
-	env->ReleaseIntArrayElements(in_len, (jint*)jpeg_length, JNI_ABORT);
-
-	sprintf (status, "frames total: %d\n", (int)nFrames);
-	return env->NewStringUTF(status);
-}
-
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_NightAddYUVFrames
 (
 	JNIEnv* env,
@@ -176,85 +149,39 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_BlurLessPreview
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_Process
 (
 	JNIEnv* env,
 	jobject thiz,
 	jint sx,
 	jint sy,
+	jint sxo,
+	jint syo,
 	jint sensorGainPref,
 	jint DeGhostPref,
 	jint lumaEnh,
 	jint chromaEnh,
-	jint nImages
+	jint nImages,
+	jintArray jcrop,
+	jboolean jrot,
+	jboolean jmirror,
+	jboolean isHALv3
 )
 {
-	int i;
-	Uint8 *pview_rgb;
-	Uint32 *pview;
+	Uint8 *OutPic, *OutNV21;
+	int *crop;
 	int nTable[3] = {2,4,6};
 	int deghTable[3] = {256/2, 256, 3*256/2};
 
-	//pview_rgb = (Uint8*)malloc((sx/4)*(sy/4)*3);
-
-	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 1");
-
-//	FILE * pFile;
-//	pFile = fopen ("/sdcard/DCIM/blurlessparams.txt","wb");
-//    fprintf (pFile, "Blurless_Preview params:\ndeghTable[DeGhostPref] %d\nnImages %d\nSX %d\nSY %d\n64*nTable[sensorGainPref] %d\nlumaEnh %d\nchromaEnh %d",deghTable[DeGhostPref],nImages,sx,sy,64*nTable[sensorGainPref],lumaEnh,chromaEnh);
-//    fclose (pFile);
-
-//	for (int i=0; i<nImages; ++i)
-//	{
-//		char str[256];
-//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
-//		FILE *f = fopen (str, "wb");
-//		fwrite(yuv[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-//		fclose(f);
-//	}
+	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
 
 	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
 		0, // 256*3,
 		deghTable[DeGhostPref], 1,
 		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
 
-	//__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "BlurLessPreview 3");
-
-//	char s[1024];
-//	sprintf(s, "/sdcard/DCIM/blurless_preview.bin");
-//	FILE *f=fopen(s, "wb");
-//	fwrite (pview_rgb, (sx/4)*(sy/4)*3, 1, f);
-//	fclose(f);
-
-	return env->NewStringUTF("ok");
-}
-
-
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_BlurLessProcess
-(
-	JNIEnv* env,
-	jobject thiz,
-	jint sx,
-	jint sy,
-	jintArray jcrop,
-	jboolean jrot,
-	jboolean jmirror
-)
-{
-	Uint8 *OutPic, *OutNV21;
-	int *crop;
-
-	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
-
 	crop[0]=crop[1]=crop[2]=crop[3]=-1;
 	BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
-
-//	char s[1024];
-//
-//	sprintf(s, "/sdcard/DCIM/night_result.bin");
-//	FILE *f=fopen(s, "wb");
-//	fwrite (OutPic, sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-//	fclose(f);
 
 	OutNV21 = OutPic;
 	if (jrot)
@@ -271,67 +198,4 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
 
 	return (jint)OutPic;
-}
-
-
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_SuperZoomPreview
-(
-	JNIEnv* env,
-	jobject thiz,
-	jintArray in,
-	jint nFrames,
-	jint sx,
-	jint sy,
-	jint sxo,
-	jint syo,
-	jint sensorGainPref,
-	jint DeGhostPref,
-	jint saturated,
-	jint noSres
-)
-{
-	int i;
-	void * *frames;
-	Uint8 *pview_yuv;
-	Uint32 *pview;
-	int nTable[3] = {2,4,6};
-	int deghTable[3] = {256/2, 256, 3*256/2};
-
-	frames = (void**)env->GetIntArrayElements(in, NULL);
-
-	for (i=0; i<nFrames; ++i)
-	{
-		// not really sure if this copy is needed
-		yuv[i] = (Uint8*)frames[i];
-	}
-
-//	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "b: %d (%d %d %d %d)  %d   %dx%d", (int)yuv, (int)yuv[0], (int)yuv[1], (int)yuv[2], (int)yuv[3], sensorGainPref, sx, sy);
-	//SuperZoom_Preview(&instance, yuv, pview_yuv, sx, sy, sxo, syo, -1, -1, nFrames,
-//	__android_log_print(ANDROID_LOG_ERROR, "Night processin", "SuperZoom_Preview: sx=%d sy=%d sxo=%d syo=%d sxo/4=%d syo/4=%d nFrames=%d SensorGain=0 DeGhostGain=%d DeGhostFrames\%d \
-//			kelvin1=%d kelvin2=%d SizeGuaranteeMode=%d noSres=%d postFilter=%d postSharpen=%d largeDisplacements=%d nBaseFrame=NULL cameraIndex=0 externalBuffers=0", sx, sy, sxo, syo, sxo/4, syo/4, nFrames, deghTable[DeGhostPref], 1,
-//			-1, 9+saturated*9*16+1, 1, 1, 64*nTable[sensorGainPref], 2, 1);
-	SuperZoom_Preview(&instance, yuv, NULL, NULL, sx, sy, sxo, syo, sxo/4, syo/4, nFrames,
-		0, // 256*nTable[sensorGainPref],
-		deghTable[DeGhostPref], 1,
-		-1, 9+saturated*9*16+1,	// hack to get brightening (pass enh. level in kelvin2 parameter)
-		1, 1, 64*nTable[sensorGainPref], 2, 1, NULL, 0, 0);
-
-//	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Preview completed");
-
-	env->ReleaseIntArrayElements(in, (jint*)frames, JNI_ABORT);
-
-	return env->NewStringUTF("ok");
-}
-
-
-extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_convertPreview(
-		JNIEnv *env, jclass clazz, jbyteArray ain, jbyteArray aout, jint width,	jint height, jint outWidth, jint outHeight)
-{
-	jbyte *cImageIn = env->GetByteArrayElements(ain, 0);
-	jbyte *cImageOut = env->GetByteArrayElements(aout, 0);
-
-	NV21_to_RGB_scaled_rotated((unsigned char*)cImageIn, width, height, 0, 0, width, height, outWidth, outHeight, 3, (unsigned char*)cImageOut);
-
-	env->ReleaseByteArrayElements(ain, cImageIn, 0);
-	env->ReleaseByteArrayElements(aout, cImageOut, 0);
 }

@@ -103,8 +103,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		AlmaShotNight.Initialize();
 
 		// start night processing
-		nightPreview();
-
 		nightProcessing();
 
 		if (mDisplayOrientation == 180 || mDisplayOrientation == 270)
@@ -147,7 +145,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
 	}
 
-	private void nightPreview()
+	private void nightProcessing()
 	{
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));
@@ -165,32 +163,21 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 					"framelen" + (i + 1) + sessionID));
 		}
 
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-		if (!isYUV)
-		{
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg start");
-			AlmaShotNight.ConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
-					mImageHeight);
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
-		} else
-		{
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames start");
-			AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-			Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
-		}
+		Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames start");
+		AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
+		Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 
 		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview start");
-		AlmaShotNight.BlurLessPreview(mImageWidth, mImageHeight, Integer.parseInt(NoisePreference),
-				Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0, imagesAmount);
-		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview success");
 
-		System.gc();
-	}
+		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isHALv3" + sessionID));
 
-	private void nightProcessing()
-	{
-		yuv = AlmaShotNight.BlurLessProcess(mImageWidth, mImageHeight, NightProcessingPlugin.crop,
-				mDisplayOrientation == 90 || mDisplayOrientation == 270, mCameraMirrored);
+		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
+				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
+				9, SaturatedColors ? 9 : 0, imagesAmount,
+				NightProcessingPlugin.crop,
+				mDisplayOrientation == 90 || mDisplayOrientation == 270,
+				mCameraMirrored,
+				isHALv3);
 
 		AlmaShotNight.Release();
 	}

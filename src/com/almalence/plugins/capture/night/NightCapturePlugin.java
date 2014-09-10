@@ -99,15 +99,10 @@ public class NightCapturePlugin extends PluginCapture
 	FloatBuffer					cubeBuff;
 	FloatBuffer					texBuff;
 
-	byte[]						yuvData;
-	byte[]						rgbData;
+	private byte[]				yuvData;
 
 	float						currHalfWidth;
 	float						currHalfHeight;
-
-	static int					captureIndex			= -1;
-	static int					imgCaptureWidth			= 0;
-	static int					imgCaptureHeight		= 0;
 
 	float						cameraDist;
 
@@ -221,7 +216,6 @@ public class NightCapturePlugin extends PluginCapture
 			dataS = null;
 			dataRotated = null;
 			yuvData = null;
-			rgbData = null;
 
 			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
 		} else if (quickControlIconID == R.drawable.plugin_capture_night_nightvision_off)
@@ -269,30 +263,21 @@ public class NightCapturePlugin extends PluginCapture
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 	}
 
-	public static void selectImageDimensionNight()
-	{
-		captureIndex = MainScreen.selectImageDimensionMultishot();
-		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
-		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
-	}
-
 	@Override
 	public void selectImageDimension()
 	{
-		selectImageDimensionNight();
+		int captureIndex = MainScreen.selectImageDimensionMultishot();
+		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
+		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 
-		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
-		{
-			MainScreen.setSaveImageWidth(imgCaptureWidth);
-			MainScreen.setSaveImageHeight(imgCaptureHeight);
+		MainScreen.setSaveImageWidth(imgCaptureWidth);
+		MainScreen.setSaveImageHeight(imgCaptureHeight);
 
-			MainScreen.setImageWidth(imgCaptureWidth);
-			MainScreen.setImageHeight(imgCaptureHeight);
+		MainScreen.setImageWidth(imgCaptureWidth);
+		MainScreen.setImageHeight(imgCaptureHeight);
 
-			String msg = "NightCapturePlugin.setCameraImageSize SX = " + MainScreen.getImageWidth() + " SY = "
-					+ MainScreen.getImageHeight();
-			Log.e("NightCapturePlugin", msg);
-		}
+		Log.i("NightCapturePlugin", "NightCapturePlugin.setCameraImageSize SX = " +
+				MainScreen.getImageWidth() + " SY = " + MainScreen.getImageHeight());
 	}
 	
 	@Override
@@ -480,9 +465,6 @@ public class NightCapturePlugin extends PluginCapture
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
-			MainScreen.setSaveImageWidth(imgCaptureWidth);
-			MainScreen.setSaveImageHeight(imgCaptureHeight);
-
 			inCapture = true;
 			takingAlready = false;
 
@@ -549,10 +531,10 @@ public class NightCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(frameNumber + 1));
 
-		// FixMe: we are always requesting YUV, so isYUV is always true 
-		// do we really need the next two lines?
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
+		PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
+				String.valueOf(CameraController.isUseHALv3()));
+		
+		// FixMe: we are always requesting YUV, so isYUV is always true (?) 
 		if (frameNumber == 0 && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
