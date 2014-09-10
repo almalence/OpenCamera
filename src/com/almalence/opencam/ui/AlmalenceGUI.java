@@ -1116,9 +1116,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void hideStore()
 	{
-		// <!-- -+-
 		store.hideStore();
-		// -+- -->
 	}
 
 	@Override
@@ -1241,10 +1239,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 
-		// <!-- -+-
 		store = new AlmalenceStore(guiView);
-		// -+- -->
-		
+
 		manageUnlockControl();
 	}
 
@@ -1435,13 +1431,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
 
-		// <!-- -+-
 		if (MainScreen.getInstance().isShowStore())
 		{
 			showStore();
 			MainScreen.getInstance().setShowStore(false);
 		}
-		// -+- -->
 	}
 
 	@Override
@@ -4011,13 +4005,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					closeQuickControlsSettings();
 					guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
-					quickControlsChangeVisible = true;
+					return;
 				}
 			}
 			if (settingsControlsVisible)
 			{
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-				settingsControlsVisible = true;
 				return;
 			}
 			if (modeSelectorVisible)
@@ -4043,8 +4036,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case R.id.buttonShutter:
 			if (quickControlsChangeVisible || settingsControlsVisible)
 			{
-				quickControlsChangeVisible = false;
-				settingsControlsVisible = false;
+				break;
+			}
+
+			if (quickControlsVisible)
+			{
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
+				quickControlsVisible = false;
 				break;
 			}
 
@@ -4584,6 +4584,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			pressed_button.setPressed(false);
 			pressed_button.setSelected(true);
 		}
+
+		quickControlsVisible = false;
 	}
 
 	private int findTopMenuButtonIndex(View view)
