@@ -3,7 +3,7 @@
 	
 	<string name="Pref_VF_AEAWLock_Preference_Title">Zámek AE\\AWB</string>
 	
-	<string name="Pref_VF_ShowAEAWLock_Title">Zobrazit zámek expozice a vyv. bílé</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Nemusí fungovat na některých typech zařízení</string>
+	<string name="Pref_VF_ShowAEAWLock_Title">Zobrazit zámek AE, AWB</string>
+	<string name="Pref_VF_ShowAEAFLock_Summary">Zámek expozice a vyvážení bílé, nemusí fungovat na některých typech zařízení</string>
 	
 </resources>

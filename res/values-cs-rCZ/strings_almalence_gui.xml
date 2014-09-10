@@ -7,11 +7,11 @@
     <string name="Pref_Common_UseFrontCamera_Title">Přední fotoaparát</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Použít přední fotoaparát</string>
     <string name="Pref_Common_ImageSize_Title">Velikost fotek</string>
-    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Velikost fotek (Chytrý multisnímek a Noční režim)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Chytrý multisnímek a Noční režim (velikost fotek)</string>
     <string name="Pref_Common_ImageSize_Summary">\nPoznámka: některé režimy mají vlastní nastavení pro velikost fotek</string>
     <string name="Pref_Common_Shutter_Title">Tichý režim</string>
     <string name="Pref_Common_Shutter_Summary">Není zaručena funkčnost na všech typech zařízení</string>
-    <string name="Pref_Common_HWShutter_Title">Použít spoušť fotoaparátu pro spuštění aplikace</string>
+    <string name="Pref_Common_HWShutter_Title">Spustit spouští fotoaparátu</string>
     <string name="Pref_Common_ShotOnTap_Title">Kliknutím vyfotit</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zaostřit a vyfotit kliknutím na displej</string>
     <string name="Pref_Common_UseHALv3_Title">Použít Сamera2 rozhraní</string>
@@ -24,7 +24,7 @@
     <string name="Pref_Common_VolumeButton_Title">Funkce tlačítek hlasitosti</string>
     <string name="Pref_SaveConfiguration_Title">Uložit konfiguraci</string>
     <string name="Pref_SaveConfiguration_Summary">Vyberte, která nastavení se uloží do příštího startu aplikace</string>
-    <string name="Pref_SaveConfiguration_ShootingMode_Title">Režim snímání</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Režim focení</string>
     <string name="Pref_SaveConfiguration_ImageSize_Title">Velikost fotek</string>
     <string name="Pref_SaveConfiguration_SceneMode_Title">Režim scény</string>
     <string name="Pref_SaveConfiguration_FocusMode_Title">Režim ostření</string>
@@ -37,7 +37,7 @@
     <string name="Pref_Common_DelayedCapture_Title">Samospoušť</string>
     <string name="Pref_Common_DelayedCapture_Summary">Ukázat tlačítko pro nastavení samospouště</string>
     <string name="Pref_ShowHelp_Title">Ukázat nápovědu</string>
-    <string name="Pref_WhowHelp_Summary">Ukázat nápovědu při zapnutí režimu (Panorama, Chytrý multisnímek)</string>
+    <string name="Pref_WhowHelp_Summary">Ukázat nápovědu při přepnutí režimu (Panorama, Chytrý multisnímek)</string>
     <string name="Pref_Common_HeadsetTap_Title">Tlačítka Headsetu</string>
     <string name="Pref_Common_HeadsetTap_Summary">Použít tlačítka od náhlavní soupravy pro focení</string>
     
@@ -66,7 +66,7 @@
         
     <string name="Pref_General_Preference_Title">Obecné nastavení</string>
 	<string name="Pref_General_Preference_Summary">Fotoaparát a focení</string>
-	<string name="Pref_VF_Preference_Title">Nastavení hledáčku</string>
+	<string name="Pref_VF_Preference_Title">Nastavení displeje</string>
 	<string name="Pref_VF_Preference_Summary">Co se zobrazí na displeji</string>
 	<string name="Pref_Modes_Preference_Title">Nastavení režimů</string>
 	<string name="Pref_Modes_Preference_Summary">HDR, Noční režim, Panorama...</string>
@@ -77,7 +77,7 @@
 	<string name="Pref_Unlock_Preference_Title">Odemknout</string>
 	<string name="Pref_Unlock_Preference_Summary">Odemknout prémiové doplňky</string>
 	
-	<string name="layout_hint_bottom">Vyberte režim snímání</string>
+	<string name="layout_hint_bottom">Vyberte režim focení</string>
 	<string name="layout_hint_center">Pro zobrazení více informací\npřejeďte po displeji</string>
 	<string name="layout_hint_top_left">Krátkým podržením\nnastavíte ikony</string>
 	<string name="layout_hint_top_center">Vysuňte pro více možností</string>

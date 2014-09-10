@@ -16,9 +16,7 @@
 	<string name="widgetGoShopText">Obchod Play</string>
 	<string name="widgetActivation">Aktivace widgetu</string>
 	<string name="widgetAdvText">Věděli jste, že můžete spustit A Better Camera přímo do Vámi požadovaného módu (např. video, HDR, nebo jiné)? \nPotřebujete k tomu pouze náš widget, který je zdarma.</string>
-	<string name="widgetInstallText">Instalovat Widget</string>
+	<string name="widgetInstallText">Instalovat Editor</string>
 	<string name="widgetNoText">Připomenout později</string>
-	<string name="editorInstallText">Instalovat Editor</string>
-	<string name="editorNoText">Připomenout později</string>
 	<string name="editorAdvText">Vaše fotografie můžete editovat v našem ABC Editoru, který je zdarma! Obsahuje filtry, efekty a mnoho dalšího!</string>
 </resources>

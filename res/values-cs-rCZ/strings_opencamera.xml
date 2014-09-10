@@ -31,7 +31,7 @@
     
     <string name="dimensions_none">Žádné</string>
     
-    <string name="already_unlocked">Již odemčeno</string>
+    <string name="already_unlocked">Odemčeno</string>
     
     <string name="volumeBtnTakePic">Vyfotit</string>
     <string name="volumeBtnZoom">Zoom</string>
@@ -42,7 +42,7 @@
     <string name="raterRate">Ohodnotit A Better Camera</string>
     <string name="raterNo">Ne, díky</string>
     
-    <string name="raterSendReview"> Jelikož chceme i nadále tuto aplikaci vylepšovat, máme zájem o Váš názor, který nám můžete touto cestou sdělit.</string>
+    <string name="raterSendReview"> Jelikož chceme i nadále tuto aplikaci vylepšovat, zajímá nás Váš názor, který nám můžete touto cestou sdělit.</string>
     <string name="raterSend">Zaslat</string>
     
 </resources>
