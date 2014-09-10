@@ -405,6 +405,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		createBillingHandler();
+		
 		/**** Billing *****/
 
 		// application rating helper
@@ -1126,6 +1127,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					.clearFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		
+		// <!-- -+-
+		if(isABCUnlockedInstalled(this))
+		{
+			unlockAllPurchased = true;
+			prefs.edit().putBoolean("unlock_all_forever", true).commit();
+		}
+		// -+- -->
 	}
 
 	public void relaunchCamera()
@@ -2531,17 +2540,21 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if (isPurchasedAll())
 			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, isCouponSale() ? SKU_UNLOCK_ALL_COUPON : SKU_UNLOCK_ALL,
-					ALL_REQUEST, mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
+		
+		//now will call store with abc unlocked
+		callStoreForUnlocked(this);
+		//iap functionality
+//		String payload = "";
+//		try
+//		{
+//			mHelper.launchPurchaseFlow(MainScreen.thiz, isCouponSale() ? SKU_UNLOCK_ALL_COUPON : SKU_UNLOCK_ALL,
+//					ALL_REQUEST, mPreferencePurchaseFinishedListener, payload);
+//		} catch (Exception e)
+//		{
+//			e.printStackTrace();
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
+//		}
 	}
 
 	public void purchaseHDR()
@@ -3051,7 +3064,33 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		dialog.show();
 	}
+	
+	private boolean isABCUnlockedInstalled(Activity activity)
+	{
+		try
+		{
+			activity.getPackageManager().getInstallerPackageName("com.almalence.opencam_plus");
+		} catch (IllegalArgumentException e)
+		{
+			return false;
+		}
 
+		return true;
+	}
+
+	private void callStoreForUnlocked(Activity activity)
+	{
+		try
+		{
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
+			activity.startActivity(intent);
+		} catch (ActivityNotFoundException e)
+		{
+			return;
+		}
+	}
+	
 	// -+- -->
 
 	/************************ Billing ************************/

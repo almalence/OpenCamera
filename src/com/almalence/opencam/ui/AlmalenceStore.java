@@ -451,7 +451,8 @@ public class AlmalenceStore
 //			MainScreen.getInstance().purchaseGroupshot();
 //			break;
 		case 5:// Promo
-			MainScreen.getInstance().enterPromo();
+			if (!MainScreen.getInstance().isPurchasedAll())
+				MainScreen.getInstance().enterPromo();
 			break;
 		
 		default:

@@ -1116,7 +1116,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void hideStore()
 	{
+		// <!-- -+-
 		store.hideStore();
+		// -+- -->
 	}
 
 	@Override
@@ -1239,8 +1241,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 
+		// <!-- -+-
 		store = new AlmalenceStore(guiView);
-
+		// -+- -->
+		
 		manageUnlockControl();
 	}
 
@@ -1431,11 +1435,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
 
+		// <!-- -+-
 		if (MainScreen.getInstance().isShowStore())
 		{
 			showStore();
 			MainScreen.getInstance().setShowStore(false);
 		}
+		// -+- -->
 	}
 
 	@Override
