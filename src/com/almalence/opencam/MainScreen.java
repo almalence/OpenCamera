@@ -2054,12 +2054,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	static final String	SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
 	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
 	// subscription
-	static final String	SKU_SUBSCRIPTION_MONTH		= "subscription_unlock_all_month";
 	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
 	static final String	SKU_SUBSCRIPTION_YEAR_CTRL		= "subscription_unlock_all_year_controller";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
 	static final String	SKU_SALE2					= "abc_sale_controller2";
+	
+	static final String	SKU_PROMO					= "abc_promo";
 
 	static
 	{
@@ -2070,12 +2071,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, "com.yandex.store", "subscription_unlock_all_month");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
 		OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
+		OpenIabHelper.mapSku(SKU_PROMO, "com.yandex.store", "abc_promo");
 
 		// Amazon store
 		OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
@@ -2084,12 +2085,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_MONTH, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_month");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
+		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
 
 		// Samsung store
 		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
@@ -2212,17 +2213,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
 						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_CTRL);
+						additionalSkuList.add(SKU_PROMO);
 
 						if (subscriptionStatusRequest)
 						{
 							// Log.e("Main billing!!!!!!!!!!!!!!",
 							// "Subscription check.");
-
-							// subscription month
-							additionalSkuList.add(SKU_SUBSCRIPTION_MONTH);
-							// reset subscription status
-							unlockAllSubscriptionMonth = false;
-							prefs.edit().putBoolean("subscription_unlock_all_month", false).commit();
 
 							// subscription year
 							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
@@ -2274,9 +2270,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockPano				= "$2.99";
 	public String								titleUnlockMoving			= "$3.99";
 	public String								titleUnlockGroup			= "$2.99";
-	public String								titleSubscriptionMonth		= "$0.99";
 	public String								titleSubscriptionYear		= "$4.99";
 
+	public String								summary_SKU_PROMO			= "";
 //	public String								summaryUnlockAll			= "";
 //	public String								summaryUnlockHDR			= "";
 //	public String								summaryUnlockPano			= "";
@@ -2356,15 +2352,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																										true).commit();
 																					}
 																					if (inventory
-																							.hasPurchase(SKU_SUBSCRIPTION_MONTH))
-																					{
-																						unlockAllSubscriptionMonth = true;
-																						prefsEditor
-																								.putBoolean(
-																										"subscription_unlock_all_month",
-																										true).commit();
-																					}
-																					if (inventory
 																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
 																					{
 																						unlockAllSubscriptionYear = true;
@@ -2435,6 +2422,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																										SKU_GROUPSHOT)
 																								.getPrice();
 
+																						summary_SKU_PROMO = inventory
+																						.getSkuDetails(
+																								SKU_PROMO)
+																						.getDescription();
+																						
 //																						summaryUnlockAll = inventory
 //																								.getSkuDetails(
 //																										SKU_UNLOCK_ALL)
@@ -2498,7 +2490,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private int									ALL_REQUEST					= 102;
 	private int									OBJECTREM_BURST_REQUEST		= 103;
 	private int									GROUPSHOT_REQUEST			= 104;
-	private int									SUBSCRIPTION_MONTH_REQUEST	= 105;
 	private int									SUBSCRIPTION_YEAR_REQUEST	= 106;
 
 	public boolean isPurchasedAll()
@@ -2599,23 +2590,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_MOVING_SEQ, OBJECTREM_BURST_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-
-	public void purchasedUnlockAllSubscriptionMonth()
-	{
-		if (isPurchasedUnlockAllSubscriptionMonth() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUBSCRIPTION_MONTH, SUBSCRIPTION_MONTH_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
 		} catch (Exception e)
 		{
@@ -2735,17 +2709,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_groupshot", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_SUBSCRIPTION_MONTH))
-		{
-			Log.v("Main billing", "Purchase month subscription.");
-			unlockAllSubscriptionMonth = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_month", true).commit();
-
-			timeLastSubscriptionCheck = System.currentTimeMillis();
-			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
 		}
 		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
 		{

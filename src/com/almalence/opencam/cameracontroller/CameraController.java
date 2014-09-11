@@ -1141,7 +1141,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					previewSizes.add(this.new Size(sz.getWidth(), sz.getHeight()));
 			} else
 			{
-				Log.e(TAG, "SupportedPreviewSizesList == null");
+				Log.d(TAG, "SupportedPreviewSizesList == null");
 			}
 
 			return previewSizes;
@@ -1181,7 +1181,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					pictureSizes.add(this.new Size(sz.width, sz.height));
 			} else
 			{
-				Log.e(TAG, "camera == null");
+				Log.d(TAG, "camera == null");
 			}
 		} else
 			HALv3.fillPictureSizeList(pictureSizes);
@@ -2409,7 +2409,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-		Log.e(TAG, "onPictureTaken");
+		Log.d(TAG, "onPictureTaken");
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
