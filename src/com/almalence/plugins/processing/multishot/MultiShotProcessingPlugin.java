@@ -131,7 +131,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		});
 
-		
 		mButtonsLayout.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -139,13 +138,13 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			{
 			}
 		});
-		
+
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
-		
+
 		mButtonsLayout.setVisibility(View.GONE);
 	}
 
@@ -176,7 +175,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		groupShotProcessingPlugin.onStart();
 		sequenceProcessingPlugin.onStart();
 		objectRemovalProcessingPlugin.onStart();
-		
+
 		selectedPlugin = CANCELLED;
 	}
 
@@ -286,7 +285,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 							}
 						});
 					}
-					
+
 					String index = String.format("_%02d", i);
 					File file = new File(saveDir, fileFormat + index + ".jpg");
 
@@ -303,8 +302,14 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 						os = new FileOutputStream(file);
 					}
 
-					PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i),
-							isYUV ? mYUVBufferList.get(i) : 0, file);
+					if (isYUV)
+					{
+						PluginManager.getInstance().writeData(os, isYUV, sessionID, i, null, mYUVBufferList.get(i),
+								file);
+					} else
+					{
+						PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i), 0, file);
+					}
 				}
 			} catch (IOException e)
 			{
@@ -399,7 +404,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			{
 				return false;
 			}
-			
+
 			MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			mButtonsLayout.setVisibility(View.GONE);
 
@@ -414,7 +419,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			return res;
 		}
-		
+
 		return super.onKeyDown(keyCode, event);
 	}
 
