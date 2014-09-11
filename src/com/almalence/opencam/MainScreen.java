@@ -1403,9 +1403,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-			onCameraConfigured();
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 		}
-
 	}
 
 	private void onCameraConfigured()
