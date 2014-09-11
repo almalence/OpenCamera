@@ -518,13 +518,15 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		Log.e("Night", "onImageTaken");
+		//Log.e("Night", "onImageTaken");
 
 		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
 				String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
 				String.valueOf(frame_len));
 
+		// ToDo: there is no need to pass orientation for every frame, just for the first one
+		// also, amountofcapturedframes can be set only once to total_frames
 		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
@@ -532,24 +534,33 @@ public class NightCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(frameNumber + 1));
 
-		boolean isHALv3 = CameraController.isUseHALv3();
-		PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
-				String.valueOf(isHALv3));
-
-		// pass sensor gain to the image processing functions if it is known
-		PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
-				String.valueOf(sensorGain));
+		if (frameNumber == 0)
+		{
+			boolean isHALv3 = CameraController.isUseHALv3();
+			PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
+					String.valueOf(isHALv3));
+	
+			// Note: a more memory-effective way would be to crop zoomed images right here
+			// (only possible with HALv3)
+			float zoom = CameraController.getInstance().getZoom();
+			PluginManager.getInstance().addToSharedMem("zoom" + SessionID,
+					String.valueOf(zoom));
+			
+			// pass sensor gain to the image processing functions if it is known
+			PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
+					String.valueOf(sensorGain));
+			
+			// FixMe: we are always requesting YUV, so isYUV is always true (?) 
+			if (!isYUV && frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+		}
 		
-		// FixMe: we are always requesting YUV, so isYUV is always true (?) 
-		if (frameNumber == 0 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
-
 		try
 		{
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			Log.e("Night", "StartPreview fail");
+			//Log.e("Night", "StartPreview fail");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			frameNumber = 0;

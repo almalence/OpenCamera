@@ -505,6 +505,11 @@ public class HALv3
 		}
 	}
 
+	public static float getZoom()
+	{
+		return zoomLevel;
+	}
+	
 	public static Rect getZoomRect(float zoom, int imgWidth, int imgHeight)
 	{
 		int cropWidth = (int) (imgWidth / zoom) + 2 * 64;
@@ -995,7 +1000,7 @@ public class HALv3
 						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 			}
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
-			if (zoomLevel >= 1.0f)
+			if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 			{
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);

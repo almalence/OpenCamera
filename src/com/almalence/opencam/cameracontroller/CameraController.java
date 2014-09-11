@@ -77,7 +77,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static final String						TAG								= "CameraController";
 
 	// YUV_RAW is the same as YUV (ie NV21) except that
-	// noise filtering and edge enhancements are disabled if possible
+	// noise filtering, edge enhancements and scaler
+	// are disabled if possible
 	public static final int							YUV_RAW							= 2;
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
@@ -1461,9 +1462,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			HALv3.setZoom(value / 10.0f + 1f);
-
 	}
 
+	// Note: getZoom returns zoom in floating point,
+	// unlike old android camera API which returns it multiplied by 10 
+	public float getZoom()
+	{
+		if (!CameraController.isHALv3)
+		{
+			Camera.Parameters cp = this.getCameraParameters();
+			return (cp.getZoom() / 10.0f + 1f);
+		} else
+			return HALv3.getZoom();
+	}
+	
 	public boolean isLumaAdaptationSupported()
 	{
 		if (!CameraController.isHALv3)

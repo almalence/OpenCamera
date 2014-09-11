@@ -167,6 +167,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jintArray jcrop,
 	jboolean jrot,
 	jboolean jmirror,
+	jfloat zoom,
 	jboolean isHALv3
 )
 {
@@ -179,18 +180,47 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 
 	if (isHALv3)
 	{
-		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
+		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
 
-		// slightly more sharpening at low zooms
-		int sharpen = 2;
-		if (sxo >= 3*(sx-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
+		// find zoomed region in the frame
+		int sx_zoom = (int)(sx/zoom) + 2*SIZE_GUARANTEE_BORDER;
+		int sy_zoom = (int)(sy/zoom) + 2*SIZE_GUARANTEE_BORDER;
+		sx_zoom -= sx_zoom&3;
+		sy_zoom -= sy_zoom&3;
+		if (sx_zoom > sx) sx_zoom = sx;
+		if (sy_zoom > sy) sy_zoom = sy;
+
+		// in-place crop of input frames according to the zoom value
+		if ((sx_zoom < sx) || (sy_zoom < sy))
+		{
+			int x0 = (sx-sx_zoom)/2;
+			int y0 = (sy-sy_zoom)/2;
+			x0 -= x0&1;
+			y0 -= y0&1;
+
+			for (int i=0; i<nImages; ++i)
+			{
+				// Y part
+				for (int y=0; y<sy_zoom; ++y)
+					memmove(&yuv[i][y*sx_zoom], &yuv[i][x0+(y+y0)*sx], sx_zoom);
+
+				// UV part
+				for (int y=0; y<sy_zoom/2; ++y)
+					memmove(&yuv[i][sx_zoom*sy_zoom+y*sx_zoom], &yuv[i][sx*sy+x0+(y+y0/2)*sx], sx_zoom);
+			}
+		}
 
 		// Note: sensor-dependent formula
 		int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
 
+		// slightly more sharpening at low zooms
+		int sharpen = 2;
+		if (sxo >= 3*sx_zoom) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
+		else if (sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
+
 		Super_Process(
 			yuv, &OutPic,
-			sx, sy, sxo, syo, nImages,
+			sx_zoom, sy_zoom, sxo, syo, nImages,
 			sensorGain,
 			deghostTable[DeGhostPref],
 			1,							// deghostFrames
@@ -199,7 +229,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			0,							// cameraIndex
 			0);							// externalBuffers
 
-		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d", iso);
+		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
 
 		crop[0]=crop[1]=0;
 		crop[2]=sxo;

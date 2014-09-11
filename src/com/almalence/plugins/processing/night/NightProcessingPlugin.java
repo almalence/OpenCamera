@@ -169,8 +169,12 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		Log.e("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
 
-		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isHALv3" + sessionID));
-		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("sensorGain" + sessionID));
+		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem(
+				"zoom" + sessionID));
+		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"isHALv3" + sessionID));
+		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
+				"sensorGain" + sessionID));
 
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
 				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
@@ -178,7 +182,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				NightProcessingPlugin.crop,
 				mDisplayOrientation == 90 || mDisplayOrientation == 270,
 				mCameraMirrored,
-				isHALv3);
+				zoom, isHALv3);
 
 		AlmaShotNight.Release();
 	}
