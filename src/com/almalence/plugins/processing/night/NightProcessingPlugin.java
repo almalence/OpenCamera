@@ -167,12 +167,13 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		AlmaShotNight.NightAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 		Log.e("Night", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 
-		Log.e("Night", "PreviewTask.doInBackground AlmaShot.BlurLessPreview start");
+		Log.e("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
 
 		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isHALv3" + sessionID));
+		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("sensorGain" + sessionID));
 
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
-				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
+				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
 				9, SaturatedColors ? 9 : 0, imagesAmount,
 				NightProcessingPlugin.crop,
 				mDisplayOrientation == 90 || mDisplayOrientation == 270,

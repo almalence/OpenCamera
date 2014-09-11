@@ -105,6 +105,7 @@ public class NightCapturePlugin extends PluginCapture
 	float						currHalfHeight;
 
 	float						cameraDist;
+	int                         sensorGain;
 
 	// preferences
 	private static String		FocusPreference;
@@ -531,8 +532,13 @@ public class NightCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(frameNumber + 1));
 
+		boolean isHALv3 = CameraController.isUseHALv3();
 		PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
-				String.valueOf(CameraController.isUseHALv3()));
+				String.valueOf(isHALv3));
+
+		// pass sensor gain to the image processing functions if it is known
+		PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
+				String.valueOf(sensorGain));
 		
 		// FixMe: we are always requesting YUV, so isYUV is always true (?) 
 		if (frameNumber == 0 && !isYUV && frameData != null)
@@ -567,12 +573,17 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
+
 		if (result.getSequenceId() == requestID && frameNumber == 0)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
 
 	public void captureFrames()
 	{
+		// we do not know sensor gain initially
+		// 0 - means auto-detection will be performed in processing functions
+		sensorGain = 0;
 		requestID = CameraController.captureImagesWithParams(
 				total_frames, CameraController.YUV_RAW, new int[0], null, true);
 	}

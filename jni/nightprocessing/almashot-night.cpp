@@ -16,6 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
 */
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <jni.h>
@@ -97,14 +98,15 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
-//	for (int i=0; i<nFrames; ++i)
-//	{
-//		char str[256];
-//		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
-//		FILE *f = fopen (str, "wb");
-//		fwrite(yuvIn[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
-//		fclose(f);
-//	}
+	/*
+	for (int i=0; i<nFrames; ++i)
+	{
+		char str[256];
+		sprintf(str, "/sdcard/DCIM/nightin%02d.yuv", i);
+		FILE *f = fopen (str, "wb");
+		fwrite(yuvIn[i], sx*sy+2*((sx+1)/2)*((sy+1)/2), 1, f);
+		fclose(f);
+	} //*/
 
 	// pre-allocate uncompressed yuv buffers
 	for (i=0; i<nFrames; ++i)
@@ -143,7 +145,6 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
 
-	//sprintf (status, "frames total: %d\nsize0: %d\nsize1: %d\nsize2: %d\n", (int)nFrames, jpeg_length[0], jpeg_length[1], jpeg_length[2]);
 	sprintf (status, "frames total: %d\n", (int)nFrames);
 	return env->NewStringUTF(status);
 }
@@ -157,7 +158,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jint sy,
 	jint sxo,
 	jint syo,
-	jint sensorGainPref,
+	jint iso,
+	jint noisePref,
 	jint DeGhostPref,
 	jint lumaEnh,
 	jint chromaEnh,
@@ -170,24 +172,59 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 {
 	Uint8 *OutPic, *OutNV21;
 	int *crop;
-	int nTable[3] = {2,4,6};
-	int deghTable[3] = {256/2, 256, 3*256/2};
+	int nTable[3] = {256/2, 256, 3*256/2};
+	int deghostTable[3] = {3*256/4, 256, 3*256/2};
 
 	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
 
-	BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
-		0, // 256*3,
-		deghTable[DeGhostPref], 1,
-		2, nImages, sx, sy, 0, 64*nTable[sensorGainPref], 1, 0, lumaEnh, chromaEnh, 0);
+	if (isHALv3)
+	{
+		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
 
-	crop[0]=crop[1]=crop[2]=crop[3]=-1;
-	BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
+		// slightly more sharpening at low zooms
+		int sharpen = 2;
+		if (sxo >= 3*(sx-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
+
+		// Note: sensor-dependent formula
+		int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
+
+		Super_Process(
+			yuv, &OutPic,
+			sx, sy, sxo, syo, nImages,
+			sensorGain,
+			deghostTable[DeGhostPref],
+			1,							// deghostFrames
+			nTable[noisePref],
+			sharpen,
+			0,							// cameraIndex
+			0);							// externalBuffers
+
+		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d", iso);
+
+		crop[0]=crop[1]=0;
+		crop[2]=sxo;
+		crop[3]=syo;
+	}
+	else
+	{
+		BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
+			0, // 256*3,
+			deghostTable[DeGhostPref], 1,
+			2, nImages, sx, sy, 0, nTable[noisePref], 1, 0, lumaEnh, chromaEnh, 0);
+
+		crop[0]=crop[1]=crop[2]=crop[3]=-1;
+		BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
+	}
 
 	OutNV21 = OutPic;
 	if (jrot)
 		OutNV21 = (Uint8 *)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
 
+	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before rotation: mirror:%d  rot:%d", jmirror, jrot);
+
 	TransformNV21(OutPic, OutNV21, sx, sy, crop, jmirror&&jrot, jmirror&&jrot, jrot);
+
+	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "After rotation");
 
 	if (jrot)
 	{
