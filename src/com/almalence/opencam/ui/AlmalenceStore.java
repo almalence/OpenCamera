@@ -265,8 +265,6 @@ public class AlmalenceStore
 				pagerLayoutMain.bringToFront();
 			}
 		}.start();
-		
-		Toast.makeText(MainScreen.getInstance(), "summary_SKU_PROMO " + MainScreen.getInstance().summary_SKU_PROMO, Toast.LENGTH_LONG).show();
 	}
 
 	public void hideStore()

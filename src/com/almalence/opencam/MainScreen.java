@@ -2799,8 +2799,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			public void onClick(View v)
 			{
+				String[] sep = MainScreen.getInstance().summary_SKU_PROMO.split(";");
 				String promo = editText.getText().toString();
-				if (promo.equalsIgnoreCase("appoftheday") || promo.equalsIgnoreCase("stelapps"))
+				boolean matchPromo = false;
+				
+				for (int i = 0; i<sep.length;i++)
+				{
+					if (promo.equalsIgnoreCase(sep[i]))
+						matchPromo = true;
+				}
+				
+				//if (promo.equalsIgnoreCase("appoftheday") || promo.equalsIgnoreCase("stelapps"))
+				if (matchPromo)
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					unlockAllPurchased = true;
