@@ -76,6 +76,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 {
 	private static final String						TAG								= "CameraController";
 
+	// YUV_RAW is the same as YUV (ie NV21) except that
+	// noise filtering, edge enhancements and scaler
+	// are disabled if possible
+	public static final int							YUV_RAW							= 2;
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
 
@@ -239,8 +243,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
 
-	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9",
-			"1:1"																	};
+	protected static final CharSequence[]			RATIO_STRINGS
+													= { " ", "4:3", "3:2", "16:9", "1:1" };
 
 	// States of focus and capture
 	public static final int							FOCUS_STATE_IDLE				= 0;
@@ -1214,7 +1218,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void updateCameraFeatures()
 	{
-		cameraParameters = CameraController.camera.getParameters();
+		if (CameraController.camera != null)
+			cameraParameters = CameraController.camera.getParameters();
 
 		mEVSupported = getExposureCompensationSupported();
 		mSceneModeSupported = getSceneModeSupported();
@@ -1457,9 +1462,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			HALv3.setZoom(value / 10.0f + 1f);
-
 	}
 
+	// Note: getZoom returns zoom in floating point,
+	// unlike old android camera API which returns it multiplied by 10 
+	public float getZoom()
+	{
+		if (!CameraController.isHALv3)
+		{
+			Camera.Parameters cp = this.getCameraParameters();
+			return (cp.getZoom() / 10.0f + 1f);
+		} else
+			return HALv3.getZoom();
+	}
+	
 	public boolean isLumaAdaptationSupported()
 	{
 		if (!CameraController.isHALv3)
@@ -2316,7 +2332,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!CameraController.isHALv3)
 		{
-			takeYUVFrame = (format == CameraController.YUV);
+			takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 			if (evRequested != null && evRequested.length >= total_frames)
 				CameraController.getInstance().sendMessage(MSG_SET_EXPOSURE);
 			else
@@ -2517,94 +2533,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 
-	// =============== Captured Image data manipulation ======================
-	@TargetApi(19)
-	public static int getImageFrame(Image im)
-	{
-		int frame = 0;
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
-				return -1;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e(TAG, "Error while cropping: " + status);
-
-			frame = YuvImage.GetFrame(0);
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			int frame_len = jpeg.limit();
-			byte[] jpegByteArray = new byte[frame_len];
-			jpeg.get(jpegByteArray, 0, frame_len);
-
-			frame = SwapHeap.SwapToHeap(jpegByteArray);
-		}
-
-		return frame;
-	}
 
 	// =============== Captured Image data manipulation ======================
-	@TargetApi(19)
-	public static byte[] getImageFrameData(Image im)
-	{
-		byte[] frameData = new byte[0];
-
-		if (im.getFormat() == ImageFormat.YUV_420_888)
-		{
-			ByteBuffer Y = im.getPlanes()[0].getBuffer();
-			ByteBuffer U = im.getPlanes()[1].getBuffer();
-			ByteBuffer V = im.getPlanes()[2].getBuffer();
-
-			if ((!Y.isDirect()) || (!U.isDirect()) || (!V.isDirect()))
-			{
-				Log.e(TAG, "Oops, YUV ByteBuffers isDirect failed");
-				return frameData;
-			}
-
-			// Note: android documentation guarantee that:
-			// - Y pixel stride is always 1
-			// - U and V strides are the same
-			// So, passing all these parameters is a bit overkill
-			int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
-					im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
-					im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-					im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
-
-			if (status != 0)
-				Log.e(TAG, "Error while cropping: " + status);
-
-			frameData = YuvImage.GetByteFrame(0);
-
-		} else if (im.getFormat() == ImageFormat.JPEG)
-		{
-			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
-
-			int frame_len = jpeg.limit();
-			frameData = new byte[frame_len];
-			jpeg.get(frameData, 0, frame_len);
-		}
-
-		return frameData;
-	}
 
 	@TargetApi(19)
 	public static boolean isYUVImage(Image im)
@@ -2708,7 +2638,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (previewMode)
 			{
-				// message to capture image will be emitted 2 or 3 frames after
+				// message to capture image will be emitted a few frames after
 				// setExposure
 				evLatency = 10; // the minimum value at which Galaxy Nexus is
 								// changing exposure in a stable way
@@ -2770,7 +2700,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				MainScreen.getInstance().playShutter();
 
 				lastCaptureStarted = SystemClock.uptimeMillis();
-				if (imageWidth == previewWidth && imageHeight == previewHeight && frameFormat == CameraController.YUV)
+				if (imageWidth == previewWidth && imageHeight == previewHeight &&
+						((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
 					takePreviewFrame = true; // Temporary make capture by
 												// preview frames only for YUV
 												// requests to avoid slow YUV to

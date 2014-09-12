@@ -102,6 +102,12 @@ int SuperZoom_Process
 	int		*h_out
 );
 
+// Cancel superzoom processing (stop SuperZoom_Process)
+void SuperZoom_CancelProcessing
+(
+	void  * instance
+);
+
 // SuperZoom_FreeInstance - can be called after SuperZoom_Preview instead of SuperZoom_Process
 // if full-size processing is not needed.
 // Set keepBuffers to non-zero to keep input frame buffers and only free processing instance.
@@ -109,6 +115,25 @@ void SuperZoom_FreeInstance
 (
 	void *instance,
 	int keepBuffers
+);
+
+
+int Super_Process
+(
+	Uint8 ** in,
+	Uint8 ** pout,
+	int		sx,
+	int		sy,
+	int		sxo,
+	int		syo,
+	int		nFrames,
+	int     SensorGain,
+	int     DeGhostGain,
+	int     DeGhostFrames,
+	int		postFilter,
+	int		postSharpen,
+	int     cameraIndex,
+	int     externalBuffers
 );
 
 

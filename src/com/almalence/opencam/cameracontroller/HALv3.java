@@ -49,17 +49,17 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
-import android2.hardware.camera2.CameraCaptureSession;
-import android2.hardware.camera2.CameraCharacteristics;
-import android2.hardware.camera2.CameraDevice;
-import android2.hardware.camera2.CameraManager;
-import android2.hardware.camera2.CaptureRequest;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.CameraMetadata;
-import android2.hardware.camera2.CameraAccessException;
-import android2.hardware.camera2.TotalCaptureResult;
-import android2.hardware.camera2.params.MeteringRectangle;
-import android2.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
@@ -68,8 +68,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android2.util.Range;
-import android2.util.Size;
+import android.util.Range;
+import android.util.Size;
 import android.widget.Toast;
 
 //HALv3 camera's objects
@@ -505,6 +505,11 @@ public class HALv3
 		}
 	}
 
+	public static float getZoom()
+	{
+		return zoomLevel;
+	}
+	
 	public static Rect getZoomRect(float zoom, int imgWidth, int imgHeight)
 	{
 		int cropWidth = (int) (imgWidth / zoom) + 2 * 64;
@@ -982,11 +987,20 @@ public class HALv3
 		{
 			stillRequestBuilder = HALv3.getInstance().camDevice
 					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			
+			if (format == CameraController.YUV_RAW)
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			} else
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			}
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
-			if (zoomLevel >= 1.0f)
+			if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 			{
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
@@ -1527,7 +1541,7 @@ public class HALv3
 				// - U and V strides are the same
 				// So, passing all these parameters is a bit overkill
 				
-				byte[] data = YuvImage.CreateSingleYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+				byte[] data = YuvImage.CreateYUVImageByteArray(Y, U, V, im.getPlanes()[0].getPixelStride(),
 						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
 						im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
@@ -1537,12 +1551,6 @@ public class HALv3
 			else
 			{
 				Log.e("HALv3", "onImageAvailable");
-				//PluginManager.getInstance().onImageAvailable(im);
-//				int frame = CameraController.getImageFrame(im);
-//				byte[] frameData = CameraController.getImageFrameData(im);
-//				int frame_len = CameraController.getImageLenght(im);
-//				boolean isYUV = CameraController.isYUVImage(im);
-				
 				
 				int frame = 0;
 				byte[] frameData = new byte[0];
@@ -1568,15 +1576,15 @@ public class HALv3
 					int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
 							im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 							im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight());
 
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: " + status);
 
 					if(!resultInHeap)
-						frameData = YuvImage.GetByteFrame(0);
+						frameData = YuvImage.GetByteFrame();
 					else
-						frame = YuvImage.GetFrame(0);
+						frame = YuvImage.GetFrame();
 					
 					
 					frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()

@@ -260,18 +260,19 @@ public class YuvImage
 			int[] strides, int quality, OutputStream stream, byte[] tempStorage);
 
 	// Return: pointer to the frame data in heap converted to int
-	public static synchronized native int GetFrame(int frameNum);
+	public static synchronized native int GetFrame();
 
-	public static synchronized native byte[] GetByteFrame(int frameNum);
+	// Return: byte-array copy of the frame in heap
+	// Note: this will remove image from heap
+	public static synchronized native byte[] GetByteFrame();
 
-	public static synchronized native void RemoveFrame(int frameNum);
+	public static synchronized native void RemoveFrame();
 
 	// Return: error status (0 = all ok)
 	public static synchronized native int CreateYUVImage(ByteBuffer Y, ByteBuffer U, ByteBuffer V, int pixelStrideY,
-			int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV, int sx, int sy,
-			int nFrame);
+			int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV, int sx, int sy);
 
-	public static synchronized native byte[] CreateSingleYUVImage(ByteBuffer Y, ByteBuffer U, ByteBuffer V,
+	public static synchronized native byte[] CreateYUVImageByteArray(ByteBuffer Y, ByteBuffer U, ByteBuffer V,
 			int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,
 			int sx, int sy);
 
