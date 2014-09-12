@@ -59,7 +59,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.opencam.CameraParameters;

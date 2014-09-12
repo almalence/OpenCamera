@@ -23,7 +23,7 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.os.CountDownTimer;
 import android.os.Debug;
 import android.preference.PreferenceManager;
