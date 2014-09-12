@@ -6047,7 +6047,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void setShutterIcon(ShutterButton id)
 	{
 		RotateImageView mainButton = (RotateImageView) guiView.findViewById(R.id.buttonShutter);
-		RotateImageView additionalButton = (RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional);
+		//RotateImageView additionalButton = (RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional);
 		RotateImageView buttonSelectMode = (RotateImageView) guiView.findViewById(R.id.buttonSelectMode);
 		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
 

@@ -22,5 +22,5 @@
     <string name="Pref_Video_ShowLandscapeNotification_Title">Show notification</string>
     <string name="Pref_Video_ShowLandscapeNotification_Summary">Enables notification to hold device in landscape orientation</string>
     
-    <string name="video_paused">Video paused</string>
+    <string name="video_paused">Recording paused</string>
 </resources>
