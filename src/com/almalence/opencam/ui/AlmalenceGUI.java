@@ -6066,50 +6066,52 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (id == ShutterButton.DEFAULT)
 			{
 				mainButton.setImageResource(R.drawable.button_shutter);
-			} else if (id == ShutterButton.RECORDER_START)
+			} 
+			else if (id == ShutterButton.RECORDER_START)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-			} else if (id == ShutterButton.RECORDER_STOP)
-			{
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-			} else if (id == ShutterButton.RECORDER_RECORDING)
-			{
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
-			}
+			} 
+//			else if (id == ShutterButton.RECORDER_STOP)
+//			{
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+//			} else if (id == ShutterButton.RECORDER_RECORDING)
+//			{
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+//			}
 
 			// int dp = (int)
 			// MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
 			// mainButton.getLayoutParams().width = dp;
 			// mainButton.getLayoutParams().height = dp;
 		}
-		// video with pause (2 butons)
-		else
-		{
-			// buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
-			// buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
-
-			// int dp = (int)
-			// MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
-			// mainButton.getLayoutParams().width = dp;
-			// mainButton.getLayoutParams().height = dp;
-
-			if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
-			{
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
-			} else if (id == ShutterButton.RECORDER_STOP_WITH_PAUSE)
-			{
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
-			} else if (id == ShutterButton.RECORDER_PAUSED)
-			{
-				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-			} else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
-			{
-				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
-			}
-		}
+//		// video with pause (2 butons)
+//		else
+//		{
+//			// buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
+//			// buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
+//
+//			// int dp = (int)
+//			// MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
+//			// mainButton.getLayoutParams().width = dp;
+//			// mainButton.getLayoutParams().height = dp;
+//
+//			if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
+//			{
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
+//			} else if (id == ShutterButton.RECORDER_STOP_WITH_PAUSE)
+//			{
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
+//			} else if (id == ShutterButton.RECORDER_PAUSED)
+//			{
+//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+//			} else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
+//			{
+//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+//			}
+//		}
 	}
 
 	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event)
