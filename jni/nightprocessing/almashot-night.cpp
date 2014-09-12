@@ -78,7 +78,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_NightAddYUVFrames
+extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_NightAddYUVFrames
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -89,12 +89,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 )
 {
 	int i;
-	unsigned char * *yuvIn;
-	char status[1024];
-
-	Uint8 *inp[4];
-	int x, y;
-	int x0_out, y0_out, w_out, h_out;
+	unsigned char **yuvIn;
 
 	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
@@ -110,43 +105,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_night
 
 	// pre-allocate uncompressed yuv buffers
 	for (i=0; i<nFrames; ++i)
-	{
-		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-
-		if (yuv[i]==NULL)
-		{
-			i--;
-			for (;i>=0;--i)
-			{
-				free(yuv[i]);
-				yuv[i] = NULL;
-			}
-			break;
-		}
-
-		//		yuv[i] = yuvIn[i];
-		for (y=0; y<sy; y+=2)
-		{
-			// Y
-			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
-			memcpy (&yuv[i][(y+1)*sx], &yuvIn[i][(y+1)*sx], sx);
-
-			// UV - no direct memcpy as swap may be needed
-			for (x=0; x<sx/2; ++x)
-			{
-				// U
-				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
-
-				// V
-				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
-			}
-		}
-	}
+		yuv[i] = yuvIn[i];
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
-
-	sprintf (status, "frames total: %d\n", (int)nFrames);
-	return env->NewStringUTF(status);
 }
 
 
@@ -165,8 +126,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jint chromaEnh,
 	jint nImages,
 	jintArray jcrop,
-	jboolean jrot,
-	jboolean jmirror,
+	jint orientation,
+	jboolean mirror,
 	jfloat zoom,
 	jboolean isHALv3
 )
@@ -180,7 +141,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 
 	if (isHALv3)
 	{
-		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
+		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
 
 		// find zoomed region in the frame
 		int sx_zoom = (int)(sx/zoom) + 2*SIZE_GUARANTEE_BORDER;
@@ -229,7 +190,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			0,							// cameraIndex
 			0);							// externalBuffers
 
-		__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
+		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
 
 		crop[0]=crop[1]=0;
 		crop[2]=sxo;
@@ -246,17 +207,25 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
 	}
 
+	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before rotation");
+
+	int flipLeftRight, flipUpDown;
+	int rotate90 = orientation == 90 || orientation == 270;
+	if (mirror)
+		flipUpDown = flipLeftRight = orientation == 180 || orientation == 90;
+	else
+		flipUpDown = flipLeftRight = orientation == 180 || orientation == 270;
+
+	// 90/270-degree rotations are out-ot-place
 	OutNV21 = OutPic;
-	if (jrot)
+	if (rotate90)
 		OutNV21 = (Uint8 *)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
 
-	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before rotation: mirror:%d  rot:%d", jmirror, jrot);
-
-	TransformNV21(OutPic, OutNV21, sx, sy, crop, jmirror&&jrot, jmirror&&jrot, jrot);
+	TransformNV21(OutPic, OutNV21, sx, sy, crop, flipLeftRight, flipUpDown, rotate90);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "After rotation");
 
-	if (jrot)
+	if (rotate90)
 	{
 		free(OutPic);
 		OutPic = OutNV21;

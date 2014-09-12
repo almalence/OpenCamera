@@ -2319,59 +2319,46 @@ public class PluginManager implements PluginManagerInterface
 					}
 				} else
 				{// if result in nv21 format
+					int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
+					com.almalence.YuvImage out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
+					Rect r;
+					
+					String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
+					if ((null == res) || "".equals(res) || "true".equals(res))
 					{
-						String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
-						if ((null == res) || "".equals(res) || "true".equals(res))
+						// to avoid problems with SKIA
+						int cropHeight = out.getHeight() - out.getHeight() % 16;
+						r = new Rect(0, 0, out.getWidth(), cropHeight);
+					} else
+					{
+						if (null == getFromSharedMem("resultcrop0" + Long.toString(sessionID)))
 						{
-							// Why not just compress directly from native?
-							final int ptr = Integer.parseInt(getFromSharedMem("resultframe" + i
-									+ Long.toString(sessionID)));
-							com.almalence.YuvImage image = new com.almalence.YuvImage(ptr, 0x00000011, x, y, null);
 							// to avoid problems with SKIA
-							int cropHeight = image.getHeight() - image.getHeight() % 16;
-							if (!image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os))
-							{
-								MainScreen.getMessageHandler().sendEmptyMessage(
-										PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-								return;
-							}
-							SwapHeap.FreeFromHeap(ptr);
+							int cropHeight = out.getHeight() - out.getHeight() % 16;
+							r = new Rect(0, 0, out.getWidth(), cropHeight);
 						} else
 						{
-							int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
-							com.almalence.YuvImage out;
-							out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
-							if (null == getFromSharedMem("resultcrop0" + Long.toString(sessionID)))
-							{
-								if (!out.compressToJpeg(new Rect(0, 0, out.getWidth(), out.getHeight()), 95, os))
-								{
-									MainScreen.getMessageHandler().sendEmptyMessage(
-											PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-									return;
-								}
-							} else
-							{
-								int crop0 = Integer
-										.parseInt(getFromSharedMem("resultcrop0" + Long.toString(sessionID)));
-								int crop1 = Integer
-										.parseInt(getFromSharedMem("resultcrop1" + Long.toString(sessionID)));
-								int crop2 = Integer
-										.parseInt(getFromSharedMem("resultcrop2" + Long.toString(sessionID)));
-								int crop3 = Integer
-										.parseInt(getFromSharedMem("resultcrop3" + Long.toString(sessionID)));
-								Rect r = new Rect(crop0, crop1, crop0 + crop2, crop1 + crop3);
+							int crop0 = Integer
+									.parseInt(getFromSharedMem("resultcrop0" + Long.toString(sessionID)));
+							int crop1 = Integer
+									.parseInt(getFromSharedMem("resultcrop1" + Long.toString(sessionID)));
+							int crop2 = Integer
+									.parseInt(getFromSharedMem("resultcrop2" + Long.toString(sessionID)));
+							int crop3 = Integer
+									.parseInt(getFromSharedMem("resultcrop3" + Long.toString(sessionID)));
+							
+							r = new Rect(crop0, crop1, crop0 + crop2, crop1 + crop3);
 
-								if (!out.compressToJpeg(r, 95, os))
-								{
-									MainScreen.getMessageHandler().sendEmptyMessage(
-											PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-									return;
-								}
-							}
-
-							SwapHeap.FreeFromHeap(yuv);
 						}
 					}
+					
+					if (!out.compressToJpeg(r, 95, os))
+					{
+						MainScreen.getMessageHandler().sendEmptyMessage(
+								PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						return;
+					}
+					SwapHeap.FreeFromHeap(yuv);
 				}
 
 				String orientation_tag = String.valueOf(0);

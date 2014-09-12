@@ -1541,7 +1541,7 @@ public class HALv3
 				// - U and V strides are the same
 				// So, passing all these parameters is a bit overkill
 				
-				byte[] data = YuvImage.CreateSingleYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
+				byte[] data = YuvImage.CreateYUVImageByteArray(Y, U, V, im.getPlanes()[0].getPixelStride(),
 						im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 						im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
 						im.getPlanes()[2].getRowStride(), imageWidth, imageHeight);
@@ -1551,12 +1551,6 @@ public class HALv3
 			else
 			{
 				Log.e("HALv3", "onImageAvailable");
-				//PluginManager.getInstance().onImageAvailable(im);
-//				int frame = CameraController.getImageFrame(im);
-//				byte[] frameData = CameraController.getImageFrameData(im);
-//				int frame_len = CameraController.getImageLenght(im);
-//				boolean isYUV = CameraController.isYUVImage(im);
-				
 				
 				int frame = 0;
 				byte[] frameData = new byte[0];
@@ -1582,15 +1576,15 @@ public class HALv3
 					int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
 							im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 							im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight(), 0);
+							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight());
 
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: " + status);
 
 					if(!resultInHeap)
-						frameData = YuvImage.GetByteFrame(0);
+						frameData = YuvImage.GetByteFrame();
 					else
-						frame = YuvImage.GetFrame(0);
+						frame = YuvImage.GetFrame();
 					
 					
 					frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()

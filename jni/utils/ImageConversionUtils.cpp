@@ -306,9 +306,8 @@ void TransformPlane8bit
 	int rotate90
 )
 {
-	int x,y, ox, oy;
+	int y;
 	int osx, osy;
-	unsigned char t1, t2, t3, t4;
 
 	// no transform case
 	if ((!flipLeftRight) && (!flipUpDown) && (!rotate90))
@@ -327,7 +326,13 @@ void TransformPlane8bit
 
 	// processing 4 mirrored locations at once
 	// +1 here to cover case when image dimensions are odd
+	#pragma omp parallel for schedule(guided)
 	for (y=0; y<(sy+1)/2; ++y)
+	{
+		int x;
+		int ox, oy;
+		unsigned char t1, t2, t3, t4;
+
 		for (x=0; x<(sx+1)/2; ++x)
 		{
 			if (rotate90)
@@ -365,6 +370,7 @@ void TransformPlane8bit
 				Out[osx-1-ox + (osy-1-oy)*osx] = t4;
 			}
 		}
+	}
 }
 
 
@@ -379,9 +385,8 @@ void TransformPlane16bit
 	int rotate90
 )
 {
-	int x,y, ox, oy;
+	int y;
 	int osx, osy;
-	unsigned short t1, t2, t3, t4;
 
 	// no transform case
 	if ((!flipLeftRight) && (!flipUpDown) && (!rotate90))
@@ -399,7 +404,13 @@ void TransformPlane16bit
 		else {osx = sx; osy = sy;}
 
 	// processing 4 mirrored locations at once
+	#pragma omp parallel for schedule(guided)
 	for (y=0; y<(sy+1)/2; ++y)
+	{
+		int x;
+		int ox, oy;
+		unsigned short t1, t2, t3, t4;
+
 		for (x=0; x<(sx+1)/2; ++x)
 		{
 			if (rotate90)
@@ -437,7 +448,9 @@ void TransformPlane16bit
 				Out[osx-1-ox + (osy-1-oy)*osx] = t4;
 			}
 		}
+	}
 }
+
 
 void TransformPlane32bit
 (
@@ -450,9 +463,8 @@ void TransformPlane32bit
 	int rotate90
 )
 {
-	int x,y, ox, oy;
+	int y;
 	int osx, osy;
-	unsigned int t1, t2, t3, t4;
 
 	// no transform case
 	if ((!flipLeftRight) && (!flipUpDown) && (!rotate90))
@@ -470,7 +482,13 @@ void TransformPlane32bit
 		else {osx = sx; osy = sy;}
 
 	// processing 4 mirrored locations at once
+	#pragma omp parallel for schedule(guided)
 	for (y=0; y<(sy+1)/2; ++y)
+	{
+		int x;
+		int ox, oy;
+		unsigned int t1, t2, t3, t4;
+
 		for (x=0; x<(sx+1)/2; ++x)
 		{
 			if (rotate90)
@@ -508,6 +526,7 @@ void TransformPlane32bit
 				Out[osx-1-ox + (osy-1-oy)*osx] = t4;
 			}
 		}
+	}
 }
 
 
