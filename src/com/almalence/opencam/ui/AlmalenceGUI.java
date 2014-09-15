@@ -3517,7 +3517,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
-		lockControls = true;
 		PluginManager.getInstance().onShutterClick();
 	}
 

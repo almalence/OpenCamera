@@ -26,16 +26,18 @@ package com.almalence.opencam;
 
 import java.util.Date;
 
-import com.almalence.opencam.cameracontroller.CameraController;
+import android.util.Log;
 
-import android.hardware.Camera;
-import android.media.Image;
-import android.preference.PreferenceFragment;
+import com.almalence.opencam.cameracontroller.CameraController;
 
 public abstract class PluginCapture extends Plugin
 {
 	protected boolean	takingAlready	= false;
 	protected boolean	inCapture;
+	
+	public boolean getInCapture() {
+		return inCapture;
+	}
 
 	public PluginCapture(String ID, int preferenceID, int advancedPreferenceID, int quickControlID,
 			String quickControlInitTitle)
@@ -53,6 +55,7 @@ public abstract class PluginCapture extends Plugin
 	{
 		if (!inCapture)
 		{
+			MainScreen.getGUIManager().lockControls = true;
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
@@ -74,6 +77,12 @@ public abstract class PluginCapture extends Plugin
 				takePicture();
 			}
 		}
+	}
+	
+	@Override
+	public void onExportFinished() {
+		inCapture = false;
+		takingAlready = false;
 	}
 
 	public void takePicture()

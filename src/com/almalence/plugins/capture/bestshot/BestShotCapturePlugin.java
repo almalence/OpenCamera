@@ -208,7 +208,6 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
 			return;
 		}
 		String frameName = "frame" + imagesTaken;
@@ -236,7 +235,6 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
 			return;
 		}
 		
@@ -251,9 +249,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			Log.e("Bestshot", "CAPTURE FINISHED");
 			
 			imagesTaken = 0;
-			inCapture = false;
 		}
-		inCapture = false;
 		takingAlready = false;	
 	}
 

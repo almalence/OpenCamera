@@ -209,7 +209,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onShutterClick()
 	{
-		if (!takingAlready)
+		if (!takingAlready && !inCapture)
 		{
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
@@ -298,8 +298,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			takingAlready = false;
-			inCapture = false;
+//			takingAlready = false;
+//			inCapture = false;
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -316,8 +316,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		if (++frame_num >= total_frames)
 		{
-			takingAlready = false;
-			inCapture = false;
+//			takingAlready = false;
+//			inCapture = false;
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -541,9 +541,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		// play tick sound
-		MainScreen.getGUIManager().showCaptureIndication();
-		MainScreen.getInstance().playShutter();
 		boolean isHDRMode = PluginManager.getInstance().getActiveModeID().equals("hdrmode");
 		requestID = CameraController.captureImagesWithParams(total_frames, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues, true);
 	}

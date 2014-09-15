@@ -566,7 +566,6 @@ public class NightCapturePlugin extends PluginCapture
 			frameNumber = 0;
 			MainScreen.getInstance().muteShutter(false);
 			takingAlready = false;
-			inCapture = false;
 			return;
 		}
 

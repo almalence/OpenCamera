@@ -223,7 +223,6 @@ public class BurstCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
 			return;
 		}
 		String frameName = "frame" + imagesTaken;
@@ -250,7 +249,6 @@ public class BurstCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
 			return;
 		}
 
@@ -263,7 +261,6 @@ public class BurstCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 
 			imagesTaken = 0;
-			inCapture = false;
 		}
 		takingAlready = false;		
 	}

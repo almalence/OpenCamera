@@ -175,9 +175,6 @@ public class PreshotCapturePlugin extends PluginCapture
 				params);
 
 		this.modeSwitcher.setLayoutParams(params);
-//		this.modeSwitcher.requestLayout();
-//
-//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 
 	private void getPrefs()
@@ -260,6 +257,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onExportFinished()
 	{
+		inCapture = false;
 		if (modeSwitcher != null)
 			modeSwitcher.setEnabled(true);
 		if (AutostartPreference)
@@ -281,7 +279,7 @@ public class PreshotCapturePlugin extends PluginCapture
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
-		} else
+		} else if (!inCapture)
 		{
 			if (!AutostartPreference)
 				modeSwitcher.setEnabled(false);
@@ -337,6 +335,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			cnt = frmCnt % (preview_fps / Integer.parseInt(FPS))*10;
 			fpsInterval = 1000.0/Integer.parseInt(FPS);
 			t1 = System.currentTimeMillis();
+			
+			inCapture = true;
 		} else
 		{
 			// full size code
@@ -456,7 +456,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		inCapture = false;
+//		inCapture = false;
 
 		if (0 == PreShot.GetImageCount() && !isYUV && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
@@ -538,7 +538,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			{
 				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					return;
-				inCapture = true;
+//				inCapture = true;
 
 				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
 				counter++;

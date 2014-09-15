@@ -737,10 +737,12 @@ public class PluginManager implements PluginManagerInterface
 	{
 		// <!-- -+-
 		// check if plugin payed
-		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
-		{
-			MainScreen.getGUIManager().lockControls = false;
-			return;
+		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture()) {
+			if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
+			{
+				MainScreen.getGUIManager().lockControls = false;
+				return;
+			}
 		}
 		// -+- -->
 		if (!shutterRelease)
@@ -771,10 +773,12 @@ public class PluginManager implements PluginManagerInterface
 	{
 		// <!-- -+-
 		// check if plugin payed
-		if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
-		{
-			MainScreen.getGUIManager().lockControls = false;
-			return;
+		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture()) {
+			if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
+			{
+				MainScreen.getGUIManager().lockControls = false;
+				return;
+			}
 		}
 		// -+- -->
 		for (int i = 0; i < activeVF.size(); i++)
