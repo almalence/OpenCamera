@@ -162,18 +162,44 @@
 					android:scaleType="fitXY"							
 			   		android:onClick="onButtonClick">
 			 	</com.almalence.ui.RotateImageView>
-			 	
-		 	 	<com.almalence.ui.RotateImageView
-					android:id="@+id/buttonShutterAdditional"
-					android:visibility="gone"
-					android:src="@drawable/gui_almalence_shutter_video_pause"				
-					android:background="@android:color/transparent"			
-					android:layout_height="@dimen/paramsLayoutHeight"
-					android:layout_width="@dimen/paramsLayoutHeight"
-					android:scaleType="fitXY"
-			   		android:layout_gravity="center_horizontal"/>
 		 	</LinearLayout>
  	</LinearLayout>
+ 	
+
+    <RelativeLayout 
+		android:id="@+id/mainButtonsVideo"
+       	android:background="@drawable/blacktransparentlayerbottom"
+       	android:layout_weight="1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="bottom|center"	    
+	   	android:layout_alignParentBottom="true"
+		android:visibility="gone">
+          	<com.almalence.ui.RotateImageView
+				android:id="@+id/buttonVideoPause"
+				android:src="@drawable/plugin_capture_video_pause"									
+				android:background="@android:color/transparent"
+				android:layout_height="@dimen/paramsLayoutHeight"
+				android:layout_width="@dimen/paramsLayoutHeight"
+				android:scaleType="fitCenter"
+				android:layout_toLeftOf="@+id/buttonVideoStop"
+				android:layout_marginRight="20dip"
+				android:layout_marginBottom="20dip"
+				android:layout_centerVertical="true"
+				>
+			</com.almalence.ui.RotateImageView>
+          	<com.almalence.ui.RotateImageView
+				android:id="@+id/buttonVideoStop"
+				android:src="@drawable/plugin_capture_video_stop_square"
+				android:background="@android:color/transparent"
+				android:layout_height="@dimen/paramsLayoutHeight"
+				android:layout_width="@dimen/paramsLayoutHeight"
+				android:scaleType="fitCenter"
+				android:layout_centerInParent="true"
+				android:layout_marginBottom="20dip"
+		   		>
+			</com.almalence.ui.RotateImageView>
+	</RelativeLayout>
 	 	      
     <RelativeLayout
        android:id="@+id/fullscreenLayout"
