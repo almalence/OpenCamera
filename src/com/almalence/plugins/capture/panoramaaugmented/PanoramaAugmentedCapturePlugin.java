@@ -62,6 +62,7 @@ import android.widget.Toast;
 import android2.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -72,6 +73,7 @@ import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
+import com.almalence.util.ImageConversion;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -1068,7 +1070,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				// e.printStackTrace();
 				// }
 				this.engine.recordCoordinates();
-				this.engine.onFrameAdded(true, image, true);
+				this.engine.onFrameAdded(true, image);
 				this.isFirstFrame = false;
 			} else
 			{
@@ -1097,7 +1099,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE || this.isFirstFrame)
 				{
-					this.takePictureUnimode(this.modeSweep ? SwapHeap.SwapToHeap(data) : 0);
+					if (this.modeSweep)
+					{
+						this.takePictureUnimode(SwapHeap.SwapToHeap(data));
+					}
+					else
+					{
+						this.takePictureUnimode(0);
+					}
 				}
 			}
 		}
@@ -1248,7 +1257,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			if (isYUV)
 			{
-				goodPlace = this.engine.onFrameAdded(true, frame, true);
+				goodPlace = this.engine.onFrameAdded(true, frame);
 			} else
 			{
 				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);

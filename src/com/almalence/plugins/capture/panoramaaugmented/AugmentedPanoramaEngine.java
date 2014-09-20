@@ -790,9 +790,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			
 			if (isYUV)
 			{
-				final boolean rotate = args.length >= 1 ? (Boolean)args[0] : false;
 				frame = new AugmentedFrameTaken(targetFrame.angle,
-						position, topVec, transform, image, rotate);
+						position, topVec, transform, image);
 			}
 			else
 			{
@@ -1208,12 +1207,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 		public void move()
 		{
-			this.move((int) Math.signum(this.angle));
+			this.move((int)Math.signum(this.angle));
 		}
 
 		public void moveBack()
 		{
-			this.move(-(int) Math.signum(this.angle));
+			this.move(-(int)Math.signum(this.angle));
 		}
 	}
 
@@ -1268,7 +1267,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		 * For YUV input
 		 */
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final int yuv_address, final boolean rotate)
+				final Vector3d topVec, final float[] rotation, final int yuv_address)
 		{
 			this(angleShift, position, topVec, rotation);
 
@@ -1296,48 +1295,24 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										AugmentedPanoramaEngine.this.textureWidth
 											* AugmentedPanoramaEngine.this.textureHeight * 4);
 								
-								final int in_width;
-								final int in_height;
-								final int yuv_rotated;
-								if (rotate)
-								{
-									in_width = AugmentedPanoramaEngine.this.height;
-									in_height = AugmentedPanoramaEngine.this.width;
-									
-									yuv_rotated = yuv_address;
-									
-									AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
-											AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.width);
-									ImageConversion.TransformNV21N(yuv_address,
-											AugmentedFrameTaken.this.nv21address,
-											AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.width,
-											0, 0, 1);
-								}
-								else
-								{
-									in_width = AugmentedPanoramaEngine.this.width;
-									in_height = AugmentedPanoramaEngine.this.height;
-									
-									yuv_rotated = YuvImage.AllocateMemoryForYUV(
-											AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.width);
-									ImageConversion.TransformNV21N(yuv_address, yuv_rotated,
-											AugmentedPanoramaEngine.this.width,
-											AugmentedPanoramaEngine.this.height,
-											0, 0, 1);
-									
-									AugmentedFrameTaken.this.nv21address = yuv_address;
-								}
+								final int in_width = AugmentedPanoramaEngine.this.height;
+								final int in_height = AugmentedPanoramaEngine.this.width;
 								
-								ImageConversion.convertNV21toGLN(yuv_rotated,
+								if (CameraController.isFrontCamera())
+								{
+									ImageConversion.TransformNV21N(yuv_address,
+											yuv_address,
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											1, 0, 0);
+								}
+
+								ImageConversion.convertNV21toGLN(yuv_address,
 										AugmentedFrameTaken.this.rgba_buffer.array(),
 										in_width,
 										in_height,
 										AugmentedPanoramaEngine.this.textureWidth,
 										AugmentedPanoramaEngine.this.textureHeight);
-								SwapHeap.FreeFromHeap(yuv_rotated);
 								
 								ImageConversion.addCornersRGBA8888(
 										AugmentedFrameTaken.this.rgba_buffer.array(),
@@ -1353,6 +1328,16 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									}
 								});
 							}
+							
+							AugmentedFrameTaken.this.nv21address = YuvImage.AllocateMemoryForYUV(
+									AugmentedPanoramaEngine.this.height,
+									AugmentedPanoramaEngine.this.width);
+							ImageConversion.TransformNV21N(yuv_address,
+									AugmentedFrameTaken.this.nv21address,
+									AugmentedPanoramaEngine.this.height,
+									AugmentedPanoramaEngine.this.width,
+									CameraController.isFrontCamera() ? 1 : 0, CameraController.isFrontCamera() ? 1 : 0, 1);
+							SwapHeap.FreeFromHeap(yuv_address);
 						}
 					}
 				}).start();
