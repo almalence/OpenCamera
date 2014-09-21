@@ -39,6 +39,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -581,8 +582,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		// if (camera == null)
 		// return;
 
-		final CameraController.Size previewSize = this.getOptimalPreviewSize(CameraController.getInstance()
-				.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
+		final CameraController.Size previewSize;
+		if (this.modeSweep)
+		{
+			previewSize = getOptimalSweepPreviewSize(
+					CameraController.getInstance().getSupportedPreviewSizes());
+		}
+		else
+		{
+			previewSize = this.getOptimalPreviewSize(CameraController.getInstance()
+					.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
+		}
 
 		this.previewWidth = previewSize.getWidth();
 		this.previewHeight = previewSize.getHeight();
@@ -1451,6 +1461,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			MainScreen.getMessageHandler().sendMessage(message);
 
 		}
+	}
+	
+	private CameraController.Size getOptimalSweepPreviewSize(final List<CameraController.Size> sizes)
+	{
+		CameraController.Size best_size = sizes.get(0);
+		
+		for (CameraController.Size size : sizes)
+		{
+			if (size.getWidth() > best_size.getWidth())
+			{
+				best_size = size;
+			}
+		}
+		
+		return best_size;
 	}
 
 	private static Vector3d transformVector(final Vector3d vec, final float[] mat)
