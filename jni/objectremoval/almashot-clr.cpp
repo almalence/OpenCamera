@@ -339,10 +339,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectre
 			fastmode, // use fast mode (recommended for sensors >= 8Mpix)
 			0);
 
-	env->ReleaseIntArrayElements(jbase_area, (jint*)base_area, JNI_ABORT);
+	env->ReleaseIntArrayElements(jbase_area, (jint*)base_area, JNI_COMMIT);
 
-	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
-	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);
+	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_COMMIT);
+	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_COMMIT);
 
 	LOGD("MovObjProcess - end");
 
@@ -375,7 +375,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectre
 
 	MovObj_FixHoles(enumer, sx, sy, baseFrame);
 
-	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_ABORT);
+	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_COMMIT);
 
 	LOGD("MovObjFixHoles - end");
 
@@ -411,7 +411,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectre
 
 	totalObj = MovObj_Enumerate(layout, enumer, sx, sy, baseFrame, nFrames);
 
-	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_ABORT);
+	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_COMMIT);
 	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);
 
 	LOGD("MovObjEnumerate - end, objects detected: %d", totalObj);
