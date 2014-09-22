@@ -94,6 +94,8 @@
 		        <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>            
 		</receiver>
+		
+		<receiver android:name="com.almalence.opencam.AlarmReceiver"></receiver>
 
 		<!-- Uncomment for Amazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">

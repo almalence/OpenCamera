@@ -267,6 +267,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sDelayedSoundPref;
 	public static String				sDelayedFlashPref;
 	public static String				sDelayedCaptureIntervalPref;
+	
+	public static String				sPhotoTimeLapseCaptureIntervalPref;
+	public static String				sPhotoTimeLapseActivePref;
+	public static String				sPhotoTimeLapseIsRunningPref;
 
 	private static String				sUseFrontCameraPref;
 	private static String				sShutterPref;
@@ -311,6 +315,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
 		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
 
+		sDelayedCapturePref = getResources().getString(R.string.Preference_DelayedCaptureValue);
+		sShowDelayedCapturePref = getResources().getString(R.string.Preference_ShowDelayedCaptureValue);
+		sDelayedSoundPref = getResources().getString(R.string.Preference_DelayedSoundValue);
+		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
+		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
+		
+		sPhotoTimeLapseCaptureIntervalPref = getResources().getString(R.string.Preference_PhotoTimeLapseCaptureInterval);
+		sPhotoTimeLapseActivePref = getResources().getString(R.string.Preference_PhotoTimeLapseSWChecked);
+		
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);

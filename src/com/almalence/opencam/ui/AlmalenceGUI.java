@@ -143,7 +143,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public enum ShutterButton
 	{
-		DEFAULT, RECORDER_START_WITH_PAUSE, RECORDER_START, RECORDER_STOP_WITH_PAUSE, RECORDER_STOP, RECORDER_RECORDING_WITH_PAUSE, RECORDER_RECORDING, RECORDER_PAUSED
+		DEFAULT, RECORDER_START_WITH_PAUSE, RECORDER_START, RECORDER_STOP_WITH_PAUSE, RECORDER_STOP, RECORDER_RECORDING_WITH_PAUSE, RECORDER_RECORDING, RECORDER_PAUSED, TIMELAPSE_ACTIVE
 	}
 
 	public enum SettingsType
@@ -178,7 +178,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private AlmalenceStore						store;
 
-	private SelfTimer							selfTimer;
+	private SelfTimerAndPhotoTimeLapse			selfTimer;
 
 	// Assoc list for storing association between mode button and mode ID
 	private Map<View, String>					buttonModeViewAssoc;
@@ -1381,7 +1381,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// add self-timer control
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
-		selfTimer = new SelfTimer();
+		selfTimer = new SelfTimerAndPhotoTimeLapse();
 		selfTimer.addSelfTimerControl(showDelayedCapturePrefCommon);
 
 		LinearLayout infoLayout = (LinearLayout) guiView.findViewById(R.id.infoLayout);
@@ -6046,12 +6046,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void setShutterIcon(ShutterButton id)
 	{
 		RotateImageView mainButton = (RotateImageView) guiView.findViewById(R.id.buttonShutter);
-		//RotateImageView additionalButton = (RotateImageView) guiView.findViewById(R.id.buttonShutterAdditional);
+		// RotateImageView additionalButton = (RotateImageView)
+		// guiView.findViewById(R.id.buttonShutterAdditional);
 		RotateImageView buttonSelectMode = (RotateImageView) guiView.findViewById(R.id.buttonSelectMode);
 		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
 
 		// additionalButton.setVisibility(View.VISIBLE);
 		// buttonSelectMode.setVisibility(View.GONE);
+
+		if (id == ShutterButton.TIMELAPSE_ACTIVE)
+		{
+			mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+		}
 
 		// 1 button
 		if (id == ShutterButton.DEFAULT || id == ShutterButton.RECORDER_START || id == ShutterButton.RECORDER_STOP
@@ -6065,52 +6071,52 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (id == ShutterButton.DEFAULT)
 			{
 				mainButton.setImageResource(R.drawable.button_shutter);
-			} 
-			else if (id == ShutterButton.RECORDER_START)
+			} else if (id == ShutterButton.RECORDER_START)
 			{
 				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-			} 
-//			else if (id == ShutterButton.RECORDER_STOP)
-//			{
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-//			} else if (id == ShutterButton.RECORDER_RECORDING)
-//			{
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
-//			}
+			}
+			// else if (id == ShutterButton.RECORDER_STOP)
+			// {
+			// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+			// } else if (id == ShutterButton.RECORDER_RECORDING)
+			// {
+			// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+			// }
 
 			// int dp = (int)
 			// MainScreen.getInstance().getResources().getDimension(R.dimen.shutterHeight);
 			// mainButton.getLayoutParams().width = dp;
 			// mainButton.getLayoutParams().height = dp;
 		}
-//		// video with pause (2 butons)
-//		else
-//		{
-//			// buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
-//			// buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
-//
-//			// int dp = (int)
-//			// MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
-//			// mainButton.getLayoutParams().width = dp;
-//			// mainButton.getLayoutParams().height = dp;
-//
-//			if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
-//			{
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
-//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
-//			} else if (id == ShutterButton.RECORDER_STOP_WITH_PAUSE)
-//			{
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
-//			} else if (id == ShutterButton.RECORDER_PAUSED)
-//			{
-//				additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
-//			} else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
-//			{
-//				mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
-//			}
-//		}
+		// // video with pause (2 butons)
+		// else
+		// {
+		// // buttonShutterContainer.setOrientation(LinearLayout.HORIZONTAL);
+		// // buttonShutterContainer.setPadding(0, Util.dpToPixel(15), 0, 0);
+		//
+		// // int dp = (int)
+		// //
+		// MainScreen.getInstance().getResources().getDimension(R.dimen.videoShutterHeight);
+		// // mainButton.getLayoutParams().width = dp;
+		// // mainButton.getLayoutParams().height = dp;
+		//
+		// if (id == ShutterButton.RECORDER_START_WITH_PAUSE)
+		// {
+		// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+		// additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
+		// } else if (id == ShutterButton.RECORDER_STOP_WITH_PAUSE)
+		// {
+		// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+		// additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause);
+		// } else if (id == ShutterButton.RECORDER_PAUSED)
+		// {
+		// additionalButton.setImageResource(R.drawable.gui_almalence_shutter_video_pause_red);
+		// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop);
+		// } else if (id == ShutterButton.RECORDER_RECORDING_WITH_PAUSE)
+		// {
+		// mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_stop_red);
+		// }
+		// }
 	}
 
 	public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event)

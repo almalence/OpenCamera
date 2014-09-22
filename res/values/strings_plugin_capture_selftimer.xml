@@ -19,4 +19,8 @@
     <string name="Res_SelfTimerCapture_Capture_3">3 images</string>
     
     <string name="selfTimerTitle">Self timer</string>
+    
+    
+    
+    <string name="photoTimeLapseTitle">Photo timelapse</string>
 </resources>
