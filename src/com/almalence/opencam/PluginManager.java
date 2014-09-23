@@ -2356,7 +2356,9 @@ public class PluginManager implements PluginManagerInterface
 						}
 					}
 					
-					if (!out.compressToJpeg(r, 95, os))
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
 						MainScreen.getMessageHandler().sendEmptyMessage(
 								PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
@@ -2838,11 +2840,14 @@ public class PluginManager implements PluginManagerInterface
 				os.write(buffer);
 			} else
 			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+				
 				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
 						iImageHeight, null);
 				// to avoid problems with SKIA
 				int cropHeight = image.getHeight() - image.getHeight() % 16;
-				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
 			}
 			os.close();
 

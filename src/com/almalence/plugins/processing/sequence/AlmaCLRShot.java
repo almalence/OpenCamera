@@ -21,15 +21,18 @@ package com.almalence.plugins.processing.sequence;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.MainScreen;
 import com.almalence.util.Size;
 
 public class AlmaCLRShot
@@ -264,6 +267,7 @@ public class AlmaCLRShot
 
 	public byte[] processingSaveData()
 	{
+		Log.e("sequence", "save");
 		byte[] jpegBuffer = null;
 
 		android.graphics.YuvImage out = new android.graphics.YuvImage(SwapHeap.SwapFromHeap(mOutNV21,
@@ -276,7 +280,9 @@ public class AlmaCLRShot
 
 			Rect r = new Rect(mCrop[0], mCrop[1], mCrop[0] + mCrop[2], mCrop[1] + mCrop[3]);
 
-			if (!out.compressToJpeg(r, 95, os))
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+			if (!out.compressToJpeg(r, jpegQuality, os))
 			{
 				Log.d(TAG, "the compression is not successful");
 			}

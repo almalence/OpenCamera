@@ -631,7 +631,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
-		CameraController.getInstance().setJpegQuality(100);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+		CameraController.getInstance().setJpegQuality(jpegQuality);
 
 		try
 		{

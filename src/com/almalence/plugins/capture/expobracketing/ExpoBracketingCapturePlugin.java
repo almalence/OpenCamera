@@ -183,7 +183,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void setCameraPictureSize()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		CameraController.getInstance().setJpegQuality(jpegQuality);

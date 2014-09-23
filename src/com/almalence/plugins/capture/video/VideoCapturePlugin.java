@@ -1150,8 +1150,9 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 
-		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		cp.setJpegQuality(95);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+		CameraController.getInstance().setJpegQuality(jpegQuality);
 
 		if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
 		{
