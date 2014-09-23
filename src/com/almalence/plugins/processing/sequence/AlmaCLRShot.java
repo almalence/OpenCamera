@@ -267,7 +267,6 @@ public class AlmaCLRShot
 
 	public byte[] processingSaveData()
 	{
-		Log.e("sequence", "save");
 		byte[] jpegBuffer = null;
 
 		android.graphics.YuvImage out = new android.graphics.YuvImage(SwapHeap.SwapFromHeap(mOutNV21,
