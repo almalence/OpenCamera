@@ -1430,8 +1430,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 			}
 
-			previewWidth = cp.getPreviewSize().width;
-			previewHeight = cp.getPreviewSize().height;
+			if (cp != null) {
+				previewWidth = cp.getPreviewSize().width;
+				previewHeight = cp.getPreviewSize().height;
+			}
+			
 		}
 
 		try
