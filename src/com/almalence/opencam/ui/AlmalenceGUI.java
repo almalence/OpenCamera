@@ -1389,6 +1389,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 
+		final View blockingLayout = guiView.findViewById(R.id.blockingLayout);
 		final View postProcessingLayout = guiView.findViewById(R.id.postprocessingLayout);
 		final View topPanel = guiView.findViewById(R.id.topPanel);
 		final View mainButtons = guiView.findViewById(R.id.mainButtons);
@@ -1400,6 +1401,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		qcLayout.bringToFront();
 		buttonsLayout.bringToFront();
 		topPanel.bringToFront();
+		blockingLayout.bringToFront();
 		postProcessingLayout.bringToFront();
 		hintLayout.bringToFront();
 
@@ -2182,6 +2184,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		};
 
 		guiView.findViewById(R.id.topPanel).bringToFront();
+		guiView.findViewById(R.id.blockingLayout).bringToFront();
+		guiView.findViewById(R.id.postprocessingLayout).bringToFront();
 		((Panel) guiView.findViewById(R.id.topPanel)).setOnPanelListener(pListener);
 	}
 
