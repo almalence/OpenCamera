@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.util.Log;
 
 /**
  * YuvImage contains YUV data and provides a method that compresses a region of
@@ -43,6 +44,12 @@ public class YuvImage
 	 * native compressor and the java OutputStream.
 	 */
 	private static final int	WORKING_COMPRESS_STORAGE	= 4096;
+
+	/**
+	 * Number of bytes of temp storage we use for communicating between the
+	 * native compressor and the java OutputStream for multithreaded encoding.
+	 */
+	private static final int	WORKING_COMPRESS_STORAGE_MT	= 1024*512;
 
 	/**
 	 * The YUV format as defined in {@link PixelFormat}.
@@ -157,8 +164,17 @@ public class YuvImage
 		adjustRectangle(rectangle);
 		int[] offsets = calculateOffsets(rectangle.left, rectangle.top);
 
-		return SaveJpegFreeOut(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
-				stream, new byte[WORKING_COMPRESS_STORAGE]);
+		if (true)
+		{
+	      	boolean res = SaveJpegFreeOutMT(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
+					stream, new byte[WORKING_COMPRESS_STORAGE_MT]);
+			return res;
+		}
+		else
+		{
+			return SaveJpegFreeOut(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
+					stream, new byte[WORKING_COMPRESS_STORAGE]);
+		}
 	}
 
 	/**
@@ -258,6 +274,10 @@ public class YuvImage
 
 	public static native boolean SaveJpegFreeOut(int oriYuv, int format, int width, int height, int[] offsets,
 			int[] strides, int quality, OutputStream stream, byte[] tempStorage);
+	
+	//Multithreaded version of SaveJpegFreeOut, byte array used instead stream
+	public static native boolean SaveJpegFreeOutMT(int oriYuv, int format, int width, int height, int[] offsets,
+			int[] strides, int quality, OutputStream stream, byte[] tempStorage);	
 
 	// Return: pointer to the frame data in heap converted to int
 	public static synchronized native int GetFrame();

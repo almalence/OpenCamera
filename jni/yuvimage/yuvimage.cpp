@@ -23,6 +23,7 @@ by Almalence Inc. All Rights Reserved.
 
 #include "CreateJavaOutputStreamAdaptor.h"
 #include "YuvToJpegEncoder.h"
+#include "YuvToJpegEncoderMT.h"
 
 static unsigned char *yuv;
 static int SX = 0;
@@ -54,6 +55,38 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOu
 	bool result = encoder->encode(strm, OutPic, width, height, imgOffsets, jpegQuality);
 
 	delete encoder;
+	env->ReleaseIntArrayElements(offsets, imgOffsets, 0);
+	env->ReleaseIntArrayElements(strides, imgStrides, 0);
+
+	return result;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOutMT
+(
+	JNIEnv* env, jobject, int jout,
+	int format, int width, int height, jintArray offsets,
+	jintArray strides, int jpegQuality, jobject jstream, jbyteArray jstorage
+)
+{
+	jbyte* OutPic;
+
+	OutPic = (jbyte *)jout;
+
+	initStreamMethods(env);
+
+	jint* imgOffsets = env->GetIntArrayElements(offsets, NULL);
+	jint* imgStrides = env->GetIntArrayElements(strides, NULL);
+
+	if (YuvToJpegEncoderMT_init(format, imgStrides))
+	{
+		free(OutPic);
+		return false;
+	}
+
+	boolean result = true;
+
+	result = YuvToJpegEncoderMT_encode(env, jstream, jstorage, (uint8_t*)OutPic, width, height, imgOffsets, imgStrides, jpegQuality, format);
+
 	env->ReleaseIntArrayElements(offsets, imgOffsets, 0);
 	env->ReleaseIntArrayElements(strides, imgStrides, 0);
 
@@ -246,3 +279,4 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_AllocateMemoryForYU
 	unsigned char* yuv_mem = (unsigned char *)malloc (sx*sy+sx*((sy+1)/2));
 	return (jint)yuv_mem;
 }
+
