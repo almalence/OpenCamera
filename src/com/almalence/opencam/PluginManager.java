@@ -839,10 +839,13 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
-			Preference pref;
-			if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack")) || null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+			if (CameraController.isUseHALv3())
 			{
-				pref.setTitle(MainScreen.getInstance().getResources().getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+				Preference pref;
+				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack")) || null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+				{
+					pref.setTitle(MainScreen.getInstance().getResources().getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+				}
 			}
 			MainScreen.getInstance().onPreferenceCreate(pf);
 		} else if ("vf_settings".equals(settings))
