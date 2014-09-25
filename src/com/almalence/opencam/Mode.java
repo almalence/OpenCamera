@@ -49,15 +49,17 @@ import java.util.List;
 
 public class Mode
 {
-	public String		modeID;		// unique mode id
+	public String		modeID;			// unique mode id
 	public String		modeName;		// mode visible name - any
+	public String		modeNameHAL;	// mode visible name for HAL - any
 	public String		modeSaveName;	// mode name for save
-	public List<String>	VF;			// list of VF plugins available in this
+	public String		modeSaveNameHAL;	// mode name for save for HAL
+	public List<String>	VF;				// list of VF plugins available in this
 										// mode
 	public String		Capture;		// Capture plugin
-	public String		Processing;	// Processing plugin
-	public List<String>	Filter;		// list of Filter plugin
-	public String		Export;		// Export plugin
+	public String		Processing;		// Processing plugin
+	public List<String>	Filter;			// list of Filter plugin
+	public String		Export;			// Export plugin
 
 	public String		howtoText;		// text string describing how to use
 										// mode
@@ -65,12 +67,17 @@ public class Mode
 	public String		SKU;			// SKU for billing purposes
 
 	public String		icon;			// mode icon name
+	public String		iconHAL;		// mode icon name
 
 	public Mode()
 	{
 		modeID = "";
 		modeName = "";
 		icon = "";
+		modeNameHAL = "";
+		iconHAL = "";
+		modeSaveName = "";
+		modeSaveNameHAL = "";
 		Capture = "";
 		Processing = "";
 		Export = "";

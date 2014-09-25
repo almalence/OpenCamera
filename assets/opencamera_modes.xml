@@ -149,9 +149,10 @@
 	
 	</mode>
 	
-	<mode id="nightmode" name="night_mode_name"  savename="NIGHT">
+	<mode id="nightmode" name="night_mode_name"  savename="NIGHT" nameHAL="super_mode_name"  savenameHAL="SUPER">
 	
 	    <icon		id="gui_almalence_mode_night"/>
+	    <iconHAL	id="gui_almalence_mode_super"/>
 	    
 	    <vf 		id="com.almalence.plugins.gridvf"/>
 		<vf 		id="com.almalence.plugins.zoomvf"/>
