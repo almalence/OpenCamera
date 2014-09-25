@@ -377,55 +377,31 @@
    		android:layout_gravity="top|left"
    		android:visibility="gone"/>	
 
-	<RelativeLayout android:id="@+id/storeLayout"
-        		android:background="@drawable/store_background"
-        		android:layout_width="fill_parent"
-        		android:layout_height="fill_parent"        		
-				android:visibility="gone">
-					<ImageView
-						android:id="@+id/storeHeader"
-						android:src="@drawable/store_header_large"
-						android:background="@android:color/transparent"
-						android:layout_height="@dimen/headerStoreImageSize"
-						android:layout_width="fill_parent"
-						android:layout_alignParentTop="true"
-						android:layout_centerHorizontal="true"
-				   		>
-					</ImageView>
-					<GridView
-					    android:id="@+id/storeGrid"
-					    android:layout_width="fill_parent" 
-					    android:layout_height="wrap_content"
-					    android:numColumns="3"
-					    android:horizontalSpacing="8dp"
-					    android:verticalSpacing="8dp"
-					    android:adjustViewBounds="true"
-					    android:stretchMode="columnWidth"
-					    android:layout_below="@+id/storeHeader"
-					    android:paddingLeft="8dp"
-	    				android:paddingRight="8dp"
-					/>
-					<ImageView
-						android:id="@+id/storeWhatsNew"
-						android:src="@drawable/almalence_upgrade_whatsnew"
-						android:background="@android:color/transparent"
-						android:layout_height="@dimen/paramsLayoutHeight"
-						android:layout_width="@dimen/paramsLayoutHeight"
-						android:layout_alignParentBottom="true"
-						android:layout_alignParentRight="true"
-				   		>
-					</ImageView>
-	</RelativeLayout>
-
-	
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:id="@+id/viewPagerLayout"
+		android:id="@+id/viewPagerLayoutMain"
         android:background="@drawable/store_background"
         android:visibility="gone"
 		>
-
+		<ImageView
+			android:id="@+id/storeHeader"
+			android:src="@drawable/store_header"
+			android:background="@android:color/transparent"
+			android:layout_height="@dimen/headerStoreImageSize"
+			android:layout_width="match_parent"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"
+	   		>
+		</ImageView>
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/viewPagerLayout"
+	        android:background="@drawable/store_background"
+	        android:layout_below="@+id/storeHeader"
+			>
+	 	</RelativeLayout>
 	</RelativeLayout>
 	
 	<RelativeLayout
