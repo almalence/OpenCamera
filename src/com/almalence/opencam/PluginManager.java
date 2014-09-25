@@ -86,6 +86,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -838,6 +839,14 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
+			if (CameraController.isUseHALv3())
+			{
+				Preference pref;
+				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack")) || null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+				{
+					pref.setTitle(MainScreen.getInstance().getResources().getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+				}
+			}
 			MainScreen.getInstance().onPreferenceCreate(pf);
 		} else if ("vf_settings".equals(settings))
 		{

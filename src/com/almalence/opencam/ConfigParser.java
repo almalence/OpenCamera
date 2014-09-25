@@ -177,6 +177,11 @@ public class ConfigParser
 		mode.modeID = parser.getAttributeValue(null, "id");
 		mode.modeName = parser.getAttributeValue(null, "name");
 		mode.modeSaveName = parser.getAttributeValue(null, "savename");
+		
+		if ((mode.modeNameHAL = parser.getAttributeValue(null, "nameHAL")) == null)
+			mode.modeNameHAL = mode.modeName;
+		if ((mode.modeSaveNameHAL = parser.getAttributeValue(null, "savenameHAL")) == null)
+			mode.modeSaveNameHAL = mode.modeSaveName;
 
 		while (parser.next() != XmlPullParser.END_TAG)
 		{
@@ -194,11 +199,25 @@ public class ConfigParser
 		String tag = parser.getName();
 		parser.require(XmlPullParser.START_TAG, ns, tag);
 		String id = parser.getAttributeValue(null, "id");
-		if (tag.equals("icon"))
+		if (tag.equals("icon") || tag.equals("iconHAL"))
 		{
-			if (id != null)
-				mode.icon = id;
-		} else if (tag.equals("vf"))
+			if (tag.equals("iconHAL"))
+			{
+				if (id != null)
+					mode.iconHAL = id;
+				else
+					mode.iconHAL = mode.icon;
+			}
+			else
+			{
+				if (id != null)
+				{
+					mode.icon = id;
+					mode.iconHAL = id;
+				}
+			}
+		}
+		else if (tag.equals("vf"))
 		{
 			if (id != null)
 				mode.VF.add(id);
