@@ -33,13 +33,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -63,7 +63,6 @@ import android.widget.Toast;
 import android2.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -74,7 +73,6 @@ import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
-import com.almalence.util.ImageConversion;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -153,12 +151,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private boolean						aeLockedByPanorama			= false;
 	private boolean						wbLockedByPanorama			= false;
 
+	private static String				sModePref					= "panoramaMode";
 	private static String				sMemoryPref;
 	private static String				sFrameOverlapPref;
 	private static String				sAELockPref;
 
 	private Switch						modeSwitcher;
-	private boolean						modeSweep					= true;
+	private boolean						modeSweep;
 	private boolean						focused						= false;
 
 	public PanoramaAugmentedCapturePlugin()
@@ -305,9 +304,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				prefs.edit().putString(sizeKey, ResolutionsPictureIdxesList.get(idx)).commit();
 			}
 		}
-		
-		PanoramaAugmentedCapturePlugin.prefResolution = Integer
-				.parseInt(prefs.getString(sizeKey, "0"));
+
+		PanoramaAugmentedCapturePlugin.prefResolution = Integer.parseInt(prefs.getString(sizeKey, "0"));
 
 	}
 
@@ -340,6 +338,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onCreate()
 	{
+		getPrefs();
 		sMemoryPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaMemory);
 		sFrameOverlapPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaFrameOverlap);
 		sAELockPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaAELock);
@@ -359,6 +358,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			{
 				PanoramaAugmentedCapturePlugin.this.modeSweep = isChecked;
 				PanoramaAugmentedCapturePlugin.this.setMode();
+				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				Editor editor = prefs.edit();
+				editor.putBoolean(sModePref, modeSweep);
+				editor.commit();
+				
 			}
 		});
 		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);
@@ -543,8 +547,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
 				params);
 		this.modeSwitcher.setLayoutParams(params);
-//		this.modeSwitcher.requestLayout();
-//		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		// this.modeSwitcher.requestLayout();
+		// ((RelativeLayout)
+		// MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 	}
 
 	@Override
@@ -585,13 +590,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		final CameraController.Size previewSize;
 		if (this.modeSweep)
 		{
-			previewSize = getOptimalSweepPreviewSize(
-					CameraController.getInstance().getSupportedPreviewSizes());
-		}
-		else
+			previewSize = getOptimalSweepPreviewSize(CameraController.getInstance().getSupportedPreviewSizes());
+		} else
 		{
-			previewSize = this.getOptimalPreviewSize(CameraController.getInstance()
-					.getSupportedPreviewSizes(), this.pictureWidth, this.pictureHeight);
+			previewSize = this.getOptimalPreviewSize(CameraController.getInstance().getSupportedPreviewSizes(),
+					this.pictureWidth, this.pictureHeight);
 		}
 
 		this.previewWidth = previewSize.getWidth();
@@ -631,7 +634,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 		CameraController.getInstance().setJpegQuality(jpegQuality);
@@ -843,7 +846,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void getPrefs()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
+		this.modeSweep = prefs.getBoolean(sModePref, true);
+		
 		try
 		{
 			this.prefResolution = Integer
@@ -1115,8 +1119,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					if (this.modeSweep)
 					{
 						this.takePictureUnimode(SwapHeap.SwapToHeap(data));
-					}
-					else
+					} else
 					{
 						this.takePictureUnimode(0);
 					}
@@ -1465,11 +1468,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		}
 	}
-	
+
 	private CameraController.Size getOptimalSweepPreviewSize(final List<CameraController.Size> sizes)
 	{
 		CameraController.Size best_size = sizes.get(0);
-		
+
 		for (CameraController.Size size : sizes)
 		{
 			if (size.getWidth() > best_size.getWidth())
@@ -1477,7 +1480,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				best_size = size;
 			}
 		}
-		
+
 		return best_size;
 	}
 

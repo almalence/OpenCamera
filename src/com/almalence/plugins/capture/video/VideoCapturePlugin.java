@@ -1269,6 +1269,8 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.stopVideoRecording();
 		}
+		
+		MainScreen.getInstance().setKeepScreenOn(false);
 	}
 
 	protected void onPreExportVideo()
@@ -1383,6 +1385,8 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.startVideoRecording();
 		}
+		
+		MainScreen.getInstance().setKeepScreenOn(true);
 	}
 
 	private void stopVideoRecording()
