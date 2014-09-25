@@ -240,39 +240,43 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 )
 {
 	int i;
-	int *yuv_length;
+//	int *yuv_length;
 	unsigned char * *yuv;
 	char status[1024];
 	int isFoundinInput = 255;
 
-	int x, y;
-	int x0_out, y0_out, w_out, h_out;
+//	int x, y;
+//	int x0_out, y0_out, w_out, h_out;
 
 	yuv = (unsigned char**)env->GetIntArrayElements(in, NULL);
-	yuv_length = (int*)env->GetIntArrayElements(in_len, NULL);
+//	yuv_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
 	// pre-allocate uncompressed yuv buffers
+//	for (i=0; i<nFrames; ++i)
+//	{
+//		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+//
+//		if (inputFrame[i]==NULL)
+//		{
+//			isFoundinInput = i;
+//			i--;
+//			for (;i>=0;--i)
+//			{
+//				free(inputFrame[i]);
+//				inputFrame[i] = NULL;
+//			}
+//			break;
+//		}
+//
+//		memcpy(inputFrame[i], yuv[i], yuv_length[i]);
+//	}
+
 	for (i=0; i<nFrames; ++i)
-	{
-		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+		inputFrame[i] = yuv[i];
 
-		if (inputFrame[i]==NULL)
-		{
-			isFoundinInput = i;
-			i--;
-			for (;i>=0;--i)
-			{
-				free(inputFrame[i]);
-				inputFrame[i] = NULL;
-			}
-			break;
-		}
-
-		memcpy(inputFrame[i], yuv[i], yuv_length[i]);
-	}
 
 	env->ReleaseIntArrayElements(in, (jint*)yuv, JNI_ABORT);
-	env->ReleaseIntArrayElements(in_len, (jint*)yuv_length, JNI_ABORT);
+//	env->ReleaseIntArrayElements(in_len, (jint*)yuv_length, JNI_ABORT);
 
 	LOGD("frames total: %d\n", (int)nFrames);
 	return isFoundinInput;

@@ -238,7 +238,7 @@ public class HALv3
 
 	public static void setupImageReadersHALv3(CameraController.Size sz)
 	{
-		Log.e(TAG, "setupImageReadersHALv3()");
+		Log.e(TAG, "setupImageReadersHALv3(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
 
 		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
 		MainScreen.setPreviewWidth(sz.getWidth());

@@ -2708,9 +2708,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 												// JPEG conversion
 				else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 				{
-					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-					camera.setPreviewCallback(null);
-					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					try
+					{
+						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+//						camera.setPreviewCallback(null);
+						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					}
+					catch(Exception exp)
+					{
+						Log.e(TAG, "takePicture exception. Message: " + exp.getMessage());
+						exp.printStackTrace();
+						
+//						PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 0);
+					}
 
 				}
 			}

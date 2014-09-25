@@ -37,7 +37,7 @@ public final class AlmaShotHDR
 	public static synchronized native String HDRPreview2a(int sx, int sy, int[] pview, boolean rotate, int exposure,
 			int vividness, int contrast, int microcontrast, boolean mirrored);
 
-	public static synchronized native byte[] HDRProcess(int sx, int sy, int[] crop, boolean rotate, boolean mirrored);
+	public static synchronized native byte[] HDRProcess(int sx, int sy, int[] crop, int rotate, boolean mirrored);
 
 	public static synchronized native void HDRStopProcessing();
 

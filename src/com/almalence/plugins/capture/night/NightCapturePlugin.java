@@ -588,6 +588,12 @@ public class NightCapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID && frameNumber == 0)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
+	
+	@Override
+	public void onExportFinished()
+	{
+		
+	}
 
 	public void captureFrames()
 	{
