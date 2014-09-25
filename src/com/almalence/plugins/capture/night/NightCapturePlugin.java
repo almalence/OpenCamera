@@ -29,7 +29,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
 import android.os.Build;
@@ -121,17 +121,22 @@ public class NightCapturePlugin extends PluginCapture
 	public NightCapturePlugin()
 	{
 		super("com.almalence.plugins.nightcapture",
-				CameraController.isUseHALv3()?0:R.xml.preferences_capture_night,
-				CameraController.isUseHALv3()?0:R.xml.preferences_capture_night_more,
-				CameraController.isUseHALv3()?0:R.drawable.plugin_capture_night_nightvision_on,
-				CameraController.isUseHALv3()?null:MainScreen.getInstance().getResources().getString(R.string.NightVisionOn));
+				R.xml.preferences_capture_night,
+				R.xml.preferences_capture_night_more,
+				R.drawable.plugin_capture_night_nightvision_on,
+				MainScreen.getInstance().getResources().getString(R.string.NightVisionOn));
 	}
 
 	@Override
 	public void onCreate()
 	{
 		if (!CameraController.isUseHALv3())
+		{
 			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
+			this.setActivatedQuickControl(false);
+		}
+		else
+			this.setActivatedQuickControl(true);
 
 		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
@@ -140,19 +145,16 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onStart()
 	{
-		if (!CameraController.isUseHALv3())
+		getPrefs();
+
+		if (OpenGLPreference)
 		{
-			getPrefs();
-	
-			if (OpenGLPreference)
-			{
-				quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-				quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
-			} else
-			{
-				quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-				quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
-			}
+			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
+			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
+		} else
+		{
+			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
+			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
 		}
 	}
 
@@ -190,6 +192,12 @@ public class NightCapturePlugin extends PluginCapture
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
+		
+		if (!CameraController.isUseHALv3())
+		{
+			
+		}
+			
 	}
 	
 	@Override

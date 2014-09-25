@@ -2655,7 +2655,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			settingsViews.add(qcView);
 
-		plugin.quickControlView = qcView;
+		plugin.setQuickControlView(qcView);
 	}
 
 	/***************************************************************************************
