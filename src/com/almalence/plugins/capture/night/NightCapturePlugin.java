@@ -29,7 +29,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
 import android.os.Build;
@@ -109,7 +109,7 @@ public class NightCapturePlugin extends PluginCapture
 
 	// preferences
 	private static String		FocusPreference;
-	private static boolean		OpenGLPreference;
+	private static boolean		OpenGLPreference = false;
 
 	private int					preferenceSceneMode;
 	private int					preferenceFocusMode;
@@ -121,16 +121,17 @@ public class NightCapturePlugin extends PluginCapture
 	public NightCapturePlugin()
 	{
 		super("com.almalence.plugins.nightcapture",
-				R.xml.preferences_capture_night,
-				R.xml.preferences_capture_night_more,
-				R.drawable.plugin_capture_night_nightvision_on,
-				MainScreen.getInstance().getResources().getString(R.string.NightVisionOn));
+				CameraController.isUseHALv3()?0:R.xml.preferences_capture_night,
+				CameraController.isUseHALv3()?0:R.xml.preferences_capture_night_more,
+				CameraController.isUseHALv3()?0:R.drawable.plugin_capture_night_nightvision_on,
+				CameraController.isUseHALv3()?null:MainScreen.getInstance().getResources().getString(R.string.NightVisionOn));
 	}
 
 	@Override
 	public void onCreate()
 	{
-		cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
+		if (!CameraController.isUseHALv3())
+			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 
 		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
@@ -139,16 +140,19 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onStart()
 	{
-		getPrefs();
-
-		if (OpenGLPreference)
+		if (!CameraController.isUseHALv3())
 		{
-			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
-		} else
-		{
-			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
+			getPrefs();
+	
+			if (OpenGLPreference)
+			{
+				quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
+				quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
+			} else
+			{
+				quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
+				quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
+			}
 		}
 	}
 
@@ -187,11 +191,14 @@ public class NightCapturePlugin extends PluginCapture
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
 	}
-
+	
 	@Override
 	public boolean isGLSurfaceNeeded()
 	{
-		return true;
+		if (!CameraController.isUseHALv3())
+			return true;
+		else
+			return false;
 	}
 
 	@Override
@@ -243,7 +250,8 @@ public class NightCapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+		if (!CameraController.isUseHALv3())
+			OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
 	}
 
 	@Override
@@ -287,7 +295,7 @@ public class NightCapturePlugin extends PluginCapture
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
 		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		Log.e("Night", "Optimal preview size = " + os.getWidth() + " x " + os.getHeight());
+		//Log.e("Night", "Optimal preview size = " + os.getWidth() + " x " + os.getHeight());
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
@@ -602,40 +610,43 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		if (OpenGLPreference && !inCapture)
+		if (!CameraController.isUseHALv3())
 		{
-			if (data1 == null)
-				data1 = data;
-			else if (data2 == null)
+			if (OpenGLPreference && !inCapture)
 			{
-				data2 = data;
-
-				if (dataS == null)
-					dataS = new byte[data2.length];
-				else if (dataS.length < data2.length)
-					dataS = new byte[data2.length];
-
-				int imageWidth = MainScreen.getPreviewWidth();
-				int imageHeight = MainScreen.getPreviewHeight();
-				
-				ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
-				if (CameraController.isFrontCamera())
+				if (data1 == null)
+					data1 = data;
+				else if (data2 == null)
 				{
-					dataRotated = new byte[dataS.length];
-					ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
-
-					yuvData = dataRotated;
-				} else
-					yuvData = dataS;
-								
-				data1 = data2;
+					data2 = data;
+	
+					if (dataS == null)
+						dataS = new byte[data2.length];
+					else if (dataS.length < data2.length)
+						dataS = new byte[data2.length];
+	
+					int imageWidth = MainScreen.getPreviewWidth();
+					int imageHeight = MainScreen.getPreviewHeight();
+					
+					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
+					if (CameraController.isFrontCamera())
+					{
+						dataRotated = new byte[dataS.length];
+						ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
+	
+						yuvData = dataRotated;
+					} else
+						yuvData = dataS;
+									
+					data1 = data2;
+					data2 = null;
+				}
+			} else if (inCapture && data1 != null)
+			{
+				data1 = null;
 				data2 = null;
+				dataS = null;
 			}
-		} else if (inCapture && data1 != null)
-		{
-			data1 = null;
-			data2 = null;
-			dataS = null;
 		}
 	}
 
@@ -661,70 +672,79 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		cameraPreview.generateGLTexture(gl);
-		gl.glEnable(GL10.GL_TEXTURE_2D); // Enable Texture Mapping ( NEW )
-		gl.glShadeModel(GL10.GL_SMOOTH); // Enable Smooth Shading
-		gl.glLineWidth(4.0f);
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
-		gl.glClearDepthf(1.0f); // Depth Buffer Setup
-		gl.glEnable(GL10.GL_DEPTH_TEST); // Enables Depth Testing
-		gl.glDepthFunc(GL10.GL_LEQUAL); // The Type Of Depth Testing To Do
-
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GLES10.GL_ONE);
-
-		// Really Nice Perspective Calculations
-		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		if (!CameraController.isUseHALv3())
+		{
+			cameraPreview.generateGLTexture(gl);
+			gl.glEnable(GL10.GL_TEXTURE_2D); // Enable Texture Mapping ( NEW )
+			gl.glShadeModel(GL10.GL_SMOOTH); // Enable Smooth Shading
+			gl.glLineWidth(4.0f);
+			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
+			gl.glClearDepthf(1.0f); // Depth Buffer Setup
+			gl.glEnable(GL10.GL_DEPTH_TEST); // Enables Depth Testing
+			gl.glDepthFunc(GL10.GL_LEQUAL); // The Type Of Depth Testing To Do
+	
+			gl.glBlendFunc(GL10.GL_SRC_ALPHA, GLES10.GL_ONE);
+	
+			// Really Nice Perspective Calculations
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		}
 	}
 
 	@Override
 	public void onGLSurfaceChanged(GL10 gl, int width, int height)
 	{
-		if (height == 0)
-		{ // Prevent A Divide By Zero By
-			height = 1; // Making Height Equal One
+		if (!CameraController.isUseHALv3())
+		{
+			if (height == 0)
+			{ // Prevent A Divide By Zero By
+				height = 1; // Making Height Equal One
+			}
+	
+			currHalfWidth = width / 2;
+			currHalfHeight = height / 2;
+	
+			cameraDist = (float) (currHalfHeight / Math.tan(Math.toRadians(45.0f / 2.0f)));
+	
+			gl.glViewport(0, 0, width, height); // Reset The Current Viewport
+			gl.glMatrixMode(GL10.GL_PROJECTION); // Select The Projection Matrix
+			gl.glLoadIdentity(); // Reset The Projection Matrix
+	
+			// Calculate The Aspect Ratio Of The Window
+			GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, cameraDist / 10.0f, cameraDist * 10.0f);
+	
+			gl.glMatrixMode(GL10.GL_MODELVIEW); // Select The Modelview Matrix
+			gl.glLoadIdentity(); // Reset The Modelview Matrix
+	
+			cameraPreview.setSurfaceSize(width, height);
 		}
-
-		currHalfWidth = width / 2;
-		currHalfHeight = height / 2;
-
-		cameraDist = (float) (currHalfHeight / Math.tan(Math.toRadians(45.0f / 2.0f)));
-
-		gl.glViewport(0, 0, width, height); // Reset The Current Viewport
-		gl.glMatrixMode(GL10.GL_PROJECTION); // Select The Projection Matrix
-		gl.glLoadIdentity(); // Reset The Projection Matrix
-
-		// Calculate The Aspect Ratio Of The Window
-		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, cameraDist / 10.0f, cameraDist * 10.0f);
-
-		gl.glMatrixMode(GL10.GL_MODELVIEW); // Select The Modelview Matrix
-		gl.glLoadIdentity(); // Reset The Modelview Matrix
-
-		cameraPreview.setSurfaceSize(width, height);
 	}
 
 	@Override
 	public void onGLDrawFrame(GL10 gl)
 	{
-		// Clear Screen And Depth Buffer
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glLoadIdentity();
-
-		// Drawing
-		gl.glTranslatef(0.0f, 0.0f, -(cameraDist)); // Move 5 units into the
-													// screen
-		gl.glRotatef(-90, 0.0f, 0.0f, 1.0f); // Z
-
-		if (OpenGLPreference && !inCapture && yuvData != null)
-			synchronized (this)
-			{
-				try
+		if (!CameraController.isUseHALv3())
+		{
+			// Clear Screen And Depth Buffer
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+			gl.glLoadIdentity();
+	
+			// Drawing
+			gl.glTranslatef(0.0f, 0.0f, -(cameraDist)); // Move 5 units into the
+														// screen
+			gl.glRotatef(-90, 0.0f, 0.0f, 1.0f); // Z
+	
+			if (OpenGLPreference && !inCapture && yuvData != null)
+				synchronized (this)
 				{
-					// Draw the square
-					cameraPreview.draw(gl, yuvData, MainScreen.getMainContext());
-				} catch (RuntimeException e)
-				{
-					Log.e("onGLDrawFrame", "onGLDrawFrame in Night some exception" + e.getMessage());
+					try
+					{
+						// Draw the square
+						cameraPreview.draw(gl, yuvData, MainScreen.getMainContext());
+					} catch (RuntimeException e)
+					{
+						Log.e("onGLDrawFrame", "onGLDrawFrame in Night some exception" + e.getMessage());
+					}
 				}
-			}
+		}
 	}
 }
