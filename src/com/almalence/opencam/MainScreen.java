@@ -1498,7 +1498,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
-				MainScreen.mApplicationStarted = true;
+				MainScreen.mApplicationStarted = true;				
 			}
 
 			@Override

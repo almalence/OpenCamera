@@ -56,6 +56,9 @@ public class CapturePlugin extends PluginCapture
 	private static String	ModePreference; // 0=DRO On 1=DRO Off
 	private Switch			modeSwitcher;
 	public static final String CAMERA_IMAGE_BUCKET_NAME = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/tmp_raw_img" ;
+	
+	private int singleModeEV;
+	private int droEvDiff;
 
 	public CapturePlugin()
 	{
@@ -71,6 +74,8 @@ public class CapturePlugin extends PluginCapture
 			int diff = (int) Math.floor(0.5 / expStep);
 			if (diff < 1)
 				diff = 1;
+			
+			droEvDiff = diff;
 			ev -= diff;
 		}
 		
@@ -96,8 +101,10 @@ public class CapturePlugin extends PluginCapture
 			public void onCheckedChanged(CompoundButton buttonView, boolean isDro)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int ev = prefs.getInt(MainScreen.sEvPref, 0);
-				UpdateEv(isDro, ev);
+				singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+				//UpdateEv(isDro, isDro? singleModeEV : (singleModeEV+droEvDiff));
+				UpdateEv(isDro, singleModeEV);
+				
 				if (isDro)
 				{
 					ModePreference = "0";
@@ -107,7 +114,7 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
 				}
-
+				
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeStandardPref", ModePreference);
 				editor.commit();
@@ -131,9 +138,9 @@ public class CapturePlugin extends PluginCapture
 		if (ModePreference.compareTo("0") == 0)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			int ev = prefs.getInt(MainScreen.sEvPref, 0);
+			singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 			// FixMe: why not setting exposure if we are in dro-off mode?
-			UpdateEv(true, ev);
+			UpdateEv(true, singleModeEV);
 		}
 	}
 
@@ -153,6 +160,15 @@ public class CapturePlugin extends PluginCapture
 		else
 			MainScreen.setCaptureYUVFrames(false);
 	}
+	
+//	@Override
+//	public void onPause()
+//	{
+////		if(ModePreference.contains("0"))
+////		{
+////			UpdateEv(false, singleModeEV+droEvDiff);
+////		}
+//	}
 
 	@Override
 	public void onGUICreate()
