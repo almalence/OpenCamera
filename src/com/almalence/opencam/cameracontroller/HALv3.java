@@ -48,6 +48,7 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Area;
 import android2.hardware.camera2.CameraCaptureSession;
 import android2.hardware.camera2.CameraCharacteristics;
@@ -96,6 +97,7 @@ public class HALv3
 	protected static boolean				resultInHeap 		= false;
 	
 	private static int						MAX_SUPPORTED_PREVIEW_SIZE = 1920*1088;
+	private static int						FULL_HD_SIZE = 1920*1080;
 	
 
 	public static HALv3 getInstance()
@@ -238,7 +240,7 @@ public class HALv3
 
 	public static void setupImageReadersHALv3(CameraController.Size sz)
 	{
-		Log.e(TAG, "setupImageReadersHALv3()");
+		Log.e(TAG, "setupImageReadersHALv3(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
 
 		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
 		MainScreen.setPreviewWidth(sz.getWidth());
@@ -275,7 +277,7 @@ public class HALv3
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);		
-		final Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);		
+		final Size[] cs = configMap.getOutputSizes(MainScreen.isCaptureYUVFrames()? ImageFormat.YUV_420_888 : ImageFormat.JPEG);		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -283,6 +285,8 @@ public class HALv3
 		int ii = 0;
 		for (Size s : cs)
 		{
+			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
+				s = new Size(1920, 1088);
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
 			int highestSizeWidth = sHighest.getWidth();
@@ -373,6 +377,9 @@ public class HALv3
 	{
 		boolean needAdd = true;
 		boolean isFast = true;
+		
+		if(currSizeWidth*currSizeHeight == FULL_HD_SIZE)
+			currSizeHeight = 1088;
 
 		Long lmpix = (long) currSizeWidth * currSizeHeight;
 		float mpix = (float) lmpix / 1000000.f;
@@ -435,20 +442,31 @@ public class HALv3
 	public static List<CameraController.Size> fillPreviewSizeList()
 	{
 		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
-		Size[] cs = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.YUV_420_888);
+		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		//Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
+		Size[] cs = configMap.getOutputSizes(SurfaceTexture.class);
 		for (Size sz : cs)
 			if(sz.getWidth()*sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
+			{
+				if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
+					sz = new Size(1920, 1088);
 				previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+			}
 		
 		return previewSizes;
 	}
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
-		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
+		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
+		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		Size[] cs = configMap.getOutputSizes(MainScreen.isCaptureYUVFrames()? ImageFormat.YUV_420_888 : ImageFormat.JPEG);
 		for (Size sz : cs)
+		{
+			if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
+				sz = new Size(1920, 1088);
 			pictureSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+		}
 	}
 
 	public static CameraDevice getCamera2()

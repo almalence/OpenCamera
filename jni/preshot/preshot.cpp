@@ -279,7 +279,7 @@ JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_G
 
 	if (idxIN == idxOUT)
 	{
-		env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
+		env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_COMMIT);
 		return jdata;
 	}
 
@@ -289,7 +289,7 @@ JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_G
 		TempidxOUT=0;
 	if (idxIN == TempidxOUT)
 	{
-		env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
+		env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_COMMIT);
 		return jdata;
 	}
 	if(TempidxOUT > (buf_size-1))
@@ -304,7 +304,7 @@ JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_G
 	bool rotate = (manualOrientation ? orientation : (1 == *(orient_buffer+TempidxOUT) || 3 == *(orient_buffer+TempidxOUT)));
 	NV21_to_RGB(frame_buffer+TempidxOUT*elemSize, (int*)data, image_w, image_h, rotate);
 
-	env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
+	env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_COMMIT);
 
 	return jdata;
 }
@@ -332,7 +332,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	if (idxIN == idxOUT)
 	{
 		//env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
-		env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+		env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 		return jdata;
 	}
 
@@ -343,7 +343,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	if (idxIN == TempidxOUT)
 	{
 		//env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
-		env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+		env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 		return jdata;
 	}
 	if(TempidxOUT > (buf_size-1))
@@ -363,7 +363,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	memcpy (data, frame_buffer+TempidxOUT*elemSize, size_src);
 	//memcpy (data, frame_buffer+TempidxOUT*elemSize, size*sizeof(int));
 	//env->ReleaseIntArrayElements(jdata, (jint*)data, JNI_ABORT);
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 
 	return jdata;
 }
@@ -570,7 +570,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 			memcpy (data, frame_buffer+idx*elemSize, elemSize);
 	}
 
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 
 	return jdata;
 }
@@ -663,7 +663,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	data = (unsigned char*)env->GetByteArrayElements(jdata, NULL);
 	memcpy (data, frame_buffer+idx*elemSize, *(len_buffer + idx));
 
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 
 	return jdata;
 }

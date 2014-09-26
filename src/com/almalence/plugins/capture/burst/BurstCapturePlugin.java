@@ -261,8 +261,11 @@ public class BurstCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 
 			imagesTaken = 0;
+			
+			takingAlready = false;
+			inCapture = false;
 		}
-		takingAlready = false;		
+				
 	}
 
 	@TargetApi(21)
@@ -274,6 +277,12 @@ public class BurstCapturePlugin extends PluginCapture
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
+	}
+	
+	@Override
+	public void onExportFinished()
+	{
+		
 	}
 
 	@Override

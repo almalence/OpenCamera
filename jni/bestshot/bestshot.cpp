@@ -124,47 +124,50 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_bests
 	int i;
 	unsigned char * *yuvIn;
 	char status[1024];
-
-	Uint8 *inp[4];
-	int x, y;
-	int x0_out, y0_out, w_out, h_out;
-
+//
+//	Uint8 *inp[4];
+//	int x, y;
+//	int x0_out, y0_out, w_out, h_out;
+//
 	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
+//
+//	// pre-allocate uncompressed yuv buffers
+//	for (i=0; i<nFrames; ++i)
+//	{
+//		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+//
+//		if (yuv[i]==NULL)
+//		{
+//			i--;
+//			for (;i>=0;--i)
+//			{
+//				free(yuv[i]);
+//				yuv[i] = NULL;
+//			}
+//			break;
+//		}
+//
+////		yuv[i] = yuvIn[i];
+//		for (y=0; y<sy; y+=2)
+//		{
+//			// Y
+//			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
+//			memcpy (&yuv[i][(y+1)*sx], &yuv[i][(y+1)*sx], sx);
+//
+//			// UV - no direct memcpy as swap may be needed
+//			for (x=0; x<sx/2; ++x)
+//			{
+//				// U
+//				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
+//
+//				// V
+//				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
+//			}
+//		}
+//	}
 
-	// pre-allocate uncompressed yuv buffers
 	for (i=0; i<nFrames; ++i)
-	{
-		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-
-		if (yuv[i]==NULL)
-		{
-			i--;
-			for (;i>=0;--i)
-			{
-				free(yuv[i]);
-				yuv[i] = NULL;
-			}
-			break;
-		}
-
-//		yuv[i] = yuvIn[i];
-		for (y=0; y<sy; y+=2)
-		{
-			// Y
-			memcpy (&yuv[i][y*sx],     &yuvIn[i][y*sx],   sx);
-			memcpy (&yuv[i][(y+1)*sx], &yuv[i][(y+1)*sx], sx);
-
-			// UV - no direct memcpy as swap may be needed
-			for (x=0; x<sx/2; ++x)
-			{
-				// U
-				yuv[i][sx*sy+(y/2)*sx+x*2+1] = yuvIn[i][sx*sy+(y/2)*sx+x*2+1];
-
-				// V
-				yuv[i][sx*sy+(y/2)*sx+x*2]   = yuvIn[i][sx*sy+(y/2)*sx+x*2];
-			}
-		}
-	}
+			yuv[i] = yuvIn[i];
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
 
@@ -195,8 +198,11 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 
 	for (int i=0; i<nFrames; ++i)
 	{
-		free(yuv[i]);
-		yuv[i] = NULL;
+		if(BestFrames[0] != i)
+		{
+			free(yuv[i]);
+			yuv[i] = NULL;
+		}
 //		if (i!=BestFrames[0])
 //			free (jpeg[i]);
 	}
