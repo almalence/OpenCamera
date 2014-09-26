@@ -37,7 +37,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
+import android2.hardware.camera2.CaptureResult;
 import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -721,11 +721,6 @@ public abstract class Plugin
 	public void setQuickControlView(View view)
 	{
 		quickControlView = view;
-	}
-	
-	public void setActivatedQuickControl(boolean state)
-	{
-		quickControlView.setActivated(state);
 	}
 	
 	public void refreshQuickControl()

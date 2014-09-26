@@ -90,6 +90,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -897,6 +898,18 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
+			if (CameraController.isUseHALv3())
+			{
+				PreferenceScreen prefScr;
+				if (null != (prefScr = (PreferenceScreen)pf.findPreference("nightProcessingMoreScreen")))
+				{
+					Preference pref;
+					if (null != (pref = pf.findPreference("keepcolorsPref")))
+					{
+						prefScr.removePreference(pref);
+					}
+				}
+			}
 		} else if ("capture_preshot_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);

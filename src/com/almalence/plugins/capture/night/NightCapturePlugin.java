@@ -133,11 +133,8 @@ public class NightCapturePlugin extends PluginCapture
 		if (!CameraController.isUseHALv3())
 		{
 			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
-			this.setActivatedQuickControl(false);
 		}
-		else
-			this.setActivatedQuickControl(true);
-
+		
 		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
 	}
@@ -155,6 +152,11 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
 			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
+		}
+		
+		if (CameraController.isUseHALv3())
+		{
+			quickControlIconID = -1;
 		}
 	}
 
@@ -192,12 +194,6 @@ public class NightCapturePlugin extends PluginCapture
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-		
-		if (!CameraController.isUseHALv3())
-		{
-			
-		}
-			
 	}
 	
 	@Override
@@ -283,7 +279,11 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void selectImageDimension()
 	{
-		int captureIndex = MainScreen.selectImageDimensionMultishot();
+		//max size will be used in supermode
+		int captureIndex = 0;
+		if (!CameraController.isUseHALv3())
+			captureIndex = MainScreen.selectImageDimensionMultishot();
+		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 
