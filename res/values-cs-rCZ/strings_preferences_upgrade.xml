@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">Hotovo!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Neplatný promo kód</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Roční předplatné (3 měsíce zdarma!)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Roční předplatné \n3 měsíce zdarma!</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Měsíční předplatné</string>
   
   <string name="subscriptionText">Aktivujte si prémiové doplňky ZDARMA po dobu 3 měsíců!</string>
