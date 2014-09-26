@@ -169,6 +169,36 @@ int YuvToJpegEncoderMT_init(int format, int* strides) {
 	return 0;
 }
 
+int write_to_stream(JNIEnv* env, jobject jstream, jbyteArray jstorage, int storage_size, uint8_t* out_data, int outsize)
+{
+	int size = 0;
+
+	while(outsize > 0)
+	{
+		if ( storage_size < outsize)
+			size = storage_size;
+		else
+			size = outsize;
+		env->SetByteArrayRegion(jstorage, 0, size, (const jbyte*) out_data);
+		if (env->ExceptionCheck()) {
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+			return 1;
+		}
+
+		env->CallVoidMethod(jstream, gOutputStream_writeMethodID,
+			jstorage, 0, size);
+		if (env->ExceptionCheck()) {
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+			return 1;
+		}
+		outsize -= size;
+		out_data += size;
+	}
+	return 0;
+}
+
 boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstorage, uint8_t* inYuv, int width,
         int height, int* offsets, int* strides, int jpegQuality, int format) {
     unsigned char *out_data = NULL;
@@ -306,22 +336,11 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 				out_data[outsize-1] =  JPEG_RST0 + (restart_cnt & 0x7);
 				restart_cnt++;
 
-		    	env->SetByteArrayRegion(jstorage, 0, outsize, (const jbyte*) out_data);
-		    	if (env->ExceptionCheck()) {
-		        	env->ExceptionDescribe();
-		        	env->ExceptionClear();
-					err = true;
+				if(write_to_stream(env, jstream, jstorage, storage_size, out_data, outsize))
+				{
+					err= true;
 					break;
-		    	}
-
-		    	env->CallVoidMethod(jstream, gOutputStream_writeMethodID,
-		    			jstorage, 0, outsize);
-		    	if (env->ExceptionCheck()) {
-		        	env->ExceptionDescribe();
-		        	env->ExceptionClear();
-					err = true;
-					break;
-		    	}
+				}
 			}
 		}
 
@@ -358,20 +377,9 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 
 		if (i <= last_thread_num)
 		{
-			env->SetByteArrayRegion(jstorage, 0, outsize, (const jbyte*) out_data);
-			if (env->ExceptionCheck()) {
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-				err = true;
-				break;
-			}
-
-			env->CallVoidMethod(jstream, gOutputStream_writeMethodID,
-					jstorage, 0, outsize);
-			if (env->ExceptionCheck()) {
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-				err = true;
+			if(write_to_stream(env, jstream, jstorage, storage_size, out_data, outsize))
+			{
+				err= true;
 				break;
 			}
 		}
