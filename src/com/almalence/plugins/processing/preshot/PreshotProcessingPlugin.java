@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -86,7 +87,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private static int		imgCnt							= 0;
 
 	private Bitmap[]		mini_frames;
-	//private AtomicBoolean	miniframesReady					= new AtomicBoolean(false);
+	// private AtomicBoolean miniframesReady = new AtomicBoolean(false);
 
 	private Button			mSaveButton;
 	private Button			mSaveAllButton;
@@ -120,8 +121,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.getMessageHandler().sendMessage(msg);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_LOCKED);
 
 		MainScreen.getGUIManager().lockControls = true;
 
@@ -139,20 +139,21 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-//		if (0 == PreShot.MakeCopy())
-//		{
-//			Log.v("Preshot processing", "Preshot processing make copy failed.");
-//			return;
-//		}
-		//PreShot.FreeBuffer();
+		// if (0 == PreShot.MakeCopy())
+		// {
+		// Log.v("Preshot processing", "Preshot processing make copy failed.");
+		// return;
+		// }
+		// PreShot.FreeBuffer();
 
-//		isSlowMode = Boolean
-//				.parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled" + sessionID));
+		// isSlowMode = Boolean
+		// .parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled"
+		// + sessionID));
 		// processing only in fast mode.
-		
+
 		final int[] mi = HeapUtil.getMemoryInfo();
 		Log.e("!!!!!!!!!!!", "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
-		
+
 		ProcessingImages();
 
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID));
@@ -161,7 +162,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				isSlowMode ? "true" : "false");
 
 		prepareMiniFrames();
-		//miniframesReady.set(true);
+		// miniframesReady.set(true);
 	}
 
 	private Integer ProcessingImages()
@@ -178,44 +179,50 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		for (int i = 0; i < imagesAmount; i++)
 		{
-//			if (!isSlowMode)
-//			{
-//				byte[] data = null;
-//
-//				if (mCameraMirrored)
-//				{
-//					data = PreShot.GetFromBufferNV21(i, 0, 0, 1);
-//				} else
-//					data = PreShot.GetFromBufferNV21(i, 0, 0, 0);
-//
-//				if (data.length == 0)
-//				{
-//					return null;
-//				}
-//
-//				int frame = SwapHeap.SwapToHeap(data);
-//
-//				PluginManager.getInstance().addToSharedMem("resultframe" + (i + 1) + sessionID, String.valueOf(frame));
-//				PluginManager.getInstance().addToSharedMem("resultframelen" + (i + 1) + sessionID,
-//						String.valueOf(data.length));
-//
-//			} else if (isSlowMode)
-//			{
-//				byte[] data = PreShot.GetFromBufferSimpleNV21(i, MainScreen.getImageHeight(),
-//						MainScreen.getImageWidth());
-//
-//				if (data.length == 0)
-//				{
-//					return null;
-//				}
-//
-//				int frame = SwapHeap.SwapToHeap(data);
-//
-//				PluginManager.getInstance().addToSharedMem("resultframe" + (i + 1) + sessionID, String.valueOf(frame));
-//				PluginManager.getInstance().addToSharedMem("resultframelen" + (i + 1) + sessionID,
-//						String.valueOf(data.length));
-//				PluginManager.getInstance().addToSharedMem("resultframeformat" + (i + 1) + sessionID, "jpeg");
-//			}
+			// if (!isSlowMode)
+			// {
+			// byte[] data = null;
+			//
+			// if (mCameraMirrored)
+			// {
+			// data = PreShot.GetFromBufferNV21(i, 0, 0, 1);
+			// } else
+			// data = PreShot.GetFromBufferNV21(i, 0, 0, 0);
+			//
+			// if (data.length == 0)
+			// {
+			// return null;
+			// }
+			//
+			// int frame = SwapHeap.SwapToHeap(data);
+			//
+			// PluginManager.getInstance().addToSharedMem("resultframe" + (i +
+			// 1) + sessionID, String.valueOf(frame));
+			// PluginManager.getInstance().addToSharedMem("resultframelen" + (i
+			// + 1) + sessionID,
+			// String.valueOf(data.length));
+			//
+			// } else if (isSlowMode)
+			// {
+			// byte[] data = PreShot.GetFromBufferSimpleNV21(i,
+			// MainScreen.getImageHeight(),
+			// MainScreen.getImageWidth());
+			//
+			// if (data.length == 0)
+			// {
+			// return null;
+			// }
+			//
+			// int frame = SwapHeap.SwapToHeap(data);
+			//
+			// PluginManager.getInstance().addToSharedMem("resultframe" + (i +
+			// 1) + sessionID, String.valueOf(frame));
+			// PluginManager.getInstance().addToSharedMem("resultframelen" + (i
+			// + 1) + sessionID,
+			// String.valueOf(data.length));
+			// PluginManager.getInstance().addToSharedMem("resultframeformat" +
+			// (i + 1) + sessionID, "jpeg");
+			// }
 
 			int iOrientation = PreShot.getOrientation(i);
 			if (isSlowMode)
@@ -356,8 +363,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		else
 			saveThis();
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 
 		MainScreen.getGUIManager().lockControls = false;
 
@@ -394,8 +400,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 
@@ -428,8 +433,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			mDisplayOrientationCurrent = orientation;
 			if (postProcessingRun)
 			{
-				//Log.e("PreShot Post processing", "orientation = " + orientation + " mLayoutOrientationCurrent =  "
-				//		+ mLayoutOrientationCurrent);
+				// Log.e("PreShot Post processing", "orientation = " +
+				// orientation + " mLayoutOrientationCurrent =  "
+				// + mLayoutOrientationCurrent);
 				mSaveButton.setRotation(mLayoutOrientationCurrent);
 				mSaveButton.invalidate();
 				mSaveAllButton.setRotation(mLayoutOrientationCurrent);
@@ -567,7 +573,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 			int H = MainScreen.getPreviewHeight(), W = MainScreen.getPreviewWidth();
 			int or = PreShot.getOrientation(index);
-			//Log.e("PreShot", "getMultishotBitmap orientation: " + or);
+			// Log.e("PreShot", "getMultishotBitmap orientation: " + or);
 			if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
 			{
 				H = MainScreen.getPreviewWidth();
@@ -577,7 +583,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			Bitmap bitmap;
 			bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
 			bitmap.setPixels(data, 0, W, 0, 0, W, H);
-			bitmap = Bitmap.createScaledBitmap(bitmap, W/2, H/2, false);
+			bitmap = Bitmap.createScaledBitmap(bitmap, W / 2, H / 2, false);
 
 			if (mCameraMirrored && (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index)))
 			{
@@ -672,6 +678,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 						flipPhoto(false, XtoRightVisible);
 					else
 						Show(false);
+				} else
+				{
+					postProcessingView.findViewById(R.id.imageListed).clearAnimation();
+					postProcessingView.findViewById(R.id.imageListed).setVisibility(View.GONE);
 				}
 				break;
 			}
@@ -865,20 +875,20 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		{
 			pushToExport(i);
 		}
-		
+
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 	}
 
 	private void saveThis()
 	{
 		pushToExport(idx);
-		
+
 		int index = idx + 1;
 
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
 		PluginManager.getInstance().addToSharedMem("resultframeindex" + sessionID, String.valueOf(index));
 	}
-	
+
 	private void pushToExport(int i)
 	{
 		if (!isSlowMode)
@@ -901,8 +911,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		} else if (isSlowMode)
 		{
-			byte[] data = PreShot.GetFromBufferSimpleNV21(i, MainScreen.getImageHeight(),
-					MainScreen.getImageWidth());
+			byte[] data = PreShot.GetFromBufferSimpleNV21(i, MainScreen.getImageHeight(), MainScreen.getImageWidth());
 
 			if (data.length == 0)
 				return;

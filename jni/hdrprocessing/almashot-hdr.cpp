@@ -496,7 +496,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_processing_hd
 //	fclose(f);
 
 	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
 
 	return jdata;
 }

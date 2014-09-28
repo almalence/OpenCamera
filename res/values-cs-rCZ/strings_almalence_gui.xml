@@ -8,6 +8,7 @@
     <string name="Pref_Common_UseFrontCamera_Summary">Použít přední fotoaparát</string>
     <string name="Pref_Common_ImageSize_Title">Velikost fotek</string>
     <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Chytrý multisnímek a Noční režim (velikost fotek)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Chytrý multisnímek (velikost fotek)</string>
     <string name="Pref_Common_ImageSize_Summary">\nPoznámka: některé režimy mají vlastní nastavení pro velikost fotek</string>
     <string name="Pref_Common_Shutter_Title">Tichý režim</string>
     <string name="Pref_Common_Shutter_Summary">Není zaručena funkčnost na všech typech zařízení</string>
