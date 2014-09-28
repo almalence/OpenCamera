@@ -81,7 +81,10 @@ public class CapturePlugin extends PluginCapture
 		
 		int minValue = CameraController.getInstance().getMinExposureCompensation();
 		if (ev >= minValue)
+		{
+			Log.e("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.getInstance().setCameraExposureCompensation(ev);
+		}
 	}
 	
 	@Override
@@ -100,20 +103,26 @@ public class CapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isDro)
 			{
+				
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
-				//UpdateEv(isDro, isDro? singleModeEV : (singleModeEV+droEvDiff));
-				UpdateEv(isDro, singleModeEV);
 				
 				if (isDro)
 				{
+					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+					Log.e("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
+					
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
 				} else
 				{
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
+					
+					Log.e("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
+				
+				//UpdateEv(isDro, isDro? singleModeEV : (singleModeEV+droEvDiff));
+				UpdateEv(isDro, singleModeEV);
 				
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeStandardPref", ModePreference);
@@ -135,10 +144,12 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onCameraParametersSetup()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+		Log.e("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
+
 		if (ModePreference.compareTo("0") == 0)
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, singleModeEV);
 		}
@@ -161,14 +172,15 @@ public class CapturePlugin extends PluginCapture
 			MainScreen.setCaptureYUVFrames(false);
 	}
 	
-//	@Override
-//	public void onPause()
-//	{
-////		if(ModePreference.contains("0"))
-////		{
-////			UpdateEv(false, singleModeEV+droEvDiff);
-////		}
-//	}
+	@Override
+	public void onPause()
+	{
+		Log.e("Capture", "onPause");
+		if(ModePreference.contains("0"))
+		{
+			UpdateEv(false, singleModeEV);
+		}
+	}
 
 	@Override
 	public void onGUICreate()
