@@ -1059,7 +1059,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					updatePreferences();
 
 					preview.setKeepScreenOn(keepScreenOn);
-					
+
 					captureYUVFrames = false;
 
 					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
@@ -1361,7 +1361,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
 		shutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon", false);
+		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
 
@@ -1498,7 +1498,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
-				MainScreen.mApplicationStarted = true;				
+				MainScreen.mApplicationStarted = true;
 			}
 
 			@Override
@@ -1736,7 +1736,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS)
 		{
-			MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			if (event.getDownTime() == event.getEventTime()) {
+				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			}
 			return true;
 		}
 
@@ -2038,11 +2040,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// Apply attribute changes to this window
 		window.setAttributes(layoutpars);
 	}
-	
-	public void setKeepScreenOn(boolean keepScreenOn) {
-		if (keepScreenOn) {
+
+	public void setKeepScreenOn(boolean keepScreenOn)
+	{
+		if (keepScreenOn)
+		{
 			preview.setKeepScreenOn(keepScreenOn);
-		} else {
+		} else
+		{
 			preview.setKeepScreenOn(this.keepScreenOn);
 		}
 	}
