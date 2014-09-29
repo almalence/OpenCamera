@@ -189,9 +189,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void deinit()
 	{
 		deinitSensors();
-
-		previewWidth = -1;
-		previewHeight = -1;
 	}
 
 	private void initSensors()
@@ -1064,7 +1061,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (this.modeSweep)
 			{
-				// File saveDir = PluginManager.getSaveDir(false);
 				// File file = new File(saveDir, "PANORAMA_PREVIEW_FRAME_" +
 				// (CameraController.isUseHALv3()? "NEW" : "OLD") + ".jpg");
 				// OutputStream os = null;
