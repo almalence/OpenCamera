@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -544,13 +545,31 @@ public class FocusVFPlugin extends PluginViewfinder
 		// Set the focus area and metering area.
 		if (mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP))
 		{
+			CameraController.cancelAutoFocus();
 			if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 					|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-			{
+			{				
 				CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 			}
-			setFocusParameters();
-			autoFocus();
+			
+			//This time is useful for Android L. Camera2 dosn't have time between cancelAutoFocus and autoFocus calls
+			//to reset current focus state and initiate new focusing procedure. If autoFocus is called right after
+			//cancelAutoFocus then success focus state (FOCUS_LOCKED) return immediately and re-focusing occurs after
+			//image capturing is called.
+			new CountDownTimer(100, 100)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+					// Not used
+				}
+
+				public void onFinish()
+				{
+					setFocusParameters();
+					autoFocus();
+				}
+			}.start();
+			
 		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap()
 				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
 			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
@@ -613,7 +632,10 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 
 			if (fm != preferenceFocusMode)
+			{
+				CameraController.cancelAutoFocus();
 				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+			}
 		}
 
 		// Reset the tap area before calling mListener.cancelAutofocus.
