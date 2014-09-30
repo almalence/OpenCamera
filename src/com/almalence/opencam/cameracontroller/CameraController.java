@@ -286,6 +286,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		messageHandler = new Handler(this);
 		pauseHandler = new Handler(this);
+		
+		HALv3.started = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);

@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1059,7 +1060,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					updatePreferences();
 
 					preview.setKeepScreenOn(keepScreenOn);
-					
+
 					captureYUVFrames = false;
 
 					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
@@ -1361,7 +1362,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
 		shutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon", false);
+		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
 
@@ -1498,7 +1499,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
-				MainScreen.mApplicationStarted = true;				
+				MainScreen.mApplicationStarted = true;
 			}
 
 			@Override
@@ -1540,6 +1541,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
+			// Here, we create a CameraCaptureSession for camera preview.
 			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateListener, null);
 		} catch (Exception e)
 		{
@@ -1736,7 +1738,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS)
 		{
-			MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			if (event.getDownTime() == event.getEventTime()) {
+				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			}
 			return true;
 		}
 
@@ -2038,11 +2042,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// Apply attribute changes to this window
 		window.setAttributes(layoutpars);
 	}
-	
-	public void setKeepScreenOn(boolean keepScreenOn) {
-		if (keepScreenOn) {
+
+	public void setKeepScreenOn(boolean keepScreenOn)
+	{
+		if (keepScreenOn)
+		{
 			preview.setKeepScreenOn(keepScreenOn);
-		} else {
+		} else
+		{
 			preview.setKeepScreenOn(this.keepScreenOn);
 		}
 	}
