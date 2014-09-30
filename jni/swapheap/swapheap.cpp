@@ -86,7 +86,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_SwapHeap_CopyFromHeap
 
 	memcpy (data, heap, jdata_length);
 
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_COMMIT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
 
 	return jdata;
 }
