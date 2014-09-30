@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1540,6 +1541,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
+			// Here, we create a CameraCaptureSession for camera preview.
 			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateListener, null);
 		} catch (Exception e)
 		{

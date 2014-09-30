@@ -1367,6 +1367,7 @@ public class HALv3
 	};
 	
 	
+	protected static boolean started = false;
 	public final static CameraCaptureSession.StateListener captureSessionStateListener = new CameraCaptureSession.StateListener()
 	{
 		@Override
@@ -1396,7 +1397,14 @@ public class HALv3
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureListener, null);
 				
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				if(!started)
+				{
+					started = true;
+					MainScreen.getInstance().relaunchCamera();
+				}
+				else
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 			}
 			catch (final Exception e)
 			{
@@ -1407,7 +1415,8 @@ public class HALv3
 		}
 		
 	};
-
+	
+	
 	// Note: there other onCaptureXxxx methods in this listener which we do not
 	// implement
 //	public final static CameraCaptureSession.CaptureListener focusListener = new CameraCaptureSession.CaptureListener()
