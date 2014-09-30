@@ -93,8 +93,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	public void onGUICreate()
 	{
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-		if (mButtonsLayout == null)
-			mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
+		mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
 
 		LinearLayout buttonObjectRemoval = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
 		LinearLayout buttonGroupShot = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonGroupShot);
@@ -145,7 +144,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		if (MainScreen.getInstance().findViewById(R.id.blockingLayout) != null)
-			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
+			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout,
+					params);
 
 		if (selectedPlugin == WAITING)
 		{
