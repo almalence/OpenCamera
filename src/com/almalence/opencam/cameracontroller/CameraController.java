@@ -2650,6 +2650,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				// Note 3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
 					evLatency = 20;
+//				else if (Build.MODEL.contains("LG-D855"))
+//					evLatency = 60;
 			} else
 			{
 				new CountDownTimer(500, 500)
