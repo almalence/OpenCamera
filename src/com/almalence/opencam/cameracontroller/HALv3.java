@@ -619,6 +619,7 @@ public class HALv3
 
 	public static void resetExposureCompensationHALv3()
 	{
+		Log.e(TAG, "RESET EXPOSURE COMPENSATION");
 		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
@@ -1305,14 +1306,19 @@ public class HALv3
 
 	public void configurePreviewRequest() throws CameraAccessException
 	{
+		if(camDevice == null)
+			return;
+		
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
 		
 		Log.e(TAG, "configurePreviewRequest()");
 		HALv3.getInstance().previewRequestBuilder = HALv3.getInstance().camDevice
 				.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
 				focusMode);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
@@ -1396,7 +1402,14 @@ public class HALv3
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureListener, null);
 				
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				if(!CameraController.appStarted)
+				{
+					CameraController.appStarted = true;
+					MainScreen.getInstance().relaunchCamera();
+				}
+				else
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 			}
 			catch (final Exception e)
 			{
@@ -1407,7 +1420,8 @@ public class HALv3
 		}
 		
 	};
-
+	
+	
 	// Note: there other onCaptureXxxx methods in this listener which we do not
 	// implement
 //	public final static CameraCaptureSession.CaptureListener focusListener = new CameraCaptureSession.CaptureListener()

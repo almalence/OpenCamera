@@ -330,7 +330,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_seq
 
 	NV21toARGB((Uint8 *)inptr, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, (Uint8 *)pixels);
 
-	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_COMMIT);
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_ABORT);
 
 	LOGD("NV21toARGB - end");
 

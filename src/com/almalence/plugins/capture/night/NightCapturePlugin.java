@@ -487,9 +487,12 @@ public class NightCapturePlugin extends PluginCapture
 
 			LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
 
-			capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
-			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
-			capturingDialog.show();
+			if (!CameraController.isUseHALv3())
+			{
+				capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
+				capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+				capturingDialog.show();
+			}
 
 			// reiniting for every shutter press
 			frameNumber = 0;
@@ -501,9 +504,10 @@ public class NightCapturePlugin extends PluginCapture
 				takingAlready = true;
 			} else
 			{
+				int focusState = CameraController.getFocusState();
 				int focusMode = CameraController.getInstance().getFocusMode();
-				if ( (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE ||
-					  CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				if ( (focusState == CameraController.FOCUS_STATE_IDLE ||
+						focusState == CameraController.FOCUS_STATE_FOCUSING)
 						&& focusMode != -1
 						&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 								|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
@@ -518,7 +522,13 @@ public class NightCapturePlugin extends PluginCapture
 				{
 					captureFrames();
 					takingAlready = true;
-				} else
+				}
+				else if(!takingAlready && focusState == CameraController.FOCUS_STATE_FOCUSED)
+				{
+					captureFrames();
+					takingAlready = true;
+				}
+				else
 				{
 					inCapture = false;
 

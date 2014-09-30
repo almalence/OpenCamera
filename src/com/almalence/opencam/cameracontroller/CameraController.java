@@ -262,6 +262,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static Surface						mPreviewSurface					= null;
 
 	private static final Object						SYNC_OBJECT						= new Object();
+	
+	protected static boolean 						appStarted							= false;
 
 	// Singleton access function
 	public static CameraController getInstance()
@@ -286,6 +288,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		messageHandler = new Handler(this);
 		pauseHandler = new Handler(this);
+		
+		appStarted = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -2646,6 +2650,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				// Note 3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
 					evLatency = 20;
+//				else if (Build.MODEL.contains("LG-D855"))
+//					evLatency = 60;
 			} else
 			{
 				new CountDownTimer(500, 500)
