@@ -262,6 +262,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static Surface						mPreviewSurface					= null;
 
 	private static final Object						SYNC_OBJECT						= new Object();
+	
+	protected static boolean 						appStarted							= false;
 
 	// Singleton access function
 	public static CameraController getInstance()
@@ -287,7 +289,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		messageHandler = new Handler(this);
 		pauseHandler = new Handler(this);
 		
-		HALv3.started = false;
+		appStarted = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
