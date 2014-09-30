@@ -1305,6 +1305,9 @@ public class HALv3
 
 	public void configurePreviewRequest() throws CameraAccessException
 	{
+		if(camDevice == null)
+			return;
+		
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 		
