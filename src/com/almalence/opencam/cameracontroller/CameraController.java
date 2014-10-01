@@ -2682,12 +2682,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				// message to capture image will be emitted a few frames after
 				// setExposure
-				evLatency = 10; // the minimum value at which Galaxy Nexus is
+				evLatency = 20; // the minimum value at which Galaxy Nexus is
 								// changing exposure in a stable way
 
 				// Note 3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 20;
+					evLatency = 40;
 				else if (Build.MODEL.contains("LG-D855"))
 					evLatency = 60;
 			} else
