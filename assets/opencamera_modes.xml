@@ -226,7 +226,7 @@
 			
 	</mode>
 	
-	<mode id="multishot" name="multishot_mode_name"  savename="OR">
+	<mode id="multishot" name="multishot_mode_name"  savename="MS">
 	
 	    <icon		id="gui_almalence_mode_moving"/>
 	    
