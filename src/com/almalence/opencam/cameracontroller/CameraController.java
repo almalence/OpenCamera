@@ -2643,7 +2643,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// set exposure based on onpreviewframe
 	private static int				evLatency;
-	private static boolean			previewMode			= false;
+	private static boolean			previewMode			= true;
 	private static boolean			previewWorking		= false;
 	private static CountDownTimer	cdt					= null;
 	private long					lastCaptureStarted	= 0;
@@ -2688,8 +2688,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				// Note 3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
 					evLatency = 20;
-//				else if (Build.MODEL.contains("LG-D855"))
-//					evLatency = 60;
+				else if (Build.MODEL.contains("LG-D855"))
+					evLatency = 60;
 			} else
 			{
 				new CountDownTimer(500, 500)
