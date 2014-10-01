@@ -195,6 +195,7 @@ int write_to_stream(JNIEnv* env, jobject jstream, jbyteArray jstorage, int stora
 		}
 		outsize -= size;
 		out_data += size;
+		env->CallVoidMethod(jstream, gOutputStream_flushMethodID);
 	}
 	return 0;
 }
@@ -219,6 +220,7 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 	int last_thread_num;
 	boolean err = false;
 	boolean err_thread_num = 0;
+	int file_size = 0;
 
 	storage_size = env->GetArrayLength(jstorage);
 	bufsize = getBuffSize(height, width, thread_num);
@@ -336,6 +338,8 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 				out_data[outsize-1] =  JPEG_RST0 + (restart_cnt & 0x7);
 				restart_cnt++;
 
+				file_size += outsize;
+
 				if(write_to_stream(env, jstream, jstorage, storage_size, out_data, outsize))
 				{
 					err= true;
@@ -377,6 +381,8 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 
 		if (i <= last_thread_num)
 		{
+			file_size += outsize;
+
 			if(write_to_stream(env, jstream, jstorage, storage_size, out_data, outsize))
 			{
 				err= true;
@@ -413,6 +419,8 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 		jpeg_destroy_compress(&cinfo_arr[i]);
 		free(outbuffer_arr[i]);
 	}
+
+    LOGD("file_size %d ", file_size);
 
     free(cinfo_arr);
     free(jerr_arr);

@@ -164,17 +164,9 @@ public class YuvImage
 		adjustRectangle(rectangle);
 		int[] offsets = calculateOffsets(rectangle.left, rectangle.top);
 
-		if (true)
-		{
-	      	boolean res = SaveJpegFreeOutMT(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
+		boolean res = SaveJpegFreeOutMT(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
 					stream, new byte[WORKING_COMPRESS_STORAGE_MT]);
-			return res;
-		}
-		else
-		{
-			return SaveJpegFreeOut(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
-					stream, new byte[WORKING_COMPRESS_STORAGE]);
-		}
+		return res;
 	}
 
 	/**
@@ -275,7 +267,7 @@ public class YuvImage
 	public static native boolean SaveJpegFreeOut(int oriYuv, int format, int width, int height, int[] offsets,
 			int[] strides, int quality, OutputStream stream, byte[] tempStorage);
 	
-	//Multithreaded version of SaveJpegFreeOut, byte array used instead stream
+	//Multithreaded version of SaveJpegFreeOut
 	public static native boolean SaveJpegFreeOutMT(int oriYuv, int format, int width, int height, int[] offsets,
 			int[] strides, int quality, OutputStream stream, byte[] tempStorage);	
 
