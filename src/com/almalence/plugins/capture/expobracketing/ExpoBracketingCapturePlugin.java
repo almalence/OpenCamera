@@ -255,6 +255,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			{
 				CaptureFrame();
 				takingAlready = true;
+			}
+			else if(!takingAlready && CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSED)
+			{
+				CaptureFrame();
+				takingAlready = true;
 			} else
 			{
 				inCapture = false;

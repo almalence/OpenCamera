@@ -175,7 +175,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void init()
 	{
-		this.scanResolutions();
+		PanoramaAugmentedCapturePlugin.scanResolutions();
 
 		this.getPrefs();
 
@@ -567,7 +567,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 
-		final CameraController.Size size = cs.get(this.prefResolution);
+		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
 
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();

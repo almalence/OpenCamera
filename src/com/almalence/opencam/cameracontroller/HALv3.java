@@ -165,6 +165,11 @@ public class HALv3
 			// Doesn't matter, cloising device anyway
 			e.printStackTrace();
 		}
+		catch (final IllegalStateException e2)
+		{
+			// Doesn't matter, cloising device anyway
+			e2.printStackTrace();
+		}
 		finally
 		{
 			HALv3.getInstance().camDevice.close();
@@ -1302,6 +1307,7 @@ public class HALv3
 			e.printStackTrace();
 		}
 		HALv3.autoFocusTriggered = false;
+			
 	}
 
 	public void configurePreviewRequest() throws CameraAccessException
@@ -1319,6 +1325,7 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
 				focusMode);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
