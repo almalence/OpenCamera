@@ -284,6 +284,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sSavePathPref;
 	public static String				sSaveToPref;
 	public static String				sSortByDataPref;
+	
+	public static String				sExpoPreviewModePref;
 
 	public static String				sDefaultModeName;
 
@@ -327,6 +329,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
+		
+		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 
 		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 
