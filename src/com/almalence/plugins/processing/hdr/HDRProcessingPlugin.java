@@ -174,13 +174,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			HDRProcessing();
 			Log.e("HDR", "HDRProcessing success");
 
-			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
-			{
-				byte[] dataRotated = new byte[yuv.length];
-				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
-
-				yuv = dataRotated;
-			}
+//			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
+//			{
+//				byte[] dataRotated = new byte[yuv.length];
+//				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
+//
+//				yuv = dataRotated;
+//			}
 
 			int frame_len = yuv.length;
 			int frame = SwapHeap.SwapToHeap(yuv);
@@ -232,7 +232,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			try
 			{
-				File saveDir = PluginManager.getInstance().getSaveDir(false);
+				File saveDir = PluginManager.getSaveDir(false);
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
@@ -257,7 +257,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					{
 						// save always if not working saving to sdcard
 						e.printStackTrace();
-						saveDir = PluginManager.getInstance().getSaveDir(true);
+						saveDir = PluginManager.getSaveDir(true);
 						file = new File(saveDir, fileFormat + evmark + ".jpg");
 						os = new FileOutputStream(file);
 					}
@@ -306,8 +306,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private void HDRProcessing()
 	{
 		yuv = AlmaShotHDR.HDRProcess(mImageWidth, mImageHeight, HDRProcessingPlugin.crop,
-				mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270,
-				mCameraMirrored);
+				mDisplayOrientationOnStartProcessing, mCameraMirrored);
 	}
 
 	@Override

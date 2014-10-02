@@ -130,9 +130,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 	unsigned char * *yuvIn;
 	char status[1024];
 
-	Uint8 *inp[4];
-	int x, y;
-	int x0_out, y0_out, w_out, h_out;
+//	Uint8 *inp[4];
+//	int x, y;
+//	int x0_out, y0_out, w_out, h_out;
 
 	yuvIn = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
@@ -148,23 +148,26 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 //	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "INPUT SAVCED");
 
 	// pre-allocate uncompressed yuv buffers
+//	for (i=0; i<nFrames; ++i)
+//	{
+//		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+//
+//		if (yuv[i]==NULL)
+//		{
+//			i--;
+//			for (;i>=0;--i)
+//			{
+//				free(yuv[i]);
+//				yuv[i] = NULL;
+//			}
+//			break;
+//		}
+//
+//		yuv[i] = yuvIn[i];
+//	}
+
 	for (i=0; i<nFrames; ++i)
-	{
-		yuv[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-
-		if (yuv[i]==NULL)
-		{
-			i--;
-			for (;i>=0;--i)
-			{
-				free(yuv[i]);
-				yuv[i] = NULL;
-			}
-			break;
-		}
-
-		yuv[i] = yuvIn[i];
-	}
+			yuv[i] = yuvIn[i];
 
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
 
@@ -430,7 +433,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_processing_hd
 	jint sx,
 	jint sy,
 	jintArray jcrop,
-	jboolean jrot,
+	jint orientation,
 	jboolean mirror
 )
 {
@@ -462,13 +465,20 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_processing_hd
 	Hdr_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3], 1);
 	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Hdr_Process() call returned");
 
+	int flipLeftRight, flipUpDown;
+	int rotate90 = orientation == 90 || orientation == 270;
+	if (mirror)
+		flipUpDown = flipLeftRight = orientation == 180 || orientation == 90;
+	else
+		flipUpDown = flipLeftRight = orientation == 180 || orientation == 270;
+
 	OutNV21 = OutPic;
-	if (jrot)
+	if (rotate90)
 		OutNV21 = (Uint8 *)malloc(allocSize);
 
-	TransformNV21(OutPic, OutNV21, sx, sy, crop, mirror&&jrot, mirror&&jrot, jrot);
+	TransformNV21(OutPic, OutNV21, sx, sy, crop, flipLeftRight, flipUpDown, rotate90);
 
-	if (jrot)
+	if (rotate90)
 	{
 		free(OutPic);
 		OutPic = OutNV21;
@@ -486,7 +496,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_processing_hd
 //	fclose(f);
 
 	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
-	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
+	env->ReleaseByteArrayElements(jdata, (jbyte*)data, 0);
 
 	return jdata;
 }

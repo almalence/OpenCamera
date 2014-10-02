@@ -125,6 +125,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
+		Log.e("HDR", "onResume");
 		takingAlready = false;
 		inCapture = false;
 		evRequested = 0;
@@ -183,7 +184,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void setCameraPictureSize()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int jpegQuality = Integer.parseInt(prefs.getString("commonJPEGQuality", "95"));
+		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
 		CameraController.getInstance().setJpegQuality(jpegQuality);
@@ -209,8 +210,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onShutterClick()
 	{
+		Log.e("HDR", "onShutterClick");
 		if (!takingAlready && !inCapture)
 		{
+			Log.e("HDR", "onShutterClick takingAlready == false && inCapture == false");
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
@@ -218,6 +221,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			cdt = null;
 			startCaptureSequence();
 		}
+		else
+			Log.e("HDR", "onShutterClick2 takingAlready == " + takingAlready + " && inCapture == " + inCapture);
 	}
 
 	private void startCaptureSequence()
@@ -234,8 +239,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			frame_num = 0;
 
 			int focusMode = CameraController.getInstance().getFocusMode();
-			if (!takingAlready
-					&& (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
+			if ((CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
 							.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 					&& focusMode != -1
 					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
@@ -244,11 +248,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
 					&& !MainScreen.getAutoFocusLock())
 				aboutToTakePicture = true;
-			else if (!takingAlready
-					|| (focusMode != -1 && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+			else if ((focusMode != -1 && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 							|| focusMode == CameraParameters.AF_MODE_INFINITY
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)))
+			{
+				CaptureFrame();
+				takingAlready = true;
+			}
+			else if(!takingAlready && CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSED)
 			{
 				CaptureFrame();
 				takingAlready = true;
@@ -329,6 +337,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 
 			CameraController.getInstance().resetExposureCompensation();
+			
+			inCapture = false;
+			takingAlready = false;
 		}
 	}
 
@@ -341,6 +352,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			if (evIdx[frame_num] == 0)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
+	}
+	
+	@Override
+	public void onExportFinished()
+	{
+		
 	}
 
 	private void getPrefs()
@@ -547,14 +564,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onAutoFocus(boolean paramBoolean)
 	{
+		Log.e("HDR", "onAutoFocus");
 		if (inCapture) // disregard autofocus success (paramBoolean)
 		{
+			Log.e("HDR", "onAutoFocus inCapture == true");
 			// on motorola xt5 cm7 this function is called twice!
 			// on motorola droid's onAutoFocus seem to be called at every
 			// startPreview,
 			// causing additional frame(s) taken after sequence is finished
 			if (aboutToTakePicture)
 			{
+				Log.e("HDR", "onAutoFocus aboutToTakePicture == true");
 				CaptureFrame();
 				takingAlready = true;
 			}

@@ -53,13 +53,12 @@ import com.almalence.ui.Switch.Switch;
 
 public class CapturePlugin extends PluginCapture
 {
-	private static String		ModePreference;													// 0=DRO
-																									// On
-																									// 1=DRO
-																									// Off
-	private Switch				modeSwitcher;
-	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
-																	+ "/DCIM/Camera/tmp_raw_img";
+	private static String	ModePreference; // 0=DRO On 1=DRO Off
+	private Switch			modeSwitcher;
+	public static final String CAMERA_IMAGE_BUCKET_NAME = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/tmp_raw_img" ;
+	
+	private int singleModeEV;
+	private int droEvDiff;
 
 	public CapturePlugin()
 	{
@@ -76,12 +75,17 @@ public class CapturePlugin extends PluginCapture
 			int diff = (int) Math.floor(0.5 / expStep);
 			if (diff < 1)
 				diff = 1;
+			
+			droEvDiff = diff;
 			ev -= diff;
 		}
 
 		int minValue = CameraController.getInstance().getMinExposureCompensation();
 		if (ev >= minValue)
+		{
+			Log.e("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.getInstance().setCameraExposureCompensation(ev);
+		}
 	}
 
 	@Override
@@ -100,19 +104,27 @@ public class CapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isDro)
 			{
+				
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int ev = prefs.getInt(MainScreen.sEvPref, 0);
-				UpdateEv(isDro, ev);
+				
 				if (isDro)
 				{
+					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+					Log.e("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
+					
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
 				} else
 				{
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
+					
+					Log.e("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
-
+				
+				//UpdateEv(isDro, isDro? singleModeEV : (singleModeEV+droEvDiff));
+				UpdateEv(isDro, singleModeEV);
+				
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeStandardPref", ModePreference);
 				editor.commit();
@@ -133,12 +145,14 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onCameraParametersSetup()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+		Log.e("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
+
 		if (ModePreference.compareTo("0") == 0)
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			int ev = prefs.getInt(MainScreen.sEvPref, 0);
 			// FixMe: why not setting exposure if we are in dro-off mode?
-			UpdateEv(true, ev);
+			UpdateEv(true, singleModeEV);
 		}
 	}
 
@@ -157,6 +171,16 @@ public class CapturePlugin extends PluginCapture
 			MainScreen.setCaptureYUVFrames(true);
 		else
 			MainScreen.setCaptureYUVFrames(false);
+	}
+	
+	@Override
+	public void onPause()
+	{
+		Log.e("Capture", "onPause");
+		if(ModePreference.contains("0"))
+		{
+			UpdateEv(false, singleModeEV);
+		}
 	}
 
 	@Override

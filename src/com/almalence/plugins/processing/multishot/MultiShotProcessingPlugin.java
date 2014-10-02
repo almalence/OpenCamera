@@ -76,7 +76,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private static SequenceProcessingPlugin			sequenceProcessingPlugin		= new SequenceProcessingPlugin();
 	private static ObjectRemovalProcessingPlugin	objectRemovalProcessingPlugin	= new ObjectRemovalProcessingPlugin();
 
-	private int										selectedPlugin;
+	private int										selectedPlugin					= CANCELLED;
 	private long									sessionID;
 
 	private boolean									isYUV;
@@ -143,9 +143,14 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout, params);
+		if (MainScreen.getInstance().findViewById(R.id.blockingLayout) != null)
+			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout,
+					params);
 
-		mButtonsLayout.setVisibility(View.GONE);
+		if (selectedPlugin == WAITING)
+		{
+			mButtonsLayout.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -175,8 +180,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		groupShotProcessingPlugin.onStart();
 		sequenceProcessingPlugin.onStart();
 		objectRemovalProcessingPlugin.onStart();
-
-		selectedPlugin = CANCELLED;
 	}
 
 	@Override
@@ -379,7 +382,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			return ((Callback) objectRemovalProcessingPlugin).handleMessage(msg);
 		}
 
-		return true;
+		return false;
 	}
 
 	@Override
@@ -408,8 +411,12 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			mButtonsLayout.setVisibility(View.GONE);
 
+			mYUVBufferList.clear();
+			mJpegBufferList.clear();
+
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 			selectedPlugin = CANCELLED;
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			MainScreen.getGUIManager().lockControls = false;
 
 			return true;
@@ -434,8 +441,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 		}
-
-		selectedPlugin = CANCELLED;
 	}
 
 	@Override

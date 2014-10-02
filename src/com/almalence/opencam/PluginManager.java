@@ -67,9 +67,11 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
@@ -900,6 +902,14 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
+			if (CameraController.isUseHALv3())
+			{
+				Preference pref;
+				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack")) || null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+				{
+					pref.setTitle(MainScreen.getInstance().getResources().getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+				}
+			}
 			MainScreen.getInstance().onPreferenceCreate(pf);
 		} else if ("vf_settings".equals(settings))
 		{
@@ -950,6 +960,18 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
+			if (CameraController.isUseHALv3())
+			{
+				PreferenceScreen prefScr;
+				if (null != (prefScr = (PreferenceScreen)pf.findPreference("nightProcessingMoreScreen")))
+				{
+					Preference pref;
+					if (null != (pref = pf.findPreference("keepcolorsPref")))
+					{
+						prefScr.removePreference(pref);
+					}
+				}
+			}
 		} else if ("capture_preshot_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_preshot_more);
@@ -2414,8 +2436,10 @@ public class PluginManager implements PluginManagerInterface
 
 						}
 					}
-
-					if (!out.compressToJpeg(r, 95, os))
+					
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
 						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						return;
@@ -2899,11 +2923,14 @@ public class PluginManager implements PluginManagerInterface
 				os.write(buffer);
 			} else
 			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+				
 				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
 						iImageHeight, null);
 				// to avoid problems with SKIA
 				int cropHeight = image.getHeight() - image.getHeight() % 16;
-				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), 100, os);
+				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
 			}
 			os.close();
 

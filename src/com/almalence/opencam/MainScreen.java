@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -287,6 +288,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sSavePathPref;
 	public static String				sSaveToPref;
 	public static String				sSortByDataPref;
+	
+	public static String				sExpoPreviewModePref;
 
 	public static String				sDefaultModeName;
 
@@ -339,6 +342,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
+		
+		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 
 		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 
@@ -418,7 +423,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		createBillingHandler();
-		
+
 		/**** Billing *****/
 
 		// application rating helper
@@ -436,11 +441,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		cameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
 
+		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
 		preview.setOnClickListener(this);
 		preview.setOnTouchListener(this);
-		preview.setKeepScreenOn(true);
+		preview.setKeepScreenOn(keepScreenOn);
 
 		surfaceHolder = preview.getHolder();
 		surfaceHolder.addCallback(this);
@@ -494,7 +501,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 		};
 
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		// prevent power drain
 		screenTimer = new CountDownTimer(180000, 180000)
 		{
@@ -515,7 +521,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					preview.setKeepScreenOn(true);
 					return;
 				}
-				preview.setKeepScreenOn(false);
+				preview.setKeepScreenOn(keepScreenOn);
 				isScreenTimerRunning = false;
 			}
 		};
@@ -883,18 +889,21 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
 							{
-								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i).equals(newValue))
+								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i)
+										.equals(newValue))
 								{
 									final int idx = i;
-									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist().get(idx);
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist()
+											.get(idx);
 
 									// frames_fit_count may decrease when
 									// returning to main view due to slightly
 									// more memory used, so in text messages we
 									// report both exact and decreased count to
 									// the user
-									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin.getFrameSizeInBytes(
-											point.x, point.y));
+									final int frames_fit_count = (int) (PanoramaAugmentedCapturePlugin
+											.getAmountOfMemoryToFitFrames() / PanoramaAugmentedCapturePlugin
+											.getFrameSizeInBytes(point.x, point.y));
 
 									{
 										Toast.makeText(
@@ -1067,6 +1076,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					updatePreferences();
 
+					preview.setKeepScreenOn(keepScreenOn);
+
 					captureYUVFrames = false;
 
 					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
@@ -1140,9 +1151,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					.clearFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		
+
 		// <!-- -+-
-		if(isABCUnlockedInstalled(this))
+		if (isABCUnlockedInstalled(this))
 		{
 			unlockAllPurchased = true;
 			prefs.edit().putBoolean("unlock_all_forever", true).commit();
@@ -1191,6 +1202,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		multishotImageSizeIdxPreference = prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
 						: "imageSizePrefSmartMultishotFront", "-1");
+
+		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 	}
 
 	@Override
@@ -1366,7 +1379,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
 		shutterPreference = prefs.getBoolean("shutterPrefCommon", false);
-		shotOnTapPreference = prefs.getBoolean("shotontapPrefCommon", false);
+		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
 
@@ -1443,8 +1456,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 			}
 
-			previewWidth = cp.getPreviewSize().width;
-			previewHeight = cp.getPreviewSize().height;
+			if (cp != null)
+			{
+				previewWidth = cp.getPreviewSize().width;
+				previewHeight = cp.getPreviewSize().height;
+			}
+
 		}
 
 		try
@@ -1541,6 +1558,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			Log.e("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
+			// Here, we create a CameraCaptureSession for camera preview.
 			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateListener, null);
 		} catch (Exception e)
 		{
@@ -1737,7 +1755,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// focus/half-press button processing
 		if (keyCode == KeyEvent.KEYCODE_FOCUS)
 		{
-			MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			if (event.getDownTime() == event.getEventTime()) {
+				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+			}
 			return true;
 		}
 
@@ -2040,6 +2060,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		window.setAttributes(layoutpars);
 	}
 
+	public void setKeepScreenOn(boolean keepScreenOn)
+	{
+		if (keepScreenOn)
+		{
+			preview.setKeepScreenOn(keepScreenOn);
+		} else
+		{
+			preview.setKeepScreenOn(this.keepScreenOn);
+		}
+	}
+
 	/*******************************************************/
 	/************************ Billing ************************/
 
@@ -2067,11 +2098,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
 	// subscription
 	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
-	static final String	SKU_SUBSCRIPTION_YEAR_CTRL		= "subscription_unlock_all_year_controller";
+	static final String	SKU_SUBSCRIPTION_YEAR_CTRL	= "subscription_unlock_all_year_controller";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
 	static final String	SKU_SALE2					= "abc_sale_controller2";
-	
+
 	static final String	SKU_PROMO					= "abc_promo";
 
 	static
@@ -2098,7 +2129,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_controller");
+		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON,
+				"subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
@@ -2285,28 +2317,27 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleSubscriptionYear		= "$4.99";
 
 	public String								summary_SKU_PROMO			= "";
-//	public String								summaryUnlockAll			= "";
-//	public String								summaryUnlockHDR			= "";
-//	public String								summaryUnlockPano			= "";
-//	public String								summaryUnlockMoving			= "";
-//	public String								summaryUnlockGroup			= "";
-//
-//	public String								summarySubscriptionMonth	= "";
-//	public String								summarySubscriptionYear		= "";
+	// public String summaryUnlockAll = "";
+	// public String summaryUnlockHDR = "";
+	// public String summaryUnlockPano = "";
+	// public String summaryUnlockMoving = "";
+	// public String summaryUnlockGroup = "";
+	//
+	// public String summarySubscriptionMonth = "";
+	// public String summarySubscriptionYear = "";
 
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= 
-			new IabHelper.QueryInventoryFinishedListener()
-			{
-				public void onQueryInventoryFinished(
-						IabResult result,
-						Inventory inventory)
-				{
-					if (inventory == null)
-					{
-						Log.e("Main billing",
-								"mGotInventoryListener inventory null ");
-						return;
-					}
+	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
+																			{
+																				public void onQueryInventoryFinished(
+																						IabResult result,
+																						Inventory inventory)
+																				{
+																					if (inventory == null)
+																					{
+																						Log.e("Main billing",
+																								"mGotInventoryListener inventory null ");
+																						return;
+																					}
 
 																					SharedPreferences prefs = PreferenceManager
 																							.getDefaultSharedPreferences(MainScreen
@@ -2435,65 +2466,89 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																								.getPrice();
 
 																						summary_SKU_PROMO = inventory
-																						.getSkuDetails(
-																								SKU_PROMO)
-																						.getDescription();
-																						
-//																						summaryUnlockAll = inventory
-//																								.getSkuDetails(
-//																										SKU_UNLOCK_ALL)
-//																								.getDescription();
-//																						summaryUnlockHDR = inventory
-//																								.getSkuDetails(SKU_HDR)
-//																								.getDescription();
-//																						summaryUnlockPano = inventory
-//																								.getSkuDetails(
-//																										SKU_PANORAMA)
-//																								.getDescription();
-//																						summaryUnlockMoving = inventory
-//																								.getSkuDetails(
-//																										SKU_MOVING_SEQ)
-//																								.getDescription();
-//																						summaryUnlockGroup = inventory
-//																								.getSkuDetails(
-//																										SKU_GROUPSHOT)
-//																								.getDescription();
+																								.getSkuDetails(
+																										SKU_PROMO)
+																								.getDescription();
+
+																						// summaryUnlockAll
+																						// =
+																						// inventory
+																						// .getSkuDetails(
+																						// SKU_UNLOCK_ALL)
+																						// .getDescription();
+																						// summaryUnlockHDR
+																						// =
+																						// inventory
+																						// .getSkuDetails(SKU_HDR)
+																						// .getDescription();
+																						// summaryUnlockPano
+																						// =
+																						// inventory
+																						// .getSkuDetails(
+																						// SKU_PANORAMA)
+																						// .getDescription();
+																						// summaryUnlockMoving
+																						// =
+																						// inventory
+																						// .getSkuDetails(
+																						// SKU_MOVING_SEQ)
+																						// .getDescription();
+																						// summaryUnlockGroup
+																						// =
+																						// inventory
+																						// .getSkuDetails(
+																						// SKU_GROUPSHOT)
+																						// .getDescription();
 																					} catch (Exception e)
 																					{
 																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
 																								"Error Getting data for store!!!!!!!!");
 																					}
 
-//																					try
-//																					{
-//																						titleSubscriptionMonth = inventory
-//																								.getSkuDetails(
-//																										SKU_SUBSCRIPTION_MONTH)
-//																								.getPrice();
-//																						summarySubscriptionMonth = inventory
-//																								.getSkuDetails(
-//																										SKU_SUBSCRIPTION_MONTH)
-//																								.getDescription();
-//																					} catch (Exception e)
-//																					{
-//																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-//																								"Error Getting data for store SubscriptionMonth!!!!!!!!");
-//																					}
-//																					try
-//																					{
-//																						titleSubscriptionYear = inventory
-//																								.getSkuDetails(
-//																										SKU_SUBSCRIPTION_YEAR)
-//																								.getPrice();
-//																						summarySubscriptionYear = inventory
-//																								.getSkuDetails(
-//																										SKU_SUBSCRIPTION_YEAR)
-//																								.getDescription();
-//																					} catch (Exception e)
-//																					{
-//																						Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
-//																								"Error Getting data for store SubscriptionYear!!!!!!!!");
-//																					}
+																					// try
+																					// {
+																					// titleSubscriptionMonth
+																					// =
+																					// inventory
+																					// .getSkuDetails(
+																					// SKU_SUBSCRIPTION_MONTH)
+																					// .getPrice();
+																					// summarySubscriptionMonth
+																					// =
+																					// inventory
+																					// .getSkuDetails(
+																					// SKU_SUBSCRIPTION_MONTH)
+																					// .getDescription();
+																					// }
+																					// catch
+																					// (Exception
+																					// e)
+																					// {
+																					// Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+																					// "Error Getting data for store SubscriptionMonth!!!!!!!!");
+																					// }
+																					// try
+																					// {
+																					// titleSubscriptionYear
+																					// =
+																					// inventory
+																					// .getSkuDetails(
+																					// SKU_SUBSCRIPTION_YEAR)
+																					// .getPrice();
+																					// summarySubscriptionYear
+																					// =
+																					// inventory
+																					// .getSkuDetails(
+																					// SKU_SUBSCRIPTION_YEAR)
+																					// .getDescription();
+																					// }
+																					// catch
+																					// (Exception
+																					// e)
+																					// {
+																					// Log.e("Market!!!!!!!!!!!!!!!!!!!!!!!",
+																					// "Error Getting data for store SubscriptionYear!!!!!!!!");
+																					// }
 																				}
 																			};
 
@@ -2543,21 +2598,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if (isPurchasedAll())
 			return;
-		
-		//now will call store with abc unlocked
+
+		// now will call store with abc unlocked
 		callStoreForUnlocked(this);
-		//iap functionality
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(MainScreen.thiz, isCouponSale() ? SKU_UNLOCK_ALL_COUPON : SKU_UNLOCK_ALL,
-//					ALL_REQUEST, mPreferencePurchaseFinishedListener, payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
+		// iap functionality
+		// String payload = "";
+		// try
+		// {
+		// mHelper.launchPurchaseFlow(MainScreen.thiz, isCouponSale() ?
+		// SKU_UNLOCK_ALL_COUPON : SKU_UNLOCK_ALL,
+		// ALL_REQUEST, mPreferencePurchaseFinishedListener, payload);
+		// } catch (Exception e)
+		// {
+		// e.printStackTrace();
+		// Log.e("Main billing", "Purchase result " + e.getMessage());
+		// Toast.makeText(MainScreen.thiz, "Error during purchase " +
+		// e.getMessage(), Toast.LENGTH_LONG).show();
+		// }
 	}
 
 	public void purchaseHDR()
@@ -2814,14 +2871,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				String[] sep = MainScreen.getInstance().summary_SKU_PROMO.split(";");
 				String promo = editText.getText().toString();
 				boolean matchPromo = false;
-				
-				for (int i = 0; i<sep.length;i++)
+
+				for (int i = 0; i < sep.length; i++)
 				{
 					if (promo.equalsIgnoreCase(sep[i]))
 						matchPromo = true;
 				}
-				
-				//if (promo.equalsIgnoreCase("appoftheday") || promo.equalsIgnoreCase("stelapps"))
+
+				// if (promo.equalsIgnoreCase("appoftheday") ||
+				// promo.equalsIgnoreCase("stelapps"))
 				if (matchPromo)
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -3049,7 +3107,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		dialog.show();
 	}
-	
+
 	private boolean isABCUnlockedInstalled(Activity activity)
 	{
 		try
@@ -3075,7 +3133,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return;
 		}
 	}
-	
+
 	// -+- -->
 
 	/************************ Billing ************************/

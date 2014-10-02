@@ -398,7 +398,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_gro
 
 	NV21_to_RGB_scaled((Uint8 *)inptr, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, 4, (Uint8 *)pixels);
 
-	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_ABORT);
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, 0);
 
 	LOGD("NV21toARGB - end");
 
@@ -483,7 +483,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_gro
 
 	free(outBuffer);
 
-	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_ABORT);
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_COMMIT);
 
 	LOGD("Preview - end");
 	return jpixels;

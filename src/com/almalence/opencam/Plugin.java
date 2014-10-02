@@ -38,7 +38,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android2.hardware.camera2.CaptureResult;
-import android.media.Image;
 import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -82,7 +81,7 @@ public abstract class Plugin
 	// Each plugin may have only one quick control button
 	public int						quickControlIconID	= -1;
 	public String					quickControlTitle	= "";
-	public View						quickControlView	= null;
+	private View					quickControlView	= null;
 
 	protected static final String	TIME_STAMP_NAME		= "'IMG'_yyyyMMdd_HHmmss";
 
@@ -724,6 +723,11 @@ public abstract class Plugin
 	{
 	}
 
+	public void setQuickControlView(View view)
+	{
+		quickControlView = view;
+	}
+	
 	public void refreshQuickControl()
 	{
 		if (this.quickControlView != null)

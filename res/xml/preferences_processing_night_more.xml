@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="nightProcessingMoreScreen">
 	<ListPreference 
 	    android:title="@string/Pref_Night_NoiseReduction_Title" 
 	    android:key="noisePrefNight" 

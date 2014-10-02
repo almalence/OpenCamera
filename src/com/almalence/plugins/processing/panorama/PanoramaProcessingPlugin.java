@@ -242,7 +242,8 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 
 			final YuvImage out = new com.almalence.YuvImage(optr, ImageFormat.NV21, input_width, input_height, null);
 
-			out.compressToJpeg(crop, 100, os);
+			int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+			out.compressToJpeg(crop, jpegQuality, os);
 
 			try
 			{

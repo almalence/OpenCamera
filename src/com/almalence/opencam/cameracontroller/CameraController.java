@@ -35,6 +35,7 @@ import java.util.Set;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
@@ -262,6 +263,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static Surface						mPreviewSurface					= null;
 
 	private static final Object						SYNC_OBJECT						= new Object();
+	
+	protected static boolean 						appStarted							= false;
 
 	// Singleton access function
 	public static CameraController getInstance()
@@ -286,6 +289,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		messageHandler = new Handler(this);
 		pauseHandler = new Handler(this);
+		
+		appStarted = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -626,7 +631,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void onResume()
 	{
-		// Does nothing yet
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
+        {
+        	previewMode = prefs.getBoolean(MainScreen.sExpoPreviewModePref, true);
+        }
+        else
+        	previewMode = true;
+        
+        previewWorking=false;
+        cdt = null;
 	}
 
 	public void onPause()
@@ -2329,6 +2343,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		frameFormat = format;
 
 		resultInHeap = resInHeap;
+		
+		previewWorking=false;
+		cdt = null;
 
 		if (!CameraController.isHALv3)
 		{
@@ -2402,11 +2419,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void cancelAutoFocus()
 	{
+		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 		if (!CameraController.isHALv3)
 		{
 			if (CameraController.getCamera() != null)
 			{
-				CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
 				try
 				{
 					camera.cancelAutoFocus();
@@ -2456,6 +2473,31 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 
 		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
+		
+		//if preview not working
+		if (previewMode==false)
+			return;
+		previewWorking = false;
+		//start timer to check if onpreviewframe working
+		cdt = new CountDownTimer(5000, 5000) {
+			public void onTick(long millisUntilFinished) {
+			}
+
+			public void onFinish() {
+				if (!previewWorking)
+				{
+					Log.e(TAG, "previewMode DISABLED!");
+					previewMode=false;
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
+					prefsEditor.commit();
+					evLatency=0;
+					CameraController.getInstance().sendMessage(MSG_TAKE_IMAGE);
+				}
+			}
+		};
+		cdt.start();
 	}
 
 	@Override
@@ -2600,11 +2642,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	// set exposure based on onpreviewframe
-	private int				evLatency;
-	private boolean			previewMode			= false;
-	private boolean			previewWorking		= false;
-	private CountDownTimer	cdt					= null;
-	private long			lastCaptureStarted	= 0;
+	private static int				evLatency;
+	private static boolean			previewMode			= true;
+	private static boolean			previewWorking		= false;
+	private static CountDownTimer	cdt					= null;
+	private long					lastCaptureStarted	= 0;
 
 	public static final int	MSG_SET_EXPOSURE	= 01;
 	public static final int	MSG_NEXT_FRAME		= 02;
@@ -2640,12 +2682,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				// message to capture image will be emitted a few frames after
 				// setExposure
-				evLatency = 10; // the minimum value at which Galaxy Nexus is
+				evLatency = 20; // the minimum value at which Galaxy Nexus is
 								// changing exposure in a stable way
 
 				// Note 3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 20;
+					evLatency = 40;
+				else if (Build.MODEL.contains("LG-D855"))
+					evLatency = 60;
 			} else
 			{
 				new CountDownTimer(500, 500)
@@ -2686,6 +2730,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}, pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
 				}
 			}
+			else
+			{
+				previewWorking = true;
+            	if (cdt!=null)
+            	{
+            		cdt.cancel();
+            		cdt = null;
+            	}
+			}
 			break;
 		case MSG_TAKE_IMAGE:
 			synchronized (SYNC_OBJECT)
@@ -2708,9 +2761,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 												// JPEG conversion
 				else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 				{
-					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-					camera.setPreviewCallback(null);
-					camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					try
+					{
+						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+//						camera.setPreviewCallback(null);
+						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+					}
+					catch(Exception exp)
+					{
+						previewWorking = true;
+		            	if (cdt!=null)
+		            	{
+		            		cdt.cancel();
+		            		cdt = null;
+		            	}
+		            	
+						Log.e(TAG, "takePicture exception. Message: " + exp.getMessage());
+						exp.printStackTrace();
+						
+//						PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 0);
+					}
 
 				}
 			}

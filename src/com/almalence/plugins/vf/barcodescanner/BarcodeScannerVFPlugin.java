@@ -66,6 +66,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	private final MultiFormatReader		mMultiFormatReader		= new MultiFormatReader();
 	private SoundPlayer					mSoundPlayer			= null;
 	private static Boolean				mBarcodeScannerState	= OFF;
+	private static final Object			lock					= new Object();
+	private static Boolean				decodedProcessing		= false;
 	private int							mFrameCounter			= 0;
 	private int							mOrientation			= 0;
 	private BoundingView				mBound					= null;
@@ -373,6 +375,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		if (mSoundPlayer != null)
 			if (!MainScreen.isShutterSoundEnabled())
 				mSoundPlayer.play();
+		
+		decodedProcessing = false;
 	}
 
 	protected void showBarcodeViewDialog(Barcode barcode)
@@ -478,9 +482,15 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 				return null;
 			}
 
-			if (rawResult != null)
+			synchronized (lock)
 			{
-				file = saveDecodedImageToFile(datas);
+				if (rawResult != null && !decodedProcessing)
+				{
+					decodedProcessing = true;
+					file = saveDecodedImageToFile(datas);
+				} else {
+					return null;
+				}
 			}
 
 			Barcode barcode = null;
