@@ -639,12 +639,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
         else
         	previewMode = true;
         
+		evLatency=0;
         previewWorking=false;
-        cdt = null;
+        if (cdt != null)
+		{
+			cdt.cancel();
+			cdt = null;
+		}
+        
+        total_frames = 0;
 	}
 
 	public void onPause()
 	{
+		evLatency=0;
+        previewWorking=false;
+        if (cdt != null)
+		{
+			cdt.cancel();
+			cdt = null;
+		}
+        
+        total_frames = 0;
+        
 		// reset torch
 		if (!CameraController.isHALv3)
 		{
@@ -2550,6 +2567,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (evLatency > 0)
 		{
+			Log.e(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
 			if (--evLatency == 0)
 			{
@@ -2708,6 +2726,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return true;
 
 		case MSG_NEXT_FRAME:
+			Log.e(TAG, "MSG_NEXT_FRAME");
 			if (++frame_num < total_frames)
 			{
 				if (Array.getLength(pauseBetweenShots) < frame_num)
