@@ -23,6 +23,7 @@ by Almalence Inc. All Rights Reserved.
 
 #include "CreateJavaOutputStreamAdaptor.h"
 #include "YuvToJpegEncoder.h"
+#include "YuvToJpegEncoderMT.h"
 
 static unsigned char *yuv;
 static int SX = 0;
@@ -60,6 +61,38 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOu
 	return result;
 }
 
+extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOutMT
+(
+	JNIEnv* env, jobject, int jout,
+	int format, int width, int height, jintArray offsets,
+	jintArray strides, int jpegQuality, jobject jstream, jbyteArray jstorage
+)
+{
+	jbyte* OutPic;
+
+	OutPic = (jbyte *)jout;
+
+	initStreamMethods(env);
+
+	jint* imgOffsets = env->GetIntArrayElements(offsets, NULL);
+	jint* imgStrides = env->GetIntArrayElements(strides, NULL);
+
+	if (YuvToJpegEncoderMT_init(format, imgStrides))
+	{
+		free(OutPic);
+		return false;
+	}
+
+	boolean result = true;
+
+	result = YuvToJpegEncoderMT_encode(env, jstream, jstorage, (uint8_t*)OutPic, width, height, imgOffsets, imgStrides, jpegQuality, format);
+
+	env->ReleaseIntArrayElements(offsets, imgOffsets, 0);
+	env->ReleaseIntArrayElements(strides, imgStrides, 0);
+
+	return result;
+}
+
 extern "C" JNIEXPORT void JNICALL Java_com_almalence_YuvImage_RemoveFrame
 (
 	JNIEnv* env,
@@ -91,7 +124,7 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_GetByteFrame
 	jpixels = env->NewByteArray(SX*SY+SX*((SY+1)/2));
 	pixels = (unsigned char *)env->GetByteArrayElements(jpixels, NULL);
 	memcpy (pixels, yuv, SX*SY+SX*((SY+1)/2));
-	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, 0);
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, JNI_ABORT);
 
 	free(yuv);
 
@@ -229,7 +262,7 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_CreateYUVImageBy
 
 	ExtractYuvFromDirectBuffer(Y, U, V, single_yuv, pixelStrideY, rowStrideY, pixelStrideU, rowStrideU, pixelStrideV, rowStrideV, sx, sy);
 
-	env->ReleaseByteArrayElements(jpixels, (jbyte*)single_yuv, 0);
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)single_yuv, JNI_ABORT);
 
 	return (jbyte *)jpixels;
 }
@@ -246,3 +279,4 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_AllocateMemoryForYU
 	unsigned char* yuv_mem = (unsigned char *)malloc (sx*sy+sx*((sy+1)/2));
 	return (jint)yuv_mem;
 }
+

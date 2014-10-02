@@ -10,6 +10,12 @@
 /* Support arithmetic decoding */
 #define D_ARITH_CODING_SUPPORTED 1
 
+/* Support in-memory source/destination managers */
+#define MEM_SRCDST_SUPPORTED 1
+
+/* Multithreading support */
+#define MT_SUPPORTED 1
+
 /* Define if your compiler supports prototypes */
 #define HAVE_PROTOTYPES 1
 
