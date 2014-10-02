@@ -1070,8 +1070,9 @@ public class HALv3
 			// CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 			// Google: note: CONTROL_AF_MODE_OFF causes focus to move away from
 			// current position
-			// stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-			// CaptureRequest.CONTROL_AF_MODE_OFF);
+			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+			 stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 			if (format == CameraController.JPEG)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
@@ -1181,6 +1182,10 @@ public class HALv3
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 			}
+			
+			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+			 stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 
 			if (format == CameraController.JPEG)
 			{
