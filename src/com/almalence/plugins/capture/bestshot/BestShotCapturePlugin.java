@@ -202,7 +202,7 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (frame == 0)
 		{
-			Log.e("Bestshot", "Load to heap failed");
+			Log.d("Bestshot", "Load to heap failed");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
@@ -245,8 +245,6 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
-			
-			Log.e("Bestshot", "CAPTURE FINISHED");
 			
 			imagesTaken = 0;
 		}

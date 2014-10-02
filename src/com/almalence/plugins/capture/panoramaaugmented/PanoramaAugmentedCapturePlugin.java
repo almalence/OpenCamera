@@ -571,7 +571,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
-		Log.e(TAG, String.format("Picture dimensions: %dx%d", size.getWidth(), size.getHeight()));
+		Log.d(TAG, String.format("Picture dimensions: %dx%d", size.getWidth(), size.getHeight()));
 
 		MainScreen.setImageWidth(this.pictureWidth);
 		MainScreen.setImageHeight(this.pictureHeight);
@@ -792,7 +792,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 					if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
 					{
-						Log.e("Almalence", String.format("Emergency preview restart"));
+						Log.d("Almalence", String.format("Emergency preview restart"));
 						CameraController.setPreviewCallbackWithBuffer();
 					} else
 					{
@@ -1150,7 +1150,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		try
 		{
-			Log.e(TAG, "Perform CAPTURE Panorama");
+			Log.d(TAG, "Perform CAPTURE Panorama");
 			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0],
 					false);
 		} catch (final Exception e)

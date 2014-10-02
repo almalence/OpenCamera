@@ -371,14 +371,6 @@ public abstract class Plugin
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
-//		cp.setPreviewSize(os.getWidth(), os.getHeight());
-//		try
-//		{
-//			CameraController.getInstance().setCameraParameters(cp);
-//		} catch (RuntimeException e)
-//		{
-//			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
-//		}
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)
