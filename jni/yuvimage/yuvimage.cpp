@@ -124,7 +124,7 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_GetByteFrame
 	jpixels = env->NewByteArray(SX*SY+SX*((SY+1)/2));
 	pixels = (unsigned char *)env->GetByteArrayElements(jpixels, NULL);
 	memcpy (pixels, yuv, SX*SY+SX*((SY+1)/2));
-	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, JNI_ABORT);
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)pixels, 0);
 
 	free(yuv);
 
@@ -262,7 +262,7 @@ extern "C" JNIEXPORT jbyte* JNICALL Java_com_almalence_YuvImage_CreateYUVImageBy
 
 	ExtractYuvFromDirectBuffer(Y, U, V, single_yuv, pixelStrideY, rowStrideY, pixelStrideU, rowStrideU, pixelStrideV, rowStrideV, sx, sy);
 
-	env->ReleaseByteArrayElements(jpixels, (jbyte*)single_yuv, JNI_ABORT);
+	env->ReleaseByteArrayElements(jpixels, (jbyte*)single_yuv, 0);
 
 	return (jbyte *)jpixels;
 }
