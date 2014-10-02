@@ -101,7 +101,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -151,7 +151,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{

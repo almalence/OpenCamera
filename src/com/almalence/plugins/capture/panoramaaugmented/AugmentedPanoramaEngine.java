@@ -304,7 +304,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	public void setMaxFrames(final int count)
 	{
 		this.framesMax = count;
-		Log.e("Almalence", "Maximum frames count: " + count);
+		Log.d("Almalence", "Maximum frames count: " + count);
 	}
 
 	public float getRadiusToEdge()

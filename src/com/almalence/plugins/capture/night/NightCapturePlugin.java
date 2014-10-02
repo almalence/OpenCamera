@@ -303,7 +303,6 @@ public class NightCapturePlugin extends PluginCapture
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
 		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		//Log.e("Night", "Optimal preview size = " + os.getWidth() + " x " + os.getHeight());
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
@@ -544,8 +543,6 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		//Log.e("Night", "onImageTaken");
-
 		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
 				String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
@@ -586,7 +583,6 @@ public class NightCapturePlugin extends PluginCapture
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			//Log.e("Night", "StartPreview fail");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			frameNumber = 0;

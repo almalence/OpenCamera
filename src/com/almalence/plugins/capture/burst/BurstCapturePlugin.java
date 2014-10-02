@@ -217,7 +217,7 @@ public class BurstCapturePlugin extends PluginCapture
 
 		if (frame == 0)
 		{
-			Log.e("Burst", "Load to heap failed");
+			Log.d("Burst", "Load to heap failed");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 

@@ -90,7 +90,7 @@ public class GLCameraPreview
 
 	public void setSurfaceSize(int width, int height)
 	{
-		Log.e("GLCameraPreview", "Surface size = " + width + " x " + height);
+		Log.d("GLCameraPreview", "Surface size = " + width + " x " + height);
 		surfaceWidth = width;
 		surfaceHeight = height;
 
@@ -146,22 +146,8 @@ public class GLCameraPreview
 		previewWidth = MainScreen.getPreviewWidth();
 		previewHeight = MainScreen.getPreviewHeight();
 		
-		Log.e("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
+		Log.d("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
 		
-//		Camera camera = CameraController.getCamera();
-//		if (null == camera)
-//			return;
-//		Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (params == null)
-//		{
-//			return;
-//		}
-//
-//		previewWidth = params.getPreviewSize().width;
-//		previewHeight = params.getPreviewSize().height;
-//		
-//		Log.e("GLCameraPreview", "Preview size from Camera.Parameters = " + previewWidth + " x " + previewHeight);
-
 		textureWidth = 512;
 		textureHeight = 512;
 

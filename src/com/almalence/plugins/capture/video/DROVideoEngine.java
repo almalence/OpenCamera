@@ -66,7 +66,7 @@ public class DROVideoEngine
 		GLES20.glGetShaderiv(vshader, GLES20.GL_COMPILE_STATUS, compiled, 0);
 		if (compiled[0] == 0)
 		{
-			Log.e(TAG, "Could not compile vertex shader: " + GLES20.glGetShaderInfoLog(vshader));
+			Log.d(TAG, "Could not compile vertex shader: " + GLES20.glGetShaderInfoLog(vshader));
 			GLES20.glDeleteShader(vshader);
 			vshader = 0;
 		}
@@ -77,7 +77,7 @@ public class DROVideoEngine
 		GLES20.glGetShaderiv(fshader, GLES20.GL_COMPILE_STATUS, compiled, 0);
 		if (compiled[0] == 0)
 		{
-			Log.e(TAG, "Could not compile fragment shader: " + GLES20.glGetShaderInfoLog(fshader));
+			Log.d(TAG, "Could not compile fragment shader: " + GLES20.glGetShaderInfoLog(fshader));
 			GLES20.glDeleteShader(fshader);
 			fshader = 0;
 		}
@@ -370,7 +370,7 @@ public class DROVideoEngine
 			if (this.instance == 0)
 			{
 				this.instance = RealtimeDRO.initialize(this.previewWidth, this.previewHeight);
-				Log.e(TAG, String.format("RealtimeDRO.initialize(%d, %d)", this.previewWidth, this.previewHeight));
+				Log.d(TAG, String.format("RealtimeDRO.initialize(%d, %d)", this.previewWidth, this.previewHeight));
 				this.forceUpdate = true;
 			}
 

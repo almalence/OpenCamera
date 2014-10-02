@@ -79,7 +79,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	@Override
 	public void onStartProcessing(long SessionID)
 	{
-		Log.e("NightProcessing", "+++++++++++++++++++++++++++++++++++++ onStartProcessing");
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -94,11 +93,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		int iSaveImageWidth = MainScreen.getSaveImageWidth();
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
-		//
-		// Log.e("NightProcessing", "Image size " + mImageWidth + "x" +
-		// mImageHeight);
-		// Log.e("NightProcessing", "Image save size " + iSaveImageWidth + "x" +
-		// iSaveImageHeight);
 
 		AlmaShotNight.Initialize();
 
@@ -141,7 +135,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		AlmaShotNight.NightAddYUVFrames(frames, imagesAmount, mImageWidth, mImageHeight);
 
-		Log.e("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
+		Log.d("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
 
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem(
 				"zoom" + sessionID));

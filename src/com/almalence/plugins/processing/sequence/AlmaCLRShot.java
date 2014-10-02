@@ -155,7 +155,7 @@ public class AlmaCLRShot
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 
-		Log.e(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		Log.d(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{

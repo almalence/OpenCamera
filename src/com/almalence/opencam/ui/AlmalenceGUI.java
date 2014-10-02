@@ -1414,7 +1414,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
-		Log.e("GUI", "setupViewfinderPreviewSize. Width = " + previewSize.getWidth() + " Height = " + previewSize.getHeight());
+		Log.d("GUI", "setupViewfinderPreviewSize. Width = " + previewSize.getWidth() + " Height = " + previewSize.getHeight());
 		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
 
 		RelativeLayout ll = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
@@ -1455,7 +1455,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 
-		Log.e("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
+		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
@@ -1811,7 +1811,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							} catch (Exception e)
 							{
 								e.printStackTrace();
-								Log.e("set AF-L failed", "icons_focus.get exception: " + e.getMessage());
+								Log.d("set AF-L failed", "icons_focus.get exception: " + e.getMessage());
 							}
 
 							mFocusMode = FOCUS_AF_LOCK;

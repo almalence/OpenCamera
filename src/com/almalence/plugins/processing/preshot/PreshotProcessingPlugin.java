@@ -151,9 +151,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		// + sessionID));
 		// processing only in fast mode.
 
-		final int[] mi = HeapUtil.getMemoryInfo();
-		Log.e("!!!!!!!!!!!", "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
-
 		ProcessingImages();
 
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID));
@@ -162,7 +159,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				isSlowMode ? "true" : "false");
 
 		prepareMiniFrames();
-		// miniframesReady.set(true);
 	}
 
 	private Integer ProcessingImages()
@@ -419,7 +415,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		for (int i = 0; i < imgCnt; i++)
 		{
-			Log.e("!!!!!", "i == " + i + " imgCnt = " + imgCnt);
 			this.mini_frames[i] = getMultishotBitmap(i);
 		}
 	}
@@ -433,9 +428,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			mDisplayOrientationCurrent = orientation;
 			if (postProcessingRun)
 			{
-				// Log.e("PreShot Post processing", "orientation = " +
-				// orientation + " mLayoutOrientationCurrent =  "
-				// + mLayoutOrientationCurrent);
 				mSaveButton.setRotation(mLayoutOrientationCurrent);
 				mSaveButton.invalidate();
 				mSaveAllButton.setRotation(mLayoutOrientationCurrent);
@@ -573,7 +565,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 			int H = MainScreen.getPreviewHeight(), W = MainScreen.getPreviewWidth();
 			int or = PreShot.getOrientation(index);
-			// Log.e("PreShot", "getMultishotBitmap orientation: " + or);
 			if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
 			{
 				H = MainScreen.getPreviewWidth();

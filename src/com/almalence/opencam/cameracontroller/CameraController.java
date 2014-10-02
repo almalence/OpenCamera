@@ -2503,7 +2503,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			public void onFinish() {
 				if (!previewWorking)
 				{
-					Log.e(TAG, "previewMode DISABLED!");
+					Log.d(TAG, "previewMode DISABLED!");
 					previewMode=false;
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					Editor prefsEditor = prefs.edit();
@@ -2567,7 +2567,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (evLatency > 0)
 		{
-			Log.e(TAG, "evLatency = " + evLatency);
+			Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
 			if (--evLatency == 0)
 			{
@@ -2726,7 +2726,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return true;
 
 		case MSG_NEXT_FRAME:
-			Log.e(TAG, "MSG_NEXT_FRAME");
+			Log.d(TAG, "MSG_NEXT_FRAME");
 			if (++frame_num < total_frames)
 			{
 				if (Array.getLength(pauseBetweenShots) < frame_num)

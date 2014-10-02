@@ -125,7 +125,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		Log.e("HDR", "onResume");
 		takingAlready = false;
 		inCapture = false;
 		evRequested = 0;
@@ -210,10 +209,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onShutterClick()
 	{
-		Log.e("HDR", "onShutterClick");
 		if (!takingAlready && !inCapture)
 		{
-			Log.e("HDR", "onShutterClick takingAlready == false && inCapture == false");
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
@@ -296,7 +293,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		Log.e("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
+		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
@@ -306,8 +303,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-//			takingAlready = false;
-//			inCapture = false;
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -324,8 +319,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		if (++frame_num >= total_frames)
 		{
-//			takingAlready = false;
-//			inCapture = false;
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -564,17 +557,16 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		Log.e("HDR", "onAutoFocus");
 		if (inCapture) // disregard autofocus success (paramBoolean)
 		{
-			Log.e("HDR", "onAutoFocus inCapture == true");
+			Log.d("HDR", "onAutoFocus inCapture == true");
 			// on motorola xt5 cm7 this function is called twice!
 			// on motorola droid's onAutoFocus seem to be called at every
 			// startPreview,
 			// causing additional frame(s) taken after sequence is finished
 			if (aboutToTakePicture)
 			{
-				Log.e("HDR", "onAutoFocus aboutToTakePicture == true");
+				Log.d("HDR", "onAutoFocus aboutToTakePicture == true");
 				CaptureFrame();
 				takingAlready = true;
 			}

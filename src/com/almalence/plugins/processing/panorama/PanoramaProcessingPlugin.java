@@ -69,7 +69,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@Override
 	public void onStartProcessing(final long sessionID)
 	{
-		Log.e(TAG, "onStartProcessing");
+		Log.d(TAG, "onStartProcessing");
 
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()).getBoolean(
 				PREFERENCES_KEY_SAVEINPUT, false);
