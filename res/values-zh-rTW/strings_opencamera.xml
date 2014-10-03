@@ -1,7 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="app_name">更好相機</string>
-    <string name="Pref_Billing_Left">%1$s 模式剩餘拍攝次數: %2$d</string>
+    <string name="trial_left">%1$s模式免費拍攝剩餘: %2$d</string>
+    <string name="trial_finished">已用%1$s次免費拍攝，請解鎖</string>
+    <!-- -+-  -->
+    <string name="app_name">一個更好的相機</string>
+    <string name="Pref_About">A Better Camera  v3.25\n(©) 由Almalence Inc出品\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
+    +++ -->
     <string name="cannot_create_jpeg">出錯: 無法儲存圖像!</string>
     <string name="choose_folder_pick">使用此資料夾</string>
     <string name="choose_folder_newfolder">新資料夾</string>
@@ -15,6 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">儲存到…</string>
     <string name="pref_advanced_saving_saveToPref_summary">選擇位置以存儲圖像</string>
     <string name="choose_folder">選擇資料夾</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat不允許儲存到SD卡。</string>
     
     <string name="save_to_phone">電話</string>
     <string name="save_to_memorycard">記憶卡</string>
@@ -23,5 +32,17 @@
     <string name="dimensions_none">無</string>
     
     <string name="already_unlocked">已解鎖</string>
+    
+    <string name="volumeBtnTakePic">拍照</string>
+    <string name="volumeBtnZoom">縮放</string>
+    <string name="volumeBtnExpoCorrection">曝光校正</string>
+    <string name="volumeBtnNone">無</string>
+    
+    <string name="raterMain">如果你喜歡使用A Better Camera，請花一點時間給它評分。\n\n感謝您的支援！</string>
+    <string name="raterRate">給A Better Camera評分</string>
+    <string name="raterNo">不，謝謝</string>
+    
+    <string name="raterSendReview">我們非常在乎您的意見，並希望使ABC變得更好。請將您的意見直接傳送給支援人員。</string>
+    <string name="raterSend">傳送</string>
     
 </resources>

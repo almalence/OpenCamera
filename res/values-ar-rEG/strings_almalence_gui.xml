@@ -7,43 +7,59 @@
     <string name="Pref_Common_UseFrontCamera_Title">الكاميرا الأمامية</string>
     <string name="Pref_Common_UseFrontCamera_Summary">استخدام الكاميرا الأمامية</string>
     <string name="Pref_Common_ImageSize_Title">حجم الصورة</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">حجم الصورة (لقطة متعددة ذكية وليلية)</string>
     <string name="Pref_Common_ImageSize_Summary">\nملاحظة: تحتوي بعض الأوضاع على إعداد واحد لحجم الصورة</string>
     <string name="Pref_Common_Shutter_Title">تشغيل صامت</string>
     <string name="Pref_Common_Shutter_Summary">ليس مضمونًا أن يعمل على كل الطرز</string>
+    <string name="Pref_Common_HWShutter_Title">استخدام المصراع الفعلي لبدء تشغيل التطبيق</string>
+    <string name="Pref_Common_ShotOnTap_Title">المس للتصوير</string>
+    <string name="Pref_Common_ShotOnTap_Summary">حدد البؤرة والتقط الصورة بالضغط</string>
+    <string name="Pref_Common_UseHALv3_Title">استخدم واجهة الكاميرا 2</string>
+    <string name="Pref_Common_UseHALv3_Summary">الوضع التجريبي. سيعمل على عدد محدود من الأجهزة (Google Nexus 5 و7 بنظام التشغيل Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">إعادة مسح الوسائط عند الخروج</string>
     <string name="Pref_Common_MediaRescan_Summary">يساعد إذا كانت الصور لا تظهر في المعرض.</string>
-    <string name="Pref_Common_VolumeButton_Title">Volume button</string>
-    <string name="Pref_SaveConfiguration_Title">Save configuration</string>
-    <string name="Pref_SaveConfiguration_Summary">Select which settings to save between launches</string>
-    <string name="Pref_SaveConfiguration_ShootingMode_Title">Shooting mode</string>
-    <string name="Pref_SaveConfiguration_ImageSize_Title">Image size</string>
-    <string name="Pref_SaveConfiguration_SceneMode_Title">Scene mode</string>
-    <string name="Pref_SaveConfiguration_FocusMode_Title">Focus mode</string>
-    <string name="Pref_SaveConfiguration_WBMode_Title">White balance mode</string>
-    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO mode</string>
-    <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
-    <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
-    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Self-timer</string>
-    <string name="Pref_Common_DelayedCapture_Title">Self-timer capture</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Show self-timer control</string>
-    <string name="Pref_ShowHelp_Title">Show help</string>
-    <string name="Pref_WhowHelp_Summary">Show help when mode started (Panorama, Object removal, Sequence, Groupshot)</string>
+    <string name="Pref_Common_Gallery_Title">السماح بتحديد معرض صور خارجي</string>
+    <string name="Pref_Common_Gallery_Summary">لا تستخدم محرر تطبيق كاميرا أفضل كعارض افتراضي إذا كان مثبتًا</string>
+    <string name="Pref_Common_JPEGQuality_Title">جودة Jpeg</string>
+    <string name="Pref_Common_VolumeButton_Title">زر مستوى الصوت</string>
+    <string name="Pref_SaveConfiguration_Title">حفظ التكوين</string>
+    <string name="Pref_SaveConfiguration_Summary">حدد الإعدادات التي سيتم حفظها بين مرات بدء التشغيل</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">وضع التصوير</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">حجم الصورة</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">وضع المنظر</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">وضع البؤرة</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">وضع توازن اللون الأبيض</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">وضع الأيزو</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">وضع الفلاش</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">الكاميرا المحددة</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">الميقاتي الذاتي</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">تعويض التعريض الضوئي</string>
+    <string name="Pref_Common_DelayedCapture_Title">تصوير بالميقاتي الذاتي</string>
+    <string name="Pref_Common_DelayedCapture_Summary">عرض التحكم في الميقاتي الذاتي</string>
+    <string name="Pref_ShowHelp_Title">عرض المساعدة</string>
+    <string name="Pref_WhowHelp_Summary">عرض المساعدة عند بدء تشغيل الوضع (بانوراما، إزالة الكائن، التسلسل، اللقطة الجماعية)</string>
+    <string name="Pref_Common_HeadsetTap_Title">مصراع سماعة الرأس</string>
+    <string name="Pref_Common_HeadsetTap_Summary">استخدام أزرار سماعة الرأس كمصراع</string>
+    
+    
+    <string name="helpTextDontShow">لا تعرض</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">يرجى الانتظار، تتم المعالجة...</string>
-    <string name="almalence_gui_selected">selected</string>
-    
+    <string name="almalence_gui_selected">المحدد</string>
+
     <string name="settings_mode_scene">وضع المشهد</string>
     <string name="settings_mode_wb">توازن اللون الأبيض</string>
     <string name="settings_mode_focus">وضع البؤرة</string>
     <string name="settings_mode_flash">وضع الفلاش</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">وضع قياس التعريض الضوئي</string>
     <string name="settings_mode_rear">الكاميرا الخلفية</string>
     <string name="settings_mode_front">الكاميرا الأمامية</string>
     <string name="settings_mode_exposure">التعريض</string>
     <string name="settings_mode_moresettings">المزيد من الإعدادات</string>
-    <string name="settings_mode_aeaflock">AE\\AF Locked</string>
-    <string name="settings_mode_aeafunlock">AE\\AF UnLocked</string>
+    <string name="settings_mode_aeaflock">إغلاق التعريض الضوئي التلقائي/البؤرة التلقائية</string>
+    <string name="settings_mode_aeafunlock">فتح التعريض الضوئي التلقائي/البؤرة التلقائية</string>
     
     <string name="settings_not_available">غير متاح في الوضع الحالي</string>
     <string name="processing_not_finished">المعالجة لم تكتمل بعد. يرجى الانتظار.</string>
@@ -53,7 +69,7 @@
 	<string name="Pref_VF_Preference_Title">إعدادات باحث العرض</string>
 	<string name="Pref_VF_Preference_Summary">ما يتم عرضه</string>
 	<string name="Pref_Modes_Preference_Title">إعدادات أوضاع التصوير</string>
-	<string name="Pref_Modes_Preference_Summary">HDR, Night, Panorama ...</string>
+	<string name="Pref_Modes_Preference_Summary">المدى الديناميكي العالي، ليلي، بانوراما ...</string>
 	<string name="Pref_Saving_Preference_Title">الحفظ والمشاركة</string>
 	<string name="Pref_Saving_Preference_Summary">أسماء الملفات والتنسيقات ووضع العلامات الجغرافية وتنسيق ملفات الصور القابلة للتبادل ومعلمات أخرى</string>
 	<string name="Pref_Advanced_Preference_Title">متقدم</string>
@@ -62,8 +78,20 @@
 	<string name="Pref_Unlock_Preference_Summary">فتح الميزات المتميزة</string>
 	
 	<string name="layout_hint_bottom">تحديد وضع الكاميرا</string>
-	<string name="layout_hint_center">مسح</string>
+	<string name="layout_hint_center">امسح لإظهار معلومات أكثر/أقل</string>
 	<string name="layout_hint_top_left">ضغطة طويلة\nللتكوين</string>
 	<string name="layout_hint_top_center">سحب للمزيد من الخيارات</string>
+
+	<string name="Dro_Help_Header">مساعدة تحسين المدى الديناميكي</string>
+	<string name="Dro_Help">تعمل التقنية الجديدة من Almalence على جعل الكاميرات ترى مثل العين البشرية! يستخدم DRO (تحسين المدى الديناميكي) تقنية مشابهة لتخطيط درجات اللون ويعمل على تحسين الصور في 100% من الحالات ويستطيع استبدال المدى الديناميكي العالي في معظم الحالات.\n\n1. اضغط على المصراع لالتقاط صورة\n2. انتظر حتى تتم المعالجة في ثانية!</string>
+	
+	<string name="setTimerText">ضبط</string>
+	<string name="soundTimerText">الصوت بعد انتهاء العد التنازلي</string>
+	<string name="flashTimerText">الفلاش بعد انتهاء العد التنازلي</string>	
+
+	<string name="secondsText">الثواني</string>	
+	<string name="okText">موافق</string>
+	
+	<string name="moreText">المزيد...</string>
 	
 </resources>

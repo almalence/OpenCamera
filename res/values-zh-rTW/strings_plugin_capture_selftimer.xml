@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1張圖像</string>
     <string name="Res_SelfTimerCapture_Capture_2">2張圖像</string>
     <string name="Res_SelfTimerCapture_Capture_3">3張圖像</string>
+    
+    <string name="selfTimerTitle">使用人像</string>
 </resources>

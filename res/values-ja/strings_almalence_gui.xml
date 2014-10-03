@@ -7,11 +7,20 @@
     <string name="Pref_Common_UseFrontCamera_Title">前面カメラ</string>
     <string name="Pref_Common_UseFrontCamera_Summary">前面カメラを使用</string>
     <string name="Pref_Common_ImageSize_Title">画像サイズ</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">画像サイズ (スマートマルチショットとナイト)</string>
     <string name="Pref_Common_ImageSize_Summary">\n注意：個々に画像サイズの設定があるモードもあります</string>
     <string name="Pref_Common_Shutter_Title">消音</string>
     <string name="Pref_Common_Shutter_Summary">全てのモデルで作動する保証はありません</string>
+    <string name="Pref_Common_HWShutter_Title">HWシャッターを使ってアプリケーションを開始</string>
+    <string name="Pref_Common_ShotOnTap_Title">タッチして撮影</string>
+    <string name="Pref_Common_ShotOnTap_Summary">タップしてフォーカス、撮影</string>
+    <string name="Pref_Common_UseHALv3_Title">カメラ2のインターフェースを使用</string>
+    <string name="Pref_Common_UseHALv3_Summary">実験的モード。限定された種類のデバイスでしか作動しません。(Android Lを搭載したGoogle Nexus 5・7)</string>    
     <string name="Pref_Common_MediaRescan_Title">終了時にメディアを再スキャン</string>
     <string name="Pref_Common_MediaRescan_Summary">ギャラリーに画像が表示されない場合に役立ちます。</string>
+    <string name="Pref_Common_Gallery_Title">外部ギャラリーの選択を許可</string>
+    <string name="Pref_Common_Gallery_Summary">インストールされていても、ABCエディターをデフォルトのビューワーとして使用しない</string>
+    <string name="Pref_Common_JPEGQuality_Title">Jpeg品質</string>
     <string name="Pref_Common_VolumeButton_Title">音量ボタン</string>
     <string name="Pref_SaveConfiguration_Title">設定を保存</string>
     <string name="Pref_SaveConfiguration_Summary">起動間に保存する設定を選択</string>
@@ -24,20 +33,27 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">フラッシュモード</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">選択されたカメラ</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">セルフタイマー</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">露出補正</string>
     <string name="Pref_Common_DelayedCapture_Title">セルフタイマー撮影</string>
     <string name="Pref_Common_DelayedCapture_Summary">セルフタイマーコントロールを表示</string>
     <string name="Pref_ShowHelp_Title">ヘルプを表示</string>
     <string name="Pref_WhowHelp_Summary">モード開始時にヘルプを表示（パノラマ、オブジェクト削除、シーケンス、グループ撮影）</string>
+    <string name="Pref_Common_HeadsetTap_Title">ヘッドセット・シャッター</string>
+    <string name="Pref_Common_HeadsetTap_Summary">ヘッドセット・ボタンをシャッターとして使用</string>
+    
+    
+    <string name="helpTextDontShow">非表示</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">お待ちください、処理中です...</string>
     <string name="almalence_gui_selected">選択済み</string>
-    
+
     <string name="settings_mode_scene">シーンモード</string>
     <string name="settings_mode_wb">ホワイトバランス</string>
     <string name="settings_mode_focus">フォーカスモード</string>
     <string name="settings_mode_flash">フラッシュモード</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">露出計測モード</string>
     <string name="settings_mode_rear">背面カメラ</string>
     <string name="settings_mode_front">前面カメラ</string>
     <string name="settings_mode_exposure">露出</string>
@@ -62,8 +78,20 @@
 	<string name="Pref_Unlock_Preference_Summary">プレミアム機能をアンロック</string>
 	
 	<string name="layout_hint_bottom">カメラモードを選択</string>
-	<string name="layout_hint_center">スワイプ</string>
+	<string name="layout_hint_center">スワイプで情報を増／減</string>
 	<string name="layout_hint_top_left">長押しで\n設定</string>
 	<string name="layout_hint_top_center">プルでさらにオプション表示</string>
+
+	<string name="Dro_Help_Header">DROヘルプ</string>
+	<string name="Dro_Help">Almalenceの新しいテクノロジーで、カメラが人間の目のように見えるよになりました！DRO(ダイナミック・レンジ・オプティマイゼーション)は、100%の確率で画像を自動で修正する、トーン・マッピングに似たテクニックを使用します。ほとんどの場合で、HDRを代用できます。\n\n1. シャッターを押して写真を撮影\n2. すぐ処理されるので待つ！</string>
+	
+	<string name="setTimerText">設定</string>
+	<string name="soundTimerText">カウントダウンでサウンド</string>
+	<string name="flashTimerText">カウントダウンでフラッシュ</string>	
+
+	<string name="secondsText">秒</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">さらに...</string>
 	
 </resources>

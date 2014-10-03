@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1张图像</string>
     <string name="Res_SelfTimerCapture_Capture_2">2张图像</string>
     <string name="Res_SelfTimerCapture_Capture_3">3张图像</string>
+    
+    <string name="selfTimerTitle">自动定时器</string>
 </resources>

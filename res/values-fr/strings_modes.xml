@@ -3,6 +3,9 @@
     <string name="single_mode_name">Prise de vue unique</string>
     <string name="single_mode_howto"/>
     
+    <string name="selftimer_mode_name">Retardateur</string>
+    <string name="selftimer_mode_howto"/>
+    
     <string name="burst_mode_name">Rafale</string>
     <string name="burst_mode_howto"/>
     
@@ -24,6 +27,9 @@
     <string name="objectremoval_mode_name">Suppression d\'objet</string>
     <string name="objectremoval_mode_howto"/>
     
+    <string name="multishot_mode_name">Rafale intelligente</string>
+	<string name="multishot_mode_howto"/>
+    
     <string name="groupshot_mode_name">Photo de groupe</string>
     <string name="groupshot_mode_howto"/>
     
@@ -33,4 +39,10 @@
     <string name="panorama_mode_name">Panorama</string>
     <string name="panorama_mode_howto"/>
     
+	<string name="hiresportrait_mode_name">Portrait en haute résolution</string>
+	<string name="hiresportrait_mode_howto"/>
+    
+	<string name="bestshot_mode_name">Meilleure photo</string>
+	<string name="bestshot_mode_howto"/>
+	
 </resources>

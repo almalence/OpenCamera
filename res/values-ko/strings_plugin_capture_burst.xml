@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">연속촬영 시 이미지 개수</string>
     
+    
     <string name="Res_Burst_Images_Text">이미지</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">촬영 간 일시정지</string>
     <string name="Res_Burst_Fast_Text">최대 속도</string>

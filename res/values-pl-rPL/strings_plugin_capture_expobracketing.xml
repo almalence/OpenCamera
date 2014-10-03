@@ -1,18 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="Pref_ExpoBracketing_Category_Title">Przechwytywanie bracketingu ekspozycji</string>
-    <string name="Pref_ExpoBracketing_Preference_Title">Przechwytywanie</string>
-    <string name="Pref_ExpoBracketing_Preference_Summary">Bracketing ekspozycji</string>
+    <string name="Pref_ExpoBracketing_Category_Title">Zdjęcie w technice bracketingu</string>
+    <string name="Pref_ExpoBracketing_Preference_Title">Uchwyć</string>
+    <string name="Pref_ExpoBracketing_Preference_Summary">Bracketing</string>
     
     <string name="Pref_ExpoBracketing_ImageSize_Title">Rozmiar zdjęcia</string>
     <string name="Pref_ExpoBracketing_EvRange_Title">Zakres EV</string>
-    <string name="Pref_ExpoBracketing_Capture_Title">Zmiana trybu ekspozycji</string>
-    <string name="Pref_ExpoBracketing_Capture_Summary">Zmień, jeśli masz wszystkie zdjęcia z tej samej ekspozycji</string>
-    <string name="Pref_ExpoBracketing_Luma_Title">Alternatywa kontroli ekspozycji</string>
-    <string name="Pref_ExpoBracketing_Luma_Summary">Spróbuj tego, jeśli ekspozycja się nie zmieniła</string>
-    <string name="Pref_ExpoBracketing_Refocus_Title">Ponowne ust. ostrości przy każdym zdjęciu</string>
-    <string name="Pref_ExpoBracketing_Refocus_Summary">Niektóre urządzenia resetują ostrość po zrobieniu zdjęcia.</string>
+    <string name="Pref_ExpoBracketing_Capture_Title">Tryb zmiany naświetlania</string>
+    <string name="Pref_ExpoBracketing_Capture_Summary">Dostosuj, jeśli wszystkie zdjęcia mają takie samo naświetlanie</string>
+    <string name="Pref_ExpoBracketing_Luma_Title">Alternatywna kontrola bracketingu</string>
+    <string name="Pref_ExpoBracketing_Luma_Summary">Wypróbuj, jeśli naświetlanie jest wciąż takie samo</string>
+    <string name="Pref_ExpoBracketing_Refocus_Title">Ustaw ponownie ostrość przy każdym zdjęciu</string>
+    <string name="Pref_ExpoBracketing_Refocus_Summary">Niektóre urządzenia resetują ustawienia ostrości po każdym zdjęciu. Sprawdź, czy twoje zdjęcia są ostre.</string>
     
-    <string name="Pref_ExpoBracketing_Expo">Maksymalna możliwa</string>
-    <string name="Pref_ExpoBracketing_None">None</string>
+    <string name="Pref_ExpoBracketing_Expo">Dopuszczalne maksimum</string>
+    <string name="Pref_ExpoBracketing_None">Brak</string>
+    
 </resources>

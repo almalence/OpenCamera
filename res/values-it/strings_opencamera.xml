@@ -1,7 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="trial_left">Scatti gratuiti rimasti in modalità %1$s: %2$d</string>
+    <string name="trial_finished">Hai esaurito i %1$s scatti gratuiti, sblocca</string>
+    <!-- -+-  -->
     <string name="app_name">A Better Camera - Una fotocamera migliore</string>
-    <string name="Pref_Billing_Left">Scatti gratuiti rimasti in modalità %1$s: %2$d</string>
+    <string name="Pref_About">Fotocamera ottimizzata v3.25\n(©) di Almalence Inc\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
+    +++ -->
     <string name="cannot_create_jpeg">Errore: impossibile salvare l\'immagine!</string>
     <string name="choose_folder_pick">Usa questa cartella</string>
     <string name="choose_folder_newfolder">Nuova cartella</string>
@@ -15,6 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Salva in...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Seleziona il percorso per salvare le immagini</string>
     <string name="choose_folder">Seleziona cartella</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat non consente il salvataggio su scheda SD.</string>
     
     <string name="save_to_phone">Telefono</string>
     <string name="save_to_memorycard">Scheda di memoria</string>
@@ -22,6 +31,18 @@
     
     <string name="dimensions_none">Nessuna</string>
     
-    <string name="already_unlocked">sbloccato</string>
+    <string name="already_unlocked">Sbloccato</string>
+    
+    <string name="volumeBtnTakePic">Scatta una foto</string>
+    <string name="volumeBtnZoom">Zoom</string>
+    <string name="volumeBtnExpoCorrection">Correzione esposizione</string>
+    <string name="volumeBtnNone">Nessuno</string>
+    
+    <string name="raterMain">Se ti piace usare Fotocamera ottimizzata, dedica un\'attimo del tuo tempo alla sua valutazione.\n\nGrazie per il tuo sostegno!</string>
+    <string name="raterRate">Valuta Fotocamera ottimizzata</string>
+    <string name="raterNo">No, grazie</string>
+    
+    <string name="raterSendReview">La tua opinione è per noi molto importante per migliorare ABC. Invia la tua recensione direttamente all\'assistenza.</string>
+    <string name="raterSend">Invia</string>
     
 </resources>

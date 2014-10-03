@@ -2,7 +2,6 @@
 <resources>
 	
 	<string name="Pref_PreShot_Preference_Title">قبل التقاط الصورة</string>
-	<string name="Pref_PreShot_Preference_Summary">العودة في الزمن</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">حجم الصورة</string>
 	
@@ -15,13 +14,13 @@
 	<string name="Pref_PreShot_preshot_Title">ثوانٍ قبل الختام...</string>
 	<string name="Pref_PreShot_preshot_Summary">احتفظ بالأطر التي تم التقاطها في الفترة المعينة قبل الختام.</string>
 	
-	<string name="Pref_PreShot_fps_Title">اللقطات في الثانية (الوضع السريع فقط)</string>
+	<string name="Pref_PreShot_fps_Title">اللقطات في الثانية (الوضع السريع)</string>
 	<string name="Pref_PreShot_fps_Summary">عدد الصور التي يتم التقاطها في الثانية</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">التوقف بين اللقطات (وضع دقة الوضوح العالية فقط)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">التوقف بين اللقطات (وضع دقة الوضوح العالية)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">التوقف بعد التقاط الصورة - لأغراض إعادة ضبط البؤرة.</string>
 	
-	<string name="Pref_PreShot_Low">دقة الوضوح المنخفضة (أسرع)</string>
+	<string name="Pref_PreShot_Low">السرعة العالية (أسرع)</string>
 	<string name="Pref_PreShot_High">دقة الوضوح المرتفعة (أبطأ)</string>
 	
 	<string name="Pref_PreShot_None">لا شيء</string>
@@ -32,4 +31,9 @@
 	<string name="Pref_PreShot_4shot">4 لقطات في الثانية</string>
 	<string name="Pref_PreShot_5shot">5 لقطات في الثانية</string>
 	<string name="Pref_PreShot_10shot">10 لقطات في الثانية</string>
+	
+	<string name="Pref_PreShot_Autostart_Title">تشغيل تلقائي</string>
+	<string name="Pref_PreShot_Autostart_Summary">بدء التصوير عند بدء تشغيل الكاميرا</string>
+	
+	
 </resources>

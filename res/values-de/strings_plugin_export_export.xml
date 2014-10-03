@@ -17,5 +17,8 @@
 	
 	<string name="Pref_Export_UseGeoTagging_Title">Geotagging</string>
 	<string name="Pref_Export_UseGeoTagging_Summary">Fügen Sie Standort-Tags hinzu. Schalten Sie die Systemeinstellung „Standortdienste“ ein, um genaue Geodaten zu erhalten.</string>
+	
+	<string name="Pref_Export_SortByData_Title">Tagesordner nutzen</string>
+	<string name="Pref_Export_SortByData_Summary">Speichert Zielfotos im Ordner des aktuellen Datums</string>
 
 </resources>

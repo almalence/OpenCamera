@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
+    <string name="NightCaptureMode">設定_夜撮影モード</string>
+    
+    <string name="NightCaptureModeHiRes">高画質</string>
+    <string name="NightCaptureModeHiSpeed">高速</string>
+    
 	<string name="textOn">オン</string>
 	<string name="textOff">オフ</string>
+	
+	<string name="NightVisionOn">夜ビジョン・オン</string>
+	<string name="NightVisionOff">夜ビジョン・オフ</string>
+	
+	
+	<!-- <string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
+	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string> -->
 	
 	<string name="hold_still">カメラを動かさないで！</string>
 	<string name="capturing">撮影中</string>

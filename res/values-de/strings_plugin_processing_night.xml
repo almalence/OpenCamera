@@ -8,7 +8,7 @@
 	
 	<string name="Pref_Night_DeGhosting_Title">Geisteffekt entfernen</string>
 
-	<string name="Res_Night_DecodingProgress_Text">Wird entschlüsselt&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">Wird entschlüsselt…</string>
 	
 	<string name="Pref_Night_ColorsSaturated_Title">Farben gesättigt halten</string>
     <string name="Pref_Night_ColorsSaturated_Summary">Hält Farbtöne gesättigt</string>

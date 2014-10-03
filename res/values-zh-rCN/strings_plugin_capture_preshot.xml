@@ -20,8 +20,8 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">拍摄之间停顿(仅高分辨率模式)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">拍照后停顿以重新对焦。</string>
 	
-	<string name="Pref_PreShot_Low">低分辨率(较快)</string>
-	<string name="Pref_PreShot_High">高分辨率(较慢)</string>
+	<string name="Pref_PreShot_Low">高速（更快）</string>
+	<string name="Pref_PreShot_High">高分辨率(更慢)</string>
 	
 	<string name="Pref_PreShot_None">无</string>
 	
@@ -34,4 +34,6 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">自动启动</string>
 	<string name="Pref_PreShot_Autostart_Summary">相机启动时开始拍摄</string>
+	
+	
 </resources>

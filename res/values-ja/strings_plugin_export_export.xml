@@ -16,6 +16,9 @@
 	<string name="Pref_Export_SaveTo_Title">画像保存場所を選択</string>
 	
 	<string name="Pref_Export_UseGeoTagging_Title">ジオタグ</string>
-	<string name="Pref_Export_UseGeoTagging_Summary">ロケーションタグを追加しましょう。&quot;GPSロケーション&quot;システムの設定をオンにして正確なジオタグを取得しましょう。</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">ロケーションタグを追加しましょう。"GPSロケーション"システムの設定をオンにして正確なジオタグを取得しましょう。</string>
+	
+	<string name="Pref_Export_SortByData_Title">日付入りのフォルダーを使用</string>
+	<string name="Pref_Export_SortByData_Summary">最終的な画像を現在の日付入りのフォルダーに保存</string>
 
 </resources>

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-	<string name="Pref_HiresPortrait_Category_Title">Przechwytywanie portretu o wysokiej rozdzielczości</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Przechwytywanie</string>
+	<string name="Pref_HiresPortrait_Category_Title">Wykonywanie portretu w wys. rozdz.</string>
+	<string name="Pref_HiresPortrait_Preference_Title">Uchwyć</string>
 	
-	<string name="HiresPortrait_Not_Available">Tryb portretu nie jest obsługiwany przez urządzenie. Aby skorzystać z tego trybu, potrzebujesz urządzenia z przednią i tylną kamerą.</string>
-	<string name="HiresPortrait_Capture_Front">Uchwyć autoportret z przedniej kamery. Wybierz żądaną kompozycję.</string>
-	<string name="HiresPortrait_Capture_Rear">Uchwyć autoportret z tylnej kamery.</string>
+	<string name="HiresPortrait_Not_Available">Twoje urządzenie nie obsługuje trybu portretu w wysokiej rozdzielczości. Do korzystania z tego trybu niezbędne jest urządzenie z przednim i tylnym aparatem.</string>
+	<string name="HiresPortrait_Capture_Front">Zrób autoportret przy pomocy przedniego aparatu. Wybierz kompozycję.</string>
+	<string name="HiresPortrait_Capture_Rear">Zrób autoportret przy pomocy tylnego aparatu.</string>
 </resources>

@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">صورة</string>
     <string name="Res_SelfTimerCapture_Capture_2">صورتان</string>
     <string name="Res_SelfTimerCapture_Capture_3">3 صور</string>
+    
+    <string name="selfTimerTitle">ميقاتي ذاتي</string>
 </resources>

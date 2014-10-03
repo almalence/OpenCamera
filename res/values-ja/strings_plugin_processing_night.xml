@@ -8,7 +8,7 @@
 	
 	<string name="Pref_Night_DeGhosting_Title">ゴースト排除</string>
 
-	<string name="Res_Night_DecodingProgress_Text">ディコーディング&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">ディコーディング…</string>
 	
 	<string name="Pref_Night_ColorsSaturated_Title">濃い色を維持</string>
     <string name="Pref_Night_ColorsSaturated_Summary">濃い色を維持</string>

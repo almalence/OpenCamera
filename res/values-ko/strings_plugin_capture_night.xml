@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
+    <string name="NightCaptureMode">Preference_NightCaptureMode</string>
+    
+    <string name="NightCaptureModeHiRes">고해상도</string>
+    <string name="NightCaptureModeHiSpeed">고속</string>
+    
 	<string name="textOn">켬</string>
 	<string name="textOff">끔</string>
+	
+	<string name="NightVisionOn">야간 모드 켬</string>
+	<string name="NightVisionOff">야간 모드 끔</string>
+	
+	
+	<!-- <string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
+	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string> -->
 	
 	<string name="hold_still">가만히 있으세요!</string>
 	<string name="capturing">촬영 중</string>

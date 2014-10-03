@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1개의 이미지</string>
     <string name="Res_SelfTimerCapture_Capture_2">2개의 이미지</string>
     <string name="Res_SelfTimerCapture_Capture_3">3개의 이미지</string>
+    
+    <string name="selfTimerTitle">셀프타이머</string>
 </resources>

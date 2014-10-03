@@ -20,7 +20,7 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">Pause zwischen den Aufnahmen (im hochauflösenden Modus)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pause nach dem aufgenommenen Bild - zum Neufokussiern.</string>
 	
-	<string name="Pref_PreShot_Low">Niedrige Auflösung (schneller)</string>
+	<string name="Pref_PreShot_Low">Hohe Geschwindigkeit (schneller)</string>
 	<string name="Pref_PreShot_High">Hohe Auflösung (langsamer)</string>
 	
 	<string name="Pref_PreShot_None">Keine</string>
@@ -34,4 +34,6 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">Autostart</string>
 	<string name="Pref_PreShot_Autostart_Summary">Aufnahme beim Aufruf der Kamera beginnen</string>
+	
+	
 </resources>
