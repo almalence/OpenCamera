@@ -8,7 +8,7 @@
 	
 	<string name="Pref_Night_DeGhosting_Title">إلغاء الظلال</string>
 
-	<string name="Res_Night_DecodingProgress_Text">فك التشفير&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">فك التشفير…</string>
 	
 	<string name="Pref_Night_ColorsSaturated_Title">الحفاظ على تشبع الألوان</string>
     <string name="Pref_Night_ColorsSaturated_Summary">الحفاظ على تشبع الألوان</string>

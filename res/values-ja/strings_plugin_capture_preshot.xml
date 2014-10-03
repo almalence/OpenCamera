@@ -20,8 +20,8 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">撮影間で休止（高画質モード）</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">撮影後に休止ー再フォーカスのため</string>
 	
-	<string name="Pref_PreShot_Low">低画質（高速）</string>
-	<string name="Pref_PreShot_High">高画質（遅い）</string>
+	<string name="Pref_PreShot_Low">高速（より速い）</string>
+	<string name="Pref_PreShot_High">高画質（より遅い）</string>
 	
 	<string name="Pref_PreShot_None">なし</string>
 	
@@ -34,4 +34,6 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">自動スタート</string>
 	<string name="Pref_PreShot_Autostart_Summary">カメラ起動時に撮影開始</string>
+	
+	
 </resources>

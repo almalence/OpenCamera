@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">Numero di immagini in successione</string>
     
+    
     <string name="Res_Burst_Images_Text">immagini</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">Pausa tra gli scatti</string>
     <string name="Res_Burst_Fast_Text">più veloce possibile</string>

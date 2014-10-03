@@ -16,6 +16,9 @@
 	<string name="Pref_Export_SaveTo_Title">تحديد موقع تخزين الصور</string>
 	
 	<string name="Pref_Export_UseGeoTagging_Title">وضع علامات جغرافية</string>
-	<string name="Pref_Export_UseGeoTagging_Summary">إضافة علامات الموقع. تشغيل إعداد نظام &quot;موقع GPS&quot; للحصول على علامات جغرافية دقيقة</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">إضافة علامات الموقع. تشغيل إعداد نظام "موقع GPS" للحصول على علامات جغرافية دقيقة</string>
+	
+	<string name="Pref_Export_SortByData_Title">استخدام مجلدات مؤرخة</string>
+	<string name="Pref_Export_SortByData_Summary">حفظ الصور الناتجة في مجلد التاريخ الحالي</string>
 
 </resources>

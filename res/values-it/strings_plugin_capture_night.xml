@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
+    <string name="NightCaptureMode">Preference_NightCaptureMode</string>
+    
+    <string name="NightCaptureModeHiRes">Alta risoluzione</string>
+    <string name="NightCaptureModeHiSpeed">Alta velocità</string>
+    
 	<string name="textOn">SÌ</string>
 	<string name="textOff">NO</string>
+	
+	<string name="NightVisionOn">Visione notturna ATTIVA</string>
+	<string name="NightVisionOff">Visione notturna NON ATTIVA</string>
+	
+	
+	<!-- <string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
+	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string> -->
 	
 	<string name="hold_still">Tienila ferma!</string>
 	<string name="capturing">Acquisizione in corso</string>

@@ -1,7 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="trial_left">Modo %1$s, disparos gratis restantes: %2$d</string>
+    <string name="trial_finished">%1$s disparos gratis utilizados, debes desbloquear</string>
+    <!-- -+-  -->
     <string name="app_name">A Better Camera - (Una cámara fabulosa)</string>
-    <string name="Pref_Billing_Left">%1$s modo disparos restantes: %2$d</string>
+    <string name="Pref_About">Una cámara fabulosa  v1.06\n(©) de Almalence Inc\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
+    +++ -->
     <string name="cannot_create_jpeg">Error: No se puede guardar la imagen.</string>
     <string name="choose_folder_pick">Utilizar esta carpeta</string>
     <string name="choose_folder_newfolder">Nueva carpeta</string>
@@ -15,6 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Guardar en...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Seleccionar ubicación para guardar imágenes</string>
     <string name="choose_folder">Elegir carpeta</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat no permite guardar en la tarjeta SD</string>
     
     <string name="save_to_phone">Teléfono</string>
     <string name="save_to_memorycard">Tarjeta de memoria</string>
@@ -23,5 +32,17 @@
     <string name="dimensions_none">Ninguna</string>
     
     <string name="already_unlocked">desbloqueado</string>
+    
+    <string name="volumeBtnTakePic">Tomar fotografía</string>
+    <string name="volumeBtnZoom">Zoom</string>
+    <string name="volumeBtnExpoCorrection">Corrección de exposición</string>
+    <string name="volumeBtnNone">Ninguna</string>
+    
+    <string name="raterMain">Si te agrada utilizar Una cámara fabulosa, tómate un momento para calificarla.\n\nGracias por tu ayuda.</string>
+    <string name="raterRate">Calificar Una cámara fabulosa</string>
+    <string name="raterNo">No, gracias</string>
+    
+    <string name="raterSendReview">Tu opinión nos importa mucho y queremos mejorar la aplicación. Envía tu reseña directamente al soporte.</string>
+    <string name="raterSend">Enviar</string>
     
 </resources>

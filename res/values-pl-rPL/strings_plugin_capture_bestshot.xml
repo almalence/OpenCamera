@@ -1,17 +1,18 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="Pref_Bestshot_Category_Title">Przechwytywanie najlepszego zdjęcia</string>
+    <string name="Pref_Bestshot_Category_Title">Tryb najlepszego zdjęcia</string>
     <string name="Pref_Bestshot_Preference_Title">Tryb najlepszego zdjęcia</string>
-    <string name="Pref_Bestshot_Preference_Summary">Ustaw liczbę obrazów do przechwycenia</string>
+    <string name="Pref_Bestshot_Preference_Summary">Ustaw liczbę zdjęć w serii</string>
 
-    <string name="Pref_Bestshot_ImagesAmount_Title">Liczba obrazów</string>
+    <string name="Pref_Bestshot_ImagesAmount_Title">Liczba zdjęć</string>
     
-    <string name="Res_Bestshot_Images_Text"> obrazów</string>
+    <string name="Res_Bestshot_Images_Text">zdjęć/zdjęcia</string>
     
-    <string name="Bestshot_Help">Analizując serię zdjęć, funkcja Best Shot wybierze najlepsze, zwiększając szanse na mniej rozmyte zdjęcie. Best Shot automatycznie wybierze najlepsze i je zapisze.\n\n1. Wybierz liczbę obrazów do przechwycenia.\n2. Trzymaj urządzenie i nie ruszaj nim\n3. Naciśnij przycisk migawki, aby rozpocząć przechwytywanie\n4. Poczekaj, aż seria obrazów zostanie wykonana i przetworzona\n5. Mniej rozmazany obraz zostanie wybrany i zapisany</string>
+    <string name="Bestshot_Help_Header">Najlepsze zdjęcie - pomoc</string>
+    <string name="Bestshot_Help">Analizując serię zdjęć, tryb wybiera najlepsze, zwiększając szansę na wykonanie nierozmazanego zdjęcia. Tryb automatycznie wybierze i zapisze najlepsze zdjęcie.\n\n1. Wybierz liczbę zdjęć w serii.\n2. Trzymaj urządzenie nieruchomo i nie ruszaj się\n3. Wciśnij spust migawki, aby rozpocząć robienie zdjęć\n4. Zaczekaj, aż aparat zrobi i przetworzy serię zdjęć\n5. Tryb wybierze i zapisze najmniej rozmazane zdjęcie</string>
     
-    <string name="Res_Bestshot_3">3 obrazy</string>
-    <string name="Res_Bestshot_5">5 obrazów</string>
-    <string name="Res_Bestshot_10">10 obrazów</string>
+    <string name="Res_Bestshot_3">3 zdjęcia</string>
+    <string name="Res_Bestshot_5">5 zdjęć</string>
+    <string name="Res_Bestshot_10">10 zdjęć</string>
     
 </resources>

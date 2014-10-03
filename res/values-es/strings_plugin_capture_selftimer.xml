@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1 imagen</string>
     <string name="Res_SelfTimerCapture_Capture_2">2 imágenes</string>
     <string name="Res_SelfTimerCapture_Capture_3">3 imágenes</string>
+    
+    <string name="selfTimerTitle">Temporizador automático</string>
 </resources>

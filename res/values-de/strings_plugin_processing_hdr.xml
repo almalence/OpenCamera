@@ -17,10 +17,13 @@
 	
 	<string name="Pref_HDR_NoiseReduction_Title">Rauschunterdrückung</string>
 	
-	<string name="Res_HDR_DecodingProgress_Text">Wird entschlüsselt&#8230;</string>
+	<string name="Res_HDR_DecodingProgress_Text">Wird entschlüsselt…</string>
 	
 	<string name="Pref_HDR_SaveInputPref_Title">Ausgangsbilder speichern</string>
+    
     <string name="Pref_HDR_SaveInputPref_Summary">Bilder der Belichtungsreihe speichern</string>
+    <string name="Pref_HDR_SaveInputPref_None">Nicht speichern</string>
+    <string name="Pref_HDR_SaveInputPref_Normal">Nur Bilder mit Standardbelichtung</string>
     
 	<string name="Pref_HDR_AutoAdjustPref_Title">Nach der Aufnahme bearbeiten</string>
 	<string name="Pref_HDR_AutoAdjustPref_Summary">Passen Sie die Farbtonparameter nach der Aufnahme an</string>
@@ -38,7 +41,7 @@
 	<string name="Pref_HDR_Saturated">Gesättigt</string>
 	
 	<string name="adjustments_trashDialog_title">Dieses Foto löschen?</string>
-    <string name="adjustments_trashDialog_content">Dieses Bild wird gelöscht.</string>
+    <string name="adjustments_trashDialog_content">Dieses Bild geht verloren</string>
     <string name="adjustments_trashDialog_positive">Ja</string>
     <string name="adjustments_trashDialog_negative">Nein</string>
     <string name="adjustments_presets_prompt">Wählen Sie eine Bearbeitungsvoreinstellung</string>

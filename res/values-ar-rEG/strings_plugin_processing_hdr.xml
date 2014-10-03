@@ -17,10 +17,13 @@
 	
 	<string name="Pref_HDR_NoiseReduction_Title">تقليل الضوضاء</string>
 	
-	<string name="Res_HDR_DecodingProgress_Text">فك التشفير&#8230;</string>
+	<string name="Res_HDR_DecodingProgress_Text">فك التشفير…</string>
 	
 	<string name="Pref_HDR_SaveInputPref_Title">حفظ الأطر الأصلية</string>
+    
     <string name="Pref_HDR_SaveInputPref_Summary">حفظ الصور متغيرة التعريض الضوئي</string>
+    <string name="Pref_HDR_SaveInputPref_None">لا تحفظ</string>
+    <string name="Pref_HDR_SaveInputPref_Normal">صورة تعريض ضوئي قياسية فقط</string>
     
 	<string name="Pref_HDR_AutoAdjustPref_Title">تحرير بعد الالتقاط</string>
 	<string name="Pref_HDR_AutoAdjustPref_Summary">ضبط معلمات توجيه النغمة بعد التقاط صورة</string>
@@ -36,4 +39,22 @@
 	<string name="Pref_HDR_Pure">نقي</string>
 	<string name="Pref_HDR_Standard">قياسي</string>
 	<string name="Pref_HDR_Saturated">مشبع</string>
+	
+	<string name="adjustments_trashDialog_title">حذف هذه الصورة؟</string>
+    <string name="adjustments_trashDialog_content">ستضيع هذه الصورة</string>
+    <string name="adjustments_trashDialog_positive">نعم</string>
+    <string name="adjustments_trashDialog_negative">لا</string>
+    <string name="adjustments_presets_prompt">اختر عناصر ضبط محددة مسبقًا</string>
+    <string name="adjustments_preset_natural">طبيعي</string>
+    <string name="adjustments_preset_candy">التفاصيل</string>
+    <string name="adjustments_preset_artistic">فني</string>
+    <string name="adjustments_preset_bnw">أسود وأبيض</string>
+    <string name="adjustments_preset_vanilla">فانيلا</string>
+    <string name="adjustments_preset_xerox">زيروكس</string>
+    <string name="adjustments_preset_neon">نيون</string>
+    <string name="adjustments_preset_custom">مخصص</string>
+    <string name="adjustments_exposure">تعريض ضوئي</string>
+    <string name="adjustments_contrast">تباين</string>
+    <string name="adjustments_microcontrast">تباين مصغر</string>
+    <string name="adjustments_vividness">بريق الألوان</string>
 </resources>

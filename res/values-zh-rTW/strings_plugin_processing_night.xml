@@ -8,7 +8,7 @@
 	
 	<string name="Pref_Night_DeGhosting_Title">去重影</string>
 
-	<string name="Res_Night_DecodingProgress_Text">正在解碼&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">正在解碼…</string>
 	
 	<string name="Pref_Night_ColorsSaturated_Title">保持顏色飽和</string>
     <string name="Pref_Night_ColorsSaturated_Summary">保持顏色飽和</string>

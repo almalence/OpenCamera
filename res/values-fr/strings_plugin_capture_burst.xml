@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">Nombre de photos de la rafale</string>
     
+    
     <string name="Res_Burst_Images_Text">photos</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">Pause entre les prises de vue</string>
     <string name="Res_Burst_Fast_Text">aussi vite que possible</string>
@@ -13,7 +14,7 @@
     <string name="Res_Burst_3">3 photos</string>
     <string name="Res_Burst_5">5 photos</string>
     <string name="Res_Burst_10">10 photos</string>
-    <string name="Res_Burst_15">15 photos</string>
-    <string name="Res_Burst_20">20 photos</string>
+    <string name="Res_Burst_15">15 images</string>
+    <string name="Res_Burst_20">20 images</string>
     
 </resources>

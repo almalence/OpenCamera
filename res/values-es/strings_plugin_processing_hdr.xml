@@ -17,10 +17,13 @@
 	
 	<string name="Pref_HDR_NoiseReduction_Title">Reducción de ruidos</string>
 	
-	<string name="Res_HDR_DecodingProgress_Text">Decodificando&#8230;</string>
+	<string name="Res_HDR_DecodingProgress_Text">Decodificando…</string>
 	
 	<string name="Pref_HDR_SaveInputPref_Title">Guardar imágenes originales</string>
+    
     <string name="Pref_HDR_SaveInputPref_Summary">Mantener imágenes con exposición automática</string>
+    <string name="Pref_HDR_SaveInputPref_None">No guardar</string>
+    <string name="Pref_HDR_SaveInputPref_Normal">Solo imagen de exposición estándar</string>
     
 	<string name="Pref_HDR_AutoAdjustPref_Title">Editar después de sacar</string>
 	<string name="Pref_HDR_AutoAdjustPref_Summary">Ajustar parámetros de tonos después de sacar una foto</string>

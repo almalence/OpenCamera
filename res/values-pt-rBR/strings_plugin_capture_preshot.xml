@@ -1,37 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
-	<string name="Pref_PreShot_Preference_Title">Foto com pré-disparo</string>
+	<string name="Pref_PreShot_Preference_Title">Captura antes da foto</string>
 	
 	<string name="Pref_PreShot_ImageSize_Title">Tamanho da imagem</string>
 	
-	<string name="Pref_PreShot_RefocusOnEachShot_Title">Re-focar a cada disparo</string>
-	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Alguns dispositivos resetam o foco após um disparo. Marque se suas fotos estão ficando fora de foco.</string>
+	<string name="Pref_PreShot_RefocusOnEachShot_Title">Refocar em cada disparo</string>
+	<string name="Pref_PreShot_RefocusOnEachShot_Summary">Alguns dispositivos redefinem o foco após a captura. Veja se você obtém disparos fora do foco.</string>
 	
 	<string name="Pref_PreShot_Mode_Title">Modo</string>
-	<string name="Pref_PreShot_Mode_Summary">Modo de captura de imagem</string>
+	<string name="Pref_PreShot_Mode_Summary">Modo de captura de imagens</string>
 	
-	<string name="Pref_PreShot_preshot_Title">Segundos antes da captura...</string>
-	<string name="Pref_PreShot_preshot_Summary">Armazenar quadros num determinado intervalo, antes da conclusão da captura.</string>
+	<string name="Pref_PreShot_preshot_Title">Segundos antes de pressionar o botão do obturador...</string>
+	<string name="Pref_PreShot_preshot_Summary">Mantenha as fotos tiradas em um período específico antes de pressionar o botão do obturador.</string>
 	
-	<string name="Pref_PreShot_fps_Title">Disparos por segundo (alta velocidade)</string>
-	<string name="Pref_PreShot_fps_Summary">Quantidade de imagens para capturar por segundo</string>
+	<string name="Pref_PreShot_fps_Title">Disparos por segundos (alta velocidade)</string>
+	<string name="Pref_PreShot_fps_Summary">Quantidade de fotos para tirar por segundo</string>
 	
-	<string name="Pref_PreShot_pauseBetweenShots_Title">Pausa entre as capturas (alta resolução)</string>
-	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pausar após uma captura - para fins de refoco.</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Title">Pausar entre os disparos (alta resolução)</string>
+	<string name="Pref_PreShot_pauseBetweenShots_Summary">Pausar após a foto tirada - com objetivo de refocar.</string>
 	
-	<string name="Pref_PreShot_Low">Baixa resolução (mais rápido)</string>
+	<string name="Pref_PreShot_Low">Alta velocidade (mais rápido)</string>
 	<string name="Pref_PreShot_High">Alta resolução (mais lento)</string>
 	
 	<string name="Pref_PreShot_None">Nenhum</string>
 	
-	<string name="Pref_PreShot_1shot">1 disparo por segundo</string>
-	<string name="Pref_PreShot_2shot">2 disparos por segundo</string>
-	<string name="Pref_PreShot_3shot">3 disparos por segundo</string>
-	<string name="Pref_PreShot_4shot">4 disparos por segundo</string>
-	<string name="Pref_PreShot_5shot">5 disparos por segundo</string>
-	<string name="Pref_PreShot_10shot">10 disparos por segundo</string>
+	<string name="Pref_PreShot_1shot">1 foto por segundo</string>
+	<string name="Pref_PreShot_2shot">2 fotos por segundo</string>
+	<string name="Pref_PreShot_3shot">3 fotos por segundo</string>
+	<string name="Pref_PreShot_4shot">4 fotos por segundo</string>
+	<string name="Pref_PreShot_5shot">5 fotos por segundo</string>
+	<string name="Pref_PreShot_10shot">10 fotos por segundo</string>
 	
-	<string name="Pref_PreShot_Autostart_Title">Iniciar automaticamente</string>
-	<string name="Pref_PreShot_Autostart_Summary">Começar a captura ao abrir a câmera</string>
+	<string name="Pref_PreShot_Autostart_Title">Início automático</string>
+	<string name="Pref_PreShot_Autostart_Summary">Iniciar a captura no lançamento da câmera</string>
+	
+	
 </resources>

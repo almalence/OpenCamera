@@ -16,6 +16,9 @@
 	<string name="Pref_Export_SaveTo_Title">Sélectionner l\'emplacement de stockage des photos</string>
 	
 	<string name="Pref_Export_UseGeoTagging_Title">Géotagging</string>
-	<string name="Pref_Export_UseGeoTagging_Summary">Ajoutez les balises de géolocalisation. Activez votre système de &quot;Localisation par GPS&quot; afin d\'obtenir les données de géotagging les plus précises</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">Ajoutez les balises de géolocalisation. Activez votre système de "Localisation par GPS" afin d\'obtenir les données de géotagging les plus précises</string>
+	
+	<string name="Pref_Export_SortByData_Title">Utiliser des dossiers datés</string>
+	<string name="Pref_Export_SortByData_Summary">Enregistrez les images obtenues dans le dossier daté du jour</string>
 
 </resources>

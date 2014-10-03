@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	<string name="Pref_Night_Category_Title">Processamento noturno</string>
-	<string name="Pref_Night_Preference_Title">Processando</string>
-	<string name="Pref_Night_Preference_Summary">Noite</string>
+	<string name="Pref_Night_Preference_Title">Processamento</string>
+	<string name="Pref_Night_Preference_Summary">Noturno</string>
 	
-	<string name="Pref_Night_NoiseReduction_Title">Redução de ruido</string>
+	<string name="Pref_Night_NoiseReduction_Title">Redução de ruídos</string>
 	
-	<string name="Pref_Night_DeGhosting_Title">Removendo efeito-fantasma</string>
+	<string name="Pref_Night_DeGhosting_Title">Remover efeito fastasma</string>
 
-	<string name="Res_Night_DecodingProgress_Text">Decodificando&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">Decodificação…</string>
 	
-	<string name="Pref_Night_ColorsSaturated_Title">Manter cores saturadas</string>
-    <string name="Pref_Night_ColorsSaturated_Summary">Manter cores saturadas</string>
+	<string name="Pref_Night_ColorsSaturated_Title">Manter as cores saturadas</string>
+    <string name="Pref_Night_ColorsSaturated_Summary">Manter as cores saturadas</string>
 	<string name="Pref_Night_None">Nenhum</string>
-	<string name="Pref_Night_Minor">Pouco</string>
-	<string name="Pref_Night_Hard">Muito</string>
+	<string name="Pref_Night_Minor">Baixo</string>
+	<string name="Pref_Night_Hard">Alto</string>
 </resources>

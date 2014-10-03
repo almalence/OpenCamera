@@ -17,10 +17,13 @@
 	
 	<string name="Pref_HDR_NoiseReduction_Title">노이즈 감소</string>
 	
-	<string name="Res_HDR_DecodingProgress_Text">디코딩 중&#8230;</string>
+	<string name="Res_HDR_DecodingProgress_Text">디코딩 중…</string>
 	
 	<string name="Pref_HDR_SaveInputPref_Title">원본 프레임 저장</string>
+    
     <string name="Pref_HDR_SaveInputPref_Summary">이미지 노출 브라케팅</string>
+    <string name="Pref_HDR_SaveInputPref_None">저장 안 함</string>
+    <string name="Pref_HDR_SaveInputPref_Normal">표준 노출 이미지만</string>
     
 	<string name="Pref_HDR_AutoAdjustPref_Title">촬영 후 편집</string>
 	<string name="Pref_HDR_AutoAdjustPref_Summary">사진 촬영 후 톤 매핑 파라미터 조절</string>
