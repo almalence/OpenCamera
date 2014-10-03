@@ -274,8 +274,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static String				sShotOnTapPref;
 	private static String				sVolumeButtonPref;
 
-	private static String				sImageSizeRearPref;
-	private static String				sImageSizeFrontPref;
+	public static String				sImageSizeRearPref;
+	public static String				sImageSizeFrontPref;
 
 	public static String				sJPEGQualityPref;
 
