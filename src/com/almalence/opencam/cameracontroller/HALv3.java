@@ -51,17 +51,17 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Area;
-import android2.hardware.camera2.CameraCaptureSession;
-import android2.hardware.camera2.CameraCharacteristics;
-import android2.hardware.camera2.CameraDevice;
-import android2.hardware.camera2.CameraManager;
-import android2.hardware.camera2.CaptureRequest;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.CameraMetadata;
-import android2.hardware.camera2.CameraAccessException;
-import android2.hardware.camera2.TotalCaptureResult;
-import android2.hardware.camera2.params.MeteringRectangle;
-import android2.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
@@ -70,8 +70,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android2.util.Range;
-import android2.util.Size;
+import android.util.Range;
+import android.util.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -1322,13 +1322,21 @@ public class HALv3
 		
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				MainScreen.sFlashModePref, -1);
+		int wbMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				MainScreen.sWBModePref, -1);
+		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				MainScreen.sSceneModePref, -1);
 		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
 		
 		Log.e(TAG, "configurePreviewRequest()");
 		HALv3.getInstance().previewRequestBuilder = HALv3.getInstance().camDevice
 				.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-				focusMode);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
