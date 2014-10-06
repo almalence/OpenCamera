@@ -1199,7 +1199,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (shutterPreference)
 		{
 			AudioManager mgr = (AudioManager) MainScreen.thiz
-					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
+					.getSystemService(MainScreen.AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
 		}
 
@@ -1357,7 +1357,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1, true);
-		shutterPreference = prefs.getBoolean("shutterPrefCommon", false);
+		shutterPreference = prefs.getBoolean(sShutterPref, false);
 		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
 				: "imageSizePrefCommonFront", "-1");
@@ -1943,7 +1943,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (MainScreen.isShutterSoundEnabled())
 		{
 			AudioManager mgr = (AudioManager) MainScreen.thiz
-					.getSystemService(MainScreen.getMainContext().AUDIO_SERVICE);
+					.getSystemService(MainScreen.AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
 		}
 	}
