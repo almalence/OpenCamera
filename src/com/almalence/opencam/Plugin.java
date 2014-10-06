@@ -355,7 +355,7 @@ public abstract class Plugin
 			}
 		}
 
-		CameraController.setCameraImageSizeIndex(CaptureIdx);
+		CameraController.setCameraImageSizeIndex(CaptureIdx, true);
 		MainScreen.setImageWidth(CaptureWidth);
 		MainScreen.setImageHeight(CaptureHeight);
 

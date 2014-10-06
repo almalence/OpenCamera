@@ -315,7 +315,7 @@ public class HALv3
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
-		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);		
+		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		final Size[] cs = configMap.getOutputSizes(MainScreen.isCaptureYUVFrames()? ImageFormat.YUV_420_888 : ImageFormat.JPEG);		
 
 		int iHighestIndex = 0;
@@ -348,6 +348,8 @@ public class HALv3
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
 			Size s = cs[iHighestIndex];
+			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
+				s = new Size(1920, 1088);
 
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
