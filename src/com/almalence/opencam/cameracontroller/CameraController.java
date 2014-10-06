@@ -1940,12 +1940,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return CapIdx;
 	}
 
-	public static void setCameraImageSizeIndex(int captureIndex)
+	public static void setCameraImageSizeIndex(int captureIndex, boolean init)
 	{
 		CapIdx = captureIndex;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
-				: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
+		if(init)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			prefs.edit().putString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
+					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
+		}
 	}
 
 	public static boolean isModeAvailable(int[] modeList, int mode)

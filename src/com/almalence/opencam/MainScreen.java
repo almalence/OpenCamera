@@ -852,7 +852,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
 							int value = Integer.parseInt(newValue.toString());
-							CameraController.setCameraImageSizeIndex(value);
+							CameraController.setCameraImageSizeIndex(value, false);
 							return true;
 						}
 					});
@@ -1356,7 +1356,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
+		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1, true);
 		shutterPreference = prefs.getBoolean("shutterPrefCommon", false);
 		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
@@ -1527,6 +1527,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 													// capture
 		}
 
+//		sfl.add(mImageReaderJPEG.getSurface());
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
