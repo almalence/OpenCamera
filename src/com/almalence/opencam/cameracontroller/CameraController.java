@@ -2790,7 +2790,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 //						camera.setPreviewCallback(null);
-						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+						camera.takePicture(null, null, null, CameraController.getInstance());
 					}
 					catch(Exception exp)
 					{
