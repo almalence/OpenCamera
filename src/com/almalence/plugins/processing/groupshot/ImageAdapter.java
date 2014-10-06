@@ -210,12 +210,12 @@ public class ImageAdapter extends BaseAdapter
 		int width = MainScreen.getImageWidth();
 		int height = MainScreen.getImageHeight();
 
-		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		Size mInputFrameSize = new Size(width, height);
 
 		Rect rect = new Rect(0, 0, width, height);
-		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
-		bm.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
+		Bitmap bm = Bitmap.createBitmap(
+				AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize), width,
+				height, Config.ARGB_8888);
 
 		float imageRatio = (float) width / (float) height;
 		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
