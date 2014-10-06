@@ -215,7 +215,7 @@ public class ImageAdapter extends BaseAdapter
 		Rect rect = new Rect(0, 0, width, height);
 		Bitmap bm = Bitmap.createBitmap(
 				AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize), width,
-				height, Config.ARGB_8888);
+				height, Config.RGB_565);
 
 		float imageRatio = (float) width / (float) height;
 		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
