@@ -271,8 +271,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				Matrix matrix = new Matrix();
 				matrix.postRotate(mCameraMirrored ? (mDisplayOrientationOnStartProcessing + 180) % 360
 						: mDisplayOrientationOnStartProcessing);
-				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
+				
+				if (rotatedBitmap != PreviewBmp) {
+					PreviewBmp.recycle();
+					PreviewBmp= rotatedBitmap;
+				}
 			}
 
 			if ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
@@ -282,6 +287,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				matrix.postRotate((mDisplayOrientationOnStartProcessing + 180) % 360);
 				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
+				
+				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+						matrix, true);
+				if (rotatedBitmap != PreviewBmp) {
+					PreviewBmp.recycle();
+					PreviewBmp= rotatedBitmap;
+				}
 			}
 
 			previewBmpRealWidth = PreviewBmp.getWidth();
@@ -577,6 +589,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			PreviewBmpInitial = Bitmap.createBitmap(rotated);
+			
+			if (PreviewBmpInitial != rotated) {
+				rotated.recycle();
+			}
 		}
 
 		mImgView.setImageBitmap(PreviewBmpInitial);
