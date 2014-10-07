@@ -230,12 +230,18 @@ public class ImageAdapter extends BaseAdapter
 		}
 
 		if (bitmap != bm)
+		{
 			bm.recycle();
+			bm = null;
+		}
 
 		Matrix matrix = new Matrix();
 		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
 
-		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		bitmap.recycle();
+		bitmap = null;
+		return rotatedBitmap;
 	}
 
 	private int setDirContainThumbnails(String path)

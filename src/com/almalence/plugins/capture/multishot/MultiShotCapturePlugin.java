@@ -108,7 +108,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG,
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
 						pauseBetweenShots, null, true);
 			} catch (Exception e)
 			{

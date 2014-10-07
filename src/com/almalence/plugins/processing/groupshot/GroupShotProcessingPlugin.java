@@ -325,6 +325,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
 		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+		
+		PreviewBmp.recycle();
+		PreviewBmp = null;
 	}
 
 	private void getFaceRects()
@@ -804,7 +807,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	private void setupImageView()
 	{
-		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
+//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
 
 		if (PreviewBmp != null)
 		{
@@ -922,6 +925,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			if (mSeamless != null)
 				mSeamless.release();
 			mJpegBufferList.clear();
+			for(int yuv: mYUVBufferList)
+			{
+				SwapHeap.FreeFromHeap(yuv);
+			}
 			mYUVBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
@@ -981,7 +988,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	{
 		PreviewBmp = mSeamless.getPreviewBitmap();
 		Log.d("GroupShot", "updateBitmap. PreviewBmp WxH: " + PreviewBmp.getWidth() + " x " + PreviewBmp.getHeight());
-		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
+//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
 		drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
 		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
 		{
