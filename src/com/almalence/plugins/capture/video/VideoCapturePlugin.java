@@ -96,7 +96,6 @@ import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
-import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.authoring.Movie;
 import com.googlecode.mp4parser.authoring.Track;
@@ -200,6 +199,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
+	//shows if HDR video allowed
+	private boolean								hdrAllowed = false;
+
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
 	public VideoCapturePlugin()
@@ -219,7 +221,10 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingTimeView.setText("00:00");
 
 		this.createModeSwitcher();
-		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		hdrAllowed = prefs.getBoolean("hdrAllowed", false);
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2 || !hdrAllowed)
 		{
 			this.modeSwitcher.setVisibility(View.GONE);
 		}
@@ -851,6 +856,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
+		
+		frameCnt = 0;
 	}
 
 	@Override
@@ -1226,7 +1233,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2)
+		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
 		View mainButtonsVideo = (View) MainScreen.getInstance().guiManager.getMainView().findViewById(
@@ -2405,9 +2412,35 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
+	private int frameCnt = 0;
+	private long timeStart = 0;
+	private long time = 0;
+	private final int MIN_FPS = 15;
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && !hdrAllowed && frameCnt<=50)
+		{
+			//check if FPS rate higher than minimum allowed
+			if (frameCnt==0)
+				timeStart = System.currentTimeMillis(); 
+			frameCnt++;
+			
+			//frames number
+			if (frameCnt==50)
+			{
+				time = (System.currentTimeMillis() - timeStart);
+				long fps = (1000*frameCnt)/time;
+				Log.e("!!!!!!!", "fps " + fps);
+				if (fps>=MIN_FPS)
+				{
+					hdrAllowed = true;
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					prefs.edit().putBoolean("hdrAllowed", hdrAllowed).commit();
+					this.modeSwitcher.setVisibility(View.VISIBLE);
+				}
+			}
+		}
 	}
 
 	@Override
