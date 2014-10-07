@@ -84,7 +84,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int							YUV								= 1;
 	public static final int							JPEG							= 0;
 
-	protected static final long						MPIX_1080						= 1920 * 1080;
+	protected static final long						MPIX_1080						= 400 * 300;
 
 	// Android camera parameters constants
 	private static String							sceneAuto;

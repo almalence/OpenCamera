@@ -840,6 +840,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				{
 					if (Integer.valueOf(entryValues[idx].toString()) == currentIdx)
 					{
+						Log.e("entryValues[idx]", entryValues[idx] + "");
+						Log.e("currentIdx", currentIdx + "");
+						Log.e("idx", idx + "");
 						lp.setValueIndex(idx);
 						break;
 					}
@@ -1301,7 +1304,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		int prefIdx = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? "imageSizePrefSmartMultishotBack"
 						: "imageSizePrefSmartMultishotFront", "-1"));
-
+		
 		// ----- Find max-resolution capture dimensions
 		int minMPIX = MIN_MPIX_PREVIEW;
 
@@ -1329,7 +1332,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			CameraController.Size s = CameraController.MultishotResolutionsSizeList.get(ii);
 			long mpix = (long) s.getWidth() * s.getHeight();
 
-			if ((ii == prefIdx) && (mpix >= minMPIX))
+			if ((Integer.valueOf(CameraController.MultishotResolutionsIdxesList.get(ii)) == prefIdx) && (mpix >= minMPIX))
 			{
 				prefFound = true;
 				captureIdx = ii;
