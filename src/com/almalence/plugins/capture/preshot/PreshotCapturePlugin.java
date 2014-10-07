@@ -400,7 +400,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			System.gc();
 
 			//??? should it be 0? frmCnt seems never to be 0! 
-			if (frmCnt == 0)
+			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			PreShot.InsertToBuffer(data, MainScreen.getGUIManager().getDisplayOrientation());
@@ -454,12 +454,19 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (0 == PreShot.GetImageCount()) {
+			if (frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			else
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 //		inCapture = false;
-
-		if (0 == PreShot.GetImageCount() && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 

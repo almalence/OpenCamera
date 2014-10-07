@@ -61,8 +61,6 @@ public class BurstCapturePlugin extends PluginCapture
 	private int				imageAmount			= 3;
 	private int				pauseBetweenShots	= 0;
 
-	private int				imagesTaken			= 0;
-
 	private static String	sImagesAmountPref;
 	private static String	sPauseBetweenShotsPref;
 
@@ -234,9 +232,6 @@ public class BurstCapturePlugin extends PluginCapture
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
-
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{

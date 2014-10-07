@@ -41,4 +41,6 @@ public interface PluginManagerInterface
 //	public void onPictureTaken(byte[] paramArrayOfByte, boolean isYUV);
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
 
+	public void addToSharedMemExifTags(byte[] paramArrayOfByte);
+
 }

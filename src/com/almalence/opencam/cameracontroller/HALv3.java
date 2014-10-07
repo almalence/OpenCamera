@@ -1698,6 +1698,7 @@ public class HALv3
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: " + status);
 
+					PluginManager.getInstance().addToSharedMemExifTags(null);
 					if(!resultInHeap)
 						frameData = YuvImage.GetByteFrame();
 					else
@@ -1717,6 +1718,7 @@ public class HALv3
 					frameData = new byte[frame_len];
 					jpeg.get(frameData, 0, frame_len);
 
+					PluginManager.getInstance().addToSharedMemExifTags(frameData);
 					if(resultInHeap)
 					{
 						frame = SwapHeap.SwapToHeap(frameData);

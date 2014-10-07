@@ -1316,6 +1316,13 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, isYUV);
 	}
+	
+	@Override
+	public void addToSharedMemExifTags(byte[] frameData)
+	{
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
+	}
 
 	@TargetApi(21)
 	public void onCaptureCompleted(TotalCaptureResult result)

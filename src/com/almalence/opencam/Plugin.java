@@ -240,6 +240,11 @@ public abstract class Plugin
 		
 	}
 	
+	public void addToSharedMemExifTags(byte[] frameData)
+	{
+		
+	}
+	
 	public void onPreviewFrame(byte[] data)
 	{
 		

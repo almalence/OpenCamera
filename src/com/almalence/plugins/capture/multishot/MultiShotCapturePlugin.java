@@ -70,7 +70,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int		imageAmount			= 8;
 	private int[]	pauseBetweenShots	= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
-	private int		imagesTaken			= 0;
 
 	public MultiShotCapturePlugin()
 	{
@@ -152,8 +151,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		try
 		{
 			CameraController.startCameraPreview();

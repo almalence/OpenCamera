@@ -1247,6 +1247,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (this.isFirstFrame) {
+			if (frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			else
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		final boolean goodPlace;
@@ -1273,11 +1283,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			} else
 			{
 				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);
-			}
-
-			if (this.isFirstFrame && !isYUV && frameData != null)
-			{
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			}
 		}
 

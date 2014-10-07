@@ -269,6 +269,20 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (frameData != null) {
+			if (PluginManager.getInstance().getActiveModeID().equals("hdrmode")) {
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			} else {
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, frame_num + 1);
+			}
+		}
+		else if (frame_num == 0) {
+			PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		int n = evIdx[frame_num];
@@ -297,7 +311,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
+		
 		try
 		{
 			CameraController.startCameraPreview();

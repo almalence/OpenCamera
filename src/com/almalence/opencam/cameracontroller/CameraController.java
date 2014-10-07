@@ -2518,6 +2518,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
+		pluginManager.addToSharedMemExifTags(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
 
@@ -2605,6 +2606,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				int frame = 0;
 				if (resultInHeap)
 					frame = SwapHeap.SwapToHeap(data);
+				
+				pluginManager.addToSharedMemExifTags(null);
 				pluginManager.onImageTaken(frame, data, data.length, true);
 			} else
 			{

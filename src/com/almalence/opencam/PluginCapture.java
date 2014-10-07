@@ -34,8 +34,10 @@ public abstract class PluginCapture extends Plugin
 {
 	protected boolean	takingAlready	= false;
 	protected boolean	inCapture;
-	
-	public boolean getInCapture() {
+	protected int		imagesTaken = 0;
+
+	public boolean getInCapture()
+	{
 		return inCapture;
 	}
 
@@ -50,6 +52,16 @@ public abstract class PluginCapture extends Plugin
 		return false;
 	}
 
+	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (imagesTaken == 0) {
+			if (frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			else
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
 	@Override
 	public void onShutterClick()
 	{
@@ -78,9 +90,10 @@ public abstract class PluginCapture extends Plugin
 			}
 		}
 	}
-	
+
 	@Override
-	public void onExportFinished() {
+	public void onExportFinished()
+	{
 		inCapture = false;
 		takingAlready = false;
 	}
@@ -94,7 +107,7 @@ public abstract class PluginCapture extends Plugin
 
 	@Override
 	public abstract void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
-	
+
 	@Override
 	public abstract void onPreviewFrame(byte[] data);
 

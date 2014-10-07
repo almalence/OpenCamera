@@ -59,8 +59,6 @@ public class BestShotCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int				imageAmount	= 5;
 
-	private int				imagesTaken	= 0;
-
 	//private static String	sImagesAmountPref;
 
 	public BestShotCapturePlugin()
@@ -220,9 +218,6 @@ public class BestShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{
