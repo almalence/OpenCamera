@@ -245,7 +245,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 	}
 
 
-	env->ReleaseIntArrayElements(jresult, nresult, JNI_COMMIT);
+	env->ReleaseIntArrayElements(jresult, nresult, 0);
 
 	return jresult;
 }
