@@ -135,26 +135,26 @@ public class ImageConversion
 		Rect rect = new Rect(0, 0, width, height);
 		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize), width, height, Config.ARGB_8888);
 
-		File saveDir = PluginManager.getInstance().getSaveDir(false);
-		Calendar d = Calendar.getInstance();
-
-		File file = new File(saveDir, String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",
-				d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH),
-				d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE), d.get(Calendar.SECOND)));
-
-		FileOutputStream os;
-		try
-		{
-			os = new FileOutputStream(file);
-			if (os != null)
-			{
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
-			}
-			os.close();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+//		File saveDir = PluginManager.getSaveDir(false);
+//		Calendar d = Calendar.getInstance();
+//
+//		File file = new File(saveDir, String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",
+//				d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH),
+//				d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE), d.get(Calendar.SECOND)));
+//
+//		FileOutputStream os;
+//		try
+//		{
+//			os = new FileOutputStream(file);
+//			if (os != null)
+//			{
+//				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
+//			}
+//			os.close();
+//		} catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
 		
 		return bitmap;
 	}
