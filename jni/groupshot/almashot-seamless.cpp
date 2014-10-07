@@ -483,7 +483,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_gro
 
 	free(outBuffer);
 
-	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, JNI_COMMIT);
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, 0);
 
 	LOGD("Preview - end");
 	return jpixels;
