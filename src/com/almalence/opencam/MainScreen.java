@@ -840,9 +840,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				{
 					if (Integer.valueOf(entryValues[idx].toString()) == currentIdx)
 					{
-						Log.e("entryValues[idx]", entryValues[idx] + "");
-						Log.e("currentIdx", currentIdx + "");
-						Log.e("idx", idx + "");
 						lp.setValueIndex(idx);
 						break;
 					}
