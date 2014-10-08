@@ -239,7 +239,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<String>						MultishotResolutionsIdxesList;
 	public static List<String>						MultishotResolutionsNamesList;
 
-	public static List<Integer>						FastIdxelist;											;
+	public static List<Integer>						FastIdxelist;											
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
@@ -1086,7 +1086,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							&& CameraController.MultishotResolutionsMPixList.get(j) > maxMpx)
 					{
 						maxMpx = CameraController.MultishotResolutionsMPixList.get(j);
-						maxFastIdx = j;
+						maxFastIdx = CameraController.FastIdxelist.get(i);
 					}
 				}
 			}

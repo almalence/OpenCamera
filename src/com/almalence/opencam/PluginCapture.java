@@ -54,6 +54,7 @@ public abstract class PluginCapture extends Plugin
 
 	@Override
 	public void addToSharedMemExifTags(byte[] frameData) {
+		// frameData is jpeg array or null.
 		if (imagesTaken == 0) {
 			if (frameData != null)
 				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);

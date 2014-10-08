@@ -172,7 +172,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		}
 
 		// Note: sensor-dependent formula
-		int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
+		//int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
+		int sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
 
 		// slightly more sharpening at low zooms
 		int sharpen = 2;
