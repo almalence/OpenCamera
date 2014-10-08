@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -131,10 +132,38 @@ public class ImageConversion
 	public static Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
 	{
 		Size mInputFrameSize = new Size(width, height);
+		Size mOutputFrameSize = null;
+		
+		Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay();
+		int mDisplayWidth = display.getHeight();
+		int mDisplayHeight = display.getWidth();
 
-		Rect rect = new Rect(0, 0, width, height);
-		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mInputFrameSize), width, height, Config.ARGB_8888);
+		float widthScale = (float) width / (float) mDisplayWidth;
+		float heightScale = (float) height / (float) mDisplayHeight;
+		float scale = widthScale > heightScale ? widthScale : heightScale;
+		float imageRatio = (float) width / (float) height;
+		float displayRatio = (float) mDisplayWidth / (float) mDisplayHeight;
+		
+		int scaledWidth = 0;
+		int scaledHeight = 0;
+		if (imageRatio > displayRatio)
+		{
+			scaledWidth =  mDisplayWidth;
+			scaledHeight = (int)(mDisplayWidth/displayRatio);			
+		} else
+		{
+			scaledWidth =  (int)(mDisplayHeight * imageRatio);
+			scaledHeight = mDisplayHeight;
+		}
+		
+		mOutputFrameSize = new Size(scaledWidth, scaledHeight);
 
+//		Log.e("ImageConversion", "decodeYUVfromBuffer. width = " + width + " height = " + height);
+//		Log.e("ImageConversion", "decode to width = " + scaledWidth + " height = " + scaledHeight);
+		Rect rect = new Rect(0, 0, width, height);		
+		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mOutputFrameSize), scaledWidth, scaledHeight, Config.ARGB_8888);
+		
 //		File saveDir = PluginManager.getSaveDir(false);
 //		Calendar d = Calendar.getInstance();
 //

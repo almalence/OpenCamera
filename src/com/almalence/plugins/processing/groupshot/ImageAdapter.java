@@ -209,31 +209,30 @@ public class ImageAdapter extends BaseAdapter
 	{
 		int width = MainScreen.getImageWidth();
 		int height = MainScreen.getImageHeight();
+		
+		int scaledWidth = 0;
+		int scaledHeight = 0;
 
 		Size mInputFrameSize = new Size(width, height);
-
-		Rect rect = new Rect(0, 0, width, height);
-		Bitmap bm = Bitmap.createBitmap(
-				AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize), width,
-				height, Config.RGB_565);
-
+				
 		float imageRatio = (float) width / (float) height;
 		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
 
-		Bitmap bitmap = null;
 		if (imageRatio > displayRatio)
 		{
-			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int) (THUMBNAIL_WIDTH / displayRatio), true);
+			scaledWidth = THUMBNAIL_WIDTH;
+			scaledHeight = (int) (THUMBNAIL_WIDTH / displayRatio);
 		} else
 		{
-			bitmap = Bitmap.createScaledBitmap(bm, (int) (THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+			scaledWidth = (int) (THUMBNAIL_HEIGHT * imageRatio);
+			scaledHeight = THUMBNAIL_HEIGHT;
 		}
+		Size mOutputFrameSize = new Size(scaledWidth, scaledHeight);
 
-		if (bitmap != bm)
-		{
-			bm.recycle();
-			bm = null;
-		}
+		Rect rect = new Rect(0, 0, width, height);
+		Bitmap bitmap = Bitmap.createBitmap(
+				AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mOutputFrameSize), scaledWidth,
+				scaledHeight, Config.RGB_565);
 
 		Matrix matrix = new Matrix();
 		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);

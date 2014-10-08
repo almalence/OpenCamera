@@ -263,6 +263,11 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			} else
 			{
 				mFrameCount = mYUVBufferList.size();
+				if(PreviewBmp != null)
+				{
+					PreviewBmp.recycle();
+					PreviewBmp = null;
+				}
 				PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
 			}
 
@@ -582,8 +587,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		if (!isYUV)
 			PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
 		else
+		{
+			if(PreviewBmp != null)
+			{
+				PreviewBmp.recycle();
+				PreviewBmp = null;
+			}
 			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(),
 					MainScreen.getImageHeight());
+		}
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
