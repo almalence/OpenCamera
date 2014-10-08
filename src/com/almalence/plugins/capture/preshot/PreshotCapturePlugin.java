@@ -144,18 +144,13 @@ public class PreshotCapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
-				StopBuffering();
-				inCapture = false;
-
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modePrefPreShot", isChecked ? "1" : "0");
 				editor.commit();
 
-				Message msg = new Message();
-				msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				getPrefs();
 			}
 		});
 

@@ -169,6 +169,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// Mode selector layout
 	private ElementAdapter						modeAdapter;
 	private List<View>							modeViews;
+	private ViewGroup							activeMode					= null;
 	private boolean								modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
@@ -1056,8 +1057,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					R.drawable.gui_almalence_select_mode);
 			Bitmap iconOverlay = BitmapFactory.decodeResource(
 					MainScreen.getMainContext().getResources(),
-					MainScreen.getInstance().getResources()
-							.getIdentifier(CameraController.isUseHALv3()?mode.iconHAL:mode.icon, "drawable", MainScreen.getInstance().getPackageName()));
+					MainScreen
+							.getInstance()
+							.getResources()
+							.getIdentifier(CameraController.isUseHALv3() ? mode.iconHAL : mode.icon, "drawable",
+									MainScreen.getInstance().getPackageName()));
 			iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
 					(int) (iconBase.getWidth() / 1.8), false);
 
@@ -1158,7 +1162,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 
 		manageUnlockControl();
-		
+
 		// Create select mode button with appropriate icon
 		createMergedSelectModeButton();
 	}
@@ -1262,8 +1266,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			store.ShowUnlockControl();
 	}
-
-	private static View	convertView	= null;
 
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
@@ -1414,7 +1416,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
-		Log.d("GUI", "setupViewfinderPreviewSize. Width = " + previewSize.getWidth() + " Height = " + previewSize.getHeight());
+		Log.d("GUI",
+				"setupViewfinderPreviewSize. Width = " + previewSize.getWidth() + " Height = "
+						+ previewSize.getHeight());
 		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
 
 		RelativeLayout ll = (RelativeLayout) MainScreen.getInstance().findViewById(R.id.mainLayout1);
@@ -2154,6 +2158,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		// create and fill drawing slider
 		initSettingsMenu();
+		initModeList();
 
 		Panel.OnPanelListener pListener = new OnPanelListener()
 		{
@@ -4941,6 +4946,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// controls if info about new mode shown or not. to prevent from double info
 	private void initModeList()
 	{
+		if (activeMode != null)
+		{
+			return;
+		}
+
 		modeViews.clear();
 		buttonModeViewAssoc.clear();
 
@@ -4955,11 +4965,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			View mode = inflator.inflate(R.layout.gui_almalence_select_mode_grid_element, null, false);
 			// set some mode icon
-			((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(MainScreen.getInstance().getResources()
-					.getIdentifier(CameraController.isUseHALv3()?tmp.iconHAL:tmp.icon, "drawable", MainScreen.getInstance().getPackageName()));
+			((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(MainScreen
+					.getInstance()
+					.getResources()
+					.getIdentifier(CameraController.isUseHALv3() ? tmp.iconHAL : tmp.icon, "drawable",
+							MainScreen.getInstance().getPackageName()));
 
-			int id = MainScreen.getInstance().getResources()
-					.getIdentifier(CameraController.isUseHALv3()?tmp.modeNameHAL:tmp.modeName, "string", MainScreen.getInstance().getPackageName());
+			int id = MainScreen
+					.getInstance()
+					.getResources()
+					.getIdentifier(CameraController.isUseHALv3() ? tmp.modeNameHAL : tmp.modeName, "string",
+							MainScreen.getInstance().getPackageName());
 			String modename = MainScreen.getInstance().getResources().getString(id);
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
@@ -4993,6 +5009,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				mode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(
 						R.drawable.thumbnail_background_selected_inner);
+
+				activeMode = (ViewGroup) mode;
 			}
 
 			mode_number++;
@@ -5003,6 +5021,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private boolean changeMode(View v)
 	{
+		activeMode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(R.drawable.underlayer);
+		v.findViewById(R.id.modeSelectLayout2).setBackgroundResource(R.drawable.thumbnail_background_selected_inner);
+		activeMode = (ViewGroup) v;
+
 		hideModeList();
 
 		// get mode associated with pressed button
@@ -5051,12 +5073,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				R.drawable.gui_almalence_select_mode);
 		Bitmap iconOverlay = BitmapFactory.decodeResource(
 				MainScreen.getMainContext().getResources(),
-				MainScreen.getInstance().getResources()
-						.getIdentifier(CameraController.isUseHALv3()?mode.iconHAL:mode.icon, "drawable", MainScreen.getInstance().getPackageName()));
+				MainScreen
+						.getInstance()
+						.getResources()
+						.getIdentifier(CameraController.isUseHALv3() ? mode.iconHAL : mode.icon, "drawable",
+								MainScreen.getInstance().getPackageName()));
 		iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
 				(int) (iconBase.getWidth() / 1.8), false);
 
-		
 		bm = mergeImage(iconBase, iconOverlay);
 		bm = Bitmap.createScaledBitmap(bm,
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.mainButtonHeightSelect)),
