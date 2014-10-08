@@ -312,24 +312,24 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			previewWorking = true;
-			if (cdt != null)
-			{
-				cdt.cancel();
-				cdt = null;
-			}
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			CameraController.getInstance().resetExposureCompensation();
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			previewWorking = true;
+//			if (cdt != null)
+//			{
+//				cdt.cancel();
+//				cdt = null;
+//			}
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			CameraController.getInstance().resetExposureCompensation();
+//			return;
+//		}
 
 		if (++frame_num >= total_frames)
 		{

@@ -292,13 +292,13 @@ public class CapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.e("Capture", "StartPreview fail");
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.e("Capture", "StartPreview fail");
+//		}
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 

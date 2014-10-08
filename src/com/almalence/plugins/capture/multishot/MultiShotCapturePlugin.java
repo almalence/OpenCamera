@@ -108,7 +108,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 			try
 			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG,
+				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
 						pauseBetweenShots, null, true);
 			} catch (Exception e)
 			{
@@ -151,20 +151,20 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.i(TAG, "StartPreview fail");
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.i(TAG, "StartPreview fail");
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			inCapture = false;
+//			return;
+//		}
 		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,

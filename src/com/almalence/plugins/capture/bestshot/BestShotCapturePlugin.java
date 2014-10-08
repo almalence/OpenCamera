@@ -219,19 +219,19 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.e("Bestshot", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.e("Bestshot", "StartPreview fail");
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			return;
+//		}
 		
 		if (imagesTaken >= imageAmount)
 		{

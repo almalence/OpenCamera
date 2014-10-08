@@ -573,18 +573,18 @@ public class NightCapturePlugin extends PluginCapture
 					String.valueOf(sensorGain));
 		}
 		
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			takingAlready = false;
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			takingAlready = false;
+//			return;
+//		}
 
 		if (++imagesTaken == total_frames)
 		{
