@@ -40,6 +40,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -2529,21 +2530,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		// is YUV frame requested
 		{
-			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
-					MainScreen.getImageHeight(), false, false, 0);
-			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
-					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
-
-			byte[] frameData = null;
-			if (!resultInHeap)
-			{
-				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
-				SwapHeap.FreeFromHeap(yuvFrame);
-				yuvFrame = 0;
-			}
-			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			new DecodeToYUVFrameTask().execute(paramArrayOfByte);
+//			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
+//					MainScreen.getImageHeight(), false, false, 0);
+//			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
+//					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+//
+//			byte[] frameData = null;
+//			if (!resultInHeap)
+//			{
+//				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+//				SwapHeap.FreeFromHeap(yuvFrame);
+//				yuvFrame = 0;
+//			}
+//			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 
+		try
+		{
+			CameraController.startCameraPreview();
+		} catch (RuntimeException e)
+		{
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+			MainScreen.getInstance().muteShutter(false);
+			CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
+			return;
+		}
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 
 		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
@@ -2573,6 +2585,39 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 		cdt.start();
 	}
+	
+	private class DecodeToYUVFrameTask extends AsyncTask<byte[], Void, Void> {
+		int yuvFrame;
+		int frameLen;
+		byte[] frameData;
+		
+		@Override
+	     protected Void doInBackground(byte[]...params)
+	     {
+	    	byte[] paramArrayOfByte = params[0];
+	    	yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
+					MainScreen.getImageHeight(), false, false, 0);
+			frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
+					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+
+			frameData = null;
+			if (!resultInHeap)
+			{
+				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
+				SwapHeap.FreeFromHeap(yuvFrame);
+				yuvFrame = 0;
+			}			
+			
+//			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			return null;	         
+	     }
+
+		@Override
+	     protected void onPostExecute(Void result)
+	     {
+	    	 pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+	     }
+	 }
 
 	@Override
 	public void onAutoFocus(boolean focused, Camera paramCamera)
