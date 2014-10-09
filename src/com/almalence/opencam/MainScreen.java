@@ -737,6 +737,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			opt1 = "imageSizePrefCommonBack";
 			opt2 = "imageSizePrefCommonFront";
 			currentIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
+			
+			if (currentIdx == -1) {
+				currentIdx = 0;
+			}
+			
 			entries = CameraController.getResolutionsNamesList().toArray(
 					new CharSequence[CameraController.getResolutionsNamesList().size()]);
 			entryValues = CameraController.getResolutionsIdxesList().toArray(
@@ -852,7 +857,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
 							thiz.imageSizeIdxPreference = newValue.toString();
-							CameraController.setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), false);
+							CameraController.setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), true);
 							return true;
 						}
 					});
