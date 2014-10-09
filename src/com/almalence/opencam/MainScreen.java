@@ -2726,7 +2726,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
 
-		if (left == 5)
+		if (left == 5 || left == 3)
 		{
 			// show subscription dialog
 			showSubscriptionDialog();
@@ -2859,6 +2859,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		ImageView img = new ImageView(this);
 		img.setImageResource(R.drawable.store_subscription);
+		img.setAdjustViewBounds(true);
 		ll.addView(img);
 
 		TextView tv = new TextView(this);
