@@ -53,16 +53,14 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
-import com.almalence.util.ImageConversion;
-
-//<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+import com.almalence.util.ImageConversion;
+//<!-- -+-
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationInterface;
@@ -1119,7 +1117,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				break;
 
 		int ri = 0;
-		if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+		if (Math.abs(ratio - 4 / 3.f) < 0.12f)
 			ri = 1;
 		if (Math.abs(ratio - 3 / 2.f) < 0.12f)
 			ri = 2;
@@ -1128,6 +1126,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (Math.abs(ratio - 1) == 0)
 			ri = 4;
 
+		if (mpix < 0.1f) {
+			mpix = 0.1f;
+		}
+		
 		String newName;
 		if (isFast)
 		{
