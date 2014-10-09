@@ -2541,8 +2541,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 //			byte[] frameData = null;
 //			if (!resultInHeap)
 //			{
-//				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
-//				SwapHeap.FreeFromHeap(yuvFrame);
+//				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
 //				yuvFrame = 0;
 //			}
 //			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
@@ -2589,9 +2588,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	private class DecodeToYUVFrameTask extends AsyncTask<byte[], Void, Void> {
-		int yuvFrame;
-		int frameLen;
-		byte[] frameData;
+		int yuvFrame = 0;
+		int frameLen = 0;
+		byte[] frameData = null;
 		
 		@Override
 	     protected Void doInBackground(byte[]...params)
@@ -2605,8 +2604,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			frameData = null;
 			if (!resultInHeap)
 			{
-				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
-				SwapHeap.FreeFromHeap(yuvFrame);
+				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
 				yuvFrame = 0;
 			}			
 			
@@ -2652,11 +2650,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (CameraController.takeYUVFrame)
 			{
 				int frame = 0;
+				int dataLenght = data.length;
 				if (resultInHeap)
+				{
 					frame = SwapHeap.SwapToHeap(data);
+					data = null;
+				}
 				
 				pluginManager.addToSharedMemExifTags(null);
-				pluginManager.onImageTaken(frame, data, data.length, true);
+				pluginManager.onImageTaken(frame, data, dataLenght, true);
 			} else
 			{
 				int jpegData = 0;

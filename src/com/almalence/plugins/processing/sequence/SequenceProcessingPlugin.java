@@ -179,9 +179,11 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 									false));
 				} else
 				{
-					byte[] in = SwapHeap.CopyFromHeap(
-							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
+//					byte[] in = SwapHeap.CopyFromHeap(
+//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
+//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
+					
+					byte[] in = mJpegBufferList.get(i-1);
 
 					BitmapFactory.Options opts = new BitmapFactory.Options();
 					thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),

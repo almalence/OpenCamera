@@ -132,7 +132,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);

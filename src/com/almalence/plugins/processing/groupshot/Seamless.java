@@ -370,18 +370,6 @@ public class Seamless
 		return list;
 	}
 
-	public byte[] getInputFrameBuffer(int index)
-	{
-		if (AlmaShotSeamless.getInputFrame(index) == 0)
-		{
-			return new byte[0];
-		} else
-		{
-			return SwapHeap.CopyFromHeap(AlmaShotSeamless.getInputFrame(index), mInputFrameSize.getWidth()
-					* mInputFrameSize.getHeight() * 3 / 2);
-		}
-	}
-
 	public int getWidthForFaceDetection(int w, int h)
 	{
 		// compute

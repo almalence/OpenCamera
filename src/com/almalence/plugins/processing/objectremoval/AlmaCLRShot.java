@@ -159,7 +159,7 @@ public class AlmaCLRShot
 		void onProcessingComplete(ObjectInfo[] objInfoList);
 	}
 
-	public void addInputFrame(List<byte[]> inputFrame, Size size, boolean isYUV) throws Exception
+	public void addInputFrame(List<Integer> inputFrame, Size size) throws Exception
 	{
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
@@ -197,7 +197,7 @@ public class AlmaCLRShot
 					* ((mInputFrameSize.getWidth() + 1) / 2) * ((mInputFrameSize.getHeight() + 1) / 2);
 			for (int i = 0; i < mNumOfFrame; i++)
 			{
-				PointOfData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
+				PointOfData[i] = inputFrame.get(i);
 				LengthOfData[i] = data_lenght;
 				if (PointOfData[i] == 0)
 				{
@@ -207,10 +207,7 @@ public class AlmaCLRShot
 			}
 
 			int error = -1;
-			if (!isYUV)
-				error = ConvertFromJpeg(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
-			else
-				error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
+			error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
 			if (error < 0)
 			{
 				Log.d(TAG, "Out Of Memory");
@@ -399,6 +396,7 @@ public class AlmaCLRShot
 		matrix.preRotate(angle);
 		Bitmap rotImage = Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
 		b.recycle();
+		b = null;
 		return rotImage;
 	}
 

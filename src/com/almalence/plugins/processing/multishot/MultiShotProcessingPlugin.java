@@ -234,7 +234,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			sequenceProcessingPlugin.onStartProcessing(sessionID);
 		} else if (selectedPlugin == OBJECT_REMOVAL)
 		{
-			ObjectRemovalProcessingPlugin.setYUVBufferList(new ArrayList<byte[]>());
+			ObjectRemovalProcessingPlugin.setYUVBufferList(mYUVBufferList);
 			objectRemovalProcessingPlugin.onStartProcessing(sessionID);
 		}
 	}
@@ -260,7 +260,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				mYUVBufferList.add(i - 1, yuv);
 			} else
 			{
-				byte[] in = SwapHeap.CopyFromHeap(
+				byte[] in = SwapHeap.SwapFromHeap(
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
 
