@@ -424,8 +424,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (released)
 				return false;
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
-			for(int yuv: mYUVBufferList)
-				SwapHeap.FreeFromHeap(yuv);
 			
 			mYUVBufferList.clear();
 
