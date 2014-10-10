@@ -1361,7 +1361,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		CameraController.setCameraImageSizeIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1, true);
+		CameraController.setCameraIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
+		
 		shutterPreference = prefs.getBoolean(sShutterPref, false);
 		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
 		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
