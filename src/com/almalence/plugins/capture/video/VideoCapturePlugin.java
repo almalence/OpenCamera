@@ -1157,25 +1157,19 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void setCameraPictureSize()
 	{
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 		CameraController.getInstance().setJpegQuality(jpegQuality);
 
-		if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+		if(CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 		{
-			cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-			CameraController.getInstance().setCameraParameters(cp);
-		}
-		PreferenceManager
+			CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+			PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext())
 				.edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
+		}
 	}
 
 	private void releaseMediaRecorder()

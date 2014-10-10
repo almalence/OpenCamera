@@ -316,24 +316,26 @@ public class FocusVFPlugin extends PluginViewfinder
 				}
 				setFocusParameters();
 				autoFocus();
-			} else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
-					&& (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& preferenceFocusMode != CameraController.getInstance().getFocusMode())
-			{
-				// allow driver to choose whatever it wants for focusing /
-				// metering
-				// without these two lines Continuous focus is not re-enabled on
-				// HTC One
-				int focusMode = getFocusMode();
-				if ((focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
-						&& mFocusAreaSupported)
-				{
-					CameraController.getInstance().setCameraFocusAreas(null);
-				}
-				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-			} else if (mState == STATE_FAIL)
+			}
+//			else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
+//					&& (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
+//					&& preferenceFocusMode != CameraController.getInstance().getFocusMode())
+//			{
+//				// allow driver to choose whatever it wants for focusing /
+//				// metering
+//				// without these two lines Continuous focus is not re-enabled on
+//				// HTC One
+//				int focusMode = getFocusMode();
+//				if ((focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+//						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
+//						|| focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
+//						&& mFocusAreaSupported)
+//				{
+//					CameraController.getInstance().setCameraFocusAreas(null);
+//				}
+//				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+//			}
+			else if (mState == STATE_FAIL)
 				MainScreen.getGUIManager().lockControls = false;
 		}
 	}
