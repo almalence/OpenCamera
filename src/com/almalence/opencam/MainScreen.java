@@ -857,7 +857,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
 							thiz.imageSizeIdxPreference = newValue.toString();
-							CameraController.setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), true);
+							CameraController.setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), false);
 							return true;
 						}
 					});
