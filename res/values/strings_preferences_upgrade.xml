@@ -23,7 +23,7 @@
 	<string name="subscriptionYesText">Subscribe me!</string>
 	<string name="subscriptionNoText">Not now</string>
 	<string name="Pref_Upgrde_SubscriptionYear_Year">year</string>
-	<string name="storeWhatsnew">  Version 3.25\n\n   New:\n    - HDR video\n    - pause for video\n    - level tool\n    - sweep panorama\n\n   Improved:\n    - panorama capture and processing\n    - DRO, HDR, Night processing\n    - multishots combined in one mode\n    - faster processing\n\n   Bug fixes:\n    - video fixed\n    - stability fixes</string>
+	<string name="storeWhatsnew">  Version 3.25\n\n   New:\n    - HDR video (for Android 4.3 and higher)\n    - pause for video\n    - level tool\n    - sweep panorama\n\n   Improved:\n    - panorama capture and processing\n    - DRO, HDR, Night processing\n    - multishots combined in one mode\n    - faster processing\n\n   Bug fixes:\n    - video fixed\n    - stability fixes</string>
 	<string name="storeFeatures"></string>
 	
 </resources>
