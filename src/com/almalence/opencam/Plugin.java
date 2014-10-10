@@ -310,7 +310,7 @@ public abstract class Plugin
 			{
 				if (mpix > defaultCaptureMpix && mpix <= MPIX_8)
 				{
-					defaultCaptureIdx = ii;
+					defaultCaptureIdx = Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii));
 					defaultCaptureMpix = mpix;
 					defaultCaptureWidth = s.getWidth();
 					defaultCaptureHeight = s.getHeight();
@@ -329,7 +329,7 @@ public abstract class Plugin
 					&& (mpix >= CameraController.MIN_MPIX_SUPPORTED))
 			{
 				prefFound = true;
-				CaptureIdx = ii;
+				CaptureIdx = prefIdx;
 				CaptureMpix = mpix;
 				CaptureWidth = s.getWidth();
 				CaptureHeight = s.getHeight();
@@ -338,7 +338,7 @@ public abstract class Plugin
 
 			if (mpix > CaptureMpix)
 			{
-				CaptureIdx = ii;
+				CaptureIdx = Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii));
 				CaptureMpix = mpix;
 				CaptureWidth = s.getWidth();
 				CaptureHeight = s.getHeight();
