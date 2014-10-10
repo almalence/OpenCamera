@@ -9,4 +9,10 @@
         android:defaultValue="false" 
         android:summary="@string/Pref_ExpoBracketing_Refocus_Summary" 
         android:key="refocusPrefExpoBracketing" />
+    <CheckBoxPreference 
+        android:title="@string/PreferenceExpoSlow_Title" 
+        android:defaultValue="false" 
+        android:summary="@string/PreferenceExpoSlow_Summary" 
+        android:key="PreferenceExpoSlow" />
+    
 </PreferenceScreen>

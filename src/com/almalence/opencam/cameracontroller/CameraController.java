@@ -2806,16 +2806,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (previewMode)
 			{
-				// message to capture image will be emitted a few frames after
-				// setExposure
-				evLatency = 20; // the minimum value at which Galaxy Nexus is
-								// changing exposure in a stable way
-
-				// Note 3 need more time to change exposure.
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+				//if true - evLatency will be doubled. 
+				boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
+				
+				// Note 3 & LG G3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 40;
+					evLatency = 20*(isSlow?2:1);
 				else if (Build.MODEL.contains("LG-D855"))
-					evLatency = 60;
+					evLatency = 30*(isSlow?2:1);
+				else
+				{
+					// message to capture image will be emitted a few frames after
+					// setExposure
+					evLatency = 10*(isSlow?2:1);// the minimum value at which Galaxy Nexus is
+												// changing exposure in a stable way
+				}
 			} else
 			{
 				new CountDownTimer(500, 500)
