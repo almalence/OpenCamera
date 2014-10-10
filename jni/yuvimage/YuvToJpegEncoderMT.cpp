@@ -89,11 +89,11 @@ int initStreamMethods(JNIEnv* env) {
 void YuvToJpegEncoderMT_setJpegCompressStruct(jpeg_compress_struct* cinfo,
         int width, int height, int quality);
 void Yuv420SpToJpegEncoderMT_init(int* strides);
-void Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
+boolean Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
         uint8_t* yuv, int* offsets, int start_row, int end_row, boolean call_pass_startup);
 void Yuv420SpToJpegEncoderMT_configSamplingFactors(jpeg_compress_struct* cinfo);
 void Yuv422IToJpegEncoderMT_init(int* strides);
-void Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
+boolean Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
         uint8_t* yuv, int* offsets, int start_row, int end_row, boolean call_pass_startup);
 void Yuv422IToJpegEncoderMT_configSamplingFactors(jpeg_compress_struct* cinfo);
 
@@ -108,7 +108,7 @@ int getThreadsNum()
 
 int getBuffSize(int h, int w, int tn)
 {
-	return 512*1024;
+	return 1024*1024;
 }
 
 int getOptHeight(int height, int width, int bufsize, int thread_num)
@@ -302,17 +302,23 @@ boolean YuvToJpegEncoderMT_encode(JNIEnv* env, jobject jstream, jbyteArray jstor
 				cinfo_arr[i].restart_in_rows = 0;
 			}
 
-		    if (err_thread_num = setjmp(jerr_arr[i].fJmpBuf)) {
+		   /* if (err_thread_num = setjmp(jerr_arr[i].fJmpBuf)) {
 		        err = true;
 		        continue;
-		    }
+		    }*/
 
 			if (fFormat == ImageFormat_NV21)
-				Yuv420SpToJpegEncoderMT_compress(&cinfo_arr[i],
+				err |= Yuv420SpToJpegEncoderMT_compress(&cinfo_arr[i],
 						(uint8_t*) inYuv, offsets, start_row, end_row, call_pass_startup);
 			else
-				Yuv422IToJpegEncoderMT_compress(&cinfo_arr[i], (uint8_t*) inYuv,
+				err |= Yuv422IToJpegEncoderMT_compress(&cinfo_arr[i], (uint8_t*) inYuv,
 						offsets, start_row, end_row, call_pass_startup);
+
+			if (err)
+			{
+				continue;
+			}
+
 			if (end_row == height)
 			{
 				last_thread_num = i;
@@ -472,7 +478,7 @@ void Yuv420SpToJpegEncoderMT_deinterleave(uint8_t* vuPlanar, uint8_t* uRows,
     }
 }
 
-void Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
+boolean Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
         uint8_t* yuv, int* offsets, int start_row, int end_row, boolean call_pass_startup) {
     //SkDebugf("onFlyCompress");
     JSAMPROW y[16];
@@ -490,6 +496,14 @@ void Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
     uint8_t* uRows = (uint8_t*)malloc(8 * (width >> 1));
     uint8_t* vRows = (uint8_t*)malloc(8 * (width >> 1));
     mem_dest_ptr dest;
+    mt_jpeg_error_mgr *err = (mt_jpeg_error_mgr *)cinfo->err;
+    int err_thread_num = 0;
+
+    if (err_thread_num = setjmp(err->fJmpBuf)) {
+        free(uRows);
+        free(vRows);
+    	return true;
+    }
 
 	if (call_pass_startup)
 		cinfo->master->call_pass_startup = TRUE;
@@ -525,7 +539,7 @@ void Yuv420SpToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
     }
     free(uRows);
     free(vRows);
-
+    return false;
 }
 
 void Yuv420SpToJpegEncoderMT_configSamplingFactors(jpeg_compress_struct* cinfo) {
@@ -563,7 +577,7 @@ void Yuv422IToJpegEncoderMT_deinterleave(uint8_t* yuv, uint8_t* yRows, uint8_t* 
     }
 }
 
-void Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
+boolean Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
         uint8_t* yuv, int* offsets, int start_row, int end_row, boolean call_pass_startup) {
     //SkDebugf("onFlyCompress_422");
     JSAMPROW y[16];
@@ -582,6 +596,15 @@ void Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
 
     uint8_t* yuvOffset = yuv + offsets[0];
     mem_dest_ptr dest;
+    mt_jpeg_error_mgr *err = (mt_jpeg_error_mgr *)cinfo->err;
+    int err_thread_num = 0;
+
+    if (err_thread_num = setjmp(err->fJmpBuf)) {
+        free(yRows);
+        free(uRows);
+        free(vRows);
+    	return true;
+    }
 
 	if (call_pass_startup)
 		cinfo->master->call_pass_startup = TRUE;
@@ -615,6 +638,7 @@ void Yuv422IToJpegEncoderMT_compress(jpeg_compress_struct* cinfo,
     free(yRows);
     free(uRows);
     free(vRows);
+    return false;
 }
 
 void Yuv422IToJpegEncoderMT_configSamplingFactors(jpeg_compress_struct* cinfo) {
