@@ -2424,8 +2424,7 @@ public class VideoCapturePlugin extends PluginCapture
 			if (frameCnt==50)
 			{
 				time = (System.currentTimeMillis() - timeStart);
-				long fps = (1000*frameCnt)/time;
-				Log.e("!!!!!!!", "fps " + fps);
+				long fps = (1000*frameCnt)/time;				
 				if (fps>=MIN_FPS)
 				{
 					hdrAllowed = true;
