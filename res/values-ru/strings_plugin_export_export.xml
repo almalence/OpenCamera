@@ -20,6 +20,6 @@
 	<string name="Pref_Export_SortByData_Title">Использовать датируемые папки</string>
 	<string name="Pref_Export_SortByData_Summary">Сохранять фотографии в папки c текущей датой</string>
 
-	<string name="Pref_Export_Prefix_Title">Префикс</string>
-	<string name="Pref_Export_Postfix_Title">Постфикс</string>
+	<string name="Pref_Export_Prefix_Title">Префикс названия файла</string>
+	<string name="Pref_Export_Postfix_Title">Постфикс названия файла</string>
 </resources>

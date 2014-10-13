@@ -21,7 +21,7 @@
 	<string name="Pref_Export_SortByData_Title">Use dated folders</string>
 	<string name="Pref_Export_SortByData_Summary">Save result images to folder of current date</string>
 	
-	<string name="Pref_Export_Prefix_Title">Prefix</string>
-	<string name="Pref_Export_Postfix_Title">Postfix</string>
+	<string name="Pref_Export_Prefix_Title">Photo name prefix</string>
+	<string name="Pref_Export_Postfix_Title">Photo name postfix</string>
 
 </resources>
