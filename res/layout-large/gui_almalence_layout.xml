@@ -874,6 +874,7 @@
 			android:layout_margin="20dip"
 			android:background="#FAFAFA"
 			android:visibility="gone"
+			android:layout_centerInParent="true"
 			>
             
 	    	<TextView
