@@ -282,6 +282,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sDefaultInfoSetPref;
 	public static String				sSWCheckedPref;
 	public static String				sSavePathPref;
+	public static String				sExportNamePref;
+	public static String				sExportNamePrefixPref;
+	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
 	public static String				sSortByDataPref;
 	
@@ -327,6 +330,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);
 		sSWCheckedPref = getResources().getString(R.string.Preference_SWCheckedValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
+		sExportNamePref = getResources().getString(R.string.Preference_ExportNameValue);
+		sExportNamePrefixPref = getResources().getString(R.string.Preference_SavePathPrefixValue);
+		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
 		
