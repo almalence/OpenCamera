@@ -319,7 +319,6 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				postfixValue = postfix.getText();
 			}
 
-			postfixValue = postfix.getText();
 			if (!postfixValue.equals(""))
 			{
 				postfixValue = "_" + postfixValue;
@@ -330,10 +329,10 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				R.string.Preference_ExportNameValue));
 		if (exportNameList != null)
 		{
-			CharSequence[] names = exportNameList.getEntries();
+			String[] names = MainScreen.getInstance().getResources().getStringArray(R.array.exportNameArray);
 			CharSequence[] newNames = new CharSequence[names.length];
 			int i = 0;
-			for (CharSequence name : names)
+			for (String name : names)
 			{
 				newNames[i] = prefixValue + name + postfixValue;
 				i++;
