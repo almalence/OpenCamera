@@ -4,8 +4,16 @@
    	        android:defaultValue="false" 
    	        android:summary="@string/Pref_Export_SortByData_Summary" 
    	        android:key="@string/Preference_SortByDataValue" />
+       <EditTextPreference 
+   	        android:title="@string/Pref_Export_Prefix_Title" 
+   	        android:defaultValue="" 
+   	        android:key="@string/Preference_SavePathPrefixValue" />
+       <EditTextPreference 
+   	        android:title="@string/Pref_Export_Postfix_Title" 
+   	        android:defaultValue="" 
+   	        android:key="@string/Preference_SavePathPostfixValue" />
    	    <ListPreference 
-   	        android:key="exportName" 
+   	        android:key="@string/Preference_ExportNameValue" 
    	        android:title="@string/Pref_Export_ExportName_Title" 
    	        android:entries="@array/exportNameArray" 
    	        android:defaultValue="2" 

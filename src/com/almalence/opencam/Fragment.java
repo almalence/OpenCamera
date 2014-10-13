@@ -24,6 +24,8 @@ package com.almalence.opencam;
 
 //-+- -->
 
+import com.android.internal.util.CharSequences;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,11 +37,11 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -109,7 +111,40 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				}
 			});
 
-		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(R.string.Preference_SaveToValue));
+		EditTextPreference prefix = (EditTextPreference) this.findPreference(getResources().getString(
+				R.string.Preference_SavePathPrefixValue));
+		EditTextPreference postfix = (EditTextPreference) this.findPreference(getResources().getString(
+				R.string.Preference_SavePathPostfixValue));
+		initExportName(null, null);
+
+		if (prefix != null)
+		{
+			prefix.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					initExportName(preference, newValue);
+					return true;
+				}
+			});
+		}
+
+		if (postfix != null)
+		{
+			postfix.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					initExportName(preference, newValue);
+					return true;
+				}
+			});
+		}
+
+		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(
+				R.string.Preference_SaveToValue));
 		if (saveToPreference != null)
 			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
@@ -247,6 +282,64 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		} else
 		{
 			updatePrefSummary(p);
+		}
+	}
+
+	private void initExportName(Preference preference, Object newValue)
+	{
+		EditTextPreference prefix = (EditTextPreference) this.findPreference(getResources().getString(
+				R.string.Preference_SavePathPrefixValue));
+		String prefixValue = "";
+		if (prefix != null)
+		{
+			if (preference != null && prefix.getKey().equals(preference.getKey()))
+			{
+				prefixValue = newValue.toString();
+			} else
+			{
+				prefixValue = prefix.getText();
+			}
+
+			if (!prefixValue.equals(""))
+			{
+				prefixValue = prefixValue + "_";
+			}
+		}
+
+		EditTextPreference postfix = (EditTextPreference) this.findPreference(getResources().getString(
+				R.string.Preference_SavePathPostfixValue));
+		String postfixValue = "";
+		if (postfix != null)
+		{
+			if (preference != null && postfix.getKey().equals(preference.getKey()))
+			{
+				postfixValue = newValue.toString();
+			} else
+			{
+				postfixValue = postfix.getText();
+			}
+
+			postfixValue = postfix.getText();
+			if (!postfixValue.equals(""))
+			{
+				postfixValue = "_" + postfixValue;
+			}
+		}
+
+		ListPreference exportNameList = (ListPreference) this.findPreference(getResources().getString(
+				R.string.Preference_ExportNameValue));
+		if (exportNameList != null)
+		{
+			CharSequence[] names = exportNameList.getEntries();
+			CharSequence[] newNames = new CharSequence[names.length];
+			int i = 0;
+			for (CharSequence name : names)
+			{
+				newNames[i] = prefixValue + name + postfixValue;
+				i++;
+			}
+			exportNameList.setEntries(newNames);
+			exportNameList.setSummary(exportNameList.getEntries()[Integer.parseInt(exportNameList.getValue()) - 1]);
 		}
 	}
 

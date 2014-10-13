@@ -2207,7 +2207,7 @@ public class PluginManager implements PluginManagerInterface
 	private void getPrefs()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
+		saveOption = Integer.parseInt(prefs.getString(MainScreen.sExportNamePref, "2"));
 		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 	}
 
@@ -2242,31 +2242,9 @@ public class PluginManager implements PluginManagerInterface
 				if (imagesAmount != 1)
 					idx += "_" + i;
 
-				// define file name format. from settings!
-				String fileFormat = String.format(Locale.US, "%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR),
-						d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY),
-						d.get(Calendar.MINUTE), d.get(Calendar.SECOND));
 				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
-				switch (saveOption)
-				{
-				case 1:// YEARMMDD_HHMMSS
-					break;
-
-				case 2:// YEARMMDD_HHMMSS_MODE
-					fileFormat += (modeName.isEmpty() ? "" : "_") + modeName;
-					break;
-
-				case 3:// IMG_YEARMMDD_HHMMSS
-					fileFormat = "IMG_" + fileFormat;
-					break;
-
-				case 4:// IMG_YEARMMDD_HHMMSS_MODE
-					fileFormat = "IMG_" + fileFormat + (modeName.isEmpty() ? "" : "_") + modeName;
-					break;
-				default:
-					break;
-				}
-
+				// define file name format. from settings!
+				String fileFormat = getExportFileName(modeName);
 				fileFormat += idx + ".jpg";
 
 				File file;
@@ -2813,10 +2791,18 @@ public class PluginManager implements PluginManagerInterface
 		}
 	}
 
-	public String getFileFormat()
-	{
+	public String getExportFileName(String modeName) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
+		saveOption = Integer.parseInt(prefs.getString(MainScreen.sExportNamePref, "2"));
+		
+		String prefix = prefs.getString(MainScreen.sExportNamePrefixPref, "");
+		if (!prefix.equals(""))
+			prefix = prefix + "_";
+		
+		String postfix = prefs.getString(MainScreen.sExportNamePostfixPref, "");
+		if (!postfix.equals(""))
+			postfix = "_" + postfix;
+		
 		Calendar d = Calendar.getInstance();
 		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
 				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
@@ -2824,23 +2810,30 @@ public class PluginManager implements PluginManagerInterface
 		switch (saveOption)
 		{
 		case 1:// YEARMMDD_HHMMSS
+			fileFormat = prefix + fileFormat + postfix;
 			break;
 
 		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat += "_" + getActiveMode().modeSaveName;
+			fileFormat = prefix + fileFormat + "_" + modeName + postfix;
 			break;
 
 		case 3:// IMG_YEARMMDD_HHMMSS
-			fileFormat = "IMG_" + fileFormat;
+			fileFormat = prefix + "IMG_" + fileFormat + postfix;
 			break;
 
 		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = "IMG_" + fileFormat + "_" + getActiveMode().modeSaveName;
+			fileFormat = prefix + "IMG_" + fileFormat + "_" + modeName + postfix;
 			break;
 		default:
 			break;
 		}
+		
 		return fileFormat;
+	}
+	
+	public String getFileFormat()
+	{
+		return getExportFileName(getActiveMode().modeSaveName);
 	}
 
 	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,

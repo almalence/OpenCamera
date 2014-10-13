@@ -184,35 +184,10 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			final int input_height)
 	{
 		File saveDir = PluginManager.getSaveDir(false);
-
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-		final Calendar d = Calendar.getInstance();
-		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
-				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
-				d.get(Calendar.SECOND));
-
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
 		final String modeName = PluginManager.getInstance().getActiveMode().modeSaveName;
-
-		switch (saveOption)
-		{
-		case 1:// YEARMMDD_HHMMSS
-			break;
-
-		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat += "_" + modeName;
-			break;
-
-		case 3:// IMG_YEARMMDD_HHMMSS
-			fileFormat = "IMG_" + fileFormat;
-			break;
-
-		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = "IMG_" + fileFormat + "_" + modeName;
-			break;
-		default:
-			break;
-		}
+		String fileFormat = PluginManager.getInstance().getExportFileName(modeName);
 
 		final Rect crop = new Rect(0, 0, input_width, input_height);
 		for (int i = 0; i < count; ++i)
