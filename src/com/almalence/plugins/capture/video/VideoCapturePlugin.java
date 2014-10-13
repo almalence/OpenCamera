@@ -2409,7 +2409,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private int frameCnt = 0;
 	private long timeStart = 0;
 	private long time = 0;
-	private final int MIN_FPS = 15;
+	private final int MIN_FPS = 12;
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
@@ -2424,7 +2424,8 @@ public class VideoCapturePlugin extends PluginCapture
 			if (frameCnt==50)
 			{
 				time = (System.currentTimeMillis() - timeStart);
-				long fps = (1000*frameCnt)/time;				
+				long fps = (1000*frameCnt)/time;
+//				Log.e("!!!!!!!", "fps " + fps);
 				if (fps>=MIN_FPS)
 				{
 					hdrAllowed = true;
