@@ -499,12 +499,12 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	jbyteArray jlayout
 )
 {
-	LOGD("RealView - start");
+	LOGE("RealView - start");
 
 	Uint8 *layout;
 	int *crop;
 
-	LOGD("alloc %d byte yvu memory", width * height * 3 / 2);
+	LOGE("alloc %d byte yvu memory", width * height * 3 / 2);
 
 	Uint8 *outBuffer = (Uint8 *)malloc(width * height * 3 / 2);
 
@@ -519,14 +519,14 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 			0,					// full processing, not a quick method
 			&crop[0], &crop[1], &crop[2], &crop[3]) == ALMA_ALL_OK)
 	{
-		LOGD("RealView - ok");
+		LOGE("RealView - ok");
 	}
 	else
 	{
-		LOGD("RealView - error");
+		LOGE("RealView - error");
 	}
 
-	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
+	env->ReleaseIntArrayElements(jcrop, (jint*)crop, 0);
 	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);
 
 	LOGD("RealView - end");
