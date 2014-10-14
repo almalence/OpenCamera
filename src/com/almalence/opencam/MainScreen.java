@@ -287,6 +287,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
 	public static String				sSortByDataPref;
+	public static String				sEnableExifOrientationTagPref;
+	public static String				sAdditionalRotationPref;
 	
 	public static String				sExpoPreviewModePref;
 
@@ -335,6 +337,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
+		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
+		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
 		
 		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 
