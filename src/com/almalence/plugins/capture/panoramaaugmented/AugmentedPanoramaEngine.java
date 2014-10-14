@@ -35,6 +35,7 @@ import com.almalence.YuvImage;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;

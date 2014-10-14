@@ -61,11 +61,12 @@ import android.view.animation.Animation;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
-//-+- -->
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 /**
  * Collection of utility functions used in this package.

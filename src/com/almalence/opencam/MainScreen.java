@@ -102,20 +102,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
+import com.almalence.plugins.capture.video.VideoCapturePlugin;
+import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.Util;
+
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
-import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppRater;
-import com.almalence.util.AppWidgetNotifier;
-import com.almalence.util.Util;
-//<!-- -+-
-
 //-+- -->
 /* <!-- +++
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.HALv3;
  import com.almalence.opencam_plus.ui.AlmalenceGUI;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;

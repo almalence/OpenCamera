@@ -92,6 +92,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.googsharing.Thumbnail;
+
+import com.almalence.ui.Panel;
+import com.almalence.ui.Panel.OnPanelListener;
+import com.almalence.ui.RotateImageView;
+import com.almalence.util.AppEditorNotifier;
+import com.almalence.util.Util;
+//<!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
@@ -102,12 +109,6 @@ import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.ui.Panel;
-import com.almalence.ui.Panel.OnPanelListener;
-import com.almalence.ui.RotateImageView;
-import com.almalence.util.AppEditorNotifier;
-import com.almalence.util.Util;
-//<!-- -+-
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.CameraController;
@@ -120,6 +121,7 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.PluginType;
  import com.almalence.opencam_plus.Preferences;
  import com.almalence.opencam_plus.R;
+
  +++ --> */
 
 /***
