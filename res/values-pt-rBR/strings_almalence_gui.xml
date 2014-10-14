@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nNota: alguns modos têm configurações individuais para o tamanho das imagens</string>
     <string name="Pref_Common_Shutter_Title">Operação silenciosa</string>
     <string name="Pref_Common_Shutter_Summary">Não garantido que funcione em todos os modelos</string>
-    <string name="Pref_Common_HWShutter_Title">Use o obturador do hardware para iniciar o aplicativo</string>
+    <string name="Pref_Common_HWShutter_Summary">Use o obturador do hardware para iniciar o aplicativo</string>
     <string name="Pref_Common_ShotOnTap_Title">Toque para disparar</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focar e disparar no toque</string>
     <string name="Pref_Common_UseHALv3_Title">Usar interface do Сamera2</string>

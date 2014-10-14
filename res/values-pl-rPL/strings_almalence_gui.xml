@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nUwaga: niektóre tryby mają odrębne ustawienia rozmiaru zdjęcia</string>
     <string name="Pref_Common_Shutter_Title">Cicha praca</string>
     <string name="Pref_Common_Shutter_Summary">Może nie działać na niektórych urządzeniach</string>
-    <string name="Pref_Common_HWShutter_Title">Użyj wbudowanego spustu migawki, aby uruchomić aplikację</string>
+    <string name="Pref_Common_HWShutter_Summary">Użyj wbudowanego spustu migawki, aby uruchomić aplikację</string>
     <string name="Pref_Common_ShotOnTap_Title">Dotknij, aby zrobić zdjęcie</string>
     <string name="Pref_Common_ShotOnTap_Summary">Dotknij, aby ustawić ostrość i zrobić zdjęcie</string>
     <string name="Pref_Common_UseHALv3_Title">Użyj interfejsu Сamera2</string>

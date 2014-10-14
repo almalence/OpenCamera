@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\n注意：個々に画像サイズの設定があるモードもあります</string>
     <string name="Pref_Common_Shutter_Title">消音</string>
     <string name="Pref_Common_Shutter_Summary">全てのモデルで作動する保証はありません</string>
-    <string name="Pref_Common_HWShutter_Title">HWシャッターを使ってアプリケーションを開始</string>
+    <string name="Pref_Common_HWShutter_Summary">HWシャッターを使ってアプリケーションを開始</string>
     <string name="Pref_Common_ShotOnTap_Title">タッチして撮影</string>
     <string name="Pref_Common_ShotOnTap_Summary">タップしてフォーカス、撮影</string>
     <string name="Pref_Common_UseHALv3_Title">カメラ2のインターフェースを使用</string>

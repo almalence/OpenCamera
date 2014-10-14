@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\n请注意: 一些模式有单个的图像尺寸设置</string>
     <string name="Pref_Common_Shutter_Title">静音操作</string>
     <string name="Pref_Common_Shutter_Summary">不保证在所有模型上都可使用</string>
-    <string name="Pref_Common_HWShutter_Title">使用硬件快门可开启应用</string>
+    <string name="Pref_Common_HWShutter_Summary">使用硬件快门可开启应用</string>
     <string name="Pref_Common_ShotOnTap_Title">触按可拍摄</string>
     <string name="Pref_Common_ShotOnTap_Summary">聚焦后触按拍摄</string>
     <string name="Pref_Common_UseHALv3_Title">使用相机2界面</string>
