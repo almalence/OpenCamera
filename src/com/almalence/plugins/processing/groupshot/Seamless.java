@@ -101,7 +101,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+//		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -124,12 +124,12 @@ public class Seamless
 			}
 		}
 
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		int error = 0;
 		error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame,
 				size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation,
 				cameraMirrored, rotationDegree);
-		Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
 		if (error < 0)
 		{
 			Log.d(TAG, "Out Of Memory");
@@ -151,7 +151,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+//		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -176,12 +176,12 @@ public class Seamless
 			}
 		}
 
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		int error = 0;
 		error = AlmaShotSeamless
 				.DetectFacesFromYUVs(PointOfYUVData, LengthOfYUVData, mNumOfFrame, size.getWidth(), size.getHeight(),
 						fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
-		Log.d(TAG, "DetectFracesFromYUVs() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "DetectFracesFromYUVs() elapsed time = " + (System.currentTimeMillis() - start));
 		if (error < 0)
 		{
 			Log.d(TAG, "Out Of Memory");
@@ -245,6 +245,8 @@ public class Seamless
 	{
 		if (ARGBBuffer == null || mIsBaseFrameChanged)
 		{
+			ARGBBuffer = null;
+			System.gc();
 			makePreview(mRectList.get(mBasebaseFrameIndex));
 			mIsBaseFrameChanged = false;
 		}

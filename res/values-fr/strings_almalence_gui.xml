@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nRemarque : certains modes comportent un paramètre spécial de configuration de la taille de l\'image</string>
     <string name="Pref_Common_Shutter_Title">Fonctionnement silencieux</string>
     <string name="Pref_Common_Shutter_Summary">Nous ne garantissons toutefois pas le fonctionnement sur tous les modèles</string>
-    <string name="Pref_Common_HWShutter_Title">Utiliser l\'obturateur de l\'appareil pour démarrer l\'application</string>
+    <string name="Pref_Common_HWShutter_Summary">Utiliser l\'obturateur de l\'appareil pour démarrer l\'application</string>
     <string name="Pref_Common_ShotOnTap_Title">Appuyer pour prendre la photo</string>
     <string name="Pref_Common_ShotOnTap_Summary">Effectuez la mise au point et appuyez pour prendre une photo</string>
     <string name="Pref_Common_UseHALv3_Title">Utiliser l\'interface Сamera2</string>

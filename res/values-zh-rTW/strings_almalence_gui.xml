@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\n請注意: 一些模式有單個的圖像尺寸設定</string>
     <string name="Pref_Common_Shutter_Title">靜音操作</string>
     <string name="Pref_Common_Shutter_Summary">不保證在所有模型上都可使用</string>
-    <string name="Pref_Common_HWShutter_Title">使用硬體快門啟動應用程式</string>
+    <string name="Pref_Common_HWShutter_Summary">使用硬體快門啟動應用程式</string>
     <string name="Pref_Common_ShotOnTap_Title">觸按拍攝</string>
     <string name="Pref_Common_ShotOnTap_Summary">輕點對焦和拍攝</string>
     <string name="Pref_Common_UseHALv3_Title">使用Сamera2介面</string>

@@ -61,11 +61,12 @@ import android.view.animation.Animation;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
-//-+- -->
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 /**
  * Collection of utility functions used in this package.
@@ -513,7 +514,7 @@ public final class Util
 
 			if (hasLatLon)
 			{
-				Log.d(TAG, "Set gps location");
+				//Log.d(TAG, "Set gps location");
 				parameters.setGpsLatitude(lat);
 				parameters.setGpsLongitude(lon);
 				parameters.setGpsProcessingMethod(loc.getProvider().toUpperCase());

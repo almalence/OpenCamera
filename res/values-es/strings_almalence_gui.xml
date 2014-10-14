@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nNota: algunos modos tienen ajustes individuales para el tamaño de la imagen</string>
     <string name="Pref_Common_Shutter_Title">Operación silenciosa</string>
     <string name="Pref_Common_Shutter_Summary">No se garantiza que funcione en todos los modelos</string>
-    <string name="Pref_Common_HWShutter_Title">Utilizar el botón del hardware para iniciar la aplicación.</string>
+    <string name="Pref_Common_HWShutter_Summary">Utilizar el botón del hardware para iniciar la aplicación.</string>
     <string name="Pref_Common_ShotOnTap_Title">Tocar para disparar</string>
     <string name="Pref_Common_ShotOnTap_Summary">Enfoca y dispara al tocar</string>
     <string name="Pref_Common_UseHALv3_Title">Utilizar la interfaz de Camera2</string>

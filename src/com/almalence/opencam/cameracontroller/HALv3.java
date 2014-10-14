@@ -17,11 +17,10 @@
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
+ package com.almalence.opencam_plus.cameracontroller;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
-
 //-+- -->
 
 import java.io.File;

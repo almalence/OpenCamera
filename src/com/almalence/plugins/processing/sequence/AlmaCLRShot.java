@@ -155,7 +155,7 @@ public class AlmaCLRShot
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 
-		Log.d(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		//Log.d(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -261,7 +261,7 @@ public class AlmaCLRShot
 				mPreviewSize.getHeight());
 		ARGBBuffer = null;
 
-		Log.d(TAG, "getPreviewBitmap() -- end");
+		//Log.d(TAG, "getPreviewBitmap() -- end");
 		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 

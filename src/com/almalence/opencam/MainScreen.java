@@ -102,20 +102,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
+import com.almalence.plugins.capture.video.VideoCapturePlugin;
+import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.Util;
+
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
-import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppRater;
-import com.almalence.util.AppWidgetNotifier;
-import com.almalence.util.Util;
-//<!-- -+-
-
 //-+- -->
 /* <!-- +++
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.HALv3;
  import com.almalence.opencam_plus.ui.AlmalenceGUI;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
@@ -1307,8 +1309,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			String msg;
 			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			Log.d("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			Log.d("MultishotCapturePlugin", msg);
+//			Log.d("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+//			Log.d("MultishotCapturePlugin", msg);
 		}
 
 		// find index selected in preferences
@@ -2011,7 +2013,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewWidth(int iWidth)
 	{
-		Log.d("MainScreen", "setPreviewWidth = " + iWidth);
 		thiz.previewWidth = iWidth;
 	}
 
@@ -2022,7 +2023,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewHeight(int iHeight)
 	{
-		Log.d("MainScreen", "setPreviewHeight = " + iHeight);
 		thiz.previewHeight = iHeight;
 	}
 
@@ -2260,7 +2260,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_SALE1);
 						additionalSkuList.add(SKU_SALE2);
 
-						Log.v("Main billing", "Setup successful. Querying inventory.");
+						//Log.v("Main billing", "Setup successful. Querying inventory.");
 						mHelper.queryInventoryAsync(true, additionalSkuList, mGotInventoryListener);
 					} catch (Exception e)
 					{

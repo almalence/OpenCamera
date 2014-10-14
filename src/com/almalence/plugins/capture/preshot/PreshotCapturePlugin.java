@@ -520,13 +520,11 @@ public class PreshotCapturePlugin extends PluginCapture
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
 					&& !MainScreen.getAutoFocusLock())
 			{
-				Log.v("", "1");
 				counter = 0;
 				if (!CameraController.autoFocus())
 					CaptureFrame();
 			} else
 			{
-				Log.v("", "2");
 				CaptureFrame();
 			}
 		}

@@ -609,7 +609,6 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void autoFocus()
 	{
-		Log.v(TAG, "Start autofocus.");
 		if (CameraController.autoFocus())
 		{
 			mState = STATE_FOCUSING;

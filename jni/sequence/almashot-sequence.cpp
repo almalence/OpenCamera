@@ -390,7 +390,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 
 	free(layout);
 
-	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_ABORT);
+	env->ReleaseIntArrayElements(jcrop, (jint*)crop, 0);
 	env->ReleaseIntArrayElements(jsports_order, (jint*)sports_mode_order, JNI_ABORT);
 
 	LOGD("MovObjProcess - end");

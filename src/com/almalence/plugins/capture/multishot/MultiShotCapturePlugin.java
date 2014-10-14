@@ -18,32 +18,26 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.multishot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
-import android2.hardware.camera2.CaptureResult;
 import android.os.CountDownTimer;
-import android.os.Debug;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android2.hardware.camera2.CaptureResult;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
-
 //-+- -->
+
 /***
  * Implements group shot capture plugin - captures predefined number of images
  ***/

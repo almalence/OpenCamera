@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nHinweis: Einige Kameramodi haben eine eigene Einstellung für die Bildgröße.</string>
     <string name="Pref_Common_Shutter_Title">Geräuschlose Bedienung</string>
     <string name="Pref_Common_Shutter_Summary">Funktioniert nicht bei allen Geräten</string>
-    <string name="Pref_Common_HWShutter_Title">App über Auslösertaste am Gerät starten</string>
+    <string name="Pref_Common_HWShutter_Summary">App über Auslösertaste am Gerät starten</string>
     <string name="Pref_Common_ShotOnTap_Title">Zum Aufnehmen berühren</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zum Fokussieren und Aufnehmen eines Bildes brauchen Sie nur den Bildschirm berühren</string>
     <string name="Pref_Common_UseHALv3_Title">Сamera2-Schnittstelle nutzen</string>

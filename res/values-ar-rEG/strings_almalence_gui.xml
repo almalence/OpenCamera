@@ -11,7 +11,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nملاحظة: تحتوي بعض الأوضاع على إعداد واحد لحجم الصورة</string>
     <string name="Pref_Common_Shutter_Title">تشغيل صامت</string>
     <string name="Pref_Common_Shutter_Summary">ليس مضمونًا أن يعمل على كل الطرز</string>
-    <string name="Pref_Common_HWShutter_Title">استخدام المصراع الفعلي لبدء تشغيل التطبيق</string>
+    <string name="Pref_Common_HWShutter_Summary">استخدام المصراع الفعلي لبدء تشغيل التطبيق</string>
     <string name="Pref_Common_ShotOnTap_Title">المس للتصوير</string>
     <string name="Pref_Common_ShotOnTap_Summary">حدد البؤرة والتقط الصورة بالضغط</string>
     <string name="Pref_Common_UseHALv3_Title">استخدم واجهة الكاميرا 2</string>

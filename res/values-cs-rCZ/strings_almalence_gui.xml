@@ -12,7 +12,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nPoznámka: některé režimy mají vlastní nastavení pro velikost fotek</string>
     <string name="Pref_Common_Shutter_Title">Tichý režim</string>
     <string name="Pref_Common_Shutter_Summary">Není zaručena funkčnost na všech typech zařízení</string>
-    <string name="Pref_Common_HWShutter_Title">Spustit spouští fotoaparátu</string>
+    <string name="Pref_Common_HWShutter_Summary">Spustit spouští fotoaparátu</string>
     <string name="Pref_Common_ShotOnTap_Title">Kliknutím vyfotit</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zaostřit a vyfotit kliknutím na displej</string>
     <string name="Pref_Common_UseHALv3_Title">Použít Сamera2 rozhraní</string>

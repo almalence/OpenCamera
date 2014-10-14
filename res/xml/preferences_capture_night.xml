@@ -9,7 +9,7 @@
             android:summary="@string/Pref_NightCapture_NightVision_Summary"
             android:title="@string/Pref_NightCapture_NightVision_Title" />
 
-        <!-- -+- -->
+        <!-- -+-  -->
         <PreferenceScreen
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:fragment="com.almalence.opencam.Fragment"
@@ -18,9 +18,8 @@
                 android:name="type"
                 android:value="capture_night_more" />
         </PreferenceScreen>
-        <!-- -+- -->
-        <!--
-        +++
+        <!--  -+- -->
+        <!-- +++
 		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"
     	    android:fragment="com.almalence.opencam_plus.Fragment" 
@@ -29,8 +28,7 @@
 			     android:name="type" 
 			     android:value="capture_night_more" />
     	</PreferenceScreen>
-		+++
-        -->
+		+++ -->
     </PreferenceCategory>
 
 </PreferenceScreen>

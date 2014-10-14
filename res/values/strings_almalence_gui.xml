@@ -12,7 +12,8 @@
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
     <string name="Pref_Common_Shutter_Title">Silent operation</string>
     <string name="Pref_Common_Shutter_Summary">Not guaranteed to work on all models</string>
-    <string name="Pref_Common_HWShutter_Title">Use HW shutter to start application</string>
+    <string name="Pref_Common_HWShutter_Title">HW shutter</string>
+    <string name="Pref_Common_HWShutter_Summary">Use HW shutter to start application</string>
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_UseHALv3_Title">Use Сamera2 interface</string>

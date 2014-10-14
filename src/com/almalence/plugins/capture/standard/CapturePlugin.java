@@ -87,7 +87,7 @@ public class CapturePlugin extends PluginCapture
 		int minValue = CameraController.getInstance().getMinExposureCompensation();
 		if (ev >= minValue)
 		{
-			Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
+			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.getInstance().setCameraExposureCompensation(ev);
 		}
 	}
@@ -114,7 +114,7 @@ public class CapturePlugin extends PluginCapture
 				if (isDro)
 				{
 					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
-					Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
+					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
@@ -123,7 +123,7 @@ public class CapturePlugin extends PluginCapture
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
 
-					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
+//					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
 
 				// UpdateEv(isDro, isDro? singleModeEV :
@@ -152,7 +152,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
-		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
+//		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
 
 		if (ModePreference.compareTo("0") == 0)
 		{
@@ -181,7 +181,7 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		Log.d("Capture", "onPause");
+//		Log.d("Capture", "onPause");
 		if (ModePreference.contains("0"))
 		{
 			UpdateEv(false, singleModeEV);
@@ -237,10 +237,10 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-		Log.d("CapturePlugin", "takePicture");
+//		Log.d("CapturePlugin", "takePicture");
 		if (!inCapture)
 		{
-			Log.d("CapturePlugin", "send next frame message");
+//			Log.d("CapturePlugin", "send next frame message");
 			inCapture = true;
 			takingAlready = true;
 
@@ -254,7 +254,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Log.d("CapturePlugin", "next frame message received");
+//			Log.d("CapturePlugin", "next frame message received");
 			try
 			{
 				if (ModePreference.compareTo("0") == 0)
@@ -319,7 +319,7 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		Log.d("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
+//		Log.d("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
 		if (takingAlready)
 			takePicture();
 	}
