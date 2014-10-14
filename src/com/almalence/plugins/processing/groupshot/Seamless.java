@@ -245,6 +245,8 @@ public class Seamless
 	{
 		if (ARGBBuffer == null || mIsBaseFrameChanged)
 		{
+			ARGBBuffer = null;
+			System.gc();
 			makePreview(mRectList.get(mBasebaseFrameIndex));
 			mIsBaseFrameChanged = false;
 		}
