@@ -2007,7 +2007,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewWidth(int iWidth)
 	{
-		Log.d("MainScreen", "setPreviewWidth = " + iWidth);
 		thiz.previewWidth = iWidth;
 	}
 
@@ -2018,7 +2017,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static void setPreviewHeight(int iHeight)
 	{
-		Log.d("MainScreen", "setPreviewHeight = " + iHeight);
 		thiz.previewHeight = iHeight;
 	}
 
