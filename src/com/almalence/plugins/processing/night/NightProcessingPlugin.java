@@ -135,7 +135,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		AlmaShotNight.NightAddYUVFrames(frames, imagesAmount, mImageWidth, mImageHeight);
 
-		Log.d("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
+//		Log.d("Night", "PreviewTask.doInBackground AlmaShotNight.Process start");
 
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem(
 				"zoom" + sessionID));

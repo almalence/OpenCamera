@@ -143,7 +143,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			MainScreen.getGUIManager().lockControls = true;
 		}
 
-		Log.d("HDR", "start processing");
+//		Log.d("HDR", "start processing");
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -152,7 +152,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
 		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
-		Log.d("PreShot", "onStartProcessing layout orientation: " + orientation);
+//		Log.d("PreShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
@@ -163,16 +163,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 
 		AlmaShotHDR.Initialize();
-		Log.d("HDR", "almashot lib initialize success");
+//		Log.d("HDR", "almashot lib initialize success");
 
 		// hdr processing
 		HDRPreview();
-		Log.d("HDR", "HDRPreview success");
+//		Log.d("HDR", "HDRPreview success");
 
 		if (!AutoAdjustments)
 		{
 			HDRProcessing();
-			Log.d("HDR", "HDRProcessing success");
+//			Log.d("HDR", "HDRProcessing success");
 
 //			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 //			{
@@ -281,11 +281,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			AlmaShotHDR.HDRConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
 					mImageHeight);
-			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
 		} else
 		{
 			AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 		}
 
 		int nf = HDRProcessingPlugin.getNoise();
@@ -597,8 +597,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			mDisplayOrientationCurrent = orientation;
 			if (postProcessingRun)
 			{
-				Log.d("PreSho Post processing", "orientation = " + orientation + " mLayoutOrientationCurrent =  "
-						+ mLayoutOrientationCurrent);
 				this.buttonSave.setRotation(mLayoutOrientationCurrent);
 				this.buttonSave.invalidate();
 				this.buttonTrash.setRotation(mLayoutOrientationCurrent);
@@ -1205,7 +1203,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		if (this.previewTaskCurrent == null)
 		{
 			HDRProcessing();
-			Log.d("HDR", "HDRProcessing success");
+//			Log.d("HDR", "HDRProcessing success");
 
 			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 			{

@@ -325,7 +325,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 	public void closeZoomPanel()
 	{
-		Log.d("ZoomPlugin", "closeZoomPanel");
+		//Log.d("ZoomPlugin", "closeZoomPanel");
 		panelClosing = true;
 
 		this.zoomPanel.clearAnimation();
@@ -343,7 +343,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 			@Override
 			public void onAnimationEnd(Animation animation)
 			{
-				Log.d("ZoomPlugin", "onAnimationEnd");
+//				Log.d("ZoomPlugin", "onAnimationEnd");
 				if (zoomStopping)
 				{
 					List<View> specialView = new ArrayList<View>();

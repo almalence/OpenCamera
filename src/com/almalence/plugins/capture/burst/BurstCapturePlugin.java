@@ -97,7 +97,7 @@ public class BurstCapturePlugin extends PluginCapture
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
 		} catch (Exception e)
 		{
-			Log.v("Burst capture", "Cought exception " + e.getMessage());
+			Log.e("Burst capture", "Cought exception " + e.getMessage());
 		}
 
 		switch (imageAmount)

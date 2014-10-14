@@ -307,7 +307,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
+//		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
@@ -573,14 +573,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		if (inCapture) // disregard autofocus success (paramBoolean)
 		{
-			Log.d("HDR", "onAutoFocus inCapture == true");
+//			Log.d("HDR", "onAutoFocus inCapture == true");
 			// on motorola xt5 cm7 this function is called twice!
 			// on motorola droid's onAutoFocus seem to be called at every
 			// startPreview,
 			// causing additional frame(s) taken after sequence is finished
 			if (aboutToTakePicture)
 			{
-				Log.d("HDR", "onAutoFocus aboutToTakePicture == true");
+//				Log.d("HDR", "onAutoFocus aboutToTakePicture == true");
 				CaptureFrame();
 				takingAlready = true;
 			}

@@ -513,7 +513,7 @@ public final class Util
 
 			if (hasLatLon)
 			{
-				Log.d(TAG, "Set gps location");
+				//Log.d(TAG, "Set gps location");
 				parameters.setGpsLatitude(lat);
 				parameters.setGpsLongitude(lon);
 				parameters.setGpsProcessingMethod(loc.getProvider().toUpperCase());

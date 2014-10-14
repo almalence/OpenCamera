@@ -1303,8 +1303,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			String msg;
 			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			Log.d("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			Log.d("MultishotCapturePlugin", msg);
+//			Log.d("MultishotCapturePlugin", "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+//			Log.d("MultishotCapturePlugin", msg);
 		}
 
 		// find index selected in preferences
@@ -2254,7 +2254,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_SALE1);
 						additionalSkuList.add(SKU_SALE2);
 
-						Log.v("Main billing", "Setup successful. Querying inventory.");
+						//Log.v("Main billing", "Setup successful. Querying inventory.");
 						mHelper.queryInventoryAsync(true, additionalSkuList, mGotInventoryListener);
 					} catch (Exception e)
 					{
