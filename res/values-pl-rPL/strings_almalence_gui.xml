@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">Przyciśnij długo,\naby skonfigurować</string>
 	<string name="layout_hint_top_center">Przeciągnij, aby zobaczyć więcej opcji</string>
 
-	<string name="Dro_Help_Header">Optymalizacja zakresu dynamicznego - pomoc</string>
 	<string name="Dro_Help">Nowa technologia Almalence sprawia, że aparat zachowuje się jak ludzkie oko! DRO (optymalizacja zakresu dynamicznego - Dynamic Range Optimization) wykorzystuje technikę podobną do tone mappingu i automatycznie zwiększa jakość zdjęcia w 100% przypadków, a także w wielu sytuacjach może być uzupełnieniem techniki HDR.\n\n1. Wciśnij spust migawki, aby zrobić zdjęcie\n2. Zaczekaj, aż zdjęcie zostanie przetworzone!</string>
 	
 	<string name="setTimerText">Ustaw</string>

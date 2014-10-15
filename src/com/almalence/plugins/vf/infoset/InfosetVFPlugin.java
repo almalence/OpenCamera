@@ -350,7 +350,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			addInfoView(evInfoText);
 		}
 
-		initInfoIndicators();
+//		initInfoIndicators();
 	}
 
 	@Override
@@ -380,6 +380,12 @@ public class InfosetVFPlugin extends PluginViewfinder
 		currentBatteryLevel = -1;
 
 		this.orientListener.disable();
+	}
+	
+	@Override
+	public void onCameraParametersSetup()
+	{
+		initInfoIndicators();
 	}
 
 	public void initInfoIndicators()

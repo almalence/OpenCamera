@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">Per configurare,\npremi a lungo</string>
 	<string name="layout_hint_top_center">Scorri per visualizzare altre opzioni</string>
 
-	<string name="Dro_Help_Header">Guida OGD</string>
 	<string name="Dro_Help">La nuova tecnologia Almalence rende la visione delle fotocamere come quella dell\'occhio umano! L\'OGD (ottimizzazione della gamma dinamica) impiega una tecnica simile alla mappatura dei toni, ottimizza automaticamente le immagini nel 100% dei casi e sostituisce l\'HDR nella maggior parte di essi.\n\n1. Premi l\'otturatore per scattare una foto\n2. Attendi un secondo la sua elaborazione!</string>
 	
 	<string name="setTimerText">Imposta</string>
