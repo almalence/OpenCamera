@@ -33,7 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;

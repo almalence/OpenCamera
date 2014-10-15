@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1918,7 +1917,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (glView == null)
 		{
 			glView = new GLLayer(MainScreen.getMainContext(), version);
-			glView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			LayoutParams params = MainScreen.getPreviewSurfaceView().getLayoutParams();
+			glView.setLayoutParams(params);
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 0);
 			preview.bringToFront();
 			glView.setZOrderMediaOverlay(true);

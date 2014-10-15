@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -53,7 +52,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
+
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 /***
  * Abstract class for plugins

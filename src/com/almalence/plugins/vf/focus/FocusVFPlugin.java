@@ -32,7 +32,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,7 +41,7 @@ import android.widget.RelativeLayout;
 
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;

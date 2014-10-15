@@ -29,17 +29,12 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
 import com.almalence.util.ImageConversion;
 
 /* <!-- +++
@@ -49,6 +44,10 @@ import com.almalence.util.ImageConversion;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.R;
 //-+- -->
 
 public class PanoramaProcessingPlugin extends PluginProcessing

@@ -18,21 +18,21 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Calendar;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
+//-+- -->
+
 import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
 
 public class ImageConversion

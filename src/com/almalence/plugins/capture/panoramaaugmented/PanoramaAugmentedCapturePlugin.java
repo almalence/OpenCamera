@@ -63,6 +63,20 @@ import android.widget.Toast;
 import android2.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
+import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
+import com.almalence.ui.Switch.Switch;
+import com.almalence.util.HeapUtil;
+
+/* <!-- +++
+ import com.almalence.opencam_plus.CameraParameters;
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginCapture;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ +++ --> */
+// <!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -70,19 +84,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
-import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
-import com.almalence.ui.Switch.Switch;
-import com.almalence.util.HeapUtil;
-
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.ui.GUI;
- import com.almalence.opencam_plus.ui.GUI.CameraParameter;
- +++ --> */
-// <!-- -+-
 //-+- -->
 
 public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements

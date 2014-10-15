@@ -17,8 +17,8 @@
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus.cameracontroller;
- +++ --> */
+package com.almalence.opencam_plus.cameracontroller;
++++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
 //-+- -->

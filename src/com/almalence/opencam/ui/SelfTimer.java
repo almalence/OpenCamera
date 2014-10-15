@@ -17,11 +17,10 @@ by Almalence Inc. All Rights Reserved.
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
+ package com.almalence.opencam_plus.ui;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -60,14 +59,6 @@ import com.almalence.opencam.R;
 import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.RotateLayout;
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginType;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-//-+- -->
 
 public class SelfTimer
 {

@@ -9,7 +9,6 @@ import java.util.Locale;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.almalence.opencam.MainScreen;
 import com.almalence.util.FpsMeasurer;
 
 import android.content.ContentValues;
@@ -18,6 +17,13 @@ import android.opengl.GLES20;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.MainScreen;
+//-+- -->
 
 public class DROVideoEngine
 {

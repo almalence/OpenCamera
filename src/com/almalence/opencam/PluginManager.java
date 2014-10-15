@@ -18,10 +18,10 @@ by Almalence Inc. All Rights Reserved.
 
 /* <!-- +++
  package com.almalence.opencam_plus;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
-// <!-- -+-
+//<!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -93,7 +93,6 @@ import android2.hardware.camera2.CaptureResult;
 import android2.hardware.camera2.TotalCaptureResult;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -133,6 +132,11 @@ import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /***
@@ -1117,17 +1121,6 @@ public class PluginManager implements PluginManagerInterface
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 			MainScreen.getInstance().setShowStore(true);
-			// new CountDownTimer(800, 800)
-			// {
-			// public void onTick(long millisUntilFinished)
-			// {
-			// }
-			//
-			// public void onFinish()
-			// {
-			// MainScreen.getInstance().showStore= true;
-			// }
-			// }.start();
 			// -+- -->
 		}
 	}
@@ -1639,6 +1632,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
+	//<!-- -+-
 	public void controlPremiumContent()
 	{
 		Mode mode = getActiveMode();
@@ -1646,6 +1640,7 @@ public class PluginManager implements PluginManagerInterface
 			if (!mode.SKU.isEmpty())
 				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	}
+	//-+- -->
 
 	/******************************************************************************************************
 	 * Work with hash table

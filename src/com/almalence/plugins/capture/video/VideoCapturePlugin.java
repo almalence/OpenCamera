@@ -69,7 +69,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -77,7 +76,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -94,6 +93,7 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
+
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 import com.coremedia.iso.boxes.Container;
@@ -1227,7 +1227,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
 		View mainButtonsVideo = (View) MainScreen.getInstance().guiManager.getMainView().findViewById(
@@ -1240,7 +1240,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.modeDRO())
 		{
+			//<!-- -+-
 			PluginManager.getInstance().controlPremiumContent();
+			//-+- -->
 
 			this.droEngine.stopRecording();
 

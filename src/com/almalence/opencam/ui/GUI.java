@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import android.widget.RelativeLayout;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.Plugin;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
  +++ --> */
 // <!-- -+-
@@ -47,6 +47,7 @@ import com.almalence.opencam.Plugin;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+//-+- -->
 
 /***
  * GUI implements basic functionality for GUI.

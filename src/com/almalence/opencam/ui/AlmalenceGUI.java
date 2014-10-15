@@ -111,7 +111,7 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.MainScreen;
@@ -175,7 +175,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private boolean								modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
+	//<!-- -+-
 	private AlmalenceStore						store;
+	//-+- -->
 
 	private SelfTimer							selfTimer;
 
@@ -1034,8 +1036,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				((TextView) guiView.findViewById(R.id.blockingText)).setRotation(-AlmalenceGUI.mDeviceOrientation);
 
+				//<!-- -+-
 				store.setOrientation();
-
+				//-+- -->
+				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
 				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
@@ -1096,9 +1100,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			hideModeList();
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+		
+		//<!-- -+-
 		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
-
+		//-+- -->
+		
 		lockControls = false;
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
@@ -1109,13 +1116,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void showStore()
 	{
+		//<!-- -+-
 		store.showStore();
+		//-+- -->
 	}
 
 	@Override
 	public void hideStore()
 	{
+		//<!-- -+-
 		store.hideStore();
+		//-+- -->
 	}
 
 	@Override
@@ -1163,8 +1174,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 
+		//<!-- -+-
 		manageUnlockControl();
-
+		//-+- -->
+		
 		// Create select mode button with appropriate icon
 		createMergedSelectModeButton();
 	}
@@ -1241,11 +1254,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 
+		//<!-- -+-
 		store = new AlmalenceStore(guiView);
-
 		manageUnlockControl();
+		//-+- -->
 	}
 
+	//<!-- -+-
 	private void manageUnlockControl()
 	{
 		// manage unlock control
@@ -1268,6 +1283,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			store.ShowUnlockControl();
 	}
+	//-+- -->
 
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
@@ -1408,11 +1424,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
 
+		//<!-- -+-
 		if (MainScreen.getInstance().isShowStore())
 		{
 			showStore();
 			MainScreen.getInstance().setShowStore(false);
 		}
+		//-+- -->
 	}
 
 	@Override
@@ -6163,11 +6181,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
 			}
+			
+			//<!-- -+-
 			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			{
 				hideStore();
 				res++;
 			}
+			//-+- -->
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_CAMERA /*

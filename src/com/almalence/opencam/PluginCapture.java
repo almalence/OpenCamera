@@ -18,17 +18,14 @@ by Almalence Inc. All Rights Reserved.
 
 /* <!-- +++
  package com.almalence.opencam_plus;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import java.util.Date;
-
-import android.util.Log;
-
-import com.almalence.opencam.cameracontroller.CameraController;
 
 public abstract class PluginCapture extends Plugin
 {

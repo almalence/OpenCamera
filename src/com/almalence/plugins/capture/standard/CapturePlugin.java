@@ -31,7 +31,7 @@ import android.widget.RelativeLayout;
 import android2.hardware.camera2.CaptureResult;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;

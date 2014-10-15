@@ -13,7 +13,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -22,10 +21,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener;
 import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
 import com.almalence.ui.RotateImageView;
@@ -34,9 +29,13 @@ import com.almalence.ui.RotateImageView;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginViewfinder;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 public class GyroVFPlugin extends PluginViewfinder
