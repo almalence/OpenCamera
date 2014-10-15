@@ -1120,17 +1120,6 @@ public class PluginManager implements PluginManagerInterface
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 			MainScreen.getInstance().setShowStore(true);
-			// new CountDownTimer(800, 800)
-			// {
-			// public void onTick(long millisUntilFinished)
-			// {
-			// }
-			//
-			// public void onFinish()
-			// {
-			// MainScreen.getInstance().showStore= true;
-			// }
-			// }.start();
 			// -+- -->
 		}
 	}

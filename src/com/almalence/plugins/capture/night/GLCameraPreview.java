@@ -27,16 +27,13 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.content.Context;
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.util.Log;
 
-import com.almalence.opencam.MainScreen;
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.MainScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
