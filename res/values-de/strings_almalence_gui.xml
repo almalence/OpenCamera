@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">Zum Konfigurieren\nlange drücken</string>
 	<string name="layout_hint_top_center">Ziehen Sie, um weitere Optionen einzusehen</string>
 
-	<string name="Dro_Help_Header">DRO-Hilfe</string>
 	<string name="Dro_Help">Mit der neuen Technologie von Almalence können Kameras wie ein menschliches Auge sehen! DRO (Dynamic Range Optimization) nutzt eine Technik, die dem Tone Mapping ähnelt und Bilder in 100% der Fälle automatisch optimiert und in den meisten Fällen HDR ersetzt.\n\n1. Drücken Sie auf den Auslöser, um ein Foto aufzunehmen.\n2. Warten Sie eine Sekunde, bis das Bild verarbeitet ist!</string>
 	
 	<string name="setTimerText">Einstellen</string>

@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">ضغطة طويلة\nللتكوين</string>
 	<string name="layout_hint_top_center">سحب للمزيد من الخيارات</string>
 
-	<string name="Dro_Help_Header">مساعدة تحسين المدى الديناميكي</string>
 	<string name="Dro_Help">تعمل التقنية الجديدة من Almalence على جعل الكاميرات ترى مثل العين البشرية! يستخدم DRO (تحسين المدى الديناميكي) تقنية مشابهة لتخطيط درجات اللون ويعمل على تحسين الصور في 100% من الحالات ويستطيع استبدال المدى الديناميكي العالي في معظم الحالات.\n\n1. اضغط على المصراع لالتقاط صورة\n2. انتظر حتى تتم المعالجة في ثانية!</string>
 	
 	<string name="setTimerText">ضبط</string>

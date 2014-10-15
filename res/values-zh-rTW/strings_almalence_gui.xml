@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">長按\n以設定</string>
 	<string name="layout_hint_top_center">拉動可獲取更多選項</string>
 
-	<string name="Dro_Help_Header">DRO說明</string>
 	<string name="Dro_Help">Almalence的新技術，使相機像人眼一樣看事物！ DRO(動態範圍優化)採用了類似色調映射的技術，100%情況下可改善圖像，並且可在大多數情況下代替HDR。\n\n1.按下快門拍照\n2.等待快速處理！</string>
 	
 	<string name="setTimerText">設定</string>

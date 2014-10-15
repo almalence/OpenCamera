@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">Presser longuement\npour configurer</string>
 	<string name="layout_hint_top_center">Faire descendre pour plus d\'options</string>
 
-	<string name="Dro_Help_Header">Aide OPD</string>
 	<string name="Dro_Help">La nouvelle technologie développée par Almalence permet aux appareils photos de "voir" comme l\'œil le fait ! L\'OPD (Optimisation de la plage dynamique) utilise une technique similaire au mappage de ton, améliorant automatiquement toutes les photos, et peut remplacer la plupart du temps la plage dynamique étendue.\n\n1. Appuyez sur l\'obturateur pour prendre une photo\n2. Attendez une seconde que le cliché soit traité !</string>
 	
 	<string name="setTimerText">Configurer</string>

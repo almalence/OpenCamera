@@ -82,7 +82,6 @@
 	<string name="layout_hint_top_left">Mantener pulsado\npara configurar</string>
 	<string name="layout_hint_top_center">Deslizar para más opciones</string>
 
-	<string name="Dro_Help_Header">Ayuda de DRO</string>
 	<string name="Dro_Help">Gracias a la nueva tecnología de Almalence, las cámaras pueden ver como el ojo humano. El sistema DRO (Optimización de Rango Dinámico) utiliza una técnica similar a la de asignación de tonos, en el 100% de los casos mejora la imagen automáticamente y puede reemplazar al sistema HDR en la mayoría de los casos.\n\n1. Pulsa el disparador para tomar una imagen\n2. Espera un segundo y la imagen está procesada.</string>
 	
 	<string name="setTimerText">Establecer</string>

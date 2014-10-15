@@ -236,8 +236,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
-				ContentValues values = null;
-
 				int tmpImagesAmount = imagesAmount;
 				if (HDRProcessingPlugin.SaveInputPreference == 2)
 					tmpImagesAmount = 1;
