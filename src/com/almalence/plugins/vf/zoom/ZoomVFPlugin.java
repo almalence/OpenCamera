@@ -248,21 +248,20 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 		if (!isEnabled)
 		{
-			zoomPanel.setVisibility(View.GONE);
+//			zoomPanel.setVisibility(View.GONE);
+//			zoomPanelView.setVisibility(View.GONE);
+			zoomBar.setVisibility(View.GONE);
 		} else
 		{
-			zoomPanel.setVisibility(View.VISIBLE);
+//			zoomPanel.setVisibility(View.VISIBLE);
+//			zoomPanelView.setVisibility(View.VISIBLE);
+			zoomBar.setVisibility(View.VISIBLE);
 		}
-
-		String modeName = prefs.getString("defaultModeName", null);
 	}
 
 	@Override
 	public void onCameraParametersSetup()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		String modeName = prefs.getString("defaultModeName", null);
-
 		zoomCurrent = 0;
 
 		if (CameraController.getInstance().isZoomSupported())
@@ -302,8 +301,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (!isEnabled)
-			return false;
+//		if (!isEnabled)
+//			return false;
 
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_ZOOM_OUT)
 		{
