@@ -83,7 +83,6 @@
 	<string name="layout_hint_top_left">Krátkým podržením\nnastavíte ikony</string>
 	<string name="layout_hint_top_center">Vysuňte pro více možností</string>
 
-	<string name="Dro_Help_Header">DRO - nápověda</string>
 	<string name="Dro_Help">Naše nová technologie umožňuje vyfotit scénu tak, jak ji skutečně vidíte. DRO (Optimalizace dynamického rozsahu) používá techniku podobnou mapování tónů, automaticky vylepší snímek a může dokonce nahradit režim HDR ve většině případů.\n\n1. Zmáčkněte spoušť pro vyfocení\n2. Čekejte pár sekund na zpracování snímku!</string>
 	
 	<string name="setTimerText">Nastavit</string>
