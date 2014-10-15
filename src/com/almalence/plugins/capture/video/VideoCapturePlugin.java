@@ -1227,7 +1227,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
 		View mainButtonsVideo = (View) MainScreen.getInstance().guiManager.getMainView().findViewById(
