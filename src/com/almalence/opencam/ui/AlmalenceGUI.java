@@ -2191,6 +2191,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.topPanel).bringToFront();
 		guiView.findViewById(R.id.blockingLayout).bringToFront();
 		guiView.findViewById(R.id.postprocessingLayout).bringToFront();
+		if (modeSelectorVisible) {
+			guiView.findViewById(R.id.modeLayout).bringToFront();
+		}
 		((Panel) guiView.findViewById(R.id.topPanel)).setOnPanelListener(pListener);
 	}
 
@@ -5147,7 +5150,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) imgView.getLayoutParams();
 					pm.width = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.mainButtonHeight);
 					pm.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.mainButtonHeight);
-					imgView.setImageDrawable(((ImageView) v.findViewById(R.id.modeImage)).getDrawable());
+					imgView.setImageDrawable(((ImageView) v.findViewById(R.id.modeImage)).getDrawable().getConstantState().newDrawable());
 				} else
 				{
 					RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) imgView.getLayoutParams();
