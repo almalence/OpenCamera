@@ -19,7 +19,7 @@ by Almalence Inc. All Rights Reserved.
 /* <!-- +++
 package com.almalence.opencam_plus;
 +++ --> */
-// <!-- -+-
+//<!-- -+-
 package com.almalence.opencam;
 //-+- -->
 

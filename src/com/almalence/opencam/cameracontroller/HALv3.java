@@ -23,10 +23,6 @@
 package com.almalence.opencam.cameracontroller;
 //-+- -->
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -34,14 +30,10 @@ import java.util.List;
 
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.util.Util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.SharedPreferences;
 
 import android.graphics.ImageFormat;
@@ -65,15 +57,21 @@ import android2.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android2.util.Range;
 import android2.util.Size;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.widget.Toast;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+//-+- -->
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")

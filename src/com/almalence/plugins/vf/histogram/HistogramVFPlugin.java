@@ -26,7 +26,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.hardware.Camera;
 import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.OrientationEventListener;

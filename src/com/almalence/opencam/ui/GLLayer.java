@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import java.io.IOException;
