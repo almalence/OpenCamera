@@ -26,6 +26,7 @@ package com.almalence.opencam;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -2329,11 +2330,6 @@ public class PluginManager implements PluginManagerInterface
 				if (writeOrientTag != null)
 					writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
 
-				if (writeOrientationTag)
-				{
-					writeOrientationTag = enableExifTagOrientation;
-				}
-
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 				if (format != null && format.equalsIgnoreCase("jpeg"))
 				{// if result in jpeg format
@@ -2426,7 +2422,22 @@ public class PluginManager implements PluginManagerInterface
 				values.put(ImageColumns.DISPLAY_NAME, file.getName());
 				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-				values.put(ImageColumns.ORIENTATION, writeOrientationTag ? String.valueOf((Integer.parseInt(orientation_tag) + additionalRotationValue + 360) % 360) : String.valueOf(0));
+
+				if (enableExifTagOrientation)
+				{
+					if (writeOrientationTag)
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
+								+ additionalRotationValue + 360) % 360));
+					} else
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
+					}
+				} else
+				{
+					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
+				}
+
 				values.put(ImageColumns.BUCKET_ID, path.hashCode());
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
 				values.put(ImageColumns.DATA, file.getAbsolutePath());
@@ -2441,20 +2452,21 @@ public class PluginManager implements PluginManagerInterface
 					tmpFile.createNewFile();
 					copyFromForceFileName(tmpFile);
 				}
-				
-				if (!writeOrientationTag) {
-					Bitmap sourceBitmap = BitmapFactory.decodeFile(tmpFile.getAbsolutePath());
-					Matrix matrix = new Matrix();
-					matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
-					Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
-							sourceBitmap.getHeight(), matrix, true);
 
-					FileOutputStream outStream = new FileOutputStream(tmpFile);
-					rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-					outStream.flush();
-					outStream.close();
+				if (!enableExifTagOrientation)
+				{
+					Matrix matrix = new Matrix();
+					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
+					{
+						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					} else if (!writeOrientationTag && additionalRotationValue != 0)
+					{
+						matrix.postRotate((additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					}
 				}
-				
+
 				// Set tag_model using ExifInterface.
 				// If we try set tag_model using ExifDriver, then standard
 				// gallery of android (Nexus 4) will crash on this file.
@@ -2733,29 +2745,55 @@ public class PluginManager implements PluginManagerInterface
 					softwareValue.setBytes(softwareString.getBytes());
 					exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
 
-					if (writeOrientationTag)
+					if (enableExifTagOrientation)
 					{
-						int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						switch ((orientation + additionalRotationValue + 360) % 360)
+						if (writeOrientationTag)
 						{
-						default:
-						case 0:
-							exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-							break;
-						case 90:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-									: ExifInterface.ORIENTATION_ROTATE_90;
-							break;
-						case 180:
-							exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-							break;
-						case 270:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-									: ExifInterface.ORIENTATION_ROTATE_270;
-							break;
+							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+							switch ((orientation + additionalRotationValue + 360) % 360)
+							{
+							default:
+							case 0:
+								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+								break;
+							case 90:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+										: ExifInterface.ORIENTATION_ROTATE_90;
+								break;
+							case 180:
+								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+								break;
+							case 270:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+										: ExifInterface.ORIENTATION_ROTATE_270;
+								break;
+							}
+							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+						} else
+						{
+							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+							switch ((additionalRotationValue + 360) % 360)
+							{
+							default:
+							case 0:
+								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+								break;
+							case 90:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+										: ExifInterface.ORIENTATION_ROTATE_90;
+								break;
+							case 180:
+								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+								break;
+							case 270:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+										: ExifInterface.ORIENTATION_ROTATE_270;
+								break;
+							}
+							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 						}
-						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-						exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 					} else
 					{
 						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
@@ -2771,7 +2809,7 @@ public class PluginManager implements PluginManagerInterface
 					{
 						file.delete();
 						modifiedFile.renameTo(file);
-						
+
 						File[] fList = new File(Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/")
 								.listFiles();
 						for (File f : fList)
@@ -2824,6 +2862,30 @@ public class PluginManager implements PluginManagerInterface
 		} finally
 		{
 			MainScreen.setForceFilename(null);
+		}
+	}
+
+	private void rotateImage(File file, Matrix matrix)
+	{
+		try
+		{
+			Bitmap sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+			Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
+					sourceBitmap.getHeight(), matrix, true);
+
+			FileOutputStream outStream;
+			outStream = new FileOutputStream(file);
+			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			outStream.flush();
+			outStream.close();
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
