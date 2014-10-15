@@ -1918,7 +1918,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (glView == null)
 		{
 			glView = new GLLayer(MainScreen.getMainContext(), version);
-			glView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			LayoutParams params = MainScreen.getPreviewSurfaceView().getLayoutParams();
+			glView.setLayoutParams(params);
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 0);
 			preview.bringToFront();
 			glView.setZOrderMediaOverlay(true);
