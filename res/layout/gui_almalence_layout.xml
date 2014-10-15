@@ -957,7 +957,7 @@
 					>
 			            <Button 
 			                android:id="@+id/buttonOk"
-			                android:layout_height="wrap_content"
+			                android:layout_height="match_parent"
 							android:layout_width="match_parent"
 			                android:textSize="17sp"
 			                android:text="@string/okText"
@@ -969,7 +969,7 @@
 			            
 			            <Button 
 			                android:id="@+id/buttonDontShow"
-			                android:layout_height="wrap_content"
+			                android:layout_height="match_parent"
 							android:layout_width="match_parent"
 			                android:textSize="17sp"
 			                android:text="@string/helpTextDontShow"
