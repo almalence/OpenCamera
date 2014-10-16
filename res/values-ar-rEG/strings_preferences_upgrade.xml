@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">تم!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">رمز ترويج غير صحيح</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">الاشتراك لمدة عام (3 أشهر مجانًا!)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">الاشتراك (3 أشهر مجانًا!)</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">الاشتراك لمدة شهر</string>
 	<string name="subscriptionText">استخدم ميزات الإصدار الكامل مجانًا لمدة 3 أشهر - اشترك الآن!</string>
 	<string name="subscriptionYesText">اجعلني أشترك!</string>

@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">完成！</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">错误的促销码</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">全年订阅（3个月免费！）</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">订阅 \n3个月免费！</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">包月订阅</string>
 	<string name="subscriptionText">3个月免费使用高级功能-立即订阅！</string>
 	<string name="subscriptionYesText">订阅我！</string>

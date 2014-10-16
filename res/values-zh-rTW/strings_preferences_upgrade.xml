@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">完成！</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">促銷代碼錯誤</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">年度訂購(3個月免費！)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">訂購\n3個月免費！</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">月訂購</string>
 	<string name="subscriptionText">免費使用高級功能3個月 – 立即訂購！</string>
 	<string name="subscriptionYesText">訂購！</string>
