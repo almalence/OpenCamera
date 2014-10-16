@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">完了！</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">プロモコードが正しくありません</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">1年登録 (3ヶ月無料！)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">登録 \n3ヶ月無料！</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">1ヶ月登録</string>
 	<string name="subscriptionText">3ヶ月無料でプレミアム機能を使用 - 今すぐ登録！</string>
 	<string name="subscriptionYesText">登録しよう！</string>
