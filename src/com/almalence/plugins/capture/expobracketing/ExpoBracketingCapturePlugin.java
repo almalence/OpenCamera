@@ -18,19 +18,12 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.expobracketing;
 
-import java.nio.ByteBuffer;
 import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
 import android2.hardware.camera2.CaptureResult;
-import android.media.Image;
-import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -40,6 +33,8 @@ import android.util.Log;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -50,9 +45,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 
 /***
  * Implements capture plugin with exposure bracketing. Used for HDR image

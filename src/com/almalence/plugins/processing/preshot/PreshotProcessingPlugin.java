@@ -25,11 +25,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +53,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -65,7 +64,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.plugins.capture.preshot.PreShot;
-import com.almalence.util.HeapUtil;
 
 /***
  * Implements back in time prcessing plugin. Prepares images for displaying etc.
