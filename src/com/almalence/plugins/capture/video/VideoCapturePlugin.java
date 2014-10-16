@@ -797,7 +797,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public boolean muteSound()
 	{
-		return this.isRecording;
+		return true;
 	}
 
 	public void startrotateAnimation()
@@ -1246,8 +1246,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 			this.droEngine.stopRecording();
 
-			MainScreen.getInstance().playShutter();
-
 			MainScreen.getGUIManager().lockControls = false;
 			// inform the user that recording has stopped
 			isRecording = false;
@@ -1371,8 +1369,6 @@ public class VideoCapturePlugin extends PluginCapture
 			// inform the user that recording has stopped
 			isRecording = true;
 			onPause = false;
-
-			MainScreen.getInstance().playShutter();
 
 			showRecordingUI(isRecording);
 			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()

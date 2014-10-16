@@ -131,7 +131,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private VfGyroSensor				sensorSoftGyroscope			= null;
 	private boolean						remapOrientation;
 
-	private volatile boolean			capturing;
 	// private boolean aboutToTakePicture = false;
 
 	private AugmentedRotationListener	rotationListener;
@@ -166,7 +165,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		super("com.almalence.plugins.panoramacapture_augmented", R.xml.preferences_capture_panoramaaugmented, 0, 0,
 				null);
 
-		this.capturing = false;
+		this.inCapture = false;
 
 		this.sensorManager = (SensorManager) MainScreen.getMainContext().getSystemService(Context.SENSOR_SERVICE);
 		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -460,7 +459,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		synchronized (this.engine)
 		{
-			if (this.capturing)
+			if (this.inCapture)
 			{
 				if (!this.takingAlready)
 				{
@@ -485,7 +484,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (this.capturing && !this.takingAlready)
+			if (this.inCapture && !this.takingAlready)
 			{
 				if (this.engine != null)
 				{
@@ -757,7 +756,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				if (this.capturing)
+				if (this.inCapture)
 				{
 					this.stopCapture();
 				} else
@@ -1053,7 +1052,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
-		this.capturing = true;
+		this.inCapture = true;
 	}
 
 	private void takePictureUnimode(final int image)
@@ -1138,7 +1137,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		synchronized (this.engine)
 		{
-			if (!this.capturing)
+			if (!this.inCapture)
 			{
 				this.takingAlready = false;
 				// this.aboutToTakePicture = false;
@@ -1165,7 +1164,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					String.valueOf(SessionID));
 
 			takingAlready = false;
-			capturing = false;
+			inCapture = false;
 			// aboutToTakePicture = false;
 		}
 	}
@@ -1325,7 +1324,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@SuppressLint("FloatMath")
 	private void stopCapture()
 	{
-		this.capturing = false;
+		this.inCapture = false;
 		this.focused = false;
 
 		unlockAEWB();
