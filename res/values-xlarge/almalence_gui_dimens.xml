@@ -36,6 +36,8 @@
    <dimen name="paramsLayoutHeight">87dp</dimen>
    <dimen name="paramsLayoutHeightScanner">92dp</dimen>
    
+   <dimen name="paramsLayoutVideoHeight">150dp</dimen>
+   
    <dimen name="buttonsLayoutMarginTop">25dp</dimen>
    
    <dimen name="exposureButtonSize">50dp</dimen>
