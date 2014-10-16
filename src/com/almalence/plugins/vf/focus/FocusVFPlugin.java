@@ -32,6 +32,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -837,14 +838,15 @@ public class FocusVFPlugin extends PluginViewfinder
 	private static boolean isSupported(int value, int[] supported)
 	{
 		boolean isAvailable = false;
-		for (int currMode : supported)
-		{
-			if (currMode == value)
+		if(supported != null)
+			for (int currMode : supported)
 			{
-				isAvailable = true;
-				break;
+				if (currMode == value)
+				{
+					isAvailable = true;
+					break;
+				}
 			}
-		}
 		return isAvailable;
 	}
 
