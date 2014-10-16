@@ -77,13 +77,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 import com.coremedia.iso.boxes.Container;
@@ -103,6 +96,13 @@ import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
  import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginCapture;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
 /***
