@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,10 +38,6 @@ import android.widget.RelativeLayout;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
@@ -54,6 +49,10 @@ import com.almalence.ui.RotateLayout;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.R;
 //-+- -->
 
 /***

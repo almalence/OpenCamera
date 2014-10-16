@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -48,7 +47,6 @@ import android.os.AsyncTask;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,7 +73,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;

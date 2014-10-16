@@ -2429,7 +2429,8 @@ public class VideoCapturePlugin extends PluginCapture
 					hdrAllowed = true;
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					prefs.edit().putBoolean("hdrAllowed", hdrAllowed).commit();
-					this.modeSwitcher.setVisibility(View.VISIBLE);
+					if (!isRecording)
+						this.modeSwitcher.setVisibility(View.VISIBLE);
 				}
 			}
 		}
