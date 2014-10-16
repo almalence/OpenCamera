@@ -4877,6 +4877,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					return;
 
 				view.setLayoutParams(viewLayoutParams);
+				if (view.getParent() != null)
+					((ViewGroup) view.getParent()).removeView(view);
+				
 				if (desire_zone == Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN
 						|| desire_zone == Plugin.ViewfinderZone.VIEWFINDER_ZONE_CENTER)
 					((RelativeLayout) guiView.findViewById(R.id.fullscreenLayout)).addView(view, 0,
