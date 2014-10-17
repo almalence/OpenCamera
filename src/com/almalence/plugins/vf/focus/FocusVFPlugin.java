@@ -138,15 +138,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		public void handleMessage(Message msg)
 		{
 			if (msg.what == RESET_TOUCH_FOCUS)
-			{
 				cancelAutoFocus();
-				int fm = CameraController.getInstance().getFocusMode();
-				if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-						&& fm != -1 && preferenceFocusMode != fm)
-				{
-					CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-				}
-			} else if (msg.what == START_TOUCH_FOCUS)
+			else if (msg.what == START_TOUCH_FOCUS)
 			{
 				lastEvent.setAction(MotionEvent.ACTION_UP);
 				delayedFocus = true;
@@ -626,14 +619,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getInstance().getFocusMode();
 		if (fm != -1)
 		{
-			if (fm == CameraParameters.AF_MODE_INFINITY)
-			{
-				String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(
-						"defaultModeName", null);
-				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
-						.getBoolean("videorecording", false);
-			}
-
 			if (fm != preferenceFocusMode)
 			{
 				CameraController.cancelAutoFocus();

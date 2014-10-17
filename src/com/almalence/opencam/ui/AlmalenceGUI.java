@@ -1577,6 +1577,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	//
 	private void initDefaultQuickControls()
 	{
+		quickControl1 = null;
+		quickControl2 = null;
+		quickControl3 = null;
+		quickControl4 = null;
 		initDefaultQuickControls(quickControl1);
 		initDefaultQuickControls(quickControl2);
 		initDefaultQuickControls(quickControl3);
