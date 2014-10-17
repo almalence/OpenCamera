@@ -19,7 +19,7 @@
     <string name="Pref_Common_MediaRescan_Title">Escanear de nuevo archivos multimedia a la salida</string>
     <string name="Pref_Common_MediaRescan_Summary">Ayuda si la imagen no aparece en la galería.</string>
     <string name="Pref_Common_Gallery_Title">Permitir seleccionar galería externa</string>
-    <string name="Pref_Common_Gallery_Summary">No utilizar el Editor ABC como visor predeterminado</string>
+    <string name="Pref_Common_Gallery_Summary">No utilizar el A Better Editor&amp;Effects como visor predeterminado</string>
     <string name="Pref_Common_JPEGQuality_Title">Calidad Jpeg</string>
     <string name="Pref_Common_VolumeButton_Title">Botón de volumen</string>
     <string name="Pref_SaveConfiguration_Title">Guardar configuración</string>

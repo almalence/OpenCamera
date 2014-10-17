@@ -20,5 +20,5 @@
 	<string name="widgetNoText">Напомнить позже</string>
 	<string name="editorInstallText">Установить редактор</string>
 	<string name="editorNoText">Напомнить позже</string>
-	<string name="editorAdvText">Вы можете редактировать свои фотографии в бесплатном редакторе A Better Camera Editor! Фильтры, эффекты и многое другое!</string>
+	<string name="editorAdvText">Вы можете редактировать свои фотографии в бесплатном редакторе A Better Editor&amp;Effects! Фильтры, эффекты и многое другое!</string>
 </resources>

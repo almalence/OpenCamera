@@ -19,7 +19,7 @@
     <string name="Pref_Common_MediaRescan_Title">注销时媒体重新扫描</string>
     <string name="Pref_Common_MediaRescan_Summary">图像未出现在库中时帮助。</string>
     <string name="Pref_Common_Gallery_Title">可选择外部图库</string>
-    <string name="Pref_Common_Gallery_Summary">不要使用ABC Editor作为默认阅读器（若安装）</string>
+    <string name="Pref_Common_Gallery_Summary">不要使用A Better Editor&amp;Effects作为默认阅读器（若安装）</string>
     <string name="Pref_Common_JPEGQuality_Title">Jpeg品质</string>
     <string name="Pref_Common_VolumeButton_Title">音量按钮</string>
     <string name="Pref_SaveConfiguration_Title">保存配置</string>

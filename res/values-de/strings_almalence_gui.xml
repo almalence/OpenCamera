@@ -19,7 +19,7 @@
     <string name="Pref_Common_MediaRescan_Title">Medien beim Schließen erneut scannen</string>
     <string name="Pref_Common_MediaRescan_Summary">Nützlich, wenn Bilder nicht in der Galerie erscheinen.</string>
     <string name="Pref_Common_Gallery_Title">Externe Galerie bei Bedarf nutzen</string>
-    <string name="Pref_Common_Gallery_Summary">Falls Sie den ABC Editor installiert haben, wird er nicht als Standardprogramm zum Öffnen von Fotos verwendet</string>
+    <string name="Pref_Common_Gallery_Summary">Falls Sie den A Better Editor&amp;Effects installiert haben, wird er nicht als Standardprogramm zum Öffnen von Fotos verwendet</string>
     <string name="Pref_Common_JPEGQuality_Title">JPEG-Qualität</string>
     <string name="Pref_Common_VolumeButton_Title">Lautstärke-Button</string>
     <string name="Pref_SaveConfiguration_Title">Konfiguration speichern</string>

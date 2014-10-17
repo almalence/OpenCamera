@@ -19,7 +19,7 @@
     <string name="Pref_Common_MediaRescan_Title">Wyszukuj nowe pliki po zamknięciu aplikacji</string>
     <string name="Pref_Common_MediaRescan_Summary">Zalecane w przypadku niewyświetlania się zdjęć w galerii.</string>
     <string name="Pref_Common_Gallery_Title">Pozwól na wybranie zewnętrznej galerii</string>
-    <string name="Pref_Common_Gallery_Summary">Nie używaj ABC Editora jako domyślnej przeglądarki (jeśli jest zainstalowany)</string>
+    <string name="Pref_Common_Gallery_Summary">Nie używaj A Better Editor&amp;Effects jako domyślnej przeglądarki (jeśli jest zainstalowany)</string>
     <string name="Pref_Common_JPEGQuality_Title">Jakość JPEG</string>
     <string name="Pref_Common_VolumeButton_Title">Przycisk głośności</string>
     <string name="Pref_SaveConfiguration_Title">Zapisz konfigurację</string>

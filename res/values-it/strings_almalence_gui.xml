@@ -19,7 +19,7 @@
     <string name="Pref_Common_MediaRescan_Title">Ripetizione scansione dei file multimediali all\'uscita</string>
     <string name="Pref_Common_MediaRescan_Summary">È utile quando le immagini non compaiono in galleria.</string>
     <string name="Pref_Common_Gallery_Title">Consenti la selezione della galleria esterna</string>
-    <string name="Pref_Common_Gallery_Summary">Se installato, non utilizzare ABC Editor come visualizzatore predefinito</string>
+    <string name="Pref_Common_Gallery_Summary">Se installato, non utilizzare A Better Editor&amp;Effects come visualizzatore predefinito</string>
     <string name="Pref_Common_JPEGQuality_Title">Qualità JPEG</string>
     <string name="Pref_Common_VolumeButton_Title">Pulsante Volume</string>
     <string name="Pref_SaveConfiguration_Title">Salva configurazione</string>
