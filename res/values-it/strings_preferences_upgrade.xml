@@ -17,7 +17,7 @@
 	<string name="Pref_Upgrde_PromoCode_DoneText">Fine!</string>
 	<string name="Pref_Upgrde_PromoCode_IncorrectText">Codice promozionale errato</string>
 	
-	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Abbonamento annuale (3 mesi gratis!)</string>
+	<string name="Pref_Upgrde_SubscriptionYear_Preference_Title">Abbonamento \n3 mesi gratis!</string>
 	<string name="Pref_Upgrde_SubscriptionMonth_Preference_Title">Abbonamento mensile</string>
 	<string name="subscriptionText">Usa le funzioni premium GRATIS per 3 mesi. Abbonati adesso!</string>
 	<string name="subscriptionYesText">Sottoscrivo l\'abbonamento!</string>

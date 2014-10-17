@@ -34,12 +34,14 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
@@ -75,6 +77,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.ui.RotateImageView;
+import com.almalence.util.Util;
+import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.Track;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
+
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -94,15 +105,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
-import com.almalence.ui.RotateImageView;
-import com.almalence.util.Util;
-import com.coremedia.iso.boxes.Container;
-import com.googlecode.mp4parser.authoring.Movie;
-import com.googlecode.mp4parser.authoring.Track;
-import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
-import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
-import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
-
 /***
  * Implements basic functionality of Video capture.
  ***/
@@ -114,6 +116,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private volatile boolean					isRecording;
 	private boolean								onPause;
 	private boolean								lockPauseButton					= false;
+	private int									soundVolume = 0;
 
 	private static int							CameraIDPreference;
 
@@ -199,8 +202,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
-	//shows if HDR video allowed
-	private boolean								hdrAllowed = false;
+	// shows if HDR video allowed
+	private boolean								hdrAllowed						= false;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
@@ -221,7 +224,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingTimeView.setText("00:00");
 
 		this.createModeSwitcher();
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		hdrAllowed = prefs.getBoolean("hdrAllowed", false);
 		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2 || !hdrAllowed)
@@ -797,7 +800,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public boolean muteSound()
 	{
-		return this.isRecording;
+		return true;
 	}
 
 	public void startrotateAnimation()
@@ -835,6 +838,10 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void onResume()
 	{
+		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+		soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
+		audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 				: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
@@ -856,7 +863,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
-		
+
 		frameCnt = 0;
 	}
 
@@ -905,6 +912,9 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.droEngine.onPause();
 		}
+		
+		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+		audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
 	}
 
 	@Override
@@ -1161,14 +1171,15 @@ public class VideoCapturePlugin extends PluginCapture
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 		CameraController.getInstance().setJpegQuality(jpegQuality);
 
-		if(CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(), CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
+		if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 		{
 			CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 			PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext())
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
+					.getDefaultSharedPreferences(MainScreen.getMainContext())
+					.edit()
+					.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+							: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
 		}
 	}
 
@@ -1240,13 +1251,11 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.modeDRO())
 		{
-			//<!-- -+-
+			// <!-- -+-
 			PluginManager.getInstance().controlPremiumContent();
-			//-+- -->
+			// -+- -->
 
 			this.droEngine.stopRecording();
-
-			MainScreen.getInstance().playShutter();
 
 			MainScreen.getGUIManager().lockControls = false;
 			// inform the user that recording has stopped
@@ -1347,6 +1356,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void startRecording()
 	{
+
 		if (shutterOff)
 			return;
 
@@ -1371,8 +1381,6 @@ public class VideoCapturePlugin extends PluginCapture
 			// inform the user that recording has stopped
 			isRecording = true;
 			onPause = false;
-
-			MainScreen.getInstance().playShutter();
 
 			showRecordingUI(isRecording);
 			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -1407,7 +1415,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// change shutter icon
 		pauseVideoButton.setVisibility(View.VISIBLE);
 		pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
-		
+
 		MainScreen.getInstance().setKeepScreenOn(true);
 	}
 
@@ -2408,30 +2416,32 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
-	private int frameCnt = 0;
-	private long timeStart = 0;
-	private long time = 0;
-	private final int MIN_FPS = 12;
+	private int			frameCnt	= 0;
+	private long		timeStart	= 0;
+	private long		time		= 0;
+	private final int	MIN_FPS		= 12;
+
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && !hdrAllowed && frameCnt<=50)
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && !hdrAllowed && frameCnt <= 50)
 		{
-			//check if FPS rate higher than minimum allowed
-			if (frameCnt==0)
-				timeStart = System.currentTimeMillis(); 
+			// check if FPS rate higher than minimum allowed
+			if (frameCnt == 0)
+				timeStart = System.currentTimeMillis();
 			frameCnt++;
-			
-			//frames number
-			if (frameCnt==50)
+
+			// frames number
+			if (frameCnt == 50)
 			{
 				time = (System.currentTimeMillis() - timeStart);
-				long fps = (1000*frameCnt)/time;
-//				Log.e("!!!!!!!", "fps " + fps);
-				if (fps>=MIN_FPS)
+				long fps = (1000 * frameCnt) / time;
+				// Log.e("!!!!!!!", "fps " + fps);
+				if (fps >= MIN_FPS)
 				{
 					hdrAllowed = true;
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.getMainContext());
 					prefs.edit().putBoolean("hdrAllowed", hdrAllowed).commit();
 					if (!isRecording)
 						this.modeSwitcher.setVisibility(View.VISIBLE);
