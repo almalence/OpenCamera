@@ -555,18 +555,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.init();
 
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
-		if (Build.MODEL.contains("HTC One X"))
-		{
-			if (!CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
-
 		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
 
 		this.pictureWidth = size.getWidth();
@@ -610,18 +598,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			Log.e(TAG, "Picture sizes list is empty");
 			return;
-		}
-
-		if (Build.MODEL.contains("HTC One X"))
-		{
-			if (!CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				picture_sizes.add(additional);
-			}
 		}
 
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
@@ -920,17 +896,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		ResolutionsPictureSizesList.clear();
 
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
-		if (Build.MODEL.contains("HTC One X"))
-		{
-			if (!CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
 
 		int maxIndex = 0;
 
