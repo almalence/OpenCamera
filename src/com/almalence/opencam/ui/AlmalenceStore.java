@@ -426,6 +426,8 @@ public class AlmalenceStore
 	{
 		// get inapp associated with pressed button
 		Integer id = buttonStoreViewAssoc.get(v);
+		if (id == null)
+			return;
 		switch (id)
 		{
 		case 0:// unlock all
