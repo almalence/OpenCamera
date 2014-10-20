@@ -103,6 +103,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+
 //-+- -->
 
 /***
@@ -116,7 +117,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private volatile boolean					isRecording;
 	private boolean								onPause;
 	private boolean								lockPauseButton					= false;
-	private int									soundVolume = 0;
+	private int									soundVolume						= 0;
 
 	private static int							CameraIDPreference;
 
@@ -841,7 +842,7 @@ public class VideoCapturePlugin extends PluginCapture
 		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
 		soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
 		audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 				: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
@@ -890,9 +891,15 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (camera != null)
 		{
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-			cp.setRecordingHint(false);
-			CameraController.getInstance().setCameraParameters(cp);
+			try
+			{
+				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+				cp.setRecordingHint(false);
+				CameraController.getInstance().setCameraParameters(cp);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		if (this.buttonsLayout != null)
@@ -912,7 +919,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.droEngine.onPause();
 		}
-		
+
 		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
 		audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
 	}
@@ -1356,7 +1363,10 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void startRecording()
 	{
-
+		Camera camera = CameraController.getCamera();
+		if (null == camera)
+			return;
+		
 		if (shutterOff)
 			return;
 
@@ -1485,6 +1495,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Camera camera = CameraController.getCamera();
+		
 		lastCamera = camera;
 
 		Date curDate = new Date();
