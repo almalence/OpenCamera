@@ -2445,6 +2445,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// now will call store with abc unlocked
 		callStoreForUnlocked(this);
+		
+		//TODO: this is for all other markets!!!!! Do not call store!!!
+//		String payload = "";
+//		try 
+//		{
+//			mHelper.launchPurchaseFlow(MainScreen.thiz,
+//					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
+//					mPreferencePurchaseFinishedListener, payload);
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Toast.makeText(MainScreen.thiz,
+//					"Error during purchase " + e.getMessage(),
+//					Toast.LENGTH_LONG).show();
+//		}
 	}
 
 	public void purchaseHDR()
