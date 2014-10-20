@@ -2,5 +2,5 @@
 <resources>
     <string name="Pref_TitleGyroVF">Level</string>
 	<string name="Pref_ShowGyroVF">Show level</string>
-	<string name="Pref_GyroTypeVF">Use hardvare gyroscope</string>
+	<string name="Pref_GyroTypeVF">Use hardware gyroscope</string>
 </resources>
