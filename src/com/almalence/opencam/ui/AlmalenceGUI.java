@@ -6517,7 +6517,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Animation rotation = new RotateAnimation(0, 360, width / 2, height / 2);
 		rotation.setDuration(800);
 		rotation.setInterpolator(new LinearInterpolator());
-		rotation.setRepeatCount(100);
+		rotation.setRepeatCount(1000);
 
 		processingAnim.startAnimation(rotation);
 	}
