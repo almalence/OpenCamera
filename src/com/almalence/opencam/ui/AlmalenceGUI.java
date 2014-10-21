@@ -5715,7 +5715,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			return true;
 		}
 		
-		if (view == (LinearLayout) guiView.findViewById(R.id.evLayout) || lockControls)
+		if (view == (LinearLayout) guiView.findViewById(R.id.evLayout) || (lockControls && !PluginManager.getInstance().getActiveModeID().equals("video")))
 			return true;
 
 		// to possibly slide-out top panel

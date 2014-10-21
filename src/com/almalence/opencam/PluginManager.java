@@ -1477,8 +1477,11 @@ public class PluginManager implements PluginManagerInterface
 			controlPremiumContent();
 			// -+- -->
 
-			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			if(!PluginManager.getInstance().getActiveModeID().equals("video"))
+			{
+				MainScreen.getGUIManager().lockControls = false;
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			}
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
