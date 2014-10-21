@@ -4,8 +4,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="lib" path="libs/xzing-2.1/core.jar"/>
-	<classpathentry kind="lib" path="camera2libs/framework_patched.jar"/>
-	<classpathentry kind="lib" path="camera2libs/framework2_patched.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>

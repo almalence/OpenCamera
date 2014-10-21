@@ -888,6 +888,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return isCameraCreatedHALv3();
 
 	}
+	
+	@TargetApi(21)
+	public static void createCaptureSession(List<Surface> sfl)
+	{
+		HALv3.createCaptureSession(sfl);
+	}
 
 	@TargetApi(21)
 	public static boolean isCameraCreatedHALv3()

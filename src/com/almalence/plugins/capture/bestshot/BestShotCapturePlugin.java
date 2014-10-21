@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import android.annotation.TargetApi;
 import android.util.Log;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;

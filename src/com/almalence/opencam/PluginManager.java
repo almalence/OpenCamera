@@ -46,7 +46,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -89,8 +88,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
@@ -1317,12 +1316,12 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
 	}
 
-	@TargetApi(21)
-	public void onCaptureCompleted(TotalCaptureResult result)
-	{
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onCaptureCompleted(result);
-	}
+//	@TargetApi(21)
+//	public void onCaptureCompleted(TotalCaptureResult result)
+//	{
+//		if (null != pluginList.get(activeCapture))
+//			pluginList.get(activeCapture).onCaptureCompleted(result);
+//	}
 
 	@Override
 	public void onPreviewFrame(byte[] data)
@@ -1709,7 +1708,6 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	@SuppressLint("NewApi")
 	@TargetApi(21)
 	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{

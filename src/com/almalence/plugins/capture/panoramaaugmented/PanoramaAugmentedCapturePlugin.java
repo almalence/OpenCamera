@@ -60,7 +60,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;

@@ -40,7 +40,6 @@ import org.onepf.oms.appstore.googleUtils.IabResult;
 import org.onepf.oms.appstore.googleUtils.Inventory;
 import org.onepf.oms.appstore.googleUtils.Purchase;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -108,7 +107,7 @@ import com.almalence.util.Util;
 
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.HALv3;
+//import com.almalence.opencam.cameracontroller.HALv3;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
@@ -1523,7 +1522,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}.start();
 	}
 
-	@SuppressLint("NewApi")
 	@TargetApi(21)
 	private void configureHALv3Camera(boolean captureYUVFrames)
 	{
@@ -1552,16 +1550,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// 720));
 
 		// configure camera with all the surfaces to be ever used
-		try
-		{
-			Log.d("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
-			// Here, we create a CameraCaptureSession for camera preview.
-			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateListener, null);
-		} catch (Exception e)
-		{
-			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
-			e.printStackTrace();
-		}
+		CameraController.createCaptureSession(sfl);
 
 		// ^^ HALv3 code
 		// -------------------------------------------------------------------
@@ -1882,7 +1871,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				// if both surface is created and camera device is opened
 				// - ready to set up preview and other things
-				if (surfaceCreated && (HALv3.getCamera2() != null))
+//				if (surfaceCreated && (HALv3.getCamera2() != null))
+				if (surfaceCreated)
 				{
 					configureCamera();
 					PluginManager.getInstance().onGUICreate();

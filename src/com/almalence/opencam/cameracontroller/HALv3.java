@@ -42,17 +42,17 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Area;
-import android2.hardware.camera2.CameraCaptureSession;
-import android2.hardware.camera2.CameraCharacteristics;
-import android2.hardware.camera2.CameraDevice;
-import android2.hardware.camera2.CameraManager;
-import android2.hardware.camera2.CaptureRequest;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.CameraMetadata;
-import android2.hardware.camera2.CameraAccessException;
-import android2.hardware.camera2.TotalCaptureResult;
-import android2.hardware.camera2.params.MeteringRectangle;
-import android2.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
@@ -60,8 +60,9 @@ import android.os.CountDownTimer;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android2.util.Range;
-import android2.util.Size;
+import android.util.Range;
+import android.util.Size;
+import android.view.Surface;
 import android.widget.Toast;
 
 /* <!-- +++
@@ -146,9 +147,9 @@ public class HALv3
 	{
 		Log.e(TAG, "onPause");
 		// HALv3 code -----------------------------------------
-		// if ((HALv3.getInstance().availListener != null) &&
+		// if ((HALv3.getInstance().availCallback != null) &&
 		// (HALv3.getInstance().manager != null))
-		// HALv3.getInstance().manager.removeAvailabilityListener(HALv3.getInstance().availListener);
+		// HALv3.getInstance().manager.removeAvailabilityCallback(HALv3.getInstance().availCallback);
 
 		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
 		try
@@ -189,7 +190,7 @@ public class HALv3
 				String cameraId = CameraController.getInstance().cameraIdList[CameraController.CameraIndex];
 				HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
 						.getInstance().cameraIdList[CameraController.CameraIndex]);
-				HALv3.getInstance().manager.openCamera(cameraId, openListener, null);
+				HALv3.getInstance().manager.openCamera(cameraId, openCallback, null);
 			} catch (CameraAccessException e)
 			{
 				Log.e(TAG, "CameraAccessException manager.openCamera failed: " + e.getMessage());
@@ -223,11 +224,11 @@ public class HALv3
 
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
-		// Add an Availability Listener as Cameras become available or
+		// Add an Availability Callback as Cameras become available or
 		// unavailable
-		// HALv3.getInstance().availListener = HALv3.getInstance().new
-		// cameraAvailableListener();
-		// HALv3.getInstance().manager.addAvailabilityListener(HALv3.getInstance().availListener,
+		// HALv3.getInstance().availCallback = HALv3.getInstance().new
+		// cameraAvailableCallback();
+		// HALv3.getInstance().manager.addAvailabilityCallback(HALv3.getInstance().availCallback,
 		// null);
 
 		CameraController.getInstance().mVideoStabilizationSupported = HALv3.getInstance().camCharacter
@@ -269,6 +270,20 @@ public class HALv3
 
 		MainScreen.getJPEGImageReader().setOnImageAvailableListener(imageAvailableListener,
 				 						null);
+	}
+	
+	public static void createCaptureSession(List<Surface> sfl)
+	{
+		try
+		{
+			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
+			// Here, we create a CameraCaptureSession for camera preview.
+			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateCallback, null);
+		} catch (Exception e)
+		{
+			Log.e(TAG, "Create capture session failed. " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 //	/**
@@ -554,7 +569,7 @@ public class HALv3
 		try
 		{
 			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-					HALv3.getInstance().previewRequestBuilder.build(), captureListener, null);
+					HALv3.getInstance().previewRequestBuilder.build(), captureCallback, null);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -630,7 +645,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -753,7 +768,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -779,7 +794,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -806,7 +821,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -834,7 +849,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -861,7 +876,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -886,7 +901,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -953,7 +968,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -1013,7 +1028,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			}
 			catch (CameraAccessException e)
@@ -1089,7 +1104,7 @@ public class HALv3
 			 * for (int n=0; n<NUM_FRAMES; ++n)
 			 * requests.add(stillRequestBuilder.build());
 			 * 
-			 * camDevice.captureBurst(requests, new captureListener() , null);
+			 * camDevice.captureBurst(requests, new captureCallback() , null);
 			 */
 
 //			HALv3.getInstance().mCaptureSession.stopRepeating();
@@ -1114,7 +1129,7 @@ public class HALv3
 						try
 						{
 							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureListener, null);
+									captureCallback, null);
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -1131,17 +1146,17 @@ public class HALv3
 						// setCameraExposureCompensationHALv3(evRequested[n]);
 						// }
 						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-								captureListener, null);
+								captureCallback, null);
 					}
 				}
 			}
 
 			// requestID =
 			// HALv3.getInstance().camDevice.captureBurst(requestList,
-			// captureListener , null);
+			// captureCallback , null);
 			// requestID =
 			// HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-			// captureListener , null);
+			// captureCallback , null);
 			// Log.e("CameraController", "captureImage 4");
 			// One more capture for comparison with a standard frame
 			// stillRequestBuilder.set(CaptureRequest.EDGE_MODE,
@@ -1153,7 +1168,7 @@ public class HALv3
 			// stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION,
 			// zoomCrop);
 			// camDevice.capture(stillRequestBuilder.build(), new
-			// captureListener() , null);
+			// captureCallback() , null);
 		} catch (CameraAccessException e)
 		{
 			Log.e(TAG, "setting up still image capture request failed");
@@ -1214,7 +1229,7 @@ public class HALv3
 						try
 						{
 							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureListener, null);
+									captureCallback, null);
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -1234,7 +1249,7 @@ public class HALv3
 				try
 				{
 					HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-							captureListener, null);
+							captureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();
@@ -1266,7 +1281,7 @@ public class HALv3
 				Log.e(TAG,
 						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -1292,7 +1307,7 @@ public class HALv3
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.getInstance().previewRequestBuilder.build(), captureListener,
+						HALv3.getInstance().previewRequestBuilder.build(), captureCallback,
 						null);
 			} catch (CameraAccessException e)
 			{
@@ -1341,18 +1356,18 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
-				captureListener, null);
+				captureCallback, null);
 	}
 
 	// HALv3 ------------------------------------------------ camera-related
-	// listeners
+	// Callbacks
 	@SuppressLint("Override")
-	public final static CameraDevice.StateListener openListener = new CameraDevice.StateListener()
+	public final static CameraDevice.StateCallback openCallback = new CameraDevice.StateCallback()
 	{
 		@Override
 		public void onDisconnected(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateListener.onDisconnected");
+			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
 			if (HALv3.getInstance().camDevice != null)
 			{
 				try
@@ -1373,13 +1388,13 @@ public class HALv3
 		public void onError(CameraDevice arg0, int arg1)
 		{
 			HALv3.getInstance().mOpeningCamera = false;
-			Log.e(TAG, "CameraDevice.StateListener.onError: " + arg1);
+			Log.e(TAG, "CameraDevice.StateCallback.onError: " + arg1);
 		}
 
 		@Override
 		public void onOpened(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateListener.onOpened");
+			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
 
 			HALv3.getInstance().camDevice = arg0;
 			
@@ -1392,7 +1407,7 @@ public class HALv3
 	};
 	
 	
-	public final static CameraCaptureSession.StateListener captureSessionStateListener = new CameraCaptureSession.StateListener()
+	public final static CameraCaptureSession.StateCallback captureSessionStateCallback = new CameraCaptureSession.StateCallback()
 	{
 		@Override
 		public void onConfigureFailed(final CameraCaptureSession session)
@@ -1419,7 +1434,7 @@ public class HALv3
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
-											captureListener, null);
+											captureCallback, null);
 				
 //				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 				if(!CameraController.appStarted)
@@ -1441,9 +1456,9 @@ public class HALv3
 	};
 	
 	
-	// Note: there other onCaptureXxxx methods in this listener which we do not
+	// Note: there other onCaptureXxxx methods in this Callback which we do not
 	// implement
-//	public final static CameraCaptureSession.CaptureListener focusListener = new CameraCaptureSession.CaptureListener()
+//	public final static CameraCaptureSession.CaptureCallback focusCallback = new CameraCaptureSession.CaptureCallback()
 //	{
 //		@Override
 //		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
@@ -1460,7 +1475,7 @@ public class HALv3
 //				{
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
-//					resetCaptureListener();
+//					resetCaptureCallback();
 //					CameraController.getInstance().onAutoFocus(true);
 //					HALv3.autoFocusTriggered = false;
 //
@@ -1469,7 +1484,7 @@ public class HALv3
 //				{
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
-//					resetCaptureListener();
+//					resetCaptureCallback();
 //					CameraController.getInstance().onAutoFocus(false);
 //					HALv3.autoFocusTriggered = false;
 //				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
@@ -1477,7 +1492,7 @@ public class HALv3
 //				{
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
-//					// resetCaptureListener();
+//					// resetCaptureCallback();
 //					// CameraController.getInstance().onAutoFocus(false);
 //					// HALv3.autoFocusTriggered = false;
 //				}
@@ -1505,7 +1520,7 @@ public class HALv3
 //			// dumpCaptureResult(result);
 //		}
 //
-//		private void resetCaptureListener()
+//		private void resetCaptureCallback()
 //		{
 //			if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 //			{
@@ -1517,7 +1532,7 @@ public class HALv3
 //						CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 //				try
 //				{
-//					Log.e(TAG, "resetCaptureListener. CONTROL_AF_TRIGGER_CANCEL");
+//					Log.e(TAG, "resetCaptureCallback. CONTROL_AF_TRIGGER_CANCEL");
 //					// HALv3.getInstance().camDevice.stopRepeating();
 //					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
 //							HALv3.getInstance().previewRequestBuilder.build(), null, null);
@@ -1529,12 +1544,12 @@ public class HALv3
 //		}
 //	};
 
-	public final static CameraCaptureSession.CaptureListener captureListener = new CameraCaptureSession.CaptureListener()
+	public final static CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback()
 	{
 		@Override
 		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
 		{
-			PluginManager.getInstance().onCaptureCompleted(result);
+//			PluginManager.getInstance().onCaptureCompleted(result);
 			try
 			{
 				// HALv3.exposureTime =
@@ -1545,7 +1560,7 @@ public class HALv3
 				{
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
-					resetCaptureListener();
+					resetCaptureCallback();
 					CameraController.getInstance().onAutoFocus(true);
 					HALv3.autoFocusTriggered = false;
 
@@ -1554,7 +1569,7 @@ public class HALv3
 				{
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
-					resetCaptureListener();
+					resetCaptureCallback();
 					CameraController.getInstance().onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
 				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
@@ -1562,7 +1577,7 @@ public class HALv3
 				{
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
-					// resetCaptureListener();
+					// resetCaptureCallback();
 					// CameraController.getInstance().onAutoFocus(false);
 					// HALv3.autoFocusTriggered = false;
 				}
@@ -1571,7 +1586,7 @@ public class HALv3
 				{
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE");
-					// resetCaptureListener();
+					// resetCaptureCallback();
 					// CameraController.getInstance().onAutoFocus(false);
 					// HALv3.autoFocusTriggered = false;
 				}
@@ -1600,7 +1615,7 @@ public class HALv3
 			// dumpCaptureResult(result);
 		}
 
-		private void resetCaptureListener()
+		private void resetCaptureCallback()
 		{
 //			if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 //			{
@@ -1736,5 +1751,5 @@ public class HALv3
 	};
 	// ^^ HALv3 code
 	// --------------------------------------------------------------
-	// camera-related listeners
+	// camera-related Callbacks
 }

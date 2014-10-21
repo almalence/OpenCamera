@@ -28,7 +28,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
