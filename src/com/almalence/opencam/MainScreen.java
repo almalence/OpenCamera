@@ -88,6 +88,8 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -129,7 +131,7 @@ import com.almalence.util.AppRater;
  ***/
 
 public class MainScreen extends Activity implements ApplicationInterface, View.OnClickListener, View.OnTouchListener,
-		SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
+						SurfaceTextureListener, Handler.Callback, Camera.ShutterCallback
 {
 	// >>Description
 	// section with different global parameters available for everyone
@@ -176,8 +178,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private File						forceFilename					= null;
 	private Uri							forceFilenameUri;
 
-	private SurfaceHolder				surfaceHolder;
-	private SurfaceView					preview;
+	private SurfaceTexture				surfaceHolder;
+	private TextureView					preview;
 	private Surface						mCameraSurface					= null;
 	private OrientationEventListener	orientListener;
 	private boolean						landscapeIsNormal				= false;
@@ -442,13 +444,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
 		// set preview, on click listener and surface buffers
-		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+		surfaceHolder = null;
+		preview = (TextureView) this.findViewById(R.id.SurfaceView01);
 		preview.setOnClickListener(this);
 		preview.setOnTouchListener(this);
 		preview.setKeepScreenOn(keepScreenOn);
 
-		surfaceHolder = preview.getHolder();
-		surfaceHolder.addCallback(this);
+//		surfaceHolder = preview.getSurfaceTexture();
+		Log.e("MainScreen", "SURFACE TEXTURE AVAILABLE = " + preview.isAvailable());
+		preview.setSurfaceTextureListener(this);
+//		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
 		{
@@ -656,12 +661,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz.forceFilenameUri;
 	}
 
-	public static SurfaceHolder getPreviewSurfaceHolder()
+	public static SurfaceTexture getPreviewSurfaceTexture()
 	{
 		return thiz.surfaceHolder;
 	}
 
-	public static SurfaceView getPreviewSurfaceView()
+	public static TextureView getPreviewTextureView()
 	{
 		return thiz.preview;
 	}
@@ -1092,9 +1097,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					PluginManager.getInstance().onResume();
 					MainScreen.thiz.mPausing = false;
 
+					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+
 					if (CameraController.isUseHALv3())
 					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						Log.d("MainScreen", "onResume: cameraController.setupCamera(null)");
 						cameraController.setupCamera(null);
 
@@ -1105,7 +1112,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 					} else if (surfaceCreated && (!CameraController.isCameraCreated()))
 					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						cameraController.setupCamera(surfaceHolder);
 
 						if (glView != null)
@@ -1114,6 +1121,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							Log.d("GL", "glView onResume");
 						}
 					}
+
+					if (glView != null)
+					{
+						glView.onResume();
+						Log.d("GL", "glView onResume");
+					}
+					
 					orientListener.enable();
 				}
 			}.start();
@@ -1261,41 +1275,41 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		onResume();
 	}
 
-	@Override
-	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
-	{
-
-		if (!isCreating)
-			new CountDownTimer(50, 50)
-			{
-				public void onTick(long millisUntilFinished)
-				{
-					// Not used
-				}
-
-				public void onFinish()
-				{
-					updatePreferences();
-
-					if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
-					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
-						if (!CameraController.isUseHALv3())
-						{
-							cameraController.setupCamera(holder);
-						} else
-						{
-							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
-						}
-					}
-				}
-			}.start();
-		else
-		{
-			updatePreferences();
-		}
-	}
+//	@Override
+//	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
+//	{
+//
+//		if (!isCreating)
+//			new CountDownTimer(50, 50)
+//			{
+//				public void onTick(long millisUntilFinished)
+//				{
+//					// Not used
+//				}
+//
+//				public void onFinish()
+//				{
+//					updatePreferences();
+//
+//					if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+//					{
+//						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//						Log.d("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
+//						if (!CameraController.isUseHALv3())
+//						{
+//							cameraController.setupCamera(holder);
+//						} else
+//						{
+//							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+//						}
+//					}
+//				}
+//			}.start();
+//		else
+//		{
+//			updatePreferences();
+//		}
+//	}
 
 	public static int selectImageDimensionMultishot()
 	{
@@ -1369,34 +1383,34 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return captureIdx;
 	}
 
-	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		CameraController.setCameraIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
-		
-		shutterPreference = prefs.getBoolean(sShutterPref, false);
-		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
-		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
-				: "imageSizePrefCommonFront", "-1");
-
-		if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
-		{
-			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-
-			if (CameraController.isUseHALv3())
-				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
-			else
-			{
-				Log.d("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
-				cameraController.setupCamera(holder);
-			}
-		}
-	}
+//	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
+//	{
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		CameraController.setCameraIndex(!prefs.getBoolean("useFrontCamera", false) ? 0 : 1);
+//		
+//		shutterPreference = prefs.getBoolean(sShutterPref, false);
+//		shotOnTapPreference = prefs.getBoolean(sShotOnTapPref, false);
+//		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefCommonBack"
+//				: "imageSizePrefCommonFront", "-1");
+//
+//		if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+//		{
+//			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//
+//			if (CameraController.isUseHALv3())
+//				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+//			else
+//			{
+//				Log.d("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
+//				cameraController.setupCamera(holder);
+//			}
+//		}
+//	}
 
 	@Override
 	public void addSurfaceCallback()
 	{
-		thiz.surfaceHolder.addCallback(thiz);
+		preview.setSurfaceTextureListener(this);
 	}
 
 	@Override
@@ -1527,6 +1541,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(21)
 	private void configureHALv3Camera(boolean captureYUVFrames)
 	{
+		Log.e("MainScreen", "Supported Hardware Level = " + HALv3.getSupportedHardwareLevel());
 		List<Surface> sfl = new ArrayList<Surface>();
 
 		sfl.add(mCameraSurface); // surface for viewfinder preview
@@ -1547,19 +1562,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 //		sfl.add(mImageReaderJPEG.getSurface());
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
-		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
-		// guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280,
-		// 720));
+//		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
+		 guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280, 720));
 
 		// configure camera with all the surfaces to be ever used
 		try
 		{
-			Log.d("MainScreen", "HALv3.getCamera2().configureOutputs(sfl);");
+			Log.d("MainScreen", "Camera2.createCaptureSession ");
 			// Here, we create a CameraCaptureSession for camera preview.
-			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateListener, null);
+			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateCallback, null);
 		} catch (Exception e)
 		{
-			Log.e("MainScreen", "configureOutputs failed. " + e.getMessage());
+			Log.e("MainScreen", "createCaptureSession failed. " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -1604,31 +1618,31 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mMeteringAreaSpot.add(new Area(spotRect, 1000));
 	}
 
-	@Override
-	public void surfaceCreated(SurfaceHolder holder)
-	{
-		// ----- Find 'normal' orientation of the device
-
-		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		int rotation = display.getRotation();
-		if ((rotation == Surface.ROTATION_90) || (rotation == Surface.ROTATION_270))
-			landscapeIsNormal = true; // false; - if landscape view orientation
-										// set for MainScreen
-		else
-			landscapeIsNormal = false;
-
-		surfaceCreated = true;
-
-		mCameraSurface = surfaceHolder.getSurface();
-
-		Log.d("MainScreen", "SURFACE CREATED");
-	}
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder)
-	{
-		surfaceCreated = false;
-	}
+//	@Override
+//	public void surfaceCreated(SurfaceHolder holder)
+//	{
+//		// ----- Find 'normal' orientation of the device
+//
+//		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//		int rotation = display.getRotation();
+//		if ((rotation == Surface.ROTATION_90) || (rotation == Surface.ROTATION_270))
+//			landscapeIsNormal = true; // false; - if landscape view orientation
+//										// set for MainScreen
+//		else
+//			landscapeIsNormal = false;
+//
+//		surfaceCreated = true;
+//
+//		mCameraSurface = surfaceHolder.getSurface();		
+//
+//		Log.d("MainScreen", "SURFACE CREATED");
+//	}
+//
+//	@Override
+//	public void surfaceDestroyed(SurfaceHolder holder)
+//	{
+//		surfaceCreated = false;
+//	}
 
 	// SURFACES (preview, image readers)
 	public Surface getCameraSurface()
@@ -1917,7 +1931,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (glView == null)
 		{
 			glView = new GLLayer(MainScreen.getMainContext(), version);
-			LayoutParams params = MainScreen.getPreviewSurfaceView().getLayoutParams();
+			LayoutParams params = MainScreen.getPreviewTextureView().getLayoutParams();
 			glView.setLayoutParams(params);
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).addView(glView, 0);
 			preview.bringToFront();
@@ -3051,5 +3065,140 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			prefsEditor.putInt("EvCompensationValue", 0);
 			prefsEditor.commit();
 		}
+	}
+
+	@Override
+	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height)
+	{
+		Log.e("MainScreen", "onSurfaceTextureAvailable");
+		// ----- Find 'normal' orientation of the device
+
+		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		int rotation = display.getRotation();
+		if ((rotation == Surface.ROTATION_90) || (rotation == Surface.ROTATION_270))
+			landscapeIsNormal = true; // false; - if landscape view orientation
+										// set for MainScreen
+		else
+			landscapeIsNormal = false;
+
+		surfaceHolder = surface;
+		surfaceCreated = true;
+
+		mCameraSurface = new Surface(surfaceHolder);		
+
+		Log.d("MainScreen", "SURFACE CREATED");	
+		
+		
+		if (!isCreating)
+			new CountDownTimer(50, 50)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+					// Not used
+				}
+
+				public void onFinish()
+				{
+					updatePreferences();
+
+					if (!CameraController.isUseHALv3() && !MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+					{
+						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						Log.e("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
+						if (!CameraController.isUseHALv3())
+						{
+							cameraController.setupCamera(surfaceHolder);
+						} else
+						{
+							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+						}
+					}
+					else if(CameraController.isUseHALv3() && !MainScreen.thiz.mPausing && surfaceCreated)
+					{
+						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						Log.e("MainScreen", "surfaceAvailable: sendEmptyMessage(PluginManager.MSG_SURFACE_READY)");
+						messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+					}
+					
+//					if (!CameraController.isUseHALv3())
+//					{
+//						// screen rotation
+//						try
+//						{
+//							CameraController.getCamera().setDisplayOrientation(90);
+//						} catch (RuntimeException e)
+//						{
+//							Log.e("MainScreen", "Unable to set display orientation for camera");
+//							e.printStackTrace();
+//						}
+//
+//						try
+//						{
+//							CameraController.getCamera().setPreviewTexture(surfaceHolder);
+//						} catch (IOException e)
+//						{
+//							Log.e("MainScreen", "Unable to set preview display for camera");
+//							e.printStackTrace();
+//						}
+//					}
+//					else
+//					{
+//						messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+//					}
+				}
+			}.start();
+		else
+		{
+			updatePreferences();
+		}		
+	}
+
+	@Override
+	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height)
+	{
+//		Log.e("MainScreen", "onSurfaceTextureSizeChanged");
+//		if (!isCreating)
+//		new CountDownTimer(50, 50)
+//		{
+//			public void onTick(long millisUntilFinished)
+//			{
+//				// Not used
+//			}
+//
+//			public void onFinish()
+//			{
+//				updatePreferences();
+//
+//				if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+//				{
+//					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//					Log.e("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
+//					if (!CameraController.isUseHALv3())
+//					{
+//						cameraController.setupCamera(surfaceHolder);
+//					} else
+//					{
+//						messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+//					}
+//				}
+//			}
+//		}.start();
+//	else
+//	{
+//		updatePreferences();
+//	}		
+	}
+
+	@Override
+	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface)
+	{
+		Log.e("MainScreen", "onSurfaceTextureDestroyed");
+		surfaceCreated = false;
+		return false;
+	}
+
+	@Override
+	public void onSurfaceTextureUpdated(SurfaceTexture surface)
+	{
 	}
 }

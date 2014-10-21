@@ -37,6 +37,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
@@ -754,7 +755,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isHALv3Supported;
 	}
 
-	public void setupCamera(SurfaceHolder holder)
+	public void setupCamera(SurfaceTexture holder)
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -804,7 +805,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 				try
 				{
-					camera.setPreviewDisplay(holder);
+					camera.setPreviewTexture(holder);
 				} catch (IOException e)
 				{
 					Log.e(TAG, "Unable to set preview display for camera");
@@ -830,7 +831,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			try
 			{
-				CameraController.camera.setPreviewDisplay(holder);
+				CameraController.camera.setPreviewTexture(holder);
 			} catch (IOException e)
 			{
 				Log.e(TAG, "Unable to set preview display for camera");

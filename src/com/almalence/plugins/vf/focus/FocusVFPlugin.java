@@ -280,8 +280,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void initialize(boolean mirror, int displayOrientation)
 	{
-		mPreviewWidth = MainScreen.getPreviewSurfaceView().getWidth();
-		mPreviewHeight = MainScreen.getPreviewSurfaceView().getHeight();
+		mPreviewWidth = MainScreen.getPreviewTextureView().getWidth();
+		mPreviewHeight = MainScreen.getPreviewTextureView().getHeight();
 		
 		Matrix matrix = new Matrix();
 		Util.prepareMatrix(matrix, mirror, 90, mPreviewWidth, mPreviewHeight);
@@ -518,11 +518,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		// Convert the coordinates to driver format.
 		// AE area is bigger because exposure is sensitive and
 		// easy to over- or underexposure if area is too small.
-		calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
-				.getPreviewSurfaceView().getHeight(), mFocusArea.get(0).rect);
+		calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewTextureView().getWidth(), MainScreen
+				.getPreviewTextureView().getHeight(), mFocusArea.get(0).rect);
 		if (MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
-			calculateTapArea(20, 20, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
-					.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
+			calculateTapArea(20, 20, 1f, x, y, MainScreen.getPreviewTextureView().getWidth(), MainScreen
+					.getPreviewTextureView().getHeight(), mMeteringArea.get(0).rect);
 		else
 			mMeteringArea = null;
 

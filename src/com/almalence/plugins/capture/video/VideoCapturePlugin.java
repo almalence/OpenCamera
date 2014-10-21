@@ -62,6 +62,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -315,7 +316,7 @@ public class VideoCapturePlugin extends PluginCapture
 						if (camera != null)
 							try
 							{
-								camera.setPreviewDisplay(MainScreen.getPreviewSurfaceHolder());
+								camera.setPreviewTexture(MainScreen.getPreviewSurfaceTexture());
 							} catch (IOException e)
 							{
 								e.printStackTrace();
@@ -1740,7 +1741,8 @@ public class VideoCapturePlugin extends PluginCapture
 		mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
 
 		// Step 5: Set the preview output
-		mMediaRecorder.setPreviewDisplay(MainScreen.getPreviewSurfaceHolder().getSurface());
+//		mMediaRecorder.setPreviewDisplay(MainScreen.getPreviewSurfaceHolder().getSurface());
+		mMediaRecorder.setPreviewDisplay(new Surface(MainScreen.getPreviewSurfaceTexture()));
 
 		mMediaRecorder
 				.setOrientationHint(CameraController.isFrontCamera() ? (MainScreen.getWantLandscapePhoto() ? MainScreen

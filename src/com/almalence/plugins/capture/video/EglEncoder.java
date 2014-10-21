@@ -430,7 +430,12 @@ public class EglEncoder
 		// "display" EGL context is created, then modify the eglCreateContext
 		// call to
 		// take eglGetCurrentContext() as the share_context argument.
-		this.mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+		try {
+			this.mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 		this.mInputSurface = new CodecInputSurface(this.mEncoder.createInputSurface());
 		this.mEncoder.start();

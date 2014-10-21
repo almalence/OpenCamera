@@ -11,11 +11,11 @@
         			android:layout_height="wrap_content"        			
         			android:layout_alignParentTop="true"
         			android:visibility="invisible">
-	<SurfaceView android:id="@+id/SurfaceView01"
+	<TextureView android:id="@+id/SurfaceView01"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center">
-	</SurfaceView>
+	</TextureView>
 	</RelativeLayout>	
 	
 </RelativeLayout>

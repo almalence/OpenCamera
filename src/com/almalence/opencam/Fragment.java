@@ -24,7 +24,7 @@ package com.almalence.opencam;
 
 //-+- -->
 
-import com.android.internal.util.CharSequences;
+//import com.android.internal.util.CharSequences;
 
 import android.annotation.TargetApi;
 import android.content.Intent;

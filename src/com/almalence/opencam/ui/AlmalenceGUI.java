@@ -1480,7 +1480,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
-		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
+		MainScreen.getPreviewTextureView().setLayoutParams(lp);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 	}
@@ -5719,7 +5719,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			return true;
 
 		// to possibly slide-out top panel
-		if (view == MainScreen.getPreviewSurfaceView()
+		if (view == MainScreen.getPreviewTextureView()
 				|| view == (View) MainScreen.getInstance().findViewById(R.id.mainLayout1))
 			((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
 

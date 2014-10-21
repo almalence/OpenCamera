@@ -1,5 +1,6 @@
 package com.almalence.plugins.capture.video;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import android.annotation.SuppressLint;
@@ -124,9 +125,20 @@ public class AudioRecorder
 			format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
 			format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE_AUDIO);
 
-			this.encoder = MediaCodec.createEncoderByType(MIME_TYPE_AUDIO);
+			MediaCodec new_encoder = null;
+			try
+			{
+				new_encoder = MediaCodec.createEncoderByType(MIME_TYPE_AUDIO);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+			this.encoder = new_encoder;
 			this.encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 			this.encoder.start();
+			
 		}
 
 		@Override

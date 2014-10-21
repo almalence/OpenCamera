@@ -330,7 +330,7 @@ public class Panel extends LinearLayout
 
 																int action = event.getAction();
 
-																if (v == MainScreen.getPreviewSurfaceView()
+																if (v == MainScreen.getPreviewTextureView()
 																		|| v == ((View) MainScreen.getInstance()
 																				.findViewById(R.id.mainLayout1))
 																		|| v.getParent() == (View) MainScreen

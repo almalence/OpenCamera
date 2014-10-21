@@ -89,8 +89,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
