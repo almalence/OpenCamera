@@ -936,6 +936,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (cs == null)
 			return;
 
+		if (Build.MODEL.contains("HTC One X"))
+		{
+			if (!CameraController.isFrontCamera())
+			{
+				Camera.Size additional = null;
+				additional = CameraController.getCamera().new Size(3264, 2448);
+				cs.add(additional);
+			}
+		}
+		
 		int iHighestIndex = 0;
 		Camera.Size sHighest = cs.get(0);
 
