@@ -17,6 +17,7 @@ import android.opengl.GLES20;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
@@ -147,9 +148,22 @@ public class DROVideoEngine
 						{
 							DROVideoEngine.this.paused = false;
 
-							DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
+							try
+							{
+								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
 									DROVideoEngine.this.previewHeight, 24, 20000000, (MainScreen.getGUIManager()
 											.getDisplayOrientation()) % 360);
+							}
+							catch(RuntimeException e)
+							{
+								e.printStackTrace();
+								MainScreen.getInstance().runOnUiThread(new Runnable() {
+								    public void run() {
+								        Toast.makeText(MainScreen.getInstance(), "Can't record HDR Video. MediaMuxer creation failed.", Toast.LENGTH_LONG).show();
+								    }
+								});
+								
+							}
 						}
 					}
 

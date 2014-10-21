@@ -172,7 +172,16 @@ public class GyroVFPlugin extends PluginViewfinder
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mVfGyroscope = new VfGyroSensor(null);
+		
+		//to see if it helps to fix "can't load library error"
+		try
+		{
+			mVfGyroscope = new VfGyroSensor(null);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		mSurfacePreviewAugmented = new AugmentedSurfaceView(this);
 		updatePreferences();
 	}
