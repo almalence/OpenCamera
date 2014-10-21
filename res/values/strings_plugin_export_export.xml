@@ -24,7 +24,7 @@
 	<string name="Pref_Export_Prefix_Title">Photo name prefix</string>
 	<string name="Pref_Export_Postfix_Title">Photo name postfix</string>
 	
-	<string name="Pref_Export_ExifTagOrientation_Title">Image orienttion</string>
+	<string name="Pref_Export_ExifTagOrientation_Title">Image orientation</string>
 	<string name="Pref_Export_ExifTagOrientation_Summary">Enable orientation tag</string>
 	
 	<string name="Pref_Export_AdditionalRotatoin_Title">Additional rotation</string>
