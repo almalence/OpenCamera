@@ -119,8 +119,6 @@ public class VideoCapturePlugin extends PluginCapture
 	private boolean								lockPauseButton					= false;
 	private int									soundVolume						= 0;
 
-	private static int							CameraIDPreference;
-
 	private MediaRecorder						mMediaRecorder;
 
 	private long								mRecordingStartTime;
@@ -1833,8 +1831,6 @@ public class VideoCapturePlugin extends PluginCapture
 		prefs.edit()
 				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 						false).commit();
-
-		CameraIDPreference = 0;
 
 		videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
 
