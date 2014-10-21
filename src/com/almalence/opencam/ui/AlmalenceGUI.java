@@ -4990,60 +4990,66 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int mode_number = 0;
 		while (it.hasNext())
 		{
-			Mode tmp = it.next();
-
-			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
-			View mode = inflator.inflate(R.layout.gui_almalence_select_mode_grid_element, null, false);
-			// set some mode icon
-			((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(MainScreen
-					.getInstance()
-					.getResources()
-					.getIdentifier(CameraController.isUseHALv3() ? tmp.iconHAL : tmp.icon, "drawable",
-							MainScreen.getInstance().getPackageName()));
-
-			int id = MainScreen
-					.getInstance()
-					.getResources()
-					.getIdentifier(CameraController.isUseHALv3() ? tmp.modeNameHAL : tmp.modeName, "string",
-							MainScreen.getInstance().getPackageName());
-			String modename = MainScreen.getInstance().getResources().getString(id);
-
-			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
-			if (mode_number == 0)
-				mode.setOnTouchListener(new OnTouchListener()
-				{
-					@Override
-					public boolean onTouch(View v, MotionEvent event)
+			try
+			{
+				Mode tmp = it.next();
+	
+				LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+				View mode = inflator.inflate(R.layout.gui_almalence_select_mode_grid_element, null, false);
+				// set some mode icon
+				((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(MainScreen
+						.getInstance()
+						.getResources()
+						.getIdentifier(CameraController.isUseHALv3() ? tmp.iconHAL : tmp.icon, "drawable",
+								MainScreen.getInstance().getPackageName()));
+	
+				int id = MainScreen
+						.getInstance()
+						.getResources()
+						.getIdentifier(CameraController.isUseHALv3() ? tmp.modeNameHAL : tmp.modeName, "string",
+								MainScreen.getInstance().getPackageName());
+				String modename = MainScreen.getInstance().getResources().getString(id);
+	
+				((TextView) mode.findViewById(R.id.modeText)).setText(modename);
+				if (mode_number == 0)
+					mode.setOnTouchListener(new OnTouchListener()
 					{
-						if (event.getAction() == MotionEvent.ACTION_CANCEL)// &&
-																			// isFirstMode)
+						@Override
+						public boolean onTouch(View v, MotionEvent event)
 						{
-							return changeMode(v);
+							if (event.getAction() == MotionEvent.ACTION_CANCEL)// &&
+																				// isFirstMode)
+							{
+								return changeMode(v);
+							}
+							return false;
 						}
-						return false;
-					}
-
-				});
-			mode.setOnClickListener(new OnClickListener()
-			{
-				public void onClick(View v)
+	
+					});
+				mode.setOnClickListener(new OnClickListener()
 				{
-					changeMode(v);
+					public void onClick(View v)
+					{
+						changeMode(v);
+					}
+				});
+				buttonModeViewAssoc.put(mode, tmp.modeID);
+				modeViews.add(mode);
+	
+				// select active mode in grid with frame
+				if (PluginManager.getInstance().getActiveModeID() == tmp.modeID)
+				{
+					mode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(
+							R.drawable.thumbnail_background_selected_inner);
+	
+					activeMode = (ViewGroup) mode;
 				}
-			});
-			buttonModeViewAssoc.put(mode, tmp.modeID);
-			modeViews.add(mode);
-
-			// select active mode in grid with frame
-			if (PluginManager.getInstance().getActiveModeID() == tmp.modeID)
-			{
-				mode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(
-						R.drawable.thumbnail_background_selected_inner);
-
-				activeMode = (ViewGroup) mode;
+				mode_number++;
 			}
-
-			mode_number++;
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		modeAdapter.Elements = modeViews;

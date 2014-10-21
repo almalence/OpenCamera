@@ -1348,8 +1348,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public Camera.Parameters getCameraParameters()
 	{
+		try
+		{
 		if (CameraController.camera != null)
 			return CameraController.camera.getParameters();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		return null;
 	}
