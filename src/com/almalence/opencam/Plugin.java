@@ -283,18 +283,6 @@ public abstract class Plugin
 		}
 
 		List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
-		// add 8 Mpix for rear camera for HTC One X
-		if (Build.MODEL.contains("HTC One X"))
-		{
-			if (!CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
 		int defaultCaptureIdx = -1;
 		long defaultCaptureMpix = 0;
 		int defaultCaptureWidth = 0;
