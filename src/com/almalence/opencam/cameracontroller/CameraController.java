@@ -1419,7 +1419,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public boolean getVideoStabilizationSupported()
 	{
-		if (CameraController.camera != null)
+		if (CameraController.camera != null && camera.getParameters() == null)
 			return CameraController.camera.getParameters().isVideoStabilizationSupported();
 
 		return false;
@@ -1434,7 +1434,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isAutoExposureLockSupported();
@@ -1446,7 +1446,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().getAutoExposureLock();
@@ -1458,7 +1458,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isAutoWhiteBalanceLockSupported();
@@ -1470,7 +1470,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().getAutoWhiteBalanceLock();
@@ -1482,7 +1482,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isZoomSupported();
@@ -1496,7 +1496,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return 1;
 
 			return CameraController.camera.getParameters().getMaxZoom();
@@ -1537,7 +1537,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return false;
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 
@@ -1597,16 +1597,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null) {
+			if (CameraController.camera != null && camera.getParameters() == null)
+			{
 				Camera.Parameters cameraParameters = CameraController.getCamera().getParameters();
 
 				return cameraParameters.getExposureCompensation()
 						* cameraParameters.getExposureCompensationStep();
 			}
-			
 			else
 				return 0;
-		} else
+		}
+		else
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			return prefs.getInt(MainScreen.sEvPref, 0);
@@ -1617,7 +1618,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
+			if (CameraController.camera != null && camera.getParameters() == null)
 			{
 				if (!isExposureCompensationSupported())
 					return;
