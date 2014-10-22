@@ -400,7 +400,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(this.previewWidth,
-					this.previewHeight));
+					this.previewHeight) * 0.9);
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(true);
@@ -1102,6 +1102,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 				this.engine.onFrameAdded(true, image);
 				this.isFirstFrame = false;
+				
+				final boolean done = this.engine.isCircular();
+				final boolean oom = this.engine.isMax();
+
+				if (oom && !done)
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_OUT_OF_MEMORY);
+				else if (done)
+					PluginManager.getInstance()
+							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NOTIFY_LIMIT_REACHED);
+
+				if (done || oom)
+					PluginManager.getInstance()
+							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FORCE_FINISH_CAPTURE);
 			} else
 			{
 				this.takingAlready = true;
