@@ -36,6 +36,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -70,8 +71,10 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -202,9 +205,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
-	// shows if HDR video allowed
-	private boolean								hdrAllowed						= false;
-
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
 
 	public VideoCapturePlugin()
@@ -225,9 +225,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		this.createModeSwitcher();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		hdrAllowed = prefs.getBoolean("hdrAllowed", false);
-		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2 || !hdrAllowed)
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			this.modeSwitcher.setVisibility(View.GONE);
 		}
@@ -1244,7 +1242,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && hdrAllowed)
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
 		View mainButtonsVideo = (View) MainScreen.getInstance().guiManager.getMainView().findViewById(
@@ -2443,35 +2441,26 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2 && !hdrAllowed && frameCnt <= 50)
-		{
-			// check if FPS rate higher than minimum allowed
-			if (frameCnt == 0)
-				timeStart = System.currentTimeMillis();
-			frameCnt++;
-
-			// frames number
-			if (frameCnt == 50)
-			{
-				time = (System.currentTimeMillis() - timeStart);
-				long fps = (1000 * frameCnt) / time;
-				// Log.e("!!!!!!!", "fps " + fps);
-				if (fps >= MIN_FPS)
-				{
-					hdrAllowed = true;
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext());
-					prefs.edit().putBoolean("hdrAllowed", hdrAllowed).commit();
-					if (!isRecording)
-						this.modeSwitcher.setVisibility(View.VISIBLE);
-				}
-			}
-		}
 	}
 
 	@Override
 	public void onFrameAvailable()
 	{
+		if (frameCnt <= 50)
+		{
+			// check if FPS rate higher than minimum allowed
+			if (frameCnt == 0)
+				timeStart = System.currentTimeMillis();
+			frameCnt++;
+			// frames number
+			if (frameCnt == 50)
+			{
+				time = (System.currentTimeMillis() - timeStart);
+				long fps = (1000 * frameCnt) / time;
+				if (fps < MIN_FPS)
+			    	showHDRWarning(fps);
+			}
+		}
 		this.droEngine.onFrameAvailable();
 	}
 
@@ -2491,5 +2480,31 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLDrawFrame(final GL10 gl)
 	{
 		this.droEngine.onDrawFrame(gl);
+	}
+	
+	
+	private void showHDRWarning(long fps)
+	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean showDroWarning = prefs.getBoolean("dontshowagainDroWarning", false);
+		
+		if (showDroWarning)
+			return;
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
+	    builder.setTitle("HDR Video");
+	    builder.setMessage(MainScreen.getInstance().getResources().getString(R.string.dro_warning) + " " +fps);
+	    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	            dialog.cancel();
+	        }
+	    });
+	    builder.setNegativeButton(MainScreen.getInstance().getResources().getString(R.string.helpTextDontShow), new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	        	prefs.edit().putBoolean("dontshowagainDroWarning", true).commit();
+	        }
+	    });
+	    builder.show();
 	}
 }
