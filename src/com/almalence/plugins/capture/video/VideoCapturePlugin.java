@@ -56,6 +56,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
@@ -1312,6 +1313,7 @@ public class VideoCapturePlugin extends PluginCapture
 		values.put(VideoColumns.BUCKET_ID, path.hashCode());
 		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
 		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+		values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
 		
 		if (lastUseProfile) {
 			values.put(VideoColumns.RESOLUTION, String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x" + String.valueOf(lastCamcorderProfile.videoFrameHeight));
@@ -1947,7 +1949,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		long targetNextUpdateDelay;
 		text = millisecondToTimeString(deltaAdjusted, false);
-		targetNextUpdateDelay = 1000;
+		targetNextUpdateDelay = 900;
 
 		mRecordingTimeView.setText(text);
 
@@ -1977,8 +1979,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}.start();
 
 		// show recording shutter
-
-		// TODO!!!
 		if (showRecording)
 		{
 			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
