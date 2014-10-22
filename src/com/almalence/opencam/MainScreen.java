@@ -410,14 +410,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
 		}
-		if (true == prefs.contains("subscription_unlock_all_month"))
-		{
-			unlockAllSubscriptionMonth = prefs.getBoolean("subscription_unlock_all_month", false);
-		}
-		if (true == prefs.contains("subscription_unlock_all_year"))
-		{
-			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
-		}
 
 		createBillingHandler();
 
@@ -2068,18 +2060,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean		objectRemovalBurstPurchased	= false;
 	private boolean		groupShotPurchased			= false;
 
-	private boolean		unlockAllSubscriptionMonth	= false;
-	private boolean		unlockAllSubscriptionYear	= false;
-
 	static final String	SKU_HDR						= "plugin_almalence_hdr";
 	static final String	SKU_PANORAMA				= "plugin_almalence_panorama";
 	static final String	SKU_UNLOCK_ALL				= "unlock_all_forever";
 	static final String	SKU_UNLOCK_ALL_COUPON		= "unlock_all_forever_coupon";
 	static final String	SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
 	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
-	// subscription
-	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
-	static final String	SKU_SUBSCRIPTION_YEAR_CTRL	= "subscription_unlock_all_year_controller";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
 	static final String	SKU_SALE2					= "abc_sale_controller2";
@@ -2095,9 +2081,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
-
+	
 		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
 		OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
 		OpenIabHelper.mapSku(SKU_PROMO, "com.yandex.store", "abc_promo");
@@ -2109,32 +2093,29 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON,
-				"subscription_unlock_all_year_controller");
-
+	
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
 		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
 
 		// Samsung store
-		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018387");
-		// OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018389");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001017613");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
-		// OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
-		// OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018391");
-		// OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018384");
-		//
-		// OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018393");
-		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018394");
+		 OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018387");
+		 OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018389");
+		 OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001017613");
+		 OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
+		 OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
+		 OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018391");
+		 OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018384");
+		
+		 OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018393");
+		 OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
+		 "100000103369/000001018394");
 	}
 
 	public void setShowStore(boolean show)
@@ -2162,15 +2143,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return unlockAllPurchased;
 	}
 
-	// controls subscription status request
-	private boolean	subscriptionStatusRequest	= false;
-	private long	timeLastSubscriptionCheck	= 0;							// should
-																				// check
-																				// each
-																				// 32
-																				// days
-																				// 32*24*60*60*1000
-	private long	days32						= 32 * 24 * 60 * 60 * 1000L;
 
 	private void createBillingHandler()
 	{
@@ -2178,11 +2150,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-			timeLastSubscriptionCheck = prefs.getLong("timeLastSubscriptionCheck", 0);
-			if ((System.currentTimeMillis() - timeLastSubscriptionCheck) > days32)
-				subscriptionStatusRequest = true;
-			else
-				subscriptionStatusRequest = false;
 
 			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
 			{
@@ -2231,20 +2198,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
-						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_CTRL);
 						additionalSkuList.add(SKU_PROMO);
-
-						if (subscriptionStatusRequest)
-						{
-							// subscription year
-							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
-							// reset subscription status
-							unlockAllSubscriptionYear = false;
-							prefs.edit().putBoolean("subscription_unlock_all_year", false).commit();
-
-							timeLastSubscriptionCheck = System.currentTimeMillis();
-							prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-						}
 
 						// for sale
 						additionalSkuList.add(SKU_SALE1);
@@ -2286,7 +2240,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockPano				= "$2.99";
 	public String								titleUnlockMoving			= "$3.99";
 	public String								titleUnlockGroup			= "$2.99";
-	public String								titleSubscriptionYear		= "$4.99";
 
 	public String								summary_SKU_PROMO			= "";
 	// public String summaryUnlockAll = "";
@@ -2295,8 +2248,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	// public String summaryUnlockMoving = "";
 	// public String summaryUnlockGroup = "";
 	//
-	// public String summarySubscriptionMonth = "";
-	// public String summarySubscriptionYear = "";
 
 	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
 	{
@@ -2344,11 +2295,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				groupShotPurchased = true;
 				prefsEditor.putBoolean("plugin_almalence_groupshot",true).commit();
 			}
-			if (inventory.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-			{
-				unlockAllSubscriptionYear = true;
-				prefsEditor.putBoolean("subscription_unlock_all_year",true).commit();
-			}
 
 			try
 			{
@@ -2391,7 +2337,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private int									ALL_REQUEST					= 102;
 	private int									OBJECTREM_BURST_REQUEST		= 103;
 	private int									GROUPSHOT_REQUEST			= 104;
-	private int									SUBSCRIPTION_YEAR_REQUEST	= 106;
 
 	public boolean isPurchasedAll()
 	{
@@ -2418,15 +2363,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return groupShotPurchased;
 	}
 
-	public boolean isPurchasedUnlockAllSubscriptionMonth()
-	{
-		return unlockAllSubscriptionMonth;
-	}
-
-	public boolean isPurchasedUnlockAllSubscriptionYear()
-	{
-		return unlockAllSubscriptionYear;
-	}
 
 	public void purchaseAll()
 	{
@@ -2495,23 +2431,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_MOVING_SEQ, OBJECTREM_BURST_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-
-	public void purchasedUnlockAllSubscriptionYear()
-	{
-		if (isPurchasedUnlockAllSubscriptionYear() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUBSCRIPTION_YEAR, SUBSCRIPTION_YEAR_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
 		} catch (Exception e)
 		{
@@ -2592,17 +2511,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_groupshot", true).commit();
 		}
-		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
-		{
-			Log.v("Main billing", "Purchase year subscription.");
-			unlockAllSubscriptionYear = true;
 
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
-
-			timeLastSubscriptionCheck = System.currentTimeMillis();
-			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-		}
 	}
 
 	public void launchPurchase(int requestID)
@@ -2748,12 +2657,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
 
-		if (left == 5 || left == 3)
-		{
-			// show subscription dialog
-			showSubscriptionDialog();
-			return;
-		}
 	}
 
 	// writes number of launches left into memory
@@ -2869,57 +2772,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			installed = false;
 		}
 		return installed;
-	}
-
-	private void showSubscriptionDialog()
-	{
-		final float density = getResources().getDisplayMetrics().density;
-
-		LinearLayout ll = new LinearLayout(this);
-		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
-
-		ImageView img = new ImageView(this);
-		img.setImageResource(R.drawable.store_subscription);
-		img.setAdjustViewBounds(true);
-		ll.addView(img);
-
-		TextView tv = new TextView(this);
-		tv.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionText));
-		tv.setWidth((int) (250 * density));
-		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
-		ll.addView(tv);
-
-		Button bNo = new Button(this);
-		bNo.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionNoText));
-		ll.addView(bNo);
-
-		Button bSubscribe = new Button(this);
-		bSubscribe.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionYesText));
-		ll.addView(bSubscribe);
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(ll);
-		final AlertDialog dialog = builder.create();
-
-		bSubscribe.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				purchasedUnlockAllSubscriptionYear();
-				dialog.dismiss();
-			}
-		});
-
-		bNo.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				dialog.dismiss();
-			}
-		});
-
-		dialog.show();
 	}
 
 	private boolean isABCUnlockedInstalled(Activity activity)
