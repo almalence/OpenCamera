@@ -64,7 +64,7 @@ public class AlmalenceStore
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
 
-	private static final int STORE_ELEMENTS_NUMBER = 6;
+	private static final int STORE_ELEMENTS_NUMBER = 5;
 	
 	AlmalenceStore(View gui)
 	{
@@ -320,17 +320,17 @@ public class AlmalenceStore
 					}
 				}
 				break;
-			case 1:
-				// subscription year
-				icon.setImageResource(R.drawable.store_subscription);
-				description.setText(MainScreen.getInstance().getResources()
-						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleSubscriptionYear+"/"+MainScreen.getInstance().getResources()
-							.getString(R.string.Pref_Upgrde_SubscriptionYear_Year));
-				break;
+//			case 1:
+//				// subscription year
+//				icon.setImageResource(R.drawable.store_subscription);
+//				description.setText(MainScreen.getInstance().getResources()
+//						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
+//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
+//					price.setText(R.string.already_unlocked);
+//				else
+//					price.setText(MainScreen.getInstance().titleSubscriptionYear+"/"+MainScreen.getInstance().getResources()
+//							.getString(R.string.Pref_Upgrde_SubscriptionYear_Year));
+//				break;
 //			case 2:
 //				// subscription month
 //				icon.setImageResource(R.drawable.store_promo);
@@ -341,7 +341,7 @@ public class AlmalenceStore
 //				else
 //					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
 //				break;
-			case 2:
+			case 1:
 				// HDR
 				icon.setImageResource(R.drawable.store_hdr);
 				description.setText(MainScreen.getInstance().getResources()
@@ -351,7 +351,7 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockHDR);
 				break;
-			case 3:
+			case 2:
 				// Panorama
 				icon.setImageResource(R.drawable.store_panorama);
 				description.setText(MainScreen.getInstance().getResources()
@@ -361,7 +361,7 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockPano);
 				break;
-			case 4:
+			case 3:
 				// multishot
 				icon.setImageResource(R.drawable.store_moving);
 				description.setText(MainScreen.getInstance().getResources()
@@ -381,7 +381,7 @@ public class AlmalenceStore
 //				else
 //					price.setText(MainScreen.getInstance().titleUnlockGroup);
 //				break;
-			case 5:
+			case 4:
 				// Promo code
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getInstance().getResources()
@@ -433,25 +433,25 @@ public class AlmalenceStore
 		case 0:// unlock all
 			MainScreen.getInstance().purchaseAll();
 			break;
-		case 1:// Year subscription
-			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
-			break;
+//		case 1:// Year subscription
+//			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
+//			break;
 //		case 2:// Month subscription
 //			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
 //			break;
-		case 2:// HDR
+		case 1:// HDR
 			MainScreen.getInstance().purchaseHDR();
 			break;
-		case 3:// Panorama
+		case 2:// Panorama
 			MainScreen.getInstance().purchasePanorama();
 			break;
-		case 4:// multishot
+		case 3:// multishot
 			MainScreen.getInstance().purchaseMultishot();
 			break;
 //		case 4:// Groupshot
 //			MainScreen.getInstance().purchaseGroupshot();
 //			break;
-		case 5:// Promo
+		case 4:// Promo
 			if (!MainScreen.getInstance().isPurchasedAll())
 				MainScreen.getInstance().enterPromo();
 			break;

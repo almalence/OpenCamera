@@ -2461,6 +2461,7 @@ public class VideoCapturePlugin extends PluginCapture
 			{
 				time = (System.currentTimeMillis() - timeStart);
 				long fps = (1000 * frameCnt) / time;
+//				Log.e("!!!!!!!", "fps " + fps);
 				if (fps < MIN_FPS)
 			    	showHDRWarning(fps);
 			}

@@ -102,7 +102,7 @@ import android.widget.Toast;
 
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
-import com.almalence.util.AppWidgetNotifier;
+//import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -111,7 +111,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.util.AppRater;
+//import com.almalence.util.AppRater;
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -424,10 +424,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		/**** Billing *****/
 
 		// application rating helper
-		AppRater.app_launched(this);
+//		AppRater.app_launched(this);
 		// -+- -->
 
-		AppWidgetNotifier.app_launched(this);
+//		AppWidgetNotifier.app_launched(this);
 
 		try
 		{
@@ -1784,17 +1784,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return true;
 
 		// <!-- -+-
-		if (keyCode == KeyEvent.KEYCODE_BACK)
-		{
-			if (AppRater.showRateDialogIfNeeded(this))
-			{
-				return true;
-			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
-		}
+//		if (keyCode == KeyEvent.KEYCODE_BACK)
+//		{
+//			if (AppRater.showRateDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//		}
 		// -+- -->
 
 		if (super.onKeyDown(keyCode, event))
@@ -2434,23 +2434,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return;
 
 		// now will call store with abc unlocked
-		callStoreForUnlocked(this);
+//		callStoreForUnlocked(this);
 		
 		//TODO: this is for all other markets!!!!! Do not call store!!!
-//		String payload = "";
-//		try 
-//		{
-//			mHelper.launchPurchaseFlow(MainScreen.thiz,
-//					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(MainScreen.thiz,
-//					"Error during purchase " + e.getMessage(),
-//					Toast.LENGTH_LONG).show();
-//		}
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
 	}
 
 	public void purchaseHDR()

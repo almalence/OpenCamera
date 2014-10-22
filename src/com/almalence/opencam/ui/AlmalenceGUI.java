@@ -96,7 +96,7 @@ import com.almalence.googsharing.Thumbnail;
 import com.almalence.ui.Panel;
 import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.ui.RotateImageView;
-import com.almalence.util.AppEditorNotifier;
+//import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -6264,28 +6264,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_STOP_CAPTURE);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean isAllowedExternal = prefs.getBoolean(
-				MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
-		if (isAllowedExternal || isOpenExternal)
-		{
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		boolean isAllowedExternal = prefs.getBoolean(
+//				MainScreen.getInstance().getResources().getString(R.string.Preference_allowExternalGalleries), false);
+//		if (isAllowedExternal || isOpenExternal)
+//		{
 			openExternalGallery(uri);
-		} else
-		{
-			// if installed - run ABC Editor
-			if (AppEditorNotifier.isABCEditorInstalled(MainScreen.getInstance()))
-			{
-				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));// com.almalence.opencameditor
-			}
-			// if not installed - show that we have editor and let user install
-			// it of run standard dialog
-			else
-			{
-				// if not - show default gallery
-				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance()))
-					openExternalGallery(uri);
-			}
-		}
+//		} else
+//		{
+//			// if installed - run ABC Editor
+//			if (AppEditorNotifier.isABCEditorInstalled(MainScreen.getInstance()))
+//			{
+//				MainScreen.getInstance().startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));// com.almalence.opencameditor
+//			}
+//			// if not installed - show that we have editor and let user install
+//			// it of run standard dialog
+//			else
+//			{
+//				// if not - show default gallery
+//				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(MainScreen.getInstance()))
+//					openExternalGallery(uri);
+//			}
+//		}
 	}
 
 	private void openExternalGallery(Uri uri)
