@@ -1312,16 +1312,32 @@ public class VideoCapturePlugin extends PluginCapture
 		values.put(VideoColumns.BUCKET_ID, path.hashCode());
 		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
 		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+		
+		if (lastUseProfile) {
+			values.put(VideoColumns.RESOLUTION, String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x" + String.valueOf(lastCamcorderProfile.videoFrameHeight));
+		} else {
+			values.put(VideoColumns.RESOLUTION, String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
+		}
+		
+		mRecordingTimeView.setText("00:00");
+		mRecorded = 0;
+		shutterOff = false;
+		showRecording = false;
 	}
 
 	protected void doExportVideo()
 	{
-		if (filesList.size() > 0)
+		boolean onPause = this.onPause;
+		this.onPause = false;
+		
+		File fileSaved = this.fileSaved;
+		ArrayList<File> filesListToExport = filesList;
+		if (filesListToExport.size() > 0)
 		{
-			File firstFile = filesList.get(0);
-			for (int i = 1; i < filesList.size(); i++)
+			File firstFile = filesListToExport.get(0);
+			for (int i = 1; i < filesListToExport.size(); i++)
 			{
-				File currentFile = filesList.get(i);
+				File currentFile = filesListToExport.get(i);
 				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
 			}
 			// if not onPause, then last video isn't added to list.
@@ -1330,20 +1346,16 @@ public class VideoCapturePlugin extends PluginCapture
 				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
 			}
 
-			if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
+			if (!filesListToExport.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
 			{
 				fileSaved.delete();
 				firstFile.renameTo(fileSaved);
 			}
 		}
 
-		onPause = false;
-
 		String[] filesSavedNames = new String[1];
 		filesSavedNames[0] = fileSaved.toString();
-		filesList.clear();
-		mRecordingTimeView.setText("00:00");
-		mRecorded = 0;
+		filesListToExport.clear();
 
 		MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 
@@ -1355,8 +1367,6 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 		}
 		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-		shutterOff = false;
-		showRecording = false;
 	}
 
 	private void startRecording()
@@ -1364,6 +1374,8 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
 			return;
+	
+		filesList = new ArrayList<File>();
 		
 		if (shutterOff)
 			return;
