@@ -1313,10 +1313,14 @@ public class VideoCapturePlugin extends PluginCapture
 		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 		values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
 		
-		if (lastUseProfile) {
-			values.put(VideoColumns.RESOLUTION, String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x" + String.valueOf(lastCamcorderProfile.videoFrameHeight));
+		if (this.modeDRO()){
+			values.put(VideoColumns.RESOLUTION, String.valueOf(MainScreen.getPreviewWidth()) + "x" + String.valueOf(MainScreen.getPreviewHeight()));
 		} else {
-			values.put(VideoColumns.RESOLUTION, String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
+			if (lastUseProfile) {
+				values.put(VideoColumns.RESOLUTION, String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x" + String.valueOf(lastCamcorderProfile.videoFrameHeight));
+			} else {
+				values.put(VideoColumns.RESOLUTION, String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
+			}
 		}
 		
 		mRecordingTimeView.setText("00:00");
