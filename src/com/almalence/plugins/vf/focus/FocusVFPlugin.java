@@ -566,6 +566,7 @@ public class FocusVFPlugin extends PluginViewfinder
 //					autoFocus();
 //				}
 //			}.start();
+			//Back to direct call to work on S2. TODO: Check on Android 5
 			setFocusParameters();
 			autoFocus();
 			
