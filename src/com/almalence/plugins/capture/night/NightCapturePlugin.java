@@ -29,7 +29,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
 import android.os.Build;
@@ -46,7 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -77,7 +77,6 @@ public class NightCapturePlugin extends PluginCapture
 	private static Toast		capturingDialog;
 
 	// almashot - related
-	private int					frameNumber;
 	private boolean				aboutToTakePicture		= false;
 
 	// shared between activities
@@ -303,7 +302,6 @@ public class NightCapturePlugin extends PluginCapture
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
 		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		//Log.e("Night", "Optimal preview size = " + os.getWidth() + " x " + os.getHeight());
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
@@ -495,7 +493,7 @@ public class NightCapturePlugin extends PluginCapture
 			}
 
 			// reiniting for every shutter press
-			frameNumber = 0;
+			imagesTaken = 0;
 			total_frames = HI_RES_FRAMES;
 
 			if (FocusPreference.compareTo("0") == 0)
@@ -544,23 +542,21 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
-		//Log.e("Night", "onImageTaken");
-
-		PluginManager.getInstance().addToSharedMem("frame" + (frameNumber + 1) + SessionID,
+		PluginManager.getInstance().addToSharedMem("frame" + (imagesTaken + 1) + SessionID,
 				String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen" + (frameNumber + 1) + SessionID,
+		PluginManager.getInstance().addToSharedMem("framelen" + (imagesTaken + 1) + SessionID,
 				String.valueOf(frame_len));
 
 		// ToDo: there is no need to pass orientation for every frame, just for the first one
 		// also, amountofcapturedframes can be set only once to total_frames
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (frameNumber + 1) + SessionID,
+		PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (frameNumber + 1) + SessionID,
+		PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-				String.valueOf(frameNumber + 1));
+				String.valueOf(imagesTaken + 1));
 
-		if (frameNumber == 0)
+		if (imagesTaken == 0)
 		{
 			boolean isHALv3 = CameraController.isUseHALv3();
 			PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
@@ -575,27 +571,22 @@ public class NightCapturePlugin extends PluginCapture
 			// pass sensor gain to the image processing functions if it is known
 			PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
 					String.valueOf(sensorGain));
-			
-			// FixMe: we are always requesting YUV, so isYUV is always true (?) 
-			if (!isYUV && frameData != null)
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 		}
 		
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			//Log.e("Night", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			takingAlready = false;
+//			return;
+//		}
 
-			frameNumber = 0;
-			MainScreen.getInstance().muteShutter(false);
-			takingAlready = false;
-			return;
-		}
-
-		if (++frameNumber == total_frames)
+		if (++imagesTaken == total_frames)
 		{
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
@@ -611,7 +602,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
 
-		if (result.getSequenceId() == requestID && frameNumber == 0)
+		if (result.getSequenceId() == requestID && imagesTaken == 0)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
 	

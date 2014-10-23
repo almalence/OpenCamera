@@ -17,11 +17,10 @@ by Almalence Inc. All Rights Reserved.
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
+ package com.almalence.opencam_plus.ui;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -427,6 +426,8 @@ public class AlmalenceStore
 	{
 		// get inapp associated with pressed button
 		Integer id = buttonStoreViewAssoc.get(v);
+		if (id == null)
+			return;
 		switch (id)
 		{
 		case 0:// unlock all

@@ -37,9 +37,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-
-import com.almalence.opencam.MainScreen;
 import com.almalence.util.Size;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.MainScreen;
+//-+- -->
 
 public class AlmaCLRShot
 {
@@ -159,7 +164,7 @@ public class AlmaCLRShot
 		void onProcessingComplete(ObjectInfo[] objInfoList);
 	}
 
-	public void addInputFrame(List<byte[]> inputFrame, Size size, boolean isYUV) throws Exception
+	public void addInputFrame(List<Integer> inputFrame, Size size) throws Exception
 	{
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
@@ -197,7 +202,7 @@ public class AlmaCLRShot
 					* ((mInputFrameSize.getWidth() + 1) / 2) * ((mInputFrameSize.getHeight() + 1) / 2);
 			for (int i = 0; i < mNumOfFrame; i++)
 			{
-				PointOfData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
+				PointOfData[i] = inputFrame.get(i);
 				LengthOfData[i] = data_lenght;
 				if (PointOfData[i] == 0)
 				{
@@ -207,10 +212,7 @@ public class AlmaCLRShot
 			}
 
 			int error = -1;
-			if (!isYUV)
-				error = ConvertFromJpeg(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
-			else
-				error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
+			error = AddYUVInputFrame(PointOfData, LengthOfData, mNumOfFrame, size.getWidth(), size.getHeight());
 			if (error < 0)
 			{
 				Log.d(TAG, "Out Of Memory");
@@ -227,7 +229,7 @@ public class AlmaCLRShot
 	public boolean initialize(Size previewSize, int angle, int baseFrame, int sensitivity, int minSize, int ghosting,
 			OnProcessingListener listener) throws Exception
 	{
-		Log.d(TAG, "initialize() -- start");
+//		Log.d(TAG, "initialize() -- start");
 		mGhosting = ghosting;
 		mPreviewSize = previewSize;
 		mBaseFrameIndex = baseFrame;
@@ -278,7 +280,7 @@ public class AlmaCLRShot
 		removeProcessing(mAutoLayout);
 		updateLayout();
 
-		Log.d(TAG, "initialize() -- end");
+//		Log.d(TAG, "initialize() -- end");
 		return true;
 	}
 
@@ -338,7 +340,7 @@ public class AlmaCLRShot
 
 	public synchronized ObjectInfo[] getObjectInfoList()
 	{
-		Log.d(TAG, "getObjectInfoList() -- start");
+//		Log.d(TAG, "getObjectInfoList() -- start");
 		long start = System.currentTimeMillis();
 
 		if (mTotalObj == 0)
@@ -361,7 +363,7 @@ public class AlmaCLRShot
 
 		for (int i = 0; i < mTotalObj; i++)
 		{
-			Log.d(TAG, "mObjInfo" + "[" + i + "]");
+//			Log.d(TAG, "mObjInfo" + "[" + i + "]");
 			Rect orgRect = new Rect(mBoarderRect[i].left * IMAGE_TO_LAYOUT, mBoarderRect[i].top * IMAGE_TO_LAYOUT,
 					mBoarderRect[i].right * IMAGE_TO_LAYOUT, mBoarderRect[i].bottom * IMAGE_TO_LAYOUT);
 			Rect PreviewRect = new Rect(Math.round(mBoarderRect[i].left * ratio), Math.round(mBoarderRect[i].top
@@ -380,8 +382,8 @@ public class AlmaCLRShot
 			mOnProcessingListener.onProcessingComplete(mObjInfo);
 		}
 
-		Log.d(TAG, "getObjectInfoList() elapsed time = " + (System.currentTimeMillis() - start));
-		Log.d(TAG, "getObjectInfoList() -- end");
+//		Log.d(TAG, "getObjectInfoList() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "getObjectInfoList() -- end");
 		return mObjInfo;
 	}
 
@@ -399,12 +401,13 @@ public class AlmaCLRShot
 		matrix.preRotate(angle);
 		Bitmap rotImage = Bitmap.createBitmap(b, 0, 0, w, h, matrix, true);
 		b.recycle();
+		b = null;
 		return rotImage;
 	}
 
 	public Bitmap getPreviewBitmap()
 	{
-		Log.d(TAG, "getPreviewBitmap() -- start");
+//		Log.d(TAG, "getPreviewBitmap() -- start");
 
 		Bitmap bitmap = Bitmap.createBitmap(mPreviewSize.getWidth(), mPreviewSize.getHeight(), Config.ARGB_8888);
 
@@ -414,7 +417,7 @@ public class AlmaCLRShot
 				mPreviewSize.getHeight());
 		ARGBBuffer = null;
 
-		Log.d(TAG, "getPreviewBitmap() -- end");
+//		Log.d(TAG, "getPreviewBitmap() -- end");
 		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 
@@ -861,7 +864,7 @@ public class AlmaCLRShot
 
 	public synchronized ObjBorderInfo[] getObjBorderBitmap(Paint paint)
 	{
-		Log.d(TAG, "getObjBoundaryBitmap() -- start");
+//		Log.d(TAG, "getObjBoundaryBitmap() -- start");
 
 		if (mObjBorderInfo != null)
 		{
@@ -878,7 +881,7 @@ public class AlmaCLRShot
 
 		for (int i = 0; i < mTotalObj; i++)
 		{
-			Log.d(TAG, "mObjBorderInfo" + "[" + i + "]");
+//			Log.d(TAG, "mObjBorderInfo" + "[" + i + "]");
 			if (mObjInfo[i].thumbnail == null)
 			{
 				continue;
@@ -911,7 +914,7 @@ public class AlmaCLRShot
 
 	public void setObjectList(boolean[] objectIndex) throws Exception
 	{
-		Log.d(TAG, "setObjectList() -- start");
+//		Log.d(TAG, "setObjectList() -- start");
 		long start = System.currentTimeMillis();
 
 		if (objectIndex.length > mTotalObj)
@@ -947,14 +950,14 @@ public class AlmaCLRShot
 
 		removeProcessing(mManualLayout);
 
-		Log.d(TAG, "setObjectList() elapsed time = " + (System.currentTimeMillis() - start));
-		Log.d(TAG, "setObjectList() -- end");
+//		Log.d(TAG, "setObjectList() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "setObjectList() -- end");
 		return;
 	}
 
 	public void setObject(int objectIndex, boolean removed) throws Exception
 	{
-		Log.d(TAG, "setObject() -- start");
+//		Log.d(TAG, "setObject() -- start");
 		long start = System.currentTimeMillis();
 
 		if (objectIndex > mTotalObj)
@@ -986,8 +989,8 @@ public class AlmaCLRShot
 
 		removeProcessing(mManualLayout);
 
-		Log.d(TAG, "setObject() elapsed time = " + (System.currentTimeMillis() - start));
-		Log.d(TAG, "setObject() -- end");
+//		Log.d(TAG, "setObject() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "setObject() -- end");
 		return;
 	}
 
@@ -1157,7 +1160,7 @@ public class AlmaCLRShot
 
 	public void release()
 	{
-		Log.d(TAG, "release() start");
+//		Log.d(TAG, "release() start");
 		synchronized (syncObject)
 		{
 			Release(mNumOfFrame);
@@ -1194,7 +1197,7 @@ public class AlmaCLRShot
 				e.printStackTrace();
 			}
 		}
-		Log.d(TAG, "release() end");
+//		Log.d(TAG, "release() end");
 		return;
 	}
 
@@ -1209,9 +1212,9 @@ public class AlmaCLRShot
 		long start = System.currentTimeMillis();
 		mOutNV21 = MovObjProcess(mNumOfFrame, mInputFrameSize, mSensitivity, mMinSize, mBaseArea, mCrop, layout,
 				mGhosting, IMAGE_TO_LAYOUT);
-		Log.d(TAG, "MovObjProcess() elapsed time = " + (System.currentTimeMillis() - start));
-		Log.d(TAG, "mCrop[0] = " + mCrop[0] + " mCrop[1] = " + mCrop[1] + " mCrop[2] = " + mCrop[2] + " mCrop[3] = "
-				+ mCrop[3]);
+//		Log.d(TAG, "MovObjProcess() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "mCrop[0] = " + mCrop[0] + " mCrop[1] = " + mCrop[1] + " mCrop[2] = " + mCrop[2] + " mCrop[3] = "
+//				+ mCrop[3]);
 
 		mBaseFrameIndex = mCrop[4];
 		return;

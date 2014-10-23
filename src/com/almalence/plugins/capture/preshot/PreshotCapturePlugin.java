@@ -33,7 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -144,18 +144,13 @@ public class PreshotCapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
-				StopBuffering();
-				inCapture = false;
-
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modePrefPreShot", isChecked ? "1" : "0");
 				editor.commit();
 
-				Message msg = new Message();
-				msg.what = PluginManager.MSG_RESTART_MAIN_SCREEN;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				getPrefs();
 			}
 		});
 
@@ -281,7 +276,10 @@ public class PreshotCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
-			if (!AutostartPreference)
+			if (CameraController.getCamera() == null)
+				return;
+			
+			if (!AutostartPreference && modeSwitcher != null)
 				modeSwitcher.setEnabled(false);
 			captureStarted = true;
 			StartBuffering();
@@ -400,7 +398,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			System.gc();
 
 			//??? should it be 0? frmCnt seems never to be 0! 
-			if (frmCnt == 0)
+			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
 			PreShot.InsertToBuffer(data, MainScreen.getGUIManager().getDisplayOrientation());
@@ -454,12 +452,19 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (0 == PreShot.GetImageCount()) {
+			if (frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			else
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 //		inCapture = false;
-
-		if (0 == PreShot.GetImageCount() && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 
@@ -518,13 +523,11 @@ public class PreshotCapturePlugin extends PluginCapture
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
 					&& !MainScreen.getAutoFocusLock())
 			{
-				Log.v("", "1");
 				counter = 0;
 				if (!CameraController.autoFocus())
 					CaptureFrame();
 			} else
 			{
-				Log.v("", "2");
 				CaptureFrame();
 			}
 		}

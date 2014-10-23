@@ -16,6 +16,9 @@
 	<string name="Pref_Export_SaveTo_Title">Seleccionar ubicación para guardar imágenes</string>
 	
 	<string name="Pref_Export_UseGeoTagging_Title">Geoetiquetado</string>
-	<string name="Pref_Export_UseGeoTagging_Summary">Agregar etiquetas de ubicación. Activar el ajuste del sistema &quot;ubicación del GPS&quot; para obtener un geoetiquetado preciso.</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">Agregar etiquetas de ubicación. Activar el ajuste del sistema "ubicación del GPS" para obtener un geoetiquetado preciso.</string>
+	
+	<string name="Pref_Export_SortByData_Title">Usar carpetas con fecha</string>
+	<string name="Pref_Export_SortByData_Summary">Guardar las imágenes obtenidas en la carpeta de la fecha actual</string>
 
 </resources>

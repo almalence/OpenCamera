@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -53,7 +52,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
+
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 /***
  * Abstract class for plugins
@@ -240,12 +245,17 @@ public abstract class Plugin
 		
 	}
 	
+	public void addToSharedMemExifTags(byte[] frameData)
+	{
+		
+	}
+	
 	public void onPreviewFrame(byte[] data)
 	{
 		
 	}
 
-	@TargetApi(19)
+	@TargetApi(21)
 	public void onCaptureCompleted(CaptureResult result)
 	{
 	}
@@ -273,18 +283,6 @@ public abstract class Plugin
 		}
 
 		List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
-		// add 8 Mpix for rear camera for HTC One X
-		if (Build.MODEL.contains("HTC One X"))
-		{
-			if (!CameraController.isFrontCamera())
-			{
-				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
-				additional.setWidth(3264);
-				additional.setHeight(2448);
-				cs.add(additional);
-			}
-		}
 		int defaultCaptureIdx = -1;
 		long defaultCaptureMpix = 0;
 		int defaultCaptureWidth = 0;
@@ -305,7 +303,7 @@ public abstract class Plugin
 			{
 				if (mpix > defaultCaptureMpix && mpix <= MPIX_8)
 				{
-					defaultCaptureIdx = ii;
+					defaultCaptureIdx = Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii));
 					defaultCaptureMpix = mpix;
 					defaultCaptureWidth = s.getWidth();
 					defaultCaptureHeight = s.getHeight();
@@ -324,7 +322,7 @@ public abstract class Plugin
 					&& (mpix >= CameraController.MIN_MPIX_SUPPORTED))
 			{
 				prefFound = true;
-				CaptureIdx = ii;
+				CaptureIdx = prefIdx;
 				CaptureMpix = mpix;
 				CaptureWidth = s.getWidth();
 				CaptureHeight = s.getHeight();
@@ -333,7 +331,7 @@ public abstract class Plugin
 
 			if (mpix > CaptureMpix)
 			{
-				CaptureIdx = ii;
+				CaptureIdx = Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii));
 				CaptureMpix = mpix;
 				CaptureWidth = s.getWidth();
 				CaptureHeight = s.getHeight();
@@ -355,7 +353,7 @@ public abstract class Plugin
 			}
 		}
 
-		CameraController.setCameraImageSizeIndex(CaptureIdx);
+		CameraController.setCameraImageSizeIndex(CaptureIdx, true);
 		MainScreen.setImageWidth(CaptureWidth);
 		MainScreen.setImageHeight(CaptureHeight);
 
@@ -371,14 +369,6 @@ public abstract class Plugin
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
-//		cp.setPreviewSize(os.getWidth(), os.getHeight());
-//		try
-//		{
-//			CameraController.getInstance().setCameraParameters(cp);
-//		} catch (RuntimeException e)
-//		{
-//			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
-//		}
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)

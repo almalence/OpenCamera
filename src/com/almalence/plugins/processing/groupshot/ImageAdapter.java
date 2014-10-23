@@ -38,6 +38,7 @@ import android.widget.ImageView;
 
 /* <!-- +++
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -209,33 +210,38 @@ public class ImageAdapter extends BaseAdapter
 	{
 		int width = MainScreen.getImageWidth();
 		int height = MainScreen.getImageHeight();
+		
+		int scaledWidth = 0;
+		int scaledHeight = 0;
 
-		Bitmap bm = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		Size mInputFrameSize = new Size(width, height);
-
-		Rect rect = new Rect(0, 0, width, height);
-		int[] ARGBBuffer = AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mInputFrameSize);
-		bm.setPixels(ARGBBuffer, 0, width, 0, 0, width, height);
-
+				
 		float imageRatio = (float) width / (float) height;
 		float displayRatio = (float) THUMBNAIL_WIDTH / (float) THUMBNAIL_HEIGHT;
 
-		Bitmap bitmap = null;
 		if (imageRatio > displayRatio)
 		{
-			bitmap = Bitmap.createScaledBitmap(bm, THUMBNAIL_WIDTH, (int) (THUMBNAIL_WIDTH / displayRatio), true);
+			scaledWidth = THUMBNAIL_WIDTH;
+			scaledHeight = (int) (THUMBNAIL_WIDTH / displayRatio);
 		} else
 		{
-			bitmap = Bitmap.createScaledBitmap(bm, (int) (THUMBNAIL_HEIGHT * imageRatio), THUMBNAIL_HEIGHT, true);
+			scaledWidth = (int) (THUMBNAIL_HEIGHT * imageRatio);
+			scaledHeight = THUMBNAIL_HEIGHT;
 		}
+		Size mOutputFrameSize = new Size(scaledWidth, scaledHeight);
 
-		if (bitmap != bm)
-			bm.recycle();
+		Rect rect = new Rect(0, 0, width, height);
+		Bitmap bitmap = Bitmap.createBitmap(
+				AlmaShotSeamless.NV21toARGB(mYUVList.get(position), mInputFrameSize, rect, mOutputFrameSize), scaledWidth,
+				scaledHeight, Config.RGB_565);
 
 		Matrix matrix = new Matrix();
 		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
 
-		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		bitmap.recycle();
+		bitmap = null;
+		return rotatedBitmap;
 	}
 
 	private int setDirContainThumbnails(String path)

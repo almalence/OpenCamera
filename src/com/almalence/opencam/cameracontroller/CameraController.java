@@ -17,8 +17,8 @@
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
- +++ --> */
+package com.almalence.opencam_plus.cameracontroller;
++++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
 //-+- -->
@@ -40,6 +40,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -52,9 +53,7 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 import com.almalence.util.ImageConversion;
-
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
@@ -239,7 +238,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<String>						MultishotResolutionsIdxesList;
 	public static List<String>						MultishotResolutionsNamesList;
 
-	public static List<Integer>						FastIdxelist;											;
+	public static List<Integer>						FastIdxelist;											
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
@@ -639,12 +638,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
         else
         	previewMode = true;
         
+		evLatency=0;
         previewWorking=false;
-        cdt = null;
+        if (cdt != null)
+		{
+			cdt.cancel();
+			cdt = null;
+		}
+        
+        total_frames = 0;
 	}
 
 	public void onPause()
 	{
+		evLatency=0;
+        previewWorking=false;
+        if (cdt != null)
+		{
+			cdt.cancel();
+			cdt = null;
+		}
+        
+        total_frames = 0;
+        
 		// reset torch
 		if (!CameraController.isHALv3)
 		{
@@ -872,6 +888,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return isCameraCreatedHALv3();
 
 	}
+	
+	@TargetApi(21)
+	public static void createCaptureSession(List<Surface> sfl)
+	{
+		HALv3.createCaptureSession(sfl);
+	}
 
 	@TargetApi(21)
 	public static boolean isCameraCreatedHALv3()
@@ -920,6 +942,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (cs == null)
 			return;
 
+		if (Build.MODEL.contains("HTC One X"))
+		{
+			if (!CameraController.isFrontCamera())
+			{
+				Camera.Size additional = null;
+				additional = CameraController.getCamera().new Size(3264, 2448);
+				cs.add(additional);
+			}
+		}
+		
 		int iHighestIndex = 0;
 		Camera.Size sHighest = cs.get(0);
 
@@ -1069,7 +1101,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							&& CameraController.MultishotResolutionsMPixList.get(j) > maxMpx)
 					{
 						maxMpx = CameraController.MultishotResolutionsMPixList.get(j);
-						maxFastIdx = j;
+						maxFastIdx = CameraController.FastIdxelist.get(i);
 					}
 				}
 			}
@@ -1101,7 +1133,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				break;
 
 		int ri = 0;
-		if (Math.abs(ratio - 4 / 3.f) < 0.1f)
+		if (Math.abs(ratio - 4 / 3.f) < 0.12f)
 			ri = 1;
 		if (Math.abs(ratio - 3 / 2.f) < 0.12f)
 			ri = 2;
@@ -1110,6 +1142,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (Math.abs(ratio - 1) == 0)
 			ri = 4;
 
+		if (mpix < 0.1f) {
+			mpix = 0.1f;
+		}
+		
 		String newName;
 		if (isFast)
 		{
@@ -1312,8 +1348,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public Camera.Parameters getCameraParameters()
 	{
+		try
+		{
 		if (CameraController.camera != null)
 			return CameraController.camera.getParameters();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		return null;
 	}
@@ -1376,7 +1419,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public boolean getVideoStabilizationSupported()
 	{
-		if (CameraController.camera != null)
+		if (CameraController.camera != null && camera.getParameters() == null)
 			return CameraController.camera.getParameters().isVideoStabilizationSupported();
 
 		return false;
@@ -1391,7 +1434,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isAutoExposureLockSupported();
@@ -1403,7 +1446,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().getAutoExposureLock();
@@ -1415,7 +1458,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isAutoWhiteBalanceLockSupported();
@@ -1427,7 +1470,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().getAutoWhiteBalanceLock();
@@ -1439,7 +1482,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return false;
 
 			return CameraController.camera.getParameters().isZoomSupported();
@@ -1453,7 +1496,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return 1;
 
 			return CameraController.camera.getParameters().getMaxZoom();
@@ -1494,7 +1537,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera)
+			if (null == camera && camera.getParameters() == null)
 				return false;
 			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
 
@@ -1554,16 +1597,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null) {
+			if (CameraController.camera != null && camera.getParameters() == null)
+			{
 				Camera.Parameters cameraParameters = CameraController.getCamera().getParameters();
 
 				return cameraParameters.getExposureCompensation()
 						* cameraParameters.getExposureCompensationStep();
 			}
-			
 			else
 				return 0;
-		} else
+		}
+		else
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			return prefs.getInt(MainScreen.sEvPref, 0);
@@ -1574,7 +1618,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (CameraController.camera != null)
+			if (CameraController.camera != null && camera.getParameters() == null)
 			{
 				if (!isExposureCompensationSupported())
 					return;
@@ -1923,9 +1967,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return CapIdx;
 	}
 
-	public static void setCameraImageSizeIndex(int captureIndex)
+	public static void setCameraImageSizeIndex(int captureIndex, boolean init)
 	{
 		CapIdx = captureIndex;
+		if(init)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			prefs.edit().putString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
+					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
+		}
 	}
 
 	public static boolean isModeAvailable(int[] modeList, int mode)
@@ -2068,11 +2118,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					params.setSceneMode(CameraController.mode_scene.get(mode));
-					setCameraParameters(params);
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
+					{
+						params.setSceneMode(CameraController.mode_scene.get(mode));
+						setCameraParameters(params);
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2085,11 +2142,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					params.setWhiteBalance(CameraController.mode_wb.get(mode));
-					setCameraParameters(params);
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
+					{
+						params.setWhiteBalance(CameraController.mode_wb.get(mode));
+						setCameraParameters(params);
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2102,13 +2166,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					String focusmode = CameraController.mode_focus.get(mode);
-					params.setFocusMode(focusmode);
-					setCameraParameters(params);
-					MainScreen.setAutoFocusLock(false);
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
+					{
+						String focusmode = CameraController.mode_focus.get(mode);
+						params.setFocusMode(focusmode);
+						setCameraParameters(params);
+						MainScreen.setAutoFocusLock(false);
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2121,12 +2192,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					String flashmode = CameraController.mode_flash.get(mode);
-					params.setFlashMode(flashmode);
-					setCameraParameters(params);
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
+					{
+						String flashmode = CameraController.mode_flash.get(mode);
+						params.setFlashMode(flashmode);
+						setCameraParameters(params);
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2139,20 +2217,27 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					if (params.get(CameraParameters.isoParam) != null)
-						params.set(CameraParameters.isoParam, CameraController.mode_iso.get(mode));
-					else if (params.get(CameraParameters.isoParam2) != null)
-						params.set(CameraParameters.isoParam2, CameraController.mode_iso.get(mode));
-					if (!this.setCameraParameters(params))
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
 					{
 						if (params.get(CameraParameters.isoParam) != null)
-							params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
+							params.set(CameraParameters.isoParam, CameraController.mode_iso.get(mode));
 						else if (params.get(CameraParameters.isoParam2) != null)
-							params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+							params.set(CameraParameters.isoParam2, CameraController.mode_iso.get(mode));
+						if (!this.setCameraParameters(params))
+						{
+							if (params.get(CameraParameters.isoParam) != null)
+								params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
+							else if (params.get(CameraParameters.isoParam2) != null)
+								params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+						}
 					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2161,11 +2246,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public void setLumaAdaptation(int iEv)
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if (params != null)
+		try
 		{
-			params.set("luma-adaptation", iEv);
-			setCameraParameters(params);
+			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+			if (params != null)
+			{
+				params.set("luma-adaptation", iEv);
+				setCameraParameters(params);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -2175,11 +2267,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (CameraController.camera != null)
 			{
-				Camera.Parameters params = CameraController.camera.getParameters();
-				if (params != null)
+				try
 				{
-					params.setExposureCompensation(iEV);
-					setCameraParameters(params);
+					Camera.Parameters params = CameraController.camera.getParameters();
+					if (params != null)
+					{
+						params.setExposureCompensation(iEV);
+						setCameraParameters(params);
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
 		} else
@@ -2446,6 +2545,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
+		pluginManager.addToSharedMemExifTags(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
 
@@ -2456,20 +2556,31 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		// is YUV frame requested
 		{
-			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
-					MainScreen.getImageHeight(), false, false, 0);
-			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
-					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
-
-			byte[] frameData = null;
-			if (!resultInHeap)
-			{
-				frameData = SwapHeap.CopyFromHeap(yuvFrame, frameLen);
-				yuvFrame = 0;
-			}
-			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			new DecodeToYUVFrameTask().execute(paramArrayOfByte);
+//			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
+//					MainScreen.getImageHeight(), false, false, 0);
+//			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
+//					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+//
+//			byte[] frameData = null;
+//			if (!resultInHeap)
+//			{
+//				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
+//				yuvFrame = 0;
+//			}
+//			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 
+		try
+		{
+			CameraController.startCameraPreview();
+		} catch (RuntimeException e)
+		{
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+			MainScreen.getInstance().muteShutter(false);
+			CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
+			return;
+		}
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 
 		CameraController.getInstance().sendMessage(MSG_NEXT_FRAME);
@@ -2486,7 +2597,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			public void onFinish() {
 				if (!previewWorking)
 				{
-					Log.e(TAG, "previewMode DISABLED!");
+					Log.d(TAG, "previewMode DISABLED!");
 					previewMode=false;
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					Editor prefsEditor = prefs.edit();
@@ -2499,6 +2610,38 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		};
 		cdt.start();
 	}
+	
+	private class DecodeToYUVFrameTask extends AsyncTask<byte[], Void, Void> {
+		int yuvFrame = 0;
+		int frameLen = 0;
+		byte[] frameData = null;
+		
+		@Override
+	     protected Void doInBackground(byte[]...params)
+	     {
+	    	byte[] paramArrayOfByte = params[0];
+	    	yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
+					MainScreen.getImageHeight(), false, false, 0);
+			frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
+					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+
+			frameData = null;
+			if (!resultInHeap)
+			{
+				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
+				yuvFrame = 0;
+			}			
+			
+//			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			return null;	         
+	     }
+
+		@Override
+	     protected void onPostExecute(Void result)
+	     {
+	    	 pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+	     }
+	 }
 
 	@Override
 	public void onAutoFocus(boolean focused, Camera paramCamera)
@@ -2531,9 +2674,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (CameraController.takeYUVFrame)
 			{
 				int frame = 0;
+				int dataLenght = data.length;
 				if (resultInHeap)
+				{
 					frame = SwapHeap.SwapToHeap(data);
-				pluginManager.onImageTaken(frame, data, data.length, true);
+					data = null;
+				}
+				
+				pluginManager.addToSharedMemExifTags(null);
+				pluginManager.onImageTaken(frame, data, dataLenght, true);
 			} else
 			{
 				int jpegData = 0;
@@ -2550,6 +2699,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (evLatency > 0)
 		{
+			Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
 			if (--evLatency == 0)
 			{
@@ -2680,16 +2830,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (previewMode)
 			{
-				// message to capture image will be emitted a few frames after
-				// setExposure
-				evLatency = 20; // the minimum value at which Galaxy Nexus is
-								// changing exposure in a stable way
-
-				// Note 3 need more time to change exposure.
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+				//if true - evLatency will be doubled. 
+				boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
+				
+				// Note 3 & LG G3 need more time to change exposure.
 				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 40;
+					evLatency = 20*(isSlow?2:1);
 				else if (Build.MODEL.contains("LG-D855"))
-					evLatency = 60;
+					evLatency = 30*(isSlow?2:1);
+				else
+				{
+					// message to capture image will be emitted a few frames after
+					// setExposure
+					evLatency = 10*(isSlow?2:1);// the minimum value at which Galaxy Nexus is
+												// changing exposure in a stable way
+				}
 			} else
 			{
 				new CountDownTimer(500, 500)
@@ -2708,6 +2864,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return true;
 
 		case MSG_NEXT_FRAME:
+			Log.d(TAG, "MSG_NEXT_FRAME");
 			if (++frame_num < total_frames)
 			{
 				if (Array.getLength(pauseBetweenShots) < frame_num)
@@ -2765,7 +2922,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
 //						camera.setPreviewCallback(null);
-						camera.takePicture(CameraController.getInstance(), null, null, CameraController.getInstance());
+						camera.takePicture(null, null, null, CameraController.getInstance());
 					}
 					catch(Exception exp)
 					{

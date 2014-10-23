@@ -1,81 +1,96 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="Pref_Common_Header_Title">Ustawienia wspólne</string>
-    <string name="Pref_Common_Header_Summary">Aparat i inne</string>
+    <string name="Pref_Common_Header_Title">Popularne ustawienia</string>
+    <string name="Pref_Common_Header_Summary">Aparat i pozostałe funkcje</string>
     <string name="Pref_Common_Preference_Title">Ustawienia aparatu</string>
-    <string name="Pref_Common_Preference_Summary">Aparat i inne</string>
-    <string name="Pref_Common_UseFrontCamera_Title">Przednia kamera</string>
-    <string name="Pref_Common_UseFrontCamera_Summary">Użyj przedniej kamery</string>
-    <string name="Pref_Common_ImageSize_Title">Rozmiar obrazu</string>
-    <string name="Pref_Common_ImageSize_Summary">\nUwaga: Niektóre tryby mają indywidualne ustawienia rozmiaru obrazu</string>
-    <string name="Pref_Common_Shutter_Title">Ciche działanie</string>
-    <string name="Pref_Common_Shutter_Summary">Nie gwarantuje działania na wszystkich modelach</string>
-    <string name="Pref_Common_HWShutter_Title">Użyj migawki HW, aby uruchomić aplikację</string>
+    <string name="Pref_Common_Preference_Summary">Aparat i pozostałe funkcje</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Aparat przedni</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Użyj przedniego aparatu</string>
+    <string name="Pref_Common_ImageSize_Title">Rozmiar zdjęcia</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Rozmiar zdjęcia (tryb wielu zdjęć i tryb nocny)</string>
+    <string name="Pref_Common_ImageSize_Summary">\nUwaga: niektóre tryby mają odrębne ustawienia rozmiaru zdjęcia</string>
+    <string name="Pref_Common_Shutter_Title">Cicha praca</string>
+    <string name="Pref_Common_Shutter_Summary">Może nie działać na niektórych urządzeniach</string>
+    <string name="Pref_Common_HWShutter_Summary">Użyj wbudowanego spustu migawki, aby uruchomić aplikację</string>
     <string name="Pref_Common_ShotOnTap_Title">Dotknij, aby zrobić zdjęcie</string>
-    <string name="Pref_Common_ShotOnTap_Summary">Ostrość i fotografowanie przez dotknięcie</string>
-    <string name="Pref_Common_MediaRescan_Title">Ponowne skanowanie mediów przy wyjściu</string>
-    <string name="Pref_Common_MediaRescan_Summary">Pomaga, jeśli zdjęcia nie są wyświetlane w galerii.</string>
-    <string name="Pref_Common_JPEGQuality_Title">Jakość Jpeg</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Dotknij, aby ustawić ostrość i zrobić zdjęcie</string>
+    <string name="Pref_Common_UseHALv3_Title">Użyj interfejsu Сamera2</string>
+    <string name="Pref_Common_UseHALv3_Summary">Tryb eksperymentalny. Działa na wybranych urządzeniach (Google Nexus 5, 7 z Androidem L)</string>    
+    <string name="Pref_Common_MediaRescan_Title">Wyszukuj nowe pliki po zamknięciu aplikacji</string>
+    <string name="Pref_Common_MediaRescan_Summary">Zalecane w przypadku niewyświetlania się zdjęć w galerii.</string>
+    <string name="Pref_Common_Gallery_Title">Pozwól na wybranie zewnętrznej galerii</string>
+    <string name="Pref_Common_Gallery_Summary">Nie używaj A Better Editor&amp;Effects jako domyślnej przeglądarki (jeśli jest zainstalowany)</string>
+    <string name="Pref_Common_JPEGQuality_Title">Jakość JPEG</string>
     <string name="Pref_Common_VolumeButton_Title">Przycisk głośności</string>
     <string name="Pref_SaveConfiguration_Title">Zapisz konfigurację</string>
-    <string name="Pref_SaveConfiguration_Summary">Wybierz, które ustawienia mają być zapisane między kolejnymi uruchomieniami</string>
-    <string name="Pref_SaveConfiguration_ShootingMode_Title">Tryb fotografowania</string>
-    <string name="Pref_SaveConfiguration_ImageSize_Title">Rozmiar obrazu</string>
+    <string name="Pref_SaveConfiguration_Summary">Wybierz, które ustawienia mają być zapisywane między kolejnymi uruchomieniami aplikacji</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Tryb robienia zdjęć</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Rozmiar zdjęcia</string>
     <string name="Pref_SaveConfiguration_SceneMode_Title">Tryb sceny</string>
     <string name="Pref_SaveConfiguration_FocusMode_Title">Tryb ostrości</string>
     <string name="Pref_SaveConfiguration_WBMode_Title">Tryb balansu bieli</string>
     <string name="Pref_SaveConfiguration_ISOMode_Title">Tryb ISO</string>
-    <string name="Pref_SaveConfiguration_FlashMode_Title">Tryb flash</string>
-    <string name="Pref_SaveConfiguration_FrontRear_Title">Wybrana kamera</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Tryb lampy błyskowej</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Wybrany aparat</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Samowyzwalacz</string>
-    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Kompensacja ekspozycji</string>
-    <string name="Pref_Common_DelayedCapture_Title">Samowyzwalacz przechwytywania</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Pokaż kontrolę samowyzwalacza</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Regulacja naświetlania</string>
+    <string name="Pref_Common_DelayedCapture_Title">Korzystanie z samowyzwalacza</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Pokaż panel samowyzwalacza</string>
     <string name="Pref_ShowHelp_Title">Pokaż pomoc</string>
-    <string name="Pref_WhowHelp_Summary">Pokaż pomoc, gdy uruchomisz (tryb panoramay, usuwanie obiektów, sekwencja, zdjęcie grupowe)</string>
-    <string name="Pref_Common_HeadsetTap_Title">Migawka słuchawki</string>
-    <string name="Pref_Common_HeadsetTap_Summary">Użyj przycisków słuchawki jako migawki</string>
+    <string name="Pref_WhowHelp_Summary">Pokaż pomoc podczas uruchamiania trybu (panorama, usuwanie obiektów, sekwencja, zdjęcie grupowe)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Spust migawki zestawu słuchawkowego</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Użyj przycisków zestawu słuchawkowego jako spustu migawki</string>
     
     
     <string name="helpTextDontShow">Nie pokazuj</string>
     
     <string name="ev_zero">0</string>    
-    <string name="blockingText">Proszę czekać, przetwarzanie...</string>
-    <string name="almalence_gui_selected">wybrane</string>
+    <string name="blockingText">Proszę czekać, trwa przetwarzanie...</string>
+    <string name="almalence_gui_selected">wybrany</string>
 
     <string name="settings_mode_scene">Tryb sceny</string>
     <string name="settings_mode_wb">Balans bieli</string>
     <string name="settings_mode_focus">Tryb ostrości</string>
-    <string name="settings_mode_flash">Tryb flash</string>
+    <string name="settings_mode_flash">Tryb lampy błyskowej</string>
     <string name="settings_mode_iso">ISO</string>
-    <string name="settings_mode_metering">Tryb pomiaru ekspozycji</string>
-    <string name="settings_mode_rear">Tylna kamera</string>
-    <string name="settings_mode_front">Przednia kamera</string>
-    <string name="settings_mode_exposure">Ekspozycja</string>
+    <string name="settings_mode_metering">Tryb pomiaru naświetlania</string>
+    <string name="settings_mode_rear">Aparat tylny</string>
+    <string name="settings_mode_front">Aparat przedni</string>
+    <string name="settings_mode_exposure">Naświetlanie</string>
     <string name="settings_mode_moresettings">Więcej ustawień</string>
-    <string name="settings_mode_aeaflock">AE\\AF Zablokowane</string>
-    <string name="settings_mode_aeafunlock">AE\\AF Odblokowane</string>
+    <string name="settings_mode_aeaflock">Blokada automatycznego ustawienia naświetlania\\autofokusu</string>
+    <string name="settings_mode_aeafunlock">Automatyczne ustawienie naświetlania\\autofokus odblokowane</string>
     
-    <string name="settings_not_available">Niedostępne w bieżącym trybie</string>
-    <string name="processing_not_finished">Przetwarzanie nie zostało jeszcze ukończone. Proszę czekać.</string>
+    <string name="settings_not_available">Funkcja niedostępna w bieżącym trybie</string>
+    <string name="processing_not_finished">Nie ukończono przetwarzania. Proszę czekać.</string>
         
     <string name="Pref_General_Preference_Title">Ustawienia ogólne</string>
 	<string name="Pref_General_Preference_Summary">Aparat i robienie zdjęć</string>
 	<string name="Pref_VF_Preference_Title">Ustawienia wizjera</string>
-	<string name="Pref_VF_Preference_Summary">Co wyświetlać</string>
-	<string name="Pref_Modes_Preference_Title">Ustawienia trybu fotografowania</string>
-	<string name="Pref_Modes_Preference_Summary">HDR, Noc, Panorama ...</string>
-	<string name="Pref_Saving_Preference_Title">Zapisywanie i udostępnianie</string>
-	<string name="Pref_Saving_Preference_Summary">Nazwy plików, formaty, geotagowanie, EXIF i inne parametry</string>
+	<string name="Pref_VF_Preference_Summary">Wyświetlane informacje</string>
+	<string name="Pref_Modes_Preference_Title">Ustawienia trybów robienia zdjęć</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, noc, panorama ...</string>
+	<string name="Pref_Saving_Preference_Title">Zapisywanie i wysyłanie</string>
+	<string name="Pref_Saving_Preference_Summary">Nazwy plików, formaty, geotagowanie, exif i pozostałe parametry</string>
 	<string name="Pref_Advanced_Preference_Title">Zaawansowane</string>
 	<string name="Pref_Advanced_Preference_Summary">Ustawienia dla zaawansowanych użytkowników</string>
 	<string name="Pref_Unlock_Preference_Title">Odblokuj</string>
 	<string name="Pref_Unlock_Preference_Summary">Odblokuj funkcje premium</string>
 	
 	<string name="layout_hint_bottom">Wybierz tryb kamery</string>
-	<string name="layout_hint_center">Przesuń, aby zobaczyć więcej/mniej informacji</string>
-	<string name="layout_hint_top_left">Dłuższe przyciśnięcie\naby skonfigurować</string>
-	<string name="layout_hint_top_center">Pociągnij, aby zobaczyć więcej opcji</string>
+	<string name="layout_hint_center">Przeciągnij, aby uzyskać więcej/mniej informacji</string>
+	<string name="layout_hint_top_left">Przyciśnij długo,\naby skonfigurować</string>
+	<string name="layout_hint_top_center">Przeciągnij, aby zobaczyć więcej opcji</string>
 
-	<string name="Dro_Help">Nowa technologia Almalence’s sprawia, że kamery działają jak ludzkie oko! DRO (Optymalizacja zakresu dynamicznego) wykorzystuje technikę podobną do mapowania tonów, automatyczną poprawę zdjęcia w 100% przypadków i może zastąpić HDR w większości przypadków.\n\n1. Naciśnij przycisk migawki, aby wykonać zdjęcie\n2. Poczekaj na przetworzenie, które trwa sekundę!</string>	
+	<string name="Dro_Help">Nowa technologia Almalence sprawia, że aparat zachowuje się jak ludzkie oko! DRO (optymalizacja zakresu dynamicznego - Dynamic Range Optimization) wykorzystuje technikę podobną do tone mappingu i automatycznie zwiększa jakość zdjęcia w 100% przypadków, a także w wielu sytuacjach może być uzupełnieniem techniki HDR.\n\n1. Wciśnij spust migawki, aby zrobić zdjęcie\n2. Zaczekaj, aż zdjęcie zostanie przetworzone!</string>
+	
+	<string name="setTimerText">Ustaw</string>
+	<string name="soundTimerText">Sygnał dźwiękowy przy odliczaniu</string>
+	<string name="flashTimerText">Sygnał świetlny przy odliczaniu</string>	
+
+	<string name="secondsText">sekund(y)</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">Więcej...</string>
+	
 </resources>

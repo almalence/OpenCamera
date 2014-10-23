@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 /* <!-- +++
  import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.PluginManager;

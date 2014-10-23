@@ -42,7 +42,7 @@ import android.widget.RelativeLayout;
 
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -138,15 +138,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		public void handleMessage(Message msg)
 		{
 			if (msg.what == RESET_TOUCH_FOCUS)
-			{
 				cancelAutoFocus();
-				int fm = CameraController.getInstance().getFocusMode();
-				if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-						&& fm != -1 && preferenceFocusMode != fm)
-				{
-					CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-				}
-			} else if (msg.what == START_TOUCH_FOCUS)
+			else if (msg.what == START_TOUCH_FOCUS)
 			{
 				lastEvent.setAction(MotionEvent.ACTION_UP);
 				delayedFocus = true;
@@ -316,24 +309,26 @@ public class FocusVFPlugin extends PluginViewfinder
 				}
 				setFocusParameters();
 				autoFocus();
-			} else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
-					&& (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& preferenceFocusMode != CameraController.getInstance().getFocusMode())
-			{
-				// allow driver to choose whatever it wants for focusing /
-				// metering
-				// without these two lines Continuous focus is not re-enabled on
-				// HTC One
-				int focusMode = getFocusMode();
-				if ((focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
-						&& mFocusAreaSupported)
-				{
-					CameraController.getInstance().setCameraFocusAreas(null);
-				}
-				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
-			} else if (mState == STATE_FAIL)
+			}
+//			else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
+//					&& (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
+//					&& preferenceFocusMode != CameraController.getInstance().getFocusMode())
+//			{
+//				// allow driver to choose whatever it wants for focusing /
+//				// metering
+//				// without these two lines Continuous focus is not re-enabled on
+//				// HTC One
+//				int focusMode = getFocusMode();
+//				if ((focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+//						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
+//						|| focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
+//						&& mFocusAreaSupported)
+//				{
+//					CameraController.getInstance().setCameraFocusAreas(null);
+//				}
+//				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+//			}
+			else if (mState == STATE_FAIL)
 				MainScreen.getGUIManager().lockControls = false;
 		}
 	}
@@ -558,19 +553,22 @@ public class FocusVFPlugin extends PluginViewfinder
 			//to reset current focus state and initiate new focusing procedure. If autoFocus is called right after
 			//cancelAutoFocus then success focus state (FOCUS_LOCKED) return immediately and re-focusing occurs after
 			//image capturing is called.
-			new CountDownTimer(100, 100)
-			{
-				public void onTick(long millisUntilFinished)
-				{
-					// Not used
-				}
-
-				public void onFinish()
-				{
-					setFocusParameters();
-					autoFocus();
-				}
-			}.start();
+//			new CountDownTimer(100, 100)
+//			{
+//				public void onTick(long millisUntilFinished)
+//				{
+//					// Not used
+//				}
+//
+//				public void onFinish()
+//				{
+//					setFocusParameters();
+//					autoFocus();
+//				}
+//			}.start();
+			//Back to direct call to work on S2. TODO: Check on Android 5
+			setFocusParameters();
+			autoFocus();
 			
 		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap()
 				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
@@ -607,7 +605,6 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void autoFocus()
 	{
-		Log.v(TAG, "Start autofocus.");
 		if (CameraController.autoFocus())
 		{
 			mState = STATE_FOCUSING;
@@ -625,14 +622,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getInstance().getFocusMode();
 		if (fm != -1)
 		{
-			if (fm == CameraParameters.AF_MODE_INFINITY)
-			{
-				String modeName = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(
-						"defaultModeName", null);
-				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
-						.getBoolean("videorecording", false);
-			}
-
 			if (fm != preferenceFocusMode)
 			{
 				CameraController.cancelAutoFocus();
@@ -837,14 +826,15 @@ public class FocusVFPlugin extends PluginViewfinder
 	private static boolean isSupported(int value, int[] supported)
 	{
 		boolean isAvailable = false;
-		for (int currMode : supported)
-		{
-			if (currMode == value)
+		if(supported != null)
+			for (int currMode : supported)
 			{
-				isAvailable = true;
-				break;
+				if (currMode == value)
+				{
+					isAvailable = true;
+					break;
+				}
 			}
-		}
 		return isAvailable;
 	}
 

@@ -35,6 +35,7 @@ import com.almalence.YuvImage;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -304,7 +305,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	public void setMaxFrames(final int count)
 	{
 		this.framesMax = count;
-		Log.e("Almalence", "Maximum frames count: " + count);
+//		Log.d("Almalence", "Maximum frames count: " + count);
 	}
 
 	public float getRadiusToEdge()

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -48,7 +47,6 @@ import android.os.AsyncTask;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,7 +73,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -143,7 +141,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			MainScreen.getGUIManager().lockControls = true;
 		}
 
-		Log.e("HDR", "start processing");
+//		Log.d("HDR", "start processing");
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -152,7 +150,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
 		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
-		Log.e("PreShot", "onStartProcessing layout orientation: " + orientation);
+//		Log.d("PreShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
@@ -163,16 +161,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 
 		AlmaShotHDR.Initialize();
-		Log.e("HDR", "almashot lib initialize success");
+//		Log.d("HDR", "almashot lib initialize success");
 
 		// hdr processing
 		HDRPreview();
-		Log.e("HDR", "HDRPreview success");
+//		Log.d("HDR", "HDRPreview success");
 
 		if (!AutoAdjustments)
 		{
 			HDRProcessing();
-			Log.e("HDR", "HDRProcessing success");
+//			Log.d("HDR", "HDRProcessing success");
 
 //			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 //			{
@@ -236,8 +234,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
-				ContentValues values = null;
-
 				int tmpImagesAmount = imagesAmount;
 				if (HDRProcessingPlugin.SaveInputPreference == 2)
 					tmpImagesAmount = 1;
@@ -281,11 +277,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			AlmaShotHDR.HDRConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
 					mImageHeight);
-			Log.e("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
+//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
 		} else
 		{
 			AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-			Log.e("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
+//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
 		}
 
 		int nf = HDRProcessingPlugin.getNoise();
@@ -597,8 +593,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			mDisplayOrientationCurrent = orientation;
 			if (postProcessingRun)
 			{
-				Log.e("PreSho Post processing", "orientation = " + orientation + " mLayoutOrientationCurrent =  "
-						+ mLayoutOrientationCurrent);
 				this.buttonSave.setRotation(mLayoutOrientationCurrent);
 				this.buttonSave.invalidate();
 				this.buttonTrash.setRotation(mLayoutOrientationCurrent);
@@ -1205,7 +1199,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		if (this.previewTaskCurrent == null)
 		{
 			HDRProcessing();
-			Log.e("HDR", "HDRProcessing success");
+//			Log.d("HDR", "HDRProcessing success");
 
 			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 			{

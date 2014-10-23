@@ -18,14 +18,14 @@ by Almalence Inc. All Rights Reserved.
 
 /* <!-- +++
  package com.almalence.opencam_plus;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
-// <!-- -+-
+//<!-- -+-
 package com.almalence.opencam;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +37,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -46,7 +45,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -55,9 +53,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.camera2.CaptureResult;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
@@ -86,8 +88,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android2.hardware.camera2.CaptureResult;
-import android2.hardware.camera2.TotalCaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -130,6 +130,11 @@ import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+
 //-+- -->
 
 /***
@@ -905,9 +910,11 @@ public class PluginManager implements PluginManagerInterface
 			if (CameraController.isUseHALv3())
 			{
 				Preference pref;
-				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack")) || null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack"))
+						|| null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
 				{
-					pref.setTitle(MainScreen.getInstance().getResources().getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+					pref.setTitle(MainScreen.getInstance().getResources()
+							.getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
 				}
 			}
 			MainScreen.getInstance().onPreferenceCreate(pf);
@@ -963,7 +970,7 @@ public class PluginManager implements PluginManagerInterface
 			if (CameraController.isUseHALv3())
 			{
 				PreferenceScreen prefScr;
-				if (null != (prefScr = (PreferenceScreen)pf.findPreference("nightProcessingMoreScreen")))
+				if (null != (prefScr = (PreferenceScreen) pf.findPreference("nightProcessingMoreScreen")))
 				{
 					Preference pref;
 					if (null != (pref = pf.findPreference("keepcolorsPref")))
@@ -1178,17 +1185,6 @@ public class PluginManager implements PluginManagerInterface
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 			MainScreen.getInstance().setShowStore(true);
-			// new CountDownTimer(800, 800)
-			// {
-			// public void onTick(long millisUntilFinished)
-			// {
-			// }
-			//
-			// public void onFinish()
-			// {
-			// MainScreen.getInstance().showStore= true;
-			// }
-			// }.start();
 			// -+- -->
 		}
 	}
@@ -1378,12 +1374,21 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, isYUV);
 	}
 
-	@TargetApi(21)
-	public void onCaptureCompleted(TotalCaptureResult result)
+	@Override
+	public void addToSharedMemExifTags(byte[] frameData)
 	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onCaptureCompleted(result);
+			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
 	}
+
+
+//	@TargetApi(21)
+//	public void onCaptureCompleted(TotalCaptureResult result)
+//	{
+//		if (null != pluginList.get(activeCapture))
+//			pluginList.get(activeCapture).onCaptureCompleted(result);
+//	}
+
 
 	@Override
 	public void onPreviewFrame(byte[] data)
@@ -1539,8 +1544,11 @@ public class PluginManager implements PluginManagerInterface
 			controlPremiumContent();
 			// -+- -->
 
-			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			if(!PluginManager.getInstance().getActiveModeID().equals("video"))
+			{
+				MainScreen.getGUIManager().lockControls = false;
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			}
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
@@ -1693,6 +1701,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
+	//<!-- -+-
 	public void controlPremiumContent()
 	{
 		Mode mode = getActiveMode();
@@ -1700,6 +1709,7 @@ public class PluginManager implements PluginManagerInterface
 			if (!mode.SKU.isEmpty())
 				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	}
+	//-+- -->
 
 	/******************************************************************************************************
 	 * Work with hash table
@@ -1768,7 +1778,6 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	@SuppressLint("NewApi")
 	@TargetApi(21)
 	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
 	{
@@ -2259,12 +2268,33 @@ public class PluginManager implements PluginManagerInterface
 
 	private int		saveOption;
 	private boolean	useGeoTaggingPrefExport;
+	private boolean	enableExifTagOrientation;
+	private int		additionalRotation;
+	private int		additionalRotationValue	= 0;
 
 	private void getPrefs()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
+		saveOption = Integer.parseInt(prefs.getString(MainScreen.sExportNamePref, "2"));
 		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
+		enableExifTagOrientation = prefs.getBoolean(MainScreen.sEnableExifOrientationTagPref, true);
+		additionalRotation = Integer.parseInt(prefs.getString(MainScreen.sAdditionalRotationPref, "0"));
+
+		switch (additionalRotation)
+		{
+		case 0:
+			additionalRotationValue = 0;
+			break;
+		case 1:
+			additionalRotationValue = -90;
+			break;
+		case 2:
+			additionalRotationValue = 90;
+			break;
+		case 3:
+			additionalRotationValue = 180;
+			break;
+		}
 	}
 
 	public void saveResultPicture(long sessionID)
@@ -2298,31 +2328,9 @@ public class PluginManager implements PluginManagerInterface
 				if (imagesAmount != 1)
 					idx += "_" + i;
 
-				// define file name format. from settings!
-				String fileFormat = String.format(Locale.US, "%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR),
-						d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY),
-						d.get(Calendar.MINUTE), d.get(Calendar.SECOND));
 				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
-				switch (saveOption)
-				{
-				case 1:// YEARMMDD_HHMMSS
-					break;
-
-				case 2:// YEARMMDD_HHMMSS_MODE
-					fileFormat += (modeName.isEmpty() ? "" : "_") + modeName;
-					break;
-
-				case 3:// IMG_YEARMMDD_HHMMSS
-					fileFormat = "IMG_" + fileFormat;
-					break;
-
-				case 4:// IMG_YEARMMDD_HHMMSS_MODE
-					fileFormat = "IMG_" + fileFormat + (modeName.isEmpty() ? "" : "_") + modeName;
-					break;
-				default:
-					break;
-				}
-
+				// define file name format. from settings!
+				String fileFormat = getExportFileName(modeName);
 				fileFormat += idx + ".jpg";
 
 				File file;
@@ -2436,8 +2444,9 @@ public class PluginManager implements PluginManagerInterface
 
 						}
 					}
-					
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.getMainContext());
 					int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
@@ -2479,7 +2488,22 @@ public class PluginManager implements PluginManagerInterface
 				values.put(ImageColumns.DISPLAY_NAME, file.getName());
 				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-				values.put(ImageColumns.ORIENTATION, writeOrientationTag ? orientation_tag : String.valueOf(0));
+
+				if (enableExifTagOrientation)
+				{
+					if (writeOrientationTag)
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
+								+ additionalRotationValue + 360) % 360));
+					} else
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
+					}
+				} else
+				{
+					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
+				}
+
 				values.put(ImageColumns.BUCKET_ID, path.hashCode());
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
 				values.put(ImageColumns.DATA, file.getAbsolutePath());
@@ -2493,6 +2517,20 @@ public class PluginManager implements PluginManagerInterface
 					tmpFile = new File(saveDir, "external.tmp");
 					tmpFile.createNewFile();
 					copyFromForceFileName(tmpFile);
+				}
+
+				if (!enableExifTagOrientation)
+				{
+					Matrix matrix = new Matrix();
+					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
+					{
+						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					} else if (!writeOrientationTag && additionalRotationValue != 0)
+					{
+						matrix.postRotate((additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					}
 				}
 
 				// Set tag_model using ExifInterface.
@@ -2773,29 +2811,55 @@ public class PluginManager implements PluginManagerInterface
 					softwareValue.setBytes(softwareString.getBytes());
 					exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
 
-					if (writeOrientationTag)
+					if (enableExifTagOrientation)
 					{
-						int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						switch (orientation)
+						if (writeOrientationTag)
 						{
-						default:
-						case 0:
-							exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-							break;
-						case 90:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-									: ExifInterface.ORIENTATION_ROTATE_90;
-							break;
-						case 180:
-							exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-							break;
-						case 270:
-							exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-									: ExifInterface.ORIENTATION_ROTATE_270;
-							break;
+							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+							switch ((orientation + additionalRotationValue + 360) % 360)
+							{
+							default:
+							case 0:
+								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+								break;
+							case 90:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+										: ExifInterface.ORIENTATION_ROTATE_90;
+								break;
+							case 180:
+								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+								break;
+							case 270:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+										: ExifInterface.ORIENTATION_ROTATE_270;
+								break;
+							}
+							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
+						} else
+						{
+							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+							switch ((additionalRotationValue + 360) % 360)
+							{
+							default:
+							case 0:
+								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+								break;
+							case 90:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+										: ExifInterface.ORIENTATION_ROTATE_90;
+								break;
+							case 180:
+								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+								break;
+							case 270:
+								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+										: ExifInterface.ORIENTATION_ROTATE_270;
+								break;
+							}
+							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 						}
-						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-						exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 					} else
 					{
 						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
@@ -2867,10 +2931,43 @@ public class PluginManager implements PluginManagerInterface
 		}
 	}
 
-	public String getFileFormat()
+	private void rotateImage(File file, Matrix matrix)
+	{
+		try
+		{
+			Bitmap sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+			Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
+					sourceBitmap.getHeight(), matrix, true);
+
+			FileOutputStream outStream;
+			outStream = new FileOutputStream(file);
+			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			outStream.flush();
+			outStream.close();
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public String getExportFileName(String modeName)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString("exportName", "2"));
+		saveOption = Integer.parseInt(prefs.getString(MainScreen.sExportNamePref, "2"));
+
+		String prefix = prefs.getString(MainScreen.sExportNamePrefixPref, "");
+		if (!prefix.equals(""))
+			prefix = prefix + "_";
+
+		String postfix = prefs.getString(MainScreen.sExportNamePostfixPref, "");
+		if (!postfix.equals(""))
+			postfix = "_" + postfix;
+
 		Calendar d = Calendar.getInstance();
 		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
 				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
@@ -2878,23 +2975,30 @@ public class PluginManager implements PluginManagerInterface
 		switch (saveOption)
 		{
 		case 1:// YEARMMDD_HHMMSS
+			fileFormat = prefix + fileFormat + postfix;
 			break;
 
 		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat += "_" + getActiveMode().modeSaveName;
+			fileFormat = prefix + fileFormat + "_" + modeName + postfix;
 			break;
 
 		case 3:// IMG_YEARMMDD_HHMMSS
-			fileFormat = "IMG_" + fileFormat;
+			fileFormat = prefix + "IMG_" + fileFormat + postfix;
 			break;
 
 		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = "IMG_" + fileFormat + "_" + getActiveMode().modeSaveName;
+			fileFormat = prefix + "IMG_" + fileFormat + "_" + modeName + postfix;
 			break;
 		default:
 			break;
 		}
+
 		return fileFormat;
+	}
+
+	public String getFileFormat()
+	{
+		return getExportFileName(getActiveMode().modeSaveName);
 	}
 
 	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,
@@ -2925,7 +3029,7 @@ public class PluginManager implements PluginManagerInterface
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
-				
+
 				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
 						iImageHeight, null);
 				// to avoid problems with SKIA

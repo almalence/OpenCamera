@@ -13,6 +13,9 @@
     <string name="Pref_ExpoBracketing_Refocus_Title">Перефокусировка</string>
     <string name="Pref_ExpoBracketing_Refocus_Summary">Некоторые устройства сбрасывают фокусировку после съемки кадра. Используйте если снимки получаются расфокусироваными</string>
     
+    <string name="PreferenceExpoSlow_Title">Пауза</string>
+    <string name="PreferenceExpoSlow_Summary">Если требуется больше времени на смену экспозиции</string>
+    
     <string name="Pref_ExpoBracketing_Expo">Максимально возможный</string>
     <string name="Pref_ExpoBracketing_None">None</string>
 </resources>

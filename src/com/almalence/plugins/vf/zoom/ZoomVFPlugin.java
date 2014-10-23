@@ -44,7 +44,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
@@ -243,26 +243,26 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		zoomStopping = false;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 
 		if (!isEnabled)
 		{
-			zoomPanel.setVisibility(View.GONE);
+//			zoomPanel.setVisibility(View.GONE);
+//			zoomPanelView.setVisibility(View.GONE);
+			zoomBar.setVisibility(View.GONE);
 		} else
 		{
-			zoomPanel.setVisibility(View.VISIBLE);
+//			zoomPanel.setVisibility(View.VISIBLE);
+//			zoomPanelView.setVisibility(View.VISIBLE);
+			zoomBar.setVisibility(View.VISIBLE);
 		}
-
-		String modeName = prefs.getString("defaultModeName", null);
 	}
 
 	@Override
 	public void onCameraParametersSetup()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		String modeName = prefs.getString("defaultModeName", null);
-
 		zoomCurrent = 0;
 
 		if (CameraController.getInstance().isZoomSupported())
@@ -302,8 +302,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (!isEnabled)
-			return false;
+//		if (!isEnabled)
+//			return false;
 
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_ZOOM_OUT)
 		{
@@ -325,7 +325,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 	public void closeZoomPanel()
 	{
-		Log.e("ZoomPlugin", "closeZoomPanel");
+		//Log.d("ZoomPlugin", "closeZoomPanel");
 		panelClosing = true;
 
 		this.zoomPanel.clearAnimation();
@@ -343,7 +343,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 			@Override
 			public void onAnimationEnd(Animation animation)
 			{
-				Log.e("ZoomPlugin", "onAnimationEnd");
+//				Log.d("ZoomPlugin", "onAnimationEnd");
 				if (zoomStopping)
 				{
 					List<View> specialView = new ArrayList<View>();

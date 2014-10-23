@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -33,7 +32,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -51,8 +49,8 @@ import com.almalence.SwapHeap;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -138,6 +136,17 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		}
 
 		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
+		if(!isYUV)
+		{
+			Log.d("ObjectRemovalProcessingPlugin", "Input frames have to be in YUV format!");
+			try
+			{
+				throw new Exception("Expecting YUV format instead JPEG");
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
@@ -160,17 +169,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (imagesAmount == 0)
 				imagesAmount = 1;
 
-			mYUVBufferList.clear();
-			for (int i = 1; i <= imagesAmount; i++)
-			{
-				byte[] in = SwapHeap.CopyFromHeap(
-						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
-
-				mYUVBufferList.add(i - 1, in);
-			}
-
-			getDisplaySize(mYUVBufferList.get(0));
+			getDisplaySize();
 			Size preview = new Size(mDisplayWidth, mDisplayHeight);
 
 			PluginManager.getInstance()
@@ -180,7 +179,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
 
 			// frames!!! should be taken from heap
-			mAlmaCLRShot.addInputFrame(mYUVBufferList, input, isYUV);
+			mAlmaCLRShot.addInputFrame(mYUVBufferList, input);
 
 			mAlmaCLRShot.initialize(preview, mAngle,
 			/*
@@ -231,9 +230,9 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	public static int				mDisplayWidth;
 	public static int				mDisplayHeight;
 
-	public static ArrayList<byte[]>	mYUVBufferList;
+	public static ArrayList<Integer>	mYUVBufferList;
 
-	public static void setYUVBufferList(ArrayList<byte[]> YUVBufferList)
+	public static void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
 		ObjectRemovalProcessingPlugin.mYUVBufferList = YUVBufferList;
 	}
@@ -284,7 +283,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}
 
-	public void getDisplaySize(byte[] data)
+	public void getDisplaySize()
 	{
 		Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay();
@@ -423,6 +422,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (released)
 				return false;
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			
 			mYUVBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 

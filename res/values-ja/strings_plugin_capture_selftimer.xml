@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1</string>
     <string name="Res_SelfTimerCapture_Capture_2">2</string>
     <string name="Res_SelfTimerCapture_Capture_3">3</string>
+    
+    <string name="selfTimerTitle">セルフタイマー</string>
 </resources>

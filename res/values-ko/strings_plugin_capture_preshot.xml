@@ -20,7 +20,7 @@
 	<string name="Pref_PreShot_pauseBetweenShots_Title">촬영 간 일시정지(고해상도 모드)</string>
 	<string name="Pref_PreShot_pauseBetweenShots_Summary">초점을 다시 맞추기 위해 촬영 후 일시정지합니다.</string>
 	
-	<string name="Pref_PreShot_Low">저해상도(빠름)</string>
+	<string name="Pref_PreShot_Low">고속(빠름)</string>
 	<string name="Pref_PreShot_High">고해상도(느림)</string>
 	
 	<string name="Pref_PreShot_None">없음</string>
@@ -34,4 +34,6 @@
 	
 	<string name="Pref_PreShot_Autostart_Title">자동 시작</string>
 	<string name="Pref_PreShot_Autostart_Summary">카메라 실행 시 촬영을 시작합니다</string>
+	
+	
 </resources>

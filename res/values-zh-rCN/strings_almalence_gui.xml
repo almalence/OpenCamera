@@ -7,11 +7,20 @@
     <string name="Pref_Common_UseFrontCamera_Title">前置摄像头</string>
     <string name="Pref_Common_UseFrontCamera_Summary">使用前置摄像头</string>
     <string name="Pref_Common_ImageSize_Title">图像大小</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">图像大小（智能连拍和夜拍）</string>
     <string name="Pref_Common_ImageSize_Summary">\n请注意: 一些模式有单个的图像尺寸设置</string>
     <string name="Pref_Common_Shutter_Title">静音操作</string>
     <string name="Pref_Common_Shutter_Summary">不保证在所有模型上都可使用</string>
+    <string name="Pref_Common_HWShutter_Summary">使用硬件快门可开启应用</string>
+    <string name="Pref_Common_ShotOnTap_Title">触按可拍摄</string>
+    <string name="Pref_Common_ShotOnTap_Summary">聚焦后触按拍摄</string>
+    <string name="Pref_Common_UseHALv3_Title">使用相机2界面</string>
+    <string name="Pref_Common_UseHALv3_Summary">实验模式。可运行在有限数目的设备上(Google Nexus 5、 7 和Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">注销时媒体重新扫描</string>
     <string name="Pref_Common_MediaRescan_Summary">图像未出现在库中时帮助。</string>
+    <string name="Pref_Common_Gallery_Title">可选择外部图库</string>
+    <string name="Pref_Common_Gallery_Summary">不要使用A Better Editor&amp;Effects作为默认阅读器（若安装）</string>
+    <string name="Pref_Common_JPEGQuality_Title">Jpeg品质</string>
     <string name="Pref_Common_VolumeButton_Title">音量按钮</string>
     <string name="Pref_SaveConfiguration_Title">保存配置</string>
     <string name="Pref_SaveConfiguration_Summary">选择启动之间保存哪些设置</string>
@@ -24,20 +33,27 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">闪光模式</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">已选相机</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">自拍定时器</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">曝光补偿</string>
     <string name="Pref_Common_DelayedCapture_Title">自拍定时器拍摄</string>
     <string name="Pref_Common_DelayedCapture_Summary">显示自拍定时器控制</string>
     <string name="Pref_ShowHelp_Title">显示说明</string>
     <string name="Pref_WhowHelp_Summary">启动模式时显示说明(全景、对象移除、顺序、群摄)</string>
+    <string name="Pref_Common_HeadsetTap_Title">耳机快门</string>
+    <string name="Pref_Common_HeadsetTap_Summary">使用耳机按钮作为快门</string>
+    
+    
+    <string name="helpTextDontShow">不要显示</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">请等待，处理中...</string>
     <string name="almalence_gui_selected">已选</string>
-    
+
     <string name="settings_mode_scene">场景模式</string>
     <string name="settings_mode_wb">白平衡</string>
     <string name="settings_mode_focus">对焦模式</string>
     <string name="settings_mode_flash">闪光模式</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">曝光计模式</string>
     <string name="settings_mode_rear">后置摄像头</string>
     <string name="settings_mode_front">前置摄像头</string>
     <string name="settings_mode_exposure">曝光</string>
@@ -62,8 +78,19 @@
 	<string name="Pref_Unlock_Preference_Summary">解锁高级功能</string>
 	
 	<string name="layout_hint_bottom">选择相机模式</string>
-	<string name="layout_hint_center">划动</string>
+	<string name="layout_hint_center">划动可见更多/少信息</string>
 	<string name="layout_hint_top_left">长按\n以配置</string>
 	<string name="layout_hint_top_center">拉动获取更多选项</string>
+
+	<string name="Dro_Help">Almalence的新技术使相机可与人眼媲美！动态范围优化（DRO）使用类似调色映射的技术，100%自动改进图像并可在大部分情况下替代HDR（高动态相机）\n\n1.按快门可拍照\n2.等待瞬时处理！</string>
+	
+	<string name="setTimerText">设置</string>
+	<string name="soundTimerText">倒计时声音</string>
+	<string name="flashTimerText">倒计时闪光</string>	
+
+	<string name="secondsText">秒</string>	
+	<string name="okText">好</string>
+	
+	<string name="moreText">更多...</string>
 	
 </resources>

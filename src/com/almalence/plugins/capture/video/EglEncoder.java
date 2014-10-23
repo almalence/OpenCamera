@@ -64,7 +64,7 @@ public class EglEncoder
 		GLES20.glGetShaderiv(vshader, GLES20.GL_COMPILE_STATUS, compiled, 0);
 		if (compiled[0] == 0)
 		{
-			Log.e(TAG, "Could not compile vertex shader: " + GLES20.glGetShaderInfoLog(vshader));
+			Log.d(TAG, "Could not compile vertex shader: " + GLES20.glGetShaderInfoLog(vshader));
 			GLES20.glDeleteShader(vshader);
 			vshader = 0;
 		}
@@ -75,7 +75,7 @@ public class EglEncoder
 		GLES20.glGetShaderiv(fshader, GLES20.GL_COMPILE_STATUS, compiled, 0);
 		if (compiled[0] == 0)
 		{
-			Log.e(TAG, "Could not compile fragment shader: " + GLES20.glGetShaderInfoLog(fshader));
+			Log.d(TAG, "Could not compile fragment shader: " + GLES20.glGetShaderInfoLog(fshader));
 			GLES20.glDeleteShader(fshader);
 			fshader = 0;
 		}
@@ -357,7 +357,7 @@ public class EglEncoder
 				return colorFormat;
 			}
 		}
-		Log.e(TAG, "couldn't find a good color format for " + codecInfo.getName() + " / " + mimeType);
+		Log.d(TAG, "couldn't find a good color format for " + codecInfo.getName() + " / " + mimeType);
 		return 0; // not reached
 	}
 
@@ -393,7 +393,7 @@ public class EglEncoder
 		{
 			// Don't fail CTS if they don't have an AVC codec (not here,
 			// anyway).
-			Log.e(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
+			Log.d(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
 			throw new RuntimeException("No codec found.");
 		}
 
@@ -430,7 +430,15 @@ public class EglEncoder
 		// "display" EGL context is created, then modify the eglCreateContext
 		// call to
 		// take eglGetCurrentContext() as the share_context argument.
-		this.mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+		try
+		{
+			this.mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 		this.mInputSurface = new CodecInputSurface(this.mEncoder.createInputSurface());
 		this.mEncoder.start();

@@ -18,32 +18,26 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.multishot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
-import android2.hardware.camera2.CaptureResult;
 import android.os.CountDownTimer;
-import android.os.Debug;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
-
 //-+- -->
+
 /***
  * Implements group shot capture plugin - captures predefined number of images
  ***/
@@ -70,7 +64,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int		imageAmount			= 8;
 	private int[]	pauseBetweenShots	= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
-	private int		imagesTaken			= 0;
 
 	public MultiShotCapturePlugin()
 	{
@@ -133,7 +126,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -152,22 +145,20 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.i(TAG, "StartPreview fail");
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			inCapture = false;
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.i(TAG, "StartPreview fail");
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			inCapture = false;
+//			return;
+//		}
 		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,

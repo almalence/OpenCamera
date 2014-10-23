@@ -28,10 +28,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
@@ -53,12 +53,16 @@ import com.almalence.ui.Switch.Switch;
 
 public class CapturePlugin extends PluginCapture
 {
-	private static String	ModePreference; // 0=DRO On 1=DRO Off
-	private Switch			modeSwitcher;
-	public static final String CAMERA_IMAGE_BUCKET_NAME = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/tmp_raw_img" ;
-	
-	private int singleModeEV;
-	private int droEvDiff;
+	private static String		ModePreference;													// 0=DRO
+																									// On
+																									// 1=DRO
+																									// Off
+	private Switch				modeSwitcher;
+	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
+																	+ "/DCIM/Camera/tmp_raw_img";
+
+	private int					singleModeEV;
+	private int					droEvDiff;
 
 	public CapturePlugin()
 	{
@@ -75,7 +79,7 @@ public class CapturePlugin extends PluginCapture
 			int diff = (int) Math.floor(0.5 / expStep);
 			if (diff < 1)
 				diff = 1;
-			
+
 			droEvDiff = diff;
 			ev -= diff;
 		}
@@ -83,7 +87,7 @@ public class CapturePlugin extends PluginCapture
 		int minValue = CameraController.getInstance().getMinExposureCompensation();
 		if (ev >= minValue)
 		{
-			Log.e("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
+			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.getInstance().setCameraExposureCompensation(ev);
 		}
 	}
@@ -104,27 +108,28 @@ public class CapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isDro)
 			{
-				
+
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				
+
 				if (isDro)
 				{
 					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
-					Log.e("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
-					
+					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
+
 					ModePreference = "0";
 					MainScreen.setCaptureYUVFrames(true);
 				} else
 				{
 					ModePreference = "1";
 					MainScreen.setCaptureYUVFrames(false);
-					
-					Log.e("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
+
+//					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
-				
-				//UpdateEv(isDro, isDro? singleModeEV : (singleModeEV+droEvDiff));
+
+				// UpdateEv(isDro, isDro? singleModeEV :
+				// (singleModeEV+droEvDiff));
 				UpdateEv(isDro, singleModeEV);
-				
+
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modeStandardPref", ModePreference);
 				editor.commit();
@@ -147,7 +152,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
-		Log.e("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
+//		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
 
 		if (ModePreference.compareTo("0") == 0)
 		{
@@ -172,12 +177,12 @@ public class CapturePlugin extends PluginCapture
 		else
 			MainScreen.setCaptureYUVFrames(false);
 	}
-	
+
 	@Override
 	public void onPause()
 	{
-		Log.e("Capture", "onPause");
-		if(ModePreference.contains("0"))
+//		Log.d("Capture", "onPause");
+		if (ModePreference.contains("0"))
 		{
 			UpdateEv(false, singleModeEV);
 		}
@@ -232,10 +237,10 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-		Log.e("CapturePlugin", "takePicture");
+//		Log.d("CapturePlugin", "takePicture");
 		if (!inCapture)
 		{
-			Log.e("CapturePlugin", "send next frame message");
+//			Log.d("CapturePlugin", "send next frame message");
 			inCapture = true;
 			takingAlready = true;
 
@@ -249,7 +254,7 @@ public class CapturePlugin extends PluginCapture
 	{
 		if (arg1 == PluginManager.MSG_NEXT_FRAME)
 		{
-			Log.e("CapturePlugin", "next frame message received");
+//			Log.d("CapturePlugin", "next frame message received");
 			try
 			{
 				if (ModePreference.compareTo("0") == 0)
@@ -261,7 +266,7 @@ public class CapturePlugin extends PluginCapture
 			} catch (Exception e)
 			{
 				e.printStackTrace();
-				Log.e("Standard capture", "takePicture exception: " + e.getMessage());
+				Log.d("Standard capture", "takePicture exception: " + e.getMessage());
 				takingAlready = false;
 				PluginManager.getInstance()
 						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
@@ -286,14 +291,13 @@ public class CapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
-
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.e("Capture", "StartPreview fail");
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.e("Capture", "StartPreview fail");
+//		}
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
@@ -314,7 +318,7 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		Log.e("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
+//		Log.d("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
 		if (takingAlready)
 			takePicture();
 	}

@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 import android.media.Image;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -34,7 +34,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
@@ -60,8 +60,6 @@ public class BurstCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int				imageAmount			= 3;
 	private int				pauseBetweenShots	= 0;
-
-	private int				imagesTaken			= 0;
 
 	private static String	sImagesAmountPref;
 	private static String	sPauseBetweenShotsPref;
@@ -99,7 +97,7 @@ public class BurstCapturePlugin extends PluginCapture
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
 		} catch (Exception e)
 		{
-			Log.v("Burst capture", "Cought exception " + e.getMessage());
+			Log.e("Burst capture", "Cought exception " + e.getMessage());
 		}
 
 		switch (imageAmount)
@@ -217,7 +215,7 @@ public class BurstCapturePlugin extends PluginCapture
 
 		if (frame == 0)
 		{
-			Log.e("Burst", "Load to heap failed");
+			Log.d("Burst", "Load to heap failed");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
@@ -234,9 +232,6 @@ public class BurstCapturePlugin extends PluginCapture
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
-
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try
 		{

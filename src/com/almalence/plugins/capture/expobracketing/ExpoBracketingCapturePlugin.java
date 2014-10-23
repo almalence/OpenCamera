@@ -18,19 +18,12 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.expobracketing;
 
-import java.nio.ByteBuffer;
 import java.util.Date;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
-import android.media.Image;
-import android.os.Build;
+import android.hardware.camera2.CaptureResult;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -40,6 +33,8 @@ import android.util.Log;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -50,9 +45,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 
 /***
  * Implements capture plugin with exposure bracketing. Used for HDR image
@@ -125,7 +117,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		Log.e("HDR", "onResume");
 		takingAlready = false;
 		inCapture = false;
 		evRequested = 0;
@@ -210,10 +201,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onShutterClick()
 	{
-		Log.e("HDR", "onShutterClick");
 		if (!takingAlready && !inCapture)
 		{
-			Log.e("HDR", "onShutterClick takingAlready == false && inCapture == false");
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
@@ -272,6 +261,20 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData) {
+		if (frameData != null) {
+			if (PluginManager.getInstance().getActiveModeID().equals("hdrmode")) {
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			} else {
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, frame_num + 1);
+			}
+		}
+		else if (frame_num == 0) {
+			PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+	
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		int n = evIdx[frame_num];
@@ -296,36 +299,32 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		Log.e("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
+//		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-//			takingAlready = false;
-//			inCapture = false;
-			previewWorking = true;
-			if (cdt != null)
-			{
-				cdt.cancel();
-				cdt = null;
-			}
-
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			CameraController.getInstance().resetExposureCompensation();
-			return;
-		}
+		
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			previewWorking = true;
+//			if (cdt != null)
+//			{
+//				cdt.cancel();
+//				cdt = null;
+//			}
+//
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			CameraController.getInstance().resetExposureCompensation();
+//			return;
+//		}
 
 		if (++frame_num >= total_frames)
 		{
-//			takingAlready = false;
-//			inCapture = false;
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -564,17 +563,16 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		Log.e("HDR", "onAutoFocus");
 		if (inCapture) // disregard autofocus success (paramBoolean)
 		{
-			Log.e("HDR", "onAutoFocus inCapture == true");
+//			Log.d("HDR", "onAutoFocus inCapture == true");
 			// on motorola xt5 cm7 this function is called twice!
 			// on motorola droid's onAutoFocus seem to be called at every
 			// startPreview,
 			// causing additional frame(s) taken after sequence is finished
 			if (aboutToTakePicture)
 			{
-				Log.e("HDR", "onAutoFocus aboutToTakePicture == true");
+//				Log.d("HDR", "onAutoFocus aboutToTakePicture == true");
 				CaptureFrame();
 				takingAlready = true;
 			}

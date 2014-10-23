@@ -1,7 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="trial_left">%1$sモードの無料ショットの残り: %2$d</string>
+    <string name="trial_finished">無料の%1$sショットがなくなりました、アンロックしてください</string>
+    <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_Billing_Left">%1$s モードでの残りの無料撮影数：%2$d</string>
+    <string name="Pref_About">A Better Camera v1.06\n(©) by Almalence Inc\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
+    +++ -->
     <string name="cannot_create_jpeg">エラー：画像が保存できません！</string>
     <string name="choose_folder_pick">このフォルダーを使用</string>
     <string name="choose_folder_newfolder">新規フォルダ</string>
@@ -15,6 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">次に保存...</string>
     <string name="pref_advanced_saving_saveToPref_summary">画像保存場所を選択</string>
     <string name="choose_folder">フォルダを選択</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKatがSDカードへの保存を許可していません。</string>
     
     <string name="save_to_phone">電話</string>
     <string name="save_to_memorycard">メモリカード</string>
@@ -23,5 +32,17 @@
     <string name="dimensions_none">なし</string>
     
     <string name="already_unlocked">既にアンロックされています</string>
+    
+    <string name="volumeBtnTakePic">写真を撮影</string>
+    <string name="volumeBtnZoom">ズーム</string>
+    <string name="volumeBtnExpoCorrection">露出修正</string>
+    <string name="volumeBtnNone">なし</string>
+    
+    <string name="raterMain">もしA Better Cameraをお気に入りでしたら、少々お時間を割いて評価してください。\n\nご協力、ありがとうございます！</string>
+    <string name="raterRate">A Better Cameraを評価</string>
+    <string name="raterNo">いいえ、結構です</string>
+    
+    <string name="raterSendReview">当社は皆様の意見を尊重し、A Better Cameraをよりよいものにしたいと思っています。サポートに直接、評価をお送りください。</string>
+    <string name="raterSend">送信</string>
     
 </resources>

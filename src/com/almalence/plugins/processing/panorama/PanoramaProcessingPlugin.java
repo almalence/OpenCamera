@@ -21,18 +21,21 @@ package com.almalence.plugins.processing.panorama;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
+import com.almalence.util.ImageConversion;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -46,8 +49,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.util.ImageConversion;
 
 public class PanoramaProcessingPlugin extends PluginProcessing
 {
@@ -69,7 +70,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@Override
 	public void onStartProcessing(final long sessionID)
 	{
-		Log.e(TAG, "onStartProcessing");
+		// Log.d(TAG, "onStartProcessing");
 
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()).getBoolean(
 				PREFERENCES_KEY_SAVEINPUT, false);
@@ -92,7 +93,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			final int camera_fov = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"pano_camera_fov" + sessionID));
 			final boolean use_all = PluginManager.getInstance().getFromSharedMem("pano_useall" + sessionID).equals("1");
-			final boolean free_input = use_all ? true : PluginManager.getInstance()
+			final boolean free_input = use_all ? false : PluginManager.getInstance()
 					.getFromSharedMem("pano_freeinput" + sessionID).equals("1");
 			final boolean mirror = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 					"pano_mirror" + sessionID));
@@ -117,7 +118,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 
 			// If images are going to be freed during processing we need to save
 			// original frames now.
-			if (this.prefSaveInput && free_input)
+			if (this.prefSaveInput)
 			{
 				this.saveFrames(frames_ptrs, 0, frames_ptrs.length, input_width, input_height);
 			}
@@ -140,13 +141,6 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 
 			if (!free_input)
 			{
-				if (this.prefSaveInput)
-				{
-					final int inputImagesCount = result[7];
-
-					this.saveFrames(result, 8, inputImagesCount, input_width, input_height);
-				}
-
 				this.freeFrames(frames_ptrs, 0, frames_ptrs.length);
 			}
 
@@ -184,35 +178,10 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			final int input_height)
 	{
 		File saveDir = PluginManager.getSaveDir(false);
-
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		final int saveOption = Integer.parseInt(prefs.getString("exportName", "3"));
-		final Calendar d = Calendar.getInstance();
-		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
-				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
-				d.get(Calendar.SECOND));
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		final String modeName = PluginManager.getInstance().getActiveMode().modeSaveName;
-
-		switch (saveOption)
-		{
-		case 1:// YEARMMDD_HHMMSS
-			break;
-
-		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat += "_" + modeName;
-			break;
-
-		case 3:// IMG_YEARMMDD_HHMMSS
-			fileFormat = "IMG_" + fileFormat;
-			break;
-
-		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = "IMG_" + fileFormat + "_" + modeName;
-			break;
-		default:
-			break;
-		}
+		String fileFormat = PluginManager.getInstance().getExportFileName(modeName);
 
 		final Rect crop = new Rect(0, 0, input_width, input_height);
 		for (int i = 0; i < count; ++i)
@@ -237,7 +206,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 				}
 			} catch (Exception e)
 			{
-
+				e.printStackTrace();
 			}
 
 			final YuvImage out = new com.almalence.YuvImage(optr, ImageFormat.NV21, input_width, input_height, null);
@@ -264,6 +233,23 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			{
 				e.printStackTrace();
 			}
+
+			ContentValues values = new ContentValues();
+
+			values = new ContentValues();
+			values.put(
+					ImageColumns.TITLE,
+					file.getName().substring(
+							0,
+							file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName()
+									.length()));
+			values.put(ImageColumns.DISPLAY_NAME, file.getName());
+			values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+			values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+			values.put(ImageColumns.DATA, file.getAbsolutePath());
+
+			MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+
 		}
 	}
 

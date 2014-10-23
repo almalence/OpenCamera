@@ -17,10 +17,13 @@
 	
 	<string name="Pref_HDR_NoiseReduction_Title">Réduction du bruit</string>
 	
-	<string name="Res_HDR_DecodingProgress_Text">Décodage en cours&#8230;</string>
+	<string name="Res_HDR_DecodingProgress_Text">Décodage en cours…</string>
 	
 	<string name="Pref_HDR_SaveInputPref_Title">Enregistrer les clichés originaux</string>
+    
     <string name="Pref_HDR_SaveInputPref_Summary">Garder les images avec bracketing d\'exposition</string>
+    <string name="Pref_HDR_SaveInputPref_None">Ne pas enregistrer</string>
+    <string name="Pref_HDR_SaveInputPref_Normal">Uniquement l\'image d\'exposition standard</string>
     
 	<string name="Pref_HDR_AutoAdjustPref_Title">Modifier après prise</string>
 	<string name="Pref_HDR_AutoAdjustPref_Summary">Régler les paramètres de mappage des tons après prise de la photo</string>
@@ -47,7 +50,7 @@
     <string name="adjustments_preset_artistic">Artistique</string>
     <string name="adjustments_preset_bnw">Noir et blanc</string>
     <string name="adjustments_preset_vanilla">Vanille</string>
-    <string name="adjustments_preset_xerox">Xerox</string>
+    <string name="adjustments_preset_xerox">Photocopie</string>
     <string name="adjustments_preset_neon">Néon</string>
     <string name="adjustments_preset_custom">Personnalisé</string>
     <string name="adjustments_exposure">Exposition</string>

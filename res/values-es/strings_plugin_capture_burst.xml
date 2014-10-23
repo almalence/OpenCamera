@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">Número de imágenes en una ráfaga</string>
     
+    
     <string name="Res_Burst_Images_Text">imágenes</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">Pausa entre disparos</string>
     <string name="Res_Burst_Fast_Text">lo más rápido posible</string>
@@ -14,6 +15,6 @@
     <string name="Res_Burst_5">5 imágenes</string>
     <string name="Res_Burst_10">10  imágenes</string>
     <string name="Res_Burst_15">15 imágenes</string>
-    <string name="Res_Burst_20">20  imágenes</string>
+    <string name="Res_Burst_20">20 imágenes</string>
     
 </resources>

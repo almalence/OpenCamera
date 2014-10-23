@@ -38,10 +38,10 @@ import android.widget.RelativeLayout;
 
 import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
+import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
+import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
+import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
+import com.almalence.ui.RotateLayout;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -49,12 +49,11 @@ import com.almalence.opencam.R;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.R;
 //-+- -->
-import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
-import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
-import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
-import com.almalence.ui.RotateImageView;
-import com.almalence.ui.RotateLayout;
 
 /***
  * Implements multishot processing
@@ -234,7 +233,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			sequenceProcessingPlugin.onStartProcessing(sessionID);
 		} else if (selectedPlugin == OBJECT_REMOVAL)
 		{
-			ObjectRemovalProcessingPlugin.setYUVBufferList(new ArrayList<byte[]>());
+			ObjectRemovalProcessingPlugin.setYUVBufferList(mYUVBufferList);
 			objectRemovalProcessingPlugin.onStartProcessing(sessionID);
 		}
 	}
@@ -260,7 +259,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				mYUVBufferList.add(i - 1, yuv);
 			} else
 			{
-				byte[] in = SwapHeap.CopyFromHeap(
+				byte[] in = SwapHeap.SwapFromHeap(
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
 						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
 

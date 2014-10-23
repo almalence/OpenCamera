@@ -17,4 +17,6 @@
 	<string name="Res_SelfTimerCapture_Capture_1">1 immagine</string>
     <string name="Res_SelfTimerCapture_Capture_2">2 immagini</string>
     <string name="Res_SelfTimerCapture_Capture_3">3 immagini</string>
+    
+    <string name="selfTimerTitle">Autoscatto</string>
 </resources>

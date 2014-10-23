@@ -56,7 +56,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -220,7 +220,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		mDisplayOrientationOnStartProcessing = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
-		Log.e("GroupShot", "onStartProcessing layout orientation: " + orientation);
+//		Log.d("GroupShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
@@ -263,6 +263,11 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			} else
 			{
 				mFrameCount = mYUVBufferList.size();
+				if(PreviewBmp != null)
+				{
+					PreviewBmp.recycle();
+					PreviewBmp = null;
+				}
 				PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
 			}
 
@@ -271,8 +276,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				Matrix matrix = new Matrix();
 				matrix.postRotate(mCameraMirrored ? (mDisplayOrientationOnStartProcessing + 180) % 360
 						: mDisplayOrientationOnStartProcessing);
-				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
+				
+				if (rotatedBitmap != PreviewBmp) {
+					PreviewBmp.recycle();
+					PreviewBmp= rotatedBitmap;
+				}
 			}
 
 			if ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
@@ -282,6 +292,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 				matrix.postRotate((mDisplayOrientationOnStartProcessing + 180) % 360);
 				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
+				
+				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+						matrix, true);
+				if (rotatedBitmap != PreviewBmp) {
+					PreviewBmp.recycle();
+					PreviewBmp= rotatedBitmap;
+				}
 			}
 
 			previewBmpRealWidth = PreviewBmp.getWidth();
@@ -313,6 +330,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
 		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+		
+		PreviewBmp.recycle();
+		PreviewBmp = null;
 	}
 
 	private void getFaceRects()
@@ -567,8 +587,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		if (!isYUV)
 			PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
 		else
+		{
+			if(PreviewBmp != null)
+			{
+				PreviewBmp.recycle();
+				PreviewBmp = null;
+			}
 			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(),
 					MainScreen.getImageHeight());
+		}
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
@@ -577,6 +604,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			PreviewBmpInitial = Bitmap.createBitmap(rotated);
+			
+			if (PreviewBmpInitial != rotated) {
+				rotated.recycle();
+			}
 		}
 
 		mImgView.setImageBitmap(PreviewBmpInitial);
@@ -714,17 +745,17 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			float y_tmp = y;
 			x = mDisplayOrientationOnStartProcessing == 180 ? mDisplayWidth - 1 - y_tmp : y_tmp;
 			y = mDisplayOrientationOnStartProcessing == 180 ? x_tmp : mDisplayHeight - 1 - x_tmp;
-			Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
+//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		} else if (!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
 		{
 			x = mDisplayHeight - x;
 			y = mDisplayWidth - y;
-			Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
+//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		} else if (mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
 		{
 			x = mDisplayHeight - x;
 			y = mDisplayWidth - y;
-			Log.e("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
+//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		}
 		// Have to correct touch coordinates coz ImageView centered on the
 		// screen
@@ -745,7 +776,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 						- (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? mDisplayWidth
 								: mDisplayHeight) - previewBmpRealHeight) / 2;
 			}
-			Log.e("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
+//			Log.d("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
 		}
 
 		int i = 0;
@@ -788,7 +819,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	private void setupImageView()
 	{
-		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
+//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
 
 		if (PreviewBmp != null)
 		{
@@ -906,6 +937,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			if (mSeamless != null)
 				mSeamless.release();
 			mJpegBufferList.clear();
+			for(int yuv: mYUVBufferList)
+			{
+				SwapHeap.FreeFromHeap(yuv);
+			}
 			mYUVBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
@@ -964,8 +999,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	public synchronized void updateBitmap()
 	{
 		PreviewBmp = mSeamless.getPreviewBitmap();
-		Log.e("GroupShot", "updateBitmap. PreviewBmp WxH: " + PreviewBmp.getWidth() + " x " + PreviewBmp.getHeight());
-		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
+//		Log.d("GroupShot", "updateBitmap. PreviewBmp WxH: " + PreviewBmp.getWidth() + " x " + PreviewBmp.getHeight());
+//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
 		drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
 		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
 		{

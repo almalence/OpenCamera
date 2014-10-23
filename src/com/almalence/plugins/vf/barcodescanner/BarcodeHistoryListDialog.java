@@ -24,9 +24,9 @@ import android.widget.TextView;
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
-import com.almalence.ui.RotateDialog;
 //-+- -->
 import com.almalence.ui.RotateLayout;
+import com.almalence.ui.RotateDialog;
 
 public class BarcodeHistoryListDialog extends RotateDialog implements android.view.View.OnClickListener
 {

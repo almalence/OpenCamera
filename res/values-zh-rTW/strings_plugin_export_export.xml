@@ -16,6 +16,9 @@
 	<string name="Pref_Export_SaveTo_Title">選擇位置以儲存圖像</string>
 	
 	<string name="Pref_Export_UseGeoTagging_Title">地理標記</string>
-	<string name="Pref_Export_UseGeoTagging_Summary">新增位置標籤。開啟&quot;GPS定位&quot;系統設定以獲得精確的地理位置標記</string>
+	<string name="Pref_Export_UseGeoTagging_Summary">新增位置標籤。開啟"GPS定位"系統設定以獲得精確的地理位置標記</string>
+	
+	<string name="Pref_Export_SortByData_Title">使用過時資料夾</string>
+	<string name="Pref_Export_SortByData_Summary">儲存結果圖像到當前日期的資料夾</string>
 
 </resources>

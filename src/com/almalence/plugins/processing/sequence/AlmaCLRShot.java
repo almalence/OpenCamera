@@ -31,9 +31,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-
-import com.almalence.opencam.MainScreen;
 import com.almalence.util.Size;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.MainScreen;
+//-+- -->
 
 public class AlmaCLRShot
 {
@@ -155,7 +160,7 @@ public class AlmaCLRShot
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 
-		Log.e(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+		//Log.d(TAG, "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -261,7 +266,7 @@ public class AlmaCLRShot
 				mPreviewSize.getHeight());
 		ARGBBuffer = null;
 
-		Log.d(TAG, "getPreviewBitmap() -- end");
+		//Log.d(TAG, "getPreviewBitmap() -- end");
 		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 

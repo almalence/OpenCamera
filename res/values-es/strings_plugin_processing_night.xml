@@ -8,7 +8,7 @@
 	
 	<string name="Pref_Night_DeGhosting_Title">Quitar efecto fantasma</string>
 
-	<string name="Res_Night_DecodingProgress_Text">Decodificando&#8230;</string>
+	<string name="Res_Night_DecodingProgress_Text">Decodificando…</string>
 	
 	<string name="Pref_Night_ColorsSaturated_Title">Mantener colores saturados</string>
     <string name="Pref_Night_ColorsSaturated_Summary">Mantener colores saturados</string>

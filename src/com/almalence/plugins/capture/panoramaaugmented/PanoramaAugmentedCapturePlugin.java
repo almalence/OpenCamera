@@ -60,9 +60,23 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android2.hardware.camera2.CaptureResult;
+import android.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
+import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
+import com.almalence.ui.Switch.Switch;
+import com.almalence.util.HeapUtil;
+
+/* <!-- +++
+ import com.almalence.opencam_plus.CameraParameters;
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.PluginCapture;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ +++ --> */
+// <!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -70,19 +84,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
-import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
-import com.almalence.ui.Switch.Switch;
-import com.almalence.util.HeapUtil;
 
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.ui.GUI;
- import com.almalence.opencam_plus.ui.GUI.CameraParameter;
- +++ --> */
-// <!-- -+-
 //-+- -->
 
 public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
@@ -130,7 +132,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private VfGyroSensor				sensorSoftGyroscope			= null;
 	private boolean						remapOrientation;
 
-	private volatile boolean			capturing;
 	// private boolean aboutToTakePicture = false;
 
 	private AugmentedRotationListener	rotationListener;
@@ -165,7 +166,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		super("com.almalence.plugins.panoramacapture_augmented", R.xml.preferences_capture_panoramaaugmented, 0, 0,
 				null);
 
-		this.capturing = false;
+		this.inCapture = false;
 
 		this.sensorManager = (SensorManager) MainScreen.getMainContext().getSystemService(Context.SENSOR_SERVICE);
 		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -355,11 +356,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			{
 				PanoramaAugmentedCapturePlugin.this.modeSweep = isChecked;
 				PanoramaAugmentedCapturePlugin.this.setMode();
-				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
+						.getMainContext());
 				Editor editor = prefs.edit();
 				editor.putBoolean(sModePref, modeSweep);
 				editor.commit();
-				
+
 			}
 		});
 		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);
@@ -398,16 +400,22 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.reset(this.previewHeight, this.previewWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(this.previewWidth,
-					this.previewHeight));
+					this.previewHeight) * 0.9);
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(true);
 
 			if (!CameraController.isUseHALv3())
 			{
-				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-				cp.setRecordingHint(true);
-				CameraController.getInstance().setCameraParameters(cp);
+				try
+				{
+					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+					cp.setRecordingHint(true);
+					CameraController.getInstance().setCameraParameters(cp);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		} else
 		{
@@ -422,9 +430,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			if (!CameraController.isUseHALv3())
 			{
-				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-				cp.setRecordingHint(false);
-				CameraController.getInstance().setCameraParameters(cp);
+				try
+				{
+					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+					cp.setRecordingHint(false);
+					CameraController.getInstance().setCameraParameters(cp);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -459,7 +473,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		synchronized (this.engine)
 		{
-			if (this.capturing)
+			if (this.inCapture)
 			{
 				if (!this.takingAlready)
 				{
@@ -484,7 +498,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (this.capturing && !this.takingAlready)
+			if (this.inCapture && !this.takingAlready)
 			{
 				if (this.engine != null)
 				{
@@ -555,6 +569,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.init();
 
 		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
+		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
+		
 		if (Build.MODEL.contains("HTC One X"))
 		{
 			if (!CameraController.isFrontCamera())
@@ -566,12 +582,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				cs.add(additional);
 			}
 		}
-
-		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
-
+		
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
-		Log.e(TAG, String.format("Picture dimensions: %dx%d", size.getWidth(), size.getHeight()));
+		// Log.d(TAG, String.format("Picture dimensions: %dx%d",
+		// size.getWidth(), size.getHeight()));
 
 		MainScreen.setImageWidth(this.pictureWidth);
 		MainScreen.setImageHeight(this.pictureHeight);
@@ -611,7 +626,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			Log.e(TAG, "Picture sizes list is empty");
 			return;
 		}
-
+		
 		if (Build.MODEL.contains("HTC One X"))
 		{
 			if (!CameraController.isFrontCamera())
@@ -756,7 +771,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready)
 			{
-				if (this.capturing)
+				if (this.inCapture)
 				{
 					this.stopCapture();
 				} else
@@ -792,7 +807,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 					if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
 					{
-						Log.e("Almalence", String.format("Emergency preview restart"));
+						Log.d("Almalence", String.format("Emergency preview restart"));
 						CameraController.setPreviewCallbackWithBuffer();
 					} else
 					{
@@ -844,7 +859,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		this.modeSweep = prefs.getBoolean(sModePref, true);
-		
+
 		try
 		{
 			this.prefResolution = Integer
@@ -931,7 +946,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				cs.add(additional);
 			}
 		}
-
+		
 		int maxIndex = 0;
 
 		if (cs != null)
@@ -1044,7 +1059,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.setFocused();
 
-		this.modeSwitcher.setEnabled(false);
+		if (this.modeSwitcher != null)
+			this.modeSwitcher.setEnabled(false);
+
 		this.rotationListener.setUpdateDrift(false);
 
 		lockAEWB();
@@ -1052,7 +1069,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
-		this.capturing = true;
+		this.inCapture = true;
 	}
 
 	private void takePictureUnimode(final int image)
@@ -1085,6 +1102,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.engine.recordCoordinates();
 				this.engine.onFrameAdded(true, image);
 				this.isFirstFrame = false;
+				
+				final boolean done = this.engine.isCircular();
+				final boolean oom = this.engine.isMax();
+
+				if (oom && !done)
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_OUT_OF_MEMORY);
+				else if (done)
+					PluginManager.getInstance()
+							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NOTIFY_LIMIT_REACHED);
+
+				if (done || oom)
+					PluginManager.getInstance()
+							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FORCE_FINISH_CAPTURE);
 			} else
 			{
 				this.takingAlready = true;
@@ -1137,7 +1167,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		synchronized (this.engine)
 		{
-			if (!this.capturing)
+			if (!this.inCapture)
 			{
 				this.takingAlready = false;
 				// this.aboutToTakePicture = false;
@@ -1150,7 +1180,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		try
 		{
-			Log.e(TAG, "Perform CAPTURE Panorama");
+			// Log.d(TAG, "Perform CAPTURE Panorama");
 			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0],
 					false);
 		} catch (final Exception e)
@@ -1164,7 +1194,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 					String.valueOf(SessionID));
 
 			takingAlready = false;
-			capturing = false;
+			inCapture = false;
 			// aboutToTakePicture = false;
 		}
 	}
@@ -1247,6 +1277,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
+	public void addToSharedMemExifTags(byte[] frameData)
+	{
+		if (this.isFirstFrame)
+		{
+			if (frameData != null)
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+			else
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+		}
+	}
+
+	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
 	{
 		final boolean goodPlace;
@@ -1273,11 +1315,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			} else
 			{
 				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);
-			}
-
-			if (this.isFirstFrame && !isYUV && frameData != null)
-			{
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			}
 		}
 
@@ -1319,7 +1356,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@SuppressLint("FloatMath")
 	private void stopCapture()
 	{
-		this.capturing = false;
+		this.inCapture = false;
 		this.focused = false;
 
 		unlockAEWB();

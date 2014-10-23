@@ -34,12 +34,15 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
@@ -54,6 +57,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
@@ -67,6 +71,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -76,8 +81,17 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.ui.RotateImageView;
+import com.almalence.util.Util;
+import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.Track;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
+
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -93,16 +107,8 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
+
 //-+- -->
-import com.almalence.ui.RotateImageView;
-import com.almalence.util.Util;
-import com.coremedia.iso.IsoFile;
-import com.coremedia.iso.boxes.Container;
-import com.googlecode.mp4parser.authoring.Movie;
-import com.googlecode.mp4parser.authoring.Track;
-import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
-import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
-import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
 /***
  * Implements basic functionality of Video capture.
@@ -115,8 +121,7 @@ public class VideoCapturePlugin extends PluginCapture
 	private volatile boolean					isRecording;
 	private boolean								onPause;
 	private boolean								lockPauseButton					= false;
-
-	private static int							CameraIDPreference;
+	private int									soundVolume						= 0;
 
 	private MediaRecorder						mMediaRecorder;
 
@@ -219,6 +224,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingTimeView.setText("00:00");
 
 		this.createModeSwitcher();
+
 		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			this.modeSwitcher.setVisibility(View.GONE);
@@ -792,7 +798,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public boolean muteSound()
 	{
-		return this.isRecording;
+		return true;
 	}
 
 	public void startrotateAnimation()
@@ -830,6 +836,10 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void onResume()
 	{
+		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+		soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
+		audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 				: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
@@ -851,6 +861,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
+
+		frameCnt = 0;
 	}
 
 	@Override
@@ -876,9 +888,15 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (camera != null)
 		{
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-			cp.setRecordingHint(false);
-			CameraController.getInstance().setCameraParameters(cp);
+			try
+			{
+				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+				cp.setRecordingHint(false);
+				CameraController.getInstance().setCameraParameters(cp);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		if (this.buttonsLayout != null)
@@ -898,6 +916,9 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.droEngine.onPause();
 		}
+
+		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+		audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
 	}
 
 	@Override
@@ -1150,25 +1171,20 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void setCameraPictureSize()
 	{
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 		CameraController.getInstance().setJpegQuality(jpegQuality);
 
-		if (cp.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+		if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 		{
-			cp.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-			CameraController.getInstance().setCameraParameters(cp);
+			CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+			PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.getMainContext())
+					.edit()
+					.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+							: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
 		}
-		PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext())
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO).commit();
 	}
 
 	private void releaseMediaRecorder()
@@ -1226,7 +1242,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2)
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2)
 			modeSwitcher.setVisibility(View.VISIBLE);
 
 		View mainButtonsVideo = (View) MainScreen.getInstance().guiManager.getMainView().findViewById(
@@ -1239,11 +1255,11 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.modeDRO())
 		{
+			// <!-- -+-
 			PluginManager.getInstance().controlPremiumContent();
+			// -+- -->
 
 			this.droEngine.stopRecording();
-
-			MainScreen.getInstance().playShutter();
 
 			MainScreen.getGUIManager().lockControls = false;
 			// inform the user that recording has stopped
@@ -1295,16 +1311,37 @@ public class VideoCapturePlugin extends PluginCapture
 		values.put(VideoColumns.BUCKET_ID, path.hashCode());
 		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
 		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+		values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
+		
+		if (this.modeDRO()){
+			values.put(VideoColumns.RESOLUTION, String.valueOf(MainScreen.getPreviewWidth()) + "x" + String.valueOf(MainScreen.getPreviewHeight()));
+		} else {
+			if (lastUseProfile) {
+				values.put(VideoColumns.RESOLUTION, String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x" + String.valueOf(lastCamcorderProfile.videoFrameHeight));
+			} else {
+				values.put(VideoColumns.RESOLUTION, String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
+			}
+		}
+		
+		mRecordingTimeView.setText("00:00");
+		mRecorded = 0;
+		shutterOff = false;
+		showRecording = false;
 	}
 
 	protected void doExportVideo()
 	{
-		if (filesList.size() > 0)
+		boolean onPause = this.onPause;
+		this.onPause = false;
+		
+		File fileSaved = this.fileSaved;
+		ArrayList<File> filesListToExport = filesList;
+		if (filesListToExport.size() > 0)
 		{
-			File firstFile = filesList.get(0);
-			for (int i = 1; i < filesList.size(); i++)
+			File firstFile = filesListToExport.get(0);
+			for (int i = 1; i < filesListToExport.size(); i++)
 			{
-				File currentFile = filesList.get(i);
+				File currentFile = filesListToExport.get(i);
 				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
 			}
 			// if not onPause, then last video isn't added to list.
@@ -1313,20 +1350,16 @@ public class VideoCapturePlugin extends PluginCapture
 				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
 			}
 
-			if (!filesList.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
+			if (!filesListToExport.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
 			{
 				fileSaved.delete();
 				firstFile.renameTo(fileSaved);
 			}
 		}
 
-		onPause = false;
-
 		String[] filesSavedNames = new String[1];
 		filesSavedNames[0] = fileSaved.toString();
-		filesList.clear();
-		mRecordingTimeView.setText("00:00");
-		mRecorded = 0;
+		filesListToExport.clear();
 
 		MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 
@@ -1338,12 +1371,16 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 		}
 		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
-		shutterOff = false;
-		showRecording = false;
 	}
 
 	private void startRecording()
 	{
+		Camera camera = CameraController.getCamera();
+		if (null == camera)
+			return;
+	
+		filesList = new ArrayList<File>();
+		
 		if (shutterOff)
 			return;
 
@@ -1368,8 +1405,6 @@ public class VideoCapturePlugin extends PluginCapture
 			// inform the user that recording has stopped
 			isRecording = true;
 			onPause = false;
-
-			MainScreen.getInstance().playShutter();
 
 			showRecordingUI(isRecording);
 			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -1404,7 +1439,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// change shutter icon
 		pauseVideoButton.setVisibility(View.VISIBLE);
 		pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
-		
+
 		MainScreen.getInstance().setKeepScreenOn(true);
 	}
 
@@ -1474,6 +1509,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Camera camera = CameraController.getCamera();
+		
 		lastCamera = camera;
 
 		Date curDate = new Date();
@@ -1812,8 +1848,6 @@ public class VideoCapturePlugin extends PluginCapture
 				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 						false).commit();
 
-		CameraIDPreference = 0;
-
 		videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
 
 		readVideoPreferences(prefs);
@@ -1917,7 +1951,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		long targetNextUpdateDelay;
 		text = millisecondToTimeString(deltaAdjusted, false);
-		targetNextUpdateDelay = 1000;
+		targetNextUpdateDelay = 900;
 
 		mRecordingTimeView.setText(text);
 
@@ -1947,8 +1981,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}.start();
 
 		// show recording shutter
-
-		// TODO!!!
 		if (showRecording)
 		{
 			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
@@ -2405,6 +2437,11 @@ public class VideoCapturePlugin extends PluginCapture
 		takingAlready = false;
 	}
 
+	private int			frameCnt	= 0;
+	private long		timeStart	= 0;
+	private long		time		= 0;
+	private final int	MIN_FPS		= 12;
+
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
@@ -2413,6 +2450,21 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onFrameAvailable()
 	{
+		if (frameCnt <= 50)
+		{
+			// check if FPS rate higher than minimum allowed
+			if (frameCnt == 0)
+				timeStart = System.currentTimeMillis();
+			frameCnt++;
+			// frames number
+			if (frameCnt == 50)
+			{
+				time = (System.currentTimeMillis() - timeStart);
+				long fps = (1000 * frameCnt) / time;
+				if (fps < MIN_FPS)
+			    	showHDRWarning(fps);
+			}
+		}
 		this.droEngine.onFrameAvailable();
 	}
 
@@ -2432,5 +2484,31 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onGLDrawFrame(final GL10 gl)
 	{
 		this.droEngine.onDrawFrame(gl);
+	}
+	
+	
+	private void showHDRWarning(long fps)
+	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean showDroWarning = prefs.getBoolean("dontshowagainDroWarning", false);
+		
+		if (showDroWarning)
+			return;
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
+	    builder.setTitle("HDR Video");
+	    builder.setMessage(MainScreen.getInstance().getResources().getString(R.string.dro_warning) + " " +fps);
+	    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	            dialog.cancel();
+	        }
+	    });
+	    builder.setNegativeButton(MainScreen.getInstance().getResources().getString(R.string.helpTextDontShow), new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+	        	prefs.edit().putBoolean("dontshowagainDroWarning", true).commit();
+	        }
+	    });
+	    builder.show();
 	}
 }

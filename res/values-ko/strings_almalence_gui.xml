@@ -7,11 +7,20 @@
     <string name="Pref_Common_UseFrontCamera_Title">전면 카메라</string>
     <string name="Pref_Common_UseFrontCamera_Summary">전면 카메라 사용</string>
     <string name="Pref_Common_ImageSize_Title">이미지 크기</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">이미지 크기(스마트 연속 및 야간촬영)</string>
     <string name="Pref_Common_ImageSize_Summary">\n주의: 일부 모드의 경우 이미지 크기에 개별 설정이 있습니다</string>
     <string name="Pref_Common_Shutter_Title">무음 동작</string>
     <string name="Pref_Common_Shutter_Summary">일부 모델에서는 작동하지 않을 수 있음</string>
+    <string name="Pref_Common_HWShutter_Summary">하드웨어 셔터를 사용하여 앱 시작</string>
+    <string name="Pref_Common_ShotOnTap_Title">터치하여 촬영</string>
+    <string name="Pref_Common_ShotOnTap_Summary">탭하여 초점 조정 및 촬영</string>
+    <string name="Pref_Common_UseHALv3_Title">Сamera2 인터페이스 사용</string>
+    <string name="Pref_Common_UseHALv3_Summary">실험 중 모드. 일부 장치(Android L이 설치된 Google Nexus 5, 7)에서 작동 가능.</string>    
     <string name="Pref_Common_MediaRescan_Title">종료 시 미디어 재검색</string>
     <string name="Pref_Common_MediaRescan_Summary">이미지가 갤러리에 표시되지 않을 경우 사용하세요.</string>
+    <string name="Pref_Common_Gallery_Title">외부 갤러리 선택 허용</string>
+    <string name="Pref_Common_Gallery_Summary">기본 뷰어가 설치된 경우 ABC 편집기를 사용하지 마세요</string>
+    <string name="Pref_Common_JPEGQuality_Title">JPEG 화질</string>
     <string name="Pref_Common_VolumeButton_Title">볼륨 버튼</string>
     <string name="Pref_SaveConfiguration_Title">설정 저장</string>
     <string name="Pref_SaveConfiguration_Summary">실행 간에 저장할 설정을 선택하세요</string>
@@ -24,20 +33,27 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">플래시 모드</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">선택된 카메라</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">셀프타이머</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">노출 보정</string>
     <string name="Pref_Common_DelayedCapture_Title">셀프타이머 촬영</string>
     <string name="Pref_Common_DelayedCapture_Summary">셀프타이머 컨트롤을 표시합니다</string>
     <string name="Pref_ShowHelp_Title">도움말 표시</string>
     <string name="Pref_WhowHelp_Summary">모드 시작 시 도움말을 표시합니다(파노라마, 객체 제거, 시퀀스, 단체사진)</string>
+    <string name="Pref_Common_HeadsetTap_Title">헤드셋 셔터</string>
+    <string name="Pref_Common_HeadsetTap_Summary">헤드셋 버튼을 셔터로 사용</string>
+    
+    
+    <string name="helpTextDontShow">표시 안 함</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">기다려주세요. 처리 중...</string>
     <string name="almalence_gui_selected">선택됨</string>
-    
+
     <string name="settings_mode_scene">장면 모드</string>
     <string name="settings_mode_wb">화이트밸런스</string>
     <string name="settings_mode_focus">초점 모드</string>
     <string name="settings_mode_flash">플래시 모드</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">노출계 모드</string>
     <string name="settings_mode_rear">후면 카메라</string>
     <string name="settings_mode_front">전면 카메라</string>
     <string name="settings_mode_exposure">노출</string>
@@ -62,8 +78,19 @@
 	<string name="Pref_Unlock_Preference_Summary">프리미엄 기능 잠금해제</string>
 	
 	<string name="layout_hint_bottom">카메라 모드 선택</string>
-	<string name="layout_hint_center">스와이핑</string>
+	<string name="layout_hint_center">스와이핑하여 펼치기/접기</string>
 	<string name="layout_hint_top_left">길게 눌러서\n설정하세요</string>
 	<string name="layout_hint_top_center">당겨서 더 많은 옵션을 보세요</string>
+
+	<string name="Dro_Help">Almalence의 새로운 기술로 카메라가 사람의 눈처럼 볼 수 있게 되었습니다! DRO(동적 범위 최적화)는 톤 매핑과 유사한 기술을 사용하고 모든 이미지를 자동으로 향상시키고 대부분의 경우 HDR을 적용할 수 있습니다.\n\n1. 셔터를 눌러 사진을 촬영하세요\n2. 처리될 때까지 몇 초 기다립니다!</string>
+	
+	<string name="setTimerText">설정</string>
+	<string name="soundTimerText">카운트다운 소리</string>
+	<string name="flashTimerText">카운트다운 플래시</string>	
+
+	<string name="secondsText">초</string>	
+	<string name="okText">확인</string>
+	
+	<string name="moreText">더 보기...</string>
 	
 </resources>

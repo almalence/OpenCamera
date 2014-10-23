@@ -3,6 +3,9 @@
     <string name="single_mode_name">Un disparo</string>
     <string name="single_mode_howto"/>
     
+    <string name="selftimer_mode_name">Temporizador automático</string>
+    <string name="selftimer_mode_howto"/>
+    
     <string name="burst_mode_name">Ráfaga</string>
     <string name="burst_mode_howto"/>
     
@@ -24,6 +27,9 @@
     <string name="objectremoval_mode_name">Eliminación de objetos</string>
     <string name="objectremoval_mode_howto"/>
     
+    <string name="multishot_mode_name">Disparo múltiple inteligente</string>
+	<string name="multishot_mode_howto"/>
+    
     <string name="groupshot_mode_name">Disparos múltiples</string>
     <string name="groupshot_mode_howto"/>
     
@@ -33,4 +39,10 @@
     <string name="panorama_mode_name">Panorama</string>
     <string name="panorama_mode_howto"/>
     
+	<string name="hiresportrait_mode_name">Hires portrait</string>
+	<string name="hiresportrait_mode_howto"/>
+    
+	<string name="bestshot_mode_name">Mejor disparo</string>
+	<string name="bestshot_mode_howto"/>
+	
 </resources>

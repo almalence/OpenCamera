@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">连拍图像数量</string>
     
+    
     <string name="Res_Burst_Images_Text">图像</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">拍摄之间暂停</string>
     <string name="Res_Burst_Fast_Text">尽可能快</string>

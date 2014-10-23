@@ -1,7 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="trial_left">Prises de vue gratuites restantes en mode %1$s : %2$d</string>
+    <string name="trial_finished">Il ne reste plus de prise de vue gratuite pour %1$s. Veuillez déverrouiller la fonctionnalité pour continuer.</string>
+    <!-- -+-  -->
     <string name="app_name">A Better Camera - Le nec plus ultra des appareils photo</string>
-    <string name="Pref_Billing_Left">Nombre de prise de vue restantes du mode %1$s : %2$d</string>
+    <string name="Pref_About">A Better Camera  v3.25\n(©) par Almalence Inc\n</string>
+    <!--  -+- -->
+    <!-- +++
+    <string name="app_name">A Better Camera Unlocked</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
+    +++ -->
     <string name="cannot_create_jpeg">Erreur : impossible d\'enregistrer l\'image !</string>
     <string name="choose_folder_pick">Utiliser ce dossier</string>
     <string name="choose_folder_newfolder">Nouveau dossier</string>
@@ -15,6 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Enregistrer sous...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Sélectionner l\'emplacement dans lequel stocker les images</string>
     <string name="choose_folder">Choisir le dossier</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat n\'autorise pas l\'enregistrement sur carte SD.</string>
     
     <string name="save_to_phone">Téléphone</string>
     <string name="save_to_memorycard">Carte mémoire</string>
@@ -23,5 +32,17 @@
     <string name="dimensions_none">Aucune</string>
     
     <string name="already_unlocked">déverrouillé</string>
+    
+    <string name="volumeBtnTakePic">Prendre une photo</string>
+    <string name="volumeBtnZoom">Zoom</string>
+    <string name="volumeBtnExpoCorrection">Correction de l\'exposition</string>
+    <string name="volumeBtnNone">Aucun</string>
+    
+    <string name="raterMain">Si vous appréciez A Better Camera, merci de prendre quelques instant pour la noter.\n\nNous vous remercions de votre soutien !</string>
+    <string name="raterRate">Noter A Better Camera</string>
+    <string name="raterNo">Non merci.</string>
+    
+    <string name="raterSendReview">Votre opinion nous importe et nous souhaitons améliorer ABC. Envoyez votre avis directement à l\'assistance.</string>
+    <string name="raterSend">Envoyer</string>
     
 </resources>

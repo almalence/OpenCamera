@@ -21,7 +21,6 @@ package com.almalence.plugins.processing.sequence;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -31,7 +30,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -48,8 +46,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam.cameracontroller.CameraController;
-
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -179,9 +176,11 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 									false));
 				} else
 				{
-					byte[] in = SwapHeap.CopyFromHeap(
-							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
+//					byte[] in = SwapHeap.CopyFromHeap(
+//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
+//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
+					
+					byte[] in = mJpegBufferList.get(i-1);
 
 					BitmapFactory.Options opts = new BitmapFactory.Options();
 					thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),

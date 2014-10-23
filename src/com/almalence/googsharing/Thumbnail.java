@@ -48,8 +48,13 @@ import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 
-import com.almalence.opencam.MainScreen;
+//<!-- -+-
 import com.almalence.opencam.PluginManager;
+//-+- -->
+/* <!-- +++
+import com.almalence.opencam_plus.PluginManager;
++++ --> */
+
 import com.almalence.util.Util;
 
 public class Thumbnail

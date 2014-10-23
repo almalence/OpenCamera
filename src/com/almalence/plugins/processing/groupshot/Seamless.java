@@ -32,9 +32,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-
-import com.almalence.opencam.MainScreen;
 import com.almalence.util.Size;
+
+/* <!-- +++
+import com.almalence.opencam_plus.MainScreen;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.MainScreen;
+//-+- -->
 
 public class Seamless
 {
@@ -101,7 +106,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+//		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -124,12 +129,12 @@ public class Seamless
 			}
 		}
 
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		int error = 0;
 		error = AlmaShotSeamless.ConvertAndDetectFacesFromJpegs(PointOfJpegData, LengthOfJpegData, mNumOfFrame,
 				size.getWidth(), size.getHeight(), fd_size.getWidth(), fd_size.getHeight(), needRotation,
 				cameraMirrored, rotationDegree);
-		Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "ConvertFromJpeg() elapsed time = " + (System.currentTimeMillis() - start));
 		if (error < 0)
 		{
 			Log.d(TAG, "Out Of Memory");
@@ -151,7 +156,7 @@ public class Seamless
 			mInputFrameSize = new Size(size.getHeight(), size.getWidth());
 		else
 			mInputFrameSize = size;
-		Log.e("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
+//		Log.d("Seamless", "mInputFrameSize WxH = " + mInputFrameSize.getWidth() + " x " + mInputFrameSize.getHeight());
 
 		if (mNumOfFrame < 1 && mNumOfFrame > 8)
 		{
@@ -176,12 +181,12 @@ public class Seamless
 			}
 		}
 
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		int error = 0;
 		error = AlmaShotSeamless
 				.DetectFacesFromYUVs(PointOfYUVData, LengthOfYUVData, mNumOfFrame, size.getWidth(), size.getHeight(),
 						fd_size.getWidth(), fd_size.getHeight(), needRotation, cameraMirrored, rotationDegree);
-		Log.d(TAG, "DetectFracesFromYUVs() elapsed time = " + (System.currentTimeMillis() - start));
+//		Log.d(TAG, "DetectFracesFromYUVs() elapsed time = " + (System.currentTimeMillis() - start));
 		if (error < 0)
 		{
 			Log.d(TAG, "Out Of Memory");
@@ -245,6 +250,8 @@ public class Seamless
 	{
 		if (ARGBBuffer == null || mIsBaseFrameChanged)
 		{
+			ARGBBuffer = null;
+			System.gc();
 			makePreview(mRectList.get(mBasebaseFrameIndex));
 			mIsBaseFrameChanged = false;
 		}
@@ -368,18 +375,6 @@ public class Seamless
 			i++;
 		}
 		return list;
-	}
-
-	public byte[] getInputFrameBuffer(int index)
-	{
-		if (AlmaShotSeamless.getInputFrame(index) == 0)
-		{
-			return new byte[0];
-		} else
-		{
-			return SwapHeap.CopyFromHeap(AlmaShotSeamless.getInputFrame(index), mInputFrameSize.getWidth()
-					* mInputFrameSize.getHeight() * 3 / 2);
-		}
 	}
 
 	public int getWidthForFaceDetection(int w, int h)

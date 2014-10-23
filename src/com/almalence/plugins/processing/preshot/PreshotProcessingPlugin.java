@@ -25,11 +25,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.os.CountDownTimer;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,6 +53,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -65,7 +64,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.plugins.capture.preshot.PreShot;
-import com.almalence.util.HeapUtil;
 
 /***
  * Implements back in time prcessing plugin. Prepares images for displaying etc.
@@ -151,9 +149,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		// + sessionID));
 		// processing only in fast mode.
 
-		final int[] mi = HeapUtil.getMemoryInfo();
-		Log.e("!!!!!!!!!!!", "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
-
 		ProcessingImages();
 
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID));
@@ -162,7 +157,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				isSlowMode ? "true" : "false");
 
 		prepareMiniFrames();
-		// miniframesReady.set(true);
 	}
 
 	private Integer ProcessingImages()
@@ -419,7 +413,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		for (int i = 0; i < imgCnt; i++)
 		{
-			Log.e("!!!!!", "i == " + i + " imgCnt = " + imgCnt);
 			this.mini_frames[i] = getMultishotBitmap(i);
 		}
 	}
@@ -433,9 +426,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			mDisplayOrientationCurrent = orientation;
 			if (postProcessingRun)
 			{
-				// Log.e("PreShot Post processing", "orientation = " +
-				// orientation + " mLayoutOrientationCurrent =  "
-				// + mLayoutOrientationCurrent);
 				mSaveButton.setRotation(mLayoutOrientationCurrent);
 				mSaveButton.invalidate();
 				mSaveAllButton.setRotation(mLayoutOrientationCurrent);
@@ -573,7 +563,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 			int H = MainScreen.getPreviewHeight(), W = MainScreen.getPreviewWidth();
 			int or = PreShot.getOrientation(index);
-			// Log.e("PreShot", "getMultishotBitmap orientation: " + or);
 			if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
 			{
 				H = MainScreen.getPreviewWidth();

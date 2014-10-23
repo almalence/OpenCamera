@@ -143,7 +143,6 @@
 						android:paddingTop="0dp"
 				   		android:layout_gravity="bottom"
 				   		android:onClick="onButtonClick"/>
-					
 	 	 	   </LinearLayout>	 	
 		 	</LinearLayout> 	
 		 	
@@ -170,7 +169,7 @@
        	android:background="@drawable/blacktransparentlayerbottom"
        	android:layout_weight="1"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="@dimen/paramsLayoutVideoHeight"
 		android:gravity="bottom|center"	    
 	   	android:layout_alignParentBottom="true"
 		android:visibility="gone">
@@ -849,10 +848,11 @@
 		
 	<RelativeLayout android:id="@+id/mode_help"
 			android:layout_width="fill_parent"
-			android:layout_height="600dip"
+			android:layout_height="700dip"
 			android:layout_margin="20dip"
 			android:background="#FAFAFA"
 			android:visibility="gone"
+			android:layout_centerInParent="true"
 			>
             
 	    	<TextView

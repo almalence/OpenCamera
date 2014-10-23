@@ -32,8 +32,13 @@
     <string name="Preference_SWCheckedValue">Preference_SWChekedValue</string>
     
     <string name="Preference_SavePathValue">Preference_SavePathValue</string>
+    <string name="Preference_ExportNameValue">Preference_ExportName</string>
     <string name="Preference_SaveToValue">Preference_SaveToValue</string>
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
+    <string name="Preference_SavePathPrefixValue">Preference_SavePathPrefixValue</string>
+    <string name="Preference_SavePathPostfixValue">Preference_SavePathPostfixValue</string>
+    <string name="Preference_EnableExifTagOrientationValue">Preference_EnableExifTagOrientationValue</string>
+    <string name="Preference_AdditionalRotationValue">Preference_AdditionalRotationValue</string>
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>

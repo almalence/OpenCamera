@@ -18,37 +18,26 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.bestshot;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
-import android2.hardware.camera2.CaptureResult;
-import android.media.Image;
-import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginCapture;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 
 /***
  * Implements burst capture plugin - captures predefined number of images
@@ -58,8 +47,6 @@ public class BestShotCapturePlugin extends PluginCapture
 {
 	// defaul val. value should come from config
 	private int				imageAmount	= 5;
-
-	private int				imagesTaken	= 0;
 
 	//private static String	sImagesAmountPref;
 
@@ -202,7 +189,7 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (frame == 0)
 		{
-			Log.e("Bestshot", "Load to heap failed");
+			Log.d("Bestshot", "Load to heap failed");
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
@@ -221,22 +208,19 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-		if (imagesTaken == 1 && !isYUV && frameData != null)
-			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
-
-		try
-		{
-			CameraController.startCameraPreview();
-		} catch (RuntimeException e)
-		{
-			Log.e("Bestshot", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
-			return;
-		}
+//		try
+//		{
+//			CameraController.startCameraPreview();
+//		} catch (RuntimeException e)
+//		{
+//			Log.e("Bestshot", "StartPreview fail");
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+//					String.valueOf(SessionID));
+//
+//			imagesTaken = 0;
+//			MainScreen.getInstance().muteShutter(false);
+//			return;
+//		}
 		
 		if (imagesTaken >= imageAmount)
 		{
@@ -245,8 +229,6 @@ public class BestShotCapturePlugin extends PluginCapture
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
-			
-			Log.e("Bestshot", "CAPTURE FINISHED");
 			
 			imagesTaken = 0;
 		}

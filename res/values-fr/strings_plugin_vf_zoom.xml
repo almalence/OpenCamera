@@ -4,6 +4,6 @@
 	<string name="Pref_Zoom_Preference_Title">Zoom</string>
 	<string name="Pref_Zoom_Preference_Summary">Zoom</string>
 	
-	<string name="Pref_ShowZoom">Afficher la commande de zoom</string>
+	<string name="Pref_ShowZoom">Affiche la commande de zoom</string>
 	
 </resources>

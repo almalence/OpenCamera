@@ -27,16 +27,13 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.content.Context;
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.util.Log;
 
-import com.almalence.opencam.MainScreen;
 /* <!-- +++
- import com.almalence.opencam_plus.CameraController;
+import com.almalence.opencam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.MainScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -90,7 +87,7 @@ public class GLCameraPreview
 
 	public void setSurfaceSize(int width, int height)
 	{
-		Log.e("GLCameraPreview", "Surface size = " + width + " x " + height);
+//		Log.d("GLCameraPreview", "Surface size = " + width + " x " + height);
 		surfaceWidth = width;
 		surfaceHeight = height;
 
@@ -146,22 +143,8 @@ public class GLCameraPreview
 		previewWidth = MainScreen.getPreviewWidth();
 		previewHeight = MainScreen.getPreviewHeight();
 		
-		Log.e("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
+//		Log.d("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
 		
-//		Camera camera = CameraController.getCamera();
-//		if (null == camera)
-//			return;
-//		Parameters params = CameraController.getInstance().getCameraParameters();
-//		if (params == null)
-//		{
-//			return;
-//		}
-//
-//		previewWidth = params.getPreviewSize().width;
-//		previewHeight = params.getPreviewSize().height;
-//		
-//		Log.e("GLCameraPreview", "Preview size from Camera.Parameters = " + previewWidth + " x " + previewHeight);
-
 		textureWidth = 512;
 		textureHeight = 512;
 

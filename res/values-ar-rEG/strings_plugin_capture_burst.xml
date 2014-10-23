@@ -6,6 +6,7 @@
 
     <string name="Pref_Burst_ImagesAmount_Title">عدد الصور في التقاط متسلسل</string>
     
+    
     <string name="Res_Burst_Images_Text">الصور</string>
     <string name="Pref_Burst_PauseBetweenShots_Title">التوقف بين اللقطات</string>
     <string name="Res_Burst_Fast_Text">بأسرع ما يمكن</string>
@@ -13,7 +14,7 @@
     <string name="Res_Burst_3">3 صور</string>
     <string name="Res_Burst_5">5 صور</string>
     <string name="Res_Burst_10">10 صور</string>
-    <string name="Res_Burst_15">15 صور</string>
-    <string name="Res_Burst_20">20 صور</string>
+    <string name="Res_Burst_15">15 صورة</string>
+    <string name="Res_Burst_20">20 صورة</string>
     
 </resources>

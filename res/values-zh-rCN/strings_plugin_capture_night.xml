@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
 	
+    <string name="NightCaptureMode">首选项_夜间拍摄模式</string>
+    
+    <string name="NightCaptureModeHiRes">高清</string>
+    <string name="NightCaptureModeHiSpeed">高速</string>
+    
 	<string name="textOn">开</string>
 	<string name="textOff">关</string>
+	
+	<string name="NightVisionOn">夜视 开</string>
+	<string name="NightVisionOff">夜视 关</string>
+	
+	
+	<!-- <string name="NightCaptureBackImageSize">imageSizePrefNightBack</string>
+	<string name="NightCaptureFrontImageSize">imageSizePrefNightFront</string> -->
 	
 	<string name="hold_still">保持不动！</string>
 	<string name="capturing">正在拍摄</string>

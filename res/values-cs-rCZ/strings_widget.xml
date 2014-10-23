@@ -18,5 +18,5 @@
 	<string name="widgetAdvText">Věděli jste, že můžete spustit A Better Camera přímo do Vámi požadovaného módu (např. video, HDR, nebo jiné)? \nPotřebujete k tomu pouze náš widget, který je zdarma.</string>
 	<string name="widgetInstallText">Instalovat Editor</string>
 	<string name="widgetNoText">Připomenout později</string>
-	<string name="editorAdvText">Vaše fotografie můžete editovat v našem ABC Editoru, který je zdarma! Obsahuje filtry, efekty a mnoho dalšího!</string>
+	<string name="editorAdvText">Vaše fotografie můžete editovat v našem A Better Editor&amp;Effects, který je zdarma! Obsahuje filtry, efekty a mnoho dalšího!</string>
 </resources>

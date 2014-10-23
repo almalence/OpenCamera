@@ -12,7 +12,7 @@
     <string name="Pref_Common_ImageSize_Summary">\nPoznámka: některé režimy mají vlastní nastavení pro velikost fotek</string>
     <string name="Pref_Common_Shutter_Title">Tichý režim</string>
     <string name="Pref_Common_Shutter_Summary">Není zaručena funkčnost na všech typech zařízení</string>
-    <string name="Pref_Common_HWShutter_Title">Spustit spouští fotoaparátu</string>
+    <string name="Pref_Common_HWShutter_Summary">Spustit spouští fotoaparátu</string>
     <string name="Pref_Common_ShotOnTap_Title">Kliknutím vyfotit</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zaostřit a vyfotit kliknutím na displej</string>
     <string name="Pref_Common_UseHALv3_Title">Použít Сamera2 rozhraní</string>
@@ -20,7 +20,7 @@
     <string name="Pref_Common_MediaRescan_Title">Přeskenování galerie</string>
     <string name="Pref_Common_MediaRescan_Summary">Pomůže, pokud se fotky neobjeví ve fotogalerii</string>
     <string name="Pref_Common_Gallery_Title">Povolit jiný prohlížeč fotek</string>
-    <string name="Pref_Common_Gallery_Summary">Nepoužívat ABC Editor jako primární prohlížeč fotek</string>
+    <string name="Pref_Common_Gallery_Summary">Nepoužívat A Better Editor&amp;Effects jako primární prohlížeč fotek</string>
     <string name="Pref_Common_JPEGQuality_Title">Kvalita fotek (JPEG)</string>
     <string name="Pref_Common_VolumeButton_Title">Funkce tlačítek hlasitosti</string>
     <string name="Pref_SaveConfiguration_Title">Uložit konfiguraci</string>
@@ -83,7 +83,6 @@
 	<string name="layout_hint_top_left">Krátkým podržením\nnastavíte ikony</string>
 	<string name="layout_hint_top_center">Vysuňte pro více možností</string>
 
-	<string name="Dro_Help_Header">DRO - nápověda</string>
 	<string name="Dro_Help">Naše nová technologie umožňuje vyfotit scénu tak, jak ji skutečně vidíte. DRO (Optimalizace dynamického rozsahu) používá techniku podobnou mapování tónů, automaticky vylepší snímek a může dokonce nahradit režim HDR ve většině případů.\n\n1. Zmáčkněte spoušť pro vyfocení\n2. Čekejte pár sekund na zpracování snímku!</string>
 	
 	<string name="setTimerText">Nastavit</string>

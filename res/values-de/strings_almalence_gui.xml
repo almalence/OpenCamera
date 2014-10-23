@@ -7,43 +7,59 @@
     <string name="Pref_Common_UseFrontCamera_Title">Frontkamera</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Frontkamera verwenden</string>
     <string name="Pref_Common_ImageSize_Title">Bildgröße</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Bildgröße (Smart Multishot und Nacht)</string>
     <string name="Pref_Common_ImageSize_Summary">\nHinweis: Einige Kameramodi haben eine eigene Einstellung für die Bildgröße.</string>
     <string name="Pref_Common_Shutter_Title">Geräuschlose Bedienung</string>
     <string name="Pref_Common_Shutter_Summary">Funktioniert nicht bei allen Geräten</string>
+    <string name="Pref_Common_HWShutter_Summary">App über Auslösertaste am Gerät starten</string>
+    <string name="Pref_Common_ShotOnTap_Title">Zum Aufnehmen berühren</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Zum Fokussieren und Aufnehmen eines Bildes brauchen Sie nur den Bildschirm berühren</string>
+    <string name="Pref_Common_UseHALv3_Title">Сamera2-Schnittstelle nutzen</string>
+    <string name="Pref_Common_UseHALv3_Summary">Dieser experimentelle Modus funktioniert nur bei vereinzelten Geräten (Google Nexus 5, 7 mit Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">Medien beim Schließen erneut scannen</string>
     <string name="Pref_Common_MediaRescan_Summary">Nützlich, wenn Bilder nicht in der Galerie erscheinen.</string>
+    <string name="Pref_Common_Gallery_Title">Externe Galerie bei Bedarf nutzen</string>
+    <string name="Pref_Common_Gallery_Summary">Falls Sie den A Better Editor&amp;Effects installiert haben, wird er nicht als Standardprogramm zum Öffnen von Fotos verwendet</string>
+    <string name="Pref_Common_JPEGQuality_Title">JPEG-Qualität</string>
     <string name="Pref_Common_VolumeButton_Title">Lautstärke-Button</string>
     <string name="Pref_SaveConfiguration_Title">Konfiguration speichern</string>
     <string name="Pref_SaveConfiguration_Summary">Wählen Sie, welche Einstellungen Sie zwischen den App-Aufrufen speichern möchten</string>
     <string name="Pref_SaveConfiguration_ShootingMode_Title">Aufnahmemodus</string>
     <string name="Pref_SaveConfiguration_ImageSize_Title">Bildgröße</string>
-    <string name="Pref_SaveConfiguration_SceneMode_Title">Szenemodus</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Szenenmodus</string>
     <string name="Pref_SaveConfiguration_FocusMode_Title">Fokusmodus</string>
     <string name="Pref_SaveConfiguration_WBMode_Title">Weißabgleichmodus</string>
     <string name="Pref_SaveConfiguration_ISOMode_Title">ISO-Modus</string>
     <string name="Pref_SaveConfiguration_FlashMode_Title">Blitzmodus</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Ausgewählte Kamera</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Selbstauslöser</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Belichtungskorrektur</string>
     <string name="Pref_Common_DelayedCapture_Title">Selbstauslöseraufnahme</string>
     <string name="Pref_Common_DelayedCapture_Summary">Selbstauslösersteuerung anzeigen</string>
     <string name="Pref_ShowHelp_Title">Hilfe anzeigen</string>
-    <string name="Pref_WhowHelp_Summary">Zeigt Hilfe an, kurz nachdem der Modus aktiviert wurde (Panoramas, Objektentfernung, Sequenz, Gruppenaufnahme)</string>
+    <string name="Pref_WhowHelp_Summary">Zeigt Hilfe an, kurz nachdem der Modus aktiviert wurde (Panorama, Objektentfernung, Sequenz, Gruppenaufnahme)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Kopfhörertaste</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Nutzen Sie die Kopfhörertasten als Auslöser</string>
+    
+    
+    <string name="helpTextDontShow">Nicht anzeigen</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">Bitte warten. Verarbeitung läuft...</string>
     <string name="almalence_gui_selected">ausgewählt</string>
-    
+
     <string name="settings_mode_scene">Szenenmodus</string>
     <string name="settings_mode_wb">Weißabgleich</string>
     <string name="settings_mode_focus">Fokusmodus</string>
     <string name="settings_mode_flash">Blitzmodus</string>
     <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Belichtungsmessmodus</string>
     <string name="settings_mode_rear">Rückseitenkamera</string>
     <string name="settings_mode_front">Frontkamera</string>
     <string name="settings_mode_exposure">Belichtung</string>
     <string name="settings_mode_moresettings">Weitere Einstellungen</string>
-    <string name="settings_mode_aeaflock">AB\AF gesperrt</string>
-    <string name="settings_mode_aeafunlock">AB\AF freigeschaltet</string>
+    <string name="settings_mode_aeaflock">AE\\AF gesperrt</string>
+    <string name="settings_mode_aeafunlock">AE\\AF freigeschaltet</string>
     
     <string name="settings_not_available">Im aktuellen Modus nicht verfügbar</string>
     <string name="processing_not_finished">Die Verarbeitung ist noch nicht abgeschlossen. Bitte warten.</string>
@@ -53,7 +69,7 @@
 	<string name="Pref_VF_Preference_Title">Sucher-Einstellungen</string>
 	<string name="Pref_VF_Preference_Summary">Was soll angezeigt werden</string>
 	<string name="Pref_Modes_Preference_Title">Aufnahmemodus-Einstellungen</string>
-	<string name="Pref_Modes_Preference_Summary">HDR, Nacht, Panoramas...</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Nacht, Panorama...</string>
 	<string name="Pref_Saving_Preference_Title">Speichern und Teilen</string>
 	<string name="Pref_Saving_Preference_Summary">Dateinamen, Formate, Geotagging, Exif und andere Parameter</string>
 	<string name="Pref_Advanced_Preference_Title">Erweitert</string>
@@ -62,8 +78,19 @@
 	<string name="Pref_Unlock_Preference_Summary">Premium-Funktionen freischalten</string>
 	
 	<string name="layout_hint_bottom">Kameramodus auswählen</string>
-	<string name="layout_hint_center">Wischen</string>
+	<string name="layout_hint_center">Wischen Sie, um mehr/weniger Infos zu sehen</string>
 	<string name="layout_hint_top_left">Zum Konfigurieren\nlange drücken</string>
 	<string name="layout_hint_top_center">Ziehen Sie, um weitere Optionen einzusehen</string>
+
+	<string name="Dro_Help">Mit der neuen Technologie von Almalence können Kameras wie ein menschliches Auge sehen! DRO (Dynamic Range Optimization) nutzt eine Technik, die dem Tone Mapping ähnelt und Bilder in 100% der Fälle automatisch optimiert und in den meisten Fällen HDR ersetzt.\n\n1. Drücken Sie auf den Auslöser, um ein Foto aufzunehmen.\n2. Warten Sie eine Sekunde, bis das Bild verarbeitet ist!</string>
+	
+	<string name="setTimerText">Einstellen</string>
+	<string name="soundTimerText">Ton beim Countdown</string>
+	<string name="flashTimerText">Blitz beim Countdown</string>	
+
+	<string name="secondsText">Sekunden</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">Mehr...</string>
 	
 </resources>
