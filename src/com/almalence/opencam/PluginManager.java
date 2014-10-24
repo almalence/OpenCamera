@@ -787,7 +787,7 @@ public class PluginManager implements PluginManagerInterface
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
-		if (photoTimeLapseActive && pluginList.get(activeCapture).delayedCaptureSupported())
+		if (photoTimeLapseActive && pluginList.get(activeCapture).photoTimeLapseCaptureSupported())
 		{
 			if (isUserClicked) {
 				Editor e = prefs.edit();
@@ -799,8 +799,7 @@ public class PluginManager implements PluginManagerInterface
 				}
 				else {
 					AlarmReceiver alarmReceiver = new AlarmReceiver();
-					alarmReceiver.setAlarm(MainScreen.getInstance(),
-							10000);// some hardcode
+					alarmReceiver.setAlarm(MainScreen.getInstance(), 100);// some hardcode
 					
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, true);
 					
@@ -1440,6 +1439,16 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeVF.get(i)).onCameraSetup();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCameraSetup();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+
+		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		
+		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+			AlarmReceiver.onResume();
+		}
+
 	}
 
 	/******************************************************************************************************

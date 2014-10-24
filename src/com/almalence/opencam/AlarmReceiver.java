@@ -10,26 +10,31 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.CountDownTimer;
-import android.os.SystemClock;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 
 public class AlarmReceiver extends BroadcastReceiver
 {
+	private static final String		TAG							= "ALARM_RECIVER";
+
 	private static AlarmManager		alarmMgr;
 	private static PendingIntent	alarmIntent;
 
-	private long					pauseBetweenShots	= 0;
+	private int						pauseBetweenShotsVal		= 0;
+	private static long				pauseBetweenShots			= 0;
+	private int						pauseBetweenShotsMeasurment	= 0;
 
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
 		Log.e("asd", "onReceive");
-		
+
+		awakeFromSleep();
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
@@ -37,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		Log.e("TTT", photoTimeLapseActive + "");
 		Log.e("TTT", photoTimeLapseIsRunning + "");
-		
+
 		if (!photoTimeLapseActive || !photoTimeLapseIsRunning)
 		{
 			return;
@@ -50,6 +55,9 @@ public class AlarmReceiver extends BroadcastReceiver
 				Intent dialogIntent = new Intent(context, MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				context.startActivity(dialogIntent);
+			} else
+			{
+				onResume();
 			}
 		} catch (NullPointerException e)
 		{
@@ -58,39 +66,65 @@ public class AlarmReceiver extends BroadcastReceiver
 			context.startActivity(dialogIntent);
 		}
 
-		pauseBetweenShots = prefs.getLong(MainScreen.sPhotoTimeLapseCaptureIntervalPref, -1);
-		Log.e("TTT", pauseBetweenShots + "");
-		if (pauseBetweenShots == -1)
+		pauseBetweenShotsVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, -1);
+		Log.e("TTT", pauseBetweenShotsVal + "");
+		if (pauseBetweenShotsVal == -1)
 		{
 			return;
 		}
 
-		CountDownTimer timer = new CountDownTimer(6000, 6000)
+		pauseBetweenShots = Long.parseLong(SelfTimerAndPhotoTimeLapse.stringTimelapseInterval[pauseBetweenShotsVal]);
+
+		pauseBetweenShotsMeasurment = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
+
+		Log.e(TAG, "pauseBetweenShotsMeasurment = " + pauseBetweenShotsMeasurment);
+		
+		
+		switch (pauseBetweenShotsMeasurment)
 		{
-			public void onTick(long millisUntilFinished)
-			{
-			}
+		case 0:
+			pauseBetweenShots = pauseBetweenShots * 1000;
+			break;
+		case 1:
+			pauseBetweenShots = pauseBetweenShots * 60000;
+			break;
+		case 2:
+			pauseBetweenShots = pauseBetweenShots * 60000 * 60000;
+			break;
+		default:
+			break;
+		}
 
-			public void onFinish()
-			{
-
-				Log.e("TTT", PluginManager.getInstance().getActiveMode().modeID);
-				
-				// Если выбра один из наших модов phototTmeLapse включен
-				if (PluginManager.getInstance().getActiveMode().modeID.equals("single")
-						|| PluginManager.getInstance().getActiveMode().modeID.equals("hdrmode")
-						|| PluginManager.getInstance().getActiveMode().modeID.equals("nightmode"))
-				{
-					PluginManager.getInstance().onShutterClickNotUser();
-
-					setNewAlarm(pauseBetweenShots * 1000 - 6000);
-				}
-			}
-		};
-		timer.start();
+		Log.e(TAG, "pauseBetweenShots = " + pauseBetweenShots);
+		Log.e("TTT", PluginManager.getInstance().getActiveMode().modeID);
 	}
 
-	public void setNewAlarm(long time)
+	public static void onResume()
+	{
+		// Если выбра один из наших модов phototTmeLapse включен
+		if (PluginManager.getInstance().getActiveMode().modeID.equals("single")
+				|| PluginManager.getInstance().getActiveMode().modeID.equals("hdrmode")
+				|| PluginManager.getInstance().getActiveMode().modeID.equals("nightmode"))
+		{
+			PluginManager.getInstance().onShutterClickNotUser();
+
+			setNewAlarm(pauseBetweenShots);
+		}
+	}
+
+	public void awakeFromSleep()
+	{
+		PowerManager pm = (PowerManager) MainScreen.thiz.getApplicationContext()
+				.getSystemService(Context.POWER_SERVICE);
+		WakeLock wakeLock = pm
+				.newWakeLock(
+						(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
+						TAG);
+		wakeLock.acquire();
+		wakeLock.release();
+	}
+
+	public static void setNewAlarm(long time)
 	{
 		AlarmReceiver alarmReceiver = new AlarmReceiver();
 		alarmReceiver.setAlarm(MainScreen.getInstance(), time);

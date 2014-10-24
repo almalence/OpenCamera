@@ -73,14 +73,20 @@ import com.almalence.ui.RotateLayout;
 
 public class SelfTimerAndPhotoTimeLapse
 {
-	private RotateImageView				timeLapseButton		= null;
-	private SelfTimerAndTimeLapseDialog	dialog				= null;
-	boolean								swTimerChecked		= false;
-	boolean								swTimeLapseChecked	= false;
-	String[]							stringInterval		= { "3", "5", "10", "15", "30", "60" };
+	private RotateImageView				timeLapseButton				= null;
+	private SelfTimerAndTimeLapseDialog	dialog						= null;
+	boolean								swTimerChecked				= false;
+	boolean								swTimeLapseChecked			= false;
+	int									timeLapseInterval;
+	int									timeLapseMeasurementVal;
+	String[]							stringTimerInterval			= { "3", "5", "10", "15", "30", "60" };
+	public static String[]				stringTimelapseInterval		= { "1", "1.5", "2", "2.5", "3", "4", "5", "6",
+			"10", "12", "15", "24"									};
+	String[]							stringTimelapseMeasurement	= { "seconds", "minutes", "hours" };
 	CheckBox							flashCheckbox;
 	CheckBox							soundCheckbox;
 	NumberPicker						npTimeLapse;
+	NumberPicker						npTimeLapseMeasurment;
 	NumberPicker						npTimer;
 
 	public void selfTimerInitDialog()
@@ -94,7 +100,7 @@ public class SelfTimerAndPhotoTimeLapse
 		npTimer.setMaxValue(5);
 		npTimer.setMinValue(0);
 		npTimer.setValue(interval);
-		npTimer.setDisplayedValues(stringInterval);
+		npTimer.setDisplayedValues(stringTimerInterval);
 		npTimer.setWrapSelectorWheel(false);
 
 		flashCheckbox = (CheckBox) dialog.findViewById(R.id.flashCheckbox);
@@ -157,16 +163,26 @@ public class SelfTimerAndPhotoTimeLapse
 	public void photoTimeLapseInitDialog()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		long interval = prefs.getLong(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
+		timeLapseInterval = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
+		timeLapseMeasurementVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
+
 		swTimeLapseChecked = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 
-		npTimeLapse = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseTitle_numberPicker);
+		npTimeLapse = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseInterval_numberPicker);
 		npTimeLapse.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-		npTimeLapse.setMaxValue(5);
+		npTimeLapse.setMaxValue(11);
 		npTimeLapse.setMinValue(0);
-		npTimeLapse.setValue((int) interval);
-		npTimeLapse.setDisplayedValues(stringInterval);
+		npTimeLapse.setValue(timeLapseInterval);
+		npTimeLapse.setDisplayedValues(stringTimelapseInterval);
 		npTimeLapse.setWrapSelectorWheel(false);
+
+		npTimeLapseMeasurment = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseMeasurment_numberPicker);
+		npTimeLapseMeasurment.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		npTimeLapseMeasurment.setMaxValue(2);
+		npTimeLapseMeasurment.setMinValue(0);
+		npTimeLapseMeasurment.setValue(timeLapseMeasurementVal);
+		npTimeLapseMeasurment.setDisplayedValues(stringTimelapseMeasurement);
+		npTimeLapseMeasurment.setWrapSelectorWheel(false);
 
 		final Switch sw = (Switch) dialog.findViewById(R.id.photoTimeLapseTitle_switcher);
 
@@ -217,14 +233,20 @@ public class SelfTimerAndPhotoTimeLapse
 
 				// time lapse
 				int intervalTimeLapse = 0;
+				int intervalTimeLapseMeasurment = 0;
 				Editor prefsEditor = prefs.edit();
 
-				if (swTimeLapseChecked)
+				if (swTimeLapseChecked) {
 					intervalTimeLapse = npTimeLapse.getValue();
-				else
+					intervalTimeLapseMeasurment = npTimeLapseMeasurment.getValue();
+				}
+				else {
 					intervalTimeLapse = 0;
+					intervalTimeLapseMeasurment = 0;
+				}
 				prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, swTimeLapseChecked);
-				prefsEditor.putLong(MainScreen.sPhotoTimeLapseCaptureIntervalPref, intervalTimeLapse);
+				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, intervalTimeLapse);
+				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, intervalTimeLapseMeasurment);
 
 				// timer
 				int intervalTimer = 0;
@@ -233,7 +255,7 @@ public class SelfTimerAndPhotoTimeLapse
 					intervalTimeLapse = npTimer.getValue();
 				else
 					intervalTimeLapse = 0;
-				int real_int = Integer.parseInt(stringInterval[npTimer.getValue()]);
+				int real_int = Integer.parseInt(stringTimerInterval[npTimer.getValue()]);
 				prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swTimerChecked);
 				if (swTimerChecked)
 					prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);

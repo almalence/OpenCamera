@@ -270,6 +270,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sDelayedCaptureIntervalPref;
 	
 	public static String				sPhotoTimeLapseCaptureIntervalPref;
+	public static String				sPhotoTimeLapseCaptureIntervalMeasurmentPref;
 	public static String				sPhotoTimeLapseActivePref;
 	public static String				sPhotoTimeLapseIsRunningPref;
 
@@ -330,6 +331,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
 		
 		sPhotoTimeLapseCaptureIntervalPref = getResources().getString(R.string.Preference_PhotoTimeLapseCaptureInterval);
+		sPhotoTimeLapseCaptureIntervalMeasurmentPref = getResources().getString(R.string.Preference_PhotoTimeLapseCaptureIntervalMeasurment);
 		sPhotoTimeLapseActivePref = getResources().getString(R.string.Preference_PhotoTimeLapseSWChecked);
 		
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);

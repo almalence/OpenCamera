@@ -21,6 +21,7 @@
     <string name="Preference_DelayedCaptureIntervalValue">Preference_DelayedCaptureIntervalValue</string>
     
     <string name="Preference_PhotoTimeLapseCaptureInterval">Preference_PhotoTimeLapseCaptureInterval</string>
+    <string name="Preference_PhotoTimeLapseCaptureIntervalMeasurment">Preference_PhotoTimeLapseCaptureIntervalMeasurment</string>
     <string name="Preference_PhotoTimeLapseSWChecked">Preference_PhotoTimeLapseSWChecked</string>
     
     <string name="Preference_UseFrontCameraValue">useFrontCamera</string>

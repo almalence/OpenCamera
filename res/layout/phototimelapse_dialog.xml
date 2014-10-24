@@ -61,17 +61,16 @@
                 android:orientation="horizontal" >
 
                 <NumberPicker
-                    android:id="@+id/photoTimeLapseTitle_numberPicker"
+                    android:id="@+id/photoTimeLapseInterval_numberPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp" />
 
-                <TextView
-                    android:id="@+id/secondsText"
+                <NumberPicker
+                    android:id="@+id/photoTimeLapseMeasurment_numberPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/secondsText" />
+                    android:layout_marginLeft="20dp" />
             </LinearLayout>
         </RelativeLayout>
     </com.almalence.ui.RotateLayout>
