@@ -1975,7 +1975,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 		} else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
 		{
-			saveDir = new File(MainScreen.getSaveToPath());
+			saveDir = new File(MainScreen.getSaveToPath(), abcDir);
 			usePhoneMem = false;
 		}
 

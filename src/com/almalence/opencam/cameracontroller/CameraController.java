@@ -2232,6 +2232,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 								params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
 							else if (params.get(CameraParameters.isoParam2) != null)
 								params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+							
+							this.setCameraParameters(params);
 						}
 					}
 				}

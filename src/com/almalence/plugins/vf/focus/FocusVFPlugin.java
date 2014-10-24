@@ -553,19 +553,22 @@ public class FocusVFPlugin extends PluginViewfinder
 			//to reset current focus state and initiate new focusing procedure. If autoFocus is called right after
 			//cancelAutoFocus then success focus state (FOCUS_LOCKED) return immediately and re-focusing occurs after
 			//image capturing is called.
-			new CountDownTimer(100, 100)
-			{
-				public void onTick(long millisUntilFinished)
-				{
-					// Not used
-				}
-
-				public void onFinish()
-				{
-					setFocusParameters();
-					autoFocus();
-				}
-			}.start();
+//			new CountDownTimer(100, 100)
+//			{
+//				public void onTick(long millisUntilFinished)
+//				{
+//					// Not used
+//				}
+//
+//				public void onFinish()
+//				{
+//					setFocusParameters();
+//					autoFocus();
+//				}
+//			}.start();
+			//Back to direct call to work on S2. TODO: Check on Android 5
+			setFocusParameters();
+			autoFocus();
 			
 		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap()
 				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
