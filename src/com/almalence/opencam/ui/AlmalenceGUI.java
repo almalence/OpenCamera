@@ -1993,7 +1993,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if ((supported_iso != null && supported_iso.length > 0 && activeISO != null)
 				|| (CameraController.getInstance().isISOSupported() && activeISO != null))
 		{
-			if (supported_iso != null)
+			if (supported_iso != null && supported_iso.length != 0)
 				for (int iso_name : supported_iso)
 				{
 					if (isoButtons.containsKey(iso_name))
