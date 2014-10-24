@@ -1012,7 +1012,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		// activityManager returning crap (way less than really available)
 		final int[] mi = HeapUtil.getMemoryInfo();
 
-		Log.e(TAG, "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
+		//Log.e(TAG, "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
 
 		// memory required for stitched panorama about equals to memory required
 		// for input frames
