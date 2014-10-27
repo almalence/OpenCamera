@@ -132,6 +132,7 @@ int Super_Process
 	int     DeGhostFrames,
 	int		postFilter,
 	int		postSharpen,
+	int		gamma,
 	int     cameraIndex,
 	int     externalBuffers
 );

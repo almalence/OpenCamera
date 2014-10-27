@@ -267,11 +267,32 @@ int Filters_DownscaleLowSpatial
 	Uint8 **quarterOut
 );
 
+int Filters_DownscaleLowSpatial16bit
+(
+	void *instance,
+	Uint8 *in,
+	Uint8 *inUV,
+	int sx,
+	int sy,
+	Int16 **quarterIn,
+	Int16 **quarterOut
+);
+
 int Filters_GetFilteredLowSpatial
 (
 	void *instance,
 	Uint8 *qIn,
 	Uint8 *qOut,
+	int sxs,
+	int sys,
+	int Filter
+);
+
+int Filters_GetFilteredLowSpatial16bit
+(
+	void *instance,
+	Int16 *qIn,
+	Int16 *qOut,
 	int sxs,
 	int sys,
 	int Filter
@@ -289,11 +310,35 @@ void Filters_ResidualQuarterCompute
 	int pressure
 );
 
+void Filters_ResidualQuarterCompute16bit
+(
+	Uint8 *in,
+	Int16 *quarterIn,
+	Int16 *quarterOut,
+	int sx,
+	int sy,
+	int sxs,
+	int sys,
+	int pressure
+);
+
 void Filters_ResidualQuarterComputeUV
 (
 	Uint8 *in,
 	Uint8 *quarterIn,
 	Uint8 *quarterOut,
+	int sx,
+	int sy,
+	int sxs,
+	int sys,
+	int stride
+);
+
+void Filters_ResidualQuarterComputeUV16bit
+(
+	Uint8 *in,
+	Int16 *quarterIn,
+	Int16 *quarterOut,
 	int sx,
 	int sy,
 	int sxs,
