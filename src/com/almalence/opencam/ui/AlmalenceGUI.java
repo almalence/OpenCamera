@@ -1603,7 +1603,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onCameraCreate()
 	{
-
 		String defaultQuickControl1 = "";
 		String defaultQuickControl2 = "";
 		String defaultQuickControl3 = "";
@@ -2563,7 +2562,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case CAMERA:
 			icon_id = ICON_CAM;
-			if (!preferences.getBoolean("useFrontCamera", false))
+			if (!preferences.getBoolean(MainScreen.sUseFrontCameraPref, false))
 				icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_rear);
 			else
 				icon_text = MainScreen.getInstance().getResources().getString(R.string.settings_mode_front);

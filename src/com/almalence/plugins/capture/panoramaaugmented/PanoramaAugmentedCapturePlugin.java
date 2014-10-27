@@ -252,8 +252,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance());
 
-		final String sizeKey = CameraController.getCameraIndex() == 0 ? "imageSizePrefPanoramaBack"
-				: "imageSizePrefPanoramaFront";
+		final String sizeKey = CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizePanoramaBackPref
+				: MainScreen.sImageSizePanoramaFrontPref;
 
 		if (!prefs.contains(sizeKey))
 		{
@@ -863,8 +863,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		try
 		{
 			this.prefResolution = Integer
-					.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? "imageSizePrefPanoramaBack"
-							: "imageSizePrefPanoramaFront", "0"));
+					.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizePanoramaBackPref
+							: MainScreen.sImageSizePanoramaFrontPref, "0"));
 		} catch (final Exception e)
 		{
 			e.printStackTrace();
