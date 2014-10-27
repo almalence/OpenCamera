@@ -27,21 +27,23 @@ public class AlarmReceiver extends BroadcastReceiver
 	private int						pauseBetweenShotsVal		= 0;
 	private static long				pauseBetweenShots			= 0;
 	private int						pauseBetweenShotsMeasurment	= 0;
-
+	private static AlarmReceiver thiz = null;
+	
+	public static AlarmReceiver getInstance() {
+		return thiz;
+	}
+	
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
-		Log.e("asd", "onReceive");
-
-		awakeFromSleep();
-
+		if (thiz == null) {
+			thiz = this;
+		}
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
-
-		Log.e("TTT", photoTimeLapseActive + "");
-		Log.e("TTT", photoTimeLapseIsRunning + "");
 
 		if (!photoTimeLapseActive || !photoTimeLapseIsRunning)
 		{
@@ -50,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		try
 		{
-			if (MainScreen.getInstance().getCameraController().getCamera() == null)
+			if (MainScreen.getCameraController().getCamera() == null)
 			{
 				Intent dialogIntent = new Intent(context, MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -67,7 +69,6 @@ public class AlarmReceiver extends BroadcastReceiver
 		}
 
 		pauseBetweenShotsVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, -1);
-		Log.e("TTT", pauseBetweenShotsVal + "");
 		if (pauseBetweenShotsVal == -1)
 		{
 			return;
@@ -76,9 +77,6 @@ public class AlarmReceiver extends BroadcastReceiver
 		pauseBetweenShots = Long.parseLong(SelfTimerAndPhotoTimeLapse.stringTimelapseInterval[pauseBetweenShotsVal]);
 
 		pauseBetweenShotsMeasurment = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
-
-		Log.e(TAG, "pauseBetweenShotsMeasurment = " + pauseBetweenShotsMeasurment);
-		
 		
 		switch (pauseBetweenShotsMeasurment)
 		{
@@ -89,17 +87,14 @@ public class AlarmReceiver extends BroadcastReceiver
 			pauseBetweenShots = pauseBetweenShots * 60000;
 			break;
 		case 2:
-			pauseBetweenShots = pauseBetweenShots * 60000 * 60000;
+			pauseBetweenShots = pauseBetweenShots * 60000 * 60;
 			break;
 		default:
 			break;
 		}
-
-		Log.e(TAG, "pauseBetweenShots = " + pauseBetweenShots);
-		Log.e("TTT", PluginManager.getInstance().getActiveMode().modeID);
 	}
 
-	public static void onResume()
+	public void onResume()
 	{
 		// Если выбра один из наших модов phototTmeLapse включен
 		if (PluginManager.getInstance().getActiveMode().modeID.equals("single")
@@ -107,27 +102,13 @@ public class AlarmReceiver extends BroadcastReceiver
 				|| PluginManager.getInstance().getActiveMode().modeID.equals("nightmode"))
 		{
 			PluginManager.getInstance().onShutterClickNotUser();
-
 			setNewAlarm(pauseBetweenShots);
 		}
 	}
 
-	public void awakeFromSleep()
+	public void setNewAlarm(long time)
 	{
-		PowerManager pm = (PowerManager) MainScreen.thiz.getApplicationContext()
-				.getSystemService(Context.POWER_SERVICE);
-		WakeLock wakeLock = pm
-				.newWakeLock(
-						(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
-						TAG);
-		wakeLock.acquire();
-		wakeLock.release();
-	}
-
-	public static void setNewAlarm(long time)
-	{
-		AlarmReceiver alarmReceiver = new AlarmReceiver();
-		alarmReceiver.setAlarm(MainScreen.getInstance(), time);
+		this.setAlarm(MainScreen.getInstance(), time);
 		ComponentName receiver = new ComponentName(MainScreen.getInstance(), AlarmReceiver.class);
 		PackageManager pm = MainScreen.getInstance().getPackageManager();
 
@@ -152,22 +133,22 @@ public class AlarmReceiver extends BroadcastReceiver
 		}
 	}
 
-	public void setRepeatingAlarm(Context context, long intervalMillis)
-	{
-		alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(context, AlarmReceiver.class);
-		alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-		if (Build.VERSION.SDK_INT < 19)
-		{
-			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
-					System.currentTimeMillis() + intervalMillis, alarmIntent);
-		} else
-		{
-			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
-					System.currentTimeMillis() + intervalMillis, alarmIntent);
-		}
-	}
+//	public void setRepeatingAlarm(Context context, long intervalMillis)
+//	{
+//		alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//		Intent intent = new Intent(context, AlarmReceiver.class);
+//		alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//		if (Build.VERSION.SDK_INT < 19)
+//		{
+//			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
+//					System.currentTimeMillis() + intervalMillis, alarmIntent);
+//		} else
+//		{
+//			alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
+//					System.currentTimeMillis() + intervalMillis, alarmIntent);
+//		}
+//	}
 
 	public static void cancelAlarm(Context context)
 	{

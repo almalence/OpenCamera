@@ -130,9 +130,10 @@ import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
+
 /* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-+++ --> */
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ +++ --> */
 //<!-- -+-
 
 //-+- -->
@@ -738,8 +739,6 @@ public class PluginManager implements PluginManagerInterface
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 
-		
-		
 		MainScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -754,14 +753,14 @@ public class PluginManager implements PluginManagerInterface
 		this.photoTimeLapseLayout.setVisibility(View.INVISIBLE);
 	}
 
-	private boolean isUserClicked = true;
-	
+	private boolean	isUserClicked	= true;
+
 	public void onShutterClickNotUser()
 	{
 		isUserClicked = false;
 		onShutterClick();
 	}
-	
+
 	public void onShutterClick()
 	{
 		// <!-- -+-
@@ -789,32 +788,40 @@ public class PluginManager implements PluginManagerInterface
 
 		if (photoTimeLapseActive && pluginList.get(activeCapture).photoTimeLapseCaptureSupported())
 		{
-			if (isUserClicked) {
+			if (isUserClicked)
+			{
 				Editor e = prefs.edit();
-				if  (photoTimeLapseIsRunning) {
+				if (photoTimeLapseIsRunning)
+				{
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 					AlarmReceiver.cancelAlarm(MainScreen.getInstance());
-					
+
 					MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.DEFAULT);
-				}
-				else {
+				} else
+				{
 					AlarmReceiver alarmReceiver = new AlarmReceiver();
-					alarmReceiver.setAlarm(MainScreen.getInstance(), 100);// some hardcode
-					
+					alarmReceiver.setAlarm(MainScreen.getInstance(), 100);// some
+																			// hardcode
+
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, true);
-					
+
 					MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
 				}
-				
+
 				e.commit();
-			}
-			else {
-//				for (int i = 0; i < activeVF.size(); i++)
-//					pluginList.get(activeVF.get(i)).onShutterClick();
-//				if (null != pluginList.get(activeCapture)
-//						&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE
-//						&& MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility() == View.GONE)
-					pluginList.get(activeCapture).onShutterClick();
+			} else
+			{
+				// for (int i = 0; i < activeVF.size(); i++)
+				// pluginList.get(activeVF.get(i)).onShutterClick();
+				// if (null != pluginList.get(activeCapture)
+				// &&
+				// MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility()
+				// == View.GONE
+				// &&
+				// MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility()
+				// == View.GONE)
+				MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
+				pluginList.get(activeCapture).onShutterClick();
 			}
 		}
 
@@ -832,7 +839,7 @@ public class PluginManager implements PluginManagerInterface
 			shutterRelease = false;
 			delayedCapture(delayInterval);
 		}
-		
+
 		isUserClicked = true;
 	}
 
@@ -1380,14 +1387,12 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
 	}
 
-
-//	@TargetApi(21)
-//	public void onCaptureCompleted(TotalCaptureResult result)
-//	{
-//		if (null != pluginList.get(activeCapture))
-//			pluginList.get(activeCapture).onCaptureCompleted(result);
-//	}
-
+	// @TargetApi(21)
+	// public void onCaptureCompleted(TotalCaptureResult result)
+	// {
+	// if (null != pluginList.get(activeCapture))
+	// pluginList.get(activeCapture).onCaptureCompleted(result);
+	// }
 
 	@Override
 	public void onPreviewFrame(byte[] data)
@@ -1439,14 +1444,14 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeVF.get(i)).onCameraSetup();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCameraSetup();
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
-		
-		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
-			AlarmReceiver.onResume();
+
+		if (photoTimeLapseActive && photoTimeLapseIsRunning)
+		{
+			AlarmReceiver.getInstance().onResume();
 		}
 
 	}
@@ -1553,10 +1558,11 @@ public class PluginManager implements PluginManagerInterface
 			controlPremiumContent();
 			// -+- -->
 
-			if(!PluginManager.getInstance().getActiveModeID().equals("video"))
+			if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 			{
 				MainScreen.getGUIManager().lockControls = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance()
+						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			}
 			break;
 
@@ -1710,7 +1716,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	//<!-- -+-
+	// <!-- -+-
 	public void controlPremiumContent()
 	{
 		Mode mode = getActiveMode();
@@ -1718,7 +1724,8 @@ public class PluginManager implements PluginManagerInterface
 			if (!mode.SKU.isEmpty())
 				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	}
-	//-+- -->
+
+	// -+- -->
 
 	/******************************************************************************************************
 	 * Work with hash table
