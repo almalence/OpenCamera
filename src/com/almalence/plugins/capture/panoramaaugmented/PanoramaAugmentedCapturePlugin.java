@@ -405,18 +405,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(true);
 
-			if (!CameraController.isUseHALv3())
-			{
-				try
-				{
-					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-					cp.setRecordingHint(true);
-					CameraController.getInstance().setCameraParameters(cp);
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
+			//SM: removed 28.10.14 as causing problems on S4 (5905). Decided not useful on other devices.
+//			if (!CameraController.isUseHALv3())
+//			{
+//				try
+//				{
+//					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//					cp.setRecordingHint(true);
+//					CameraController.getInstance().setCameraParameters(cp);
+//				} catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//			}
 		} else
 		{
 			this.engine.setFrameIntersection(intersection);
@@ -428,18 +429,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(false);
 
-			if (!CameraController.isUseHALv3())
-			{
-				try
-				{
-					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-					cp.setRecordingHint(false);
-					CameraController.getInstance().setCameraParameters(cp);
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
+			//SM: removed 28.10.14 as causing problems on S4 (5905). Decided not useful on other devices.
+//			if (!CameraController.isUseHALv3())
+//			{
+//				try
+//				{
+//					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//					cp.setRecordingHint(false);
+//					CameraController.getInstance().setCameraParameters(cp);
+//				} catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//			}
 		}
 	}
 
