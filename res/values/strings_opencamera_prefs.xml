@@ -3,6 +3,15 @@
     <string name="Preference_ImageSizeFrontValue">imageSizePrefCommonFront</string>
     <string name="Preference_ImageSizeRearValue">imageSizePrefCommonBack</string>
     
+    <string name="Preference_ImageSizePrefSmartMultishotBackValue">imageSizePrefSmartMultishotBack</string>
+    <string name="Preference_ImageSizePrefSmartMultishotFrontValue">imageSizePrefSmartMultishotFront</string>
+    
+    <string name="Preference_ImageSizePrefPanoramaBackValue">imageSizePrefPanoramaBack</string>
+    <string name="Preference_ImageSizePrefPanoramaFrontValue">imageSizePrefPanoramaFront</string>
+    
+    <string name="Preference_ImageSizePrefVideoBackValue">imageSizePrefVideoBack</string>
+    <string name="Preference_ImageSizePrefVideoFrontValue">imageSizePrefVideoFront</string>
+    
     <string name="Preference_JPEGQualityCommonValue">commonJPEGQuality</string>
     
     <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>

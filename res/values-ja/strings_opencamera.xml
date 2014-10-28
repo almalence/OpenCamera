@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">%1$sモードの無料ショットの残り: %2$d</string>
     <string name="trial_finished">無料の%1$sショットがなくなりました、アンロックしてください</string>
-    <!-- -+-  -->
-    <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera v1.06\n(©) by Almalence Inc\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">エラー：画像が保存できません！</string>
     <string name="choose_folder_pick">このフォルダーを使用</string>
     <string name="choose_folder_newfolder">新規フォルダ</string>
