@@ -845,8 +845,8 @@ public class PluginManager implements PluginManagerInterface
 			if (CameraController.isUseHALv3())
 			{
 				Preference pref;
-				if (null != (pref = pf.findPreference("imageSizePrefSmartMultishotBack"))
-						|| null != (pref = pf.findPreference("imageSizePrefSmartMultishotFront")))
+				if (null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotBackPref))
+						|| null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotFrontPref)))
 				{
 					pref.setTitle(MainScreen.getInstance().getResources()
 							.getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));

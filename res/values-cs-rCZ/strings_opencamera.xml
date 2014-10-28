@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">%1$s - zbývající počet fotek zdarma: %2$d</string>
     <string name="trial_finished">%1$s - snímky zdarma vyčerpány, další snímky je třeba zakoupit</string>
-    <!-- -+-  -->
-    <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera  v3.25\n(©) Almalence Inc.\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) Almalence Inc.\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">Chyba: Není možné uložit fotku!</string>
     <string name="choose_folder_pick">Použít tuto složku</string>
     <string name="choose_folder_newfolder">Nová složka</string>

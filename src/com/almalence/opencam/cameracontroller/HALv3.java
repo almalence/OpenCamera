@@ -396,7 +396,7 @@ public class HALv3
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		String prefIdx = prefs.getString("imageSizePrefSmartMultishotBack", "-1");
+		String prefIdx = prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
 
 		if (prefIdx.equals("-1"))
 		{
@@ -418,7 +418,7 @@ public class HALv3
 			if (previewSizes != null && previewSizes.size() > 0 && maxMpx >= CameraController.MPIX_1080)
 			{
 				SharedPreferences.Editor prefEditor = prefs.edit();
-				prefEditor.putString("imageSizePrefSmartMultishotBack", String.valueOf(maxFastIdx));
+				prefEditor.putString(MainScreen.sImageSizeMultishotBackPref, String.valueOf(maxFastIdx));
 				prefEditor.commit();
 			}
 		}

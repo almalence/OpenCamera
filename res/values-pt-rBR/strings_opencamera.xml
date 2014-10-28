@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">Disparos grátis restantes no modo %1$s: %2$d</string>
     <string name="trial_finished">%1$s disparos grátis esgotados. Desbloqueie</string>
-    <!-- -+-  -->
-    <string name="app_name">Uma Câmera Melhor</string>
-    <string name="Pref_About">Uma Câmera Melhor  v3.25\n(©) da Almalence Inc\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">Erro: Não é possível salvar imagem!</string>
     <string name="choose_folder_pick">Usar esta pasta</string>
     <string name="choose_folder_newfolder">Nova pasta</string>
