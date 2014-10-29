@@ -216,7 +216,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_VOLUME_ZOOM							= 21;
 	// ^^ For HALv3 code version
 
-	public static final int				MSG_SET_EXPOSURE						= 22;
 	public static final int				MSG_NEXT_FRAME							= 23;
 
 	public static final int				MSG_BAD_FRAME							= 24;
@@ -848,7 +847,7 @@ public class PluginManager implements PluginManagerInterface
 				if (null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotBackPref))
 						|| null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotFrontPref)))
 				{
-					pref.setTitle(MainScreen.getInstance().getResources()
+					pref.setTitle(MainScreen.getAppResources()
 							.getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
 				}
 			}
@@ -1459,9 +1458,9 @@ public class PluginManager implements PluginManagerInterface
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
-			int id = MainScreen.getInstance().getResources()
+			int id = MainScreen.getAppResources()
 					.getIdentifier(getActiveMode().modeName, "string", MainScreen.getInstance().getPackageName());
-			String modeName = MainScreen.getInstance().getResources().getString(id);
+			String modeName = MainScreen.getAppResources().getString(id);
 			addToSharedMem("mode_name" + (String) msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
@@ -1746,7 +1745,7 @@ public class PluginManager implements PluginManagerInterface
 		String s1 = null;
 		if (params.getSupportedWhiteBalance() != null)
 			s1 = params.getWhiteBalance().compareTo(
-					MainScreen.getInstance().getResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0)
+					MainScreen.getAppResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0)
 					: String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;
@@ -2024,8 +2023,8 @@ public class PluginManager implements PluginManagerInterface
 	private void delayedCapture(int delayInterval)
 	{
 		initializeSoundPlayers(
-				MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
-				MainScreen.getInstance().getResources()
+				MainScreen.getAppResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
+				MainScreen.getAppResources()
 						.openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
 		countdownHandler.removeCallbacks(flashOff);
 		finalcountdownHandler.removeCallbacks(flashBlink);
@@ -2735,7 +2734,7 @@ public class PluginManager implements PluginManagerInterface
 					String tag_modename = getFromSharedMem("mode_name" + Long.toString(sessionID));
 					if (tag_modename == null)
 						tag_modename = "";
-					String softwareString = MainScreen.getInstance().getResources().getString(R.string.app_name) + ", "
+					String softwareString = MainScreen.getAppResources().getString(R.string.app_name) + ", "
 							+ tag_modename;
 					ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 					softwareValue.setBytes(softwareString.getBytes());

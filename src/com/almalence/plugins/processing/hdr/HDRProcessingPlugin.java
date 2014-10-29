@@ -617,7 +617,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			this.inflater = LayoutInflater.from(MainScreen.getInstance());
 
-			final float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+			final float density = MainScreen.getAppResources().getDisplayMetrics().density;
 
 			final int radius = (int) (PRESET_ICONS_ROUND_RADIUS * PRESET_ICONS_SIZE * density);
 
@@ -724,7 +724,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent)
 		{
-			float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+			float density = MainScreen.getAppResources().getDisplayMetrics().density;
 			if (convertView == null)
 			{
 				convertView = new ImageView(MainScreen.getInstance());
@@ -852,7 +852,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			return;
 		}
 
-		DisplayMetrics dm = MainScreen.getInstance().getResources().getDisplayMetrics();
+		DisplayMetrics dm = MainScreen.getAppResources().getDisplayMetrics();
 
 		this.pview = new int[this.SXP * this.SYP];
 		this.bitmap = Bitmap.createBitmap(this.SYP, this.SXP, Bitmap.Config.ARGB_8888);
@@ -885,7 +885,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		// Add bottom padding to adjustments icons if orientation is portrait
 		if (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270))
-				&& (MainScreen.getInstance().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
+				&& (MainScreen.getAppResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
 		{
 			postProcessingView.findViewById(R.id.adjustmentsRelative).setPadding(
 					0,
@@ -945,7 +945,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private Bitmap createThumbnail()
 	{
-		int small = (int) (MainScreen.getInstance().getResources().getDisplayMetrics().density * PRESET_ICONS_SIZE * (1.0f / PRESET_ICONS_CROP_PART));
+		int small = (int) (MainScreen.getAppResources().getDisplayMetrics().density * PRESET_ICONS_SIZE * (1.0f / PRESET_ICONS_CROP_PART));
 		int radius = (int) (small * PRESET_ICONS_ROUND_RADIUS * PRESET_ICONS_CROP_PART);
 
 		if (this.SXP > this.SYP)
@@ -963,19 +963,19 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private void setupAdjustments()
 	{
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_EXPOSURE, MainScreen.getInstance().getResources()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_EXPOSURE, MainScreen.getAppResources()
 				.getString(R.string.adjustments_exposure), getExposure(false), -1, -100, MainScreen.getInstance()
 				.getResources().getDrawable(R.drawable.adjustments_expo)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_VIVIDNESS, MainScreen.getInstance().getResources()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_VIVIDNESS, MainScreen.getAppResources()
 				.getString(R.string.adjustments_vividness), getVividness(false), -1, -100, MainScreen.getInstance()
 				.getResources().getDrawable(R.drawable.adjustments_vividness)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_CONTRAST, MainScreen.getInstance().getResources()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_CONTRAST, MainScreen.getAppResources()
 				.getString(R.string.adjustments_contrast), getContrast(false), -1, -100, MainScreen.getInstance()
 				.getResources().getDrawable(R.drawable.adjustments_contrast)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_MICROCONTRAST, MainScreen.getInstance().getResources()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_MICROCONTRAST, MainScreen.getAppResources()
 				.getString(R.string.adjustments_microcontrast), getMicrocontrast(false), -1, -100, MainScreen
 				.getInstance().getResources().getDrawable(R.drawable.adjustments_microcontrast)));
 	}
@@ -984,21 +984,21 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	{
 		this.presets.clear();
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_artistic), 0, -25, 1,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_artistic), 0, -25, 1,
 				-100, 2, -100, 3, -75));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_bnw), 0, -25, 1, -0, 2,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_bnw), 0, -25, 1, -0, 2,
 				-50, 3, -50));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_natural), 0, -25, 1, -50,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_natural), 0, -25, 1, -50,
 				2, -75, 3, -25));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_candy), 0, -25, 1, -63,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_candy), 0, -25, 1, -63,
 				2, -75, 3, -75));
 
 		if (this.preset_custom == null)
 		{
-			this.presets.add(new AdjustmentsPreset(MainScreen.getInstance().getResources()
+			this.presets.add(new AdjustmentsPreset(MainScreen.getAppResources()
 					.getString(R.string.adjustments_preset_custom), null, 0, getExposure(false), 1,
 					getVividness(false), 2, getContrast(false), 3, getMicrocontrast(false)));
 		} else
@@ -1007,13 +1007,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		}
 
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_vanilla), 0, -25, 1, -25,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_vanilla), 0, -25, 1, -25,
 				2, -15, 3, -75));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_xerox), 0, -100, 1, -0,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_xerox), 0, -100, 1, -0,
 				2, -50, 3, -50));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getInstance().getResources().getString(R.string.adjustments_preset_neon), 0, -66, 1, -100,
+				MainScreen.getAppResources().getString(R.string.adjustments_preset_neon), 0, -66, 1, -100,
 				2, -100, 3, -0));
 	}
 

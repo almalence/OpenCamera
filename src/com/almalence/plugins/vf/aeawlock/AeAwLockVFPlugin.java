@@ -149,7 +149,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.WRAP_CONTENT);
-			params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.aeawlock_size);
+			params.height = (int) MainScreen.getAppResources().getDimension(R.dimen.aeawlock_size);
 
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 

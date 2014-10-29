@@ -50,6 +50,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
@@ -128,6 +129,7 @@ import com.almalence.util.AppRater;
  * Passes all main events to PluginManager
  ***/
 
+@SuppressWarnings("deprecation")
 public class MainScreen extends Activity implements ApplicationInterface, View.OnClickListener, View.OnTouchListener,
 		SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 {
@@ -1328,14 +1330,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 												// x 4 - compressed input jpegs,
 												// 1Mb - safe reserve
 
-		if (maxMpix < MIN_MPIX_SUPPORTED)
-		{
-			String msg;
-			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			// Log.d("MultishotCapturePlugin",
-			// "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			// Log.d("MultishotCapturePlugin", msg);
-		}
+//		if (maxMpix < MIN_MPIX_SUPPORTED)
+//		{
+//			String msg;
+//			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
+//			// Log.d("MultishotCapturePlugin",
+//			// "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+//			// Log.d("MultishotCapturePlugin", msg);
+//		}
 
 		// find index selected in preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -1583,6 +1585,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// -------------------------------------------------------------------
 	}
 
+	
 	private void prepareMeteringAreas()
 	{
 		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
@@ -2078,6 +2081,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			preview.setKeepScreenOn(this.keepScreenOn);
 		}
 	}
+	
+	public static Resources getAppResources()
+	{
+		return MainScreen.thiz.getResources();
+	}
 
 	/*******************************************************/
 	/************************ Billing ************************/
@@ -2234,7 +2242,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
 			mHelper = new OpenIabHelper(this, storeKeys);
 
-			mHelper.enableDebugLogging(true);
+			OpenIabHelper.enableDebugLogging(true);
 
 			// Log.v("Main billing", "Starting setup.");
 			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
@@ -2920,9 +2928,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-		int id = MainScreen.thiz.getResources()
+		int id = MainScreen.getAppResources()
 				.getIdentifier(mode.modeName, "string", MainScreen.thiz.getPackageName());
-		String modename = MainScreen.thiz.getResources().getString(id);
+		String modename = MainScreen.getAppResources().getString(id);
 
 		if (0 == launchesLeft)// no more launches left
 		{
@@ -2974,17 +2982,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		ll.addView(img);
 
 		TextView tv = new TextView(this);
-		tv.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionText));
+		tv.setText(MainScreen.getAppResources().getString(R.string.subscriptionText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button bNo = new Button(this);
-		bNo.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionNoText));
+		bNo.setText(MainScreen.getAppResources().getString(R.string.subscriptionNoText));
 		ll.addView(bNo);
 
 		Button bSubscribe = new Button(this);
-		bSubscribe.setText(MainScreen.getInstance().getResources().getString(R.string.subscriptionYesText));
+		bSubscribe.setText(MainScreen.getAppResources().getString(R.string.subscriptionYesText));
 		ll.addView(bSubscribe);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);

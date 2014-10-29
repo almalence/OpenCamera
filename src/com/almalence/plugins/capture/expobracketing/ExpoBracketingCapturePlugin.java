@@ -100,11 +100,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sEvPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingPref);
-		sRefocusPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
-		sUseLumaPref = MainScreen.getInstance().getResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
+		sEvPref = MainScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPref);
+		sRefocusPref = MainScreen.getAppResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
+		sUseLumaPref = MainScreen.getAppResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
 
-		sExpoPreviewModePref = MainScreen.getInstance().getResources()
+		sExpoPreviewModePref = MainScreen.getAppResources()
 				.getString(R.string.Preference_ExpoBracketingPreviewModePref);
 	}
 

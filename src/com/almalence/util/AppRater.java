@@ -182,24 +182,24 @@ public class AppRater
 
 	private static void contactSupport()
 	{
-		final float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		final float density = MainScreen.getAppResources().getDisplayMetrics().density;
 
 		LinearLayout ll = new LinearLayout(MainScreen.getInstance());
 		ll.setOrientation(LinearLayout.VERTICAL);
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
 		TextView tv = new TextView(MainScreen.getInstance());
-		tv.setText(MainScreen.getInstance().getResources().getString(R.string.raterSendReview));
+		tv.setText(MainScreen.getAppResources().getString(R.string.raterSendReview));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button b1 = new Button(MainScreen.getInstance());
-		b1.setText(MainScreen.getInstance().getResources().getString(R.string.raterSend));
+		b1.setText(MainScreen.getAppResources().getString(R.string.raterSend));
 		ll.addView(b1);
 
 		Button b2 = new Button(MainScreen.getInstance());
-		b2.setText(MainScreen.getInstance().getResources().getString(R.string.raterNo));
+		b2.setText(MainScreen.getAppResources().getString(R.string.raterNo));
 		ll.addView(b2);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());

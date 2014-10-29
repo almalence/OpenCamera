@@ -337,14 +337,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void onCreate()
 	{
 		getPrefs();
-		sMemoryPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaMemory);
-		sFrameOverlapPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaFrameOverlap);
-		sAELockPref = MainScreen.getInstance().getResources().getString(R.string.Preference_PanoramaAELock);
+		sMemoryPref = MainScreen.getAppResources().getString(R.string.Preference_PanoramaMemory);
+		sFrameOverlapPref = MainScreen.getAppResources().getString(R.string.Preference_PanoramaFrameOverlap);
+		sAELockPref = MainScreen.getAppResources().getString(R.string.Preference_PanoramaAELock);
 
 		final LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 
 		this.modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_night_modeswitcher, null, false);
-		final Resources resources = MainScreen.getInstance().getResources();
+		final Resources resources = MainScreen.getAppResources();
 		this.modeSwitcher.setTextOn(resources.getString(R.string.plugin_capture_panoramaaugmented_modeswitch_sweep));
 		this.modeSwitcher.setTextOff(resources
 				.getString(R.string.plugin_capture_panoramaaugmented_modeswitch_augmented));
@@ -547,7 +547,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.clearViews();
 
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Panorama_Help_Header),
-				MainScreen.getInstance().getResources().getString(R.string.Panorama_Help),
+				MainScreen.getAppResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 
 		MainScreen.getGUIManager().removeViews(this.modeSwitcher, R.id.specialPluginsLayout3);
@@ -831,14 +831,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
-					MainScreen.getInstance().getResources()
+					MainScreen.getAppResources()
 							.getString(R.string.plugin_capture_panoramaaugmented_badframe), Toast.LENGTH_SHORT).show();
 			return true;
 		} else if (command == PluginManager.MSG_OUT_OF_MEMORY)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
-					MainScreen.getInstance().getResources()
+					MainScreen.getAppResources()
 							.getString(R.string.plugin_capture_panoramaaugmented_outofmemory), Toast.LENGTH_LONG)
 					.show();
 			return true;
@@ -846,7 +846,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
-					MainScreen.getInstance().getResources()
+					MainScreen.getAppResources()
 							.getString(R.string.plugin_capture_panoramaaugmented_stopcapture), Toast.LENGTH_LONG)
 					.show();
 			return true;

@@ -480,8 +480,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.i("Preshot capture", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_NEXT_FRAME);
+			StopBuffering();
 		}
 	}
 
@@ -570,20 +569,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-			try
-			{
-				CameraController.startCameraPreview();
-				CaptureFrame();
-			} catch (RuntimeException e)
-			{
-				Log.i("CameraTest", "RuntimeException in MSG_NEXT_FRAME");
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_NEXT_FRAME);
-			}
-			return true;
-		} else if (arg1 == PluginManager.MSG_STOP_CAPTURE)
+		if (arg1 == PluginManager.MSG_STOP_CAPTURE)
 		{
 			StopBuffering();
 			return true;

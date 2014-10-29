@@ -182,7 +182,7 @@ public class SelfTimer
 		int iIndicatorSize = (int) (MainScreen.getMainContext().getResources().getInteger(R.integer.infoControlHeight) * screenDensity);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
 		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight()
-				+ (int) MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+				+ (int) MainScreen.getAppResources().getDimension(R.dimen.viewfinderViewsMarginTop);
 		params.setMargins((int) (2 * MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
 
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -222,7 +222,7 @@ public class SelfTimer
 			specialView2.add(specialLayout2.getChildAt(i));
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
+		params.height = (int) MainScreen.getAppResources().getDimension(R.dimen.videobuttons_size);
 
 		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 

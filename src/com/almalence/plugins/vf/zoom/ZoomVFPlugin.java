@@ -220,7 +220,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 				.findViewById(R.id.specialPluginsLayout).getLayoutParams();
 		mainLayoutHeight = lp.height;
 
-		zoomPanelWidth = MainScreen.getInstance().getResources().getDrawable(R.drawable.scrubber_control_pressed_holo)
+		zoomPanelWidth = MainScreen.getAppResources().getDrawable(R.drawable.scrubber_control_pressed_holo)
 				.getMinimumWidth();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,

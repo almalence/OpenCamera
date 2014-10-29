@@ -250,17 +250,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		initializeParameters();
 
 		initialize(CameraController.isFrontCamera(), 90);
-		initializeSoundPlayers(MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_vf_focus_ok),
-				MainScreen.getInstance().getResources().openRawResourceFd(R.raw.plugin_vf_focus_false));
+		initializeSoundPlayers(MainScreen.getAppResources().openRawResourceFd(R.raw.plugin_vf_focus_ok),
+				MainScreen.getAppResources().openRawResourceFd(R.raw.plugin_vf_focus_false));
 
 		cancelAutoFocus();
 
 		// Set the length of focus indicator according to preview frame size.
 		int len = Math.min(mPreviewWidth, mPreviewHeight) / 25;
 		ViewGroup.LayoutParams layout = mFocusIndicator.getLayoutParams();
-		layout.width = (int) (len * MainScreen.getInstance().getResources()
+		layout.width = (int) (len * MainScreen.getAppResources()
 				.getInteger(R.integer.focusIndicator_cropFactor));
-		layout.height = (int) (len * MainScreen.getInstance().getResources()
+		layout.height = (int) (len * MainScreen.getAppResources()
 				.getInteger(R.integer.focusIndicator_cropFactor));
 		mFocusIndicator.requestLayout();
 	}
@@ -499,7 +499,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		int focusHeight = mFocusIndicatorRotateLayout.getHeight();
 		int previewWidth = mPreviewWidth;
 		int previewHeight = mPreviewHeight;
-		int displayWidth = MainScreen.getInstance().getResources().getDisplayMetrics().widthPixels;
+		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
 		int diffWidth = displayWidth - previewWidth;
 
 		int paramsLayoutHeight = 0;

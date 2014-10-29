@@ -81,7 +81,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	public GyroVFPlugin()
 	{
 		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.gui_almalence_settings_gyro,
-				MainScreen.getInstance().getResources().getString(R.string.Pref_TitleGyroVF));
+				MainScreen.getAppResources().getString(R.string.Pref_TitleGyroVF));
 	}
 
 	@Override
@@ -426,7 +426,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		float density = MainScreen.getAppResources().getDisplayMetrics().density;
 		if ((Math.abs(horizontalError) > 1.0f && (mOrientation == 0 || mOrientation == 180 || flat))
 				|| (Math.abs(verticalError) > 1.0f && (mOrientation == 90 || mOrientation == 270 || flat)))
 		{
