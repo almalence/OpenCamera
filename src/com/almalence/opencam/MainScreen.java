@@ -2109,11 +2109,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	static final String	SKU_HDR						= "plugin_almalence_hdr";
 	static final String	SKU_PANORAMA				= "plugin_almalence_panorama";
 	static final String	SKU_UNLOCK_ALL				= "unlock_all_forever";
+
+	//barcode coupon
 	static final String	SKU_UNLOCK_ALL_COUPON		= "unlock_all_forever_coupon";
+	
+	//multishot currently
 	static final String	SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
+	
+	//unused. but if someone payed - will be unlocked multishot
 	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
 	// subscription
 	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
+	static final String	SKU_SUBSCRIPTION_YEAR_NEW	= "subscription_unlock_all_year_3free";
 	static final String	SKU_SUBSCRIPTION_YEAR_CTRL	= "subscription_unlock_all_year_controller";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
@@ -2131,6 +2138,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
+		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, "com.yandex.store", "subscription_unlock_all_year_3free");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
 
 		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
@@ -2145,6 +2153,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
+		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_3free");
 		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON,
 				"subscription_unlock_all_year_controller");
 
@@ -2273,6 +2282,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						{
 							// subscription year
 							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
+							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_NEW);
 							// reset subscription status
 							unlockAllSubscriptionYear = false;
 							prefs.edit().putBoolean("subscription_unlock_all_year", false).commit();
@@ -2399,11 +2409,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																						groupShotPurchased = true;
 																						prefsEditor
 																								.putBoolean(
-																										"plugin_almalence_groupshot",
+																										"plugin_almalence_moving_burst",
 																										true).commit();
 																					}
 																					if (inventory
 																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
+																					{
+																						unlockAllSubscriptionYear = true;
+																						prefsEditor
+																								.putBoolean(
+																										"subscription_unlock_all_year",
+																										true).commit();
+																					}
+																					if (inventory
+																							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
 																					{
 																						unlockAllSubscriptionYear = true;
 																						prefsEditor
@@ -2468,6 +2487,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																										SKU_GROUPSHOT)
 																								.getPrice();
 
+																						titleSubscriptionYear = inventory
+																								.getSkuDetails(
+																										SKU_SUBSCRIPTION_YEAR_CTRL)
+																								.getPrice();
+																						
 																						summary_SKU_PROMO = inventory
 																								.getSkuDetails(
 																										SKU_PROMO)
@@ -2605,7 +2629,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		String payload = "";
 		try
 		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUBSCRIPTION_YEAR, SUBSCRIPTION_YEAR_REQUEST,
+			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUBSCRIPTION_YEAR_NEW, SUBSCRIPTION_YEAR_REQUEST,
 					mPreferencePurchaseFinishedListener, payload);
 		} catch (Exception e)
 		{
@@ -2683,13 +2707,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		if (purchase.getSku().equals(SKU_GROUPSHOT))
 		{
-			Log.v("Main billing", "Purchase plugin_almalence_groupshot.");
-			groupShotPurchased = true;
+			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
+			objectRemovalBurstPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_groupshot", true).commit();
+			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
+		{
+			Log.v("Main billing", "Purchase year subscription.");
+			unlockAllSubscriptionYear = true;
+
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
+
+			timeLastSubscriptionCheck = System.currentTimeMillis();
+			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
+		}
+		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR_NEW))
 		{
 			Log.v("Main billing", "Purchase year subscription.");
 			unlockAllSubscriptionYear = true;

@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">عدد اللقطات المجانية المتبقية في الوضع %1$s: %2$d</string>
     <string name="trial_finished">نفدت لقطات %1$s المجانية. يرجى الفتح</string>
-    <!-- -+-  -->
-    <string name="app_name">كاميرا أفضل</string>
-    <string name="Pref_About">الإصدار 3.25 من تطبيق كاميرا أفضل\nحقوق النشر (©) لشركة Almalence Inc\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">خطأ: لا يمكن حفظ الصورة!</string>
     <string name="choose_folder_pick">استخدم هذا المجلد</string>
     <string name="choose_folder_newfolder">مجلد جديد</string>

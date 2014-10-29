@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">%1$s模式剩余免费拍摄次数：%2$d</string>
     <string name="trial_finished">免费%1$s次拍摄无效，请解锁</string>
-    <!-- -+-  -->
-    <string name="app_name">超群相机</string>
-    <string name="Pref_About">A Better Camera  v1.06\n(©)由Almalence Inc开发\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">出错: 无法保存图像!</string>
     <string name="choose_folder_pick">使用此文件夹</string>
     <string name="choose_folder_newfolder">新文件夹</string>

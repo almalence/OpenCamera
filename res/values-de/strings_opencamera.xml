@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">Kostenlose Aufnahmen im %1$s Modus: noch %2$d</string>
     <string name="trial_finished">Keine kostenlosen Aufnahmen in %1$s mehr. Bitte freischalten!</string>
-    <!-- -+-  -->
-    <string name="app_name">A Better Camera – Eine bessere Kamera</string>
-    <string name="Pref_About">A Better Camera v3.25\n(©) von Almalence Inc\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">Fehler: Bild konnte nicht gespeichert werden!</string>
     <string name="choose_folder_pick">Diesen Ordner verwenden</string>
     <string name="choose_folder_newfolder">Neuer Ordner</string>
