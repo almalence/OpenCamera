@@ -22,11 +22,16 @@
     <string name="pref_timestamp_saving_time_title">Время</string>
     <string name="pref_timestamp_saving_separator_title">Разделитель</string>
     <string name="pref_timestamp_saving_custom_text_title">Текст</string>
+    <string name="pref_timestamp_saving_color_title">Цвет</string>
     
     <string name="pref_timestamp_separator_slash">"/" - Слэш</string>
     <string name="pref_timestamp_separator_dots">"." – Точка</string>
     <string name="pref_timestamp_separator_dashes">"-" – Дефис</string>
     <string name="pref_timestamp_separator_spaces">" " – Пробел</string>
+    
+    <string name="pref_timestamp_color_black">Черный</string>
+    <string name="pref_timestamp_color_white">Бклый</string>
+    <string name="pref_timestamp_color_yellow">Желтый</string>
     
     <string name="save_to_phone">Телефон</string>
     <string name="save_to_memorycard">Карта памяти</string>

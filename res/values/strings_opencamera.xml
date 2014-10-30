@@ -30,11 +30,16 @@
     <string name="pref_timestamp_saving_time_title">Time</string>
     <string name="pref_timestamp_saving_separator_title">Separator</string>
     <string name="pref_timestamp_saving_custom_text_title">Text</string>
+    <string name="pref_timestamp_saving_color_title">Color</string>
     
     <string name="pref_timestamp_separator_slash">"/" - Slash</string>
     <string name="pref_timestamp_separator_dots">"." – Dots or full stops</string>
     <string name="pref_timestamp_separator_dashes">"-" – Hyphens or dashes</string>
     <string name="pref_timestamp_separator_spaces">" " – Spaces</string>
+    
+    <string name="pref_timestamp_color_black">Black</string>
+    <string name="pref_timestamp_color_white">White</string>
+    <string name="pref_timestamp_color_yellow">Yellow</string>
     
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>

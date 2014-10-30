@@ -262,6 +262,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sTimestampTime;
 	public static String				sTimestampSeparator;
 	public static String				sTimestampCustomText;
+	public static String				sTimestampColor;
 
 	public static String				sEvPref;
 	public static String				sSceneModePref;
@@ -374,6 +375,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
 		sTimestampSeparator = getResources().getString(R.string.Preference_TimestampSeparatorValue);
 		sTimestampCustomText = getResources().getString(R.string.Preference_TimestampCustomTextValue);
+		sTimestampColor = getResources().getString(R.string.Preference_TimestampColorValue);
 
 		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 
