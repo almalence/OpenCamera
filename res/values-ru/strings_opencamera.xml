@@ -30,7 +30,7 @@
     <string name="pref_timestamp_separator_spaces">" " пробел</string>
     
     <string name="pref_timestamp_color_black">Черный</string>
-    <string name="pref_timestamp_color_white">Бклый</string>
+    <string name="pref_timestamp_color_white">Белый</string>
     <string name="pref_timestamp_color_yellow">Желтый</string>
     
     <string name="save_to_phone">Телефон</string>
