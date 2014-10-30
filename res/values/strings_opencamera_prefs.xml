@@ -51,6 +51,7 @@
     <string name="Preference_TimestampTimeValue">Preference_TimestampTimeValue</string>
     <string name="Preference_TimestampSeparatorValue">Preference_TimestampSeparatorValue</string>
     <string name="Preference_TimestampCustomTextValue">Preference_TimestampCustomTextValue</string>
+    <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>

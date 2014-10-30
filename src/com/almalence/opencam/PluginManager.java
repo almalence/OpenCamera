@@ -265,6 +265,8 @@ public class PluginManager implements PluginManagerInterface
 	// Support flag to avoid plugin's view disappearance issue
 	static boolean						isRestarting							= false;
 
+	static int							jpegQuality								= 95;
+
 	private static boolean				isDefaultsSelected						= false;
 
 	public static PluginManager getInstance()
@@ -2383,7 +2385,7 @@ public class PluginManager implements PluginManagerInterface
 
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext());
-					int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
 						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
@@ -2452,8 +2454,8 @@ public class PluginManager implements PluginManagerInterface
 						break;
 					}
 				}
-				
-				if (!enableExifTagOrientation) 
+
+				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 
 				File parent = file.getParentFile();
@@ -2880,6 +2882,7 @@ public class PluginManager implements PluginManagerInterface
 			int timeFormat = Integer.parseInt(prefs.getString(MainScreen.sTimestampTime, "0"));
 			int separator = Integer.parseInt(prefs.getString(MainScreen.sTimestampSeparator, "0"));
 			String customText = prefs.getString(MainScreen.sTimestampCustomText, "");
+			int color = Integer.parseInt(prefs.getString(MainScreen.sTimestampColor, "1"));
 
 			String dateFormatString = "";
 			String timeFormatString = "";
@@ -2970,6 +2973,8 @@ public class PluginManager implements PluginManagerInterface
 				bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(),
 						matrix, false);
 
+				sourceBitmap.recycle();
+
 				int width = bitmap.getWidth();
 				int height = bitmap.getHeight();
 
@@ -2980,18 +2985,41 @@ public class PluginManager implements PluginManagerInterface
 				final float scale = MainScreen.getInstance().getResources().getDisplayMetrics().density;
 
 				p.setColor(Color.WHITE);
-				p.setTextSize(60 * scale + 0.5f); // convert dps to pixels
+				switch (color) {
+				case 0:
+					color = Color.BLACK;
+					p.setColor(Color.BLACK);
+					break;
+				case 1:
+					color = Color.WHITE;
+					p.setColor(Color.WHITE);
+					break;
+				case 2:
+					color = Color.YELLOW;
+					p.setColor(Color.YELLOW);
+					break;
+					
+				}
+				
+				if (width > height) {
+					p.setTextSize(height / 50 * scale + 0.5f); // convert dps to pixels
+				} else {
+					p.setTextSize(width / 50 * scale + 0.5f); // convert dps to pixels
+				}
 				p.setTextAlign(Align.RIGHT);
-				drawTextWithBackground(canvas, p, formattedCurrentDate, Color.WHITE, Color.BLACK, width, height);
+				drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
 
 				Matrix matrix2 = new Matrix();
 				matrix2.postRotate(360 - rotation);
 				sourceBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix2, false);
+
+				bitmap.recycle();
 			}
 
 			FileOutputStream outStream;
 			outStream = new FileOutputStream(file);
-			sourceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			sourceBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
+			sourceBitmap.recycle();
 			outStream.flush();
 			outStream.close();
 		} catch (FileNotFoundException e)
@@ -3021,7 +3049,7 @@ public class PluginManager implements PluginManagerInterface
 
 			FileOutputStream outStream;
 			outStream = new FileOutputStream(file);
-			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
 			outStream.flush();
 			outStream.close();
 		} catch (FileNotFoundException e)
@@ -3079,7 +3107,7 @@ public class PluginManager implements PluginManagerInterface
 		}
 		text_bounds.bottom = imageHeight - padding;
 
-//		canvas.drawRect(text_bounds, paint);
+		// canvas.drawRect(text_bounds, paint);
 
 		paint.setColor(foreground);
 		if (resText.length > 0)
@@ -3116,7 +3144,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + fileFormat + (modeName.equals("")?"":("_" + modeName)) + postfix;
+			fileFormat = prefix + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
 			break;
 
 		case 3:// IMG_YEARMMDD_HHMMSS
@@ -3124,7 +3152,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + "IMG_" + fileFormat + (modeName.equals("")?"":("_" + modeName)) + postfix;
+			fileFormat = prefix + "IMG_" + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
 			break;
 		default:
 			break;
@@ -3165,7 +3193,7 @@ public class PluginManager implements PluginManagerInterface
 			} else
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+				jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
 						iImageHeight, null);

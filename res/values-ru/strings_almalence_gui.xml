@@ -111,6 +111,7 @@
 	<string name="Pref_VF_Preference_Summary">Что показывать</string>
 	<string name="Pref_Modes_Preference_Title">Настройки режимов съемки</string>
 	<string name="Pref_Saving_Preference_Title">Сохранение и sharing</string>
+	<string name="Pref_Saving_Timestamp_Preference_Title">Печать даты</string>
 	<string name="Pref_Saving_Preference_Summary">Форматы, именование, геотэги, exif и др. параметры</string>
 	<string name="Pref_Advanced_Preference_Title">Расширенные настройки</string>
 	<string name="Pref_Advanced_Preference_Summary">Настройки для продвинутых пользователей</string>

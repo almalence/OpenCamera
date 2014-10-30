@@ -103,4 +103,16 @@
    <item>3</item>
 </string-array>
 
+<string-array name="timestampColorArrayCommon">
+   <item>@string/pref_timestamp_color_black</item>
+   <item>@string/pref_timestamp_color_white</item>
+   <item>@string/pref_timestamp_color_yellow</item>
+</string-array>
+
+<string-array name="timestampColorValuesCommon">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+</string-array>
+
 </resources>
