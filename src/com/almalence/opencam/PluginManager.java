@@ -140,6 +140,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -2947,74 +2948,76 @@ public class PluginManager implements PluginManagerInterface
 			Bitmap sourceBitmap;
 			Bitmap bitmap;
 
-			if (true)
+			ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+			int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+			int rotation = 0;
+			Matrix matrix = new Matrix();
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
 			{
-				ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
-				int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-						ExifInterface.ORIENTATION_NORMAL);
-				int rotation = 0;
-				Matrix matrix = new Matrix();
-				if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
-				{
-					rotation = 90;
-				} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
-				{
-					rotation = 180;
-				} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
-				{
-					rotation = 270;
-				}
-				matrix.postRotate(rotation);
-
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inMutable = true;
-
-				sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-				bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(),
-						matrix, false);
-
-				sourceBitmap.recycle();
-
-				int width = bitmap.getWidth();
-				int height = bitmap.getHeight();
-
-				Paint p = new Paint();
-
-				Canvas canvas = new Canvas(bitmap);
-
-				final float scale = MainScreen.getInstance().getResources().getDisplayMetrics().density;
-
-				p.setColor(Color.WHITE);
-				switch (color) {
-				case 0:
-					color = Color.BLACK;
-					p.setColor(Color.BLACK);
-					break;
-				case 1:
-					color = Color.WHITE;
-					p.setColor(Color.WHITE);
-					break;
-				case 2:
-					color = Color.YELLOW;
-					p.setColor(Color.YELLOW);
-					break;
-					
-				}
-				
-				if (width > height) {
-					p.setTextSize(height / 50 * scale + 0.5f); // convert dps to pixels
-				} else {
-					p.setTextSize(width / 50 * scale + 0.5f); // convert dps to pixels
-				}
-				p.setTextAlign(Align.RIGHT);
-				drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
-
-				Matrix matrix2 = new Matrix();
-				matrix2.postRotate(360 - rotation);
-				sourceBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix2, false);
-
-				bitmap.recycle();
+				rotation = 90;
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+			{
+				rotation = 180;
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+			{
+				rotation = 270;
 			}
+			matrix.postRotate(rotation);
+
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inMutable = true;
+
+			sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+			bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(), matrix,
+					false);
+
+			sourceBitmap.recycle();
+
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
+
+			Paint p = new Paint();
+
+			Canvas canvas = new Canvas(bitmap);
+
+			final float scale = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+
+			p.setColor(Color.WHITE);
+			switch (color)
+			{
+			case 0:
+				color = Color.BLACK;
+				p.setColor(Color.BLACK);
+				break;
+			case 1:
+				color = Color.WHITE;
+				p.setColor(Color.WHITE);
+				break;
+			case 2:
+				color = Color.YELLOW;
+				p.setColor(Color.YELLOW);
+				break;
+
+			}
+
+			if (width > height)
+			{
+				p.setTextSize(height / 50 * scale + 0.5f); // convert dps to
+															// pixels
+			} else
+			{
+				p.setTextSize(width / 50 * scale + 0.5f); // convert dps to
+															// pixels
+			}
+			p.setTextAlign(Align.RIGHT);
+			drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
+
+			Matrix matrix2 = new Matrix();
+			matrix2.postRotate(360 - rotation);
+			sourceBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix2, false);
+
+			bitmap.recycle();
 
 			FileOutputStream outStream;
 			outStream = new FileOutputStream(file);
@@ -3033,7 +3036,7 @@ public class PluginManager implements PluginManagerInterface
 		} catch (Exception e)
 		{
 			e.printStackTrace();
-		}catch (OutOfMemoryError e)
+		} catch (OutOfMemoryError e)
 		{
 			e.printStackTrace();
 		}
