@@ -2908,7 +2908,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + fileFormat + "_" + modeName + postfix;
+			fileFormat = prefix + fileFormat + (modeName.equals("")?"":("_" + modeName)) + postfix;
 			break;
 
 		case 3:// IMG_YEARMMDD_HHMMSS
@@ -2916,7 +2916,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + "IMG_" + fileFormat + "_" + modeName + postfix;
+			fileFormat = prefix + "IMG_" + fileFormat + (modeName.equals("")?"":("_" + modeName)) + postfix;
 			break;
 		default:
 			break;
