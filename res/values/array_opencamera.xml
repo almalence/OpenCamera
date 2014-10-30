@@ -63,4 +63,44 @@
    <item>10000</item>
 </string-array>
 
+<string-array name="timestampDateArrayCommon">
+   <item>none</item>
+   <item>yyyy/mm/dd</item>
+   <item>dd/mm/yyyy</item>
+   <item>mm/dd/yyyy</item>
+</string-array>
+
+<string-array name="timestampDateValuesCommon">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+   <item>3</item>
+</string-array>
+
+<string-array name="timestampTimeArrayCommon">
+   <item>none</item>
+   <item>12</item>
+   <item>24</item>
+</string-array>
+
+<string-array name="timestampTimeValuesCommon">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+</string-array>
+
+<string-array name="timestampSeparatorArrayCommon">
+   <item>@string/pref_timestamp_separator_slash</item>
+   <item>@string/pref_timestamp_separator_dots</item>
+   <item>@string/pref_timestamp_separator_dashes</item>
+   <item>@string/pref_timestamp_separator_spaces</item>
+</string-array>
+
+<string-array name="timestampSeparatorValuesCommon">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+   <item>3</item>
+</string-array>
+
 </resources>
