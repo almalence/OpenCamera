@@ -24,10 +24,10 @@
     <string name="pref_timestamp_saving_custom_text_title">Текст</string>
     <string name="pref_timestamp_saving_color_title">Цвет</string>
     
-    <string name="pref_timestamp_separator_slash">"/" - Слэш</string>
-    <string name="pref_timestamp_separator_dots">"." – Точка</string>
-    <string name="pref_timestamp_separator_dashes">"-" – Дефис</string>
-    <string name="pref_timestamp_separator_spaces">" " – Пробел</string>
+    <string name="pref_timestamp_separator_slash">"/" черта</string>
+    <string name="pref_timestamp_separator_dots">"." точка</string>
+    <string name="pref_timestamp_separator_dashes">"-" дефис</string>
+    <string name="pref_timestamp_separator_spaces">" " пробел</string>
     
     <string name="pref_timestamp_color_black">Черный</string>
     <string name="pref_timestamp_color_white">Бклый</string>
