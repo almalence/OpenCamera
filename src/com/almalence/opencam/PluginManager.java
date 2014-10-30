@@ -2907,9 +2907,6 @@ public class PluginManager implements PluginManagerInterface
 			default:
 			}
 
-			if (dateFormat == 0 && timeFormat == 0)
-				return;
-
 			switch (dateFormat)
 			{
 			case 1:
@@ -2927,16 +2924,16 @@ public class PluginManager implements PluginManagerInterface
 			switch (timeFormat)
 			{
 			case 1:
-				timeFormatString = "hh:mm:ss a";
+				timeFormatString = " hh:mm:ss a";
 				break;
 			case 2:
-				timeFormatString = "HH:mm:ss";
+				timeFormatString = " HH:mm:ss";
 				break;
 			default:
 			}
 
 			Date currentDate = Calendar.getInstance().getTime();
-			java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat(dateFormatString + " "
+			java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat(dateFormatString
 					+ timeFormatString);
 			String formattedCurrentDate = simpleDateFormat.format(currentDate);
 
@@ -3073,6 +3070,7 @@ public class PluginManager implements PluginManagerInterface
 		paint.setColor(foreground);
 		String[] resText = text.split("\n");
 		String maxLengthText = "";
+
 		if (resText.length > 1)
 		{
 			maxLengthText = resText[0].length() > resText[1].length() ? resText[0] : resText[1];
@@ -3119,7 +3117,7 @@ public class PluginManager implements PluginManagerInterface
 		}
 		if (resText.length > 1)
 		{
-			canvas.drawText(resText[1], imageWidth, imageHeight - textHeight / 2, paint);
+			canvas.drawText(resText[1], imageWidth - padding, imageHeight - textHeight / 2, paint);
 		}
 	}
 
