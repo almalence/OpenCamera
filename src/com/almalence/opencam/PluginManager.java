@@ -3005,6 +3005,9 @@ public class PluginManager implements PluginManagerInterface
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+		}catch (OutOfMemoryError e)
+		{
+			e.printStackTrace();
 		}
 	}
 
