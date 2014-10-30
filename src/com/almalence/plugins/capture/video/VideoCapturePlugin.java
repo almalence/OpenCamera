@@ -1826,7 +1826,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onPreferenceCreate(PreferenceFragment pf)
 	{
-		if (pf != null && MainScreen.getCameraController().isVideoStabilizationSupported())
+		if (pf != null && !MainScreen.getCameraController().isVideoStabilizationSupported())
 		{
 			PreferenceCategory cat = (PreferenceCategory) pf.findPreference("Pref_VideoCapture_Category");
 			CheckBoxPreference cp = (CheckBoxPreference) pf.findPreference("videoStabilizationPref");

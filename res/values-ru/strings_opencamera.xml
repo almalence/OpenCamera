@@ -23,7 +23,7 @@
     <string name="pref_timestamp_saving_separator_title">Разделитель</string>
     <string name="pref_timestamp_saving_custom_text_title">Текст</string>
     
-    <string name="pref_timestamp_separator_slash">"/" - Слэш</string>
+    <string name="pref_timestamp_separator_slash">"/" - Черта</string>
     <string name="pref_timestamp_separator_dots">"." – Точка</string>
     <string name="pref_timestamp_separator_dashes">"-" – Дефис</string>
     <string name="pref_timestamp_separator_spaces">" " – Пробел</string>
