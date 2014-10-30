@@ -136,7 +136,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 /* <!-- +++
- //import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -3002,9 +3002,9 @@ public class PluginManager implements PluginManagerInterface
 				}
 				
 				if (width > height) {
-					p.setTextSize(height / 50 * scale + 0.5f); // convert dps to pixels
+					p.setTextSize(height / 80 * scale + 0.5f); // convert dps to pixels
 				} else {
-					p.setTextSize(width / 50 * scale + 0.5f); // convert dps to pixels
+					p.setTextSize(width / 80 * scale + 0.5f); // convert dps to pixels
 				}
 				p.setTextAlign(Align.RIGHT);
 				drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
