@@ -164,7 +164,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
 
 			thumbnails.clear();
-			int heightPixels = MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels;
+			int heightPixels = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
 				if (isYUV)
@@ -382,7 +382,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		float density = MainScreen.getAppResources().getDisplayMetrics().density;
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);

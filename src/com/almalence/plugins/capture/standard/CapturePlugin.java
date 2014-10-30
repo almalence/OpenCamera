@@ -138,7 +138,7 @@ public class CapturePlugin extends PluginCapture
 
 				if (ModePreference.compareTo("0") == 0)
 					MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Dro_Help_Header),
-							MainScreen.getInstance().getResources().getString(R.string.Dro_Help),
+							MainScreen.getAppResources().getString(R.string.Dro_Help),
 							R.drawable.plugin_help_dro, "droShowHelp");
 			}
 		});
@@ -210,7 +210,7 @@ public class CapturePlugin extends PluginCapture
 
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.getGUIManager().showHelp("Dro help",
-					MainScreen.getInstance().getResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro,
+					MainScreen.getAppResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro,
 					"droShowHelp");
 	}
 
@@ -240,21 +240,9 @@ public class CapturePlugin extends PluginCapture
 //		Log.d("CapturePlugin", "takePicture");
 		if (!inCapture)
 		{
-//			Log.d("CapturePlugin", "send next frame message");
 			inCapture = true;
 			takingAlready = true;
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NEXT_FRAME);
-		}
-
-	}
-
-	@Override
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-//			Log.d("CapturePlugin", "next frame message received");
 			try
 			{
 				if (ModePreference.compareTo("0") == 0)
@@ -272,9 +260,8 @@ public class CapturePlugin extends PluginCapture
 						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 				MainScreen.getGUIManager().lockControls = false;
 			}
-			return true;
 		}
-		return false;
+
 	}
 
 	@Override

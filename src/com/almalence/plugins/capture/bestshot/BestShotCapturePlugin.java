@@ -58,7 +58,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		//sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BestShotImagesAmount);
+		//sImagesAmountPref = MainScreen.getAppResources().getString(R.string.Preference_BestShotImagesAmount);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onGUICreate()
 	{
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Bestshot_Help_Header),
-				MainScreen.getInstance().getResources().getString(R.string.Bestshot_Help),
+				MainScreen.getAppResources().getString(R.string.Bestshot_Help),
 				R.drawable.plugin_help_bestshot, "bestShotShowHelp");
 	}
 

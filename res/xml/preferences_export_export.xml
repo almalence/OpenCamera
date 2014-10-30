@@ -15,6 +15,27 @@
 
     	<!-- -+-  -->
     	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/Pref_Saving_Timestamp_Preference_Title"
+    	    android:fragment="com.almalence.opencam.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_timestamp" />
+    	</PreferenceScreen>
+    	<!--  -+- -->
+		<!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/Pref_Saving_Timestamp_Preference_Title"
+    	    android:fragment="com.almalence.opencam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_timestamp" />
+    	</PreferenceScreen>
+		+++ -->
+		
+    	<!-- -+-  -->
+    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"
     	    android:fragment="com.almalence.opencam.Fragment" 
             >
@@ -33,4 +54,5 @@
 			     android:value="export_more" />
     	</PreferenceScreen>
 		+++ -->
+		
 </PreferenceScreen>

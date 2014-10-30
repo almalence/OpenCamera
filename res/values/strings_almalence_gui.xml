@@ -248,6 +248,7 @@
 	<string name="Pref_Modes_Preference_Title">Shooting modes settings</string>
 	<string name="Pref_Modes_Preference_Summary">HDR, Night, Panorama ...</string>
 	<string name="Pref_Saving_Preference_Title">Saving and sharing</string>
+	<string name="Pref_Saving_Timestamp_Preference_Title">Timestamp</string>
 	<string name="Pref_Saving_Preference_Summary">Filenames, formats, geotagging, exif and other parameters</string>
 	<string name="Pref_Advanced_Preference_Title">Advanced</string>
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>

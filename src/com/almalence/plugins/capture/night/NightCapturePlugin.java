@@ -123,7 +123,7 @@ public class NightCapturePlugin extends PluginCapture
 				R.xml.preferences_capture_night,
 				R.xml.preferences_capture_night_more,
 				R.drawable.plugin_capture_night_nightvision_on,
-				MainScreen.getInstance().getResources().getString(R.string.NightVisionOn));
+				MainScreen.getAppResources().getString(R.string.NightVisionOn));
 	}
 
 	@Override
@@ -134,8 +134,8 @@ public class NightCapturePlugin extends PluginCapture
 			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 		}
 		
-		nightVisionLayerShowPref = MainScreen.getInstance().getResources().getString(R.string.NightVisionLayerShow);
-		nightCaptureFocusPref = MainScreen.getInstance().getResources().getString(R.string.NightCaptureFocusPref);
+		nightVisionLayerShowPref = MainScreen.getAppResources().getString(R.string.NightVisionLayerShow);
+		nightCaptureFocusPref = MainScreen.getAppResources().getString(R.string.NightCaptureFocusPref);
 	}
 
 	@Override
@@ -146,11 +146,11 @@ public class NightCapturePlugin extends PluginCapture
 		if (OpenGLPreference)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
+			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOn);
 		} else
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
+			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
 		}
 		
 		if (CameraController.isUseHALv3())
@@ -215,7 +215,7 @@ public class NightCapturePlugin extends PluginCapture
 		if (quickControlIconID == R.drawable.plugin_capture_night_nightvision_on)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOff);
+			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
 
 			editor.putBoolean(nightVisionLayerShowPref, false);
 			editor.commit();
@@ -232,7 +232,7 @@ public class NightCapturePlugin extends PluginCapture
 		} else if (quickControlIconID == R.drawable.plugin_capture_night_nightvision_off)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-			quickControlTitle = MainScreen.getInstance().getResources().getString(R.string.NightVisionOn);
+			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOn);
 
 			editor.putBoolean(nightVisionLayerShowPref, true);
 			editor.commit();

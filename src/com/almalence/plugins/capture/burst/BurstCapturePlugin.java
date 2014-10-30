@@ -73,8 +73,8 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		sImagesAmountPref = MainScreen.getInstance().getResources().getString(R.string.Preference_BurstImagesAmount);
-		sPauseBetweenShotsPref = MainScreen.getInstance().getResources()
+		sImagesAmountPref = MainScreen.getAppResources().getString(R.string.Preference_BurstImagesAmount);
+		sPauseBetweenShotsPref = MainScreen.getAppResources()
 				.getString(R.string.Preference_BurstPauseBetweenShots);
 	}
 

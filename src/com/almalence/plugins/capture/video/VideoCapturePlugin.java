@@ -462,7 +462,7 @@ public class VideoCapturePlugin extends PluginCapture
 		int iIndicatorSize = (int) (MainScreen.getMainContext().getResources().getInteger(R.integer.infoControlHeight) * fScreenDensity);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
 		int topMargin = MainScreen.getInstance().findViewById(R.id.paramsLayout).getHeight()
-				+ (int) MainScreen.getInstance().getResources().getDimension(R.dimen.viewfinderViewsMarginTop);
+				+ (int) MainScreen.getAppResources().getDimension(R.dimen.viewfinderViewsMarginTop);
 		params.setMargins((int) (2 * MainScreen.getGUIManager().getScreenDensity()), topMargin, 0, 0);
 
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -551,7 +551,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.videobuttons_size);
+		params.height = (int) MainScreen.getAppResources().getDimension(R.dimen.videobuttons_size);
 
 		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
@@ -642,7 +642,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		RelativeLayout.LayoutParams paramsRotator = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-		paramsRotator.height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.gui_element_2size);
+		paramsRotator.height = (int) MainScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
 
 		paramsRotator.addRule(RelativeLayout.CENTER_IN_PARENT);
 
@@ -808,7 +808,7 @@ public class VideoCapturePlugin extends PluginCapture
 			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
 				return;
 
-			int height = (int) MainScreen.getInstance().getResources().getDimension(R.dimen.gui_element_2size);
+			int height = (int) MainScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
 			Animation rotation = new RotateAnimation(0, -180, height / 2, height / 2);
 			rotation.setDuration(2000);
 			rotation.setRepeatCount(1000);
@@ -1961,7 +1961,7 @@ public class VideoCapturePlugin extends PluginCapture
 			// when it needs changing.
 			mRecordingTimeCountsDown = countdownRemainingTime;
 
-			int color = MainScreen.getInstance().getResources().getColor(R.color.recording_time_remaining_text);
+			int color = MainScreen.getAppResources().getColor(R.color.recording_time_remaining_text);
 
 			mRecordingTimeView.setTextColor(color);
 		}
@@ -2497,14 +2497,14 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
 	    builder.setTitle("HDR Video");
-	    builder.setMessage(MainScreen.getInstance().getResources().getString(R.string.dro_warning) + " " +fps);
+	    builder.setMessage(MainScreen.getAppResources().getString(R.string.dro_warning) + " " +fps);
 	    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 	        @Override
 	        public void onClick(DialogInterface dialog, int which) {
 	            dialog.cancel();
 	        }
 	    });
-	    builder.setNegativeButton(MainScreen.getInstance().getResources().getString(R.string.helpTextDontShow), new DialogInterface.OnClickListener() {
+	    builder.setNegativeButton(MainScreen.getAppResources().getString(R.string.helpTextDontShow), new DialogInterface.OnClickListener() {
 	        @Override
 	        public void onClick(DialogInterface dialog, int which) {
 	        	prefs.edit().putBoolean("dontshowagainDroWarning", true).commit();

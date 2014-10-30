@@ -98,7 +98,7 @@ public class AlmalenceStore
 		imgWhatNewNext.setVisibility(View.INVISIBLE);
 		imgWhatNewPrev.setVisibility(View.INVISIBLE);
 		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
-		text_whatsnew.setText(MainScreen.getInstance().getResources().getString(R.string.storeWhatsnew));
+		text_whatsnew.setText(MainScreen.getAppResources().getString(R.string.storeWhatsnew));
 
 		page.addView(whatsnew);
 		pages.add(page);
@@ -109,7 +109,7 @@ public class AlmalenceStore
 		//final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
 		final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
 		//TextView text_features = (TextView) features.findViewById(R.id.text_features);
-		//text_features.setText(MainScreen.getInstance().getResources().getString(R.string.storeFeatures));
+		//text_features.setText(MainScreen.getAppResources().getString(R.string.storeFeatures));
 		WebView wv = (WebView)features.findViewById(R.id.text_features);
 		wv.loadUrl("file:///android_asset/www/features.html");
 
@@ -121,7 +121,7 @@ public class AlmalenceStore
 //		RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
 //		final ImageView imgTipsPrev = (ImageView) tips.findViewById(R.id.storeTips);
 //		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
-//		text_tips.setText(MainScreen.getInstance().getResources().getString(R.string.storeTips));
+//		text_tips.setText(MainScreen.getAppResources().getString(R.string.storeTips));
 //
 //		page.addView(tips);
 //		pages.add(page);
@@ -301,7 +301,7 @@ public class AlmalenceStore
 			case 0:
 				// unlock all
 				icon.setImageResource(R.drawable.store_all);
-				description.setText(MainScreen.getInstance().getResources()
+				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_All_Preference_Title));
 
 				if (MainScreen.getInstance().isPurchasedAll())
@@ -334,7 +334,7 @@ public class AlmalenceStore
 //			case 2:
 //				// subscription month
 //				icon.setImageResource(R.drawable.store_promo);
-//				description.setText(MainScreen.getInstance().getResources()
+//				description.setText(MainScreen.getAppResources()
 //						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
 //				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
 //					price.setText(R.string.already_unlocked);
@@ -344,7 +344,7 @@ public class AlmalenceStore
 			case 1:
 				// HDR
 				icon.setImageResource(R.drawable.store_hdr);
-				description.setText(MainScreen.getInstance().getResources()
+				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_HDR_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
@@ -354,7 +354,7 @@ public class AlmalenceStore
 			case 2:
 				// Panorama
 				icon.setImageResource(R.drawable.store_panorama);
-				description.setText(MainScreen.getInstance().getResources()
+				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
@@ -364,7 +364,7 @@ public class AlmalenceStore
 			case 3:
 				// multishot
 				icon.setImageResource(R.drawable.store_moving);
-				description.setText(MainScreen.getInstance().getResources()
+				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Moving_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
@@ -374,7 +374,7 @@ public class AlmalenceStore
 //			case 4:
 //				// Groupshot
 //				icon.setImageResource(R.drawable.store_groupshot);
-//				description.setText(MainScreen.getInstance().getResources()
+//				description.setText(MainScreen.getAppResources()
 //						.getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
 //				if (MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
 //					price.setText(R.string.already_unlocked);
@@ -384,7 +384,7 @@ public class AlmalenceStore
 			case 4:
 				// Promo code
 				icon.setImageResource(R.drawable.store_promo);
-				description.setText(MainScreen.getInstance().getResources()
+				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);

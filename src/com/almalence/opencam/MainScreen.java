@@ -50,6 +50,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
@@ -115,7 +116,7 @@ import com.almalence.opencam.ui.GUI;
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.cameracontroller.HALv3;
+ //import com.almalence.opencam_plus.cameracontroller.HALv3;
  import com.almalence.opencam_plus.ui.AlmalenceGUI;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
@@ -127,6 +128,7 @@ import com.almalence.opencam.ui.GUI;
  * Passes all main events to PluginManager
  ***/
 
+@SuppressWarnings("deprecation")
 public class MainScreen extends Activity implements ApplicationInterface, View.OnClickListener, View.OnTouchListener,
 		SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 {
@@ -254,6 +256,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private int							currentMeteringMode				= -1;
 
+	public static String				sTimestampDate;
+	public static String				sTimestampAbbreviation;
+	public static String				sTimestampTime;
+	public static String				sTimestampSeparator;
+	public static String				sTimestampCustomText;
+	public static String				sTimestampColor;
+
 	public static String				sEvPref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
@@ -276,13 +285,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static String				sImageSizeRearPref;
 	public static String				sImageSizeFrontPref;
-	
+
 	public static String				sImageSizeMultishotBackPref;
 	public static String				sImageSizeMultishotFrontPref;
-	
+
 	public static String				sImageSizePanoramaBackPref;
 	public static String				sImageSizePanoramaFrontPref;
-	
+
 	public static String				sImageSizeVideoBackPref;
 	public static String				sImageSizeVideoFrontPref;
 
@@ -335,13 +344,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
 		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
-		
-		sImageSizeMultishotBackPref = getResources().getString(R.string.Preference_ImageSizePrefSmartMultishotBackValue);
-		sImageSizeMultishotFrontPref = getResources().getString(R.string.Preference_ImageSizePrefSmartMultishotFrontValue);
-		
+
+		sImageSizeMultishotBackPref = getResources()
+				.getString(R.string.Preference_ImageSizePrefSmartMultishotBackValue);
+		sImageSizeMultishotFrontPref = getResources().getString(
+				R.string.Preference_ImageSizePrefSmartMultishotFrontValue);
+
 		sImageSizePanoramaBackPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaBackValue);
 		sImageSizePanoramaFrontPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaFrontValue);
-		
+
 		sImageSizeVideoBackPref = getResources().getString(R.string.Preference_ImageSizePrefVideoBackValue);
 		sImageSizeVideoFrontPref = getResources().getString(R.string.Preference_ImageSizePrefVideoFrontValue);
 
@@ -357,6 +368,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
 		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
+
+		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
+		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
+		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
+		sTimestampSeparator = getResources().getString(R.string.Preference_TimestampSeparatorValue);
+		sTimestampCustomText = getResources().getString(R.string.Preference_TimestampCustomTextValue);
+		sTimestampColor = getResources().getString(R.string.Preference_TimestampColorValue);
 
 		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
 
@@ -1211,8 +1229,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				: MainScreen.sImageSizeFrontPref, "-1");
 
 		multishotImageSizeIdxPreference = prefs.getString(
-				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref
-						: sImageSizeMultishotFrontPref, "-1");
+				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
+				"-1");
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 	}
@@ -1319,20 +1337,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 												// x 4 - compressed input jpegs,
 												// 1Mb - safe reserve
 
-		if (maxMpix < MIN_MPIX_SUPPORTED)
-		{
-			String msg;
-			msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-			// Log.d("MultishotCapturePlugin",
-			// "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-			// Log.d("MultishotCapturePlugin", msg);
-		}
+		// if (maxMpix < MIN_MPIX_SUPPORTED)
+		// {
+		// String msg;
+		// msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
+		// // Log.d("MultishotCapturePlugin",
+		// // "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
+		// // Log.d("MultishotCapturePlugin", msg);
+		// }
 
 		// find index selected in preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int prefIdx = Integer.parseInt(prefs.getString(
-				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref
-						: sImageSizeMultishotFrontPref, "-1"));
+				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
+				"-1"));
 
 		// ----- Find max-resolution capture dimensions
 		int minMPIX = MIN_MPIX_PREVIEW;
@@ -2070,6 +2088,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
+	public static Resources getAppResources()
+	{
+		return MainScreen.thiz.getResources();
+	}
+
 	/*******************************************************/
 	/************************ Billing ************************/
 
@@ -2090,13 +2113,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	static final String	SKU_PANORAMA				= "plugin_almalence_panorama";
 	static final String	SKU_UNLOCK_ALL				= "unlock_all_forever";
 
-	//barcode coupon
+	// barcode coupon
 	static final String	SKU_UNLOCK_ALL_COUPON		= "unlock_all_forever_coupon";
-	
-	//multishot currently
+
+	// multishot currently
 	static final String	SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
-	
-	//unused. but if someone payed - will be unlocked multishot
+
+	// unused. but if someone payed - will be unlocked multishot
 	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
 
 	static final String	SKU_SALE1					= "abc_sale_controller1";
@@ -2124,6 +2147,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
 		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
 		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
+
 
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
@@ -2205,7 +2229,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
 			mHelper = new OpenIabHelper(this, storeKeys);
 
-			mHelper.enableDebugLogging(true);
+			OpenIabHelper.enableDebugLogging(true);
 
 			// Log.v("Main billing", "Starting setup.");
 			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
@@ -2407,6 +2431,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																								.getSkuDetails(
 																										SKU_GROUPSHOT)
 																								.getPrice();
+
 
 																						summary_SKU_PROMO = inventory
 																								.getSkuDetails(
@@ -2826,9 +2851,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-		int id = MainScreen.thiz.getResources()
-				.getIdentifier(mode.modeName, "string", MainScreen.thiz.getPackageName());
-		String modename = MainScreen.thiz.getResources().getString(id);
+		int id = MainScreen.getAppResources().getIdentifier(mode.modeName, "string", MainScreen.thiz.getPackageName());
+		String modename = MainScreen.getAppResources().getString(id);
 
 		if (0 == launchesLeft)// no more launches left
 		{
