@@ -96,7 +96,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -137,10 +136,10 @@ import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 /* <!-- +++
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ //import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /***

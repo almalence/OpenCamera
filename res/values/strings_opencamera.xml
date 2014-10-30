@@ -26,15 +26,15 @@
     <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard.</string>
     
     <string name="pref_timestamp_saving_date_title">Date</string>
-    <string name="pref_timestamp_saving_abbreviation_title">Abbreviation for month</string>
+    <string name="pref_timestamp_saving_abbreviation_title">Month name</string>
     <string name="pref_timestamp_saving_time_title">Time</string>
     <string name="pref_timestamp_saving_separator_title">Separator</string>
     <string name="pref_timestamp_saving_custom_text_title">Text</string>
     
-    <string name="pref_timestamp_separator_slash">"/" - Slash</string>
-    <string name="pref_timestamp_separator_dots">"." – Dots or full stops</string>
-    <string name="pref_timestamp_separator_dashes">"-" – Hyphens or dashes</string>
-    <string name="pref_timestamp_separator_spaces">" " – Spaces</string>
+    <string name="pref_timestamp_separator_slash">"/" slash</string>
+    <string name="pref_timestamp_separator_dots">"." dot</string>
+    <string name="pref_timestamp_separator_dashes">"-" dash</string>
+    <string name="pref_timestamp_separator_spaces">" " space</string>
     
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>
