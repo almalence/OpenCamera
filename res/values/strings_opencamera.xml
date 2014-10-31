@@ -31,6 +31,7 @@
     <string name="pref_timestamp_saving_separator_title">Separator</string>
     <string name="pref_timestamp_saving_custom_text_title">Text</string>
     <string name="pref_timestamp_saving_color_title">Color</string>
+    <string name="pref_timestamp_saving_font_size_title">Font size</string>
     
     <string name="pref_timestamp_separator_slash">"/" slash</string>
     <string name="pref_timestamp_separator_dots">"." dot</string>
@@ -40,6 +41,10 @@
     <string name="pref_timestamp_color_black">Black</string>
     <string name="pref_timestamp_color_white">White</string>
     <string name="pref_timestamp_color_yellow">Yellow</string>
+    
+    <string name="pref_timestamp_fontsize_small">Small</string>
+    <string name="pref_timestamp_fontsize_normal">Medium</string>
+    <string name="pref_timestamp_fontsize_big">Big</string>
     
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>

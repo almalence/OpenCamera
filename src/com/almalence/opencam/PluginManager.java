@@ -2884,6 +2884,7 @@ public class PluginManager implements PluginManagerInterface
 			int separator = Integer.parseInt(prefs.getString(MainScreen.sTimestampSeparator, "0"));
 			String customText = prefs.getString(MainScreen.sTimestampCustomText, "");
 			int color = Integer.parseInt(prefs.getString(MainScreen.sTimestampColor, "1"));
+			int fontSizeC = Integer.parseInt(prefs.getString(MainScreen.sTimestampFontSize, "80"));
 
 			String dateFormatString = "";
 			String timeFormatString = "";
@@ -3000,11 +3001,11 @@ public class PluginManager implements PluginManagerInterface
 
 			if (width > height)
 			{
-				p.setTextSize(height / 80 * scale + 0.5f); // convert dps to
+				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps to
 															// pixels
 			} else
 			{
-				p.setTextSize(width / 80 * scale + 0.5f); // convert dps to
+				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps to
 															// pixels
 			}
 			p.setTextAlign(Align.RIGHT);
