@@ -447,10 +447,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
 		}
-		if (true == prefs.contains("subscription_unlock_all_month"))
-		{
-			unlockAllSubscriptionMonth = prefs.getBoolean("subscription_unlock_all_month", false);
-		}
 		if (true == prefs.contains("subscription_unlock_all_year"))
 		{
 			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
@@ -2436,6 +2432,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																								.putBoolean(
 																										"subscription_unlock_all_year",
 																										true).commit();
+																						unlockAllPurchased = true;
+																						prefsEditor.putBoolean(
+																								"unlock_all_forever",
+																								true).commit();
 																					}
 																					if (inventory
 																							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
@@ -2445,6 +2445,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																								.putBoolean(
 																										"subscription_unlock_all_year",
 																										true).commit();
+																						unlockAllPurchased = true;
+																						prefsEditor.putBoolean(
+																								"unlock_all_forever",
+																								true).commit();
 																					}
 
 																					try
@@ -2739,6 +2743,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			timeLastSubscriptionCheck = System.currentTimeMillis();
 			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
+			
+			unlockAllPurchased = true;
+			prefsEditor.putBoolean("unlock_all_forever", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR_NEW))
 		{
@@ -2750,6 +2757,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			timeLastSubscriptionCheck = System.currentTimeMillis();
 			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
+			
+			unlockAllPurchased = true;
+			prefsEditor.putBoolean("unlock_all_forever", true).commit();
 		}
 	}
 
