@@ -5055,6 +5055,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				e.printStackTrace();
 			}
+			catch (OutOfMemoryError e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		modeAdapter.Elements = modeViews;

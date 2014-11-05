@@ -21,6 +21,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
 import java.io.ByteArrayInputStream;
@@ -56,10 +57,15 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.camera2.CaptureResult;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
@@ -88,8 +94,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
@@ -132,10 +136,11 @@ import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 /* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-+++ --> */
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -260,6 +265,8 @@ public class PluginManager implements PluginManagerInterface
 
 	// Support flag to avoid plugin's view disappearance issue
 	static boolean						isRestarting							= false;
+
+	static int							jpegQuality								= 95;
 
 	private static boolean				isDefaultsSelected						= false;
 
@@ -847,8 +854,8 @@ public class PluginManager implements PluginManagerInterface
 				if (null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotBackPref))
 						|| null != (pref = pf.findPreference(MainScreen.sImageSizeMultishotFrontPref)))
 				{
-					pref.setTitle(MainScreen.getAppResources()
-							.getString(R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
+					pref.setTitle(MainScreen.getAppResources().getString(
+							R.string.Pref_Comon_SmartMultishot_And_Super_ImageSize_Title));
 				}
 			}
 			MainScreen.getInstance().onPreferenceCreate(pf);
@@ -886,6 +893,9 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("export_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_export_common);
+		} else if ("export_timestamp".equals(settings))
+		{
+			pf.addPreferencesFromResource(R.xml.preferences_export_timestamp);
 		} else if ("shooting_settings".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_modes);
@@ -1315,12 +1325,12 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
 	}
 
-//	@TargetApi(21)
-//	public void onCaptureCompleted(TotalCaptureResult result)
-//	{
-//		if (null != pluginList.get(activeCapture))
-//			pluginList.get(activeCapture).onCaptureCompleted(result);
-//	}
+	// @TargetApi(21)
+	// public void onCaptureCompleted(TotalCaptureResult result)
+	// {
+	// if (null != pluginList.get(activeCapture))
+	// pluginList.get(activeCapture).onCaptureCompleted(result);
+	// }
 
 	@Override
 	public void onPreviewFrame(byte[] data)
@@ -1458,8 +1468,8 @@ public class PluginManager implements PluginManagerInterface
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
-			int id = MainScreen.getAppResources()
-					.getIdentifier(getActiveMode().modeName, "string", MainScreen.getInstance().getPackageName());
+			int id = MainScreen.getAppResources().getIdentifier(getActiveMode().modeName, "string",
+					MainScreen.getInstance().getPackageName());
 			String modeName = MainScreen.getAppResources().getString(id);
 			addToSharedMem("mode_name" + (String) msg.obj, modeName);
 			// start async task for further processing
@@ -1476,10 +1486,11 @@ public class PluginManager implements PluginManagerInterface
 			controlPremiumContent();
 			// -+- -->
 
-			if(!PluginManager.getInstance().getActiveModeID().equals("video"))
+			if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 			{
 				MainScreen.getGUIManager().lockControls = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance()
+						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			}
 			break;
 
@@ -1633,7 +1644,7 @@ public class PluginManager implements PluginManagerInterface
 		return true;
 	}
 
-	//<!-- -+-
+	// <!-- -+-
 	public void controlPremiumContent()
 	{
 		Mode mode = getActiveMode();
@@ -1641,7 +1652,8 @@ public class PluginManager implements PluginManagerInterface
 			if (!mode.SKU.isEmpty())
 				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	}
-	//-+- -->
+
+	// -+- -->
 
 	/******************************************************************************************************
 	 * Work with hash table
@@ -1744,9 +1756,8 @@ public class PluginManager implements PluginManagerInterface
 
 		String s1 = null;
 		if (params.getSupportedWhiteBalance() != null)
-			s1 = params.getWhiteBalance().compareTo(
-					MainScreen.getAppResources().getString(R.string.wbAutoSystem)) == 0 ? String.valueOf(0)
-					: String.valueOf(1);
+			s1 = params.getWhiteBalance().compareTo(MainScreen.getAppResources().getString(R.string.wbAutoSystem)) == 0 ? String
+					.valueOf(0) : String.valueOf(1);
 		String s2 = Build.MANUFACTURER;
 		String s3 = Build.MODEL;
 
@@ -2024,9 +2035,8 @@ public class PluginManager implements PluginManagerInterface
 	private void delayedCapture(int delayInterval)
 	{
 		initializeSoundPlayers(
-				MainScreen.getAppResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown),
-				MainScreen.getAppResources()
-						.openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
+				MainScreen.getAppResources().openRawResourceFd(R.raw.plugin_capture_selftimer_countdown), MainScreen
+						.getAppResources().openRawResourceFd(R.raw.plugin_capture_selftimer_finalcountdown));
 		countdownHandler.removeCallbacks(flashOff);
 		finalcountdownHandler.removeCallbacks(flashBlink);
 
@@ -2377,7 +2387,7 @@ public class PluginManager implements PluginManagerInterface
 
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext());
-					int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
 						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
@@ -2403,6 +2413,52 @@ public class PluginManager implements PluginManagerInterface
 					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
 					break;
 				}
+
+				int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+				if (writeOrientationTag)
+				{
+					switch ((orientation + additionalRotationValue + 360) % 360)
+					{
+					default:
+					case 0:
+						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						break;
+					case 90:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+								: ExifInterface.ORIENTATION_ROTATE_90;
+						break;
+					case 180:
+						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+						break;
+					case 270:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+								: ExifInterface.ORIENTATION_ROTATE_270;
+						break;
+					}
+				} else
+				{
+					switch ((additionalRotationValue + 360) % 360)
+					{
+					default:
+					case 0:
+						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						break;
+					case 90:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+								: ExifInterface.ORIENTATION_ROTATE_90;
+						break;
+					case 180:
+						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+						break;
+					case 270:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+								: ExifInterface.ORIENTATION_ROTATE_270;
+						break;
+					}
+				}
+
+				if (!enableExifTagOrientation)
+					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 
 				File parent = file.getParentFile();
 				String path = parent.toString().toLowerCase();
@@ -2475,9 +2531,10 @@ public class PluginManager implements PluginManagerInterface
 				{
 					ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
 					ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-					ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
+					ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
 				}
 				ei.saveAttributes();
+				addTimestamp(tmpFile);
 
 				// Open ExifDriver.
 				ExifDriver exifDriver = ExifDriver.getInstance(tmpFile.getAbsolutePath());
@@ -2743,53 +2800,8 @@ public class PluginManager implements PluginManagerInterface
 
 					if (enableExifTagOrientation)
 					{
-						if (writeOrientationTag)
-						{
-							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-							switch ((orientation + additionalRotationValue + 360) % 360)
-							{
-							default:
-							case 0:
-								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-								break;
-							case 90:
-								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-										: ExifInterface.ORIENTATION_ROTATE_90;
-								break;
-							case 180:
-								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-								break;
-							case 270:
-								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-										: ExifInterface.ORIENTATION_ROTATE_270;
-								break;
-							}
-							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-						} else
-						{
-							int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-							switch ((additionalRotationValue + 360) % 360)
-							{
-							default:
-							case 0:
-								exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-								break;
-							case 90:
-								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-										: ExifInterface.ORIENTATION_ROTATE_90;
-								break;
-							case 180:
-								exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-								break;
-							case 270:
-								exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-										: ExifInterface.ORIENTATION_ROTATE_270;
-								break;
-							}
-							ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-							exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-						}
+						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
+						exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
 					} else
 					{
 						ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
@@ -2861,17 +2873,155 @@ public class PluginManager implements PluginManagerInterface
 		}
 	}
 
-	private void rotateImage(File file, Matrix matrix)
+	private void addTimestamp(File file)
 	{
 		try
 		{
-			Bitmap sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-			Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
-					sourceBitmap.getHeight(), matrix, true);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+
+			int dateFormat = Integer.parseInt(prefs.getString(MainScreen.sTimestampDate, "0"));
+			boolean abbreviation = prefs.getBoolean(MainScreen.sTimestampAbbreviation, false);
+			int timeFormat = Integer.parseInt(prefs.getString(MainScreen.sTimestampTime, "0"));
+			int separator = Integer.parseInt(prefs.getString(MainScreen.sTimestampSeparator, "0"));
+			String customText = prefs.getString(MainScreen.sTimestampCustomText, "");
+			int color = Integer.parseInt(prefs.getString(MainScreen.sTimestampColor, "1"));
+			int fontSizeC = Integer.parseInt(prefs.getString(MainScreen.sTimestampFontSize, "80"));
+
+			String dateFormatString = "";
+			String timeFormatString = "";
+			String separatorString = ".";
+			String monthString = abbreviation ? "MMMM" : "MM";
+
+			switch (separator)
+			{
+			case 0:
+				separatorString = "/";
+				break;
+			case 1:
+				separatorString = ".";
+				break;
+			case 2:
+				separatorString = "-";
+				break;
+			case 3:
+				separatorString = " ";
+				break;
+			default:
+			}
+
+			switch (dateFormat)
+			{
+			case 1:
+				dateFormatString = "yyyy" + separatorString + monthString + separatorString + "dd";
+				break;
+			case 2:
+				dateFormatString = "dd" + separatorString + monthString + separatorString + "yyyy";
+				break;
+			case 3:
+				dateFormatString = monthString + separatorString + "dd" + separatorString + "yyyy";
+				break;
+			default:
+			}
+
+			switch (timeFormat)
+			{
+			case 1:
+				timeFormatString = " hh:mm:ss a";
+				break;
+			case 2:
+				timeFormatString = " HH:mm:ss";
+				break;
+			default:
+			}
+
+			Date currentDate = Calendar.getInstance().getTime();
+			java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat(dateFormatString
+					+ timeFormatString);
+			String formattedCurrentDate = simpleDateFormat.format(currentDate);
+
+			formattedCurrentDate = formattedCurrentDate + "\n" + customText;
+
+			if (formattedCurrentDate.equals(""))
+				return;
+
+			Bitmap sourceBitmap;
+			Bitmap bitmap;
+
+			ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+			int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+			int rotation = 0;
+			Matrix matrix = new Matrix();
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+			{
+				rotation = 90;
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+			{
+				rotation = 180;
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+			{
+				rotation = 270;
+			}
+			matrix.postRotate(rotation);
+
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inMutable = true;
+
+			sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+			bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(), matrix,
+					false);
+
+			sourceBitmap.recycle();
+
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
+
+			Paint p = new Paint();
+
+			Canvas canvas = new Canvas(bitmap);
+
+			final float scale = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+
+			p.setColor(Color.WHITE);
+			switch (color)
+			{
+			case 0:
+				color = Color.BLACK;
+				p.setColor(Color.BLACK);
+				break;
+			case 1:
+				color = Color.WHITE;
+				p.setColor(Color.WHITE);
+				break;
+			case 2:
+				color = Color.YELLOW;
+				p.setColor(Color.YELLOW);
+				break;
+
+			}
+
+			if (width > height)
+			{
+				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps to
+															// pixels
+			} else
+			{
+				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps to
+															// pixels
+			}
+			p.setTextAlign(Align.RIGHT);
+			drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
+
+			Matrix matrix2 = new Matrix();
+			matrix2.postRotate(360 - rotation);
+			sourceBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix2, false);
+
+			bitmap.recycle();
 
 			FileOutputStream outStream;
 			outStream = new FileOutputStream(file);
-			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+			sourceBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
+			sourceBitmap.recycle();
 			outStream.flush();
 			outStream.close();
 		} catch (FileNotFoundException e)
@@ -2882,6 +3032,94 @@ public class PluginManager implements PluginManagerInterface
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		} catch (OutOfMemoryError e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void rotateImage(File file, Matrix matrix)
+	{
+		try
+		{
+			Bitmap sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+			Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
+					sourceBitmap.getHeight(), matrix, true);
+
+			FileOutputStream outStream;
+			outStream = new FileOutputStream(file);
+			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
+			outStream.flush();
+			outStream.close();
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void drawTextWithBackground(Canvas canvas, Paint paint, String text, int foreground, int background,
+			int imageWidth, int imageHeight)
+	{
+		Rect text_bounds = new Rect();
+		paint.setColor(foreground);
+		String[] resText = text.split("\n");
+		String maxLengthText = "";
+
+		if (resText.length > 1)
+		{
+			maxLengthText = resText[0].length() > resText[1].length() ? resText[0] : resText[1];
+		} else if (resText.length > 0)
+		{
+			maxLengthText = resText[0];
+		}
+
+		final float scale = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		paint.setStyle(Paint.Style.FILL);
+		paint.setColor(background);
+		paint.setAlpha(64);
+		paint.getTextBounds(text, 0, maxLengthText.length(), text_bounds);
+		final int padding = (int) (2 * scale + 0.5f); // convert dps to pixels
+
+		int textWidth = 0;
+		int textHeight = text_bounds.bottom - text_bounds.top;
+		if (paint.getTextAlign() == Paint.Align.RIGHT || paint.getTextAlign() == Paint.Align.CENTER)
+		{
+			float width = paint.measureText(maxLengthText); // n.b., need to use
+			// measureText rather than
+			// getTextBounds here
+			textWidth = (int) width;
+		}
+
+		text_bounds.left = imageWidth - textWidth - 2 * padding;
+		text_bounds.right = imageWidth - padding;
+		if (resText.length > 1)
+		{
+			text_bounds.top = imageHeight - 2 * padding - 2 * textHeight - textHeight;
+		} else
+		{
+			text_bounds.top = imageHeight - 2 * padding - textHeight;
+			textHeight /= 3;
+		}
+		text_bounds.bottom = imageHeight - padding;
+
+		// canvas.drawRect(text_bounds, paint);
+
+		paint.setColor(foreground);
+		if (resText.length > 0)
+		{
+			canvas.drawText(resText[0], imageWidth, imageHeight - 2 * textHeight, paint);
+		}
+		if (resText.length > 1)
+		{
+			canvas.drawText(resText[1], imageWidth - padding, imageHeight - textHeight / 2, paint);
 		}
 	}
 
@@ -2909,7 +3147,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + fileFormat + "_" + modeName + postfix;
+			fileFormat = prefix + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
 			break;
 
 		case 3:// IMG_YEARMMDD_HHMMSS
@@ -2917,7 +3155,7 @@ public class PluginManager implements PluginManagerInterface
 			break;
 
 		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + "IMG_" + fileFormat + "_" + modeName + postfix;
+			fileFormat = prefix + "IMG_" + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
 			break;
 		default:
 			break;
@@ -2957,7 +3195,7 @@ public class PluginManager implements PluginManagerInterface
 			} else
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+				jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, imageSize.getWidth(),
 						imageSize.getHeight(), null);
