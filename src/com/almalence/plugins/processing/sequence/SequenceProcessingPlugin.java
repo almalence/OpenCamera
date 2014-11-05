@@ -124,18 +124,16 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
-			imgWidthOR = MainScreen.getImageHeight();
-			imgHeightOR = MainScreen.getImageWidth();
+			imgWidthOR = imageSize.getHeight();
+			imgHeightOR = imageSize.getWidth();
 		} else
 		{
-			imgWidthOR = MainScreen.getImageWidth();
-			imgHeightOR = MainScreen.getImageHeight();
+			imgWidthOR = imageSize.getWidth();
+			imgHeightOR = imageSize.getHeight();
 		}
-
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
@@ -143,7 +141,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 		try
 		{
-			Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
 			int minSize = 1000;
@@ -158,8 +156,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			if (imagesAmount == 0)
 				imagesAmount = 1;
 
-			int iImageWidth = MainScreen.getImageWidth();
-			int iImageHeight = MainScreen.getImageHeight();
+			int iImageWidth = imageSize.getWidth();
+			int iImageHeight = imageSize.getHeight();
 
 			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
 
@@ -217,8 +215,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			PluginManager.getInstance()
 					.addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
 
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(imgWidthOR));
+			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(imgHeightOR));
 
 			this.indexes = new int[imagesAmount];
 			for (int i = 0; i < imagesAmount; i++)
@@ -500,7 +498,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
 		sequenceView.setEnabled(false);
 
-		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 		int minSize = 1000;
 		if (mMinSize == 0)
 		{

@@ -156,7 +156,7 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 
-		CameraController.Size previewSize = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(),
+		CameraController.Size previewSize = new CameraController.Size(MainScreen.getPreviewWidth(),
 				MainScreen.getPreviewHeight());
 
 		float ratio = (float) previewSize.getWidth() / previewSize.getHeight();

@@ -238,30 +238,22 @@ public class CapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 //		Log.d("CapturePlugin", "takePicture");
-		if (!inCapture)
+		try
 		{
-			inCapture = true;
-			takingAlready = true;
-
-			try
-			{
-				if (ModePreference.compareTo("0") == 0)
-					requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
-							new int[0], true);
-				else
-					requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
-							new int[0], true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.d("Standard capture", "takePicture exception: " + e.getMessage());
-				takingAlready = false;
-				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
+			if (ModePreference.compareTo("0") == 0)
+				requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
+						new int[0], true);
+			else
+				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
+						new int[0], true);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.d("Standard capture", "takePicture exception: " + e.getMessage());
+			PluginManager.getInstance()
+					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			MainScreen.getGUIManager().lockControls = false;
 		}
-
 	}
 
 	@Override
@@ -289,7 +281,6 @@ public class CapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
-		takingAlready = false;
 		inCapture = false;
 	}
 
@@ -301,14 +292,6 @@ public class CapturePlugin extends PluginCapture
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-//		Log.d("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
-		if (takingAlready)
-			takePicture();
 	}
 
 	@Override

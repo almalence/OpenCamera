@@ -1444,7 +1444,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 
-			guiManager.setupViewfinderPreviewSize(cameraController.new Size(sz.width, sz.height));
+			guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
 			CameraController.getInstance().allocatePreviewBuffer(
 					sz.width
 							* sz.height
@@ -1574,7 +1574,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// sfl.add(mImageReaderJPEG.getSurface());
 		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
-		guiManager.setupViewfinderPreviewSize(cameraController.new Size(this.previewWidth, this.previewHeight));
+		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
 		// guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280,
 		// 720));
 
@@ -1673,7 +1673,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (lp == null)
 			return null;
 
-		return cameraController.new Size(lp.width, lp.height);
+		return new CameraController.Size(lp.width, lp.height);
 	}
 
 	/*
@@ -1986,45 +1986,45 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public static int getImageWidth()
-	{
-		return thiz.imageWidth;
-	}
+//	public static int getImageWidth()
+//	{
+//		return thiz.imageWidth;
+//	}
+//
+//	public static void setImageWidth(int setImageWidth)
+//	{
+//		thiz.imageWidth = setImageWidth;
+//	}
+//
+//	public static int getImageHeight()
+//	{
+//		return thiz.imageHeight;
+//	}
+//
+//	public static void setImageHeight(int setImageHeight)
+//	{
+//		thiz.imageHeight = setImageHeight;
+//	}
 
-	public static void setImageWidth(int setImageWidth)
-	{
-		thiz.imageWidth = setImageWidth;
-	}
-
-	public static int getImageHeight()
-	{
-		return thiz.imageHeight;
-	}
-
-	public static void setImageHeight(int setImageHeight)
-	{
-		thiz.imageHeight = setImageHeight;
-	}
-
-	public static int getSaveImageWidth()
-	{
-		return thiz.saveImageWidth;
-	}
-
-	public static void setSaveImageWidth(int setSaveImageWidth)
-	{
-		thiz.saveImageWidth = setSaveImageWidth;
-	}
-
-	public static int getSaveImageHeight()
-	{
-		return thiz.saveImageHeight;
-	}
-
-	public static void setSaveImageHeight(int setSaveImageHeight)
-	{
-		thiz.saveImageHeight = setSaveImageHeight;
-	}
+//	public static int getSaveImageWidth()
+//	{
+//		return thiz.saveImageWidth;
+//	}
+//
+//	public static void setSaveImageWidth(int setSaveImageWidth)
+//	{
+//		thiz.saveImageWidth = setSaveImageWidth;
+//	}
+//
+//	public static int getSaveImageHeight()
+//	{
+//		return thiz.saveImageHeight;
+//	}
+//
+//	public static void setSaveImageHeight(int setSaveImageHeight)
+//	{
+//		thiz.saveImageHeight = setSaveImageHeight;
+//	}
 
 	public static int getPreviewWidth()
 	{

@@ -282,7 +282,7 @@ public class VideoCapturePlugin extends PluginCapture
 					if (cp != null)
 					{
 						setCameraPreviewSize();
-						CameraController.Size sz = CameraController.getInstance().new Size(
+						CameraController.Size sz = new CameraController.Size(
 								MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight());
 						MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 					}
@@ -738,7 +738,7 @@ public class VideoCapturePlugin extends PluginCapture
 			setCameraPreviewSize();
 			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(
-					CameraController.getInstance().new Size(sz.width, sz.height));
+					new CameraController.Size(sz.width, sz.height));
 		}
 		CameraController.startCameraPreview();
 
@@ -944,33 +944,33 @@ public class VideoCapturePlugin extends PluginCapture
 		previewSizes.put(QUALITY_4K, false);
 
 		List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();
-		if (psz.contains(CameraController.getInstance().new Size(176, 144)))
+		if (psz.contains(new CameraController.Size(176, 144)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_QCIF, true);
 			this.qualityQCIFSupported = true;
 		}
-		if (psz.contains(CameraController.getInstance().new Size(352, 288)))
+		if (psz.contains(new CameraController.Size(352, 288)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_CIF, true);
 			this.qualityCIFSupported = true;
 		}
-		if (psz.contains(CameraController.getInstance().new Size(640, 480)))
+		if (psz.contains(new CameraController.Size(640, 480)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_480P, true);
 			this.quality480Supported = true;
 		}
-		if (psz.contains(CameraController.getInstance().new Size(1280, 720)))
+		if (psz.contains(new CameraController.Size(1280, 720)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_720P, true);
 			this.quality720Supported = true;
 		}
-		if (psz.contains(CameraController.getInstance().new Size(1920, 1080))
-				|| psz.contains(CameraController.getInstance().new Size(1920, 1088)))
+		if (psz.contains(new CameraController.Size(1920, 1080))
+				|| psz.contains(new CameraController.Size(1920, 1088)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_1080P, true);
 			this.quality1080Supported = true;
 		}
-		if (psz.contains(CameraController.getInstance().new Size(4096, 2160)))
+		if (psz.contains(new CameraController.Size(4096, 2160)))
 		{
 			previewSizes.put(QUALITY_4K, true);
 			this.quality4KSupported = true;
@@ -1469,7 +1469,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (cp != null)
 		{
 			setCameraPreviewSize();
-			CameraController.Size sz = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(),
+			CameraController.Size sz = new CameraController.Size(MainScreen.getPreviewWidth(),
 					MainScreen.getPreviewHeight());
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
@@ -1663,10 +1663,10 @@ public class VideoCapturePlugin extends PluginCapture
 				switch (quality)
 				{
 				case CamcorderProfile.QUALITY_QCIF:
-					sz = CameraController.getInstance().new Size(176, 144);
+					sz = new CameraController.Size(176, 144);
 					break;
 				case CamcorderProfile.QUALITY_CIF:
-					sz = CameraController.getInstance().new Size(352, 288);
+					sz = new CameraController.Size(352, 288);
 					break;
 				case CamcorderProfile.QUALITY_1080P:
 					{
@@ -1683,17 +1683,17 @@ public class VideoCapturePlugin extends PluginCapture
 						} else
 						{
 							List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();
-							sz = CameraController.getInstance().new Size(1920, 1080);
+							sz = new CameraController.Size(1920, 1080);
 							if (!psz.contains(sz))
-								sz = CameraController.getInstance().new Size(1920, 1088);
+								sz = new CameraController.Size(1920, 1088);
 						}
 					}
 					break;
 				case CamcorderProfile.QUALITY_720P:
-					sz = CameraController.getInstance().new Size(1280, 720);
+					sz = new CameraController.Size(1280, 720);
 					break;
 				case CamcorderProfile.QUALITY_480P:
-					sz = CameraController.getInstance().new Size(640, 480);
+					sz = new CameraController.Size(640, 480);
 					break;
 				case QUALITY_4K:
 					{
@@ -1708,7 +1708,7 @@ public class VideoCapturePlugin extends PluginCapture
 							useProf = true;
 							lastUseProf = useProf;
 						} else
-							sz = CameraController.getInstance().new Size(4096, 2160);
+							sz = new CameraController.Size(4096, 2160);
 					}
 					break;
 				default:
@@ -2282,11 +2282,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		if (takingAlready)
-			return;
-
-		takingAlready = true;
-
 		try
 		{
 			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
@@ -2294,7 +2289,6 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			e.printStackTrace();
 			Log.e("Video capture still image", "takePicture exception: " + e.getMessage());
-			takingAlready = false;
 		}
 	}
 
@@ -2433,8 +2427,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-		takingAlready = false;
 	}
 
 	private int			frameCnt	= 0;

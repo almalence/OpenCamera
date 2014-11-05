@@ -154,11 +154,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
-		mImageWidth = MainScreen.getImageWidth();
-		mImageHeight = MainScreen.getImageHeight();
-
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		mImageWidth = imageSize.getWidth();
+		mImageHeight = imageSize.getHeight();
 
 		AlmaShotHDR.Initialize();
 //		Log.d("HDR", "almashot lib initialize success");
@@ -192,8 +190,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 			PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(mImageWidth));
+			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(mImageHeight));
 
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
@@ -571,7 +569,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
 
-			AlmaShotHDR.HDRPreview2a(MainScreen.getImageWidth(), MainScreen.getImageHeight(), pview,
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			AlmaShotHDR.HDRPreview2a(imageSize.getWidth(), imageSize.getHeight(), pview,
 					mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270,
 					this.exposure, this.vividness, this.contrast, this.microcontrast, mCameraMirrored);
 
@@ -755,12 +754,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	}
 
-	private int									SXP					= (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? MainScreen
-																			.getImageHeight() / 4 : MainScreen
-																			.getImageWidth() / 4;
-	private int									SYP					= (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? MainScreen
-																			.getImageWidth() / 4 : MainScreen
-																			.getImageHeight() / 4;
+	private int									SXP					=  0;
+	private int									SYP					=  0;
 	private int[]								pview;
 	private Bitmap								bitmap;
 
@@ -802,10 +797,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	{
 		postProcessingRun = true;
 
-		SXP = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? MainScreen
-				.getImageHeight() / 4 : MainScreen.getImageWidth() / 4;
-		SYP = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? MainScreen
-				.getImageWidth() / 4 : MainScreen.getImageHeight() / 4;
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		SXP = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? imageSize.getHeight() / 4
+				: imageSize.getWidth() / 4;
+		SYP = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? imageSize.getWidth() / 4
+				: imageSize.getHeight() / 4;
 
 		postProcessingView = LayoutInflater.from(MainScreen.getMainContext()).inflate(
 				R.layout.plugin_processing_hdr_adjustments, null);
@@ -1224,9 +1220,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
 			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID,
-					String.valueOf(MainScreen.getSaveImageWidth()));
+					String.valueOf(mImageWidth));
 			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID,
-					String.valueOf(MainScreen.getSaveImageHeight()));
+					String.valueOf(mImageHeight));
 		}
 	}
 

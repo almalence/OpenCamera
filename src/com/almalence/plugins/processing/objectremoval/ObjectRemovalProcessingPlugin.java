@@ -122,17 +122,18 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int iSaveImageWidth = imageSize.getWidth();
+		int iSaveImageHeight = imageSize.getHeight();
 
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
-			imgWidthOR = MainScreen.getImageHeight();
-			imgHeightOR = MainScreen.getImageWidth();
+			imgWidthOR = imageSize.getHeight();
+			imgHeightOR = imageSize.getWidth();
 		} else
 		{
-			imgWidthOR = MainScreen.getImageWidth();
-			imgHeightOR = MainScreen.getImageHeight();
+			imgWidthOR = imageSize.getWidth();
+			imgHeightOR = imageSize.getHeight();
 		}
 
 		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
@@ -154,7 +155,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 		try
 		{
-			Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
 			int minSize = 1000;
@@ -290,7 +291,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		Point dis = new Point();
 		display.getSize(dis);
 
-		float imageRatio = (float) MainScreen.getImageWidth() / (float) MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		float imageRatio = (float) imageSize.getWidth() / (float) imageSize.getHeight();
 		float displayRatio = (float) dis.y / (float) dis.x;
 
 		if (imageRatio > displayRatio)

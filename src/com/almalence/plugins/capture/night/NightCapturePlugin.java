@@ -162,7 +162,6 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		inCapture = false;
 
 		MainScreen.getInstance().muteShutter(false);
@@ -285,15 +284,17 @@ public class NightCapturePlugin extends PluginCapture
 		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
+		
+		CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
 
-		MainScreen.setSaveImageWidth(imgCaptureWidth);
-		MainScreen.setSaveImageHeight(imgCaptureHeight);
-
-		MainScreen.setImageWidth(imgCaptureWidth);
-		MainScreen.setImageHeight(imgCaptureHeight);
+//		MainScreen.setSaveImageWidth(imgCaptureWidth);
+//		MainScreen.setSaveImageHeight(imgCaptureHeight);
+//
+//		MainScreen.setImageWidth(imgCaptureWidth);
+//		MainScreen.setImageHeight(imgCaptureHeight);
 
 		Log.i("NightCapturePlugin", "NightCapturePlugin.setCameraImageSize SX = " +
-				MainScreen.getImageWidth() + " SY = " + MainScreen.getImageHeight());
+				imgCaptureWidth + " SY = " + imgCaptureHeight);
 	}
 	
 	@Override
@@ -301,7 +302,8 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
-		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
@@ -310,7 +312,8 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void setCameraPictureSize()
 	{
-		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		CameraController.getInstance().setPictureSize(imageSize.getWidth(), imageSize.getHeight());
 		
 		// ensure image data coming as intact as possible
 		CameraController.getInstance().setJpegQuality(100);
@@ -467,75 +470,43 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onShutterClick()
 	{
-		if (!takingAlready)
-			startCaptureSequence();
+		if (!inCapture)
+		{
+			inCapture = true;
+			
+			if (!aboutToTakePicture)
+				startCaptureSequence();
+		}
 	}
 
 	private void startCaptureSequence()
 	{
 		MainScreen.getInstance().muteShutter(true);
 
-		if (!inCapture)
+		Date curDate = new Date();
+		SessionID = curDate.getTime();
+
+		LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
+
+		if (!CameraController.isUseHALv3())
 		{
-			Date curDate = new Date();
-			SessionID = curDate.getTime();
+			capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
+			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+			capturingDialog.show();
+		}
 
-			inCapture = true;
-			takingAlready = false;
+		// reiniting for every shutter press
+		imagesTaken = 0;
+		total_frames = HI_RES_FRAMES;
 
-			LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
-
-			if (!CameraController.isUseHALv3())
-			{
-				capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
-				capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
-				capturingDialog.show();
-			}
-
-			// reiniting for every shutter press
-			imagesTaken = 0;
-			total_frames = HI_RES_FRAMES;
-
-			if (FocusPreference.compareTo("0") == 0)
-			{
+		if (FocusPreference.compareTo("0") == 0)
+			captureFrames();
+		else
+		{
+			if(CameraController.isAutoFocusPerform())
+				aboutToTakePicture = true;
+			else
 				captureFrames();
-				takingAlready = true;
-			} else
-			{
-				int focusState = CameraController.getFocusState();
-				int focusMode = CameraController.getInstance().getFocusMode();
-				if ( (focusState == CameraController.FOCUS_STATE_IDLE ||
-						focusState == CameraController.FOCUS_STATE_FOCUSING)
-						&& focusMode != -1
-						&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-								|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-								|| focusMode == CameraParameters.AF_MODE_INFINITY
-								|| focusMode == CameraParameters.AF_MODE_FIXED
-								|| focusMode == CameraParameters.AF_MODE_EDOF)
-						&& !MainScreen.getAutoFocusLock())
-					aboutToTakePicture = true;
-				else if (focusMode != -1
-						&& (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-						||  focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
-				{
-					captureFrames();
-					takingAlready = true;
-				}
-				else if(!takingAlready && focusState == CameraController.FOCUS_STATE_FOCUSED)
-				{
-					captureFrames();
-					takingAlready = true;
-				}
-				else
-				{
-					inCapture = false;
-
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-							PluginManager.MSG_CONTROL_UNLOCKED);
-
-					MainScreen.getGUIManager().lockControls = false;
-				}
-			}
 		}
 	}
 
@@ -573,24 +544,10 @@ public class NightCapturePlugin extends PluginCapture
 					String.valueOf(sensorGain));
 		}
 		
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			takingAlready = false;
-//			return;
-//		}
-
 		if (++imagesTaken == total_frames)
 		{
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
-			takingAlready = false;
 			inCapture = false;
 		}
 
@@ -662,21 +619,6 @@ public class NightCapturePlugin extends PluginCapture
 				data2 = null;
 				dataS = null;
 			}
-		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (inCapture) // disregard autofocus success (paramBoolean)
-		{
-			if (aboutToTakePicture)
-			{
-				captureFrames();
-				takingAlready = true;
-			}
-
-			aboutToTakePicture = false;
 		}
 	}
 

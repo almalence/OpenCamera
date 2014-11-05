@@ -27,6 +27,7 @@ package com.almalence.plugins.processing.bestshot;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
 
@@ -55,11 +56,10 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 
-		int mImageWidth = MainScreen.getImageWidth();
-		int mImageHeight = MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int mImageWidth = imageSize.getWidth();
+		int mImageHeight = imageSize.getHeight();
 
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
 		if (num == null)
@@ -101,12 +101,12 @@ public class BestshotProcessingPlugin extends PluginProcessing
 
 		if (orientation == 90 || orientation == 270)
 		{
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageHeight));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageWidth));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(mImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(mImageWidth));
 		} else
 		{
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(mImageWidth));
+			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(mImageHeight));
 		}
 
 		int frame = compressed_frame[idxResult];

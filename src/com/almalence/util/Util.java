@@ -740,7 +740,8 @@ public final class Util
 
 		// RAW size of picture is width*height*3 (rgb). JPEG compress picture on
 		// average 86% (compress quality 95)
-		double imageSize = ((double) (MainScreen.getSaveImageWidth() * MainScreen.getSaveImageHeight() * 3 * 0.14) / 1048576d);
+		CameraController.Size saveImageSize = CameraController.getCameraImageSize();
+		double imageSize = ((double) (saveImageSize.getWidth() * saveImageSize.getHeight() * 3 * 0.14) / 1048576d);
 		if (imageSize == 0)
 			return 0;
 

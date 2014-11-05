@@ -486,7 +486,7 @@ public class HALv3
 			CameraController.MultishotResolutionsNamesList.add(loc, newName);
 			CameraController.MultishotResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.MultishotResolutionsMPixList.add(loc, lmpix);
-			CameraController.MultishotResolutionsSizeList.add(loc, CameraController.getInstance().new Size(
+			CameraController.MultishotResolutionsSizeList.add(loc, new CameraController.Size(
 					currSizeWidth, currSizeHeight));
 		}
 	}
@@ -503,7 +503,7 @@ public class HALv3
 			{
 				if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
 					sz = new Size(1920, 1088);
-				previewSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+				previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 			}
 		
 		return previewSizes;
@@ -518,7 +518,7 @@ public class HALv3
 		{
 			if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
 				sz = new Size(1920, 1088);
-			pictureSizes.add(CameraController.getInstance().new Size(sz.getWidth(), sz.getHeight()));
+			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 		}
 	}
 
@@ -1698,6 +1698,7 @@ public class HALv3
 						return;
 					}
 
+					CameraController.Size imageSize = CameraController.getCameraImageSize();
 					// Note: android documentation guarantee that:
 					// - Y pixel stride is always 1
 					// - U and V strides are the same
@@ -1705,7 +1706,7 @@ public class HALv3
 					int status = YuvImage.CreateYUVImage(Y, U, V, im.getPlanes()[0].getPixelStride(),
 							im.getPlanes()[0].getRowStride(), im.getPlanes()[1].getPixelStride(),
 							im.getPlanes()[1].getRowStride(), im.getPlanes()[2].getPixelStride(),
-							im.getPlanes()[2].getRowStride(), MainScreen.getImageWidth(), MainScreen.getImageHeight());
+							im.getPlanes()[2].getRowStride(), imageSize.getWidth(), imageSize.getHeight());
 
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: " + status);
@@ -1717,8 +1718,8 @@ public class HALv3
 						frame = YuvImage.GetFrame();
 					
 					
-					frame_len = MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
-								* ((MainScreen.getImageHeight() + 1) / 2);
+					frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()
+								* ((imageSize.getHeight() + 1) / 2);
 					
 					isYUV = true;
 					

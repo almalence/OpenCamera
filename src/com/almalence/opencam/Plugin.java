@@ -59,6 +59,7 @@ import com.almalence.opencam_plus.cameracontroller.CameraController;
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
+import com.almalence.opencam.cameracontroller.CameraController.Size;
 
 /***
  * Abstract class for plugins
@@ -354,18 +355,15 @@ public abstract class Plugin
 		}
 
 		CameraController.setCameraImageSizeIndex(CaptureIdx, true);
-		MainScreen.setImageWidth(CaptureWidth);
-		MainScreen.setImageHeight(CaptureHeight);
-
-		MainScreen.setSaveImageWidth(CaptureWidth);
-		MainScreen.setSaveImageHeight(CaptureHeight);
+		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
 	}
 
 	public void setCameraPreviewSize()
 	{
 		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
 
-		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
 		CameraController.getInstance().setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
@@ -381,8 +379,9 @@ public abstract class Plugin
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
+		Size imageSize = CameraController.getCameraImageSize();
 		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		cp.setPictureSize(imageSize.getWidth(), imageSize.getHeight());
 		cp.setJpegQuality(jpegQuality);
 		try
 		{

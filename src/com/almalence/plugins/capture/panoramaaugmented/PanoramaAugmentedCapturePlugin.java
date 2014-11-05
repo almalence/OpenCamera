@@ -98,6 +98,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private final static int			MIN_HEIGHT_SUPPORTED			= 640;
 	private final static List<Point>	ResolutionsPictureSizesList		= new ArrayList<Point>();
+	
+	private static boolean takingAlready = false;
 
 	public static List<Point> getResolutionspicturesizeslist()
 	{
@@ -476,12 +478,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		synchronized (this.engine)
 		{
 			if (this.inCapture)
-			{
-				if (!this.takingAlready)
-				{
-					this.stopCapture();
-				}
-			}
+				this.stopCapture();
 		}
 
 		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
@@ -500,7 +497,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (this.inCapture && !this.takingAlready)
+			if (this.inCapture)
 			{
 				if (this.engine != null)
 				{
@@ -578,7 +575,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
+				additional = new CameraController.Size(3264, 2448);
 				additional.setWidth(3264);
 				additional.setHeight(2448);
 				cs.add(additional);
@@ -590,8 +587,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		// Log.d(TAG, String.format("Picture dimensions: %dx%d",
 		// size.getWidth(), size.getHeight()));
 
-		MainScreen.setImageWidth(this.pictureWidth);
-		MainScreen.setImageHeight(this.pictureHeight);
+		CameraController.setCameraImageSize(new CameraController.Size(this.pictureWidth, this.pictureHeight));
 	}
 
 	@Override
@@ -634,7 +630,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
+				additional = new CameraController.Size(3264, 2448);
 				additional.setWidth(3264);
 				additional.setHeight(2448);
 				picture_sizes.add(additional);
@@ -644,8 +640,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
 
-		MainScreen.setImageWidth(this.pictureWidth);
-		MainScreen.setImageHeight(this.pictureHeight);
+		CameraController.setCameraImageSize(new CameraController.Size(this.pictureWidth, this.pictureHeight));
+//		MainScreen.setImageWidth(this.pictureWidth);
+//		MainScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
 
@@ -942,7 +939,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!CameraController.isFrontCamera())
 			{
 				CameraController.Size additional = null;
-				additional = CameraController.getInstance().new Size(3264, 2448);
+				additional = new CameraController.Size(3264, 2448);
 				additional.setWidth(3264);
 				additional.setHeight(2448);
 				cs.add(additional);
@@ -1459,11 +1456,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				PixelsShiftX = angleX * R;
 				PixelsShiftY = angleY * R;
 
+				CameraController.Size imageSize = CameraController.getCameraImageSize();
 				// convert rotation around center into rotation around top-left
 				// corner
-				PixelsShiftX += MainScreen.getImageWidth() / 2 * (1 - FloatMath.cos(angleR))
-						+ MainScreen.getImageHeight() / 2 * FloatMath.sin(angleR);
-				PixelsShiftY += -MainScreen.getImageWidth() / 2 * FloatMath.sin(angleR) + MainScreen.getImageHeight()
+				PixelsShiftX += imageSize.getWidth() / 2 * (1 - FloatMath.cos(angleR))
+						+ imageSize.getHeight() / 2 * FloatMath.sin(angleR);
+				PixelsShiftY += -imageSize.getWidth() / 2 * FloatMath.sin(angleR) + imageSize.getHeight()
 						/ 2 * (1 - FloatMath.cos(angleR));
 
 				PluginManager.getInstance().addToSharedMem("pano_frame" + (frame_cursor + 1) + "." + SessionID,

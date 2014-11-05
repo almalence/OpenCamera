@@ -1886,8 +1886,9 @@ public class PluginManager implements PluginManagerInterface
 			if (null != processing)
 				if (!processing.isPostProcessingNeeded())
 				{
-					addToSharedMem("imageHeight" + SessionID, String.valueOf(MainScreen.getImageHeight()));
-					addToSharedMem("imageWidth" + SessionID, String.valueOf(MainScreen.getImageWidth()));
+					CameraController.Size imageSize = CameraController.getCameraImageSize();
+					addToSharedMem("imageHeight" + SessionID, String.valueOf(imageSize.getHeight()));
+					addToSharedMem("imageWidth" + SessionID, String.valueOf(imageSize.getWidth()));
 					addToSharedMem("wantLandscapePhoto" + SessionID, String.valueOf(MainScreen.getWantLandscapePhoto()));
 					addToSharedMem("CameraMirrored" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 				}
@@ -2933,8 +2934,7 @@ public class PluginManager implements PluginManagerInterface
 	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,
 			File file) throws IOException
 	{
-		int iImageWidth = MainScreen.getImageWidth();
-		int iImageHeight = MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
 		Boolean orientationLandscape = false;
@@ -2959,8 +2959,8 @@ public class PluginManager implements PluginManagerInterface
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
-				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, iImageWidth,
-						iImageHeight, null);
+				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, imageSize.getWidth(),
+						imageSize.getHeight(), null);
 				// to avoid problems with SKIA
 				int cropHeight = image.getHeight() - image.getHeight() % 16;
 				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);

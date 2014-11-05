@@ -165,8 +165,22 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
+		int iSaveImageWidth = 0;
+		int iSaveImageHeight = 0;
+		
+		if(isSlowMode)
+		{
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			iSaveImageWidth = imageSize.getWidth();
+			iSaveImageHeight = imageSize.getHeight();
+			
+		}
+		else
+		{
+			iSaveImageWidth = MainScreen.getPreviewWidth();
+			iSaveImageHeight = MainScreen.getPreviewHeight();
+		}
 
 		if (imagesAmount == 0)
 			imagesAmount = 1;
@@ -900,7 +914,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		} else if (isSlowMode)
 		{
-			byte[] data = PreShot.GetFromBufferSimpleNV21(i, MainScreen.getImageHeight(), MainScreen.getImageWidth());
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			byte[] data = PreShot.GetFromBufferSimpleNV21(i, imageSize.getWidth(), imageSize.getHeight());
 
 			if (data.length == 0)
 				return;

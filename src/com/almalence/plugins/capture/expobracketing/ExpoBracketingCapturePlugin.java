@@ -62,8 +62,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public static int[]			evIdx					= new int[MAX_HDR_FRAMES];
 	private int					cur_ev, frame_num;
 	public static float			ev_step;
-	private int					evRequested, evLatency;
-	private boolean				aboutToTakePicture		= false;
+	private int					evRequested, evLatency;	
 	private boolean				cm7_crap;
 
 	// shared between activities
@@ -117,7 +116,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		inCapture = false;
 		evRequested = 0;
 		evLatency = 0;
@@ -177,7 +175,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
-		CameraController.getInstance().setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		CameraController.getInstance().setPictureSize(imageSize.getWidth(), imageSize.getHeight());
 		CameraController.getInstance().setJpegQuality(jpegQuality);
 
 //		CameraController.getInstance().applyCameraParameters();
@@ -201,7 +200,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 	public void onShutterClick()
 	{
-		if (!takingAlready && !inCapture)
+		if (!inCapture)
 		{
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
@@ -210,8 +209,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			cdt = null;
 			startCaptureSequence();
 		}
-		else
-			Log.e("HDR", "onShutterClick2 takingAlready == " + takingAlready + " && inCapture == " + inCapture);
 	}
 
 	private void startCaptureSequence()
@@ -221,42 +218,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if (!inCapture)
 		{
 			inCapture = true;
-			takingAlready = false;
 
 			// reiniting for every shutter press
 			cur_ev = 0;
 			frame_num = 0;
 
-			int focusMode = CameraController.getInstance().getFocusMode();
-			if ((CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
-							.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					&& focusMode != -1
-					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-							|| focusMode == CameraParameters.AF_MODE_INFINITY
-							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-					&& !MainScreen.getAutoFocusLock())
+			if(CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;
-			else if ((focusMode != -1 && (focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-							|| focusMode == CameraParameters.AF_MODE_INFINITY
-							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)))
-			{
+			else
 				CaptureFrame();
-				takingAlready = true;
-			}
-			else if(!takingAlready && CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSED)
-			{
-				CaptureFrame();
-				takingAlready = true;
-			} else
-			{
-				inCapture = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
-
-				MainScreen.getGUIManager().lockControls = false;
-			}
 		}
 	}
 
@@ -338,7 +308,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.getInstance().resetExposureCompensation();
 			
 			inCapture = false;
-			takingAlready = false;
 		}
 	}
 
@@ -475,9 +444,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				min_ev = -max_ev;
 			}
 
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
 			// if capturing more than 5mpix images - force no more than 3 frames
 			int max_total_frames = MAX_HDR_FRAMES;
-			if (MainScreen.getImageWidth() * MainScreen.getImageHeight() > 5200000)
+			if (imageSize.getWidth() * imageSize.getHeight() > 5200000)
 				max_total_frames = 3;
 
 			// motorola likes it a lot when the first shot is at 0Ev
@@ -571,11 +541,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			// startPreview,
 			// causing additional frame(s) taken after sequence is finished
 			if (aboutToTakePicture)
-			{
-//				Log.d("HDR", "onAutoFocus aboutToTakePicture == true");
 				CaptureFrame();
-				takingAlready = true;
-			}
+			
 			aboutToTakePicture = false;
 		}
 	}

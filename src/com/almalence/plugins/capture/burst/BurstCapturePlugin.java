@@ -81,7 +81,6 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
 		refreshPreferences();
@@ -188,7 +187,6 @@ public class BurstCapturePlugin extends PluginCapture
 	{
 		refreshPreferences();
 		inCapture = true;
-		takingAlready = true;
 		
 		try
 		{
@@ -200,7 +198,6 @@ public class BurstCapturePlugin extends PluginCapture
 			e.printStackTrace();
 			Log.e("CameraController.captureImagesWithParams failed", "takePicture: " + e.getMessage());
 			inCapture = false;
-			takingAlready = false;
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_CONTROL_UNLOCKED);
 			MainScreen.getGUIManager().lockControls = false;
@@ -257,7 +254,6 @@ public class BurstCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			
-			takingAlready = false;
 			inCapture = false;
 		}
 				
@@ -274,20 +270,7 @@ public class BurstCapturePlugin extends PluginCapture
 		}
 	}
 	
-	@Override
-	public void onExportFinished()
-	{
-		
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (takingAlready)
-			takePicture();
-	}
-
-
+	
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{

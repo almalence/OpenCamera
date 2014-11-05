@@ -73,7 +73,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
 
@@ -95,25 +94,18 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		if (!inCapture)
+		try
 		{
-			inCapture = true;
-			takingAlready = true;
-
-			try
-			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-						pauseBetweenShots, null, true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
+					pauseBetweenShots, null, true);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
+			inCapture = false;
+			PluginManager.getInstance()
+					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			MainScreen.getGUIManager().lockControls = false;
 		}
 	}
 
@@ -179,7 +171,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 				}
 			}.start();
 		}
-		takingAlready = false;
 	}
 
 	@TargetApi(21)
@@ -191,13 +182,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (takingAlready)
-			takePicture();
 	}
 
 	@Override
@@ -216,11 +200,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
-			MainScreen.setSaveImageWidth(imgCaptureWidth);
-			MainScreen.setSaveImageHeight(imgCaptureHeight);
-
-			MainScreen.setImageWidth(imgCaptureWidth);
-			MainScreen.setImageHeight(imgCaptureHeight);
+			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
+//			MainScreen.setSaveImageWidth(imgCaptureWidth);
+//			MainScreen.setSaveImageHeight(imgCaptureHeight);
+//
+//			MainScreen.setImageWidth(imgCaptureWidth);
+//			MainScreen.setImageHeight(imgCaptureHeight);
 		}
 	}
 

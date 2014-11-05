@@ -224,6 +224,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// Image size index for capturing
 	private static int								CapIdx;
+	
+	private static Size								imageSize;
 
 	public static final int							MIN_MPIX_SUPPORTED				= 1280 * 720;
 
@@ -910,7 +912,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				List<Camera.Size> list = camera.getParameters().getSupportedPreviewSizes();
 				for (Camera.Size sz : list)
-					CameraController.SupportedPreviewSizesList.add(CameraController.getInstance().new Size(sz.width,
+					CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width,
 							sz.height));
 			}
 		} else
@@ -926,7 +928,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
 				for (Camera.Size sz : list)
-					CameraController.SupportedPictureSizesList.add(CameraController.getInstance().new Size(sz.width,
+					CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width,
 							sz.height));
 			}
 		} else
@@ -1064,7 +1066,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.ResolutionsNamesList.add(loc, newName);
 			CameraController.ResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.ResolutionsMPixList.add(loc, lmpix);
-			CameraController.ResolutionsSizeList.add(loc, CameraController.getInstance().new Size(currSizeWidth,
+			CameraController.ResolutionsSizeList.add(loc, new CameraController.Size(currSizeWidth,
 					currSizeHeight));
 		}
 	}
@@ -1184,7 +1186,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.MultishotResolutionsNamesList.add(loc, newName);
 			CameraController.MultishotResolutionsIdxesList.add(loc, String.format("%d", ii));
 			CameraController.MultishotResolutionsMPixList.add(loc, lmpix);
-			CameraController.MultishotResolutionsSizeList.add(loc, CameraController.getInstance().new Size(
+			CameraController.MultishotResolutionsSizeList.add(loc, new CameraController.Size(
 					currSizeWidth, currSizeHeight));
 		}
 	}
@@ -1198,7 +1200,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				List<CameraController.Size> sizes = SupportedPreviewSizesList;
 				for (CameraController.Size sz : sizes)
-					previewSizes.add(this.new Size(sz.getWidth(), sz.getHeight()));
+					previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 			} else
 			{
 				Log.d(TAG, "SupportedPreviewSizesList == null");
@@ -1238,7 +1240,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				List<Camera.Size> sizes = camera.getParameters().getSupportedPictureSizes();
 				for (Camera.Size sz : sizes)
-					pictureSizes.add(this.new Size(sz.width, sz.height));
+					pictureSizes.add(new CameraController.Size(sz.width, sz.height));
 			} else
 			{
 				Log.d(TAG, "camera == null");
@@ -1883,6 +1885,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				String supportedIsoValues = camParams.get("iso-values");
 				String supportedIsoValues2 = camParams.get("iso-speed-values");
 				String supportedIsoValues3 = camParams.get("iso-mode-values");
+				String supportedIsoValues4 = camParams.get("nv-picture-iso-values");
 
 				String delims = "[,]+";
 				String[] isoList = null;
@@ -1893,6 +1896,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					isoList = supportedIsoValues2.split(delims);
 				else if (supportedIsoValues3 != null && !supportedIsoValues3.equals(""))
 					isoList = supportedIsoValues3.split(delims);
+				else if (supportedIsoValues4 != null && !supportedIsoValues4.equals(""))
+					isoList = supportedIsoValues4.split(delims);
 
 				if (isoList != null)
 				{
@@ -1990,6 +1995,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			prefs.edit().putString(CameraIndex == 0 ? MainScreen.sImageSizeRearPref
 					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
 		}
+	}
+	
+	public static void setCameraImageSize(Size imgSize)
+	{
+		imageSize = imgSize;
+	}
+	
+	public static Size getCameraImageSize()
+	{
+		return imageSize;
 	}
 
 	public static boolean isModeAvailable(int[] modeList, int mode)
@@ -2240,12 +2255,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam, CameraController.mode_iso.get(mode));
 						else if (params.get(CameraParameters.isoParam2) != null)
 							params.set(CameraParameters.isoParam2, CameraController.mode_iso.get(mode));
+						else if (params.get(CameraParameters.isoParam3) != null)
+							params.set(CameraParameters.isoParam3, CameraController.mode_iso.get(mode));
 						if (!this.setCameraParameters(params))
 						{
 							if (params.get(CameraParameters.isoParam) != null)
 								params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
 							else if (params.get(CameraParameters.isoParam2) != null)
 								params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+							else if (params.get(CameraParameters.isoParam3) != null)
+								params.set(CameraParameters.isoParam3, CameraController.mode_iso2.get(mode));
 							
 							this.setCameraParameters(params);
 						}
@@ -2364,6 +2383,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static int getFocusState()
 	{
 		return mFocusState;
+	}
+	
+	public static boolean isAutoFocusPerform()
+	{
+		int focusMode = CameraController.getInstance().getFocusMode();
+		if (focusMode != -1
+				&& (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
+						.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
+						|| focusMode == CameraParameters.AF_MODE_INFINITY
+						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
+				&& !MainScreen.getAutoFocusLock())
+			return true;
+		else
+			return false;
 	}
 
 	public int getPreviewFrameRate()
@@ -2572,11 +2607,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		// is YUV frame requested
 		{
-			new DecodeToYUVFrameTask().execute(paramArrayOfByte);
-//			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
-//					MainScreen.getImageHeight(), false, false, 0);
-//			int frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
-//					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+//			new DecodeToYUVFrameTask().execute(paramArrayOfByte);
+			
+			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(),
+	    			imageSize.getHeight(), false, false, 0);
+			int frameLen = imageSize.getWidth() * imageSize.getHeight() + 2
+					* ((imageSize.getWidth() + 1) / 2) * ((imageSize.getHeight() + 1) / 2);
+
+			byte[] frameData = null;
+			if (!resultInHeap)
+			{
+				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
+				yuvFrame = 0;
+			}			
+			
+			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			
+//			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(),
+//					imageSize.getHeight(), false, false, 0);
+//			int frameLen = imageSize.getWidth() * imageSize.getHeight() + 2
+//					* ((imageSize.getWidth() + 1) / 2) * ((imageSize.getHeight() + 1) / 2);
 //
 //			byte[] frameData = null;
 //			if (!resultInHeap)
@@ -2635,11 +2685,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		@Override
 	     protected Void doInBackground(byte[]...params)
 	     {
-	    	byte[] paramArrayOfByte = params[0];
-	    	yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, MainScreen.getImageWidth(),
-					MainScreen.getImageHeight(), false, false, 0);
-			frameLen = MainScreen.getImageWidth() * MainScreen.getImageHeight() + 2
-					* ((MainScreen.getImageWidth() + 1) / 2) * ((MainScreen.getImageHeight() + 1) / 2);
+	    	byte[] paramArrayOfByte = params[0];	    	
+	    	yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(),
+	    			imageSize.getHeight(), false, false, 0);
+			frameLen = imageSize.getWidth() * imageSize.getHeight() + 2
+					* ((imageSize.getWidth() + 1) / 2) * ((imageSize.getHeight() + 1) / 2);
 
 			frameData = null;
 			if (!resultInHeap)
@@ -2703,7 +2753,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				int jpegData = 0;
 				// int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte,
-				// MainScreen.getImageWidth(), MainScreen.getImageHeight(),
+				// imageSize.getWidth(), imageSize.getHeight(),
 				// false, false, 0);
 				// pluginManager.onImageTaken(yuvFrame, null, 0, true);
 			}
@@ -2755,8 +2805,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (im.getFormat() == ImageFormat.YUV_420_888)
 		{
-			return MainScreen.getImageWidth() * MainScreen.getImageHeight() + MainScreen.getImageWidth()
-					* ((MainScreen.getImageHeight() + 1) / 2);
+			return imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()
+					* ((imageSize.getHeight() + 1) / 2);
 		} else if (im.getFormat() == ImageFormat.JPEG)
 		{
 			ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
@@ -2769,7 +2819,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// ^^^^^^^^^^^^^^^^^^^^^ Image data manipulation ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-	public class Size
+	public static class Size
 	{
 		private int	mWidth;
 		private int	mHeight;
@@ -2916,8 +2966,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		case MSG_TAKE_IMAGE:
 			synchronized (SYNC_OBJECT)
 			{
-				int imageWidth = MainScreen.getImageWidth();
-				int imageHeight = MainScreen.getImageHeight();
+				int imageWidth = imageSize.getWidth();
+				int imageHeight = imageSize.getHeight();
 				int previewWidth = MainScreen.getPreviewWidth();
 				int previewHeight = MainScreen.getPreviewHeight();
 

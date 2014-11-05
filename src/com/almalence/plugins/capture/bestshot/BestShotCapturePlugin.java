@@ -64,7 +64,6 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
 //		refreshPreferences();
@@ -157,27 +156,19 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		if (!inCapture)
+		try
 		{
-			inCapture = true;
-//			refreshPreferences();
-			takingAlready = true;
-			
-			try
-			{
-				int[] pause = new int[imageAmount];
-				Arrays.fill(pause, 50);
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
+			int[] pause = new int[imageAmount];
+			Arrays.fill(pause, 50);
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, true);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
+			inCapture = false;
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
+					PluginManager.MSG_CONTROL_UNLOCKED);
+			MainScreen.getGUIManager().lockControls = false;
 		}
 	}
 
@@ -208,20 +199,6 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.e("Bestshot", "StartPreview fail");
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			return;
-//		}
-		
 		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -231,8 +208,8 @@ public class BestShotCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 			
 			imagesTaken = 0;
+			inCapture = false;
 		}
-		takingAlready = false;	
 	}
 
 	@TargetApi(21)
@@ -246,14 +223,6 @@ public class BestShotCapturePlugin extends PluginCapture
 		}
 	}
 
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (takingAlready)
-			takePicture();
-	}
-
-	
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
