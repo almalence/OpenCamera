@@ -1178,35 +1178,6 @@ public class PluginManager implements PluginManagerInterface
 		pf.addPreferencesFromResource(R.xml.preferences_advanced_common);
 	}
 
-	// show preference's value in summary on start
-	public void showInitialSummary(PreferenceActivity prefActivity)
-	{
-		Plugin tmp;
-		for (int i = 0; i < activeVF.size(); i++)
-		{
-			tmp = pluginList.get(activeVF.get(i));
-			tmp.showInitialSummary(prefActivity);
-		}
-
-		tmp = pluginList.get(activeCapture);
-		if (null != tmp)
-			tmp.showInitialSummary(prefActivity);
-
-		tmp = pluginList.get(activeProcessing);
-		if (null != tmp)
-			tmp.showInitialSummary(prefActivity);
-
-		for (int i = 0; i < activeFilter.size(); i++)
-		{
-			tmp = pluginList.get(activeFilter.get(i));
-			tmp.showInitialSummary(prefActivity);
-		}
-
-		tmp = pluginList.get(activeExport);
-		if (null != tmp)
-			tmp.showInitialSummary(prefActivity);
-	}
-
 	protected boolean isPreferenecesAvailable(List<Plugin> plugins, boolean isAdvanced)
 	{
 		boolean isAvailable = false;
@@ -1281,12 +1252,6 @@ public class PluginManager implements PluginManagerInterface
 	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).setCameraPreviewSize();
-	}
-
-	public void setCameraPictureSize()
-	{
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).setCameraPictureSize();
 	}
 
 	@Override
@@ -1750,7 +1715,7 @@ public class PluginManager implements PluginManagerInterface
 
 	public boolean addToSharedMemExifTagsFromCamera(final long SessionID)
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params == null)
 			return false;
 
@@ -1763,7 +1728,7 @@ public class PluginManager implements PluginManagerInterface
 
 		String s4 = null;
 		if (MainScreen.getGUIManager().mISOSupported)
-			s4 = String.valueOf(CameraController.getInstance().getISOMode());
+			s4 = String.valueOf(CameraController.getISOMode());
 
 		if (s1 != null)
 			addToSharedMem("exiftag_white_balance" + SessionID, s1);
@@ -2061,8 +2026,8 @@ public class PluginManager implements PluginManagerInterface
 					{
 						try
 						{
-							flashModeBackUp = CameraController.getInstance().getFlashMode();
-							CameraController.getInstance().setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+							flashModeBackUp = CameraController.getFlashMode();
+							CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
 						} catch (Exception e)
 						{
 							e.printStackTrace();
@@ -2081,8 +2046,8 @@ public class PluginManager implements PluginManagerInterface
 				countdownHandler.removeCallbacks(flashOff);
 				finalcountdownHandler.removeCallbacks(flashBlink);
 				if (delayedCaptureFlashPrefCommon)
-					if (CameraController.getInstance().getSupportedFlashModes() != null)
-						CameraController.getInstance().setCameraFlashMode(flashModeBackUp);
+					if (CameraController.getSupportedFlashModes() != null)
+						CameraController.setCameraFlashMode(flashModeBackUp);
 
 				Message msg = new Message();
 				msg.what = PluginManager.MSG_DELAYED_CAPTURE;
@@ -2137,7 +2102,7 @@ public class PluginManager implements PluginManagerInterface
 									{
 										public void run()
 										{
-											CameraController.getInstance().setCameraFlashMode(
+											CameraController.setCameraFlashMode(
 													CameraParameters.FLASH_MODE_OFF);
 										}
 									};
@@ -2152,12 +2117,12 @@ public class PluginManager implements PluginManagerInterface
 											{
 												if (isFlashON)
 												{
-													CameraController.getInstance().setCameraFlashMode(
+													CameraController.setCameraFlashMode(
 															CameraParameters.FLASH_MODE_OFF);
 													isFlashON = false;
 												} else
 												{
-													CameraController.getInstance().setCameraFlashMode(
+													CameraController.setCameraFlashMode(
 															CameraParameters.FLASH_MODE_TORCH);
 													isFlashON = true;
 												}
@@ -2659,7 +2624,7 @@ public class PluginManager implements PluginManagerInterface
 						exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
 					} else
 					{
-						int sceneMode = CameraController.getInstance().getSceneMode();
+						int sceneMode = CameraController.getSceneMode();
 
 						int sceneModeVal = 0;
 						if (sceneMode == CameraParameters.SCENE_MODE_LANDSCAPE)
@@ -2688,7 +2653,7 @@ public class PluginManager implements PluginManagerInterface
 					{
 						exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
 
-						int whiteBalance = CameraController.getInstance().getWBMode();
+						int whiteBalance = CameraController.getWBMode();
 						int whiteBalanceVal = 0;
 						int lightSourceVal = 0;
 						if (whiteBalance == CameraParameters.WB_MODE_AUTO)

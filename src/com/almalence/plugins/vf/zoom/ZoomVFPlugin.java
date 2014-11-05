@@ -265,9 +265,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		zoomCurrent = 0;
 
-		if (CameraController.getInstance().isZoomSupported())
+		if (CameraController.isZoomSupported())
 		{
-			zoomBar.setMax(CameraController.getInstance().getMaxZoom());
+			zoomBar.setMax(CameraController.getMaxZoom());
 			zoomBar.setProgressAndThumb(0);
 			zoomPanel.setVisibility(View.VISIBLE);
 		} else
@@ -276,7 +276,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 	private void zoomModify(int delta)
 	{
-		if (CameraController.getInstance().isZoomSupported())
+		if (CameraController.isZoomSupported())
 		{
 			try
 			{
@@ -285,12 +285,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 				if (zoomCurrent < 0)
 				{
 					zoomCurrent = 0;
-				} else if (zoomCurrent > CameraController.getInstance().getMaxZoom())
+				} else if (zoomCurrent > CameraController.getMaxZoom())
 				{
-					zoomCurrent = CameraController.getInstance().getMaxZoom();
+					zoomCurrent = CameraController.getMaxZoom();
 				}
 
-				CameraController.getInstance().setZoom(zoomCurrent);
+				CameraController.setZoom(zoomCurrent);
 
 				zoomBar.setProgressAndThumb(zoomCurrent);
 			} catch (Exception e)

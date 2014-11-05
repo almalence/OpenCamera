@@ -103,9 +103,9 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			aeLockButton = (RotateImageView) buttonsLayout.findViewById(R.id.buttonAELock);
 			awLockButton = (RotateImageView) buttonsLayout.findViewById(R.id.buttonAWLock);
 
-			if (!CameraController.getInstance().isExposureLockSupported())
+			if (!CameraController.isExposureLockSupported())
 				aeLockButton.setVisibility(View.INVISIBLE);
-			if (!CameraController.getInstance().isWhiteBalanceLockSupported())
+			if (!CameraController.isWhiteBalanceLockSupported())
 				awLockButton.setVisibility(View.INVISIBLE);
 
 			aeLockButton.setOnClickListener(new OnClickListener()
@@ -113,12 +113,12 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 				@Override
 				public void onClick(View v)
 				{
-					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+					Camera.Parameters params = CameraController.getCameraParameters();
 					if (params != null)
 					{
-						if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
+						if (CameraController.isExposureLockSupported() && params.getAutoExposureLock())
 							AeUnlock();
-						else if (CameraController.getInstance().isExposureLockSupported()
+						else if (CameraController.isExposureLockSupported()
 								&& !params.getAutoExposureLock())
 							AeLock();
 					}
@@ -131,13 +131,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 				@Override
 				public void onClick(View v)
 				{
-					Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+					Camera.Parameters params = CameraController.getCameraParameters();
 					if (params != null)
 					{
-						if (CameraController.getInstance().isWhiteBalanceLockSupported()
+						if (CameraController.isWhiteBalanceLockSupported()
 								&& params.getAutoWhiteBalanceLock())
 							AwUnlock();
-						else if (CameraController.getInstance().isWhiteBalanceLockSupported()
+						else if (CameraController.isWhiteBalanceLockSupported()
 								&& !params.getAutoWhiteBalanceLock())
 							AwLock();
 					}
@@ -179,13 +179,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 	private void AeLock()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params != null)
 		{
-			if (CameraController.getInstance().isExposureLockSupported())
+			if (CameraController.isExposureLockSupported())
 			{
 				params.setAutoExposureLock(true);
-				CameraController.getInstance().setCameraParameters(params);
+				CameraController.setCameraParameters(params);
 
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
 				aeLockButton.setImageDrawable(icon);
@@ -197,13 +197,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 	private void AwLock()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params != null)
 		{
-			if (CameraController.getInstance().isWhiteBalanceLockSupported())
+			if (CameraController.isWhiteBalanceLockSupported())
 			{
 				params.setAutoWhiteBalanceLock(true);
-				CameraController.getInstance().setCameraParameters(params);
+				CameraController.setCameraParameters(params);
 
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
 				awLockButton.setImageDrawable(icon);
@@ -215,13 +215,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 	private void AeUnlock()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params != null)
 		{
-			if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
+			if (CameraController.isExposureLockSupported() && params.getAutoExposureLock())
 			{
 				params.setAutoExposureLock(false);
-				CameraController.getInstance().setCameraParameters(params);
+				CameraController.setCameraParameters(params);
 			}
 			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
 			aeLockButton.setImageDrawable(icon);
@@ -232,13 +232,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 	private void AwUnlock()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params != null)
 		{
-			if (CameraController.getInstance().isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+			if (CameraController.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
 			{
 				params.setAutoWhiteBalanceLock(false);
-				CameraController.getInstance().setCameraParameters(params);
+				CameraController.setCameraParameters(params);
 			}
 			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
 			awLockButton.setImageDrawable(icon);
@@ -267,24 +267,12 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public void onCaptureFinished()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-		if (aeLocked && CameraController.getInstance().isExposureLockSupported() && !params.getAutoExposureLock())
+		Camera.Parameters params = CameraController.getCameraParameters();
+		if (aeLocked && CameraController.isExposureLockSupported() && !params.getAutoExposureLock())
 			AeUnlock();
-		if (awLocked && CameraController.getInstance().isWhiteBalanceLockSupported()
+		if (awLocked && CameraController.isWhiteBalanceLockSupported()
 				&& !params.getAutoWhiteBalanceLock())
 			AwUnlock();
-	}
-
-	@Override
-	public void onPreferenceCreate(PreferenceActivity prefActivity)
-	{
-		PreferenceCategory cat = (PreferenceCategory) prefActivity.findPreference("Pref_VF_ShowAEAWLock_Category");
-		if (cat != null && !MainScreen.getGUIManager().mEVLockSupported && !MainScreen.getGUIManager().mWBLockSupported)
-		{
-			CheckBoxPreference cp = (CheckBoxPreference) cat.findPreference("showAEAWLockPref");
-			if (cp != null)
-				cp.setEnabled(false);
-		}
 	}
 
 	@Override
@@ -304,8 +292,8 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	{
 		if (arg1 == PluginManager.MSG_AEWB_CHANGED)
 		{
-//			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
-			if (CameraController.getInstance().isExposureLockSupported() && CameraController.getInstance().isExposureLock())
+//			Camera.Parameters params = CameraController.getCameraParameters();
+			if (CameraController.isExposureLockSupported() && CameraController.isExposureLock())
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
 				if (aeLockButton!=null)
@@ -317,7 +305,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 				if (aeLockButton!=null)
 					aeLockButton.setImageDrawable(icon);
 			}
-			if (CameraController.getInstance().isWhiteBalanceLockSupported() && CameraController.getInstance().isWhiteBalanceLock())
+			if (CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLock())
 			{
 				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
 				if (awLockButton!=null)

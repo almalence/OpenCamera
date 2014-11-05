@@ -135,7 +135,7 @@ public class HALv3
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try
 		{
-			CameraController.getInstance().cameraIdList = HALv3.getInstance().manager.getCameraIdList();
+			CameraController.cameraIdList = HALv3.getInstance().manager.getCameraIdList();
 		} catch (CameraAccessException e)
 		{
 			Log.d("MainScreen", "getCameraIdList failed");
@@ -187,7 +187,7 @@ public class HALv3
 			{
 //				onCreateHALv3();
 				Log.e(TAG, "try to manager.openCamera");
-				String cameraId = CameraController.getInstance().cameraIdList[CameraController.CameraIndex];
+				String cameraId = CameraController.cameraIdList[CameraController.CameraIndex];
 				HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
 						.getInstance().cameraIdList[CameraController.CameraIndex]);
 				HALv3.getInstance().manager.openCamera(cameraId, openCallback, null);
@@ -231,7 +231,7 @@ public class HALv3
 		// HALv3.getInstance().manager.addAvailabilityCallback(HALv3.getInstance().availCallback,
 		// null);
 
-		CameraController.getInstance().mVideoStabilizationSupported = HALv3.getInstance().camCharacter
+		CameraController.mVideoStabilizationSupported = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null ? false : true;
 
 		// check that full hw level is supported
@@ -1476,7 +1476,7 @@ public class HALv3
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 //					resetCaptureCallback();
-//					CameraController.getInstance().onAutoFocus(true);
+//					CameraController.onAutoFocus(true);
 //					HALv3.autoFocusTriggered = false;
 //
 //				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
@@ -1485,7 +1485,7 @@ public class HALv3
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 //					resetCaptureCallback();
-//					CameraController.getInstance().onAutoFocus(false);
+//					CameraController.onAutoFocus(false);
 //					HALv3.autoFocusTriggered = false;
 //				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
 //						)
@@ -1493,7 +1493,7 @@ public class HALv3
 //					Log.e(TAG,
 //							"onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
 //					// resetCaptureCallback();
-//					// CameraController.getInstance().onAutoFocus(false);
+//					// CameraController.onAutoFocus(false);
 //					// HALv3.autoFocusTriggered = false;
 //				}
 //			} catch (Exception e)
@@ -1561,7 +1561,7 @@ public class HALv3
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 					resetCaptureCallback();
-					CameraController.getInstance().onAutoFocus(true);
+					CameraController.onAutoFocus(true);
 					HALv3.autoFocusTriggered = false;
 
 				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
@@ -1570,7 +1570,7 @@ public class HALv3
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 					resetCaptureCallback();
-					CameraController.getInstance().onAutoFocus(false);
+					CameraController.onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
 				} else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
 						&& HALv3.autoFocusTriggered)
@@ -1578,7 +1578,7 @@ public class HALv3
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
 					// resetCaptureCallback();
-					// CameraController.getInstance().onAutoFocus(false);
+					// CameraController.onAutoFocus(false);
 					// HALv3.autoFocusTriggered = false;
 				}
 				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE
@@ -1587,7 +1587,7 @@ public class HALv3
 					Log.e(TAG,
 							"onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE");
 					// resetCaptureCallback();
-					// CameraController.getInstance().onAutoFocus(false);
+					// CameraController.onAutoFocus(false);
 					// HALv3.autoFocusTriggered = false;
 				}
 				

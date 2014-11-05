@@ -409,10 +409,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useEVMonitor && evInfoText != null)
 		{
-			float iEV = CameraController.getInstance().getExposureCompensation();
+			float iEV = CameraController.getExposureCompensation();
 			String evString = (iEV > 0 ? "+" : "") + String.format("%.1f", iEV) + "EV";
 			evInfoText.setText(evString);
-			if (CameraController.getInstance().isExposureCompensationSupported())
+			if (CameraController.isExposureCompensationSupported())
 				evInfoText.setVisibility(View.VISIBLE);
 			else
 				evInfoText.setVisibility(View.GONE);
@@ -420,8 +420,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useSceneMonitor && sceneInfoImage != null)
 		{
-			int scene = CameraController.getInstance().getSceneMode();
-			if (scene != -1 && sceneInfoImage != null && CameraController.getInstance().isSceneModeSupported())
+			int scene = CameraController.getSceneMode();
+			if (scene != -1 && sceneInfoImage != null && CameraController.isSceneModeSupported())
 			{
 				int scene_id = MainScreen.getInstance().getSceneIcon(scene);
 				if (scene_id != -1)
@@ -436,8 +436,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useWBMonitor && wbInfoImage != null)
 		{
-			int wb = CameraController.getInstance().getWBMode();
-			if (wb != -1 && wbInfoImage != null && CameraController.getInstance().isWhiteBalanceSupported())
+			int wb = CameraController.getWBMode();
+			if (wb != -1 && wbInfoImage != null && CameraController.isWhiteBalanceSupported())
 			{
 				int wb_id = MainScreen.getInstance().getWBIcon(wb);
 				if (wb_id != -1)
@@ -452,8 +452,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useFocusMonitor && focusInfoImage != null)
 		{
-			int focus = CameraController.getInstance().getFocusMode();
-			if (focus != -1 && focusInfoImage != null && CameraController.getInstance().isFocusModeSupported())
+			int focus = CameraController.getFocusMode();
+			if (focus != -1 && focusInfoImage != null && CameraController.isFocusModeSupported())
 			{
 				int focus_id = MainScreen.getInstance().getFocusIcon(focus);
 				if (focus_id != -1)
@@ -468,8 +468,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useFlashMonitor && flashInfoImage != null)
 		{
-			int flash = CameraController.getInstance().getFlashMode();
-			if (flash != -1 && flashInfoImage != null && CameraController.getInstance().isFlashModeSupported())
+			int flash = CameraController.getFlashMode();
+			if (flash != -1 && flashInfoImage != null && CameraController.isFlashModeSupported())
 			{
 				int flash_id = MainScreen.getInstance().getFlashIcon(flash);
 				if (flash_id != -1)
@@ -484,8 +484,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (useISOMonitor && isoInfoImage != null)
 		{
-			int iso = CameraController.getInstance().getISOMode();
-			if (iso != -1 && isoInfoImage != null && CameraController.getInstance().isISOSupported())
+			int iso = CameraController.getISOMode();
+			if (iso != -1 && isoInfoImage != null && CameraController.isISOSupported())
 			{
 				int iso_id = MainScreen.getInstance().getISOIcon(iso);
 				if (iso_id != -1)
@@ -518,7 +518,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			{
 				try
 				{
-					float iEV = CameraController.getInstance().getExposureCompensation();
+					float iEV = CameraController.getExposureCompensation();
 					String evString = (iEV > 0 ? "+" : "") + String.format("%.1f", iEV) + "EV";
 					evInfoText.setText(evString);
 				} catch (Exception e)
@@ -531,7 +531,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if (this.useSceneMonitor && sceneInfoImage != null)
 			{
-				int scene = CameraController.getInstance().getSceneMode();
+				int scene = CameraController.getSceneMode();
 				if (scene != -1 && sceneInfoImage != null)
 				{
 					int scene_id = MainScreen.getInstance().getSceneIcon(scene);
@@ -546,7 +546,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if (this.useWBMonitor && wbInfoImage != null)
 			{
-				int wb = CameraController.getInstance().getWBMode();
+				int wb = CameraController.getWBMode();
 				if (wb != -1 && wbInfoImage != null)
 				{
 					int wb_id = MainScreen.getInstance().getWBIcon(wb);
@@ -560,7 +560,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if (this.useFocusMonitor && focusInfoImage != null)
 			{
-				int focus = CameraController.getInstance().getFocusMode();
+				int focus = CameraController.getFocusMode();
 				if (focus != -1 && focusInfoImage != null)
 				{
 					int focus_id = MainScreen.getInstance().getFocusIcon(focus);
@@ -575,7 +575,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if (this.useFlashMonitor && flashInfoImage != null)
 			{
-				int flash = CameraController.getInstance().getFlashMode();
+				int flash = CameraController.getFlashMode();
 				if (flash != -1 && flashInfoImage != null)
 				{
 					int flash_id = MainScreen.getInstance().getFlashIcon(flash);
@@ -590,7 +590,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		{
 			if (this.useISOMonitor && isoInfoImage != null)
 			{
-				int iso = CameraController.getInstance().getISOMode();
+				int iso = CameraController.getISOMode();
 				if (iso != -1 && isoInfoImage != null)
 				{
 					int iso_id = MainScreen.getInstance().getISOIcon(iso);

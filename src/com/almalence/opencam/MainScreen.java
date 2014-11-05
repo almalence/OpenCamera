@@ -471,7 +471,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			Log.e("MainScreen", exp.getMessage());
 		}
-		cameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
+		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
@@ -1136,8 +1136,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					if (CameraController.isUseHALv3())
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "onResume: cameraController.setupCamera(null)");
-						cameraController.setupCamera(null);
+						Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
+						CameraController.setupCamera(null);
 
 						if (glView != null)
 						{
@@ -1147,7 +1147,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					} else if (surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						cameraController.setupCamera(surfaceHolder);
+						CameraController.setupCamera(surfaceHolder);
 
 						if (glView != null)
 						{
@@ -1270,7 +1270,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			isScreenTimerRunning = false;
 		}
 
-		cameraController.onPause();
+		CameraController.onPause();
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
 
@@ -1320,10 +1320,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "surfaceChanged: cameraController.setupCamera(null)");
+						Log.d("MainScreen", "surfaceChanged: CameraController.setupCamera(null)");
 						if (!CameraController.isUseHALv3())
 						{
-							cameraController.setupCamera(holder);
+							CameraController.setupCamera(holder);
 						} else
 						{
 							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
@@ -1429,8 +1429,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 			else
 			{
-				Log.d("MainScreen", "surfaceChangedMain: cameraController.setupCamera(null)");
-				cameraController.setupCamera(holder);
+				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
+				CameraController.setupCamera(holder);
 			}
 		}
 	}
@@ -1446,7 +1446,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		Log.d("MainScreen", "configureCamera()");
 
-		CameraController.getInstance().updateCameraFeatures();
+		CameraController.updateCameraFeatures();
 
 		// ----- Select preview dimensions with ratio correspondent to
 		// full-size image
@@ -1456,13 +1456,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			configureHALv3Camera(captureYUVFrames);
 		else
 		{
-			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
+			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 
 			guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
-			CameraController.getInstance().allocatePreviewBuffer(
+			CameraController.allocatePreviewBuffer(
 					sz.width
 							* sz.height
-							* ImageFormat.getBitsPerPixel(CameraController.getInstance().getCameraParameters()
+							* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters()
 									.getPreviewFormat()) / 8);
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
@@ -1473,10 +1473,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private void onCameraConfigured()
 	{
-		PluginManager.getInstance().setCameraPictureSize();
 		PluginManager.getInstance().setupCameraParameters();
 
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters cp = CameraController.getCameraParameters();
 
 		if (!CameraController.isUseHALv3())
 		{
@@ -1486,8 +1485,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				if (Build.MODEL.contains("Nexus 5"))
 				{
 					cp.setPreviewFpsRange(7000, 30000);
-					cameraController.setCameraParameters(cp);
-					cp = CameraController.getInstance().getCameraParameters();
+					CameraController.setCameraParameters(cp);
+					cp = CameraController.getCameraParameters();
 				}
 			} catch (RuntimeException e)
 			{
@@ -1544,7 +1543,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					}
 
 					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-					CameraController.getCamera().addCallbackBuffer(CameraController.getInstance().getPreviewBuffer());
+					CameraController.getCamera().addCallbackBuffer(CameraController.getPreviewBuffer());
 				} else
 				{
 					guiManager.onCameraCreate();
@@ -1586,10 +1585,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		// sfl.add(mImageReaderJPEG.getSurface());
-		cameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
-		// guiManager.setupViewfinderPreviewSize(cameraController.new Size(1280,
+		// guiManager.setupViewfinderPreviewSize(CameraController.new Size(1280,
 		// 720));
 
 		// configure camera with all the surfaces to be ever used
@@ -1722,22 +1721,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void setCameraMeteringMode(int mode)
 	{
 		if (CameraParameters.meteringModeAuto == mode)
-			cameraController.setCameraMeteringAreas(null);
+			CameraController.setCameraMeteringAreas(null);
 		else if (CameraParameters.meteringModeMatrix == mode)
 		{
-			int maxAreasCount = CameraController.getInstance().getMaxNumMeteringAreas();
+			int maxAreasCount = CameraController.getMaxNumMeteringAreas();
 			if (maxAreasCount > 4)
-				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix5);
+				CameraController.setCameraMeteringAreas(mMeteringAreaMatrix5);
 			else if (maxAreasCount > 3)
-				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix4);
+				CameraController.setCameraMeteringAreas(mMeteringAreaMatrix4);
 			else if (maxAreasCount > 0)
-				cameraController.setCameraMeteringAreas(mMeteringAreaMatrix1);
+				CameraController.setCameraMeteringAreas(mMeteringAreaMatrix1);
 			else
-				cameraController.setCameraMeteringAreas(null);
+				CameraController.setCameraMeteringAreas(null);
 		} else if (CameraParameters.meteringModeCenter == mode)
-			cameraController.setCameraMeteringAreas(mMeteringAreaCenter);
+			CameraController.setCameraMeteringAreas(mMeteringAreaCenter);
 		else if (CameraParameters.meteringModeSpot == mode)
-			cameraController.setCameraMeteringAreas(mMeteringAreaSpot);
+			CameraController.setCameraMeteringAreas(mMeteringAreaSpot);
 
 		currentMeteringMode = mode;
 	}

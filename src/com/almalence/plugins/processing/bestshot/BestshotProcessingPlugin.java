@@ -84,16 +84,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
 					"framelen" + (i + 1) + sessionID));
 		}
 
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
-		if (!isYUV)
-		{
-			AlmaShotBestShot.ConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
-					mImageHeight);
-		} else
-		{
-			AlmaShotBestShot.AddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-		}
+		AlmaShotBestShot.AddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 
 		int idxResult = AlmaShotBestShot.BestShotProcess(imagesAmount, mImageWidth, mImageHeight);
 
@@ -112,8 +103,6 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		int frame = compressed_frame[idxResult];
 		int len = compressed_frame_len[idxResult];
 
-		if (!isYUV)
-			PluginManager.getInstance().addToSharedMem("resultframeformat1" + sessionID, "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(len));
 

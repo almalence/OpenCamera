@@ -245,7 +245,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onCameraParametersSetup()
 	{
-		preferenceFocusMode = CameraController.getInstance().getFocusMode();
+		preferenceFocusMode = CameraController.getFocusMode();
 
 		initializeParameters();
 
@@ -274,7 +274,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	public void initializeParameters()
 	{
 		mFocusAreaSupported = (CameraController.getMaxAreasSupported() > 0 && isSupported(
-				CameraParameters.AF_MODE_AUTO, CameraController.getInstance().getSupportedFocusModes()));
+				CameraParameters.AF_MODE_AUTO, CameraController.getSupportedFocusModes()));
 		mMeteringAreaSupported = CameraController.getMaxAreasSupported() > 0;
 	}
 
@@ -305,14 +305,14 @@ public class FocusVFPlugin extends PluginViewfinder
 				if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 						|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 				}
 				setFocusParameters();
 				autoFocus();
 			}
 //			else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
 //					&& (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-//					&& preferenceFocusMode != CameraController.getInstance().getFocusMode())
+//					&& preferenceFocusMode != CameraController.getFocusMode())
 //			{
 //				// allow driver to choose whatever it wants for focusing /
 //				// metering
@@ -324,9 +324,9 @@ public class FocusVFPlugin extends PluginViewfinder
 //						|| focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
 //						&& mFocusAreaSupported)
 //				{
-//					CameraController.getInstance().setCameraFocusAreas(null);
+//					CameraController.setCameraFocusAreas(null);
 //				}
-//				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+//				CameraController.setCameraFocusMode(preferenceFocusMode);
 //			}
 			else if (mState == STATE_FAIL)
 				MainScreen.getGUIManager().lockControls = false;
@@ -344,14 +344,14 @@ public class FocusVFPlugin extends PluginViewfinder
 	public void setFocusParameters()
 	{
 		if (mFocusAreaSupported)
-			CameraController.getInstance().setCameraFocusAreas(getFocusAreas());
+			CameraController.setCameraFocusAreas(getFocusAreas());
 
 		if (mMeteringAreaSupported)
 		{
 			// Use the same area for focus and metering.
 			List<Area> area = getMeteringAreas();
 			if (area != null)
-				CameraController.getInstance().setCameraMeteringAreas(area);
+				CameraController.setCameraMeteringAreas(area);
 		}
 	}
 
@@ -441,11 +441,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			focusCanceled = true;
 			cancelAutoFocus();
-			int fm = CameraController.getInstance().getFocusMode();
+			int fm = CameraController.getFocusMode();
 			if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& fm != -1 && preferenceFocusMode != CameraController.getInstance().getFocusMode())
+					&& fm != -1 && preferenceFocusMode != CameraController.getFocusMode())
 			{
-				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
 			return true;
 		}
@@ -546,7 +546,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 					|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 			{				
-				CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 			}
 			
 			//This time is useful for Android L. Camera2 dosn't have time between cancelAutoFocus and autoFocus calls
@@ -615,17 +615,17 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void cancelAutoFocus()
 	{
-		// Note: CameraController.getInstance().getFocusMode(); will return
+		// Note: CameraController.getFocusMode(); will return
 		// 'FOCUS_MODE_AUTO' if actual
 		// mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or
 		// FOCUS_MODE_CONTINUOUS_VIDEO
-		int fm = CameraController.getInstance().getFocusMode();
+		int fm = CameraController.getFocusMode();
 		if (fm != -1)
 		{
 			if (fm != preferenceFocusMode)
 			{
 				CameraController.cancelAutoFocus();
-				CameraController.getInstance().setCameraFocusMode(preferenceFocusMode);
+				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
 		}
 
@@ -674,14 +674,14 @@ public class FocusVFPlugin extends PluginViewfinder
 			mFocusMode = mPreferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 					: MainScreen.sFrontFocusModePref, mDefaultFocusMode);
 
-		if (!isSupported(mFocusMode, CameraController.getInstance().getSupportedFocusModes()))
+		if (!isSupported(mFocusMode, CameraController.getSupportedFocusModes()))
 		{
 			// For some reasons, the driver does not support the current
 			// focus mode. Fall back to auto.
-			if (isSupported(CameraParameters.AF_MODE_AUTO, CameraController.getInstance().getSupportedFocusModes()))
+			if (isSupported(CameraParameters.AF_MODE_AUTO, CameraController.getSupportedFocusModes()))
 				mFocusMode = CameraParameters.AF_MODE_AUTO;
 			else
-				mFocusMode = CameraController.getInstance().getFocusMode();
+				mFocusMode = CameraController.getFocusMode();
 		}
 		return mFocusMode;
 	}
@@ -876,7 +876,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
-			int fm = CameraController.getInstance().getFocusMode();
+			int fm = CameraController.getFocusMode();
 			if (fm != -1)
 				preferenceFocusMode = fm;
 		} else if (arg1 == PluginManager.MSG_PREVIEW_CHANGED)

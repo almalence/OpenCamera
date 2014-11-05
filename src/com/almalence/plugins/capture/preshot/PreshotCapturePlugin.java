@@ -206,10 +206,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -226,10 +226,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -309,7 +309,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			PreShot.FreeBuffer();
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
-			preview_fps = CameraController.getInstance().getPreviewFrameRate();
+			preview_fps = CameraController.getPreviewFrameRate();
 			if (Build.MODEL.contains("HTC One"))
 				preview_fps = 30;
 
@@ -504,21 +504,14 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		try
+		if (isBuffering)
 		{
-			if (isBuffering)
-			{
-				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					return;
-//				inCapture = true;
-
-				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
-				counter++;
-			}
-		} catch (RuntimeException e)
-		{
-			Log.i("Preshot capture", "takePicture fail in CaptureFrame (called after release?)" + e.getMessage());
-			CameraController.startCameraPreview();
+			if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				return;
+	//				inCapture = true;
+	
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
+			counter++;
 		}
 	}
 

@@ -156,37 +156,29 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
 	}
 
-	@Override
-	public void setupCameraParameters()
-	{
-		CameraController.getInstance().resetExposureCompensation();
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt("EvCompensationValue", 0).commit();
-	}
-
 	public boolean delayedCaptureSupported()
 	{
 		return true;
 	}
 
 	@Override
-	public void setCameraPictureSize()
+	public void setupCameraParameters()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		CameraController.getInstance().setPictureSize(imageSize.getWidth(), imageSize.getHeight());
-		CameraController.getInstance().setJpegQuality(jpegQuality);
+		CameraController.setPictureSize(imageSize.getWidth(), imageSize.getHeight());
+		CameraController.setJpegQuality(jpegQuality);
 
-//		CameraController.getInstance().applyCameraParameters();
+//		CameraController.applyCameraParameters();
 
 		try
 		{
-			int[] sceneModes = CameraController.getInstance().getSupportedSceneModes();
+			int[] sceneModes = CameraController.getSupportedSceneModes();
 			if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
 			{
-				CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
+				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
@@ -196,6 +188,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		{
 			Log.e("ExpoBracketing", "MainScreen.setupCamera unable to setSceneMode");
 		}
+		
+		CameraController.resetExposureCompensation();
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+				.putInt("EvCompensationValue", 0).commit();
 	}
 
 	public void onShutterClick()
@@ -272,27 +268,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-		
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			previewWorking = true;
-//			if (cdt != null)
-//			{
-//				cdt.cancel();
-//				cdt = null;
-//			}
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-//					String.valueOf(SessionID));
-//
-//			CameraController.getInstance().resetExposureCompensation();
-//			return;
-//		}
-
 		if (++frame_num >= total_frames)
 		{
 			previewWorking = true;
@@ -305,7 +280,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 
-			CameraController.getInstance().resetExposureCompensation();
+			CameraController.resetExposureCompensation();
 			
 			inCapture = false;
 		}
@@ -350,7 +325,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		int ev_inc;
 		int min_ev, max_ev;
 
-		LumaAdaptationAvailable = CameraController.getInstance().isLumaAdaptationSupported();
+		LumaAdaptationAvailable = CameraController.isLumaAdaptationSupported();
 
 		if (UseLumaAdaptation && LumaAdaptationAvailable)
 		{
@@ -370,11 +345,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 
 		// figure min and max ev
-		min_ev = CameraController.getInstance().getMinExposureCompensation();
-		max_ev = CameraController.getInstance().getMaxExposureCompensation();
+		min_ev = CameraController.getMinExposureCompensation();
+		max_ev = CameraController.getMaxExposureCompensation();
 		try
 		{
-			ev_step = CameraController.getInstance().getExposureCompensationStep();
+			ev_step = CameraController.getExposureCompensationStep();
 		} catch (NullPointerException e)
 		{
 			// miezu m9 fails to provide exposure correction step,

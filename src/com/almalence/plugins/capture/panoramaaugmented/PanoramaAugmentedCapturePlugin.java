@@ -412,9 +412,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 //			{
 //				try
 //				{
-//					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//					Camera.Parameters cp = CameraController.getCameraParameters();
 //					cp.setRecordingHint(true);
-//					CameraController.getInstance().setCameraParameters(cp);
+//					CameraController.setCameraParameters(cp);
 //				} catch (Exception e)
 //				{
 //					e.printStackTrace();
@@ -436,9 +436,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 //			{
 //				try
 //				{
-//					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+//					Camera.Parameters cp = CameraController.getCameraParameters();
 //					cp.setRecordingHint(false);
-//					CameraController.getInstance().setCameraParameters(cp);
+//					CameraController.setCameraParameters(cp);
 //				} catch (Exception e)
 //				{
 //					e.printStackTrace();
@@ -483,11 +483,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
 		{
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+			Camera.Parameters cp = CameraController.getCameraParameters();
 			if (cp != null)
 			{
 				cp.setRecordingHint(false);
-				CameraController.getInstance().setCameraParameters(cp);
+				CameraController.setCameraParameters(cp);
 			}
 		}
 	}
@@ -567,7 +567,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		this.init();
 
-		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
+		final List<CameraController.Size> cs = CameraController.getSupportedPictureSizes();
 		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
 		
 		if (Build.MODEL.contains("HTC One X"))
@@ -600,25 +600,25 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		final CameraController.Size previewSize;
 		if (this.modeSweep)
 		{
-			previewSize = getOptimalSweepPreviewSize(CameraController.getInstance().getSupportedPreviewSizes());
+			previewSize = getOptimalSweepPreviewSize(CameraController.getSupportedPreviewSizes());
 		} else
 		{
-			previewSize = this.getOptimalPreviewSize(CameraController.getInstance().getSupportedPreviewSizes(),
+			previewSize = this.getOptimalPreviewSize(CameraController.getSupportedPreviewSizes(),
 					this.pictureWidth, this.pictureHeight);
 		}
 
 		this.previewWidth = previewSize.getWidth();
 		this.previewHeight = previewSize.getHeight();
 
-		CameraController.getInstance().setCameraPreviewSize(previewSize);
+		CameraController.setCameraPreviewSize(previewSize);
 		MainScreen.setPreviewWidth(previewSize.getWidth());
 		MainScreen.setPreviewHeight(previewSize.getHeight());
 	}
 
 	@Override
-	public void setCameraPictureSize()
+	public void setupCameraParameters()
 	{
-		final List<CameraController.Size> picture_sizes = CameraController.getInstance().getSupportedPictureSizes();
+		final List<CameraController.Size> picture_sizes = CameraController.getSupportedPictureSizes();
 		if (picture_sizes.size() == 0)
 		{
 			Log.e(TAG, "Picture sizes list is empty");
@@ -644,18 +644,18 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 //		MainScreen.setImageWidth(this.pictureWidth);
 //		MainScreen.setImageHeight(this.pictureHeight);
 
-		CameraController.getInstance().setPictureSize(this.pictureWidth, this.pictureHeight);
+		CameraController.setPictureSize(this.pictureWidth, this.pictureHeight);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
-		CameraController.getInstance().setJpegQuality(jpegQuality);
+		CameraController.setJpegQuality(jpegQuality);
 
 		try
 		{
 			try
 			{
-				this.viewAngleX = CameraController.getInstance().getHorizontalViewAngle();
-				this.viewAngleY = CameraController.getInstance().getVerticalViewAngle();
+				this.viewAngleX = CameraController.getHorizontalViewAngle();
+				this.viewAngleY = CameraController.getVerticalViewAngle();
 			} catch (final Throwable e)
 			{
 				// Some bugged camera drivers pop ridiculous exception here, use
@@ -747,7 +747,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void setFocused()
 	{
-		int fm = CameraController.getInstance().getFocusMode();
+		int fm = CameraController.getFocusMode();
 		int fs = CameraController.getFocusState();
 		if (!takingAlready
 				&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
@@ -914,13 +914,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			});
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onPreferenceCreate(final PreferenceActivity prefActivity)
-	{
-		this.createPrefs(prefActivity.findPreference(PREFERENCES_KEY_USE_DEVICE_GYRO));
-	}
-
 	@Override
 	public void onPreferenceCreate(final PreferenceFragment prefActivity)
 	{
@@ -933,7 +926,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		ResolutionsPictureIdxesList.clear();
 		ResolutionsPictureSizesList.clear();
 
-		final List<CameraController.Size> cs = CameraController.getInstance().getSupportedPictureSizes();
+		final List<CameraController.Size> cs = CameraController.getSupportedPictureSizes();
 		if (Build.MODEL.contains("HTC One X"))
 		{
 			if (!CameraController.isFrontCamera())
@@ -1168,34 +1161,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.inCapture)
 			{
-				this.takingAlready = false;
+				takingAlready = false;
 				// this.aboutToTakePicture = false;
 				return;
 			}
 		}
 
-		this.takingAlready = true;
+		takingAlready = true;
 
 		this.coordsRecorded = false;
-		try
-		{
-			// Log.d(TAG, "Perform CAPTURE Panorama");
-			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0],
-					false);
-		} catch (final Exception e)
-		{
-			e.printStackTrace();
-
-			this.engine.onCameraError();
-
-			this.stopCapture();
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT,
-					String.valueOf(SessionID));
-
-			takingAlready = false;
-			inCapture = false;
-			// aboutToTakePicture = false;
-		}
+		
+		// Log.d(TAG, "Perform CAPTURE Panorama");
+		requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0],
+				false);
 	}
 
 	private void lockAEWB()
@@ -1220,19 +1198,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		if (lock)
 		{
-			Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+			Camera.Parameters params = CameraController.getCameraParameters();
 			if (params != null)
 			{
-				if (CameraController.getInstance().isWhiteBalanceLockSupported() && !params.getAutoWhiteBalanceLock())
+				if (CameraController.isWhiteBalanceLockSupported() && !params.getAutoWhiteBalanceLock())
 				{
 					params.setAutoWhiteBalanceLock(true);
-					CameraController.getInstance().setCameraParameters(params);
+					CameraController.setCameraParameters(params);
 					wbLockedByPanorama = true;
 				}
-				if (CameraController.getInstance().isExposureLockSupported() && !params.getAutoExposureLock())
+				if (CameraController.isExposureLockSupported() && !params.getAutoExposureLock())
 				{
 					params.setAutoExposureLock(true);
-					CameraController.getInstance().setCameraParameters(params);
+					CameraController.setCameraParameters(params);
 					aeLockedByPanorama = true;
 				}
 			}
@@ -1243,24 +1221,24 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void unlockAEWB()
 	{
-		Camera.Parameters params = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters params = CameraController.getCameraParameters();
 		if (params != null)
 		{
 			if (wbLockedByPanorama)
 			{
-				if (CameraController.getInstance().isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
+				if (CameraController.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
 				{
 					params.setAutoWhiteBalanceLock(false);
-					CameraController.getInstance().setCameraParameters(params);
+					CameraController.setCameraParameters(params);
 				}
 				wbLockedByPanorama = false;
 			}
 			if (aeLockedByPanorama)
 			{
-				if (CameraController.getInstance().isExposureLockSupported() && params.getAutoExposureLock())
+				if (CameraController.isExposureLockSupported() && params.getAutoExposureLock())
 				{
 					params.setAutoExposureLock(false);
-					CameraController.getInstance().setCameraParameters(params);
+					CameraController.setCameraParameters(params);
 				}
 				aeLockedByPanorama = false;
 			}

@@ -136,19 +136,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			imgHeightOR = imageSize.getHeight();
 		}
 
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-		if(!isYUV)
-		{
-			Log.d("ObjectRemovalProcessingPlugin", "Input frames have to be in YUV format!");
-			try
-			{
-				throw new Exception("Expecting YUV format instead JPEG");
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
 		getPrefs();

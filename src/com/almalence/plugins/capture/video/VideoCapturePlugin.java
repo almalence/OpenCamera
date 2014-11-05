@@ -278,7 +278,7 @@ public class VideoCapturePlugin extends PluginCapture
 				try
 				{
 					CameraController.stopCameraPreview();
-					Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+					Camera.Parameters cp = CameraController.getCameraParameters();
 					if (cp != null)
 					{
 						setCameraPreviewSize();
@@ -487,7 +487,7 @@ public class VideoCapturePlugin extends PluginCapture
 		Camera camera = CameraController.getCamera();
 		if (camera != null)
 		{
-			Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+			Camera.Parameters cp = CameraController.getCameraParameters();
 			if (cp != null)
 			{
 				if (cp.isVideoSnapshotSupported())
@@ -732,11 +732,11 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		CameraController.stopCameraPreview();
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters cp = CameraController.getCameraParameters();
 		if (cp != null)
 		{
 			setCameraPreviewSize();
-			Camera.Size sz = CameraController.getInstance().getCameraParameters().getPreviewSize();
+			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(
 					new CameraController.Size(sz.width, sz.height));
 		}
@@ -890,9 +890,9 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+				Camera.Parameters cp = CameraController.getCameraParameters();
 				cp.setRecordingHint(false);
-				CameraController.getInstance().setCameraParameters(cp);
+				CameraController.setCameraParameters(cp);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -943,7 +943,7 @@ public class VideoCapturePlugin extends PluginCapture
 		previewSizes.put(CamcorderProfile.QUALITY_1080P, false);
 		previewSizes.put(QUALITY_4K, false);
 
-		List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();
+		List<CameraController.Size> psz = CameraController.getSupportedPreviewSizes();
 		if (psz.contains(new CameraController.Size(176, 144)))
 		{
 			previewSizes.put(CamcorderProfile.QUALITY_QCIF, true);
@@ -1036,13 +1036,13 @@ public class VideoCapturePlugin extends PluginCapture
 				String.valueOf(ImageSizeIdxPreference));
 		editor.commit();
 
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters cp = CameraController.getCameraParameters();
 		if (cp != null)
 		{
 			cp.setPreviewFrameRate(30);
 			cp.setRecordingHint(true);
 
-			CameraController.getInstance().setCameraParameters(cp);
+			CameraController.setCameraParameters(cp);
 		}
 	}
 
@@ -1057,7 +1057,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		Log.i(TAG, String.format("Preview size: %dx%d", sz.getWidth(), sz.getHeight()));
 
-		CameraController.getInstance().setCameraPreviewSize(sz);
+		CameraController.setCameraPreviewSize(sz);
 		MainScreen.setPreviewWidth(sz.getWidth());
 		MainScreen.setPreviewHeight(sz.getHeight());
 	}
@@ -1109,7 +1109,7 @@ public class VideoCapturePlugin extends PluginCapture
 			return getBestPreviewSizeNormal(false);
 		}
 
-		final List<CameraController.Size> sizes = CameraController.getInstance().getSupportedPreviewSizes();
+		final List<CameraController.Size> sizes = CameraController.getSupportedPreviewSizes();
 
 		CameraController.Size size_best = sizes.get(0);
 		for (final CameraController.Size size : sizes)
@@ -1132,7 +1132,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private static CameraController.Size selectMaxPreviewSize(final float ratioDisplay)
 	{
-		final List<CameraController.Size> sizes = CameraController.getInstance().getSupportedPreviewSizes();
+		final List<CameraController.Size> sizes = CameraController.getSupportedPreviewSizes();
 
 		CameraController.Size size_best = sizes.get(0);
 		float size_ratio_best = size_best.getWidth() / (float) size_best.getHeight();
@@ -1169,16 +1169,16 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void setCameraPictureSize()
+	public void setupCameraParameters()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
-		CameraController.getInstance().setJpegQuality(jpegQuality);
+		CameraController.setJpegQuality(jpegQuality);
 
-		if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 				CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 		{
-			CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+			CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 			PreferenceManager
 					.getDefaultSharedPreferences(MainScreen.getMainContext())
 					.edit()
@@ -1465,7 +1465,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// camera.lock(); // take camera access back from MediaRecorder
 
 		CameraController.stopCameraPreview();
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		Camera.Parameters cp = CameraController.getCameraParameters();
 		if (cp != null)
 		{
 			setCameraPreviewSize();
@@ -1473,7 +1473,7 @@ public class VideoCapturePlugin extends PluginCapture
 					MainScreen.getPreviewHeight());
 			MainScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-				CameraController.getInstance().setVideoStabilization(false);
+				CameraController.setVideoStabilization(false);
 		}
 		CameraController.startCameraPreview();
 
@@ -1516,7 +1516,7 @@ public class VideoCapturePlugin extends PluginCapture
 		SessionID = curDate.getTime();
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
-			CameraController.getInstance().setVideoStabilization(true);
+			CameraController.setVideoStabilization(true);
 
 		shutterOff = true;
 		mRecordingStartTime = SystemClock.uptimeMillis();
@@ -1682,7 +1682,7 @@ public class VideoCapturePlugin extends PluginCapture
 							lastUseProf = useProf;
 						} else
 						{
-							List<CameraController.Size> psz = CameraController.getInstance().getSupportedPreviewSizes();
+							List<CameraController.Size> psz = CameraController.getSupportedPreviewSizes();
 							sz = new CameraController.Size(1920, 1080);
 							if (!psz.contains(sz))
 								sz = new CameraController.Size(1920, 1088);
@@ -2282,14 +2282,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		try
-		{
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Video capture still image", "takePicture exception: " + e.getMessage());
-		}
+		CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], true);
 	}
 
 	// timelapse values

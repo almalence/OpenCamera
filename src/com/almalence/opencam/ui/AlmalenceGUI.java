@@ -1649,21 +1649,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		createPluginTopMenuButtons();
 
-		if (CameraController.getInstance().isExposureLockSupported())
+		if (CameraController.isExposureLockSupported())
 			mEVLockSupported = true;
-		if (CameraController.getInstance().isWhiteBalanceLockSupported())
+		if (CameraController.isWhiteBalanceLockSupported())
 			mWBLockSupported = true;
 
 		// Create Exposure compensation button and slider with supported values
-		if (CameraController.getInstance().isExposureCompensationSupported())
+		if (CameraController.isExposureCompensationSupported())
 		{
 			mEVSupported = true;
 			defaultQuickControl1 = String.valueOf(MODE_EV);
 
-			float ev_step = CameraController.getInstance().getExposureCompensationStep();
+			float ev_step = CameraController.getExposureCompensationStep();
 
-			int minValue = CameraController.getInstance().getMinExposureCompensation();
-			int maxValue = CameraController.getInstance().getMaxExposureCompensation();
+			int minValue = CameraController.getMinExposureCompensation();
+			int maxValue = CameraController.getMaxExposureCompensation();
 
 			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 			if (evBar != null)
@@ -1689,7 +1689,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				rightText.setText(maxString);
 
 				mEV = initValue;
-				CameraController.getInstance().setCameraExposureCompensation(mEV);
+				CameraController.setCameraExposureCompensation(mEV);
 
 				evBar.setOnSeekBarChangeListener(this);
 			}
@@ -1700,7 +1700,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mEVSupported = false;
 
 		// Create Scene mode button and adding supported scene modes
-		int[] supported_scene = CameraController.getInstance().getSupportedSceneModes();
+		int[] supported_scene = CameraController.getSupportedSceneModes();
 		if (supported_scene != null && supported_scene.length > 0 && activeScene != null)
 		{
 			for (int scene_name : supported_scene)
@@ -1739,7 +1739,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraSceneMode(mSceneMode);
+				CameraController.setCameraSceneMode(mSceneMode);
 			} else
 			{
 				mSceneModeSupported = false;
@@ -1752,7 +1752,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Create White Balance mode button and adding supported white balances
-		int[] supported_wb = CameraController.getInstance().getSupportedWhiteBalance();
+		int[] supported_wb = CameraController.getSupportedWhiteBalance();
 		if (supported_wb != null && supported_wb.length > 0 && activeWB != null)
 		{
 			for (int wb_name : supported_wb)
@@ -1790,7 +1790,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraWhiteBalance(mWB);
+				CameraController.setCameraWhiteBalance(mWB);
 			} else
 			{
 				mWBSupported = false;
@@ -1803,7 +1803,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Create Focus mode button and adding supported focus modes
-		final int[] supported_focus = CameraController.getInstance().getSupportedFocusModes();
+		final int[] supported_focus = CameraController.getSupportedFocusModes();
 		if (supported_focus != null && supported_focus.length > 0 && activeFocus != null)
 		{
 			for (int focus_name : supported_focus)
@@ -1857,7 +1857,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							else
 								afMode = supported_focus[0];
 
-							CameraController.getInstance().setCameraFocusMode(afMode);
+							CameraController.setCameraFocusMode(afMode);
 							MainScreen.setAutoFocusLock(true);
 
 							preferences
@@ -1923,9 +1923,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					else
 						afMode = supported_focus[0];
 
-					CameraController.getInstance().setCameraFocusMode(afMode);
+					CameraController.setCameraFocusMode(afMode);
 				} else
-					CameraController.getInstance().setCameraFocusMode(mFocusMode);
+					CameraController.setCameraFocusMode(mFocusMode);
 			} else
 			{
 				mFocusModeSupported = false;
@@ -1938,7 +1938,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Create Flash mode button and adding supported flash modes
-		int[] supported_flash = CameraController.getInstance().getSupportedFlashModes();
+		int[] supported_flash = CameraController.getSupportedFlashModes();
 		if (supported_flash != null
 				&& supported_flash.length > 0
 				&& activeFlash != null
@@ -1981,7 +1981,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.getInstance().setCameraFlashMode(mFlashMode);
+				CameraController.setCameraFlashMode(mFlashMode);
 			} else
 			{
 				mFlashModeSupported = false;
@@ -1994,9 +1994,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Create ISO button and adding supported ISOs
-		int[] supported_iso = CameraController.getInstance().getSupportedISO();
+		int[] supported_iso = CameraController.getSupportedISO();
 		if ((supported_iso != null && supported_iso.length > 0 && activeISO != null)
-				|| (CameraController.getInstance().isISOSupported() && activeISO != null))
+				|| (CameraController.isISOSupported() && activeISO != null))
 		{
 			if (supported_iso != null && supported_iso.length != 0)
 				for (int iso_name : supported_iso)
@@ -2043,7 +2043,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int icon_id = ICONS_ISO.get(initValue);
 					but.setImageResource(icon_id);
 				}
-				CameraController.getInstance().setCameraISO(mISO);
+				CameraController.setCameraISO(mISO);
 			} else
 			{
 				mISOSupported = false;
@@ -2055,7 +2055,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mISO = -1;
 		}
 
-		int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
+		int iMeteringAreasSupported = CameraController.getMaxNumMeteringAreas();
 		if (iMeteringAreasSupported > 0)
 		{
 			Collection<Integer> unsorted_keys = NAMES_METERING.keySet();
@@ -3186,7 +3186,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int[] supported_scene = CameraController.getInstance().getSupportedSceneModes();
+				int[] supported_scene = CameraController.getSupportedSceneModes();
 				if (supported_scene == null)
 					return;
 				if (supported_scene.length > 0)
@@ -3217,7 +3217,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int[] supported_wb = CameraController.getInstance().getSupportedWhiteBalance();
+				int[] supported_wb = CameraController.getSupportedWhiteBalance();
 				if (supported_wb == null)
 					return;
 				if (supported_wb.length > 0)
@@ -3250,7 +3250,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int[] supported_focus = CameraController.getInstance().getSupportedFocusModes();
+				int[] supported_focus = CameraController.getSupportedFocusModes();
 				if (supported_focus == null)
 					return;
 				if (supported_focus.length > 0)
@@ -3281,7 +3281,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int[] supported_flash = CameraController.getInstance().getSupportedFlashModes();
+				int[] supported_flash = CameraController.getSupportedFlashModes();
 				if (supported_flash == null)
 					return;
 				if (supported_flash.length > 0)
@@ -3312,9 +3312,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int[] supported_iso = CameraController.getInstance().getSupportedISO();
+				int[] supported_iso = CameraController.getSupportedISO();
 				if ((supported_iso != null && supported_iso.length > 0)
-						|| CameraController.getInstance().isISOSupported())
+						|| CameraController.isISOSupported())
 				{
 					if (iScreenType == 0)
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
@@ -3342,7 +3342,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							.getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int iMeteringAreasSupported = CameraController.getInstance().getMaxNumMeteringAreas();
+				int iMeteringAreasSupported = CameraController.getMaxNumMeteringAreas();
 				if (iMeteringAreasSupported > 0)
 				{
 					if (iScreenType == 0)
@@ -4312,36 +4312,36 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (newMode != -1 && sceneModeButtons.containsKey(newMode))
 		{
 			if (newMode != CameraParameters.SCENE_MODE_AUTO)
-				CameraController.getInstance().setCameraISO(CameraParameters.ISO_AUTO);
-			CameraController.getInstance().setCameraSceneMode(newMode);
+				CameraController.setCameraISO(CameraParameters.ISO_AUTO);
+			CameraController.setCameraSceneMode(newMode);
 			mSceneMode = newMode;
 		} else if (sceneModeButtons.containsKey(CameraParameters.SCENE_MODE_AUTO))
 		{
-			CameraController.getInstance().setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
+			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 			mSceneMode = CameraParameters.SCENE_MODE_AUTO;
-		} else if (CameraController.getInstance().getSupportedSceneModes() != null)
+		} else if (CameraController.getSupportedSceneModes() != null)
 		{
-			CameraController.getInstance().setCameraSceneMode(
-					CameraController.getInstance().getSupportedSceneModes()[0]);
-			mSceneMode = CameraController.getInstance().getSupportedSceneModes()[0];
+			CameraController.setCameraSceneMode(
+					CameraController.getSupportedSceneModes()[0]);
+			mSceneMode = CameraController.getSupportedSceneModes()[0];
 		}
 
 		// After change scene mode it may be changed other stuff such as
 		// flash, wb, focus mode.
 		// Need to get this information and update state of current
 		// parameters.
-		int wbNew = CameraController.getInstance().getWBMode();
-		int flashNew = CameraController.getInstance().getFlashMode();
-		int focusNew = CameraController.getInstance().getFocusMode();
-		int isoNew = CameraController.getInstance().getISOMode();
+		int wbNew = CameraController.getWBMode();
+		int flashNew = CameraController.getFlashMode();
+		int focusNew = CameraController.getFocusMode();
+		int isoNew = CameraController.getISOMode();
 
 		// Save new params value
 		if (wbNew != -1 && wbModeButtons.containsKey(wbNew))
 			mWB = wbNew;
 		else if (wbModeButtons.containsKey(CameraParameters.WB_MODE_AUTO))
 			mWB = CameraParameters.WB_MODE_AUTO;
-		else if (CameraController.getInstance().isWhiteBalanceSupported())
-			mWB = CameraController.getInstance().getSupportedWhiteBalance()[0];
+		else if (CameraController.isWhiteBalanceSupported())
+			mWB = CameraController.getSupportedWhiteBalance()[0];
 		else
 			mWB = -1;
 
@@ -4349,8 +4349,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mFocusMode = focusNew;
 		else if (focusModeButtons.containsKey(CameraParameters.AF_MODE_AUTO))
 			mFocusMode = CameraParameters.AF_MODE_AUTO;
-		else if (CameraController.getInstance().isFocusModeSupported())
-			mFocusMode = CameraController.getInstance().getSupportedFocusModes()[0];
+		else if (CameraController.isFocusModeSupported())
+			mFocusMode = CameraController.getSupportedFocusModes()[0];
 		else
 			mFocusMode = -1;
 
@@ -4358,8 +4358,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mFlashMode = flashNew;
 		else if (focusModeButtons.containsKey(CameraParameters.FLASH_MODE_AUTO))
 			mFlashMode = CameraParameters.FLASH_MODE_AUTO;
-		else if (CameraController.getInstance().isFlashModeSupported())
-			mFlashMode = CameraController.getInstance().getSupportedFlashModes()[0];
+		else if (CameraController.isFlashModeSupported())
+			mFlashMode = CameraController.getSupportedFlashModes()[0];
 		else
 			mFlashMode = -1;
 
@@ -4367,8 +4367,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mISO = isoNew;
 		else if (isoButtons.containsKey(CameraParameters.ISO_AUTO))
 			mISO = CameraParameters.ISO_AUTO;
-		else if (CameraController.getInstance().getSupportedISO() != null)
-			mISO = CameraController.getInstance().getSupportedISO()[0];
+		else if (CameraController.getSupportedISO() != null)
+			mISO = CameraController.getSupportedISO()[0];
 		else
 			mISO = -1;
 
@@ -4447,10 +4447,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (newMode != -1)
 		{
 			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
-					&& CameraController.getInstance().isSceneModeSupported())
+					&& CameraController.isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-			CameraController.getInstance().setCameraWhiteBalance(newMode);
+			CameraController.setCameraWhiteBalance(newMode);
 
 			mWB = newMode;
 			setButtonSelected(wbModeButtons, mWB);
@@ -4474,10 +4474,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
-				if (CameraController.getInstance().isSceneModeSupported())
+				if (CameraController.isSceneModeSupported())
 					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-			CameraController.getInstance().setCameraFocusMode(newMode);
+			CameraController.setCameraFocusMode(newMode);
 
 			mFocusMode = newMode;
 			setButtonSelected(focusModeButtons, mFocusMode);
@@ -4513,10 +4513,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
-					&& CameraController.getInstance().isSceneModeSupported())
+					&& CameraController.isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-			CameraController.getInstance().setCameraFlashMode(newMode);
+			CameraController.setCameraFlashMode(newMode);
 			mFlashMode = newMode;
 			setButtonSelected(flashModeButtons, mFlashMode);
 
@@ -4538,10 +4538,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (newMode != -1)
 		{
-			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && CameraController.getInstance().isSceneModeSupported())
+			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && CameraController.isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-			CameraController.getInstance().setCameraISO(newMode);
+			CameraController.setCameraISO(newMode);
 			mISO = newMode;
 			setButtonSelected(isoButtons, mISO);
 
@@ -6005,8 +6005,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 	{
 
-		int iEv = progress - CameraController.getInstance().getMaxExposureCompensation();
-		CameraController.getInstance().setCameraExposureCompensation(iEv);
+		int iEv = progress - CameraController.getMaxExposureCompensation();
+		CameraController.setCameraExposureCompensation(iEv);
 
 		preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
 
@@ -6029,19 +6029,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
-			int minValue = CameraController.getInstance().getMinExposureCompensation();
+			int minValue = CameraController.getMinExposureCompensation();
 			int step = 1;
 			int currProgress = evBar.getProgress();
 			int iEv = currProgress - step;
 			if (iEv < 0)
 				iEv = 0;
 
-			CameraController.getInstance().setCameraExposureCompensation(iEv + minValue);
+			CameraController.setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getInstance().getExposureCompensationStep()))
+							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep()))
 					.commit();
 
 			evBar.setProgress(iEv);
@@ -6053,8 +6053,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
-			int minValue = CameraController.getInstance().getMinExposureCompensation();
-			int maxValue = CameraController.getInstance().getMaxExposureCompensation();
+			int minValue = CameraController.getMinExposureCompensation();
+			int maxValue = CameraController.getMaxExposureCompensation();
 
 			int step = 1;
 
@@ -6063,12 +6063,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (iEv > maxValue - minValue)
 				iEv = maxValue - minValue;
 
-			CameraController.getInstance().setCameraExposureCompensation(iEv + minValue);
+			CameraController.setCameraExposureCompensation(iEv + minValue);
 
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getInstance().getExposureCompensationStep()))
+							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep()))
 					.commit();
 
 			evBar.setProgress(iEv);

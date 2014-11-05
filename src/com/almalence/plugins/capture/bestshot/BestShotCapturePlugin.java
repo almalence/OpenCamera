@@ -156,20 +156,9 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		try
-		{
-			int[] pause = new int[imageAmount];
-			Arrays.fill(pause, 50);
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, true);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Bestshot takePicture() failed", "takePicture: " + e.getMessage());
-			inCapture = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
-			MainScreen.getGUIManager().lockControls = false;
-		}
+		int[] pause = new int[imageAmount];
+		Arrays.fill(pause, 50);
+		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, true);
 	}
 
 	
@@ -197,7 +186,6 @@ public class BestShotCapturePlugin extends PluginCapture
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 
 		if (imagesTaken >= imageAmount)
 		{

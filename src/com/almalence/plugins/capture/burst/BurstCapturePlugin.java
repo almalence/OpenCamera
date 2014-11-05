@@ -188,20 +188,9 @@ public class BurstCapturePlugin extends PluginCapture
 		refreshPreferences();
 		inCapture = true;
 		
-		try
-		{
-			int[] pause = new int[imageAmount];
-			Arrays.fill(pause, pauseBetweenShots);
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, true);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("CameraController.captureImagesWithParams failed", "takePicture: " + e.getMessage());
-			inCapture = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
-			MainScreen.getGUIManager().lockControls = false;
-		}
+		int[] pause = new int[imageAmount];
+		Arrays.fill(pause, pauseBetweenShots);
+		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, true);
 	}
 
 	

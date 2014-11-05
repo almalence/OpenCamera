@@ -150,13 +150,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	/*
 	 * Group shot testing start
 	 */
-	private static ArrayList<byte[]>	mJpegBufferList;
-
-	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList)
-	{
-		GroupShotProcessingPlugin.mJpegBufferList = mJpegBufferList;
-	}
-
 	private static ArrayList<Integer>	mYUVBufferList;
 
 	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
@@ -178,8 +171,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	// indicates that no more user interaction needed
 	private boolean				finishing				= false;
 	private boolean				changingFace			= false;
-
-	private static boolean		isYUV					= false;
 
 	public GroupShotProcessingPlugin()
 	{
@@ -253,22 +244,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 			nFrames = imagesAmount;
 
-			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
-			if (!isYUV)
+			mFrameCount = mYUVBufferList.size();
+			if(PreviewBmp != null)
 			{
-				mFrameCount = mJpegBufferList.size();
-				PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
-			} else
-			{
-				mFrameCount = mYUVBufferList.size();
-				if(PreviewBmp != null)
-				{
-					PreviewBmp.recycle();
-					PreviewBmp = null;
-				}
-				PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
+				PreviewBmp.recycle();
+				PreviewBmp = null;
 			}
+			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
 
 			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 			{
@@ -390,11 +372,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			int rotation = mCameraMirrored
 					&& (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360
 					: mDisplayOrientationOnStartProcessing;
-			if (!isYUV)
-				mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, false,
-						rotation);
-			else
-				mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
+			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
 			getFaceRects();
 
 			sortFaceList();
@@ -584,20 +562,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 
 		mImgView = ((ImageView) postProcessingView.findViewById(R.id.groupshotImageHolder));
-		if (!isYUV)
-			PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
-		else
+		if(PreviewBmp != null)
 		{
-			if(PreviewBmp != null)
-			{
-				PreviewBmp.recycle();
-				PreviewBmp = null;
-			}
-			
-			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), imageSize.getWidth(),
-					imageSize.getWidth());
+			PreviewBmp.recycle();
+			PreviewBmp = null;
 		}
+		
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), imageSize.getWidth(),
+				imageSize.getWidth());
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
@@ -626,14 +599,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	private void setupImageSelector()
 	{
-		if (!isYUV)
-			mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mJpegBufferList,
-					mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-					mCameraMirrored);
-		else
-			mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mYUVBufferList,
-					mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-					mCameraMirrored, true);
+		mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mYUVBufferList,
+				mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
+				mCameraMirrored, true);
 		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 		mGallery.setAdapter(mImageAdapter);
 		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -940,7 +908,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 			if (mSeamless != null)
 				mSeamless.release();
-			mJpegBufferList.clear();
 			for(int yuv: mYUVBufferList)
 			{
 				SwapHeap.FreeFromHeap(yuv);

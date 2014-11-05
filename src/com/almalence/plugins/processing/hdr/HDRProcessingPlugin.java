@@ -222,8 +222,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					"framelen" + (i + 1) + sessionID));
 		}
 
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
 		if (HDRProcessingPlugin.SaveInputPreference != 0)
 		{
 			try
@@ -259,7 +257,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
-					PluginManager.getInstance().writeData(os, isYUV, sessionID, i, buffer, yuvBuffer, file);
+					PluginManager.getInstance().writeData(os, true, sessionID, i, buffer, yuvBuffer, file);
 				}
 			} catch (IOException e)
 			{
@@ -271,16 +269,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			}
 		}
 
-		if (!isYUV)
-		{
-			AlmaShotHDR.HDRConvertFromJpeg(compressed_frame, compressed_frame_len, imagesAmount, mImageWidth,
-					mImageHeight);
-//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.ConvertFromJpeg success");
-		} else
-		{
-			AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
-//			Log.d("HDR", "PreviewTask.doInBackground AlmaShot.AddYUVFrames success");
-		}
+		AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 
 		int nf = HDRProcessingPlugin.getNoise();
 

@@ -90,8 +90,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	// indicates that no more user interaction needed
 	private boolean						finishing		= false;
 
-	private static boolean				isYUV			= false;
-
 	public View getPostProcessingView()
 	{
 		return postProcessingView;
@@ -159,55 +157,33 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			int iImageWidth = imageSize.getWidth();
 			int iImageHeight = imageSize.getHeight();
 
-			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
 			thumbnails.clear();
 			int heightPixels = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
-				if (isYUV)
-				{
-					thumbnails
-							.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
-									mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
-									/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
-									false));
-				} else
-				{
-//					byte[] in = SwapHeap.CopyFromHeap(
-//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
-					
-					byte[] in = mJpegBufferList.get(i-1);
-
-					BitmapFactory.Options opts = new BitmapFactory.Options();
-					thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-							heightPixels / imagesAmount,
-							(int) (opts.outHeight * (((float)heightPixels / imagesAmount) / opts.outWidth)), false));
-				}
+				thumbnails
+						.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
+								mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
+								/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
+								false));
 			}
 
-			if (!isYUV)
-				getDisplaySize(mJpegBufferList.get(0));
-			else
+			Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+					.getDefaultDisplay();
+			Point dis = new Point();
+			display.getSize(dis);
+
+			float imageRatio = (float) iImageWidth / (float) iImageHeight;
+			float displayRatio = (float) dis.y / (float) dis.x;
+
+			if (imageRatio > displayRatio)
 			{
-				Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
-						.getDefaultDisplay();
-				Point dis = new Point();
-				display.getSize(dis);
-
-				float imageRatio = (float) iImageWidth / (float) iImageHeight;
-				float displayRatio = (float) dis.y / (float) dis.x;
-
-				if (imageRatio > displayRatio)
-				{
-					mDisplayWidth = dis.y;
-					mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
-				} else
-				{
-					mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
-					mDisplayHeight = dis.x;
-				}
+				mDisplayWidth = dis.y;
+				mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
+			} else
+			{
+				mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
+				mDisplayHeight = dis.x;
 			}
 
 			Size preview = new Size(mDisplayWidth, mDisplayHeight);
@@ -225,10 +201,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			}
 
 			// frames!!! should be taken from heap
-			if (!isYUV)
-				mAlmaCLRShot.addJPEGInputFrame(mJpegBufferList, input);
-			else
-				mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
+			mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
 
 			mAlmaCLRShot.initialize(preview, mAngle,
 			/*
@@ -270,13 +243,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private Bitmap						PreviewBmp			= null;
 	public static int					mDisplayWidth;
 	public static int					mDisplayHeight;
-
-	private static ArrayList<byte[]>	mJpegBufferList;
-
-	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList)
-	{
-		SequenceProcessingPlugin.mJpegBufferList = mJpegBufferList;
-	}
 
 	private static ArrayList<Integer>	mYUVBufferList;
 
@@ -442,7 +408,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			break;
 		case MSG_LEAVING:
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
-			mJpegBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_CONTROL_UNLOCKED);

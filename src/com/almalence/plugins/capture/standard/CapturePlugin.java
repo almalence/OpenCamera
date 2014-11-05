@@ -75,7 +75,7 @@ public class CapturePlugin extends PluginCapture
 		{
 			// for still-image DRO - set Ev just a bit lower (-0.5Ev or less)
 			// than for standard shot
-			float expStep = CameraController.getInstance().getExposureCompensationStep();
+			float expStep = CameraController.getExposureCompensationStep();
 			int diff = (int) Math.floor(0.5 / expStep);
 			if (diff < 1)
 				diff = 1;
@@ -84,11 +84,11 @@ public class CapturePlugin extends PluginCapture
 			ev -= diff;
 		}
 
-		int minValue = CameraController.getInstance().getMinExposureCompensation();
+		int minValue = CameraController.getMinExposureCompensation();
 		if (ev >= minValue)
 		{
 			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
-			CameraController.getInstance().setCameraExposureCompensation(ev);
+			CameraController.setCameraExposureCompensation(ev);
 		}
 	}
 
@@ -238,22 +238,12 @@ public class CapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 //		Log.d("CapturePlugin", "takePicture");
-		try
-		{
-			if (ModePreference.compareTo("0") == 0)
-				requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
-						new int[0], true);
-			else
-				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
-						new int[0], true);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.d("Standard capture", "takePicture exception: " + e.getMessage());
-			PluginManager.getInstance()
-					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-			MainScreen.getGUIManager().lockControls = false;
-		}
+		if (ModePreference.compareTo("0") == 0)
+			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
+					new int[0], true);
+		else
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
+					new int[0], true);
 	}
 
 	@Override
@@ -268,16 +258,7 @@ public class CapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
-
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.e("Capture", "StartPreview fail");
-//		}
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
