@@ -2,14 +2,7 @@
 <resources>
     <string name="trial_left">Liczba pozostałych darmowych zdjęć w trybie "%1$s": %2$d</string>
     <string name="trial_finished">Wyczerpano limit darmowych zdjęć w trybie "%1$s". Zdejmij limit.</string>
-    <!-- -+-  -->
-    <string name="app_name">A Better Camera - Lepszy aparat</string>
-    <string name="Pref_About">A Better Camera  v3.25\n(©) Almalence Inc\n</string>
-    <!--  -+- -->
-    <!-- +++
-    <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.25\n(©) by Almalence Inc\n</string>
-    +++ -->
+
     <string name="cannot_create_jpeg">Błąd: nie udało się zapisać zdjęcia!</string>
     <string name="choose_folder_pick">Użyj tego folderu</string>
     <string name="choose_folder_newfolder">Nowy folder</string>

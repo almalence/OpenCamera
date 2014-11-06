@@ -133,17 +133,17 @@ public class AppEditorNotifier
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);
-		tv.setText(MainScreen.getInstance().getResources().getString(R.string.editorAdvText));
+		tv.setText(MainScreen.getAppResources().getString(R.string.editorAdvText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button bInstall = new Button(mContext);
-		bInstall.setText(MainScreen.getInstance().getResources().getString(R.string.editorInstallText));
+		bInstall.setText(MainScreen.getAppResources().getString(R.string.editorInstallText));
 		ll.addView(bInstall);
 
 		Button bLater = new Button(mContext);
-		bLater.setText(MainScreen.getInstance().getResources().getString(R.string.editorNoText));
+		bLater.setText(MainScreen.getAppResources().getString(R.string.editorNoText));
 		ll.addView(bLater);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

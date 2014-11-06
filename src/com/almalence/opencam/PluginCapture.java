@@ -29,8 +29,8 @@ import java.util.Date;
 
 public abstract class PluginCapture extends Plugin
 {
-	protected boolean	takingAlready	= false;
 	protected boolean	inCapture;
+	protected boolean	aboutToTakePicture = false;
 	protected int		imagesTaken = 0;
 
 	public boolean getInCapture()
@@ -65,27 +65,18 @@ public abstract class PluginCapture extends Plugin
 	{
 		if (!inCapture)
 		{
+			inCapture = true;
+			
 			MainScreen.getGUIManager().lockControls = true;
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
 			MainScreen.getInstance().muteShutter(true);
 
-			int focusMode = CameraController.getInstance().getFocusMode();
-			if (focusMode != -1
-					&& !takingAlready
-					&& (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
-							.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-							|| focusMode == CameraParameters.AF_MODE_INFINITY
-							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-					&& !MainScreen.getAutoFocusLock())
-				takingAlready = true;
-			else if (!takingAlready)
-			{
+			if(CameraController.isAutoFocusPerform())				
+				aboutToTakePicture = true;
+			else
 				takePicture();
-			}
 		}
 	}
 
@@ -93,7 +84,6 @@ public abstract class PluginCapture extends Plugin
 	public void onExportFinished()
 	{
 		inCapture = false;
-		takingAlready = false;
 	}
 
 	public void takePicture()
@@ -101,7 +91,16 @@ public abstract class PluginCapture extends Plugin
 	}
 
 	@Override
-	public abstract void onAutoFocus(boolean paramBoolean);
+	public void onAutoFocus(boolean paramBoolean)
+	{
+		if(inCapture)
+		{
+			if (aboutToTakePicture)
+				takePicture();
+			
+			aboutToTakePicture = false;
+		}
+	}
 
 	@Override
 	public abstract void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);

@@ -156,7 +156,7 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 
-		CameraController.Size previewSize = CameraController.getInstance().new Size(MainScreen.getPreviewWidth(),
+		CameraController.Size previewSize = new CameraController.Size(MainScreen.getPreviewWidth(),
 				MainScreen.getPreviewHeight());
 
 		float ratio = (float) previewSize.getWidth() / previewSize.getHeight();
@@ -187,7 +187,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_golden4x3;
 			}
-			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
 		} else if (1 == gridType)
 		{
 			switch (ri)
@@ -204,7 +204,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_thirds4x3;
 			}
-			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
 		} else if (2 == gridType)
 		{
 			switch (ri)
@@ -221,10 +221,10 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_trisec4x3;
 			}
-			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
 		} else if (3 == gridType)
 		{
-			grid.setImageDrawable(MainScreen.getInstance().getResources()
+			grid.setImageDrawable(MainScreen.getAppResources()
 					.getDrawable(R.drawable.plugin_vf_grid_none_img));
 		} else
 		{
@@ -242,7 +242,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_thirds4x3;
 			}
-			grid.setImageDrawable(MainScreen.getInstance().getResources().getDrawable(resID));
+			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
 		}
 
 //		grid.requestLayout();

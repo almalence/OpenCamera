@@ -90,8 +90,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	// indicates that no more user interaction needed
 	private boolean						finishing		= false;
 
-	private static boolean				isYUV			= false;
-
 	public View getPostProcessingView()
 	{
 		return postProcessingView;
@@ -124,18 +122,16 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
-			imgWidthOR = MainScreen.getImageHeight();
-			imgHeightOR = MainScreen.getImageWidth();
+			imgWidthOR = imageSize.getHeight();
+			imgHeightOR = imageSize.getWidth();
 		} else
 		{
-			imgWidthOR = MainScreen.getImageWidth();
-			imgHeightOR = MainScreen.getImageHeight();
+			imgWidthOR = imageSize.getWidth();
+			imgHeightOR = imageSize.getHeight();
 		}
-
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
@@ -143,7 +139,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 		try
 		{
-			Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
 			int minSize = 1000;
@@ -158,58 +154,36 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			if (imagesAmount == 0)
 				imagesAmount = 1;
 
-			int iImageWidth = MainScreen.getImageWidth();
-			int iImageHeight = MainScreen.getImageHeight();
-
-			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
+			int iImageWidth = imageSize.getWidth();
+			int iImageHeight = imageSize.getHeight();
 
 			thumbnails.clear();
-			int heightPixels = MainScreen.getInstance().getResources().getDisplayMetrics().heightPixels;
+			int heightPixels = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
-				if (isYUV)
-				{
-					thumbnails
-							.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
-									mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
-									/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
-									false));
-				} else
-				{
-//					byte[] in = SwapHeap.CopyFromHeap(
-//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-//							Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
-					
-					byte[] in = mJpegBufferList.get(i-1);
-
-					BitmapFactory.Options opts = new BitmapFactory.Options();
-					thumbnails.add(Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(in, 0, in.length, opts),
-							heightPixels / imagesAmount,
-							(int) (opts.outHeight * (((float)heightPixels / imagesAmount) / opts.outWidth)), false));
-				}
+				thumbnails
+						.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
+								mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
+								/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
+								false));
 			}
 
-			if (!isYUV)
-				getDisplaySize(mJpegBufferList.get(0));
-			else
+			Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+					.getDefaultDisplay();
+			Point dis = new Point();
+			display.getSize(dis);
+
+			float imageRatio = (float) iImageWidth / (float) iImageHeight;
+			float displayRatio = (float) dis.y / (float) dis.x;
+
+			if (imageRatio > displayRatio)
 			{
-				Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
-						.getDefaultDisplay();
-				Point dis = new Point();
-				display.getSize(dis);
-
-				float imageRatio = (float) iImageWidth / (float) iImageHeight;
-				float displayRatio = (float) dis.y / (float) dis.x;
-
-				if (imageRatio > displayRatio)
-				{
-					mDisplayWidth = dis.y;
-					mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
-				} else
-				{
-					mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
-					mDisplayHeight = dis.x;
-				}
+				mDisplayWidth = dis.y;
+				mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
+			} else
+			{
+				mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
+				mDisplayHeight = dis.x;
 			}
 
 			Size preview = new Size(mDisplayWidth, mDisplayHeight);
@@ -217,8 +191,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			PluginManager.getInstance()
 					.addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
 
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(imgWidthOR));
+			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(imgHeightOR));
 
 			this.indexes = new int[imagesAmount];
 			for (int i = 0; i < imagesAmount; i++)
@@ -227,10 +201,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			}
 
 			// frames!!! should be taken from heap
-			if (!isYUV)
-				mAlmaCLRShot.addJPEGInputFrame(mJpegBufferList, input);
-			else
-				mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
+			mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
 
 			mAlmaCLRShot.initialize(preview, mAngle,
 			/*
@@ -272,13 +243,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private Bitmap						PreviewBmp			= null;
 	public static int					mDisplayWidth;
 	public static int					mDisplayHeight;
-
-	private static ArrayList<byte[]>	mJpegBufferList;
-
-	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList)
-	{
-		SequenceProcessingPlugin.mJpegBufferList = mJpegBufferList;
-	}
 
 	private static ArrayList<Integer>	mYUVBufferList;
 
@@ -382,7 +346,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		float density = MainScreen.getAppResources().getDisplayMetrics().density;
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
@@ -444,7 +408,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			break;
 		case MSG_LEAVING:
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
-			mJpegBufferList.clear();
 
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
 					PluginManager.MSG_CONTROL_UNLOCKED);
@@ -500,7 +463,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
 		sequenceView.setEnabled(false);
 
-		Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 		int minSize = 1000;
 		if (mMinSize == 0)
 		{

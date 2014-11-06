@@ -78,6 +78,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	private Switch				modeSwitcher;
 
 	private boolean				captureStarted		= false;
+	private boolean				aboutToTakePicture		= false;
 
 	public PreshotCapturePlugin()
 	{
@@ -106,8 +107,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		StopBuffering();
 		inCapture = false;
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putBoolean("UseFocus", true)
-				.commit();
 		PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext())
 				.edit()
@@ -207,10 +206,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -227,10 +226,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -310,15 +309,12 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			PreShot.FreeBuffer();
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
-			preview_fps = CameraController.getInstance().getPreviewFrameRate();
+			preview_fps = CameraController.getPreviewFrameRate();
 			if (Build.MODEL.contains("HTC One"))
 				preview_fps = 30;
 
 			imW = MainScreen.getPreviewWidth();
 			imH = MainScreen.getPreviewHeight();
-
-			MainScreen.setSaveImageWidth(imW);
-			MainScreen.setSaveImageHeight(imH);
 
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 
@@ -339,11 +335,9 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			// full size code
 			PreShot.FreeBuffer();
-			imW = MainScreen.getImageWidth();
-			imH = MainScreen.getImageHeight();
-
-			MainScreen.setSaveImageWidth(imW);
-			MainScreen.setSaveImageHeight(imH);
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			imW = imageSize.getWidth();
+			imH = imageSize.getHeight();
 
 			int secondsAllocated = PreShot.AllocateBuffer(imW, imH, Integer.parseInt(FPS),
 					Integer.parseInt(PreShotInterval), 1);
@@ -412,37 +406,11 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (!inCapture)
 		{
 			inCapture = true;
-			takingAlready = false;
-
-			// start series
-			try
-			// some crappy models have autoFocus() = null
-			{
-				int focusMode = CameraController.getInstance().getFocusMode();
-				if (!(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| focusMode == CameraParameters.AF_MODE_INFINITY
-						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-						&& !MainScreen.getAutoFocusLock())
-				{
-					if (!CameraController.autoFocus())
-					{
-						this.CaptureFrame();
-						takingAlready = true;
-					}
-				} else if (!takingAlready)
-				{
-					this.CaptureFrame();
-					takingAlready = true;
-				}
-			} catch (NullPointerException e)
-			{
-				if (!takingAlready)
-				{
-					this.CaptureFrame();
-					takingAlready = true;
-				}
-			}
+			
+			if(CameraController.isAutoFocusPerform())
+				aboutToTakePicture = true;
+			else
+				CaptureFrame();
 		}
 	}
 
@@ -468,8 +436,6 @@ public class PreshotCapturePlugin extends PluginCapture
 
 		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 
-		takingAlready = false;
-		
 		try
 		{
 			CameraController.startCameraPreview();
@@ -480,8 +446,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.i("Preshot capture", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_NEXT_FRAME);
+			StopBuffering();
 		}
 	}
 
@@ -524,8 +489,12 @@ public class PreshotCapturePlugin extends PluginCapture
 					&& !MainScreen.getAutoFocusLock())
 			{
 				counter = 0;
+				aboutToTakePicture = true;
 				if (!CameraController.autoFocus())
+				{
+					aboutToTakePicture = false;
 					CaptureFrame();
+				}
 			} else
 			{
 				CaptureFrame();
@@ -535,21 +504,14 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		try
+		if (isBuffering)
 		{
-			if (isBuffering)
-			{
-				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					return;
-//				inCapture = true;
-
-				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
-				counter++;
-			}
-		} catch (RuntimeException e)
-		{
-			Log.i("Preshot capture", "takePicture fail in CaptureFrame (called after release?)" + e.getMessage());
-			CameraController.startCameraPreview();
+			if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				return;
+	//				inCapture = true;
+	
+			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
+			counter++;
 		}
 	}
 
@@ -560,30 +522,18 @@ public class PreshotCapturePlugin extends PluginCapture
 		// on motorola droid's onAutoFocus seem to be called at every
 		// startPreview,
 		// causing additional frame(s) taken after sequence is finished
-		if (!takingAlready && isSlowMode)
+		if (aboutToTakePicture && isSlowMode)
 		{
 			CaptureFrame();
-			takingAlready = true;
 		}
+		
+		aboutToTakePicture = false;
 	}
 
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_NEXT_FRAME)
-		{
-			try
-			{
-				CameraController.startCameraPreview();
-				CaptureFrame();
-			} catch (RuntimeException e)
-			{
-				Log.i("CameraTest", "RuntimeException in MSG_NEXT_FRAME");
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_NEXT_FRAME);
-			}
-			return true;
-		} else if (arg1 == PluginManager.MSG_STOP_CAPTURE)
+		if (arg1 == PluginManager.MSG_STOP_CAPTURE)
 		{
 			StopBuffering();
 			return true;

@@ -78,7 +78,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	private int										selectedPlugin					= CANCELLED;
 	private long									sessionID;
 
-	private boolean									isYUV;
 	private boolean									mSaveInputPreference;
 	private static ArrayList<Integer>				mYUVBufferList					= new ArrayList<Integer>();
 	private static ArrayList<byte[]>				mJpegBufferList					= new ArrayList<byte[]>();
@@ -223,12 +222,10 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		if (selectedPlugin == GROUP_SHOT)
 		{
-			GroupShotProcessingPlugin.setmJpegBufferList(mJpegBufferList);
 			GroupShotProcessingPlugin.setmYUVBufferList(mYUVBufferList);
 			groupShotProcessingPlugin.onStartProcessing(sessionID);
 		} else if (selectedPlugin == SEQUENCE)
 		{
-			SequenceProcessingPlugin.setmJpegBufferList(mJpegBufferList);
 			SequenceProcessingPlugin.setmYUVBufferList(mYUVBufferList);
 			sequenceProcessingPlugin.onStartProcessing(sessionID);
 		} else if (selectedPlugin == OBJECT_REMOVAL)
@@ -246,32 +243,20 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		if (imagesAmount == 0)
 			imagesAmount = 1;
 
-		isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
 		mYUVBufferList.clear();
 		mJpegBufferList.clear();
 
 		for (int i = 1; i <= imagesAmount; i++)
 		{
-			if (isYUV)
-			{
-				int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
-				mYUVBufferList.add(i - 1, yuv);
-			} else
-			{
-				byte[] in = SwapHeap.SwapFromHeap(
-						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID)),
-						Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID)));
-
-				mJpegBufferList.add(i - 1, in);
-			}
+			int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
+			mYUVBufferList.add(i - 1, yuv);
 		}
 
 		if (mSaveInputPreference)
 		{
 			try
 			{
-				File saveDir = PluginManager.getInstance().getSaveDir(false);
+				File saveDir = PluginManager.getSaveDir(false);
 
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
@@ -299,19 +284,12 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					{
 						// save always if not working saving to sdcard
 						e.printStackTrace();
-						saveDir = PluginManager.getInstance().getSaveDir(true);
+						saveDir = PluginManager.getSaveDir(true);
 						file = new File(saveDir, fileFormat + index + ".jpg");
 						os = new FileOutputStream(file);
 					}
 
-					if (isYUV)
-					{
-						PluginManager.getInstance().writeData(os, isYUV, sessionID, i, null, mYUVBufferList.get(i),
-								file);
-					} else
-					{
-						PluginManager.getInstance().writeData(os, isYUV, sessionID, i, mJpegBufferList.get(i), 0, file);
-					}
+					PluginManager.getInstance().writeData(os, true, sessionID, i, null, mYUVBufferList.get(i), file);
 				}
 			} catch (IOException e)
 			{

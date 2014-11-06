@@ -122,30 +122,18 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int iSaveImageWidth = imageSize.getWidth();
+		int iSaveImageHeight = imageSize.getHeight();
 
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
-			imgWidthOR = MainScreen.getImageHeight();
-			imgHeightOR = MainScreen.getImageWidth();
+			imgWidthOR = imageSize.getHeight();
+			imgHeightOR = imageSize.getWidth();
 		} else
 		{
-			imgWidthOR = MainScreen.getImageWidth();
-			imgHeightOR = MainScreen.getImageHeight();
-		}
-
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-		if(!isYUV)
-		{
-			Log.d("ObjectRemovalProcessingPlugin", "Input frames have to be in YUV format!");
-			try
-			{
-				throw new Exception("Expecting YUV format instead JPEG");
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			imgWidthOR = imageSize.getWidth();
+			imgHeightOR = imageSize.getHeight();
 		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
@@ -154,7 +142,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 		try
 		{
-			Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
 			int minSize = 1000;
@@ -290,7 +278,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		Point dis = new Point();
 		display.getSize(dis);
 
-		float imageRatio = (float) MainScreen.getImageWidth() / (float) MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		float imageRatio = (float) imageSize.getWidth() / (float) imageSize.getHeight();
 		float displayRatio = (float) dis.y / (float) dis.x;
 
 		if (imageRatio > displayRatio)
@@ -349,7 +338,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		float density = MainScreen.getInstance().getResources().getDisplayMetrics().density;
+		float density = MainScreen.getAppResources().getDisplayMetrics().density;
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.objectremovalLayout)).addView(mSaveButton,
 				saveLayoutParams);

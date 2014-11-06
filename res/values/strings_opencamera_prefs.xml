@@ -3,6 +3,15 @@
     <string name="Preference_ImageSizeFrontValue">imageSizePrefCommonFront</string>
     <string name="Preference_ImageSizeRearValue">imageSizePrefCommonBack</string>
     
+    <string name="Preference_ImageSizePrefSmartMultishotBackValue">imageSizePrefSmartMultishotBack</string>
+    <string name="Preference_ImageSizePrefSmartMultishotFrontValue">imageSizePrefSmartMultishotFront</string>
+    
+    <string name="Preference_ImageSizePrefPanoramaBackValue">imageSizePrefPanoramaBack</string>
+    <string name="Preference_ImageSizePrefPanoramaFrontValue">imageSizePrefPanoramaFront</string>
+    
+    <string name="Preference_ImageSizePrefVideoBackValue">imageSizePrefVideoBack</string>
+    <string name="Preference_ImageSizePrefVideoFrontValue">imageSizePrefVideoFront</string>
+    
     <string name="Preference_JPEGQualityCommonValue">commonJPEGQuality</string>
     
     <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>
@@ -40,6 +49,14 @@
     <string name="Preference_SavePathPostfixValue">Preference_SavePathPostfixValue</string>
     <string name="Preference_EnableExifTagOrientationValue">Preference_EnableExifTagOrientationValue</string>
     <string name="Preference_AdditionalRotationValue">Preference_AdditionalRotationValue</string>
+    
+    <string name="Preference_TimestampDateValue">Preference_TimestampDateValue</string>
+    <string name="Preference_TimestampAbbreviationValue">Preference_TimestampAbbreviationValue</string>
+    <string name="Preference_TimestampTimeValue">Preference_TimestampTimeValue</string>
+    <string name="Preference_TimestampSeparatorValue">Preference_TimestampSeparatorValue</string>
+    <string name="Preference_TimestampCustomTextValue">Preference_TimestampCustomTextValue</string>
+    <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
+    <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>

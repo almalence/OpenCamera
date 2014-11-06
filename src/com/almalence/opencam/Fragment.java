@@ -78,7 +78,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				public boolean onPreferenceClick(Preference preference)
 				{
 					Toast.makeText(MainScreen.getInstance(),
-							MainScreen.getInstance().getResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
+							MainScreen.getAppResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
 							.show();
 
 					return true;
@@ -166,7 +166,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						Toast.makeText(
 								MainScreen.getInstance(),
-								MainScreen.getInstance().getResources()
+								MainScreen.getAppResources()
 										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
 								Toast.LENGTH_LONG).show();
 					}
@@ -175,7 +175,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						Toast.makeText(
 								MainScreen.getInstance(),
-								MainScreen.getInstance().getResources()
+								MainScreen.getAppResources()
 										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
 								Toast.LENGTH_LONG).show();
 					}
@@ -327,7 +327,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				R.string.Preference_ExportNameValue));
 		if (exportNameList != null)
 		{
-			String[] names = MainScreen.getInstance().getResources().getStringArray(R.array.exportNameArray);
+			String[] names = MainScreen.getAppResources().getStringArray(R.array.exportNameArray);
 			CharSequence[] newNames = new CharSequence[names.length];
 			int i = 0;
 			for (String name : names)

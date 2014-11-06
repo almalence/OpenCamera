@@ -73,7 +73,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
 
@@ -84,7 +83,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	public void onGUICreate()
 	{
 		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
-				MainScreen.getInstance().getResources().getString(R.string.MultiShot_Help),
+				MainScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}
 
@@ -95,26 +94,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		if (!inCapture)
-		{
-			inCapture = true;
-			takingAlready = true;
-
-			try
-			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-						pauseBetweenShots, null, true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
-		}
+		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
+				pauseBetweenShots, null, true);
 	}
 
 	@Override
@@ -143,22 +124,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.i(TAG, "StartPreview fail");
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			inCapture = false;
-//			return;
-//		}
 		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -179,7 +144,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 				}
 			}.start();
 		}
-		takingAlready = false;
 	}
 
 	@TargetApi(21)
@@ -191,13 +155,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (takingAlready)
-			takePicture();
 	}
 
 	@Override
@@ -216,11 +173,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
-			MainScreen.setSaveImageWidth(imgCaptureWidth);
-			MainScreen.setSaveImageHeight(imgCaptureHeight);
-
-			MainScreen.setImageWidth(imgCaptureWidth);
-			MainScreen.setImageHeight(imgCaptureHeight);
+			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
+//			MainScreen.setSaveImageWidth(imgCaptureWidth);
+//			MainScreen.setSaveImageHeight(imgCaptureHeight);
+//
+//			MainScreen.setImageWidth(imgCaptureWidth);
+//			MainScreen.setImageHeight(imgCaptureHeight);
 		}
 	}
 

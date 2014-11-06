@@ -181,15 +181,16 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		else if (sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
 
 		Super_Process(
-			yuv, &OutPic,
-			sx_zoom, sy_zoom, sxo, syo, nImages,
-			sensorGain,
-			deghostTable[DeGhostPref],
-			1,							// deghostFrames
-			nTable[noisePref],
-			sharpen,
-			0,							// cameraIndex
-			0);							// externalBuffers
+				yuv, &OutPic,
+				sx_zoom, sy_zoom, sxo, syo, nImages,
+				sensorGain,
+				deghostTable[DeGhostPref],
+				1,							// deghostFrames
+				nTable[noisePref],
+				sharpen,
+				0.5f,						// gamma
+				0,							// cameraIndex
+				0);							// externalBuffers
 
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
 

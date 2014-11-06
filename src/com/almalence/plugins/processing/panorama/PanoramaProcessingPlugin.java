@@ -144,8 +144,6 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 				this.freeFrames(frames_ptrs, 0, frames_ptrs.length);
 			}
 
-			MainScreen.setSaveImageWidth(output_width);
-			MainScreen.setSaveImageHeight(output_height);
 			if (this.prefLandscape)
 			{
 				PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(output_height));

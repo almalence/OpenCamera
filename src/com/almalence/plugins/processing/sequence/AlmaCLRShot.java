@@ -95,66 +95,6 @@ public class AlmaCLRShot
 		return mInstance;
 	}
 
-	public void addJPEGInputFrame(List<byte[]> inputFrame, Size size) throws Exception
-	{
-		mNumOfFrame = inputFrame.size();
-		mInputFrameSize = size;
-
-		if (mNumOfFrame > MAX_INPUT_FRAME)
-		{
-			Log.d(TAG, "Number of Input Frame = " + mNumOfFrame);
-			throw new Exception("Too Many Input Frame");
-		}
-
-		if (!mInputFrameSize.isValid())
-		{
-			Log.d(TAG, "Input frame size is wrong ");
-			throw new Exception("Too Many Input Frame");
-		}
-
-		long pixels = mInputFrameSize.getWidth() * mInputFrameSize.getHeight();
-
-		if (pixels >= 7680000)
-		{
-			IMAGE_TO_LAYOUT = 16;
-		} else
-		{
-			IMAGE_TO_LAYOUT = 8;
-		}
-
-		Initialize();
-
-		synchronized (syncObject)
-		{
-			int[] PointOfJpegData = new int[mNumOfFrame];
-			int[] LengthOfJpegData = new int[mNumOfFrame];
-
-			for (int i = 0; i < mNumOfFrame; i++)
-			{
-				PointOfJpegData[i] = SwapHeap.SwapToHeap(inputFrame.get(i));
-				LengthOfJpegData[i] = inputFrame.get(i).length;
-				if (PointOfJpegData[i] == 0)
-				{
-					Log.d(TAG, "Out of Memory in Native");
-					throw new Exception("Out of Memory in Native");
-				}
-			}
-
-			int error = ConvertFromJpeg(PointOfJpegData, LengthOfJpegData, mNumOfFrame, size.getWidth(),
-					size.getHeight());
-			if (error < 0)
-			{
-				Log.d(TAG, "Out Of Memory");
-				throw new Exception("Out Of Memory");
-			} else if (error < mNumOfFrame)
-			{
-				Log.d(TAG, "JPEG buffer is wrong in " + error + " frame");
-				throw new Exception("Out Of Memory");
-			}
-		}
-		return;
-	}
-
 	public void addYUVInputFrame(List<Integer> inputFrame, Size size) throws Exception
 	{
 		mNumOfFrame = inputFrame.size();
