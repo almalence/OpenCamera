@@ -570,7 +570,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), imageSize.getWidth(),
-				imageSize.getWidth());
+				imageSize.getHeight());
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
