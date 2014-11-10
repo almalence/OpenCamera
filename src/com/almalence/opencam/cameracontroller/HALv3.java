@@ -1159,6 +1159,7 @@ public class HALv3
 					 }
 				} else
 				{
+					MainScreen.getGUIManager().showCaptureIndication();
 					for (int n = 0; n < nFrames; ++n)
 					{
 						// if(evRequested != null && evRequested.length > n)

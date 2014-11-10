@@ -274,9 +274,6 @@ public class PreshotCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
-			if (CameraController.getCamera() == null)
-				return;
-			
 			if (!AutostartPreference && modeSwitcher != null)
 				modeSwitcher.setEnabled(false);
 			captureStarted = true;
