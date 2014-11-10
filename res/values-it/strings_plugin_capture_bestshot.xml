@@ -9,7 +9,7 @@
     <string name="Res_Bestshot_Images_Text">immagini</string>
     
     <string name="Bestshot_Help_Header">Guida Miglior scatto</string>
-    <string name="Bestshot_Help">Analizzando una serie di scatti, Miglior scatto sceglie quello migliore, riducendo le possibilità di ritrovarsi con un\'immagine sfocata. Miglior scatto selezionerà automaticamente la migliore e la salverà.\n\n1. Seleziona il numero di immagini da acquisire.\n2. Tieni fermo il dispositivo e non muoverti\n3. Per iniziare, premi l\'otturatore\n4. Attendi l\'acquisizione e l\'elaborazione di una serie di immagini\n5. Sarà selezionata e salvata l\'immagine meno sfocata</string>
+    <string name="Bestshot_Help">Analizzando una serie di scatti, Miglior scatto sceglie quello migliore, riducendo le possibilità di ritrovarsi con un\'immagine sfocata. Miglior scatto selezionerà automaticamente la migliore e la salverà.\n\n1. Tieni fermo il dispositivo e non muoverti\n2. Per iniziare, premi l\'otturatore\n3. Attendi l\'acquisizione e l\'elaborazione di una serie di immagini\n4. Sarà selezionata e salvata l\'immagine meno sfocata</string>
     
     <string name="Res_Bestshot_3">3 immagini</string>
     <string name="Res_Bestshot_5">5 immagini</string>
