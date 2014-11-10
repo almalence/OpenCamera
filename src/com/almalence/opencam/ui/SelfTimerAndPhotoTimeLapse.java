@@ -17,7 +17,7 @@ by Almalence Inc. All Rights Reserved.
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
+ package com.almalence.opencam_plus.ui;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
@@ -44,11 +44,13 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.almalence.ui.RotateImageView;
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
-import com.almalence.ui.RotateImageView;
+//-+- -->
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -56,16 +58,6 @@ import com.almalence.ui.RotateImageView;
  import com.almalence.opencam_plus.PluginType;
  import com.almalence.opencam_plus.R;
  +++ --> */
-// <!-- -+-
-//-+- -->
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginType;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-//-+- -->
 
 public class SelfTimerAndPhotoTimeLapse
 {

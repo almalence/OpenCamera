@@ -17,59 +17,27 @@ by Almalence Inc. All Rights Reserved.
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus;
+ package com.almalence.opencam_plus.ui;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
 
 //-+- -->
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TabHost;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginType;
-import com.almalence.opencam.R;
 import com.almalence.ui.RotateDialog;
-import com.almalence.ui.RotateImageView;
 import com.almalence.ui.RotateLayout;
+
+//<!-- -+-
+import com.almalence.opencam.R;
+//-+- -->
+
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginType;
  import com.almalence.opencam_plus.R;
  +++ --> */
-// <!-- -+-
-//-+- -->
-/* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginType;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-//-+- -->
 
 public class SelfTimerAndTimeLapseDialog extends RotateDialog
 {

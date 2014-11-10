@@ -1,4 +1,10 @@
+/* <!-- +++
+ package com.almalence.opencam_plus;
+ +++ --> */
+//<!-- -+-
 package com.almalence.opencam;
+
+//-+- -->
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -11,7 +17,13 @@ import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+//<!-- -+-
 import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
+//-+- -->
+
+/* <!-- +++
+import com.almalence.opencam_plus.ui.SelfTimerAndPhotoTimeLapse;
++++ --> */
 
 public class AlarmReceiver extends BroadcastReceiver
 {
