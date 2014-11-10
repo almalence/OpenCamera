@@ -117,11 +117,11 @@ public class CapturePlugin extends PluginCapture
 					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
-					MainScreen.setCaptureYUVFrames(true);
+					MainScreen.setCaptureFormat(CameraController.YUV);
 				} else
 				{
 					ModePreference = "1";
-					MainScreen.setCaptureYUVFrames(false);
+					MainScreen.setCaptureFormat(CameraController.JPEG);
 
 //					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
@@ -173,9 +173,9 @@ public class CapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		if (ModePreference.compareTo("0") == 0)
-			MainScreen.setCaptureYUVFrames(true);
+			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
-			MainScreen.setCaptureYUVFrames(false);
+			MainScreen.setCaptureFormat(CameraController.JPEG);
 	}
 
 	@Override

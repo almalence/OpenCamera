@@ -1684,8 +1684,8 @@ public class VideoCapturePlugin extends PluginCapture
 						{
 							List<CameraController.Size> psz = CameraController.getSupportedPreviewSizes();
 							sz = new CameraController.Size(1920, 1080);
-							if (!psz.contains(sz))
-								sz = new CameraController.Size(1920, 1088);
+//							if (!psz.contains(sz))
+//								sz = new CameraController.Size(1920, 1088);
 						}
 					}
 					break;

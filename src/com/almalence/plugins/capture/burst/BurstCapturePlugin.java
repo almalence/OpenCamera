@@ -84,7 +84,7 @@ public class BurstCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		refreshPreferences();
-		MainScreen.setCaptureYUVFrames(false);
+		MainScreen.setCaptureFormat(CameraController.JPEG);
 	}
 
 	private void refreshPreferences()

@@ -78,7 +78,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	private Switch				modeSwitcher;
 
 	private boolean				captureStarted		= false;
-	private boolean				aboutToTakePicture		= false;
 
 	public PreshotCapturePlugin()
 	{
@@ -275,9 +274,6 @@ public class PreshotCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
-			if (CameraController.getCamera() == null)
-				return;
-			
 			if (!AutostartPreference && modeSwitcher != null)
 				modeSwitcher.setEnabled(false);
 			captureStarted = true;

@@ -79,9 +79,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// YUV_RAW is the same as YUV (ie NV21) except that
 	// noise filtering, edge enhancements and scaler
 	// are disabled if possible
-	public static final int							YUV_RAW							= 2;
-	public static final int							YUV								= 1;
-	public static final int							JPEG							= 0;
+	public static final int							RAW							    = 0x20;
+	public static final int							YUV_RAW							= 0x22;
+	public static final int							YUV								= 0x23;
+	public static final int							JPEG							= 0x100;
 
 	protected static final long						MPIX_1080						= 1920 * 1080;
 
@@ -1650,7 +1651,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		int[] supported_scene = getSupportedSceneModesInternal();
 		return supported_scene != null && supported_scene.length > 0
-				&& supported_scene[0] != CameraParameters.SCENE_MODE_UNSUPPORTED;
+				&& supported_scene[0] != CameraParameters.SCENE_MODE_AUTO;
 	}
 
 	public static boolean isSceneModeSupported()
