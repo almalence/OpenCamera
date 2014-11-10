@@ -42,7 +42,7 @@ import com.almalence.opencam.R;
 
 public class AppEditorNotifier
 {
-	private static int	DAYS_UNTIL_PROMPT	= 4;
+	private static int	DAYS_UNTIL_PROMPT	= 10;
 
 	// private static final int LAUNCHES_UNTIL_PROMPT = 30;
 
