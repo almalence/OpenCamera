@@ -76,7 +76,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 
-		MainScreen.setCaptureYUVFrames(true);
+		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override

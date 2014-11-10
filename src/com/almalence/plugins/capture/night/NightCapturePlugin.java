@@ -76,9 +76,6 @@ public class NightCapturePlugin extends PluginCapture
 
 	private static Toast		capturingDialog;
 
-	// almashot - related
-	private boolean				aboutToTakePicture		= false;
-
 	// shared between activities
 	private static int			total_frames;
 
@@ -172,7 +169,7 @@ public class NightCapturePlugin extends PluginCapture
 				: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
 
-		MainScreen.setCaptureYUVFrames(true);
+		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override
@@ -468,13 +465,13 @@ public class NightCapturePlugin extends PluginCapture
 		total_frames = HI_RES_FRAMES;
 
 		if (FocusPreference.compareTo("0") == 0)
-			captureFrames();
+			takePicture();
 		else
 		{
 			if(CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;
 			else
-				captureFrames();
+				takePicture();
 		}
 	}
 
@@ -537,7 +534,8 @@ public class NightCapturePlugin extends PluginCapture
 		
 	}
 
-	public void captureFrames()
+	@Override
+	public void takePicture()
 	{
 		// we do not know sensor gain initially
 		// 0 - means auto-detection will be performed in processing functions

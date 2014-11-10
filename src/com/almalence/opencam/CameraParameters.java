@@ -28,8 +28,8 @@ public final class CameraParameters
 	private CameraParameters(){}
 	
 	//SCENE
-	public static final int SCENE_MODE_UNSUPPORTED = 0;
-	public static final int SCENE_MODE_AUTO = 1;
+	public static final int SCENE_MODE_DISABLED = -1;
+	public static final int SCENE_MODE_AUTO = 1;	
 	public static final int SCENE_MODE_ACTION = 2;
 	public static final int SCENE_MODE_PORTRAIT = 3;
 	public static final int SCENE_MODE_LANDSCAPE = 4;
@@ -45,6 +45,7 @@ public final class CameraParameters
 	public static final int SCENE_MODE_PARTY = 14;
 	public static final int SCENE_MODE_CANDLELIGHT = 15;
 	public static final int SCENE_MODE_BARCODE = 16;
+	public static final int SCENE_MODE_HIGH_SPEED_VIDEO = 17;
 	
 	//WHITE BALANCE
 	public static final int WB_MODE_AUTO = 1;

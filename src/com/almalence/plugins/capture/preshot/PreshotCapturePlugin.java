@@ -78,7 +78,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	private Switch				modeSwitcher;
 
 	private boolean				captureStarted		= false;
-	private boolean				aboutToTakePicture		= false;
 
 	public PreshotCapturePlugin()
 	{

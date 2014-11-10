@@ -136,9 +136,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		cdt = null;
 
 		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
-			MainScreen.setCaptureYUVFrames(true);
+			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
-			MainScreen.setCaptureYUVFrames(false);
+			MainScreen.setCaptureFormat(CameraController.JPEG);
 	}
 
 	@Override

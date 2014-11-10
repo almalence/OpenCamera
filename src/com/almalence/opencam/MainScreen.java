@@ -79,6 +79,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -164,8 +165,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private ImageReader					mImageReaderPreviewYUV;
 	private ImageReader					mImageReaderYUV;
 	private ImageReader					mImageReaderJPEG;
+	private ImageReader					mImageReaderRAW;
 
-	private boolean						captureYUVFrames				= false;
+	private int							captureFormat					= CameraController.JPEG;
 
 	public GUI							guiManager						= null;
 
@@ -184,11 +186,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private OrientationEventListener	orientListener;
 	private boolean						landscapeIsNormal				= false;
 	private boolean						surfaceCreated					= false;
+	
+	private int							surfaceWidth                    = 0;
+	private int							surfaceHeight                    = 0;
 
 	// shared between activities
-	private int							imageWidth, imageHeight;
+//	private int							imageWidth, imageHeight;
 	private int							previewWidth, previewHeight;
-	private int							saveImageWidth, saveImageHeight;
 
 	private CountDownTimer				screenTimer						= null;
 	private boolean						isScreenTimerRunning			= false;
@@ -482,6 +486,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		preview.setKeepScreenOn(keepScreenOn);
 
 		surfaceHolder = preview.getHolder();
+		surfaceHolder.setFixedSize(1280, 720);
 		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
@@ -639,15 +644,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-				ImageFormat.YUV_420_888, 1);
-		// thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
-		// ImageFormat.YUV_420_888, 1);
+		ImageFormat.YUV_420_888, 2);
+//		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
+//		 ImageFormat.YUV_420_888, 2);
 
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
-		thiz.mImageReaderYUV = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888, 2);
 
 		// ImageReader for JPEG still images
-		thiz.mImageReaderJPEG = ImageReader.newInstance(thiz.imageWidth, thiz.imageHeight, ImageFormat.JPEG, 1);
+		thiz.mImageReaderJPEG = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
+		
+		// ImageReader for RAW still images
+		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.RAW_SENSOR, 2);
+		
 	}
 
 	public static ImageReader getPreviewYUVImageReader()
@@ -664,15 +674,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.mImageReaderJPEG;
 	}
-
-	public static boolean isCaptureYUVFrames()
+	
+	public static ImageReader getRAWImageReader()
 	{
-		return thiz.captureYUVFrames;
+		return thiz.mImageReaderRAW;
 	}
 
-	public static void setCaptureYUVFrames(boolean captureYUV)
+	public static int getCaptureFormat()
 	{
-		thiz.captureYUVFrames = captureYUV;
+		return thiz.captureFormat;
+	}
+
+	public static void setCaptureFormat(int capture)
+	{
+		thiz.captureFormat = capture;
 	}
 
 	public static File getForceFilename()
@@ -698,6 +713,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static SurfaceView getPreviewSurfaceView()
 	{
 		return thiz.preview;
+	}
+	
+	public static void setSurfaceHolderSize(int width, int height)
+	{
+		if(thiz.surfaceHolder != null)
+		{
+			thiz.surfaceWidth = width;
+			thiz.surfaceHeight = height;
+			thiz.surfaceHolder.setFixedSize(width, height);
+//			thiz.surfaceWidth = 1280;
+//			thiz.surfaceHeight = 720;
+//			thiz.surfaceHolder.setFixedSize(1280, 720);
+		}
 	}
 
 	public static int getOrientation()
@@ -1066,6 +1094,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			mImageReaderJPEG.close();
 			mImageReaderJPEG = null;
 		}
+		if (mImageReaderRAW != null)
+		{
+			mImageReaderRAW.close();
+			mImageReaderRAW = null;
+		}
 	}
 
 	@Override
@@ -1116,7 +1149,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					preview.setKeepScreenOn(keepScreenOn);
 
-					captureYUVFrames = false;
+					captureFormat = CameraController.JPEG;
 
 					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
 							.getAbsolutePath());
@@ -1453,7 +1486,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
 		if (CameraController.isUseHALv3())
-			configureHALv3Camera(captureYUVFrames);
+			configureHALv3Camera(captureFormat);
 		else
 		{
 			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
@@ -1565,22 +1598,37 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	@TargetApi(21)
-	private void configureHALv3Camera(boolean captureYUVFrames)
+	private void configureHALv3Camera(int captureFormat)
 	{
+		DisplayMetrics metrics = new DisplayMetrics();
+		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		Log.d("MainScreen", "Screen size = " + metrics.widthPixels + " x " + metrics.heightPixels);
 		List<Surface> sfl = new ArrayList<Surface>();
 
+		Log.d("MainScreen", "configureHALv3Camera. mImageReaderPreviewYUV size = " + mImageReaderPreviewYUV.getWidth() + " x " + mImageReaderPreviewYUV.getHeight());
+		Log.d("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
+		
+		surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
+//		surfaceHolder.setFixedSize(1280, 720);
+		mCameraSurface = surfaceHolder.getSurface();
 		sfl.add(mCameraSurface); // surface for viewfinder preview
 		sfl.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
 														// images
-		if (captureYUVFrames)
+		if (captureFormat == CameraController.YUV)
 		{
-			Log.d("MainScreen", "add mImageReaderYUV");
+			Log.d("MainScreen", "add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
 			sfl.add(mImageReaderYUV.getSurface()); // surface for yuv image
 													// capture
-		} else
+		} else if(captureFormat == CameraController.JPEG)
 		{
-			Log.d("MainScreen", "add mImageReaderJPEG");
+			Log.d("MainScreen", "add mImageReaderJPEG " + mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
 			sfl.add(mImageReaderJPEG.getSurface()); // surface for jpeg image
+													// capture
+		}
+		else if(captureFormat == CameraController.RAW)
+		{
+			Log.d("MainScreen", "add mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x " + mImageReaderRAW.getHeight());
+			sfl.add(mImageReaderRAW.getSurface()); // surface for jpeg image
 													// capture
 		}
 
@@ -1588,8 +1636,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
-		// guiManager.setupViewfinderPreviewSize(CameraController.new Size(1280,
-		// 720));
+//		 guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280, 720));
 
 		// configure camera with all the surfaces to be ever used
 		CameraController.createCaptureSession(sfl);

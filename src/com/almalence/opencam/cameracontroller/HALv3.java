@@ -63,8 +63,10 @@ import android.util.Log;
 import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.widget.Toast;
 
+import com.almalence.opencam.CameraParameters;
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
@@ -154,6 +156,7 @@ public class HALv3
 		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
 		try
 		{
+			Log.d(TAG, "Stop capture session repeating. Close capture session");
 			HALv3.getInstance().mCaptureSession.stopRepeating();
 			HALv3.getInstance().mCaptureSession.close();
 			HALv3.getInstance().mCaptureSession = null;
@@ -234,9 +237,12 @@ public class HALv3
 		CameraController.mVideoStabilizationSupported = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null ? false : true;
 
+		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		// check that full hw level is supported
 		if (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) != CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL)
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_NOT_LEVEL_FULL);
+		else
+			Log.d(TAG, "HARWARE_SUPPORT_LEVEL_FULL");
 
 		// Get sensor size for zoom and focus/metering areas.
 		activeRect = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
@@ -248,7 +254,7 @@ public class HALv3
 	{
 		Log.e(TAG, "setupImageReadersHALv3(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
 
-		MainScreen.getPreviewSurfaceHolder().setFixedSize(sz.getWidth(), sz.getHeight());
+		MainScreen.setSurfaceHolderSize(sz.getWidth(), sz.getHeight());
 		MainScreen.setPreviewWidth(sz.getWidth());
 		MainScreen.setPreviewHeight(sz.getHeight());
 //		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
@@ -279,9 +285,13 @@ public class HALv3
 			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
 			// Here, we create a CameraCaptureSession for camera preview.
 			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateCallback, null);
-		} catch (Exception e)
+		} catch (IllegalArgumentException e)
 		{
-			Log.e(TAG, "Create capture session failed. " + e.getMessage());
+			Log.e(TAG, "Create capture session failed. IllegalArgumentException: " + e.getMessage());
+			e.printStackTrace();
+		} catch (CameraAccessException e)
+		{
+			Log.e(TAG, "Create capture session failed. CameraAccessException: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -328,7 +338,7 @@ public class HALv3
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		final Size[] cs = configMap.getOutputSizes(MainScreen.isCaptureYUVFrames()? ImageFormat.YUV_420_888 : ImageFormat.JPEG);		
+		final Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -336,8 +346,8 @@ public class HALv3
 		int ii = 0;
 		for (Size s : cs)
 		{
-			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
-				s = new Size(1920, 1088);
+//			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
+//				s = new Size(1920, 1088);
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
 			int highestSizeWidth = sHighest.getWidth();
@@ -360,8 +370,8 @@ public class HALv3
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
 			Size s = cs[iHighestIndex];
-			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
-				s = new Size(1920, 1088);
+//			if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
+//				s = new Size(1920, 1088);
 
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
@@ -431,8 +441,8 @@ public class HALv3
 		boolean needAdd = true;
 		boolean isFast = true;
 		
-		if(currSizeWidth*currSizeHeight == FULL_HD_SIZE)
-			currSizeHeight = 1088;
+//		if(currSizeWidth*currSizeHeight == FULL_HD_SIZE)
+//			currSizeHeight = 1088;
 
 		Long lmpix = (long) currSizeWidth * currSizeHeight;
 		float mpix = (float) lmpix / 1000000.f;
@@ -497,12 +507,12 @@ public class HALv3
 		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
 		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		//Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
-		Size[] cs = configMap.getOutputSizes(SurfaceTexture.class);
+		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
 		for (Size sz : cs)
 			if(sz.getWidth()*sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
 			{
-				if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
-					sz = new Size(1920, 1088);
+//				if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
+//					sz = new Size(1920, 1088);
 				previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 			}
 		
@@ -513,11 +523,11 @@ public class HALv3
 	{
 		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		Size[] cs = configMap.getOutputSizes(MainScreen.isCaptureYUVFrames()? ImageFormat.YUV_420_888 : ImageFormat.JPEG);
+		Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());
 		for (Size sz : cs)
 		{
-			if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
-				sz = new Size(1920, 1088);
+//			if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
+//				sz = new Size(1920, 1088);
 			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 		}
 	}
@@ -764,7 +774,14 @@ public class HALv3
 	{
 		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
+			if(mode != CameraParameters.SCENE_MODE_AUTO)
+			{
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
+			}
+			else
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+		
 			try
 			{
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
@@ -790,6 +807,11 @@ public class HALv3
 	{
 		if (HALv3.getInstance().previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
+			if(mode != CameraParameters.WB_MODE_AUTO)
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			else
+				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+			
 			HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
 			try
 			{
@@ -1413,6 +1435,7 @@ public class HALv3
 		public void onConfigureFailed(final CameraCaptureSession session)
 		{
 			Log.e(TAG, "CaptureSessionConfigure failed");
+			onPauseHALv3();
 			MainScreen.getInstance().finish();
 		}
 
