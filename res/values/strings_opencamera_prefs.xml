@@ -32,6 +32,8 @@
     <string name="Preference_PhotoTimeLapseCaptureInterval">Preference_PhotoTimeLapseCaptureInterval</string>
     <string name="Preference_PhotoTimeLapseCaptureIntervalMeasurment">Preference_PhotoTimeLapseCaptureIntervalMeasurment</string>
     <string name="Preference_PhotoTimeLapseSWChecked">Preference_PhotoTimeLapseSWChecked</string>
+    <string name="Preference_PhotoTimeLapseIsRunning">"Preference_PhotoTimeLapseIsRunning"</string>
+    <string name="Preference_PhotoTimeLapseCount">"Preference_PhotoTimeLapseCount"</string>
     
     <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
     <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>

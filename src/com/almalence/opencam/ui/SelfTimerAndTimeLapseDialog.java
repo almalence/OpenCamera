@@ -109,7 +109,12 @@ public class SelfTimerAndTimeLapseDialog extends RotateDialog
 		}
 		currentOrientation = degree;
 
-		RotateLayout r = (RotateLayout) findViewById(R.id.rotateLayout);
+		RotateLayout r = (RotateLayout) findViewById(R.id.rotateLayoutTimelapse);
+		r.setAngle(degree);
+		r.requestLayout();
+		r.invalidate();
+		
+		r = (RotateLayout) findViewById(R.id.rotateLayoutTimer);
 		r.setAngle(degree);
 		r.requestLayout();
 		r.invalidate();

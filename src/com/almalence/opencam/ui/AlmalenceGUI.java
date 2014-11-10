@@ -109,6 +109,7 @@ import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -817,8 +818,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// indicates if it's first launch - to show hint layer.
 	private boolean								isFirstLaunch				= true;
 
-	private static int							iScreenType					= MainScreen.getAppResources()
-																					.getInteger(R.integer.screen_type);
+	private static int							iScreenType					= MainScreen.getAppResources().getInteger(
+																					R.integer.screen_type);
 
 	public AlmalenceGUI()
 	{
@@ -1466,8 +1467,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			if (surfaceAspect > cameraAspect && (Math.abs(1 - cameraAspect) > 0.05d))
 			{
-				int paramsLayoutHeight = (int) MainScreen.getAppResources()
-						.getDimension(R.dimen.paramsLayoutHeight);
+				int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
 				// if wide-screen - decrease width of surface
 				lp.width = previewSurfaceWidth;
 
@@ -1475,8 +1475,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				lp.topMargin = (int) (paramsLayoutHeight);
 			} else if (surfaceAspect > cameraAspect)
 			{
-				int paramsLayoutHeight = (int) MainScreen.getAppResources()
-						.getDimension(R.dimen.paramsLayoutHeight);
+				int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
 				// if wide-screen - decrease width of surface
 				lp.width = previewSurfaceWidth;
 
@@ -2113,17 +2112,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mCameraChangeSupported = false;
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		String qc1 = prefs.getString(
-				MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton1),
+		String qc1 = prefs.getString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton1),
 				defaultQuickControl1);
-		String qc2 = prefs.getString(
-				MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton2),
+		String qc2 = prefs.getString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton2),
 				defaultQuickControl2);
-		String qc3 = prefs.getString(
-				MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton3),
+		String qc3 = prefs.getString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton3),
 				defaultQuickControl3);
-		String qc4 = prefs.getString(
-				MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton4),
+		String qc4 = prefs.getString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton4),
 				defaultQuickControl4);
 
 		quickControl1 = isCameraParameterSupported(qc1) ? getQuickControlButton(qc1, quickControl1)
@@ -3182,8 +3177,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isSceneEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.BOTTOM, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.BOTTOM,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int[] supported_scene = CameraController.getSupportedSceneModes();
@@ -3213,8 +3208,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isWBEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int[] supported_wb = CameraController.getSupportedWhiteBalance();
@@ -3246,8 +3241,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isFocusEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int[] supported_focus = CameraController.getSupportedFocusModes();
@@ -3277,8 +3272,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isFlashEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int[] supported_flash = CameraController.getSupportedFlashModes();
@@ -3308,13 +3303,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isIsoEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int[] supported_iso = CameraController.getSupportedISO();
-				if ((supported_iso != null && supported_iso.length > 0)
-						|| CameraController.isISOSupported())
+				if ((supported_iso != null && supported_iso.length > 0) || CameraController.isISOSupported())
 				{
 					if (iScreenType == 0)
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
@@ -3338,8 +3332,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isMeteringEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				int iMeteringAreasSupported = CameraController.getMaxNumMeteringAreas();
@@ -3367,8 +3361,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isCameraChangeEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				cameraSwitched(true);
@@ -3384,8 +3378,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (!isEVEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
 				if (iScreenType == 0)
@@ -3451,8 +3445,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
 		int modeHeightByWidth = (int) (width / 3 - 5 * metrics.density);
-		int modeHeightByDimen = Math.round(MainScreen.getAppResources()
-				.getDimension(R.dimen.gridModeImageSize)
+		int modeHeightByDimen = Math.round(MainScreen.getAppResources().getDimension(R.dimen.gridModeImageSize)
 				+ MainScreen.getAppResources().getDimension(R.dimen.gridModeTextLayoutSize));
 
 		int modeHeight = modeHeightByDimen > modeHeightByWidth ? modeHeightByWidth : modeHeightByDimen;
@@ -3799,29 +3792,25 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			quickControl1 = currentView;
 			pref.edit()
-					.putString(
-							MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton1),
+					.putString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton1),
 							currentViewID).commit();
 		} else if (newView == quickControl2)
 		{
 			quickControl2 = currentView;
 			pref.edit()
-					.putString(
-							MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton2),
+					.putString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton2),
 							currentViewID).commit();
 		} else if (newView == quickControl3)
 		{
 			quickControl3 = currentView;
 			pref.edit()
-					.putString(
-							MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton3),
+					.putString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton3),
 							currentViewID).commit();
 		} else if (newView == quickControl4)
 		{
 			quickControl4 = currentView;
 			pref.edit()
-					.putString(
-							MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton4),
+					.putString(MainScreen.getAppResources().getString(R.string.Preference_QuickControlButton4),
 							currentViewID).commit();
 		} else
 		{
@@ -4080,8 +4069,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isEVEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4107,8 +4096,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isSceneEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4134,8 +4123,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isWBEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4161,8 +4150,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isFocusEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4188,8 +4177,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isFlashEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4215,8 +4204,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isIsoEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4242,8 +4231,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isMeteringEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4272,8 +4261,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (!isCameraChangeEnabled)
 				{
-					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER, MainScreen.getAppResources()
-							.getString(R.string.settings_not_available), true, false);
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					break;
 				}
 
@@ -4321,8 +4310,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mSceneMode = CameraParameters.SCENE_MODE_AUTO;
 		} else if (CameraController.getSupportedSceneModes() != null)
 		{
-			CameraController.setCameraSceneMode(
-					CameraController.getSupportedSceneModes()[0]);
+			CameraController.setCameraSceneMode(CameraController.getSupportedSceneModes()[0]);
 			mSceneMode = CameraController.getSupportedSceneModes()[0];
 		}
 
@@ -5054,8 +5042,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			} catch (Exception e)
 			{
 				e.printStackTrace();
-			}
-			catch (OutOfMemoryError e)
+			} catch (OutOfMemoryError e)
 			{
 				e.printStackTrace();
 			}
@@ -5132,15 +5119,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				(int) (MainScreen.getMainContext().getResources().getDimension(R.dimen.mainButtonHeightSelect)), false);
 		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageBitmap(bm);
 
-		int rid = MainScreen.getAppResources()
-				.getIdentifier(tmpActiveMode.howtoText, "string", MainScreen.getInstance().getPackageName());
+		int rid = MainScreen.getAppResources().getIdentifier(tmpActiveMode.howtoText, "string",
+				MainScreen.getInstance().getPackageName());
 		String howto = "";
 		if (rid != 0)
 			howto = MainScreen.getAppResources().getString(rid);
 		// show toast on mode changed
-		showToast(v, Toast.LENGTH_SHORT, Gravity.CENTER, ((TextView) v.findViewById(R.id.modeText)).getText() + " "
-				+ MainScreen.getAppResources().getString(R.string.almalence_gui_selected)
-				+ (tmpActiveMode.howtoText.isEmpty() ? "" : "\n") + howto, false, true);
+		showToast(
+				v,
+				Toast.LENGTH_SHORT,
+				Gravity.CENTER,
+				((TextView) v.findViewById(R.id.modeText)).getText() + " "
+						+ MainScreen.getAppResources().getString(R.string.almalence_gui_selected)
+						+ (tmpActiveMode.howtoText.isEmpty() ? "" : "\n") + howto, false, true);
 		return false;
 	}
 
@@ -5178,8 +5169,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 
 				if (withBackground)
-					modeLayout.setBackgroundDrawable(MainScreen.getAppResources()
-							.getDrawable(R.drawable.almalence_gui_toast_background));
+					modeLayout.setBackgroundDrawable(MainScreen.getAppResources().getDrawable(
+							R.drawable.almalence_gui_toast_background));
 				else
 					modeLayout.setBackgroundDrawable(null);
 				RotateImageView imgView = (RotateImageView) modeLayout.findViewById(R.id.selectModeIcon);
@@ -6041,8 +6032,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep()))
-					.commit();
+							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep())).commit();
 
 			evBar.setProgress(iEv);
 		}
@@ -6068,8 +6058,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			preferences
 					.edit()
 					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep()))
-					.commit();
+							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep())).commit();
 
 			evBar.setProgress(iEv);
 		}
@@ -6253,8 +6242,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					// splash screen about processing
 					AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance())
 							.setTitle("Processing...")
-							.setMessage(
-									MainScreen.getAppResources().getString(R.string.processing_not_finished))
+							.setMessage(MainScreen.getAppResources().getString(R.string.processing_not_finished))
 							.setPositiveButton("Ok", new DialogInterface.OnClickListener()
 							{
 								public void onClick(DialogInterface dialog, int which)
@@ -6595,6 +6583,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public void stopCaptureIndication()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		if (photoTimeLapseActive) {
+			MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.DEFAULT);
+			selfTimer.updateTimelapseCount();			
+			return;
+		}
+		
 		captureIndication = false;
 		if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 		{
@@ -6604,6 +6600,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public void showCaptureIndication()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+			MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
+			selfTimer.updateTimelapseCount();			
+			return;
+		}
+
 		new CountDownTimer(400, 200)
 		{
 			public void onTick(long millisUntilFinished)

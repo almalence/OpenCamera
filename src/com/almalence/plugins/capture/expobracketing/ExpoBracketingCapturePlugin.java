@@ -543,4 +543,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //			return;
 //		}
 	}
+	
+	public boolean photoTimeLapseCaptureSupported()
+	{
+		return true;
+	}
 }

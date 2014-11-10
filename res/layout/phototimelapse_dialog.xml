@@ -3,7 +3,7 @@
     android:layout_height="320dp" >
 
     <com.almalence.ui.RotateLayout
-        android:id="@+id/rotateLayout"
+        android:id="@+id/rotateLayoutTimelapse"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" >

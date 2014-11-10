@@ -27,7 +27,6 @@ package com.almalence.opencam.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
@@ -38,21 +37,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
-import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateImageView;
-import com.almalence.ui.RotateLayout;
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
@@ -73,6 +69,7 @@ import com.almalence.ui.RotateLayout;
 
 public class SelfTimerAndPhotoTimeLapse
 {
+	private TextView					timeLapseCount				= null;
 	private RotateImageView				timeLapseButton				= null;
 	private SelfTimerAndTimeLapseDialog	dialog						= null;
 	boolean								swTimerChecked				= false;
@@ -80,8 +77,7 @@ public class SelfTimerAndPhotoTimeLapse
 	int									timeLapseInterval;
 	int									timeLapseMeasurementVal;
 	String[]							stringTimerInterval			= { "3", "5", "10", "15", "30", "60" };
-	public static String[]				stringTimelapseInterval		= { "1", "1.5", "2", "2.5", "3", "4", "5", "6",
-			"10", "12", "15", "24"									};
+	public static String[]				stringTimelapseInterval		= { "3", "5", "10", "15", "30", "60" };
 	String[]							stringTimelapseMeasurement	= { "seconds", "minutes", "hours" };
 	CheckBox							flashCheckbox;
 	CheckBox							soundCheckbox;
@@ -170,7 +166,7 @@ public class SelfTimerAndPhotoTimeLapse
 
 		npTimeLapse = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseInterval_numberPicker);
 		npTimeLapse.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-		npTimeLapse.setMaxValue(11);
+		npTimeLapse.setMaxValue(5);
 		npTimeLapse.setMinValue(0);
 		npTimeLapse.setValue(timeLapseInterval);
 		npTimeLapse.setDisplayedValues(stringTimelapseInterval);
@@ -212,12 +208,12 @@ public class SelfTimerAndPhotoTimeLapse
 		});
 
 		// disable control in dialog by default
-		if (!swTimeLapseChecked)
-		{
-			sw.setChecked(false);
-		} else
+		if (swTimeLapseChecked)
 		{
 			sw.setChecked(true);
+		} else
+		{
+			sw.setChecked(false);
 		}
 	}
 
@@ -236,17 +232,19 @@ public class SelfTimerAndPhotoTimeLapse
 				int intervalTimeLapseMeasurment = 0;
 				Editor prefsEditor = prefs.edit();
 
-				if (swTimeLapseChecked) {
+				if (swTimeLapseChecked)
+				{
 					intervalTimeLapse = npTimeLapse.getValue();
 					intervalTimeLapseMeasurment = npTimeLapseMeasurment.getValue();
-				}
-				else {
+				} else
+				{
 					intervalTimeLapse = 0;
 					intervalTimeLapseMeasurment = 0;
 				}
 				prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, swTimeLapseChecked);
 				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, intervalTimeLapse);
-				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, intervalTimeLapseMeasurment);
+				prefsEditor
+						.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, intervalTimeLapseMeasurment);
 
 				// timer
 				int intervalTimer = 0;
@@ -313,8 +311,9 @@ public class SelfTimerAndPhotoTimeLapse
 			return;
 		}
 
+		timeLapseCount = (TextView) selfTimerControl.findViewById(R.id.timelapseCount);
+		
 		timeLapseButton = (RotateImageView) selfTimerControl.findViewById(R.id.buttonSelftimer);
-
 		timeLapseButton.setOnClickListener(new OnClickListener()
 		{
 
@@ -345,6 +344,23 @@ public class SelfTimerAndPhotoTimeLapse
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		updateTimelapseButton(delayInterval);
+	}
+	
+	public void updateTimelapseCount() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+
+		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+			timeLapseCount.setVisibility(View.VISIBLE);
+			int count = prefs.getInt(MainScreen.sPhotoTimeLapseCount, 0);
+			timeLapseCount.setText(String.valueOf(count));
+			timeLapseButton.setVisibility(View.GONE);
+		} else {
+			timeLapseCount.setText(String.valueOf(0));
+			timeLapseCount.setVisibility(View.GONE);
+			timeLapseButton.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void updateTimelapseButton(int delayInterval)
@@ -405,6 +421,13 @@ public class SelfTimerAndPhotoTimeLapse
 			timeLapseButton.setOrientation(AlmalenceGUI.mDeviceOrientation);
 			timeLapseButton.invalidate();
 			timeLapseButton.requestLayout();
+		}
+		
+		if (timeLapseCount != null)
+		{
+			timeLapseCount.setRotation(-AlmalenceGUI.mDeviceOrientation);
+			timeLapseCount.invalidate();
+			timeLapseCount.requestLayout();
 		}
 
 		if (dialog != null)

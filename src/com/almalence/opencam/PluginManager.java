@@ -76,7 +76,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
@@ -136,12 +135,10 @@ import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
 import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
-
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 
@@ -157,6 +154,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 public class PluginManager implements PluginManagerInterface
 {
+	
 	private static PluginManager		pluginManager;
 
 	// we need some selection of active plugins by type.
@@ -271,6 +269,8 @@ public class PluginManager implements PluginManagerInterface
 	static int							jpegQuality								= 95;
 
 	private static boolean				isDefaultsSelected						= false;
+
+	private static List<String>			photoTimelapseFiles						= new ArrayList<String>();
 
 	public static PluginManager getInstance()
 	{
@@ -802,50 +802,44 @@ public class PluginManager implements PluginManagerInterface
 				if (photoTimeLapseIsRunning)
 				{
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+					e.commit();
 					AlarmReceiver.cancelAlarm(MainScreen.getInstance());
 
-					MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.DEFAULT);
+					MainScreen.getInstance().guiManager.stopCaptureIndication();
+					
+					MainScreen.getGUIManager().lockControls = false;
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 				} else
 				{
-					AlarmReceiver alarmReceiver = new AlarmReceiver();
-					alarmReceiver.setAlarm(MainScreen.getInstance(), 100);// some
-																			// hardcode
-
+					photoTimelapseFiles.clear();
+					e.putInt(MainScreen.sPhotoTimeLapseCount, 0);
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, true);
-
-					MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
+					e.commit();
+					
+					pluginList.get(activeCapture).onShutterClick();
+					MainScreen.getInstance().guiManager.showCaptureIndication();
 				}
-
-				e.commit();
+				
 			} else
 			{
-				// for (int i = 0; i < activeVF.size(); i++)
-				// pluginList.get(activeVF.get(i)).onShutterClick();
-				// if (null != pluginList.get(activeCapture)
-				// &&
-				// MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility()
-				// == View.GONE
-				// &&
-				// MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility()
-				// == View.GONE)
 				MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
 				pluginList.get(activeCapture).onShutterClick();
 			}
-		}
-
-		if (!showDelayedCapturePrefCommon || delayInterval == 0
-				|| !pluginList.get(activeCapture).delayedCaptureSupported())
-		{
-			for (int i = 0; i < activeVF.size(); i++)
-				pluginList.get(activeVF.get(i)).onShutterClick();
-			if (null != pluginList.get(activeCapture)
-					&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE
-					&& MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility() == View.GONE)
-				pluginList.get(activeCapture).onShutterClick();
-		} else
-		{
-			shutterRelease = false;
-			delayedCapture(delayInterval);
+		} else {
+			if (!showDelayedCapturePrefCommon || delayInterval == 0
+					|| !pluginList.get(activeCapture).delayedCaptureSupported())
+			{
+				for (int i = 0; i < activeVF.size(); i++)
+					pluginList.get(activeVF.get(i)).onShutterClick();
+				if (null != pluginList.get(activeCapture)
+						&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.GONE
+						&& MainScreen.getInstance().findViewById(R.id.blockingLayout).getVisibility() == View.GONE)
+					pluginList.get(activeCapture).onShutterClick();
+			} else
+			{
+				shutterRelease = false;
+				delayedCapture(delayInterval);
+			}
 		}
 
 		isUserClicked = true;
@@ -1427,7 +1421,7 @@ public class PluginManager implements PluginManagerInterface
 
 		if (photoTimeLapseActive && photoTimeLapseIsRunning)
 		{
-			AlarmReceiver.getInstance().onResume();
+			AlarmReceiver.getInstance().takePicture();
 		}
 
 	}
@@ -1540,6 +1534,7 @@ public class PluginManager implements PluginManagerInterface
 				PluginManager.getInstance()
 						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 			}
+			
 			break;
 
 		case MSG_CAPTURE_FINISHED_NORESULT:
@@ -1618,6 +1613,11 @@ public class PluginManager implements PluginManagerInterface
 					MainScreen.getMessageHandler().sendEmptyMessage(MSG_RETURN_CAPTURED);
 				}
 			}
+			
+			if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+				AlarmReceiver.getInstance().setNextAlarm();
+				MainScreen.getInstance().guiManager.showCaptureIndication();
+			}
 			break;
 
 		case MSG_EXPORT_FINISHED_IOEXCEPTION:
@@ -1639,6 +1639,11 @@ public class PluginManager implements PluginManagerInterface
 
 			Toast.makeText(MainScreen.getMainContext(), "Can't save data - seems no free space left.",
 					Toast.LENGTH_LONG).show();
+			
+			if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+				AlarmReceiver.getInstance().setNextAlarm();
+				MainScreen.getInstance().guiManager.showCaptureIndication();
+			}
 			break;
 
 		case MSG_DELAYED_CAPTURE:
@@ -2188,8 +2193,7 @@ public class PluginManager implements PluginManagerInterface
 									{
 										public void run()
 										{
-											CameraController.setCameraFlashMode(
-													CameraParameters.FLASH_MODE_OFF);
+											CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 										}
 									};
 
@@ -2203,13 +2207,13 @@ public class PluginManager implements PluginManagerInterface
 											{
 												if (isFlashON)
 												{
-													CameraController.setCameraFlashMode(
-															CameraParameters.FLASH_MODE_OFF);
+													CameraController
+															.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 													isFlashON = false;
 												} else
 												{
-													CameraController.setCameraFlashMode(
-															CameraParameters.FLASH_MODE_TORCH);
+													CameraController
+															.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
 													isFlashON = true;
 												}
 											} catch (Exception e)
@@ -2262,6 +2266,8 @@ public class PluginManager implements PluginManagerInterface
 	private boolean	enableExifTagOrientation;
 	private int		additionalRotation;
 	private int		additionalRotationValue	= 0;
+	private boolean	photoTimeLapseActive;
+	private boolean	photoTimeLapseIsRunning;
 
 	private void getPrefs()
 	{
@@ -2270,6 +2276,8 @@ public class PluginManager implements PluginManagerInterface
 		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
 		enableExifTagOrientation = prefs.getBoolean(MainScreen.sEnableExifOrientationTagPref, true);
 		additionalRotation = Integer.parseInt(prefs.getString(MainScreen.sAdditionalRotationPref, "0"));
+		photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
 		switch (additionalRotation)
 		{
@@ -3053,12 +3061,14 @@ public class PluginManager implements PluginManagerInterface
 
 			if (width > height)
 			{
-				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps to
-															// pixels
+				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps
+																	// to
+				// pixels
 			} else
 			{
-				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps to
-															// pixels
+				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps
+																	// to
+				// pixels
 			}
 			p.setTextAlign(Align.RIGHT);
 			drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
@@ -3248,8 +3258,8 @@ public class PluginManager implements PluginManagerInterface
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
-				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21, imageSize.getWidth(),
-						imageSize.getHeight(), null);
+				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
+						imageSize.getWidth(), imageSize.getHeight(), null);
 				// to avoid problems with SKIA
 				int cropHeight = image.getHeight() - image.getHeight() % 16;
 				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
