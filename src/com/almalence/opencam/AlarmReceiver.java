@@ -17,7 +17,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
+import android.view.Window;
 
 import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 //<!-- -+-
@@ -58,6 +61,15 @@ public class AlarmReceiver extends BroadcastReceiver
 				Intent dialogIntent = new Intent(MainScreen.getInstance(), MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				MainScreen.getInstance().startActivity(dialogIntent);
+
+				PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext().getSystemService(
+						Context.POWER_SERVICE);
+				WakeLock wakeLock = pm
+						.newWakeLock(
+								(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
+								TAG);
+				wakeLock.acquire();
+				wakeLock.release();
 			} else
 			{
 				takePicture();

@@ -198,6 +198,15 @@ public class SelfTimerAndPhotoTimeLapse
 				sw.setChecked(true);
 			}
 		});
+		
+		npTimeLapseMeasurment.setOnScrollListener(new NumberPicker.OnScrollListener()
+		{
+			@Override
+			public void onScrollStateChange(NumberPicker numberPicker, int scrollState)
+			{
+				sw.setChecked(true);
+			}
+		});
 
 		// disable control in dialog by default
 		if (swTimeLapseChecked)
