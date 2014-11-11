@@ -2310,7 +2310,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			else
 				subscriptionStatusRequest = false;
 
-			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.hdr")) || (isInstalled("com.almalence.pixfix")))
 			{
 				hdrPurchased = true;
 				Editor prefsEditor = prefs.edit();
