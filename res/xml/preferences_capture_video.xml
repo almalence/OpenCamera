@@ -18,5 +18,11 @@
             android:summary="@string/Pref_Video_ShowLandscapeNotification_Summary"
             android:key="showLandscapeNotification" />
     	
+    	<CheckBoxPreference
+            android:title="@string/Pref_Video_Mute_Title"
+            android:defaultValue="true"
+            android:summary="@string/Pref_Video_Mute_Summary"
+            android:key="preferenceVideoMuteMode" />
+    	
 </PreferenceCategory>
 </PreferenceScreen>
