@@ -2946,6 +2946,9 @@ public class PluginManager implements PluginManagerInterface
 			int color = Integer.parseInt(prefs.getString(MainScreen.sTimestampColor, "1"));
 			int fontSizeC = Integer.parseInt(prefs.getString(MainScreen.sTimestampFontSize, "80"));
 
+			if (dateFormat==0 && timeFormat ==0 && customText.equals(""))
+				return;
+			
 			String dateFormatString = "";
 			String timeFormatString = "";
 			String separatorString = ".";

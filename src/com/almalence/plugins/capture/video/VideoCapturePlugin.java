@@ -837,7 +837,7 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
+		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", true);
 		if (preferenceVideoMuteMode)
 		{
 			AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
@@ -921,7 +921,7 @@ public class VideoCapturePlugin extends PluginCapture
 			this.droEngine.onPause();
 		}
 
-		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
+		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", true);
 		if (preferenceVideoMuteMode)
 		{
 			AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
