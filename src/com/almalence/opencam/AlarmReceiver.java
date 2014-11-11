@@ -54,6 +54,13 @@ public class AlarmReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
+		PowerManager pm = (PowerManager) context.getApplicationContext().getSystemService(
+				Context.POWER_SERVICE);
+		WakeLock wakeLock = pm
+				.newWakeLock(
+						(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
+						TAG);
+		wakeLock.acquire();
 		try
 		{
 			if (MainScreen.getCameraController().getCamera() == null)
@@ -62,22 +69,15 @@ public class AlarmReceiver extends BroadcastReceiver
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				MainScreen.getInstance().startActivity(dialogIntent);
 
-				PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext().getSystemService(
-						Context.POWER_SERVICE);
-				WakeLock wakeLock = pm
-						.newWakeLock(
-								(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
-								TAG);
-				wakeLock.acquire();
-				wakeLock.release();
 			} else
 			{
 				takePicture();
 			}
 		} catch (NullPointerException e)
 		{
+		} finally {
+			wakeLock.release();
 		}
-
 	}
 
 	public void takePicture()
