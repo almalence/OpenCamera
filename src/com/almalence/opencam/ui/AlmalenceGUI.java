@@ -1141,6 +1141,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				AlmalenceGUI.this.updateThumbnailButton();
 			}
 		});
+		
+		
 		setShutterIcon(ShutterButton.DEFAULT);
 
 		lockControls = false;
@@ -1158,6 +1160,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		// if first launch - show layout with hints
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
+		if (prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false)) {
+			setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
+		}
+		
 		if (prefs.contains("isFirstLaunch"))
 		{
 			isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);

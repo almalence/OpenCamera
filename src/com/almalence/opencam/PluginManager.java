@@ -270,8 +270,6 @@ public class PluginManager implements PluginManagerInterface
 
 	private static boolean				isDefaultsSelected						= false;
 
-	private static List<String>			photoTimelapseFiles						= new ArrayList<String>();
-
 	public static PluginManager getInstance()
 	{
 		if (pluginManager == null)
@@ -791,8 +789,8 @@ public class PluginManager implements PluginManagerInterface
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
 		boolean showDelayedCapturePrefCommon = prefs.getBoolean(MainScreen.sShowDelayedCapturePref, false);
 
-		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
-		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
 		if (photoTimeLapseActive && pluginList.get(activeCapture).photoTimeLapseCaptureSupported())
 		{
@@ -811,11 +809,12 @@ public class PluginManager implements PluginManagerInterface
 					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 				} else
 				{
-					photoTimelapseFiles.clear();
 					e.putInt(MainScreen.sPhotoTimeLapseCount, 0);
 					e.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, true);
 					e.commit();
 					
+					for (int i = 0; i < activeVF.size(); i++)
+						pluginList.get(activeVF.get(i)).onShutterClick();
 					pluginList.get(activeCapture).onShutterClick();
 					MainScreen.getInstance().guiManager.showCaptureIndication();
 				}
@@ -823,6 +822,8 @@ public class PluginManager implements PluginManagerInterface
 			} else
 			{
 				MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
+				for (int i = 0; i < activeVF.size(); i++)
+					pluginList.get(activeVF.get(i)).onShutterClick();
 				pluginList.get(activeCapture).onShutterClick();
 			}
 		} else {
