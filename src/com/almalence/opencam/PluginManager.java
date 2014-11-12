@@ -2040,7 +2040,12 @@ public class PluginManager implements PluginManagerInterface
 			}
 		} else if ((Integer.parseInt(MainScreen.getSaveTo()) == 2))
 		{
-			saveDir = new File(MainScreen.getSaveToPath(), abcDir);
+			if (MainScreen.isSortByData())
+			{
+				saveDir = new File(MainScreen.getSaveToPath(), abcDir);
+			} else {
+				saveDir = new File(MainScreen.getSaveToPath());
+			}
 			usePhoneMem = false;
 		}
 
