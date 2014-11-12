@@ -20,7 +20,7 @@
     	
     	<CheckBoxPreference
             android:title="@string/Pref_Video_Mute_Title"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:summary="@string/Pref_Video_Mute_Summary"
             android:key="preferenceVideoMuteMode" />
     	
