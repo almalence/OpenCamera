@@ -2,12 +2,12 @@
 
 2. Put attached Android.mk into this folder
 
-3. Get a plus version ABC APK and put it to the same directory (rename the APK to ABC.apk)
+3. Build OpenCamera in Eclipse and put the result APK to the same directory (rename the APK to OpenCamera.apk)
 
-4. Extract lib folder from this ABC.apk (using any zip archive tool) into the same directory
+4. Extract lib folder from this OpenCamera.apk (using any zip archive tool) into the same directory
 
 5. At this point you should have 3 items in your android-source/packages/apps/OpenCamera directory:
-ABC.apk
+OpenCamera.apk
 Android.mk
 lib
 
