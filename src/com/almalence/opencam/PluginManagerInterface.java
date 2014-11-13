@@ -21,6 +21,8 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
+import android.hardware.camera2.TotalCaptureResult;
 //-+- -->
 
 public interface PluginManagerInterface
@@ -35,7 +37,9 @@ public interface PluginManagerInterface
 
 	public void onPreviewFrame(byte[] data);
 
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format);
+	
+	public void onCaptureCompleted(TotalCaptureResult result);
 
 	public void addToSharedMemExifTags(byte[] paramArrayOfByte);
 

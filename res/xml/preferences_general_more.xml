@@ -19,6 +19,11 @@
 		 	android:value="save_configuration"/>
 	</PreferenceScreen>
 	+++ -->
+	<CheckBoxPreference 
+            android:title="@string/Pref_Common_CaptureRAW_Title" 
+            android:summary="@string/Pref_Common_CaptureRAW_Summary" 
+            android:defaultValue="false" 
+            android:key="@string/Preference_CaptureRAWValue" />
 	<ListPreference 
             android:title="@string/Pref_Common_JPEGQuality_Title" 
             android:key="commonJPEGQuality" 
@@ -45,12 +50,12 @@
 		    android:summary="@string/Pref_Common_HWShutter_Summary"
 		    android:defaultValue="false" 
 		    android:key="useHWShutterButtonLauncher" />
-<!-- 		<CheckBoxPreference 
+ 		<CheckBoxPreference 
 		    android:title="@string/Pref_Common_UseHALv3_Title" 
 		    android:summary="@string/Pref_Common_UseHALv3_Summary" 
 		    android:defaultValue="false"
 		    android:enabled="false" 
-		    android:key="@string/Preference_UseHALv3Key" />  -->
+		    android:key="@string/Preference_UseHALv3Key" />
 		<CheckBoxPreference 
 		    android:title="@string/Pref_Common_Gallery_Title" 
 		    android:summary="@string/Pref_Common_Gallery_Summary" 
