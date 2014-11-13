@@ -20,7 +20,7 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-import android.view.Window;
+import android.util.Log;
 
 import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 //<!-- -+-
@@ -40,13 +40,22 @@ public class AlarmReceiver extends BroadcastReceiver
 	private int						pauseBetweenShotsVal		= 0;
 	private static long				pauseBetweenShots			= 0;
 	private int						pauseBetweenShotsMeasurment	= 0;
+	private static boolean			readyToTakePicture			= false;
 	private static AlarmReceiver	thiz						= null;
+	private static WakeLock			wakeLock					= null;
 
 	public static AlarmReceiver getInstance()
 	{
 		if (thiz == null)
 		{
 			thiz = new AlarmReceiver();
+			if (wakeLock == null)
+			{
+				PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext()
+						.getSystemService(Context.POWER_SERVICE);
+				wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
+						| PowerManager.ON_AFTER_RELEASE, TAG);
+			}
 		}
 		return thiz;
 	}
@@ -54,20 +63,28 @@ public class AlarmReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
-		PowerManager pm = (PowerManager) context.getApplicationContext().getSystemService(
-				Context.POWER_SERVICE);
-		WakeLock wakeLock = pm
-				.newWakeLock(
-						(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP),
-						TAG);
-		wakeLock.acquire();
+		if (wakeLock == null)
+		{
+			PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext()
+					.getSystemService(Context.POWER_SERVICE);
+			wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
+					| PowerManager.ON_AFTER_RELEASE, TAG);
+		}
+		if (!wakeLock.isHeld())
+		{
+			wakeLock.acquire();
+		}
+
+		readyToTakePicture = true;
+
 		try
 		{
 			if (MainScreen.getCameraController().getCamera() == null)
 			{
-				Intent dialogIntent = new Intent(MainScreen.getInstance(), MainScreen.class);
-				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				MainScreen.getInstance().startActivity(dialogIntent);
+				Intent dialogIntent = new Intent(context, MainScreen.class);
+				dialogIntent.addFlags(Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+						| Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				context.startActivity(dialogIntent);
 
 			} else
 			{
@@ -75,13 +92,16 @@ public class AlarmReceiver extends BroadcastReceiver
 			}
 		} catch (NullPointerException e)
 		{
-		} finally {
-			wakeLock.release();
 		}
 	}
 
 	public void takePicture()
 	{
+		if (!readyToTakePicture)
+		{
+			return;
+		}
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
@@ -93,9 +113,11 @@ public class AlarmReceiver extends BroadcastReceiver
 		}
 
 		PluginManager.getInstance().onShutterClickNotUser();
+
+		readyToTakePicture = false;
 	}
 
-	public void setNextAlarm()
+	public void setNextAlarm(Context context)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
@@ -127,13 +149,16 @@ public class AlarmReceiver extends BroadcastReceiver
 		Editor e = prefs.edit();
 		e.putInt(MainScreen.sPhotoTimeLapseCount, prefs.getInt(MainScreen.sPhotoTimeLapseCount, 0) + 1);
 		e.commit();
-		this.setAlarm(MainScreen.getInstance(), pauseBetweenShots);
+		this.setAlarm(context, pauseBetweenShots);
 
-		ComponentName receiver = new ComponentName(MainScreen.getInstance(), AlarmReceiver.class);
-		PackageManager pm = MainScreen.getInstance().getPackageManager();
+		ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
+		PackageManager pm = context.getPackageManager();
 
 		pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 				PackageManager.DONT_KILL_APP);
+
+		if (wakeLock.isHeld())
+			wakeLock.release();
 	}
 
 	@SuppressLint("NewApi")
@@ -158,5 +183,8 @@ public class AlarmReceiver extends BroadcastReceiver
 		{
 			alarmMgr.cancel(alarmIntent);
 		}
+
+		if (wakeLock.isHeld())
+			wakeLock.release();
 	}
 }
