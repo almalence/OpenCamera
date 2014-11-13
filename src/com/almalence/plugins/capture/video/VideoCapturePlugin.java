@@ -836,11 +836,15 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void onResume()
 	{
-		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
-		soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
-		audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
+		if (preferenceVideoMuteMode)
+		{
+			AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+			soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
+			audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+		}
+
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 				: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 
@@ -917,8 +921,12 @@ public class VideoCapturePlugin extends PluginCapture
 			this.droEngine.onPause();
 		}
 
-		AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
-		audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
+		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
+		if (preferenceVideoMuteMode)
+		{
+			AudioManager audioMgr = (AudioManager) MainScreen.getInstance().getSystemService(Context.AUDIO_SERVICE);
+			audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
+		}
 	}
 
 	@Override

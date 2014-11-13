@@ -22,6 +22,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -30,8 +31,8 @@ import java.util.Date;
 public abstract class PluginCapture extends Plugin
 {
 	protected boolean	inCapture;
-	protected boolean	aboutToTakePicture = false;
-	protected int		imagesTaken = 0;
+	protected boolean	aboutToTakePicture	= false;
+	protected int		imagesTaken			= 0;
 
 	public boolean getInCapture()
 	{
@@ -50,30 +51,38 @@ public abstract class PluginCapture extends Plugin
 	}
 
 	@Override
-	public void addToSharedMemExifTags(byte[] frameData) {
+	public void addToSharedMemExifTags(byte[] frameData)
+	{
 		// frameData is jpeg array or null.
-		if (imagesTaken == 0) {
+		if (imagesTaken == 0)
+		{
 			if (frameData != null)
 				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			else
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 		}
 	}
-	
+
+	@Override
+	public void onResume()
+	{
+		inCapture = false;
+	}
+
 	@Override
 	public void onShutterClick()
 	{
 		if (!inCapture)
 		{
 			inCapture = true;
-			
+
 			MainScreen.getGUIManager().lockControls = true;
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
 			MainScreen.getInstance().muteShutter(true);
 
-			if(CameraController.isAutoFocusPerform())				
+			if (CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;
 			else
 				takePicture();
@@ -93,11 +102,11 @@ public abstract class PluginCapture extends Plugin
 	@Override
 	public void onAutoFocus(boolean paramBoolean)
 	{
-		if(inCapture)
+		if (inCapture)
 		{
 			if (aboutToTakePicture)
 				takePicture();
-			
+
 			aboutToTakePicture = false;
 		}
 	}

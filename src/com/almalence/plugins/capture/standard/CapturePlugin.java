@@ -321,4 +321,9 @@ public class CapturePlugin extends PluginCapture
 	{
 		return true;
 	}
+
+	public boolean photoTimeLapseCaptureSupported()
+	{
+		return true;
+	}
 }

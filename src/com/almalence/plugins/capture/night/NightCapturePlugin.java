@@ -670,4 +670,9 @@ public class NightCapturePlugin extends PluginCapture
 				}
 		}
 	}
+	
+	public boolean photoTimeLapseCaptureSupported()
+	{
+		return true;
+	}
 }

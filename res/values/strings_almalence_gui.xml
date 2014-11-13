@@ -38,6 +38,7 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Self-timer</string>
+    <string name="Pref_SaveConfiguration_TimelapseCapture_Title">Timelapse</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Exposure compensation</string>
     <string name="Pref_Common_DelayedCapture_Title">Self-timer capture</string>
     <string name="Pref_Common_DelayedCapture_Summary">Show self-timer control</string>

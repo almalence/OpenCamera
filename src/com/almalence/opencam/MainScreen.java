@@ -285,6 +285,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sDelayedSoundPref;
 	public static String				sDelayedFlashPref;
 	public static String				sDelayedCaptureIntervalPref;
+	
+	public static String				sPhotoTimeLapseCaptureIntervalPref;
+	public static String				sPhotoTimeLapseCaptureIntervalMeasurmentPref;
+	public static String				sPhotoTimeLapseActivePref;
+	public static String				sPhotoTimeLapseIsRunningPref;
+	public static String				sPhotoTimeLapseCount;
 
 	public static String				sUseFrontCameraPref;
 	private static String				sShutterPref;
@@ -347,6 +353,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
 		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
 
+		sDelayedCapturePref = getResources().getString(R.string.Preference_DelayedCaptureValue);
+		sShowDelayedCapturePref = getResources().getString(R.string.Preference_ShowDelayedCaptureValue);
+		sDelayedSoundPref = getResources().getString(R.string.Preference_DelayedSoundValue);
+		sDelayedFlashPref = getResources().getString(R.string.Preference_DelayedFlashValue);
+		sDelayedCaptureIntervalPref = getResources().getString(R.string.Preference_DelayedCaptureIntervalValue);
+		
+		sPhotoTimeLapseCaptureIntervalPref = getResources().getString(R.string.Preference_PhotoTimeLapseCaptureInterval);
+		sPhotoTimeLapseCaptureIntervalMeasurmentPref = getResources().getString(R.string.Preference_PhotoTimeLapseCaptureIntervalMeasurment);
+		sPhotoTimeLapseActivePref = getResources().getString(R.string.Preference_PhotoTimeLapseSWChecked);
+		sPhotoTimeLapseIsRunningPref = getResources().getString(R.string.Preference_PhotoTimeLapseIsRunning);
+		sPhotoTimeLapseCount = getResources().getString(R.string.Preference_PhotoTimeLapseCount);
+		
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
@@ -1170,6 +1188,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			prefs.edit().putBoolean("PrefBarcodescannerVF", prefBarcode).commit();
 		}
+		
+		prefs.edit().putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		prefs.edit().putBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		
 		MainScreen.getGUIManager().onDestroy();
 		PluginManager.getInstance().onDestroy();
 		MainScreen.getCameraController().onDestroy();
@@ -2350,7 +2372,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			else
 				subscriptionStatusRequest = false;
 
-			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
+			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.hdr")) || (isInstalled("com.almalence.pixfix")))
 			{
 				hdrPurchased = true;
 				Editor prefsEditor = prefs.edit();
@@ -3343,6 +3365,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, false);
 			prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, false);
 			prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, 0);
+
+			prefsEditor.commit();
+		}
+		
+		isSaving = prefs.getBoolean("SaveConfiguration_TimelapseCapture", false);
+		if (!isSaving && !prefs.getBoolean(sPhotoTimeLapseIsRunningPref, false))
+		{
+			prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
+			prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
+			prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+			prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 
 			prefsEditor.commit();
 		}

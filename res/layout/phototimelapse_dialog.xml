@@ -3,7 +3,7 @@
     android:layout_height="320dp" >
 
     <com.almalence.ui.RotateLayout
-        android:id="@+id/rotateLayoutTimer"
+        android:id="@+id/rotateLayoutTimelapse"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center" >
@@ -19,13 +19,13 @@
                 android:padding="10dp" >
 
                 <TextView
-                    android:id="@+id/selfTimerTitle"
+                    android:id="@+id/photoTimeLapseTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="5dp"
-                    android:text="@string/selfTimerTitle"
+                    android:text="@string/photoTimeLapseTitle"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp" />
 
@@ -39,7 +39,7 @@
             </LinearLayout>
 
             <Switch
-                android:id="@+id/selftimer_switcher"
+                android:id="@+id/photoTimeLapseTitle_switcher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -51,48 +51,27 @@
             </Switch>
 
             <LinearLayout
-                android:id="@+id/utilitySelftimerButtons"
+                android:id="@+id/utilityPhotoTimeLapseTitleButtons"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/selftimer_switcher"
+                android:layout_below="@+id/photoTimeLapseTitle_switcher"
                 android:layout_marginTop="3dp"
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="horizontal" >
 
                 <NumberPicker
-                    android:id="@+id/numberPicker1"
+                    android:id="@+id/photoTimeLapseInterval_numberPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp" />
 
-                <TextView
-                    android:id="@+id/secondsText"
+                <NumberPicker
+                    android:id="@+id/photoTimeLapseMeasurment_numberPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/secondsText" />
+                    android:layout_marginLeft="20dp" />
             </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/flashCheckbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/utilitySelftimerButtons"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:text="@string/flashTimerText" />
-
-            <CheckBox
-                android:id="@+id/soundCheckbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/flashCheckbox"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:text="@string/soundTimerText" />
         </RelativeLayout>
     </com.almalence.ui.RotateLayout>
 

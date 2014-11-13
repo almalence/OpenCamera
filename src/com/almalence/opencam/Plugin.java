@@ -466,6 +466,11 @@ public abstract class Plugin
 	{
 		return false;
 	}
+	
+	public boolean photoTimeLapseCaptureSupported()
+	{
+		return false;
+	}
 
 	/******************************************************************************************************
 	 * Processing Interfaces
