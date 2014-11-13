@@ -22,10 +22,6 @@ by Almalence Inc. All Rights Reserved.
 // <!-- -+-
 package com.almalence.opencam;
 
-import android.annotation.TargetApi;
-import android.hardware.camera2.TotalCaptureResult;
-//-+- -->
-
 public interface PluginManagerInterface
 {
 	public void selectImageDimension();
@@ -40,9 +36,6 @@ public interface PluginManagerInterface
 
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format);
 	
-//	@TargetApi(21)
-//	public void onCaptureCompleted(TotalCaptureResult result);
-
 	public void addToSharedMemExifTags(byte[] paramArrayOfByte);
 
 }

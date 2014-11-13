@@ -2365,7 +2365,10 @@ public class PluginManager implements PluginManagerInterface
 			Calendar d = Calendar.getInstance();
 
 			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
-			int imagesAmountRAW = Integer.parseInt(getFromSharedMem("amountofresultrawframes" + Long.toString(sessionID)));
+			int imagesAmountRAW = 0;
+			String sAmountRAW = getFromSharedMem("amountofresultrawframes" + Long.toString(sessionID));
+			if(sAmountRAW != null)
+				imagesAmount = Integer.parseInt(sAmountRAW);
 			
 			if (imagesAmount == 0)
 				imagesAmount = 1;
