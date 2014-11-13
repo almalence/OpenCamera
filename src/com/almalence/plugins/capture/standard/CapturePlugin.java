@@ -64,8 +64,6 @@ public class CapturePlugin extends PluginCapture
 	private int					singleModeEV;
 	private int					droEvDiff;
 	
-	private boolean				captureRAW = false;
-
 	public CapturePlugin()
 	{
 		super("com.almalence.plugins.capture", 0, 0, 0, null);

@@ -84,7 +84,10 @@ public class BurstCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		refreshPreferences();
-		MainScreen.setCaptureFormat(CameraController.JPEG);
+		if(captureRAW && CameraController.isRAWCaptureSupported())
+			MainScreen.setCaptureFormat(CameraController.RAW);
+		else
+			MainScreen.setCaptureFormat(CameraController.JPEG);
 	}
 
 	private void refreshPreferences()
@@ -94,6 +97,7 @@ public class BurstCapturePlugin extends PluginCapture
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "3"));
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
+			captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 		} catch (Exception e)
 		{
 			Log.e("Burst capture", "Cought exception " + e.getMessage());
@@ -190,7 +194,10 @@ public class BurstCapturePlugin extends PluginCapture
 		
 		int[] pause = new int[imageAmount];
 		Arrays.fill(pause, pauseBetweenShots);
-		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, true);
+		if(captureRAW)
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, true);
+		else
+			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, true);
 	}
 
 	
@@ -256,6 +263,11 @@ public class BurstCapturePlugin extends PluginCapture
 		{
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+		}
+		
+		if(captureRAW && CameraController.isRAWCaptureSupported())
+		{
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + imagesTaken + SessionID, result);
 		}
 	}
 	

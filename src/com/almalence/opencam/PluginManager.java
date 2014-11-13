@@ -68,7 +68,6 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.DngCreator;
-import android.hardware.camera2.TotalCaptureResult;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
@@ -1366,8 +1365,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	@TargetApi(21)
-	@Override
-	public void onCaptureCompleted(TotalCaptureResult result)
+	public void onCaptureCompleted(CaptureResult result)
 	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);
@@ -1379,13 +1377,6 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
 	}
-
-	// @TargetApi(21)
-	// public void onCaptureCompleted(TotalCaptureResult result)
-	// {
-	// if (null != pluginList.get(activeCapture))
-	// pluginList.get(activeCapture).onCaptureCompleted(result);
-	// }
 
 	@Override
 	public void onPreviewFrame(byte[] data)
@@ -1881,9 +1872,10 @@ public class PluginManager implements PluginManagerInterface
 	@TargetApi(21)
 	public boolean containsRAWCaptureResults(String key)
 	{
-		if (!rawCaptureResults.containsKey(key))
+		if (rawCaptureResults.containsKey(key))
+			return true;
+		else
 			return false;
-		return true;
 	}
 
 	public void clearSharedMemory(long sessionID)

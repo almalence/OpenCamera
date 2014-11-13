@@ -94,6 +94,8 @@ public abstract class Plugin
 	protected long					SessionID			= 0;
 
 	protected int					requestID			= -1;
+	
+	protected boolean				captureRAW 			= false;
 
 	public enum ViewfinderZone
 	{
