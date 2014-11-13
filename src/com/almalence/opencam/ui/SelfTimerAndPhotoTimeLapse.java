@@ -344,7 +344,9 @@ public class SelfTimerAndPhotoTimeLapse
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int delayInterval = prefs.getInt(MainScreen.sDelayedCapturePref, 0);
+		
 		updateTimelapseButton(delayInterval);
+		updateTimelapseCount();
 	}
 	
 	public void updateTimelapseCount() {

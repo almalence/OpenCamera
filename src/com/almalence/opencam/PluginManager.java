@@ -1629,7 +1629,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 			
 			if (photoTimeLapseActive && photoTimeLapseIsRunning) {
-				AlarmReceiver.getInstance().setNextAlarm();
+				AlarmReceiver.getInstance().setNextAlarm(MainScreen.getInstance().getApplicationContext());
 				MainScreen.getInstance().guiManager.showCaptureIndication();
 			}
 			break;
@@ -1655,7 +1655,7 @@ public class PluginManager implements PluginManagerInterface
 					Toast.LENGTH_LONG).show();
 			
 			if (photoTimeLapseActive && photoTimeLapseIsRunning) {
-				AlarmReceiver.getInstance().setNextAlarm();
+				AlarmReceiver.getInstance().setNextAlarm(MainScreen.getInstance().getApplicationContext());
 				MainScreen.getInstance().guiManager.showCaptureIndication();
 			}
 			break;
