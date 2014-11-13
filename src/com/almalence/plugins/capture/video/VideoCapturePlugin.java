@@ -2405,7 +2405,7 @@ public class VideoCapturePlugin extends PluginCapture
 	}
 
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
@@ -2416,7 +2416,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
 
-		if (!isYUV && frameData != null)
+		if (format == CameraController.JPEG && frameData != null)
 			PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 
 		try

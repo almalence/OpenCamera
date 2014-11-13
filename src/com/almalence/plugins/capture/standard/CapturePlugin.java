@@ -63,6 +63,8 @@ public class CapturePlugin extends PluginCapture
 
 	private int					singleModeEV;
 	private int					droEvDiff;
+	
+	private boolean				captureRAW = false;
 
 	public CapturePlugin()
 	{
@@ -167,6 +169,8 @@ public class CapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
+		
+		captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 	}
 
 	@Override
@@ -175,7 +179,12 @@ public class CapturePlugin extends PluginCapture
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
-			MainScreen.setCaptureFormat(CameraController.JPEG);
+		{
+			if(captureRAW && CameraController.isRAWCaptureSupported())
+				MainScreen.setCaptureFormat(CameraController.RAW);
+			else
+				MainScreen.setCaptureFormat(CameraController.JPEG);
+		}
 	}
 
 	@Override
@@ -234,35 +243,58 @@ public class CapturePlugin extends PluginCapture
 		ModePreference = prefs.getString("modeStandardPref", "1");
 	}
 
+	protected int framesCaptured = 0;
 	@Override
 	public void takePicture()
 	{
 //		Log.d("CapturePlugin", "takePicture");
+		framesCaptured = 0;
 		if (ModePreference.compareTo("0") == 0)
 			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
+					new int[0], true);
+		else if(captureRAW)
+			requestID = CameraController.captureImagesWithParams(1, CameraController.RAW, new int[0],
 					new int[0], true);
 		else
 			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
 					new int[0], true);
 	}
 
+	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
+		framesCaptured++;
+		boolean isRAW = false;
+		if(format == CameraController.RAW)
+		{
+			PluginManager.getInstance().addToSharedMem("frame_raw1" + SessionID, String.valueOf(frame));
+			isRAW = true;
+		}
+		else
+			PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
+		
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, isRAW? "0" : "1");
+		PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, isRAW? "1" : "0");
 
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
+//		if((captureRAW && framesCaptured == 2) || !captureRAW)
+//		{
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+//			inCapture = false;
+//			framesCaptured = 0;
+//		}
+		
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
 		inCapture = false;
+		framesCaptured = 0;
 	}
 
 	@TargetApi(21)
@@ -272,6 +304,11 @@ public class CapturePlugin extends PluginCapture
 		if (result.getSequenceId() == requestID)
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+		}
+		
+		if(captureRAW && CameraController.isRAWCaptureSupported())
+		{
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult1" + SessionID, result);
 		}
 	}
 

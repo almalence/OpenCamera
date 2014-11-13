@@ -192,7 +192,7 @@ public class HALv3
 				Log.e(TAG, "try to manager.openCamera");
 				String cameraId = CameraController.cameraIdList[CameraController.CameraIndex];
 				HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
-						.getInstance().cameraIdList[CameraController.CameraIndex]);
+						.cameraIdList[CameraController.CameraIndex]);
 				HALv3.getInstance().manager.openCamera(cameraId, openCallback, null);
 			} catch (CameraAccessException e)
 			{
@@ -226,6 +226,13 @@ public class HALv3
 //		}
 
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
+		
+		int[] keys = HALv3.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+		for(int key : keys)
+			if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
+				CameraController.isRAWCaptureSupported = true;
+			else
+				CameraController.isRAWCaptureSupported = false;
 
 		// Add an Availability Callback as Cameras become available or
 		// unavailable
@@ -268,14 +275,17 @@ public class HALv3
 		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
 		backgroundThread.start();
 		
-		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
-				imageAvailableListener,  null);
+//		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
+//				imageAvailableListener,  null);
 
 		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener,
 				 						null);
 
 		MainScreen.getJPEGImageReader().setOnImageAvailableListener(imageAvailableListener,
 				 						null);
+		
+		MainScreen.getRAWImageReader().setOnImageAvailableListener(imageAvailableListener,
+					null);
 	}
 	
 	public static void createCaptureSession(List<Surface> sfl)
@@ -1113,10 +1123,16 @@ public class HALv3
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
 				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-			} else
+			} else if(format == CameraController.YUV)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " YUVs");
 				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
+			}
+			else if(format == CameraController.RAW)
+			{
+				Log.e("HALv3", "Capture " + nFrames + " RAW+JPEG");
+//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			}
 
 			// Google: throw: "Burst capture implemented yet", when to expect
@@ -1151,7 +1167,7 @@ public class HALv3
 						try
 						{
 							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureCallback, null);
+									stillCaptureCallback, null);
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -1169,7 +1185,7 @@ public class HALv3
 						// setCameraExposureCompensationHALv3(evRequested[n]);
 						// }
 						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-								captureCallback, null);
+								stillCaptureCallback, null);
 					}
 				}
 			}
@@ -1272,7 +1288,7 @@ public class HALv3
 				try
 				{
 					HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-							captureCallback, null);
+							stillCaptureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();
@@ -1377,7 +1393,7 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+//		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 				captureCallback, null);
 	}
@@ -1456,7 +1472,7 @@ public class HALv3
 				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
 						focusMode);
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+//				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureCallback, null);
 				
@@ -1661,6 +1677,16 @@ public class HALv3
 //			}
 		}
 	};
+	
+	public final static CameraCaptureSession.CaptureCallback stillCaptureCallback = new CameraCaptureSession.CaptureCallback()
+	{
+		@Override
+		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
+		{
+			Log.e(TAG, "CAPTURE COMPLETED");
+			PluginManager.getInstance().onCaptureCompleted(result);
+		}		
+	};
 
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
@@ -1749,6 +1775,7 @@ public class HALv3
 					
 				} else if (im.getFormat() == ImageFormat.JPEG)
 				{
+					Log.e(TAG, "captured JPEG");
 					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 					frame_len = jpeg.limit();
@@ -1762,8 +1789,31 @@ public class HALv3
 						frameData = null;
 					}
 				}
+				else if (im.getFormat() == ImageFormat.RAW_SENSOR)
+				{
+					Log.e(TAG, "captured RAW");
+					ByteBuffer raw = im.getPlanes()[0].getBuffer();
+
+					frame_len = raw.limit();
+					frameData = new byte[frame_len];
+					raw.get(frameData, 0, frame_len);
+
+//					PluginManager.getInstance().addToSharedMemExifTags(frameData);
+					if(resultInHeap)
+					{
+						frame = SwapHeap.SwapToHeap(frameData);
+						frameData = null;
+					}
+
+					//If taken RAW, call onImageTaken and then close image, increment currentFrameIndex will perform only after JPEG taken
+					
+					PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, CameraController.RAW);
+					
+					im.close();
+					return;
+				}
 				
-				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV);
+				PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, isYUV? CameraController.YUV : CameraController.JPEG);
 				HALv3.cancelAutoFocusHALv3();
 				
 				if(++currentFrameIndex < totalFrames)

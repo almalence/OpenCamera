@@ -1266,7 +1266,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		final boolean goodPlace;
 
@@ -1286,7 +1286,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				frame_len = frameData.length;
 			}
 
-			if (isYUV)
+			if (format == CameraController.YUV)
 			{
 				goodPlace = this.engine.onFrameAdded(true, frame);
 			} else

@@ -241,7 +241,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		int n = evIdx[frame_num];
 		if (cm7_crap && (total_frames == 3))

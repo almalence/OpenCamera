@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +67,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.DngCreator;
+import android.hardware.camera2.TotalCaptureResult;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
@@ -83,6 +86,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
+import android.util.Size;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -189,7 +193,8 @@ public class PluginManager implements PluginManagerInterface
 	// string value
 	// file SharedMemory.txt contains data keys and formats for currently used
 	// data
-	private Hashtable<String, String>	sharedMemory;
+	private Hashtable<String, String>				sharedMemory;
+	private Hashtable<String, CaptureResult>		rawCaptureResults;
 
 	// message codes
 	public static final int				MSG_NO_CAMERA							= 1;
@@ -285,6 +290,9 @@ public class PluginManager implements PluginManagerInterface
 		pluginList = new Hashtable<String, Plugin>();
 
 		sharedMemory = new Hashtable<String, String>();
+		
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
 		activeFilter = new ArrayList<String>();
@@ -410,6 +418,12 @@ public class PluginManager implements PluginManagerInterface
 
 		// parsing configuration file to setup modes
 		parseConfig();
+	}
+	
+	@TargetApi(21)
+	public void createRAWCaptureResultHashtable()
+	{
+		rawCaptureResults = new Hashtable<String, CaptureResult>();
 	}
 
 	public void setupDefaultMode()
@@ -1345,12 +1359,20 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, isYUV);
+			pluginList.get(activeCapture).onImageTaken(frame, frameData, frame_len, format);
 	}
 
+	@TargetApi(21)
+	@Override
+	public void onCaptureCompleted(TotalCaptureResult result)
+	{
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onCaptureCompleted(result);
+	}
+	
 	@Override
 	public void addToSharedMemExifTags(byte[] frameData)
 	{
@@ -1718,6 +1740,14 @@ public class PluginManager implements PluginManagerInterface
 
 		return true;
 	}
+	
+	@TargetApi(21)
+	public boolean addRAWCaptureResultToSharedMem(String key, CaptureResult value)
+	{
+		rawCaptureResults.put(key, value);
+
+		return true;
+	}
 
 	public boolean addToSharedMemExifTagsFromJPEG(final byte[] paramArrayOfByte, final long SessionID, final int num)
 	{
@@ -1841,6 +1871,20 @@ public class PluginManager implements PluginManagerInterface
 			return false;
 		return true;
 	}
+	
+	@TargetApi(21)
+	public CaptureResult getFromRAWCaptureResults(String key)
+	{
+		return rawCaptureResults.get(key);
+	}
+
+	@TargetApi(21)
+	public boolean containsRAWCaptureResults(String key)
+	{
+		if (!rawCaptureResults.containsKey(key))
+			return false;
+		return true;
+	}
 
 	public void clearSharedMemory(long sessionID)
 	{
@@ -1851,6 +1895,22 @@ public class PluginManager implements PluginManagerInterface
 			String i = (String) e.nextElement();
 			if (i.contains(partKey))
 				sharedMemory.remove(i);
+		}
+		
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			clearRAWCaptureResults(sessionID);
+	}
+	
+	@TargetApi(21)
+	public void clearRAWCaptureResults(long sessionID)
+	{
+		String partKey = String.valueOf(sessionID);
+		Enumeration<String> e2 = rawCaptureResults.keys();
+		while (e2.hasMoreElements())
+		{
+			String i = (String) e2.nextElement();
+			if (i.contains(partKey))
+				rawCaptureResults.remove(i);
 		}
 	}
 
@@ -2313,6 +2373,8 @@ public class PluginManager implements PluginManagerInterface
 			Calendar d = Calendar.getInstance();
 
 			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
+			int imagesAmountRAW = Integer.parseInt(getFromSharedMem("amountofresultrawframes" + Long.toString(sessionID)));
+			
 			if (imagesAmount == 0)
 				imagesAmount = 1;
 
@@ -2328,6 +2390,8 @@ public class PluginManager implements PluginManagerInterface
 
 			for (int i = 1; i <= imagesAmount; i++)
 			{
+				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
+				
 				String idx = "";
 
 				if (imagesAmount != 1)
@@ -2336,7 +2400,7 @@ public class PluginManager implements PluginManagerInterface
 				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
 				// define file name format. from settings!
 				String fileFormat = getExportFileName(modeName);
-				fileFormat += idx + ".jpg";
+				fileFormat += idx + ((format != null && format.equalsIgnoreCase("dng"))? ".dng" : ".jpg");
 
 				File file;
 				if (MainScreen.getForceFilename() == null)
@@ -2390,7 +2454,7 @@ public class PluginManager implements PluginManagerInterface
 
 				int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
 				int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-				if (orientation == 0 || orientation == 180)
+				if (orientation == 0 || orientation == 180 || (format != null && format.equalsIgnoreCase("dng")))
 				{
 					x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
 					y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
@@ -2401,7 +2465,6 @@ public class PluginManager implements PluginManagerInterface
 				if (writeOrientTag != null)
 					writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
 
-				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 				if (format != null && format.equalsIgnoreCase("jpeg"))
 				{// if result in jpeg format
 
@@ -2419,7 +2482,12 @@ public class PluginManager implements PluginManagerInterface
 							e.printStackTrace();
 						}
 					}
-				} else
+				}
+				else if(format != null && format.equalsIgnoreCase("dng"))
+				{
+					saveDNGPicture(i, sessionID, os, x, y, orientation, cameraMirrored);
+				}
+				else
 				{// if result in nv21 format
 					int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
 					com.almalence.YuvImage out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
@@ -3109,6 +3177,53 @@ public class PluginManager implements PluginManagerInterface
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	@TargetApi(21)
+	public void saveDNGPicture(int frameNum, long sessionID, OutputStream os, int width, int height, int orientation, boolean cameraMirrored)
+	{
+		DngCreator creator = new DngCreator(CameraController.getCameraCharacteristics(),
+											this.getFromRAWCaptureResults("captureResult" + frameNum + sessionID));
+		byte[] frame = SwapHeap.SwapFromHeap(
+				Integer.parseInt(getFromSharedMem("resultframe" + frameNum + Long.toString(sessionID))),
+				Integer.parseInt(getFromSharedMem("resultframelen" + frameNum + Long.toString(sessionID))));
+		
+		ByteBuffer buff = ByteBuffer.allocateDirect(frame.length);
+		buff.put(frame);
+		
+		int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+		switch ((orientation + additionalRotationValue + 360) % 360)
+		{
+		default:
+		case 0:
+			exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+			break;
+		case 90:
+			exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+					: ExifInterface.ORIENTATION_ROTATE_90;
+			break;
+		case 180:
+			exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+			break;
+		case 270:
+			exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+					: ExifInterface.ORIENTATION_ROTATE_270;
+			break;
+		}
+		
+		try
+		{
+			creator.setOrientation(exif_orientation);
+			creator.writeByteBuffer(os, new Size(width, height), buff , 0);
+		}
+		catch (IOException e)
+		{
+			creator.close();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		creator.close();
 	}
 
 	private void rotateImage(File file, Matrix matrix)

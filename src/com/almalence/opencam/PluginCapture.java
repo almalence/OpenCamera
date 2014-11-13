@@ -112,7 +112,7 @@ public abstract class PluginCapture extends Plugin
 	}
 
 	@Override
-	public abstract void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV);
+	public abstract void onImageTaken(int frame, byte[] frameData, int frame_len, int format);
 
 	@Override
 	public abstract void onPreviewFrame(byte[] data);

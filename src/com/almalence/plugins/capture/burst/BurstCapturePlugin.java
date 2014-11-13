@@ -195,7 +195,7 @@ public class BurstCapturePlugin extends PluginCapture
 
 	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		imagesTaken++;
 

@@ -216,6 +216,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private String						saveToPath;
 	private String						saveToPreference;
 	private boolean						sortByDataPreference;
+	
+	private boolean						captureRAW;
 
 	private static boolean				maxScreenBrightnessPreference;
 
@@ -306,6 +308,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public static String				sImageSizeVideoBackPref;
 	public static String				sImageSizeVideoFrontPref;
+	
+	public static String				sCaptureRAWPref;
 
 	public static String				sJPEGQualityPref;
 
@@ -380,6 +384,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sImageSizeVideoBackPref = getResources().getString(R.string.Preference_ImageSizePrefVideoBackValue);
 		sImageSizeVideoFrontPref = getResources().getString(R.string.Preference_ImageSizePrefVideoFrontValue);
 
+		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
+		
 		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
 
 		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);
@@ -661,20 +667,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static void createImageReaders()
 	{
 		// ImageReader for preview frames in YUV format
-		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-		ImageFormat.YUV_420_888, 2);
+//		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
+//		ImageFormat.YUV_420_888, 2);
 //		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
 //		 ImageFormat.YUV_420_888, 2);
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
-		thiz.mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888, 2);
+		thiz.mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888, 1);
 
 		// ImageReader for JPEG still images
-		thiz.mImageReaderJPEG = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
+		thiz.mImageReaderJPEG = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 1);
 		
 		// ImageReader for RAW still images
-		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.RAW_SENSOR, 2);
+		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.RAW_SENSOR, 1);
 		
 	}
 
@@ -1017,12 +1023,62 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
 				R.string.Preference_UseHALv3Key));
+		final Preference fp = prefActivity.findPreference(MainScreen.sCaptureRAWPref);
+		
 		if (cp != null)
 		{
 			if (!CameraController.isHALv3Supported())
 				cp.setEnabled(false);
 			else
 				cp.setEnabled(true);
+			
+			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				public boolean onPreferenceChange(Preference preference, Object useCamera2)
+				{
+					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
+					if (new_value)
+					{
+						if(fp != null && CameraController.isRAWCaptureSupported())
+							fp.setEnabled(true);
+						else
+							fp.setEnabled(false);
+					}
+					else if(fp != null)
+						fp.setEnabled(false);
+					
+					return true;
+				}
+			});
+		}
+		
+		final PreferenceFragment mPref = prefActivity;
+		
+		if (fp != null)
+		{
+			fp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				public boolean onPreferenceChange(Preference preference, Object captureRAW)
+				{
+					boolean new_value = Boolean.parseBoolean(captureRAW.toString());
+					if (new_value)
+					{
+						new AlertDialog.Builder(mPref.getActivity())
+								.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
+								.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
+								.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
+								.setPositiveButton(android.R.string.ok, null).create().show();
+
+						return true;
+					}
+					return true;
+				}
+			});
+			
+			if(CameraController.isRAWCaptureSupported())
+				fp.setEnabled(true);
+			else
+				fp.setEnabled(false);
 		}
 	}
 
@@ -1180,6 +1236,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					maxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 					setScreenBrightness(maxScreenBrightnessPreference);
+					
+					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
 					CameraController.useHALv3(prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), false));
@@ -1627,15 +1685,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.d("MainScreen", "Screen size = " + metrics.widthPixels + " x " + metrics.heightPixels);
 		List<Surface> sfl = new ArrayList<Surface>();
 
-		Log.d("MainScreen", "configureHALv3Camera. mImageReaderPreviewYUV size = " + mImageReaderPreviewYUV.getWidth() + " x " + mImageReaderPreviewYUV.getHeight());
+//		Log.d("MainScreen", "configureHALv3Camera. mImageReaderPreviewYUV size = " + mImageReaderPreviewYUV.getWidth() + " x " + mImageReaderPreviewYUV.getHeight());
 		Log.d("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
 		
 		surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
-//		surfaceHolder.setFixedSize(1280, 720);
+//		surfaceHolder.setFixedSize(1280, 960);
 		mCameraSurface = surfaceHolder.getSurface();
 		sfl.add(mCameraSurface); // surface for viewfinder preview
-		sfl.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
-														// images
+		
+//		if(captureFormat != CameraController.RAW)			//when capture RAW preview frames is not available
+//			sfl.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
+//														// images
 		if (captureFormat == CameraController.YUV)
 		{
 			Log.d("MainScreen", "add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
@@ -1649,16 +1709,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		else if(captureFormat == CameraController.RAW)
 		{
-			Log.d("MainScreen", "add mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x " + mImageReaderRAW.getHeight());
-			sfl.add(mImageReaderRAW.getSurface()); // surface for jpeg image
-													// capture
+			Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x " + mImageReaderRAW.getHeight());
+//			sfl.add(mImageReaderJPEG.getSurface()); // surface for jpeg image
+			// capture
+			if(CameraController.isRAWCaptureSupported())
+				sfl.add(mImageReaderRAW.getSurface());
 		}
 
 		// sfl.add(mImageReaderJPEG.getSurface());
-		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+//		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
-//		 guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280, 720));
+//		 guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280, 960));
 
 		// configure camera with all the surfaces to be ever used
 		CameraController.createCaptureSession(sfl);

@@ -39,6 +39,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -195,6 +196,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
+	protected static boolean						isRAWCaptureSupported			= false;
 
 	protected static String[]								cameraIdList					= { "" };
 
@@ -755,6 +757,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isHALv3Supported()
 	{
 		return isHALv3Supported;
+	}
+	
+	public static boolean isRAWCaptureSupported()
+	{
+		return isRAWCaptureSupported;
 	}
 
 	public static void setupCamera(SurfaceHolder holder)
@@ -1388,6 +1395,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		return false;
+	}
+	
+	@TargetApi(21)
+	public static CameraCharacteristics getCameraCharacteristics()
+	{
+		return HALv3.getCameraParameters2();
 	}
 
 	public static void startCameraPreview()
@@ -2604,7 +2617,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			int frame = 0;
 			if (resultInHeap)
 				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
-			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, false);
+			pluginManager.onImageTaken(frame, paramArrayOfByte, paramArrayOfByte.length, CameraController.JPEG);
 		} else
 		// is YUV frame requested
 		{
@@ -2622,7 +2635,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				yuvFrame = 0;
 			}			
 			
-			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, CameraController.YUV);
 			
 //			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(),
 //					imageSize.getHeight(), false, false, 0);
@@ -2706,7 +2719,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		@Override
 	     protected void onPostExecute(Void result)
 	     {
-	    	 pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
+	    	 pluginManager.onImageTaken(yuvFrame, frameData, frameLen, CameraController.YUV);
 	     }
 	 }
 
@@ -2749,7 +2762,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				
 				pluginManager.addToSharedMemExifTags(null);
-				pluginManager.onImageTaken(frame, data, dataLenght, true);
+				pluginManager.onImageTaken(frame, data, dataLenght, CameraController.YUV);
 			} else
 			{
 				int jpegData = 0;
@@ -2988,7 +3001,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					try
 					{
 						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-//						camera.setPreviewCallback(null);
+						camera.setPreviewCallback(null);
 						camera.takePicture(null, null, null, CameraController.getInstance());
 					}
 					catch(Exception exp)
