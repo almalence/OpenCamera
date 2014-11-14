@@ -168,7 +168,7 @@ public class CapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
 		
-		captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
+		captureRAW = (prefs.getBoolean(MainScreen.sCaptureRAWPref, false) && CameraController.isRAWCaptureSupported());
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class CapturePlugin extends PluginCapture
 			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
 		{
-			if(captureRAW && CameraController.isRAWCaptureSupported())
+			if(captureRAW)
 				MainScreen.setCaptureFormat(CameraController.RAW);
 			else
 				MainScreen.setCaptureFormat(CameraController.JPEG);
@@ -304,7 +304,7 @@ public class CapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 		}
 		
-		if(captureRAW && CameraController.isRAWCaptureSupported())
+		if(captureRAW)
 		{
 			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult1" + SessionID, result);
 		}

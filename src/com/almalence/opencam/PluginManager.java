@@ -2367,7 +2367,7 @@ public class PluginManager implements PluginManagerInterface
 			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
 			int imagesAmountRAW = 0;
 			String sAmountRAW = getFromSharedMem("amountofresultrawframes" + Long.toString(sessionID));
-			if(sAmountRAW != null)
+			if(sAmountRAW != null && Integer.parseInt(sAmountRAW) > 0)
 				imagesAmount = Integer.parseInt(sAmountRAW);
 			
 			if (imagesAmount == 0)

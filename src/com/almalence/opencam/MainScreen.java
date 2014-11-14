@@ -1023,7 +1023,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
 				R.string.Preference_UseHALv3Key));
-		final Preference fp = prefActivity.findPreference(MainScreen.sCaptureRAWPref);
+		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 		
 		if (cp != null)
 		{
@@ -1045,7 +1045,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							fp.setEnabled(false);
 					}
 					else if(fp != null)
+					{
+						PreferenceManager
+						.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putBoolean(MainScreen.sCaptureRAWPref, false).commit();
 						fp.setEnabled(false);
+					}
 					
 					return true;
 				}
@@ -1068,14 +1072,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 								.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
 								.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
 								.setPositiveButton(android.R.string.ok, null).create().show();
-
-						return true;
 					}
 					return true;
 				}
 			});
 			
-			if(CameraController.isRAWCaptureSupported())
+			if(CameraController.isRAWCaptureSupported() && CameraController.isUseHALv3())
 				fp.setEnabled(true);
 			else
 				fp.setEnabled(false);
