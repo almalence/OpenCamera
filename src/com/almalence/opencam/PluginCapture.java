@@ -33,6 +33,7 @@ public abstract class PluginCapture extends Plugin
 	protected boolean	inCapture;
 	protected boolean	aboutToTakePicture	= false;
 	protected int		imagesTaken			= 0;
+	protected int		imagesTakenRAW			= 0;
 
 	public boolean getInCapture()
 	{

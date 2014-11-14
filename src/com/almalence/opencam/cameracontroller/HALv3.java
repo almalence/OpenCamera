@@ -1092,7 +1092,7 @@ public class HALv3
 			stillRequestBuilder = HALv3.getInstance().camDevice
 					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			
-			if (format == CameraController.YUV_RAW)
+			if (format == CameraController.YUV_RAW || format == CameraController.RAW)
 			{
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
@@ -1123,7 +1123,7 @@ public class HALv3
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
 				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-			} else if(format == CameraController.YUV)
+			} else if(format == CameraController.YUV || format == CameraController.YUV_RAW)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " YUVs");
 				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
@@ -1226,10 +1226,19 @@ public class HALv3
 		{
 			stillRequestBuilder = HALv3.getInstance().camDevice
 					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			if (format == CameraController.YUV_RAW || format == CameraController.RAW)
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			} else
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			}
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			
 			if (zoomLevel >= 1.0f)
 			{
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
@@ -1243,9 +1252,15 @@ public class HALv3
 			if (format == CameraController.JPEG)
 			{
 				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-			} else
+			}
+			else if(format == CameraController.YUV || format == CameraController.YUV_RAW)
 			{
 				stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
+			}
+			else if(format == CameraController.RAW)
+			{
+//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			}
 
 			if (pause > 0)
@@ -1808,6 +1823,9 @@ public class HALv3
 					//If taken RAW, call onImageTaken and then close image, increment currentFrameIndex will perform only after JPEG taken
 					
 					PluginManager.getInstance().onImageTaken(frame, frameData, frame_len, CameraController.RAW);
+					
+					if(++currentFrameIndex < totalFrames)
+						captureNextImageWithParams(CameraController.frameFormat, pauseBetweenShots[currentFrameIndex], expRequested, currentFrameIndex);
 					
 					im.close();
 					return;
