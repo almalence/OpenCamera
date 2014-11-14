@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/suggestedLayout"
+	android:background="@drawable/store_background"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"        		
+	>
+	
+    <TextView
+        android:id="@+id/suggestedTextMain"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textColor="@android:color/black"        
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:text="Suggested apps">
+    </TextView>
+
+	<GridView
+	    android:id="@+id/suggestedGrid"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:numColumns="1"
+	    android:horizontalSpacing="8dp"
+	    android:verticalSpacing="8dp"
+	    android:adjustViewBounds="true"
+	    android:stretchMode="columnWidth"
+	    android:paddingTop="5dp"
+	    android:paddingLeft="8dp"
+ 		android:paddingRight="8dp"
+ 		android:layout_below="@+id/suggestedTextMain"
+	/>
+	
+	<ImageView
+		android:id="@+id/storeFeaturesPrev"
+		android:src="@drawable/almalence_upgrade_suggested_previous"
+		android:background="@android:color/transparent"
+		android:layout_height="@dimen/paramsLayoutHeight"
+		android:layout_width="@dimen/paramsLayoutHeight"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+   		>
+	</ImageView>
+</RelativeLayout>

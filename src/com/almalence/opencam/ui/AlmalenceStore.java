@@ -39,6 +39,7 @@ import com.almalence.opencam.R;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -63,8 +64,13 @@ public class AlmalenceStore
 	private List<View>				storeViews;
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
+	
+	private ElementAdapter			suggestedAdapter;
+	private List<View>				suggestedViews;
+	private HashMap<View, Integer>	buttonSuggestedViewAssoc;
 
 	private static final int STORE_ELEMENTS_NUMBER = 6;
+	private static final int SUGGESTED_ELEMENTS_NUMBER = 1;
 	
 	AlmalenceStore(View gui)
 	{
@@ -72,6 +78,10 @@ public class AlmalenceStore
 		storeAdapter = new ElementAdapter();
 		storeViews = new ArrayList<View>();
 		buttonStoreViewAssoc = new HashMap<View, Integer>();
+		
+		suggestedAdapter = new ElementAdapter();
+		suggestedViews = new ArrayList<View>();
+		buttonSuggestedViewAssoc = new HashMap<View, Integer>();
 	}
 
 	public void showStore()
@@ -106,10 +116,8 @@ public class AlmalenceStore
 		// page 3
 		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
 		RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
-		//final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
+		final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeSuggested);
 		final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
-		//TextView text_features = (TextView) features.findViewById(R.id.text_features);
-		//text_features.setText(MainScreen.getAppResources().getString(R.string.storeFeatures));
 		WebView wv = (WebView)features.findViewById(R.id.text_features);
 		wv.loadUrl("file:///android_asset/www/features.html");
 
@@ -126,6 +134,17 @@ public class AlmalenceStore
 //		page.addView(tips);
 //		pages.add(page);
 
+		// page 4 - suggested apps
+		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+		initSuggestedList();
+		RelativeLayout suggested = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_suggested, null);
+		final ImageView imgSuggestedPrev = (ImageView) suggested.findViewById(R.id.storeFeaturesPrev);
+		GridView suggestedGridview = (GridView) suggested.findViewById(R.id.suggestedGrid);
+		suggestedGridview.setAdapter(suggestedAdapter);
+
+		page.addView(suggested);
+		pages.add(page);
+				
 		SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
 		final ViewPager viewPager = new ViewPager(MainScreen.getInstance());
 		viewPager.setAdapter(pagerAdapter);
@@ -159,18 +178,18 @@ public class AlmalenceStore
 					imgWhatNewNext.setVisibility(View.INVISIBLE);
 					imgWhatNewPrev.setVisibility(View.INVISIBLE);
 					// 2
-					//imgFeaturesNext.setVisibility(View.VISIBLE);
+					imgFeaturesNext.setVisibility(View.VISIBLE);
 					imgFeaturesPrev.setVisibility(View.VISIBLE);
-//					// 3
-//					imgTipsPrev.setVisibility(View.INVISIBLE);
+					// 3
+					imgSuggestedPrev.setVisibility(View.INVISIBLE);
 					break;
-//				case 3:
-//					// 2
-//					imgFeaturesNext.setVisibility(View.INVISIBLE);
-//					imgFeaturesPrev.setVisibility(View.INVISIBLE);
-//					// 3
-//					imgTipsPrev.setVisibility(View.VISIBLE);
-//					break;
+				case 3:
+					// 2
+					imgFeaturesNext.setVisibility(View.INVISIBLE);
+					imgFeaturesPrev.setVisibility(View.INVISIBLE);
+					// 3
+					imgSuggestedPrev.setVisibility(View.VISIBLE);
+					break;
 				default:
 					break;
 				}
@@ -199,13 +218,13 @@ public class AlmalenceStore
 				viewPager.setCurrentItem(0);
 			}
 		});
-//		imgFeaturesNext.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(3);
-//			}
-//		});
+		imgFeaturesNext.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				viewPager.setCurrentItem(3);
+			}
+		});
 		imgFeaturesPrev.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -213,13 +232,13 @@ public class AlmalenceStore
 				viewPager.setCurrentItem(1);
 			}
 		});
-//		imgTipsPrev.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(2);
-//			}
-//		});
+		imgSuggestedPrev.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				viewPager.setCurrentItem(2);
+			}
+		});
 		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
@@ -422,6 +441,7 @@ public class AlmalenceStore
 		storeAdapter.Elements = storeViews;
 	}
 
+	
 	private void purchasePressed(View v)
 	{
 		// get inapp associated with pressed button
@@ -461,6 +481,62 @@ public class AlmalenceStore
 		}
 	}
 
+	private void initSuggestedList()
+	{
+		suggestedViews.clear();
+		buttonSuggestedViewAssoc.clear();
+
+		for (int i = 0; i < SUGGESTED_ELEMENTS_NUMBER; i++)
+		{
+			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+			View item = inflator.inflate(R.layout.gui_almalence_suggested_grid_element, null, false);
+			ImageView icon = (ImageView) item.findViewById(R.id.suggestedImage);
+			TextView description = (TextView) item.findViewById(R.id.suggestedText);
+			switch (i)
+			{
+			case 0:
+				// Fotor
+				icon.setImageResource(R.drawable.fotor);
+				description.setText("Fotor - photo editor\n\nMake ordinary photos look stunning, and stunning photos look out of this world!");
+				break;
+
+			default:
+				break;
+			}
+
+
+			item.setOnClickListener(new OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					// get inapp associated with pressed button
+					suggestedPressed(v);
+				}
+			});
+
+			buttonSuggestedViewAssoc.put(item, i);
+			suggestedViews.add(item);
+		}
+
+		suggestedAdapter.Elements = suggestedViews;
+	}
+	
+	private void suggestedPressed(View v)
+	{
+		// get inapp associated with pressed button
+		Integer id = buttonSuggestedViewAssoc.get(v);
+		if (id == null)
+			return;
+		switch (id)
+		{
+		case 0:// open Fotor on Play
+			MainScreen.callStoreInstall(MainScreen.getInstance(), "com.everimaging.photoeffectstudio");
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void ShowUnlockControl()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
