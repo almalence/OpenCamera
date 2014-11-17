@@ -510,7 +510,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		preview.setKeepScreenOn(keepScreenOn);
 
 		surfaceHolder = preview.getHolder();
-		surfaceHolder.setFixedSize(1280, 720);
+		CameraController.setSurfaceHolderFixedSize(1280, 720);
+//		surfaceHolder.setFixedSize(1280, 720);
 		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
@@ -743,6 +744,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		if(thiz.surfaceHolder != null)
 		{
+			Log.e("MainScreen", "setSurfaceHolderSize = " + width + "x" + height);
 			thiz.surfaceWidth = width;
 			thiz.surfaceHeight = height;
 			thiz.surfaceHolder.setFixedSize(width, height);

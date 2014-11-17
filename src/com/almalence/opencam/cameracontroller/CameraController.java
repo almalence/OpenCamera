@@ -635,20 +635,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onResume()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
-        {
-        	previewMode = prefs.getBoolean(MainScreen.sExpoPreviewModePref, true);
-        }
-        else
-        	previewMode = true;
-        
-		evLatency=0;
-        previewWorking=false;
-        if (cdt != null)
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
 		{
-			cdt.cancel();
-			cdt = null;
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+			if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
+	        {
+	        	previewMode = prefs.getBoolean(MainScreen.sExpoPreviewModePref, true);
+	        }
+	        else
+	        	previewMode = true;
+	        
+			evLatency=0;
+	        previewWorking=false;
+	        if (cdt != null)
+			{
+				cdt.cancel();
+				cdt = null;
+			}
 		}
         
         total_frames = 0;
@@ -659,12 +663,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onPause()
 	{
-		evLatency=0;
-        previewWorking=false;
-        if (cdt != null)
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
 		{
-			cdt.cancel();
-			cdt = null;
+			evLatency=0;
+	        previewWorking=false;
+	        if (cdt != null)
+			{
+				cdt.cancel();
+				cdt = null;
+			}
 		}
         
         total_frames = 0;
@@ -1236,6 +1244,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		{
 			HALv3.setupImageReadersHALv3(sz);
+		}
+	}
+	
+	public static void setSurfaceHolderFixedSize(int width, int height)
+	{
+		if (CameraController.isHALv3)
+		{
+			MainScreen.getPreviewSurfaceHolder().setFixedSize(width, height);
 		}
 	}
 
@@ -2668,30 +2684,34 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		CameraController.sendMessage(MSG_NEXT_FRAME);
 		
-		//if preview not working
-		if (previewMode==false)
-			return;
-		previewWorking = false;
-		//start timer to check if onpreviewframe working
-		cdt = new CountDownTimer(5000, 5000) {
-			public void onTick(long millisUntilFinished) {
-			}
-
-			public void onFinish() {
-				if (!previewWorking)
-				{
-					Log.d(TAG, "previewMode DISABLED!");
-					previewMode=false;
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
-					prefsEditor.commit();
-					evLatency=0;
-					CameraController.sendMessage(MSG_TAKE_IMAGE);
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+		{
+			//if preview not working
+			if (previewMode==false)
+				return;
+			previewWorking = false;
+			//start timer to check if onpreviewframe working
+			cdt = new CountDownTimer(5000, 5000) {
+				public void onTick(long millisUntilFinished) {
 				}
-			}
-		};
-		cdt.start();
+	
+				public void onFinish() {
+					if (!previewWorking)
+					{
+						Log.d(TAG, "previewMode DISABLED!");
+						previewMode=false;
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+						Editor prefsEditor = prefs.edit();
+						prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
+						prefsEditor.commit();
+						evLatency=0;
+						CameraController.sendMessage(MSG_TAKE_IMAGE);
+					}
+				}
+			};
+			cdt.start();
+		}
 	}
 	
 	private class DecodeToYUVFrameTask extends AsyncTask<byte[], Void, Void> {
@@ -2780,10 +2800,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return;
 		}
 
-		if (evLatency > 0)
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && evLatency > 0)
 		{
 			Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
+			
 			if (--evLatency == 0)
 			{
 				if (cdt != null)
@@ -2911,7 +2933,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
 			}
 
-			if (previewMode)
+			String modeID = PluginManager.getInstance().getActiveModeID();
+			if ((modeID.equals("hdr") || modeID.equals("expobracketing")) && previewMode)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 				//if true - evLatency will be doubled. 
@@ -2948,6 +2971,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		case MSG_NEXT_FRAME:
 			Log.d(TAG, "MSG_NEXT_FRAME");
+			String modeID2 = PluginManager.getInstance().getActiveModeID();
 			if (++frame_num < total_frames)
 			{
 				if (Array.getLength(pauseBetweenShots) < frame_num)
@@ -2970,7 +2994,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}, pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
 				}
 			}
-			else
+			else if (modeID2.equals("hdrmode") || modeID2.equals("expobracketing"))
 			{
 				previewWorking = true;
             	if (cdt!=null)
