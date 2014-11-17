@@ -138,9 +138,31 @@ public class HALv3
 		try
 		{
 			CameraController.cameraIdList = HALv3.getInstance().manager.getCameraIdList();
-		} catch (CameraAccessException e)
+		}
+		catch (CameraAccessException e)
 		{
 			Log.d("MainScreen", "getCameraIdList failed");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void onResumeHALv3()
+	{
+		try
+		{
+			Log.e(TAG, "onResumeHALv3. CameraIndex = " + CameraController.CameraIndex);
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
+					.cameraIdList[CameraController.CameraIndex]);
+			
+			int[] keys = HALv3.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+			for(int key : keys)
+				if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
+					CameraController.isRAWCaptureSupported = true;
+				else
+					CameraController.isRAWCaptureSupported = false;
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -227,13 +249,6 @@ public class HALv3
 
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 		
-		int[] keys = HALv3.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
-		for(int key : keys)
-			if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
-				CameraController.isRAWCaptureSupported = true;
-			else
-				CameraController.isRAWCaptureSupported = false;
-
 		// Add an Availability Callback as Cameras become available or
 		// unavailable
 		// HALv3.getInstance().availCallback = HALv3.getInstance().new

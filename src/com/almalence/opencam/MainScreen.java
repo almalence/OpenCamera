@@ -1246,6 +1246,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
+					CameraController.onResume();
 					MainScreen.thiz.mPausing = false;
 
 					if (CameraController.isUseHALv3())

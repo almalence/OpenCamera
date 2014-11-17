@@ -652,6 +652,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
         
         total_frames = 0;
+        
+        if (CameraController.isHALv3Supported)
+			HALv3.onResumeHALv3();
 	}
 
 	public static void onPause()
