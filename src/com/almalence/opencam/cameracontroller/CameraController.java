@@ -2934,7 +2934,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 
 			String modeID = PluginManager.getInstance().getActiveModeID();
-			if ((modeID.equals("hdr") || modeID.equals("expobracketing")) && previewMode)
+			if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && previewMode)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 				//if true - evLatency will be doubled. 
