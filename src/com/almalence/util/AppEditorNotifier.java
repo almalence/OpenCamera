@@ -79,7 +79,7 @@ public class AppEditorNotifier
 			return false;
 		}
 		
-		DAYS_UNTIL_PROMPT = prefs.getInt("days_until_prompt", 4);
+		DAYS_UNTIL_PROMPT = prefs.getInt("days_until_prompt", 10);
 		Long date_firstLaunch = prefs.getLong("date_firstlaunch_editornotifier", 0);
 		if (date_firstLaunch == 0)
 		{
