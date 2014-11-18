@@ -178,11 +178,11 @@ public class AppEditorNotifier
 				dialog.dismiss();
 				MainScreen.getInstance().guiManager.openGallery(true);
 
-				if (DAYS_UNTIL_PROMPT == 4)
-					DAYS_UNTIL_PROMPT = 5;
-				else if (DAYS_UNTIL_PROMPT == 5)
-					DAYS_UNTIL_PROMPT = 10;
-				else if (DAYS_UNTIL_PROMPT == 10)
+//				if (DAYS_UNTIL_PROMPT == 4)
+//					DAYS_UNTIL_PROMPT = 5;
+//				else if (DAYS_UNTIL_PROMPT == 5)
+//					DAYS_UNTIL_PROMPT = 10;
+				if (DAYS_UNTIL_PROMPT == 10)
 					DAYS_UNTIL_PROMPT = 30;
 				else if (DAYS_UNTIL_PROMPT == 30)
 					DAYS_UNTIL_PROMPT = 999;
