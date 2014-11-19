@@ -510,7 +510,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		preview.setKeepScreenOn(keepScreenOn);
 
 		surfaceHolder = preview.getHolder();
-		CameraController.setSurfaceHolderFixedSize(1280, 720);
+//		CameraController.setSurfaceHolderFixedSize(1280, 720);
 //		surfaceHolder.setFixedSize(1280, 720);
 		surfaceHolder.addCallback(this);
 
@@ -669,9 +669,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		// ImageReader for preview frames in YUV format
 //		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-//		ImageFormat.YUV_420_888, 2);
-//		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 720,
-//		 ImageFormat.YUV_420_888, 2);
+//		ImageFormat.YUV_420_888, 1);
+//		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
+//		 ImageFormat.YUV_420_888, 1);
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -1071,8 +1071,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					{
 						new AlertDialog.Builder(mPref.getActivity())
 								.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
-								.setTitle(R.string.Pref_NightCapture_FocusModeAlert_Title)
-								.setMessage(R.string.Pref_NightCapture_FocusModeAlert_Msg)
+								.setTitle(R.string.Pref_Common_CaptureRAW_Title)
+								.setMessage(R.string.Pref_Common_CaptureRAW_Description)
 								.setPositiveButton(android.R.string.ok, null).create().show();
 					}
 					return true;
@@ -1245,6 +1245,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					CameraController.useHALv3(prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), false));
+					
+					CameraController.setSurfaceHolderFixedSize(1280, 720);
 
 					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
@@ -1694,7 +1696,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.d("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
 		
 		surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
-//		surfaceHolder.setFixedSize(1280, 960);
+//		surfaceHolder.setFixedSize(1280, 720);
 		mCameraSurface = surfaceHolder.getSurface();
 		sfl.add(mCameraSurface); // surface for viewfinder preview
 		
