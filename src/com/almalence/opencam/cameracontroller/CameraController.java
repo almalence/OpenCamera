@@ -1251,7 +1251,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			MainScreen.getPreviewSurfaceHolder().setFixedSize(width, height);
+			MainScreen.setSurfaceHolderSize(width, height);
 		}
 	}
 
