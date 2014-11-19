@@ -2039,6 +2039,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return imageSize;
 	}
+	
+	public static Size getMaxCameraImageSize(int captureFormat)
+	{
+		if(!CameraController.isHALv3)
+			return imageSize;
+		else
+			return HALv3.getMaxCameraImageSizeHALv3(captureFormat);
+	}
 
 	public static boolean isModeAvailable(int[] modeList, int mode)
 	{

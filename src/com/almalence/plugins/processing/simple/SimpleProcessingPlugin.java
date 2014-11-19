@@ -60,25 +60,24 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int mImageHeight = imageSize.getHeight();
 
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
-		String raw_num = PluginManager.getInstance().getFromSharedMem("amountofcapturedrawframes" + sessionID);
+//		String raw_num = PluginManager.getInstance().getFromSharedMem("amountofcapturedrawframes" + sessionID);
 		
-//		if (num == null)
-//			return;
-//		int imagesAmount = Integer.parseInt(num);
-		boolean isRAW = false;
-		int imagesAmount = 0;
-		if(num != null && !num.equals("0"))
-			imagesAmount = Integer.parseInt(num);
-		else if(raw_num != null && !raw_num.equals("0"))
-		{
-			imagesAmount = Integer.parseInt(raw_num);
-			isRAW = true;
-		}
-		else
+		if (num == null)
 			return;
+		int imagesAmount = Integer.parseInt(num);
+//		boolean isRAW = false;
+//		int imagesAmount = 0;
+//		int imagesAmountRAW = 0;
+//		if(num != null && !num.equals("0"))
+//			imagesAmount = Integer.parseInt(num);
+//		if(raw_num != null && !raw_num.equals("0"))
+//		{
+//			imagesAmountRAW = Integer.parseInt(raw_num);
+//			isRAW = true;
+//		}
 
-		if (imagesAmount == 0)
-			imagesAmount = 1;
+//		if (imagesAmount == 0)
+//			imagesAmount = 1;
 
 		for (int i = 1; i <= imagesAmount; i++)
 		{
@@ -116,13 +115,43 @@ public class SimpleProcessingPlugin extends PluginProcessing
 			} else
 			{
 //				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
-				int frame = 0;
-				if(isRAW)
-					frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame_raw" + i + sessionID));
-				else
-					frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
-				
+//				int frame = 0;
+//				int frameRAW = 0;
+//				int len = 0;
+//				int lenRAW = 0;
+//				if(isRAW)
+//				{
+//					frameRAW = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame_raw" + i + sessionID));
+//					lenRAW = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen_raw" + i + sessionID));
+//					
+//					PluginManager.getInstance().addToSharedMem("resultframeformat" + i + sessionID, "dng");
+//					PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(frameRAW));
+//					PluginManager.getInstance().addToSharedMem("resultframelen" + i + sessionID, String.valueOf(lenRAW));
+//					
+//					frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
+//					len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
+//					
+//
+//					PluginManager.getInstance().addToSharedMem("resultframeformat" + (i+1) + sessionID, isRAW? "dng" : "jpeg");
+//					PluginManager.getInstance().addToSharedMem("resultframe" + (i+1) + sessionID, String.valueOf(frame));
+//					PluginManager.getInstance().addToSharedMem("resultframelen" + (i+1) + sessionID, String.valueOf(len));
+//				}
+//				else
+//				{
+//					frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
+//					len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
+//					
+//
+//					PluginManager.getInstance().addToSharedMem("resultframeformat" + i + sessionID, isRAW? "dng" : "jpeg");
+//					PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(frame));
+//					PluginManager.getInstance().addToSharedMem("resultframelen" + i + sessionID, String.valueOf(len));
+//				}
+					
+				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 				int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
+				
+				boolean isRAW = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameisraw" + i + sessionID));
+				
 
 				PluginManager.getInstance().addToSharedMem("resultframeformat" + i + sessionID, isRAW? "dng" : "jpeg");
 				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(frame));
@@ -143,7 +172,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		}
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
-		PluginManager.getInstance().addToSharedMem("amountofresultrawframes" + sessionID, isRAW? String.valueOf(imagesAmount) : "0");
+//		PluginManager.getInstance().addToSharedMem("amountofresultrawframes" + sessionID, isRAW? String.valueOf(imagesAmountRAW) : "0");
 	}
 
 	@Override

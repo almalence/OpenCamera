@@ -51,6 +51,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 
@@ -351,6 +352,64 @@ public class HALv3
 //        }
 //        surface.setTransform(matrix);
 //    }
+	public static void dumpCameraCharacteristics()
+	{
+		Log.i(TAG, "Total cameras found: "+CameraController.cameraIdList.length);
+		
+		for (int i=0; i<CameraController.cameraIdList.length; ++i)
+			Log.i(TAG, "Camera Id: "+CameraController.cameraIdList[i]);
+
+		// Query a device for Capabilities
+		CameraCharacteristics cc=null;
+		try
+		{
+			cc = HALv3.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+		}
+		catch (CameraAccessException e)
+		{
+			Log.d(TAG, "getCameraCharacteristics failed");
+			e.printStackTrace();
+		}
+
+		// dump all the keys from CameraCharacteristics
+		List<Key<?>> ck = cc.getKeys();
+		
+		for (int i=0; i<ck.size(); ++i)
+		{
+			Key<?> cm = ck.get(i);
+
+			if (cm.getName() == android.util.Size[].class.getName())
+			{
+				android.util.Size[] s = (android.util.Size[])cc.get(cm); 
+				Log.i(TAG, "Camera characteristics: "+cm.getName()+": "+s[0].toString());
+			}
+			else
+			{
+				String cmTypeName = cm.getName();
+				Log.i(TAG, "Camera characteristics: "+cm.getName()+"("+cmTypeName+"): "+cc.get(cm));
+			}
+		}
+
+		StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		// dump supported image formats (all of preview, video and still image)
+		int[] cintarr = configMap.getOutputFormats();
+		for (int k=0; k<cintarr.length; ++k)
+			Log.i(TAG, "Scaler supports format: "+cintarr[k]);
+		
+		// dump supported image sizes (all of preview, video and still image)
+		android.util.Size[] imSizes = configMap.getOutputSizes(ImageFormat.YUV_420_888);
+		for (int i=0; i<imSizes.length; ++i)
+			Log.i(TAG, "Scaler supports output size: "+imSizes[i].getWidth()+"x"+imSizes[i].getHeight());
+	}
+	
+	public static CameraController.Size getMaxCameraImageSizeHALv3(int captureFormat)
+	{
+		CameraCharacteristics params = getCameraParameters2();
+		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		final Size[] cs = configMap.getOutputSizes(captureFormat);
+		
+		return new CameraController.Size(cs[0].getWidth(), cs[0].getHeight());
+	}
 
 	public static void populateCameraDimensionsHALv3()
 	{
@@ -363,7 +422,7 @@ public class HALv3
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		final Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());		
+		final Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -1146,8 +1205,10 @@ public class HALv3
 			else if(format == CameraController.RAW)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " RAW+JPEG");
-//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+				
+				
 				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 			}
 
 			// Google: throw: "Burst capture implemented yet", when to expect
@@ -1274,7 +1335,7 @@ public class HALv3
 			}
 			else if(format == CameraController.RAW)
 			{
-//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			}
 
@@ -1471,7 +1532,7 @@ public class HALv3
 
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
-			// dumpCameraCharacteristics();
+			dumpCameraCharacteristics();
 		}
 	};
 	

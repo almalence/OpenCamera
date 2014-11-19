@@ -678,7 +678,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		thiz.mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888, 1);
 
 		// ImageReader for JPEG still images
-		thiz.mImageReaderJPEG = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 1);
+		if(getCaptureFormat() == CameraController.RAW)
+		{
+			CameraController.Size imageSizeJPEG = CameraController.getMaxCameraImageSize(CameraController.JPEG);
+			thiz.mImageReaderJPEG = ImageReader.newInstance(imageSizeJPEG.getWidth(), imageSizeJPEG.getHeight(), ImageFormat.JPEG, 1);
+		}
+		else
+			thiz.mImageReaderJPEG = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 1);
 		
 		// ImageReader for RAW still images
 		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.RAW_SENSOR, 1);
@@ -1717,7 +1723,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		else if(captureFormat == CameraController.RAW)
 		{
 			Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x " + mImageReaderRAW.getHeight());
-//			sfl.add(mImageReaderJPEG.getSurface()); // surface for jpeg image
+			sfl.add(mImageReaderJPEG.getSurface()); // surface for jpeg image
 			// capture
 			if(CameraController.isRAWCaptureSupported())
 				sfl.add(mImageReaderRAW.getSurface());
