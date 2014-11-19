@@ -93,7 +93,6 @@ public abstract class PluginCapture extends Plugin
 	@Override
 	public void onExportFinished()
 	{
-		inCapture = false;
 	}
 
 	public void takePicture()

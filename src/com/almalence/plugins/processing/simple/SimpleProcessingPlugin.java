@@ -24,7 +24,6 @@ package com.almalence.plugins.processing.simple;
  import com.almalence.opencam_plus.PluginProcessing;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.cameracontroller.CameraController;
