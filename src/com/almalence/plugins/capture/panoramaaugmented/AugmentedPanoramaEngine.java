@@ -756,7 +756,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 	}
 
 	@TargetApi(19)
-	public boolean onFrameAdded(final boolean isYUV, final int image, final Object... args)
+	public boolean onFrameAdded(final int image)
 	{
 		final boolean goodPlace;
 		final int framesCount;
@@ -787,18 +787,8 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
 			
-			final AugmentedFrameTaken frame;
-			
-			if (isYUV)
-			{
-				frame = new AugmentedFrameTaken(targetFrame.angle,
-						position, topVec, transform, image);
-			}
-			else
-			{
-				frame = new AugmentedFrameTaken(targetFrame.angle,
-						position, topVec, transform, image, (Integer)args[0]);
-			}
+			final AugmentedFrameTaken frame = new AugmentedFrameTaken(
+					targetFrame.angle, position, topVec, transform, image);
 			
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
@@ -1339,75 +1329,6 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 									AugmentedPanoramaEngine.this.width,
 									CameraController.isFrontCamera() ? 1 : 0, CameraController.isFrontCamera() ? 1 : 0, 1);
 							SwapHeap.FreeFromHeap(yuv_address);
-						}
-					}
-				}).start();
-
-				try
-				{
-					syncObject.wait();
-				}
-				catch (final InterruptedException e)
-				{
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-
-		/**
-		 * For JPEG input
-		 */
-		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final int jpeg, final int jpeg_length)
-		{
-			this(angleShift, position, topVec, rotation);
-
-			final Object syncObject = new Object();
-			synchronized (syncObject)
-			{
-				new Thread(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						// warrant the proper priority for jpeg decoding
-						android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
-
-						synchronized (AugmentedFrameTaken.this.nv21addressSync)
-						{
-							synchronized (AugmentedFrameTaken.this.glSync)
-							{
-								synchronized (syncObject)
-								{
-									syncObject.notify();
-								}
-
-								AugmentedFrameTaken.this.rgba_buffer = ByteBuffer.allocate(
-										AugmentedPanoramaEngine.this.textureWidth
-											* AugmentedPanoramaEngine.this.textureHeight * 4);
-
-								ImageConversion.resizeJpeg2RGBA(jpeg,
-										jpeg_length,
-										AugmentedFrameTaken.this.rgba_buffer.array(),
-										AugmentedPanoramaEngine.this.width,
-										AugmentedPanoramaEngine.this.height,
-										AugmentedPanoramaEngine.this.textureWidth,
-										AugmentedPanoramaEngine.this.textureHeight,
-										CameraController.isFrontCamera());
-
-								MainScreen.getInstance().queueGLEvent(new Runnable()
-								{
-									@Override
-									public void run()
-									{
-										AugmentedFrameTaken.this.createTexture();
-									}
-								});
-							}
-
-							AugmentedFrameTaken.this.nv21address = ImageConversion.JpegConvertN(jpeg, jpeg_length,
-									AugmentedPanoramaEngine.this.height, AugmentedPanoramaEngine.this.width, true,
-									CameraController.isFrontCamera(), 90);
 						}
 					}
 				}).start();
