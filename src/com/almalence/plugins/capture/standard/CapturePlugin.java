@@ -242,11 +242,13 @@ public class CapturePlugin extends PluginCapture
 	}
 
 	protected int framesCaptured = 0;
+	protected int resultCompleted = 0;
 	@Override
 	public void takePicture()
 	{
 //		Log.d("CapturePlugin", "takePicture");
 		framesCaptured = 0;
+		resultCompleted = 0;
 		if (ModePreference.compareTo("0") == 0)
 			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
 					new int[0], true);
@@ -254,8 +256,8 @@ public class CapturePlugin extends PluginCapture
 		{
 			requestID = CameraController.captureImagesWithParams(1, CameraController.RAW, new int[0],
 					new int[0], true);
-//			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
-//				new int[0], true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
+				new int[0], true);
 		}
 		else
 			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
@@ -302,6 +304,7 @@ public class CapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 			inCapture = false;
 			framesCaptured = 0;
+			resultCompleted = 0;
 		}
 		
 //		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
@@ -313,6 +316,7 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
@@ -320,7 +324,8 @@ public class CapturePlugin extends PluginCapture
 		
 		if(captureRAW)
 		{
-			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult1" + SessionID, result);
+			Log.e("CapturePlugin", "onCaptureCompleted. resultCompleted = " + resultCompleted);
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID, result);
 		}
 	}
 

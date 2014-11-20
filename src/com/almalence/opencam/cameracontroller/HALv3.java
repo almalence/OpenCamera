@@ -644,7 +644,7 @@ public class HALv3
 
 	public static float getMaxZoomHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) != null)
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) * 10.0f;
 
 		return 0;
@@ -692,7 +692,7 @@ public class HALv3
 
 	public static boolean isExposureCompensationSupportedHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE) != null)
 		{
 			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange.getLower() == expRange.getUpper() ? false : true;
@@ -703,7 +703,7 @@ public class HALv3
 
 	public static int getMinExposureCompensationHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE) != null)
 		{
 			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange.getLower();
@@ -714,7 +714,7 @@ public class HALv3
 
 	public static int getMaxExposureCompensationHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE) != null)
 		{
 			Range<Integer> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
 			return expRange.getUpper();
@@ -725,7 +725,7 @@ public class HALv3
 
 	public static float getExposureCompensationStepHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP) != null)
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP).floatValue();
 		return 0;
 	}
@@ -750,7 +750,7 @@ public class HALv3
 
 	public static int[] getSupportedSceneModesHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES) != null)
 		{
 			int[] scenes = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
 			if (scenes.length > 0 && scenes[0] != CameraCharacteristics.CONTROL_SCENE_MODE_DISABLED)
@@ -762,7 +762,7 @@ public class HALv3
 
 	public static int[] getSupportedWhiteBalanceHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null)
 		{
 			int[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			if (wb.length > 0)
@@ -774,7 +774,7 @@ public class HALv3
 
 	public static int[] getSupportedFocusModesHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES) != null)
 		{
 			int[] focus = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
 			if (focus.length > 0)
@@ -786,7 +786,7 @@ public class HALv3
 
 	public static boolean isFlashModeSupportedHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) != null)
 		{
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
 		}
@@ -796,7 +796,7 @@ public class HALv3
 
 	public static int[] getSupportedISOModesHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
 		{
 			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 			int max_iso = iso.getUpper();
@@ -823,7 +823,7 @@ public class HALv3
 
 	public static boolean isISOModeSupportedHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
 		{
 			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 			if (iso.getLower() == iso.getUpper())
@@ -836,7 +836,7 @@ public class HALv3
 
 	public static int getMaxNumMeteringAreasHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) != null)
 		{
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
 		}
@@ -846,7 +846,7 @@ public class HALv3
 
 	public static int getMaxNumFocusAreasHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null)
+		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) != null)
 		{
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
 		}
@@ -1150,9 +1150,14 @@ public class HALv3
 
 	public static int getPreviewFrameRateHALv3()
 	{
-		Range<Integer>[] range;
-		range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
-		return range[range.length - 1].getUpper();
+		if(HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES) != null)
+		{
+			Range<Integer>[] range;
+			range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+			return range[range.length - 1].getUpper();
+		}
+		
+		return 0;
 	}
 
 
@@ -1208,7 +1213,7 @@ public class HALv3
 				
 				
 				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
-				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 			}
 
 			// Google: throw: "Burst capture implemented yet", when to expect
@@ -1335,7 +1340,7 @@ public class HALv3
 			}
 			else if(format == CameraController.RAW)
 			{
-				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			}
 
