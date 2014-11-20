@@ -103,6 +103,8 @@ public class HALv3
 	private static int						MAX_SUPPORTED_PREVIEW_SIZE = 1920*1088;
 	private static int						FULL_HD_SIZE = 1920*1080;
 	
+	protected static int					captureFormat = CameraController.JPEG;
+	
 
 	public static HALv3 getInstance()
 	{
@@ -308,8 +310,8 @@ public class HALv3
 		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
 		backgroundThread.start();
 		
-//		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
-//				imageAvailableListener,  null);
+		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(
+				imageAvailableListener,  null);
 
 		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener,
 				 						null);
@@ -319,6 +321,11 @@ public class HALv3
 		
 		MainScreen.getRAWImageReader().setOnImageAvailableListener(imageAvailableListener,
 					null);
+	}
+	
+	public static void setCaptureFormat(int captureFormat)
+	{
+		HALv3.captureFormat = captureFormat;
 	}
 	
 	public static void createCaptureSession(List<Surface> sfl)
@@ -1570,7 +1577,8 @@ public class HALv3
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-//		HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+		if(HALv3.captureFormat != CameraController.RAW)
+			HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 				captureCallback, null);
 	}
@@ -1618,7 +1626,7 @@ public class HALv3
 
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
-			dumpCameraCharacteristics();
+//			dumpCameraCharacteristics();
 		}
 	};
 	
@@ -1649,7 +1657,8 @@ public class HALv3
 				HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
 						focusMode);
 				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-//				HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+				if(HALv3.captureFormat != CameraController.RAW)
+					HALv3.getInstance().previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.getInstance().previewRequestBuilder.build(),
 											captureCallback, null);
 				

@@ -913,6 +913,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	@TargetApi(21)
+	public static void setCaptureFormat(int captureFormat)
+	{
+		HALv3.setCaptureFormat(captureFormat);
+	}
+	
+	@TargetApi(21)
 	public static void createCaptureSession(List<Surface> sfl)
 	{
 		HALv3.createCaptureSession(sfl);

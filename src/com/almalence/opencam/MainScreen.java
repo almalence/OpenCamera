@@ -671,8 +671,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static void createImageReaders()
 	{
 		// ImageReader for preview frames in YUV format
-//		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-//		ImageFormat.YUV_420_888, 1);
+		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
+		ImageFormat.YUV_420_888, 2);
 //		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
 //		 ImageFormat.YUV_420_888, 1);
 
@@ -1713,9 +1713,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mCameraSurface = surfaceHolder.getSurface();
 		sfl.add(mCameraSurface); // surface for viewfinder preview
 		
-//		if(captureFormat != CameraController.RAW)			//when capture RAW preview frames is not available
-//			sfl.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
-//														// images
+		if(captureFormat != CameraController.RAW)			//when capture RAW preview frames is not available
+			sfl.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
+														// images
 		if (captureFormat == CameraController.YUV)
 		{
 			Log.d("MainScreen", "add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
@@ -1737,11 +1737,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		// sfl.add(mImageReaderJPEG.getSurface());
-//		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
 //		 guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280, 960));
 
+		CameraController.setCaptureFormat(captureFormat);
 		// configure camera with all the surfaces to be ever used
 		CameraController.createCaptureSession(sfl);
 
