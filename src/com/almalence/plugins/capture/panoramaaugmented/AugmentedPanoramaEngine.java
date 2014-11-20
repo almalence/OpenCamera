@@ -777,22 +777,22 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		{
 			this.angleTotal += this.angleShift;
 
-			if (framesCount > 0)
-			{
-				this.targetFrames[this.currentlyTargetedTarget].move();
-			}
-
 			final Vector3d position = new Vector3d(this.last_position);
 			final Vector3d topVec = new Vector3d(this.last_topVec);
 			final float[] transform = new float[16];
 			System.arraycopy(this.last_transform, 0, transform, 0, 16);
 			
 			final AugmentedFrameTaken frame = new AugmentedFrameTaken(
-					targetFrame.angle, position, topVec, transform, image);
+					targetFrame.angle, position, topVec, transform, image, framesCount > 0);
 			
 			synchronized (AugmentedPanoramaEngine.this.frames)
 			{
 				AugmentedPanoramaEngine.this.frames.add(frame);
+			}
+
+			if (framesCount > 0)
+			{
+				this.targetFrames[this.currentlyTargetedTarget].move();
 			}
 		}
 
@@ -1229,6 +1229,13 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		private final Object		glSync				= new Object();
 
 		private ByteBuffer			rgba_buffer;
+		
+		// Perfect display stuff
+		private final Vector3d dposition = new Vector3d();
+		private final float dangle;
+		private final float[] dtransform = new float[16];
+		
+		
 
 		public int getNV21address()
 		{
@@ -1239,7 +1246,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 		}
 		
 		private AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation)
+				final Vector3d topVec, final float[] rotation, final boolean displayAsPerfect)
 		{
 			this.angleShift = angleShift;
 			
@@ -1252,15 +1259,33 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 			this.transform[12] = position.x;
 			this.transform[13] = position.y;
 			this.transform[14] = position.z;
+			
+			if (displayAsPerfect)
+			{
+				final AugmentedFrameTarget target = targetFrames[currentlyTargetedTarget];
+				
+				this.dposition.set(target.position);
+				this.dangle = target.angle;
+				System.arraycopy(target.transform, 0, this.dtransform, 0, 16);
+			}
+			else
+			{
+				this.dposition.x = 0.0f;
+				this.dposition.y = 0.0f;
+				this.dposition.z = 0.0f;
+				this.dangle = 0;
+				System.arraycopy(this.transform, 0, this.dtransform, 0, 16);
+			}
 		}
 		
 		/**
 		 * For YUV input
 		 */
 		public AugmentedFrameTaken(final float angleShift, final Vector3d position,
-				final Vector3d topVec, final float[] rotation, final int yuv_address)
+				final Vector3d topVec, final float[] rotation, final int yuv_address,
+				final boolean displayAsPerfect)
 		{
-			this(angleShift, position, topVec, rotation);
+			this(angleShift, position, topVec, rotation, displayAsPerfect);
 
 			final Object syncObject = new Object();
 			synchronized (syncObject)
@@ -1406,12 +1431,12 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				}
 			}
 		}
-
+		
 		public void getPosition(final Vector3d vector)
 		{
 			vector.set(this.position);
 		}
-
+		
 		public void getTop(final Vector3d vector)
 		{
 			vector.set(this.vTop);
@@ -1426,7 +1451,14 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			gl.glPushMatrix();
 
-			gl.glMultMatrixf(this.transform, 0);
+			gl.glTranslatef(this.dposition.x, this.dposition.y, this.dposition.z);
+
+			gl.glRotatef(-this.dangle,
+					AugmentedPanoramaEngine.this.initialTopVector.x,
+					AugmentedPanoramaEngine.this.initialTopVector.y,
+					AugmentedPanoramaEngine.this.initialTopVector.z);
+
+			gl.glMultMatrixf(this.dtransform, 0);
 
 			final float scale;
 			if (AugmentedPanoramaEngine.this.miniDisplayMode)
@@ -1488,6 +1520,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 
 			this.distance = 1.5f * dpos / sizeDim;
 		}
+		
 
 		public void destroy()
 		{
