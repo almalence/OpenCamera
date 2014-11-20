@@ -793,7 +793,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null || MainScreen.getInstance().getSwitchingMode())
 			{
 				try
 				{

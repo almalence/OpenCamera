@@ -1275,6 +1275,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							Log.d("GL", "glView onResume");
 						}
 					} else if ((surfaceCreated && (!CameraController.isCameraCreated()))||
+								//this is for change mode without camera restart!
 							   (surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
