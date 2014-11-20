@@ -540,6 +540,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
+		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().pauseMain();
 		onStop();
 		onDestroy();
@@ -563,6 +564,7 @@ public class PluginManager implements PluginManagerInterface
 
 		onCreate();
 		onStart();
+		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().resumeMain();
 	}
 

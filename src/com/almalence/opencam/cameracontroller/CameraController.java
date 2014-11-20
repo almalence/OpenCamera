@@ -672,7 +672,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.onResumeHALv3();
 	}
 
-	public static void onPause()
+	public static void onPause(boolean isModeSwitching)
 	{
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
@@ -707,9 +707,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (camera != null)
 			{
 				camera.setPreviewCallback(null);
-				camera.stopPreview();
-				camera.release();
-				camera = null;
+				if (!isModeSwitching)
+				{
+					camera.stopPreview();
+					camera.release();
+					camera = null;
+				}
 			}
 		} else
 			HALv3.onPauseHALv3();
@@ -794,10 +797,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					if (Camera.getNumberOfCameras() > 0)
-						camera = Camera.open(CameraIndex);
-					else
-						camera = Camera.open();
+					if (!MainScreen.getInstance().getSwitchingMode())
+					{
+						if (Camera.getNumberOfCameras() > 0)
+							camera = Camera.open(CameraIndex);
+						else
+							camera = Camera.open();
+					}
+					MainScreen.getInstance().switchingMode(false);
 
 					Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 					Camera.getCameraInfo(CameraIndex, cameraInfo);
