@@ -206,7 +206,7 @@ public class BurstCapturePlugin extends PluginCapture
 		if(captureRAW)
 		{
 			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, new int[0], true);
-			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, new int[0], true);
+//			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, new int[0], true);
 		}
 		else
 			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, new int[0], true);
@@ -280,7 +280,7 @@ public class BurstCapturePlugin extends PluginCapture
 			return;
 		}
 
-		if (/*imagesTaken >= imageAmount && */(captureRAW && imagesTakenRAW >= (imageAmount*2)) || (!captureRAW && imagesTaken >= imageAmount))
+		if (/*imagesTaken >= imageAmount && */(captureRAW && imagesTaken >= (imageAmount/**2*/)) || (!captureRAW && imagesTaken >= imageAmount))
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(imagesTaken));
 //			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));

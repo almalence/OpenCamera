@@ -174,6 +174,8 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
+		inCapture = false;
+		
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
@@ -299,7 +301,7 @@ public class CapturePlugin extends PluginCapture
 
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
-		if((captureRAW && framesCaptured == 2) || !captureRAW)
+		if((captureRAW && framesCaptured == 2) || !captureRAW || ModePreference.compareTo("0") == 0)
 		{
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 			inCapture = false;
