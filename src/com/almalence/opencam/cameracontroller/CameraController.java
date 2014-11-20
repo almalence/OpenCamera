@@ -619,7 +619,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		if (CameraController.isHALv3Supported)
+		{
 			HALv3.onCreateHALv3();
+			if(!HALv3.checkHardwareLevel())
+			{
+				isHALv3 = false;
+				isHALv3Supported = false;
+				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
+						.commit();
+			}
+		}
+		
+		
 	}
 
 	public static void createHALv3Manager()

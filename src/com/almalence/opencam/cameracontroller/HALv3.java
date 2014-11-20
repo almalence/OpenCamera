@@ -147,6 +147,23 @@ public class HALv3
 		}
 	}
 	
+	public static boolean checkHardwareLevel()
+	{
+		try
+		{
+			Log.e(TAG, "onResumeHALv3. CameraIndex = " + CameraController.CameraIndex);
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
+					.cameraIdList[CameraController.CameraIndex]);
+			
+			return (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public static void onResumeHALv3()
 	{
 		try
