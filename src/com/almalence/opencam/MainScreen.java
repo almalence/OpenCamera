@@ -223,6 +223,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private static boolean				mAFLocked						= false;
 
+	//shows if mode is currently switching 
+	private boolean 					switchingMode 					= false;
+	
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
 	// access
@@ -1148,6 +1151,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStop()
 	{
 		super.onStop();
+		switchingMode = false;
 		mApplicationStarted = false;
 		orientationMain = 0;
 		orientationMainPrevious = 0;
@@ -1270,7 +1274,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							glView.onResume();
 							Log.d("GL", "glView onResume");
 						}
-					} else if (surfaceCreated && (!CameraController.isCameraCreated()))
+					} else if ((surfaceCreated && (!CameraController.isCameraCreated()))||
+								//this is for change mode without camera restart!
+							   (surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						CameraController.setupCamera(surfaceHolder);
@@ -1396,7 +1402,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			isScreenTimerRunning = false;
 		}
 
-		CameraController.onPause();
+		CameraController.onPause(switchingMode);
+		switchingMode = false;
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
 
@@ -3392,5 +3399,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			prefsEditor.commit();
 		}
+	}
+	
+	public void switchingMode(boolean isModeSwitching)
+	{
+		switchingMode = isModeSwitching;
+	}
+	
+	public boolean getSwitchingMode()
+	{
+		return switchingMode;
 	}
 }

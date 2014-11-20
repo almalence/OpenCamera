@@ -521,23 +521,6 @@ public class PluginManager implements PluginManagerInterface
 		photoTimeLapseView = (TextView) photoTimeLapseLayout.findViewById(R.id.photo_timelapse_text);
 	}
 
-	private void restartMainScreen()
-	{
-		// disable old plugins
-		MainScreen.getGUIManager().onStop();
-		MainScreen.getInstance().pauseMain();
-		onStop();
-
-		// create correct workflow for plugins
-		onCreate();
-		onStart();
-		MainScreen.getInstance().resumeMain();
-
-		countdownView.clearAnimation();
-		countdownLayout.setVisibility(View.GONE);
-		photoTimeLapseLayout.setVisibility(View.GONE);
-	}
-
 	// parse config to get camera and modes configurations
 	void parseConfig()
 	{
@@ -557,6 +540,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
+		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().pauseMain();
 		onStop();
 		onDestroy();
@@ -580,6 +564,7 @@ public class PluginManager implements PluginManagerInterface
 
 		onCreate();
 		onStart();
+		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().resumeMain();
 	}
 
@@ -1671,10 +1656,6 @@ public class PluginManager implements PluginManagerInterface
 		case MSG_RETURN_CAPTURED:
 			MainScreen.getInstance().setResult(Activity.RESULT_OK);
 			MainScreen.getInstance().finish();
-			break;
-
-		case MSG_RESTART_MAIN_SCREEN:
-			restartMainScreen();
 			break;
 
 		case MSG_OPENGL_LAYER_SHOW:

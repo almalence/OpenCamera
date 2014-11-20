@@ -672,7 +672,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.onResumeHALv3();
 	}
 
-	public static void onPause()
+	public static void onPause(boolean isModeSwitching)
 	{
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
@@ -707,9 +707,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (camera != null)
 			{
 				camera.setPreviewCallback(null);
-				camera.stopPreview();
-				camera.release();
-				camera = null;
+				if (!isModeSwitching)
+				{
+					camera.stopPreview();
+					camera.release();
+					camera = null;
+				}
 			}
 		} else
 			HALv3.onPauseHALv3();
@@ -790,14 +793,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null)
+			if (camera == null || MainScreen.getInstance().getSwitchingMode())
 			{
 				try
 				{
-					if (Camera.getNumberOfCameras() > 0)
-						camera = Camera.open(CameraIndex);
-					else
-						camera = Camera.open();
+					if (!MainScreen.getInstance().getSwitchingMode())
+					{
+						if (Camera.getNumberOfCameras() > 0)
+							camera = Camera.open(CameraIndex);
+						else
+							camera = Camera.open();
+					}
+					MainScreen.getInstance().switchingMode(false);
 
 					Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 					Camera.getCameraInfo(CameraIndex, cameraInfo);
@@ -894,22 +901,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			msg.what = PluginManager.MSG_CAMERA_READY;
 			MainScreen.getMessageHandler().sendMessage(msg);
 		}
-	}
-
-	protected void openCameraFrontOrRear()
-	{
-		if (Camera.getNumberOfCameras() > 0)
-		{
-			camera = Camera.open(CameraIndex);
-		}
-
-		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-		Camera.getCameraInfo(CameraIndex, cameraInfo);
-
-		if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-			CameraMirrored = true;
-		else
-			CameraMirrored = false;
 	}
 
 	public static boolean isCameraCreated()
