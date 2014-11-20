@@ -280,7 +280,7 @@ public class BurstCapturePlugin extends PluginCapture
 			return;
 		}
 
-		if (/*imagesTaken >= imageAmount && */(captureRAW && imagesTaken >= (imageAmount/**2*/)) || (!captureRAW && imagesTaken >= imageAmount))
+		if (/*imagesTaken >= imageAmount && */(captureRAW && imagesTaken >= (imageAmount*2)) || (!captureRAW && imagesTaken >= imageAmount))
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(imagesTaken));
 //			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));

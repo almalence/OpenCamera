@@ -1183,27 +1183,47 @@ public class HALv3
 	{
 		int requestID = -1;
 		final CaptureRequest.Builder stillRequestBuilder;
+		final CaptureRequest.Builder rawRequestBuilder;
+		boolean isRAWCapture = (format == CameraController.RAW);
 		try
 		{
 			stillRequestBuilder = HALv3.getInstance().camDevice
 					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			rawRequestBuilder = HALv3.getInstance().camDevice
+				.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			
-			if (format == CameraController.YUV_RAW || format == CameraController.RAW)
+			if (format == CameraController.YUV_RAW)
 			{
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
-			} else
+			}
+			else if(isRAWCapture)
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+				
+				rawRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+				rawRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			}
+			else
 			{
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 			}
+			
 			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if(isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 			if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 			{
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+				if(isRAWCapture)
+					rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 			}
 
 			// no re-focus needed, already focused in preview, so keeping the
@@ -1215,6 +1235,8 @@ public class HALv3
 			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 			 stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			 if(isRAWCapture)
+				 rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 			if (format == CameraController.JPEG)
 			{
 				Log.e("HALv3", "Capture " + nFrames + " JPEGs");
@@ -1228,9 +1250,8 @@ public class HALv3
 			{
 				Log.e("HALv3", "Capture " + nFrames + " RAW+JPEG");
 				
-				
-				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
-//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+				rawRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 			}
 
 			// Google: throw: "Burst capture implemented yet", when to expect
@@ -1261,11 +1282,16 @@ public class HALv3
 					 for (int n=0; n<nFrames; ++n)
 					 {
 						 stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[n]);
+						 if(isRAWCapture)
+							 rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[n]);
 
 						try
 						{
 							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 									stillCaptureCallback, null);
+							if(isRAWCapture)
+								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+										stillCaptureCallback, null);	
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -1284,6 +1310,9 @@ public class HALv3
 						// }
 						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 								stillCaptureCallback, null);
+						if(isRAWCapture)
+							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+									stillCaptureCallback, null);
 					}
 				}
 			}
@@ -1318,35 +1347,56 @@ public class HALv3
 	
 	private static int captureNextImageWithParams(final int format, final int pause, final int[] evRequested, final int index)
 	{
+		final boolean isRAWCapture = (format == CameraController.RAW);
 		int requestID = -1;
 		final CaptureRequest.Builder stillRequestBuilder;
+		final CaptureRequest.Builder rawRequestBuilder;
 		try
 		{
 			stillRequestBuilder = HALv3.getInstance().camDevice
 					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			if (format == CameraController.YUV_RAW || format == CameraController.RAW)
+			rawRequestBuilder = HALv3.getInstance().camDevice
+					.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			if (format == CameraController.YUV_RAW)
 			{
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
-			} else
+			}
+			else if(isRAWCapture)
+			{
+				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+				
+				rawRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+				rawRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+						CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			}
+			else
 			{
 				stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 				stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 						CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 			}
-			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 			
-			if (zoomLevel >= 1.0f)
+			stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if(isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+			if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 			{
 				zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 				stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+				if(isRAWCapture)
+					rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 			}
-			
+
 			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 			 stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-
+			 if(isRAWCapture)
+				 rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			 
 			if (format == CameraController.JPEG)
 			{
 				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
@@ -1357,8 +1407,8 @@ public class HALv3
 			}
 			else if(format == CameraController.RAW)
 			{
-//				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-				stillRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
+				rawRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
+				stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 			}
 
 			if (pause > 0)
@@ -1376,12 +1426,19 @@ public class HALv3
 						MainScreen.getGUIManager().showCaptureIndication();
 						MainScreen.getInstance().playShutter();
 						if (evRequested != null && evRequested.length > index)
+						{
 							stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+							if(isRAWCapture)
+								rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+						}
 
 						try
 						{
 							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 									captureCallback, null);
+							if(isRAWCapture)
+								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+										captureCallback, null);	
 						} catch (CameraAccessException e)
 						{
 							e.printStackTrace();
@@ -1396,12 +1453,19 @@ public class HALv3
 				MainScreen.getGUIManager().showCaptureIndication();
 				MainScreen.getInstance().playShutter();
 				if (evRequested != null && evRequested.length > index)
+				{
 					stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+					if(isRAWCapture)
+						rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evRequested[index]);
+				}
 
 				try
 				{
 					HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 							stillCaptureCallback, null);
+					if(isRAWCapture)
+						HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+								stillCaptureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();

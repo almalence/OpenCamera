@@ -258,8 +258,8 @@ public class CapturePlugin extends PluginCapture
 		{
 			requestID = CameraController.captureImagesWithParams(1, CameraController.RAW, new int[0],
 					new int[0], true);
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
-				new int[0], true);
+//			CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
+//				new int[0], true);
 		}
 		else
 			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],

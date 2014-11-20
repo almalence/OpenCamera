@@ -290,7 +290,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
 
 		++frame_num;
-		if (captureRAW? /*++frame_num >= total_frames &&*/ imagesTakenRAW >= total_frames : frame_num >= total_frames)
+		if ((captureRAW && frame_num >= (total_frames*2)) || (!captureRAW && frame_num >= total_frames))
 		{
 			previewWorking = true;
 			if (cdt != null)
