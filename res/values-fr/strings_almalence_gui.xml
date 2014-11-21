@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Retardateur</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Correction d\'exposition</string>
     <string name="Pref_Common_DelayedCapture_Title">Prise de vue avec retardateur</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Affiche la commande du retardateur</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Affiche la commande du retardateur/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Affiche l\'aide</string>
     <string name="Pref_WhowHelp_Summary">Affiche l\'aide au démarrage du mode (Panorama, Suppression d\'objet, Séquence, Photo de groupe)</string>
     <string name="Pref_Common_HeadsetTap_Title">Obturateur du casque</string>

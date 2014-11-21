@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Samowyzwalacz</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Regulacja naświetlania</string>
     <string name="Pref_Common_DelayedCapture_Title">Korzystanie z samowyzwalacza</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Pokaż panel samowyzwalacza</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Pokaż panel samowyzwalacza/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Pokaż pomoc</string>
     <string name="Pref_WhowHelp_Summary">Pokaż pomoc podczas uruchamiania trybu (panorama, usuwanie obiektów, sekwencja, zdjęcie grupowe)</string>
     <string name="Pref_Common_HeadsetTap_Title">Spust migawki zestawu słuchawkowego</string>

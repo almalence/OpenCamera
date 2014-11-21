@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Disparador automático</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Compensação de exposição</string>
     <string name="Pref_Common_DelayedCapture_Title">Captura do disparador automático</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Mostrar controle do disparador automático</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Mostrar controle do disparador automático/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Mostrar ajuda</string>
     <string name="Pref_WhowHelp_Summary">Mostrar ajuda ao iniciar modo (Panorama, Remoção de objetos, Sequência, Foto de Grupo)</string>
     <string name="Pref_Common_HeadsetTap_Title">Obturador do fone de ouvido</string>

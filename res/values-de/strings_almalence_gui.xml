@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Selbstauslöser</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Belichtungskorrektur</string>
     <string name="Pref_Common_DelayedCapture_Title">Selbstauslöseraufnahme</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Selbstauslösersteuerung anzeigen</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Selbstauslösersteuerung anzeigen/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Hilfe anzeigen</string>
     <string name="Pref_WhowHelp_Summary">Zeigt Hilfe an, kurz nachdem der Modus aktiviert wurde (Panorama, Objektentfernung, Sequenz, Gruppenaufnahme)</string>
     <string name="Pref_Common_HeadsetTap_Title">Kopfhörertaste</string>

@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Autoscatto</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Compensazione esposizione</string>
     <string name="Pref_Common_DelayedCapture_Title">Acquisizione con autoscatto</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Mostra comando Autoscatto</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Mostra comando Autoscatto/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Mostra la guida</string>
     <string name="Pref_WhowHelp_Summary">Mostra la guida all\'avvio della modalità (Foto panoramiche, Rimozione di oggetti, Sequenza, Foto di gruppo)</string>
     <string name="Pref_Common_HeadsetTap_Title">Cuffie come otturatore</string>
