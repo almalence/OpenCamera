@@ -19,6 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.night;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -140,6 +141,9 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				"isHALv3" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"sensorGain" + sessionID));
+		
+		if(!Build.MODEL.contains("Nexus 5"))
+			isHALv3 = false;
 
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
 				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
