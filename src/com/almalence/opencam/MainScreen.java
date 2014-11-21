@@ -313,6 +313,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sImageSizeVideoFrontPref;
 	
 	public static String				sCaptureRAWPref;
+	
+	public static String				sInitModeListPref = "initModeListPref";
 
 	public static String				sJPEGQualityPref;
 
@@ -1047,6 +1049,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				public boolean onPreferenceChange(Preference preference, Object useCamera2)
 				{
+					PreferenceManager
+					.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putBoolean(MainScreen.sInitModeListPref, true).commit();
+					
 					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
 					if (new_value)
 					{
