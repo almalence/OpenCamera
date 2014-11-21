@@ -17,10 +17,10 @@
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
     <string name="Pref_Common_UseHALv3_Title">Использовать новый интерфейс камеры</string>
-    <string name="Pref_Common_UseHALv3_Summary">Экспериментальный режим. Работает на ограниченном числе устройств (Google Nexus 5, 7 с Android L)</string>
-    <string name="Pref_Common_CaptureRAW_Title">Съёмка JPEG+RAW</string>
+    <string name="Pref_Common_UseHALv3_Summary">Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>
+    <string name="Pref_Common_CaptureRAW_Title">Съёмка RAW+JPEG</string>
     <string name="Pref_Common_CaptureRAW_Summary">Снимок сохраняется в формате DNG. Работает на ограниченном числе устройств</string>
-    <string name="Pref_Common_CaptureRAW_Description">BLA BLA BLA</string>
+    <string name="Pref_Common_CaptureRAW_Description">Съёмка RAW возможна только в режимах Стандартный, Серия и Брекетинг экспозиции. Так же, в этом режиме не может быть показана гистограмма</string>
     <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
