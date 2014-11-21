@@ -37,7 +37,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Samookidač</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Kompenzacija ekspozicije</string>
     <string name="Pref_Common_DelayedCapture_Title">Samookidač zatvarač</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Prikaži kontrole samookidača</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Prikaži kontrole samookidača/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Prikaži pomoć</string>
     <string name="Pref_WhowHelp_Summary">Prikaži pomoć kada se mod pokrene (Panorama, Pametan višeokidač)</string>
     <string name="Pref_Common_HeadsetTap_Title">Slikanje preko gumba slušalica</string>
