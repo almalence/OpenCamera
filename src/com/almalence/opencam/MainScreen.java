@@ -1453,7 +1453,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "surfaceChanged: CameraController.setupCamera(null)");
+						Log.d("MainScreen", "surfaceChanged: CameraController.setupCamera(null). SurfaceSize = " + width + "x" + height);
 						if (!CameraController.isUseHALv3())
 						{
 							CameraController.setupCamera(holder);

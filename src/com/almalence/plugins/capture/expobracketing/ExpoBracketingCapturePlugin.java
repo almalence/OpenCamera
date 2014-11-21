@@ -68,8 +68,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// shared between activities
 	public static int			CapIdx;
 	public static int			total_frames;
-	public static int[]			compressed_frame		= new int[MAX_HDR_FRAMES];
-	public static int[]			compressed_frame_len	= new int[MAX_HDR_FRAMES];
 	public static boolean		LumaAdaptationAvailable	= false;
 
 	// preferences
@@ -257,41 +255,39 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				n = evIdx[1];
 		}
 		
-		compressed_frame[n] = frame;
-		compressed_frame_len[n] = frame_len;
+		boolean isRAW = (format == CameraController.RAW);
 		
-		if(format == CameraController.RAW)
+		if(isRAW)
 		{
 			imagesTakenRAW++;
-			PluginManager.getInstance().addToSharedMem("frame_raw" + imagesTakenRAW + SessionID, String.valueOf(frame));
-			PluginManager.getInstance().addToSharedMem("framelen" + imagesTakenRAW + SessionID, String.valueOf(frame_len));
-			PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTakenRAW + SessionID,
+			PluginManager.getInstance().addToSharedMem("frame" + (imagesTakenRAW + 3) + SessionID, String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("framelen" + (imagesTakenRAW + 3) + SessionID, String.valueOf(frame_len));
+			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTakenRAW + 3) + SessionID,
 					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-			PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTakenRAW + SessionID,
+			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTakenRAW + 3) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 			
-			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));
+			PluginManager.getInstance().addToSharedMem("frameisraw" + (imagesTakenRAW + 3) + SessionID, String.valueOf(isRAW));
 		}
 		else
 		{
-			PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(compressed_frame[n]));
+			++frame_num;
+			PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(frame));
 			PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID,
-					String.valueOf(compressed_frame_len[n]));
+					String.valueOf(frame_len));
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
 					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 			
+			PluginManager.getInstance().addToSharedMem("frameisraw" + (n + 1) + SessionID, String.valueOf(isRAW));
+			
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(n + 1));
 		}
 
-		
-
-//		Log.d("ExpoBracketing", "amountofcapturedframes = " + (n + 1));
-
-		++frame_num;
-		if ((captureRAW && frame_num >= (total_frames*2)) || (!captureRAW && frame_num >= total_frames))
+		if ((captureRAW && (frame_num + imagesTakenRAW) >= (total_frames*2)) || (!captureRAW && frame_num >= total_frames))
 		{
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(frame_num + imagesTakenRAW));
 			previewWorking = true;
 			if (cdt != null)
 			{
@@ -305,6 +301,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.resetExposureCompensation();
 			
 			imagesTakenRAW = 0;
+			frame_num = 0;
 			inCapture = false;
 		}
 	}
