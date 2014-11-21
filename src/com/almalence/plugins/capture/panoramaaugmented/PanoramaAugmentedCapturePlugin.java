@@ -772,9 +772,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			{
 				if (this.inCapture)
 				{
+					MainScreen.getInstance().setKeepScreenOn(false);
 					this.stopCapture();
 				} else
 				{
+					MainScreen.getInstance().setKeepScreenOn(true);
 					this.startCapture();
 				}
 			}
