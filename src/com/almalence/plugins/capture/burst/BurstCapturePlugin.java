@@ -223,34 +223,15 @@ public class BurstCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 
 			imagesTaken = 0;
-//			imagesTakenRAW = 0;
+			imagesTakenRAW = 0;
 			resultCompleted = 0;
 			MainScreen.getInstance().muteShutter(false);
 			return;
 		}
 		
 		boolean isRAW = (format == CameraController.RAW);
-		
-//		if(format == CameraController.RAW)
-//		{
-//			imagesTakenRAW++;
-//			PluginManager.getInstance().addToSharedMem("frame_raw" + imagesTakenRAW + SessionID, String.valueOf(frame));
-//			PluginManager.getInstance().addToSharedMem("framelen" + imagesTakenRAW + SessionID, String.valueOf(frame_len));
-//			PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTakenRAW + SessionID,
-//					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//			PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTakenRAW + SessionID,
-//					String.valueOf(CameraController.isFrontCamera()));
-//		}
-//		else
-//		{
-//			imagesTaken++;
-//			PluginManager.getInstance().addToSharedMem("frame" + imagesTaken + SessionID, String.valueOf(frame));
-//			PluginManager.getInstance().addToSharedMem("framelen" + imagesTaken + SessionID, String.valueOf(frame_len));
-//			PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-//					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-//			PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
-//					String.valueOf(CameraController.isFrontCamera()));
-//		}
+		if(isRAW)
+			imagesTakenRAW++;
 		
 		imagesTaken++;
 		PluginManager.getInstance().addToSharedMem("frame" + imagesTaken + SessionID, String.valueOf(frame));
@@ -274,21 +255,21 @@ public class BurstCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 
 			imagesTaken = 0;
-//			imagesTakenRAW = 0;
+			imagesTakenRAW = 0;
 			resultCompleted = 0;
 			MainScreen.getInstance().muteShutter(false);
 			return;
 		}
 
-		if (/*imagesTaken >= imageAmount && */(captureRAW && imagesTaken >= (imageAmount*2)) || (!captureRAW && imagesTaken >= imageAmount))
+		if ((captureRAW && imagesTaken >= (imageAmount*2)) || (!captureRAW && imagesTaken >= imageAmount))
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(imagesTaken));
-//			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));
+			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));
 			
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
-//			imagesTakenRAW = 0;
+			imagesTakenRAW = 0;
 			resultCompleted = 0;
 			
 			inCapture = false;

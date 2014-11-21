@@ -24,6 +24,8 @@ package com.almalence.plugins.processing.simple;
  import com.almalence.opencam_plus.PluginProcessing;
  +++ --> */
 // <!-- -+-
+import android.util.Log;
+
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -64,6 +66,15 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		if (num == null)
 			return;
 		int imagesAmount = Integer.parseInt(num);
+		
+		String numRAW = PluginManager.getInstance().getFromSharedMem("amountofcapturedrawframes" + sessionID);
+		
+		int imagesAmountRAW = 0;
+		if (numRAW != null)
+			imagesAmountRAW = Integer.parseInt(numRAW);
+		
+		int frameNumRAW = 0;
+		int frameNum = 0;
 
 		for (int i = 1; i <= imagesAmount; i++)
 		{
@@ -105,10 +116,11 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				
 				boolean isRAW = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("frameisraw" + i + sessionID));
 				
-
-				PluginManager.getInstance().addToSharedMem("resultframeformat" + i + sessionID, isRAW? "dng" : "jpeg");
-				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(frame));
-				PluginManager.getInstance().addToSharedMem("resultframelen" + i + sessionID, String.valueOf(len));
+				int frameIndex = isRAW? (++frameNumRAW) : (imagesAmountRAW + (++frameNum));
+				
+				PluginManager.getInstance().addToSharedMem("resultframeformat" + frameIndex + sessionID, isRAW? "dng" : "jpeg");
+				PluginManager.getInstance().addToSharedMem("resultframe" + frameIndex + sessionID, String.valueOf(frame));
+				PluginManager.getInstance().addToSharedMem("resultframelen" + frameIndex + sessionID, String.valueOf(len));
 
 				PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID,
 						String.valueOf(mImageWidth));

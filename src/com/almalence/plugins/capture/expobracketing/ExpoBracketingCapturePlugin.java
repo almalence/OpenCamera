@@ -268,6 +268,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 					String.valueOf(CameraController.isFrontCamera()));
 			
 			PluginManager.getInstance().addToSharedMem("frameisraw" + (imagesTakenRAW + 3) + SessionID, String.valueOf(isRAW));
+			
+			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));
 		}
 		else
 		{

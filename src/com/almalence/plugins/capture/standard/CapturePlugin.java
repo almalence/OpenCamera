@@ -272,17 +272,6 @@ public class CapturePlugin extends PluginCapture
 	{
 		framesCaptured++;
 		boolean isRAW = (format == CameraController.RAW);
-//		if(format == CameraController.RAW)
-//		{
-//			PluginManager.getInstance().addToSharedMem("frame_raw1" + SessionID, String.valueOf(frame));
-//			PluginManager.getInstance().addToSharedMem("framelen_raw1" + SessionID, String.valueOf(frame_len));
-//			isRAW = true;
-//		}
-//		else
-//		{
-//			PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-//			PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-//		}
 		
 		PluginManager.getInstance().addToSharedMem("frame" + framesCaptured + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen" + framesCaptured + SessionID, String.valueOf(frame_len));
@@ -296,8 +285,7 @@ public class CapturePlugin extends PluginCapture
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(framesCaptured));
-//		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, isRAW? "0" : "1");
-//		PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, isRAW? "1" : "0");
+		PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, isRAW? "1" : "0");
 
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
@@ -308,10 +296,6 @@ public class CapturePlugin extends PluginCapture
 			framesCaptured = 0;
 			resultCompleted = 0;
 		}
-		
-//		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-//		inCapture = false;
-//		framesCaptured = 0;
 	}
 
 	@TargetApi(21)
