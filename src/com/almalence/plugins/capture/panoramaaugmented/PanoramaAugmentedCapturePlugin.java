@@ -1092,7 +1092,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				// e.printStackTrace();
 				// }
 				this.engine.recordCoordinates();
-				this.engine.onFrameAdded(true, image);
+				this.engine.onFrameAdded(image);
 				this.isFirstFrame = false;
 				
 				final boolean done = this.engine.isCircular();
@@ -1172,7 +1172,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		
 		// Log.d(TAG, "Perform CAPTURE Panorama");
-		requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0],
+		requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0], new int[0],
 				false);
 	}
 
@@ -1286,13 +1286,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				frame_len = frameData.length;
 			}
 
-			if (format == CameraController.YUV)
-			{
-				goodPlace = this.engine.onFrameAdded(true, frame);
-			} else
-			{
-				goodPlace = this.engine.onFrameAdded(false, frame, frame_len);
-			}
+			goodPlace = this.engine.onFrameAdded(frame);
 		}
 
 		this.isFirstFrame = false;
