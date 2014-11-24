@@ -163,6 +163,7 @@ public class AppEditorNotifier
 			public void onClick(View v)
 			{
 				MainScreen.callStoreInstall(mContext, "com.almalence.opencameditor");
+				prefs.edit().putInt("days_until_prompt", 999).commit();
 				dialog.dismiss();
 			}
 		});
