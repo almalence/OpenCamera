@@ -6110,7 +6110,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (id == ShutterButton.TIMELAPSE_ACTIVE)
 		{
-			mainButton.setImageResource(R.drawable.gui_almalence_shutter_video_off);
+			mainButton.setImageResource(R.drawable.gui_almalence_shutter_timelapse);
 		}
 
 		// 1 button
