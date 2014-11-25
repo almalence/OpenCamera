@@ -2847,15 +2847,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView ev = (RotateImageView) topMenuButtons.get(MODE_EV);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICON_EV);
-				ev.setImageDrawable(icon);
-
-				switchViews(currentQuickView, ev, String.valueOf(MODE_EV));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(ev);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_EV, MainScreen.getMainContext().getResources().getDrawable(ICON_EV));
 			}
 
 		});
@@ -2867,15 +2859,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView scene = (RotateImageView) topMenuButtons.get(MODE_SCENE);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_SCENE.get(mSceneMode));
-				scene.setImageDrawable(icon);
-
-				switchViews(currentQuickView, scene, String.valueOf(MODE_SCENE));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(scene);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_SCENE, MainScreen.getMainContext().getResources().getDrawable(ICONS_SCENE.get(mSceneMode)));
 			}
 		});
 	}
@@ -2886,15 +2870,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView wb = (RotateImageView) topMenuButtons.get(MODE_WB);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_WB.get(mWB));
-				wb.setImageDrawable(icon);
-
-				switchViews(currentQuickView, wb, String.valueOf(MODE_WB));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(wb);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_WB, MainScreen.getMainContext().getResources().getDrawable(ICONS_WB.get(mWB)));
 			}
 		});
 	}
@@ -2905,21 +2881,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView focus = (RotateImageView) topMenuButtons.get(MODE_FOCUS);
 				try
 				{
-					Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_FOCUS.get(mFocusMode));
-					focus.setImageDrawable(icon);
+					quickControlOnClick(MODE_FOCUS, MainScreen.getMainContext().getResources().getDrawable(ICONS_FOCUS.get(mFocusMode)));
 				} catch (Exception e)
 				{
 					e.printStackTrace();
 					Log.e("createQuickControlFocusOnClick", "icons_focus.get exception: " + e.getMessage());
 				}
-				switchViews(currentQuickView, focus, String.valueOf(MODE_FOCUS));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(focus);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
 			}
 		});
 	}
@@ -2930,15 +2899,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView flash = (RotateImageView) topMenuButtons.get(MODE_FLASH);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode));
-				flash.setImageDrawable(icon);
-
-				switchViews(currentQuickView, flash, String.valueOf(MODE_FLASH));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(flash);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_ISO, MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode)));
 			}
 
 		});
@@ -2950,15 +2911,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView iso = (RotateImageView) topMenuButtons.get(MODE_ISO);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICONS_ISO.get(mISO));
-				iso.setImageDrawable(icon);
-
-				switchViews(currentQuickView, iso, String.valueOf(MODE_ISO));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(iso);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_ISO, MainScreen.getMainContext().getResources().getDrawable(ICONS_ISO.get(mISO)));
 			}
 
 		});
@@ -2970,16 +2923,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView metering = (RotateImageView) topMenuButtons.get(MODE_MET);
-				Drawable icon = MainScreen.getMainContext().getResources()
-						.getDrawable(ICONS_METERING.get(mMeteringMode));
-				metering.setImageDrawable(icon);
-
-				switchViews(currentQuickView, metering, String.valueOf(MODE_MET));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(metering);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_MET, MainScreen.getMainContext().getResources()
+						.getDrawable(ICONS_METERING.get(mMeteringMode)));
 			}
 
 		});
@@ -2991,18 +2936,23 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				RotateImageView cam = (RotateImageView) topMenuButtons.get(MODE_CAM);
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(ICON_CAM);
-				cam.setImageDrawable(icon);
-
-				switchViews(currentQuickView, cam, String.valueOf(MODE_CAM));
-				recreateQuickControlsMenu();
-				changeCurrentQuickControl(cam);
-				initQuickControlsMenu(currentQuickView);
-				showQuickControlsSettings();
+				quickControlOnClick(MODE_CAM, MainScreen.getMainContext().getResources().getDrawable(ICON_CAM));
 			}
 
 		});
+	}
+	
+	private void quickControlOnClick(int qc, Drawable icon)
+	{
+		RotateImageView view = (RotateImageView) topMenuButtons.get(qc);
+
+		view.setImageDrawable(icon);
+		
+		switchViews(currentQuickView, view, String.valueOf(qc));
+		recreateQuickControlsMenu();
+		changeCurrentQuickControl(view);
+		initQuickControlsMenu(currentQuickView);
+		showQuickControlsSettings();
 	}
 
 	public void changeCurrentQuickControl(View newCurrent)
