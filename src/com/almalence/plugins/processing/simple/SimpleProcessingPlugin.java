@@ -98,8 +98,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				int inputYUV = 0;
 				inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 
+				float[] gammaTable = new float[] {0.5f, 0.6f, 0.7f};
 				int yuv = AlmaShotDRO.DroProcess(inputYUV, mImageWidth, mImageHeight, 1.5f, DROLocalTMPreference, 0,
-						prefPullYUV, 0.35f, 0.6f, modePrefDro);
+						prefPullYUV, 0.35f, gammaTable[modePrefDro]);
 
 				AlmaShotDRO.Release();
 

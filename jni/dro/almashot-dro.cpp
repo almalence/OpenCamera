@@ -149,8 +149,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 	jint filterStrength,
 	jint pullUV,
 	jfloat dark_noise_pass,
-	jfloat gamma,
-	jint droLevel
+	jfloat gamma
 )
 {
 	int i, x, y;
