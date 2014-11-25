@@ -63,7 +63,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	// defaul val. value should come from config
 	private int		imageAmount			= 8;
-	private int[]	pauseBetweenShots	= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]	pauseBetweenShots			= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]	pauseBetweenShotsCamera2	= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
 
 	public MultiShotCapturePlugin()
 	{
@@ -95,7 +96,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-				pauseBetweenShots, null, true);
+				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, true);
 	}
 
 	@Override
