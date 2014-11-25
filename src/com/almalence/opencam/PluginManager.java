@@ -995,7 +995,11 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("capture_panorama_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
-		} else if ("burst".equals(settings))
+		}
+		else if ("dro".equals(settings))
+		{
+			AddModeSettings("single", pf);
+		}else if ("burst".equals(settings))
 		{
 			AddModeSettings("burstmode", pf);
 		} else if ("expobracketing".equals(settings))

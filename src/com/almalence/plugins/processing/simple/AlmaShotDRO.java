@@ -29,7 +29,7 @@ public final class AlmaShotDRO
 	public static synchronized native int GetYUVFrame(int index);
 
     public static synchronized native int DroProcess(int yuv, int sx, int sy, float max_amplify,
-    		boolean local_mapping, int filterStrength, int pullUV, float dark_noise_pass, float gamma);
+    		boolean local_mapping, int filterStrength, int pullUV, float dark_noise_pass, float gamma, int droLevel);
 
 	static
 	{
