@@ -1147,7 +1147,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStart()
 	{
 		super.onStart();
-		MainScreen.getCameraController().onStart();
+		CameraController.onStart();
 		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
 	}
@@ -1162,7 +1162,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		orientationMainPrevious = 0;
 		MainScreen.getGUIManager().onStop();
 		PluginManager.getInstance().onStop();
-		MainScreen.getCameraController().onStop();
+		CameraController.onStop();
 
 		if (CameraController.isUseHALv3())
 			stopImageReaders();
@@ -1213,7 +1213,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		
 		MainScreen.getGUIManager().onDestroy();
 		PluginManager.getInstance().onDestroy();
-		MainScreen.getCameraController().onDestroy();
+		CameraController.onDestroy();
 
 		// <!-- -+-
 		/**** Billing *****/
@@ -1261,6 +1261,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					CameraController.useHALv3(prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), false));
 					
+//					Log.e("MainScreen", "CameraController.setSurfaceHolderFixedSize(1280, 960)");
 					CameraController.setSurfaceHolderFixedSize(1280, 720);
 
 					MainScreen.getGUIManager().onResume();
@@ -1268,6 +1269,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					CameraController.onResume();
 					MainScreen.thiz.mPausing = false;
 
+					isCameraConfiguring = false;
 					if (CameraController.isUseHALv3())
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
@@ -1443,7 +1445,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
 
-		if (!isCreating)
+		Log.e("MainScreen", "SurfaceChanged." + width + "x" + height + " isCreating? " + isCreating);
+		mCameraSurface = holder.getSurface();
+		
+//		if(isCameraConfiguring)
+//		{
+//			updatePreferences();
+//			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//			configureHALv3Camera(captureFormat);
+//			messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+//		}
+//		else
+			if (!isCreating)
 			new CountDownTimer(50, 50)
 			{
 				public void onTick(long millisUntilFinished)
@@ -1464,6 +1477,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							CameraController.setupCamera(holder);
 						} else
 						{
+//							CameraController.setupCamera(null);
 							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
 						}
 					}
@@ -1564,7 +1578,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 
 			if (CameraController.isUseHALv3())
+			{
+//				CameraController.setupCamera(null);
 				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+			}
 			else
 			{
 				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
@@ -1579,6 +1596,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		thiz.surfaceHolder.addCallback(thiz);
 	}
 
+	boolean isCameraConfiguring = false;
 	@Override
 	public void configureCamera()
 	{
@@ -1588,14 +1606,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// ----- Select preview dimensions with ratio correspondent to
 		// full-size image
+		if (CameraController.isUseHALv3())
+		{
+			Log.e("MainScreen", "configureCamera. Set isCameraConfiguring to TRUE");
+			isCameraConfiguring = true;
+		}
 		PluginManager.getInstance().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
 		if (CameraController.isUseHALv3())
+		{
+//			Log.e("MainScreen", "configureCamera. Set isCameraConfiguring to TRUE");
+//			isCameraConfiguring = true;
 			configureHALv3Camera(captureFormat);
+		}
 		else
 		{
 			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 
+			Log.e("MainScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
 			guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
 			CameraController.allocatePreviewBuffer(
 					sz.width
@@ -1705,16 +1733,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(21)
 	private void configureHALv3Camera(int captureFormat)
 	{
-		DisplayMetrics metrics = new DisplayMetrics();
-		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		Log.d("MainScreen", "Screen size = " + metrics.widthPixels + " x " + metrics.heightPixels);
 		List<Surface> sfl = new ArrayList<Surface>();
 
 //		Log.d("MainScreen", "configureHALv3Camera. mImageReaderPreviewYUV size = " + mImageReaderPreviewYUV.getWidth() + " x " + mImageReaderPreviewYUV.getHeight());
-		Log.d("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
+		Log.e("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
 		
-		surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
-//		surfaceHolder.setFixedSize(1280, 720);
+//		surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
+		CameraController.setSurfaceHolderFixedSize(surfaceWidth, surfaceHeight);
+//		surfaceHolder.setFixedSize(1280, 960);
 		mCameraSurface = surfaceHolder.getSurface();
 		sfl.add(mCameraSurface); // surface for viewfinder preview
 		
@@ -1750,6 +1776,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CameraController.setCaptureFormat(captureFormat);
 		// configure camera with all the surfaces to be ever used
 		CameraController.createCaptureSession(sfl);
+		
+		isCameraConfiguring = false;
 
 		// ^^ HALv3 code
 		// -------------------------------------------------------------------
@@ -1807,6 +1835,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		surfaceCreated = true;
 
+		Log.e("MainScreen", "SurfaceCreated");
 		mCameraSurface = surfaceHolder.getSurface();
 
 		Log.d("MainScreen", "SURFACE CREATED");

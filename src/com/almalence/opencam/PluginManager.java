@@ -538,6 +538,7 @@ public class PluginManager implements PluginManagerInterface
 
 	public void switchMode(Mode mode)
 	{
+		Log.e("PluginManager", "swithMode: " + mode.modeName);
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
 		MainScreen.getInstance().switchingMode(true);

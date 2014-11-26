@@ -1496,7 +1496,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || camera.getParameters() == null)
+			if (camera == null || ( camera != null && camera.getParameters() == null))
 				return false;
 
 			return camera.getParameters().isAutoExposureLockSupported();
@@ -1508,7 +1508,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || camera.getParameters() == null)
+			if (camera == null || ( camera != null && camera.getParameters() == null))
 				return false;
 
 			return camera.getParameters().getAutoExposureLock();
@@ -1520,7 +1520,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || camera.getParameters() == null)
+			if (camera == null || ( camera != null && camera.getParameters() == null))
 				return false;
 
 			return camera.getParameters().isAutoWhiteBalanceLockSupported();
@@ -1532,7 +1532,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || camera.getParameters() == null)
+			if (camera == null || ( camera != null && camera.getParameters() == null))
 				return false;
 
 			return camera.getParameters().getAutoWhiteBalanceLock();

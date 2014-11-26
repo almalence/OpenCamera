@@ -219,7 +219,7 @@ public class HALv3
 			HALv3.getInstance().camDevice.close();
 			HALv3.getInstance().camDevice = null;
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
-		}		
+		}
 	}
 
 	public static void openCameraHALv3()
@@ -300,9 +300,9 @@ public class HALv3
 		MainScreen.setSurfaceHolderSize(sz.getWidth(), sz.getHeight());
 		MainScreen.setPreviewWidth(sz.getWidth());
 		MainScreen.setPreviewHeight(sz.getHeight());
-//		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 720);
+//		MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 960);
 //		MainScreen.setPreviewWidth(1280);
-//		MainScreen.setPreviewHeight(720);
+//		MainScreen.setPreviewHeight(960);
 
 		// HALv3 code
 		// -------------------------------------------------------------------

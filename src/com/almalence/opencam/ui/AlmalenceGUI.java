@@ -1450,7 +1450,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
-		Log.d("GUI",
+		Log.e("GUI",
 				"setupViewfinderPreviewSize. Width = " + previewSize.getWidth() + " Height = "
 						+ previewSize.getHeight());
 		float cameraAspect = (float) previewSize.getWidth() / previewSize.getHeight();
@@ -1490,8 +1490,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				lp.topMargin = (int) (paramsLayoutHeight);
 			}
 		}
-
-		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
+		
+		Log.e("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
@@ -5433,6 +5433,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case VIEWFINDER_ZONE_FULLSCREEN:
 			{
+				Log.e("GUI", "VIEWFINDER_ZONE_FULLSCREEN");
 				currParams.width = MainScreen.getInstance().getPreviewSize() != null ? MainScreen.getInstance()
 						.getPreviewSize().getWidth() : 0;
 				currParams.height = MainScreen.getInstance().getPreviewSize() != null ? MainScreen.getInstance()
