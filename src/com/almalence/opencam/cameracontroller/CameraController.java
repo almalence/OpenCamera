@@ -1941,7 +1941,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			int[] supported_iso = getSupportedISO();
+			int[] supported_iso = getSupportedISOInternal();
 			String isoSystem = CameraController.getCameraParameters().get("iso");
 			String isoSystem2 = CameraController.getCameraParameters().get("iso-speed");
 			return supported_iso != null || isoSystem != null || isoSystem2 != null;
