@@ -137,21 +137,18 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem(
 				"zoom" + sessionID));
-		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
-				"isHALv3" + sessionID));
+		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"sensorGain" + sessionID));
 		
-		if(!Build.MODEL.contains("Nexus 5"))
-			isHALv3 = false;
-
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
 				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
 				9, SaturatedColors ? 9 : 0, imagesAmount,
 				NightProcessingPlugin.crop,
 				mDisplayOrientation,
 				mCameraMirrored,
-				zoom, isHALv3);
+				zoom, isSuperMode);
 
 		AlmaShotNight.Release();
 	}

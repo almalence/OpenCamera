@@ -79,6 +79,9 @@ public class NightCapturePlugin extends PluginCapture
 	// shared between activities
 	private static int			total_frames;
 
+	private boolean             usingCamera2API;
+	private boolean             usingSuperMode;
+	
 	// Night vision variables
 	private GLCameraPreview		cameraPreview;
 	private byte[]				data1;
@@ -126,7 +129,10 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onCreate()
 	{
-		if (!CameraController.isUseHALv3())
+		usingCamera2API = CameraController.isUseHALv3(); 
+		usingSuperMode = CameraController.isSuperModePossible();
+		
+		if (!usingSuperMode) // (!usingCamera2API)
 		{
 			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 		}
@@ -150,7 +156,7 @@ public class NightCapturePlugin extends PluginCapture
 			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
 		}
 		
-		if (CameraController.isUseHALv3())
+		if (usingSuperMode) // (usingCamera2API)
 		{
 			quickControlIconID = -1;
 		}
@@ -186,15 +192,19 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
+		// FixMe: why are we doing it via MainScreen and not directly via guiManager?
+		if (!usingSuperMode)
+		{
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		}
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
 	}
 	
 	@Override
 	public boolean isGLSurfaceNeeded()
 	{
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 			return true;
 		else
 			return false;
@@ -249,7 +259,7 @@ public class NightCapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 			OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
 	}
 
@@ -276,7 +286,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		//max size will be used in supermode
 		int captureIndex = 0;
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 			captureIndex = MainScreen.selectImageDimensionMultishot();
 		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
@@ -316,6 +326,9 @@ public class NightCapturePlugin extends PluginCapture
 		CameraController.setJpegQuality(100);
 
 		int[] sceneModes = CameraController.getSupportedSceneModes();
+		
+		// Note: excluding Nexus here because it will fire flash in night mode (?)
+		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
 				&& (!Build.MODEL.contains("Nexus")))
 		{
@@ -453,7 +466,7 @@ public class NightCapturePlugin extends PluginCapture
 
 		LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
 
-		if (!CameraController.isUseHALv3())
+		if (!usingCamera2API)
 		{
 			capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
 			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
@@ -494,9 +507,8 @@ public class NightCapturePlugin extends PluginCapture
 
 		if (imagesTaken == 0)
 		{
-			boolean isHALv3 = CameraController.isUseHALv3();
-			PluginManager.getInstance().addToSharedMem("isHALv3" + SessionID,
-					String.valueOf(isHALv3));
+			PluginManager.getInstance().addToSharedMem("isSuperMode" + SessionID,
+					String.valueOf(usingSuperMode));
 	
 			// Note: a more memory-effective way would be to crop zoomed images right here
 			// (only possible with HALv3)
@@ -548,7 +560,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 		{
 			if (OpenGLPreference && !inCapture)
 			{
@@ -595,7 +607,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 		{
 			cameraPreview.generateGLTexture(gl);
 			gl.glEnable(GL10.GL_TEXTURE_2D); // Enable Texture Mapping ( NEW )
@@ -616,7 +628,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLSurfaceChanged(GL10 gl, int width, int height)
 	{
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 		{
 			if (height == 0)
 			{ // Prevent A Divide By Zero By
@@ -645,7 +657,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLDrawFrame(GL10 gl)
 	{
-		if (!CameraController.isUseHALv3())
+		if (!usingSuperMode) // (!usingCamera2API)
 		{
 			// Clear Screen And Depth Buffer
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);

@@ -779,6 +779,40 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isHALv3;
 	}
 	
+	
+	public static boolean isSuperModePossible()
+	{
+		boolean SuperModeOk = false;
+		
+		if (isHALv3)
+		{
+			// if we're working via Camera2 API -
+			// check if device conform to Super Mode requirements
+			
+			/*
+			boolean nroffAvailable = false;
+			int nrmodes[] = camCharacter.get(CameraCharacteristics.NOISE_REDUCTION_AVAILABLE_NOISE_REDUCTION_MODES);
+			if (nrmodes != null)
+				for (int i=0; i<nrmodes.length; ++i)
+					if (nrmodes[i] == CameraMetadata.NOISE_REDUCTION_MODE_OFF)
+						nroffAvailable = true;
+			
+			if ( ( (camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) ||
+				  ((camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED) &&
+				   (camCharacter.get(CameraCharacteristics.SYNC_MAX_LATENCY) == CameraMetadata.SYNC_MAX_LATENCY_PER_FRAME_CONTROL)) ) &&
+				 nroffAvailable
+				)
+				SuperModeOk = true;
+			*/
+			
+			// hard-code to enable Nexus 5 only, as we have no profiles for other models at the moment
+			if (CameraController.isNexus())
+				SuperModeOk = true;
+		}
+		
+		return SuperModeOk;
+	}
+	
 	public static boolean isNexus()
 	{
 		return Build.MODEL.contains("Nexus 5");

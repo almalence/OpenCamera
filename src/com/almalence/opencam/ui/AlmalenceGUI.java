@@ -1067,7 +1067,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					MainScreen
 							.getInstance()
 							.getResources()
-							.getIdentifier((CameraController.isUseHALv3() && CameraController.isNexus()) ? mode.iconHAL : mode.icon, "drawable",
+							.getIdentifier(CameraController.isSuperModePossible() ? mode.iconHAL : mode.icon, "drawable",
 									MainScreen.getInstance().getPackageName()));
 			iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
 					(int) (iconBase.getWidth() / 1.8), false);
@@ -4954,13 +4954,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				((ImageView) mode.findViewById(R.id.modeImage)).setImageResource(MainScreen
 						.getInstance()
 						.getResources()
-						.getIdentifier((CameraController.isUseHALv3() && CameraController.isNexus()) ? tmp.iconHAL : tmp.icon, "drawable",
+						.getIdentifier(CameraController.isSuperModePossible() ? tmp.iconHAL : tmp.icon, "drawable",
 								MainScreen.getInstance().getPackageName()));
 
 				int id = MainScreen
 						.getInstance()
 						.getResources()
-						.getIdentifier((CameraController.isUseHALv3() && CameraController.isNexus()) ? tmp.modeNameHAL : tmp.modeName, "string",
+						.getIdentifier(CameraController.isSuperModePossible() ? tmp.modeNameHAL : tmp.modeName, "string",
 								MainScreen.getInstance().getPackageName());
 				String modename = MainScreen.getAppResources().getString(id);
 
@@ -5068,7 +5068,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				MainScreen
 						.getInstance()
 						.getResources()
-						.getIdentifier((CameraController.isUseHALv3() && CameraController.isNexus()) ? mode.iconHAL : mode.icon, "drawable",
+						.getIdentifier(CameraController.isSuperModePossible() ? mode.iconHAL : mode.icon, "drawable",
 								MainScreen.getInstance().getPackageName()));
 		iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
 				(int) (iconBase.getWidth() / 1.8), false);
