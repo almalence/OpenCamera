@@ -24,10 +24,14 @@ package com.almalence.plugins.processing.simple;
  import com.almalence.opencam_plus.PluginProcessing;
  +++ --> */
 // <!-- -+-
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
+import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
@@ -44,9 +48,11 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	private static boolean	DROLocalTMPreference	= true;
 	private static int		prefPullYUV				= 7; // 9;
 
+	private int				modePrefDro = 1;
+	
 	public SimpleProcessingPlugin()
 	{
-		super("com.almalence.plugins.simpleprocessing", 0, 0, 0, null);
+		super("com.almalence.plugins.simpleprocessing", R.xml.preferences_capture_dro, 0, 0, null);
 	}
 
 	@Override
@@ -54,6 +60,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	{
 		sessionID = SessionID;
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		modePrefDro = Integer.parseInt(prefs.getString("modePrefDro", "1"));
+		
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
@@ -89,8 +98,9 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				int inputYUV = 0;
 				inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 
+				float[] gammaTable = new float[] {0.5f, 0.6f, 0.7f};
 				int yuv = AlmaShotDRO.DroProcess(inputYUV, mImageWidth, mImageHeight, 1.5f, DROLocalTMPreference, 0,
-						prefPullYUV, 0.35f, 0.6f);
+						prefPullYUV, 0.35f, gammaTable[modePrefDro]);
 
 				AlmaShotDRO.Release();
 

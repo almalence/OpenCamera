@@ -33,7 +33,7 @@
    	</ImageView> -->
 	<ImageView
 		android:id="@+id/storeWhatsNew"
-		android:src="@drawable/almalence_upgrade_whatsnew_previous"
+		android:src="@drawable/almalence_upgrade_market"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
 		android:layout_width="@dimen/paramsLayoutHeight"

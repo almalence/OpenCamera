@@ -1,0 +1,11 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">        
+        
+    <PreferenceCategory android:title="@string/Pref_Dro_Preference_Title">   
+        <ListPreference 
+            android:entries="@array/droLevelArray" 
+            android:entryValues="@array/droLevelValues" 
+            android:key="modePrefDro" 
+            android:title="@string/Pref_Dro_Mode_Title" 
+            android:defaultValue="1" />
+	</PreferenceCategory>   
+</PreferenceScreen>

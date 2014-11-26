@@ -23,7 +23,7 @@
 	/>
 	<ImageView
 		android:id="@+id/storeWhatsNew"
-		android:src="@drawable/almalence_upgrade_whatsnew"
+		android:src="@drawable/almalence_upgrade_tips"
 		android:background="@android:color/transparent"
 		android:layout_height="@dimen/paramsLayoutHeight"
 		android:layout_width="@dimen/paramsLayoutHeight"
