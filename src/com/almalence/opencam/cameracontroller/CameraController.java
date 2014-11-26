@@ -2530,7 +2530,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (camera != null)
 				return camera.getParameters().getHorizontalViewAngle();
-		} else if (Build.MODEL.contains("Nexus"))
+		}
+		else
+		{
+			return HALv3.getHorizontalViewAngle();
+		}
+		
+		if (Build.MODEL.contains("Nexus"))
 			return 59.63f;
 
 		return 55.4f;
@@ -2542,7 +2548,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (camera != null)
 				return camera.getParameters().getVerticalViewAngle();
-		} else if (Build.MODEL.contains("Nexus"))
+		}
+		else
+		{
+			return HALv3.getVerticalViewAngle();
+		}
+			
+		if (Build.MODEL.contains("Nexus"))
 			return 46.66f;
 
 		return 42.7f;

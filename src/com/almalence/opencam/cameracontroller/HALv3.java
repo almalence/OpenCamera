@@ -57,12 +57,14 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
+import android.util.SizeF;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -1183,6 +1185,45 @@ public class HALv3
 		}
 		
 		return 0;
+	}
+	
+	public static float getVerticalViewAngle()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+		{
+			float[] focalLenghts = HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
+			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
+			float sensorHeight = sensorSize.getHeight();
+			
+			float alphaRad = (float)(2*Math.atan2(sensorHeight,2*focalLenghts[0]));			
+			float alpha = (float)(alphaRad*(180/Math.PI));
+			
+			return alpha;
+			
+		}
+		else if (Build.MODEL.contains("Nexus"))
+			return 46.66f;
+
+		return 42.7f;		
+	}
+	
+	public static float getHorizontalViewAngle()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+		{
+			float[] focalLenghts = HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
+			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
+			float sensorWidth = sensorSize.getWidth();
+			
+			float alphaRad = (float)(2*Math.atan2(sensorWidth,2*focalLenghts[0]));
+			float alpha = (float)(alphaRad*(180/Math.PI));
+			
+			return alpha;
+		}
+		else if (Build.MODEL.contains("Nexus"))
+			return 59.63f;
+
+		return 55.4f;
 	}
 
 
