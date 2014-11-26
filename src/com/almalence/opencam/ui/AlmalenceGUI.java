@@ -1874,7 +1874,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
 									PluginManager.MSG_FOCUS_CHANGED);
 
-							initSettingsMenu();
+							initSettingsMenu(true);
 							hideSecondaryMenus();
 							unselectPrimaryTopMenuButtons(-1);
 
@@ -2188,7 +2188,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		unselectPrimaryTopMenuButtons(-1);
 
 		// create and fill drawing slider
-		initSettingsMenu();
+		initSettingsMenu(true);
 		initModeList();
 
 		Panel.OnPanelListener pListener = new OnPanelListener()
@@ -2308,7 +2308,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			correctTopMenuButtonBackground(topMenuView, !bDisable);
 
 			if (bInitMenu)
-				initSettingsMenu();
+				initSettingsMenu(true);
 		}
 
 	}
@@ -2831,7 +2831,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						RotateImageView pluginButton = (RotateImageView) topMenuPluginButtons.get(plugin.getID());
 						pluginButton.setImageDrawable(icon);
 
-						initSettingsMenu();
+						initSettingsMenu(true);
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -3038,92 +3038,102 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 * 
 	 * begin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	 ****************************************************************************************/
-	private void initSettingsMenu()
+	private void initSettingsMenu(boolean isDelayed)
 	{
-		Handler h = new Handler();
-		h.postDelayed(new Runnable()
+		if (isDelayed)
 		{
-
-			@Override
-			public void run()
+			Handler h = new Handler();
+			h.postDelayed(new Runnable()
 			{
-				// Clear view list to recreate all settings buttons
-				settingsViews.clear();
-				if (settingsAdapter.Elements != null)
+	
+				@Override
+				public void run()
 				{
-					settingsAdapter.Elements.clear();
-					settingsAdapter.notifyDataSetChanged();
+					initSettingsMenuBody();
 				}
+			}, 2000);
+		}
+		else
+			initSettingsMenuBody();
+	}
+	
+	private void initSettingsMenuBody()
+	{
+		// Clear view list to recreate all settings buttons
+		settingsViews.clear();
+		if (settingsAdapter.Elements != null)
+		{
+			settingsAdapter.Elements.clear();
+			settingsAdapter.notifyDataSetChanged();
+		}
 
-				// Obtain all theoretical buttons we know
-				Set<Integer> keys = topMenuButtons.keySet();
-				Iterator<Integer> it = keys.iterator();
-				while (it.hasNext())
-				{
-					// If such camera feature is supported then add a button to
-					// settings
-					// menu
-					Integer id = it.next();
-					switch (id)
-					{
-					case R.id.evButton:
-						if (mEVSupported)
-							addQuickSetting(SettingsType.EV, false);
-						break;
-					case R.id.sceneButton:
-						if (mSceneModeSupported)
-							addQuickSetting(SettingsType.SCENE, false);
-						break;
-					case R.id.wbButton:
-						if (mWBSupported)
-							addQuickSetting(SettingsType.WB, false);
-						break;
-					case R.id.focusButton:
-						if (mFocusModeSupported)
-							addQuickSetting(SettingsType.FOCUS, false);
-						break;
-					case R.id.flashButton:
-						if (mFlashModeSupported)
-							addQuickSetting(SettingsType.FLASH, false);
-						break;
-					case R.id.isoButton:
-						if (mISOSupported)
-							addQuickSetting(SettingsType.ISO, false);
-						break;
-					case R.id.meteringButton:
-						if (mMeteringAreasSupported)
-							addQuickSetting(SettingsType.METERING, false);
-						break;
-					case R.id.camerachangeButton:
-						if (mCameraChangeSupported)
-							addQuickSetting(SettingsType.CAMERA, false);
-						break;
-					default:
-						break;
-					}
-				}
-
-				// Add quick conrols from plugins
-				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
-				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
-				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
-				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
-				initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
-
-				// The very last control is always MORE SETTINGS
-				addQuickSetting(SettingsType.MORE, false);
-
-				settingsAdapter.Elements = settingsViews;
-
-				final int degree = AlmalenceGUI.mDeviceOrientation >= 0 ? AlmalenceGUI.mDeviceOrientation % 360
-						: AlmalenceGUI.mDeviceOrientation % 360 + 360;
-				rotateSquareViews(degree, 0);
-
-				GridView gridview = (GridView) guiView.findViewById(R.id.settingsGrid);
-				gridview.setAdapter(settingsAdapter);
-				settingsAdapter.notifyDataSetChanged();
+		// Obtain all theoretical buttons we know
+		Set<Integer> keys = topMenuButtons.keySet();
+		Iterator<Integer> it = keys.iterator();
+		while (it.hasNext())
+		{
+			// If such camera feature is supported then add a button to
+			// settings
+			// menu
+			Integer id = it.next();
+			switch (id)
+			{
+			case R.id.evButton:
+				if (mEVSupported)
+					addQuickSetting(SettingsType.EV, false);
+				break;
+			case R.id.sceneButton:
+				if (mSceneModeSupported)
+					addQuickSetting(SettingsType.SCENE, false);
+				break;
+			case R.id.wbButton:
+				if (mWBSupported)
+					addQuickSetting(SettingsType.WB, false);
+				break;
+			case R.id.focusButton:
+				if (mFocusModeSupported)
+					addQuickSetting(SettingsType.FOCUS, false);
+				break;
+			case R.id.flashButton:
+				if (mFlashModeSupported)
+					addQuickSetting(SettingsType.FLASH, false);
+				break;
+			case R.id.isoButton:
+				if (mISOSupported)
+					addQuickSetting(SettingsType.ISO, false);
+				break;
+			case R.id.meteringButton:
+				if (mMeteringAreasSupported)
+					addQuickSetting(SettingsType.METERING, false);
+				break;
+			case R.id.camerachangeButton:
+				if (mCameraChangeSupported)
+					addQuickSetting(SettingsType.CAMERA, false);
+				break;
+			default:
+				break;
 			}
-		}, 2000);
+		}
+
+		// Add quick conrols from plugins
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
+
+		// The very last control is always MORE SETTINGS
+		addQuickSetting(SettingsType.MORE, false);
+
+		settingsAdapter.Elements = settingsViews;
+
+		final int degree = AlmalenceGUI.mDeviceOrientation >= 0 ? AlmalenceGUI.mDeviceOrientation % 360
+				: AlmalenceGUI.mDeviceOrientation % 360 + 360;
+		rotateSquareViews(degree, 0);
+
+		GridView gridview = (GridView) guiView.findViewById(R.id.settingsGrid);
+		gridview.setAdapter(settingsAdapter);
+		settingsAdapter.notifyDataSetChanged();
 	}
 
 	private void createSettingSceneOnClick(View settingView)
@@ -3920,7 +3930,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_id);
 						((RotateImageView) v).setImageDrawable(icon);
 
-						initSettingsMenu();
+						initSettingsMenu(false);
 						break;
 					}
 				}
@@ -4237,7 +4247,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		default:
 			break;
 		}
-		this.initSettingsMenu();
+		this.initSettingsMenu(false);
 	}
 
 	private boolean changeQuickControlIfVisible(View button)
@@ -4380,7 +4390,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		icon_id = ICONS_SCENE.get(mSceneMode);
 		but.setImageResource(icon_id);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
@@ -4407,7 +4417,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_WB.get(mWB);
 		but.setImageResource(icon_id);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
@@ -4446,7 +4456,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_CHANGED);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
@@ -4472,7 +4482,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_FLASH.get(mFlashMode);
 		but.setImageResource(icon_id);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
@@ -4497,7 +4507,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_ISO.get(mISO);
 		but.setImageResource(icon_id);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
@@ -4519,7 +4529,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_METERING.get(mMeteringMode);
 		but.setImageResource(icon_id);
 
-		initSettingsMenu();
+		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 	}
