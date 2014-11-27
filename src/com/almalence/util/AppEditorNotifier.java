@@ -96,26 +96,6 @@ public class AppEditorNotifier
 			return true;
 		}
 
-		// if (prefs.getBoolean("showlatereditornotifier", false))
-		// {
-		// return false;
-		// }
-
-		// final long launch_count =
-		// prefs.getLong("launch_count_editornotifier", 0) + 1;
-		// final Long date_firstLaunch =
-		// prefs.getLong("date_firstlaunch_editornotifier", 0);
-		//
-		// if (launch_count >= LAUNCHES_UNTIL_PROMPT)
-		// {
-		// if (System.currentTimeMillis() >= date_firstLaunch +
-		// (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
-		// {
-		// showEditorNotifierDialog(mContext, prefs);
-		//
-		// return true;
-		// }
-		// }
 		showEditorNotifierDialog(mContext, prefs);
 		return true;
 	}
@@ -183,7 +163,7 @@ public class AppEditorNotifier
 //					DAYS_UNTIL_PROMPT = 5;
 //				else if (DAYS_UNTIL_PROMPT == 5)
 //					DAYS_UNTIL_PROMPT = 10;
-				if (DAYS_UNTIL_PROMPT == 10)
+				if (DAYS_UNTIL_PROMPT <= 10)
 					DAYS_UNTIL_PROMPT = 30;
 				else if (DAYS_UNTIL_PROMPT == 30)
 					DAYS_UNTIL_PROMPT = 999;
