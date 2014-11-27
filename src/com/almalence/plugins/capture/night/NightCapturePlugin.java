@@ -19,6 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.night;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,8 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
@@ -40,11 +43,13 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.almalence.SwapHeap;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -62,6 +67,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
+import com.almalence.plugins.processing.night.AlmaShotNight;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -82,6 +88,7 @@ public class NightCapturePlugin extends PluginCapture
 	private boolean             usingCamera2API;
 	private boolean             usingSuperMode;
 	
+	private boolean             takingImageForExposure;
 	// Night vision variables
 	private GLCameraPreview		cameraPreview;
 	private byte[]				data1;
@@ -104,7 +111,11 @@ public class NightCapturePlugin extends PluginCapture
 	float						currHalfHeight;
 
 	float						cameraDist;
-	int                         sensorGain;
+	
+	private long                minExposure = 1000;
+	private int                 minSensitivity = 100;
+	private int                 sensorGain = 0;
+	long                        exposureTime = 0;
 
 	// preferences
 	private static String		FocusPreference;
@@ -127,12 +138,21 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	@TargetApi(21)
 	public void onCreate()
 	{
 		usingCamera2API = CameraController.isUseHALv3(); 
 		usingSuperMode = CameraController.isSuperModePossible();
-		
-		if (!usingSuperMode) // (!usingCamera2API)
+
+		if (usingSuperMode)
+		{
+			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
+			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
+			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
+			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
+			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
+		}
+		else
 		{
 			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
 		}
@@ -156,7 +176,7 @@ public class NightCapturePlugin extends PluginCapture
 			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
 		}
 		
-		if (usingSuperMode) // (usingCamera2API)
+		if (usingSuperMode)
 		{
 			quickControlIconID = -1;
 		}
@@ -204,7 +224,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public boolean isGLSurfaceNeeded()
 	{
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 			return true;
 		else
 			return false;
@@ -259,7 +279,7 @@ public class NightCapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 			OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
 	}
 
@@ -286,19 +306,13 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		//max size will be used in supermode
 		int captureIndex = 0;
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 			captureIndex = MainScreen.selectImageDimensionMultishot();
 		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 		
 		CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
-
-//		MainScreen.setSaveImageWidth(imgCaptureWidth);
-//		MainScreen.setSaveImageHeight(imgCaptureHeight);
-//
-//		MainScreen.setImageWidth(imgCaptureWidth);
-//		MainScreen.setImageHeight(imgCaptureHeight);
 
 		Log.i("NightCapturePlugin", "NightCapturePlugin.setCameraImageSize SX = " +
 				imgCaptureWidth + " SY = " + imgCaptureHeight);
@@ -422,7 +436,7 @@ public class NightCapturePlugin extends PluginCapture
 					int new_value = Integer.parseInt(focus_new.toString());
 					if ((new_value == 0)
 							&& CameraController.getSupportedFocusModes() != null
-							&& !CameraController.isModeAvailable(CameraController.getInstance()
+							&& !CameraController.isModeAvailable(CameraController
 									.getSupportedFocusModes(), CameraParameters.AF_MODE_FIXED))
 					{
 						new AlertDialog.Builder(mPref.getActivity())
@@ -491,43 +505,115 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-		PluginManager.getInstance().addToSharedMem("frame" + (imagesTaken + 1) + SessionID,
-				String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen" + (imagesTaken + 1) + SessionID,
-				String.valueOf(frame_len));
-
-		// ToDo: there is no need to pass orientation for every frame, just for the first one
-		// also, amountofcapturedframes can be set only once to total_frames
-		PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
-				String.valueOf(CameraController.isFrontCamera()));
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-				String.valueOf(imagesTaken + 1));
-
-		if (imagesTaken == 0)
+		if (takingImageForExposure)
 		{
-			PluginManager.getInstance().addToSharedMem("isSuperMode" + SessionID,
-					String.valueOf(usingSuperMode));
-	
-			// Note: a more memory-effective way would be to crop zoomed images right here
-			// (only possible with HALv3)
-			float zoom = CameraController.getZoom();
-			PluginManager.getInstance().addToSharedMem("zoom" + SessionID,
-					String.valueOf(zoom));
+			takingImageForExposure = false;
 			
-			// pass sensor gain to the image processing functions if it is known
-			PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
-					String.valueOf(sensorGain));
+			// analyze captured frame and determine if clipping correction needed
+			// only scan cropped area 
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			int imageWidth = imageSize.getWidth();
+			int imageHeight = imageSize.getHeight();
+			float zoom = CameraController.getZoom();
+			int w = (int)(imageWidth/zoom);
+			int h = (int)(imageHeight/zoom);
+			int x0 = imageWidth/2-w/2;
+			int y0 = imageHeight/2-h/2;
+			boolean clipped = AlmaShotNight.CheckClipping(frame, imageWidth, imageHeight, x0, y0, w, h);
+			
+			// free memory allocated for the frame
+			SwapHeap.FreeFromHeap(frame);
+			
+			int burstGain = sensorGain;
+			long burstExposure = exposureTime;
+
+			if (clipped)
+			{
+				// find updated exposure and ISO parameters
+				// Exposure compensation is not working in an optimal way
+				// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
+				//int evIndex = (int)(fUnclip / fEvStep);
+				//superRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evIndex);
+				float UnclipLinear = 0.5f;
+				
+				// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
+				if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
+				{
+					if (sensorGain / UnclipLinear < minSensitivity)
+					{
+						burstGain = minSensitivity;
+						UnclipLinear /= sensorGain / minSensitivity;
+					}
+					else
+					{
+						burstGain = (int)(sensorGain / UnclipLinear);
+						UnclipLinear = 1.0f;
+					}
+				}
+				
+				// if ISO reduction is not enough - decrease exposure time
+				if (minExposure < exposureTime / UnclipLinear)
+				{
+					burstExposure = (long)(exposureTime / UnclipLinear);
+				}
+				else
+					burstExposure = minExposure;
+			}
+
+			int[] burstGainArray = new int[total_frames];
+			long[] burstExposureArray = new long[total_frames];
+			Arrays.fill(burstGainArray, burstGain);
+			Arrays.fill(burstExposureArray, burstExposure);
+			
+			// capture the burst
+			requestID = CameraController.captureImagesWithParams(
+					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true);
 		}
-		
-		if (++imagesTaken == total_frames)
+		else
 		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			inCapture = false;
+			PluginManager.getInstance().addToSharedMem("frame" + (imagesTaken + 1) + SessionID,
+					String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("framelen" + (imagesTaken + 1) + SessionID,
+					String.valueOf(frame_len));
+	
+			// ToDo: there is no need to pass orientation for every frame, just for the first one
+			// also, amountofcapturedframes can be set only once to total_frames
+			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
+					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
+					String.valueOf(CameraController.isFrontCamera()));
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+					String.valueOf(imagesTaken + 1));
+	
+			// ToDo: should we also pass imageSize ?
+			// On processing side image size is found via
+			// CameraController.Size imageSize = CameraController.getCameraImageSize();
+			// Is there a possibility that imageSize will change when we reach processing stage (e.g. if there some other processing in the queue)? 
+			
+			// Note: if capturing burst - these values can be wrong for the first frame (onCaptureCompleted happens after onImageAvailable)
+			if (imagesTaken == total_frames-1)
+			{
+				PluginManager.getInstance().addToSharedMem("isSuperMode" + SessionID,
+						String.valueOf(usingSuperMode));
+		
+				// Note: a more memory-effective way would be to crop zoomed images right here
+				// (only possible with HALv3)
+				float zoom = CameraController.getZoom();
+				PluginManager.getInstance().addToSharedMem("zoom" + SessionID,
+						String.valueOf(zoom));
+				
+				// pass sensor gain to the image processing functions if it is known
+				PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
+						String.valueOf(sensorGain));
+			}
+			
+			if (++imagesTaken == total_frames)
+			{
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				inCapture = false;
+			}
 		}
-
 	}
 
 	@TargetApi(21)
@@ -535,7 +621,8 @@ public class NightCapturePlugin extends PluginCapture
 	public void onCaptureCompleted(CaptureResult result)
 	{
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
-
+		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+		
 		if (result.getSequenceId() == requestID && imagesTaken == 0)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
@@ -552,15 +639,31 @@ public class NightCapturePlugin extends PluginCapture
 		// we do not know sensor gain initially
 		// 0 - means auto-detection will be performed in processing functions
 		sensorGain = 0;
-		requestID = CameraController.captureImagesWithParams(
-				total_frames, CameraController.YUV_RAW, new int[0], null, true);
+		
+		if (usingSuperMode)
+		{
+			// ToDo: implement waiting for lens to finish it's focusing movement (like in camera3test)
+			
+			// ToDo: Lock AE, AWB, etc. for the duration of this image capture and the burst
+			
+			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
+			takingImageForExposure = true;
+			requestID = 0;
+			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true);
+		}
+		else
+		{
+			takingImageForExposure = false;
+			requestID = CameraController.captureImagesWithParams(
+					total_frames, CameraController.YUV_RAW, null, null, null, null, true);
+		}
 	}
 
 	// onPreviewFrame is used to collect frames for brightened VF output
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 		{
 			if (OpenGLPreference && !inCapture)
 			{
@@ -607,7 +710,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 		{
 			cameraPreview.generateGLTexture(gl);
 			gl.glEnable(GL10.GL_TEXTURE_2D); // Enable Texture Mapping ( NEW )
@@ -628,7 +731,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLSurfaceChanged(GL10 gl, int width, int height)
 	{
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 		{
 			if (height == 0)
 			{ // Prevent A Divide By Zero By
@@ -657,7 +760,7 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGLDrawFrame(GL10 gl)
 	{
-		if (!usingSuperMode) // (!usingCamera2API)
+		if (!usingSuperMode)
 		{
 			// Clear Screen And Depth Buffer
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);

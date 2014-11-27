@@ -2568,10 +2568,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Experimental code to take multiple images. Works only with HALv3
 	// interface in API 19(currently minimum API version for Android L increased
 	// to 21)
-	protected static int[]		pauseBetweenShots	= new int[0];
-
-	protected static final int	MAX_HDR_FRAMES		= 4;
-	protected static int[]		evValues			= new int[MAX_HDR_FRAMES];
+	protected static int[]		pauseBetweenShots	= null;
+	protected static int[]		evValues			= null;
 
 	protected static int		total_frames;
 	protected static int		frame_num;
@@ -2583,7 +2581,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static boolean	resultInHeap		= false;
 
-	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, boolean resInHeap)
+	// Note: per-frame 'gain' and 'exposure' parameters are only effective for Camera2 API at the moment
+	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain, long[] exposure, boolean resInHeap)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -2606,7 +2605,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.sendMessage(MSG_TAKE_IMAGE);
 			return 0;
 		} else
-			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, resultInHeap);
+			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, gain, exposure, resultInHeap);
 	}
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
@@ -2991,10 +2990,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		case MSG_SET_EXPOSURE:
 			try
 			{
+				// Note: LumaAdaptation is obsolete and unlikely to be relevant for Android >= 4.0
 				// if (UseLumaAdaptation && LumaAdaptationAvailable)
 				// CameraController.setLumaAdaptation(evValues[frame_num]);
 				// else
-				CameraController.setCameraExposureCompensation(evValues[frame_num]);
+				if (evValues != null && evValues.length > frame_num)
+					CameraController.setCameraExposureCompensation(evValues[frame_num]);
 			} catch (RuntimeException e)
 			{
 				Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
@@ -3041,7 +3042,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			String modeID2 = PluginManager.getInstance().getActiveModeID();
 			if (++frame_num < total_frames)
 			{
-				if (Array.getLength(pauseBetweenShots) < frame_num)
+				if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)
 				{
 					if (evValues != null && evValues.length >= total_frames)
 						CameraController.sendMessage(MSG_SET_EXPOSURE);
@@ -3058,7 +3059,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							else
 								CameraController.sendMessage(MSG_TAKE_IMAGE);
 						}
-					}, pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
+					},
+					pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
 				}
 			}
 			else if (modeID2.equals("hdrmode") || modeID2.equals("expobracketing"))
