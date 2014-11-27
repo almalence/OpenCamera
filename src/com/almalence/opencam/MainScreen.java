@@ -3203,9 +3203,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// if current mode unlocked
 		if (mode.SKU.equals("plugin_almalence_super"))
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			boolean isHALv3 = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
-			if (superPurchased || !isHALv3)
+			if (superPurchased || !CameraController.isUseSuperMode())
 				return true;
 		}
 		if (mode.SKU.equals("plugin_almalence_hdr"))

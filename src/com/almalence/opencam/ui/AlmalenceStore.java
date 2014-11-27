@@ -353,7 +353,7 @@ public class AlmalenceStore
 					price.setText(R.string.already_unlocked);
 				else
 				{
-					if (CameraController.isHALv3Supported())
+					if (CameraController.isSuperModePossible())
 						price.setText(MainScreen.getInstance().titleUnlockSuper);
 					else
 						price.setText(MainScreen.getAppResources()
@@ -459,7 +459,7 @@ public class AlmalenceStore
 //			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
 //			break;
 		case 2:// HDR
-			if (CameraController.isHALv3Supported())
+			if (CameraController.isSuperModePossible())
 				MainScreen.getInstance().purchaseSuper();
 			else
 				Toast.makeText(MainScreen.getMainContext(), "Not supported", Toast.LENGTH_LONG).show();
