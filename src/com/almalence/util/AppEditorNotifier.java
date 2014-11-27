@@ -89,9 +89,8 @@ public class AppEditorNotifier
 			return true;
 		}
 
-		if (prefs.getBoolean("dontshowagainEditornotifier", false) || System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+		if (System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 		{
-			// showEditorNotifierDialog(mContext, prefs);
 			MainScreen.getInstance().guiManager.openGallery(true);
 			return true;
 		}
@@ -167,8 +166,6 @@ public class AppEditorNotifier
 					DAYS_UNTIL_PROMPT = 30;
 				else if (DAYS_UNTIL_PROMPT == 30)
 					DAYS_UNTIL_PROMPT = 999;
-				else
-					prefs.edit().putBoolean("dontshowagainEditornotifier", false).commit();
 
 				prefs.edit().putInt("days_until_prompt", DAYS_UNTIL_PROMPT).commit();
 			}
