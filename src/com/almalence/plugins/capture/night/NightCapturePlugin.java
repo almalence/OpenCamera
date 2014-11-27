@@ -31,7 +31,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
@@ -40,10 +39,8 @@ import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -114,8 +111,11 @@ public class NightCapturePlugin extends PluginCapture
 	
 	private long                minExposure = 1000;
 	private int                 minSensitivity = 100;
+	
 	private int                 sensorGain = 0;
-	long                        exposureTime = 0;
+	private long                exposureTime = 0;
+	private int                 frameForExposure = 0;
+	
 
 	// preferences
 	private static String		FocusPreference;
@@ -142,7 +142,7 @@ public class NightCapturePlugin extends PluginCapture
 	public void onCreate()
 	{
 		usingCamera2API = CameraController.isUseHALv3(); 
-		usingSuperMode = CameraController.isSuperModePossible();
+		usingSuperMode = CameraController.isUseSuperMode();
 
 		if (usingSuperMode)
 		{
@@ -151,6 +151,7 @@ public class NightCapturePlugin extends PluginCapture
 			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
 			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
 			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
+			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
 		}
 		else
 		{
@@ -502,72 +503,91 @@ public class NightCapturePlugin extends PluginCapture
 		}
 	}
 
+	
+	// there is no warranty what comes first:
+	// onImageTaken or onCaptureCompleted, so
+	// this function can be called from either once both were called
+	public void AdjustExposureCaptureBurst()
+	{
+		takingImageForExposure = false;
+		
+		// analyze captured frame and determine if clipping correction needed
+		// only scan cropped area 
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int imageWidth = imageSize.getWidth();
+		int imageHeight = imageSize.getHeight();
+		float zoom = CameraController.getZoom();
+		int w = (int)(imageWidth/zoom);
+		int h = (int)(imageHeight/zoom);
+		int x0 = imageWidth/2-w/2;
+		int y0 = imageHeight/2-h/2;
+		boolean clipped = AlmaShotNight.CheckClipping(frameForExposure, imageWidth, imageHeight, x0, y0, w, h);
+		
+		// free memory allocated for the frame
+		SwapHeap.FreeFromHeap(frameForExposure);
+		
+		int burstGain = Math.max(sensorGain, minSensitivity);
+		long burstExposure = exposureTime;
+
+		Log.i("NightCapturePlugin", "gain: "+burstGain+" expoTime: "+burstExposure+"ns clipped: "+clipped);
+
+		if (clipped)
+		{
+			// find updated exposure and ISO parameters
+			// Exposure compensation is not working in an optimal way
+			// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
+			//int evIndex = (int)(fUnclip / fEvStep);
+			//superRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evIndex);
+			float UnclipLinear = 2.0f;
+			
+			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
+			if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
+			{
+				if (sensorGain / UnclipLinear < minSensitivity)
+				{
+					burstGain = minSensitivity;
+					UnclipLinear /= sensorGain / minSensitivity;
+				}
+				else
+				{
+					burstGain = (int)(sensorGain / UnclipLinear);
+					UnclipLinear = 1.0f;
+				}
+			}
+			
+			// if ISO reduction is not enough - decrease exposure time
+			if (minExposure < exposureTime / UnclipLinear)
+			{
+				burstExposure = (long)(exposureTime / UnclipLinear);
+			}
+			else
+				burstExposure = minExposure;
+		}
+
+		Log.i("NightCapturePlugin", "After adjusting: gain: "+burstGain+" expoTime: "+burstExposure+"ns");
+		
+		int[] burstGainArray = new int[total_frames];
+		long[] burstExposureArray = new long[total_frames];
+		Arrays.fill(burstGainArray, burstGain);
+		Arrays.fill(burstExposureArray, burstExposure);
+		
+		// capture the burst
+		requestID = CameraController.captureImagesWithParams(
+				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true);
+	}
+	
+	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
+	public synchronized void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		if (takingImageForExposure)
 		{
-			takingImageForExposure = false;
-			
-			// analyze captured frame and determine if clipping correction needed
-			// only scan cropped area 
-			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			int imageWidth = imageSize.getWidth();
-			int imageHeight = imageSize.getHeight();
-			float zoom = CameraController.getZoom();
-			int w = (int)(imageWidth/zoom);
-			int h = (int)(imageHeight/zoom);
-			int x0 = imageWidth/2-w/2;
-			int y0 = imageHeight/2-h/2;
-			boolean clipped = AlmaShotNight.CheckClipping(frame, imageWidth, imageHeight, x0, y0, w, h);
-			
-			// free memory allocated for the frame
-			SwapHeap.FreeFromHeap(frame);
-			
-			int burstGain = sensorGain;
-			long burstExposure = exposureTime;
+			frameForExposure = frame;
 
-			if (clipped)
-			{
-				// find updated exposure and ISO parameters
-				// Exposure compensation is not working in an optimal way
-				// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
-				//int evIndex = (int)(fUnclip / fEvStep);
-				//superRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evIndex);
-				float UnclipLinear = 0.5f;
-				
-				// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
-				if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
-				{
-					if (sensorGain / UnclipLinear < minSensitivity)
-					{
-						burstGain = minSensitivity;
-						UnclipLinear /= sensorGain / minSensitivity;
-					}
-					else
-					{
-						burstGain = (int)(sensorGain / UnclipLinear);
-						UnclipLinear = 1.0f;
-					}
-				}
-				
-				// if ISO reduction is not enough - decrease exposure time
-				if (minExposure < exposureTime / UnclipLinear)
-				{
-					burstExposure = (long)(exposureTime / UnclipLinear);
-				}
-				else
-					burstExposure = minExposure;
-			}
-
-			int[] burstGainArray = new int[total_frames];
-			long[] burstExposureArray = new long[total_frames];
-			Arrays.fill(burstGainArray, burstGain);
-			Arrays.fill(burstExposureArray, burstExposure);
+			Log.i("NightCapturePlugin", "frameForExposure arrived");
 			
-			// capture the burst
-			requestID = CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true);
+			if (sensorGain>0 || exposureTime>0)
+				AdjustExposureCaptureBurst();			
 		}
 		else
 		{
@@ -618,11 +638,16 @@ public class NightCapturePlugin extends PluginCapture
 
 	@TargetApi(21)
 	@Override
-	public void onCaptureCompleted(CaptureResult result)
+	public synchronized void onCaptureCompleted(CaptureResult result)
 	{
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
 		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 		
+		Log.i("NightCapturePlugin", "onCaptureCompleted gain: "+sensorGain+" expoTime: "+exposureTime+"ns");
+
+		if (takingImageForExposure && (frameForExposure != 0))
+			AdjustExposureCaptureBurst();			
+
 		if (result.getSequenceId() == requestID && imagesTaken == 0)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
 	}
@@ -636,9 +661,11 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-		// we do not know sensor gain initially
-		// 0 - means auto-detection will be performed in processing functions
+		// we do not know sensor gain and other parameters initially
+		// they will be filled in onCaptureCompleted and onImageTaken
 		sensorGain = 0;
+		exposureTime = 0;
+		frameForExposure = 0;
 		
 		if (usingSuperMode)
 		{

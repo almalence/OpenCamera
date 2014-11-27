@@ -784,7 +784,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		boolean SuperModeOk = false;
 		
-		if (isHALv3)
+		if (isHALv3Supported)
 		{
 			// if we're working via Camera2 API -
 			// check if device conform to Super Mode requirements
@@ -811,6 +811,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		
 		return SuperModeOk;
+	}
+
+	public static boolean isUseSuperMode()
+	{
+		return isSuperModePossible() && isHALv3;
 	}
 	
 	public static boolean isNexus()

@@ -24,6 +24,7 @@ by Almalence Inc. All Rights Reserved.
 
 #include "almashot.h"
 #include "blurless.h"
+#include "supersensor.h"
 #include "superzoom.h"
 
 #include "ImageConversionUtils.h"
@@ -32,7 +33,6 @@ by Almalence Inc. All Rights Reserved.
 static unsigned char *yuv[MAX_FRAMES] = {NULL};
 static void *instance = NULL;
 static int almashot_inited = 0;
-static Uint8 *OutPic = NULL;
 
 
 
@@ -216,14 +216,19 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			}
 		}
 
+
 		// Note: sensor-dependent formula
 		//int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
 		int sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
 
+		int gamma = (int)(0.5f/*fgamma*/ * 256 + 0.5f);
+
 		// slightly more sharpening at low zooms
 		int sharpen = 2;
+		int filter = 384; // 320; // 256;
 		if (sxo >= 3*sx_zoom) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
 		else if (sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
+		else filter = 192;
 
 		Super_Process(
 				yuv, &OutPic,
@@ -231,9 +236,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				sensorGain,
 				deghostTable[DeGhostPref],
 				1,							// deghostFrames
-				nTable[noisePref],
+				filter,
 				sharpen,
-				0.5f,						// gamma
+				gamma,
 				0,							// cameraIndex
 				0);							// externalBuffers
 

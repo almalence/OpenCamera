@@ -1301,6 +1301,10 @@ public class HALv3
 		boolean isRAWCapture
 	)
 	{
+		// explicitly disable AWB for the duration of still/burst capture to get full burst with the same WB
+		// WB does not apply to RAW, so no need for this in rawRequestBuilder
+		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+		
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		if(isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
