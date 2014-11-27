@@ -2360,6 +2360,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean		couponSale					= false;
 
 	private boolean		unlockAllPurchased			= false;
+	private boolean		superPurchased				= false;
 	private boolean		hdrPurchased				= false;
 	private boolean		panoramaPurchased			= false;
 	private boolean		objectRemovalBurstPurchased	= false;
@@ -2368,6 +2369,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private boolean		unlockAllSubscriptionMonth	= false;
 	private boolean		unlockAllSubscriptionYear	= false;
 
+	static final String	SKU_SUPER					= "plugin_almalence_super";
 	static final String	SKU_HDR						= "plugin_almalence_hdr";
 	static final String	SKU_PANORAMA				= "plugin_almalence_panorama";
 	static final String	SKU_UNLOCK_ALL				= "unlock_all_forever";
@@ -2393,6 +2395,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	static
 	{
 		// Yandex store
+		OpenIabHelper.mapSku(SKU_SUPER, "com.yandex.store", "plugin_almalence_super");
 		OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
 		OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
@@ -2408,6 +2411,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_PROMO, "com.yandex.store", "abc_promo");
 
 		// Amazon store
+		OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_AMAZON, "plugin_almalence_super_amazon");
 		OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
 		OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_AMAZON, "plugin_almalence_panorama_amazon");
 		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_amazon");
@@ -2425,6 +2429,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
 
 		// Samsung store
+		// OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_SAMSUNG,
+		// "100000103369/000001018387");
 		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
 		// "100000103369/000001018387");
 		// OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
@@ -2532,6 +2538,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 
 						List<String> additionalSkuList = new ArrayList<String>();
+						additionalSkuList.add(SKU_SUPER);
 						additionalSkuList.add(SKU_HDR);
 						additionalSkuList.add(SKU_PANORAMA);
 						additionalSkuList.add(SKU_UNLOCK_ALL);
@@ -2592,6 +2599,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockAll				= "$6.95";
 	public String								titleUnlockAllCoupon		= "$3.95";
 	public String								titleUnlockHDR				= "$2.99";
+	public String								titleUnlockSuper			= "$2.99";
 	public String								titleUnlockPano				= "$2.99";
 	public String								titleUnlockMoving			= "$3.99";
 	public String								titleUnlockGroup			= "$2.99";
@@ -2625,6 +2633,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																									.getMainContext());
 
 																					Editor prefsEditor = prefs.edit();
+																					if (inventory.hasPurchase(SKU_SUPER))
+																					{
+																						superPurchased = true;
+																						prefsEditor.putBoolean(
+																								"plugin_almalence_super",
+																								true).commit();
+																					}
 																					if (inventory.hasPurchase(SKU_HDR))
 																					{
 																						hdrPurchased = true;
@@ -2742,6 +2757,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																								.getSkuDetails(
 																										SKU_UNLOCK_ALL_COUPON)
 																								.getPrice();
+																						titleUnlockSuper = inventory
+																								.getSkuDetails(SKU_SUPER)
+																								.getPrice();
 																						titleUnlockHDR = inventory
 																								.getSkuDetails(SKU_HDR)
 																								.getPrice();
@@ -2776,6 +2794,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 																			};
 
 	private int									HDR_REQUEST					= 100;
+	private int									SUPER_REQUEST				= 107;
 	private int									PANORAMA_REQUEST			= 101;
 	private int									ALL_REQUEST					= 102;
 	private int									OBJECTREM_BURST_REQUEST		= 103;
@@ -2787,6 +2806,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return unlockAllPurchased;
 	}
 
+	public boolean isPurchasedSuper()
+	{
+		return superPurchased;
+	}
+	
 	public boolean isPurchasedHDR()
 	{
 		return hdrPurchased;
@@ -2842,6 +2866,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// }
 	}
 
+	public void purchaseSuper()
+	{
+		if (isPurchasedSuper() || isPurchasedAll())
+			return;
+		String payload = "";
+		try
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUPER, SUPER_REQUEST, mPreferencePurchaseFinishedListener,
+					payload);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	public void purchaseHDR()
 	{
 		if (isPurchasedHDR() || isPurchasedAll())
@@ -2943,6 +2984,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
+		}
+		if (purchase.getSku().equals(SKU_SUPER))
+		{
+			Log.v("Main billing", "Purchase SUPER.");
+			superPurchased = true;
+
+			Editor prefsEditor = prefs.edit();
+			prefsEditor.putBoolean("plugin_almalence_super", true).commit();
 		}
 		if (purchase.getSku().equals(SKU_PANORAMA))
 		{
@@ -3216,6 +3265,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return true;
 
 		// if current mode unlocked
+		if (mode.SKU.equals("plugin_almalence_super"))
+		{
+			if (superPurchased || !CameraController.isUseSuperMode())
+				return true;
+		}
 		if (mode.SKU.equals("plugin_almalence_hdr"))
 		{
 			if (hdrPurchased)

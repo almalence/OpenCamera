@@ -171,7 +171,7 @@
 		
 		<howtotext  id=""/>
 
-		<sku/>		
+		<sku 		id="plugin_almalence_super"/>		
 	</mode>
 	
 	<mode id="video" name="video_mode_name"  savename="">

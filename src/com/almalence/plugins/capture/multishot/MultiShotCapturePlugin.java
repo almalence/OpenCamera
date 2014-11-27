@@ -96,7 +96,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, true);
+				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true);
 	}
 
 	@Override

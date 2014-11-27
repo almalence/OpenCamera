@@ -118,26 +118,6 @@ void SuperZoom_FreeInstance
 );
 
 
-int Super_Process
-(
-	Uint8 ** in,
-	Uint8 ** pout,
-	int		sx,
-	int		sy,
-	int		sxo,
-	int		syo,
-	int		nFrames,
-	int     SensorGain,
-	int     DeGhostGain,
-	int     DeGhostFrames,
-	int		postFilter,
-	int		postSharpen,
-	int		gamma,
-	int     cameraIndex,
-	int     externalBuffers
-);
-
-
 // -------------------------------------------------------------------
 // Video superzoom functions
 

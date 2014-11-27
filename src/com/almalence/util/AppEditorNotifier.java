@@ -44,15 +44,8 @@ public class AppEditorNotifier
 {
 	private static int	DAYS_UNTIL_PROMPT	= 10;
 
-	// private static final int LAUNCHES_UNTIL_PROMPT = 30;
-
 	public static void app_launched(Activity mContext)
 	{
-		SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
-		// if (prefs.getBoolean("showlatereditornotifier", false))
-		// {
-		// return;
-		// }
 	}
 
 	public static final boolean isABCEditorInstalled(Activity activity)
@@ -74,8 +67,6 @@ public class AppEditorNotifier
 		// check if installed
 		if (isABCEditorInstalled(MainScreen.getInstance()))
 		{
-			// prefs.edit().putBoolean("showlatereditornotifier",
-			// true).commit();
 			return false;
 		}
 		
@@ -89,33 +80,12 @@ public class AppEditorNotifier
 			return true;
 		}
 
-		if (prefs.getBoolean("dontshowagainEditornotifier", false) || System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+		if (System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 		{
-			// showEditorNotifierDialog(mContext, prefs);
 			MainScreen.getInstance().guiManager.openGallery(true);
 			return true;
 		}
 
-		// if (prefs.getBoolean("showlatereditornotifier", false))
-		// {
-		// return false;
-		// }
-
-		// final long launch_count =
-		// prefs.getLong("launch_count_editornotifier", 0) + 1;
-		// final Long date_firstLaunch =
-		// prefs.getLong("date_firstlaunch_editornotifier", 0);
-		//
-		// if (launch_count >= LAUNCHES_UNTIL_PROMPT)
-		// {
-		// if (System.currentTimeMillis() >= date_firstLaunch +
-		// (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
-		// {
-		// showEditorNotifierDialog(mContext, prefs);
-		//
-		// return true;
-		// }
-		// }
 		showEditorNotifierDialog(mContext, prefs);
 		return true;
 	}
@@ -172,23 +142,13 @@ public class AppEditorNotifier
 		{
 			public void onClick(View v)
 			{
-				// if (prefs != null)
-				// prefs.edit().putBoolean("showlatereditornotifier",
-				// true).commit();
-
 				dialog.dismiss();
 				MainScreen.getInstance().guiManager.openGallery(true);
 
-//				if (DAYS_UNTIL_PROMPT == 4)
-//					DAYS_UNTIL_PROMPT = 5;
-//				else if (DAYS_UNTIL_PROMPT == 5)
-//					DAYS_UNTIL_PROMPT = 10;
-				if (DAYS_UNTIL_PROMPT == 10)
+				if (DAYS_UNTIL_PROMPT <= 10)
 					DAYS_UNTIL_PROMPT = 30;
 				else if (DAYS_UNTIL_PROMPT == 30)
 					DAYS_UNTIL_PROMPT = 999;
-				else
-					prefs.edit().putBoolean("dontshowagainEditornotifier", false).commit();
 
 				prefs.edit().putInt("days_until_prompt", DAYS_UNTIL_PROMPT).commit();
 			}
