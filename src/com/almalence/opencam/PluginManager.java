@@ -219,6 +219,7 @@ public class PluginManager implements PluginManagerInterface
 	// For HALv3 code version
 	public static final int				MSG_CAMERA_OPENED						= 16;
 	public static final int				MSG_SURFACE_READY						= 17;
+	public static final int				MSG_SURFACE_CONFIGURED					= 170;
 	public static final int				MSG_NOT_LEVEL_FULL						= 18;
 	public static final int				MSG_PROCESS								= 19;
 	public static final int				MSG_PROCESS_FINISHED					= 20;

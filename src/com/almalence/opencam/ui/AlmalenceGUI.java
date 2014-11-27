@@ -1377,6 +1377,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onGUICreate()
 	{
+//		Log.e("GUI", "onGUICreate");
 		if (MainScreen.getInstance().findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
 			iInfoViewHeight = MainScreen.getInstance().findViewById(R.id.infoLayout).getHeight();
 		// Recreate plugin views
