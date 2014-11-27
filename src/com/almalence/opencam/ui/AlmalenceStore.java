@@ -36,6 +36,7 @@ import java.util.List;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 
@@ -64,7 +65,7 @@ public class AlmalenceStore
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
 
-	private static final int STORE_ELEMENTS_NUMBER = 6;
+	private static final int STORE_ELEMENTS_NUMBER = 7;
 	
 	AlmalenceStore(View gui)
 	{
@@ -344,6 +345,22 @@ public class AlmalenceStore
 //					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
 //				break;
 			case 2:
+				// Super
+				icon.setImageResource(R.drawable.store_super);
+				description.setText(MainScreen.getAppResources()
+						.getString(R.string.Pref_Upgrde_Super_Preference_Title));
+				if (MainScreen.getInstance().isPurchasedSuper() || MainScreen.getInstance().isPurchasedAll())
+					price.setText(R.string.already_unlocked);
+				else
+				{
+					if (CameraController.isHALv3Supported())
+						price.setText(MainScreen.getInstance().titleUnlockSuper);
+					else
+						price.setText(MainScreen.getAppResources()
+								.getString(R.string.Pref_Upgrde_SuperNotSupported));
+				}
+				break;
+			case 3:
 				// HDR
 				icon.setImageResource(R.drawable.store_hdr);
 				description.setText(MainScreen.getAppResources()
@@ -353,7 +370,7 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockHDR);
 				break;
-			case 3:
+			case 4:
 				// Panorama
 				icon.setImageResource(R.drawable.store_panorama);
 				description.setText(MainScreen.getAppResources()
@@ -363,7 +380,7 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockPano);
 				break;
-			case 4:
+			case 5:
 				// multishot
 				icon.setImageResource(R.drawable.store_moving);
 				description.setText(MainScreen.getAppResources()
@@ -383,7 +400,7 @@ public class AlmalenceStore
 //				else
 //					price.setText(MainScreen.getInstance().titleUnlockGroup);
 //				break;
-			case 5:
+			case 6:
 				// Promo code
 				icon.setImageResource(R.drawable.store_promo);
 				description.setText(MainScreen.getAppResources()
@@ -442,18 +459,24 @@ public class AlmalenceStore
 //			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
 //			break;
 		case 2:// HDR
+			if (CameraController.isHALv3Supported())
+				MainScreen.getInstance().purchaseSuper();
+			else
+				Toast.makeText(MainScreen.getMainContext(), "Not supported", Toast.LENGTH_LONG).show();
+			break;
+		case 3:// HDR
 			MainScreen.getInstance().purchaseHDR();
 			break;
-		case 3:// Panorama
+		case 4:// Panorama
 			MainScreen.getInstance().purchasePanorama();
 			break;
-		case 4:// multishot
+		case 5:// multishot
 			MainScreen.getInstance().purchaseMultishot();
 			break;
 //		case 4:// Groupshot
 //			MainScreen.getInstance().purchaseGroupshot();
 //			break;
-		case 5:// Promo
+		case 6:// Promo
 			if (!MainScreen.getInstance().isPurchasedAll())
 				MainScreen.getInstance().enterPromo();
 			break;

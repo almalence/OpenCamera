@@ -3,6 +3,8 @@
 	<string name="Pref_Upgrde_All_Preference_Title">Активировать все</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Активировать все режимы и возможности навсегда, даже добавляемые в будущем</string>
 	
+	<string name="Pref_Upgrde_SuperNotSupported">не поддерживается</string>
+	
 	<string name="Pref_Upgrde_HDR_Preference_Title">HDR и HDR видео</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Снимайте отличные кадры с широким динамическим диапазоном и HDR видео</string>
 	

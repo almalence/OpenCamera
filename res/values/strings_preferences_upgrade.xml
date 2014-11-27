@@ -3,6 +3,9 @@
 	<string name="Pref_Upgrde_All_Preference_Title">Unlock all forever</string>
 	<string name="Pref_Upgrde_All_Preference_Summary">Activate all features and modes, even future version additions</string>
 	
+	<string name="Pref_Upgrde_Super_Preference_Title">Super</string>
+	<string name="Pref_Upgrde_SuperNotSupported">not supported</string>
+	
 	<string name="Pref_Upgrde_HDR_Preference_Title">HDR + HDR Video</string>
 	<string name="Pref_Upgrde_HDR_Preference_Summary">Take great-looking high-dynamic range images and videos</string>
 	
