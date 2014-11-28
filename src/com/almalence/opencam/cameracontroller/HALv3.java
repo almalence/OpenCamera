@@ -1669,12 +1669,12 @@ public class HALv3
 											captureCallback, null);
 				
 //				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
-				if(!CameraController.appStarted)
-				{
-					CameraController.appStarted = true;
-					MainScreen.getInstance().relaunchCamera();
-				}
-				else
+//				if(!CameraController.appStarted)
+//				{
+//					CameraController.appStarted = true;
+//					MainScreen.getInstance().relaunchCamera();
+//				}
+//				else
 					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 			}
 			catch (final Exception e)

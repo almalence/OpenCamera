@@ -1263,7 +1263,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
 					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), false));
+							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus()? true: false));
+					prefs.edit().putBoolean(getResources()
+							.getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3()).commit();
 					
 //					Log.e("MainScreen", "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
 					CameraController.setSurfaceHolderFixedSize(0, 0);
@@ -2164,6 +2166,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						mCameraStarted = true;
 					}
 				}
+				else
+					Log.e("MainScreen", "PluginManager.MSG_SURFACE_READY. surfaceCreated = false");
 			}
 			break;
 		case PluginManager.MSG_SURFACE_CONFIGURED:
