@@ -851,9 +851,10 @@ public class VideoCapturePlugin extends PluginCapture
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putBoolean("ContinuousCapturing", true).commit();
 		
-		prefs.edit()
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 		.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 				false).commit();
+		CameraController.useHALv3(false);
 
 		shutterOff = false;
 		showRecording = false;
