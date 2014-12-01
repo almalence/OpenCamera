@@ -518,7 +518,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		surfaceHolder = preview.getHolder();
 //		CameraController.setSurfaceHolderFixedSize(1280, 720);
-//		surfaceHolder.setFixedSize(1280, 720);
+//		surfaceHolder.setFixedSize(0, 0);
+//		Log.e("MainScreen", "onCreate. surfaceHolder.addCallback(this)");
 		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
@@ -1268,7 +1269,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							.getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3()).commit();
 					
 //					Log.e("MainScreen", "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
-					CameraController.setSurfaceHolderFixedSize(0, 0);
+					CameraController.setSurfaceHolderFixedSize(1, 1);
 
 					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
@@ -1415,6 +1416,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			isScreenTimerRunning = false;
 		}
 
+//		CameraController.onPause(CameraController.isUseHALv3()? false : switchingMode);
 		CameraController.onPause(switchingMode);
 		switchingMode = false;
 
@@ -2163,8 +2165,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					{
 						PluginManager.getInstance().onGUICreate();
 						MainScreen.getGUIManager().onGUICreate();
-						mCameraStarted = true;
+//						mCameraStarted = true;
 					}
+					mCameraStarted = true;
 				}
 				else
 					Log.e("MainScreen", "PluginManager.MSG_SURFACE_READY. surfaceCreated = false");
@@ -2176,10 +2179,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			PluginManager.getInstance().onGUICreate();
 			MainScreen.getGUIManager().onGUICreate();
 			mCameraStarted = true;
+			Log.e("MainScreen", "PluginManager.MSG_SURFACE_CONFIGURED. mCameraStarted = true");
 		}
 			break;
 		case PluginManager.MSG_CAMERA_STOPED:
 			mCameraStarted = false;
+			Log.e("MainScreen", "PluginManager.MSG_CAMERA_STOPED. mCameraStarted = false");
 			break;
 		default:
 			PluginManager.getInstance().handleMessage(msg);

@@ -1675,7 +1675,8 @@ public class HALv3
 //					MainScreen.getInstance().relaunchCamera();
 //				}
 //				else
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				Log.e(TAG, "session.setRepeatingRequest success. Session configured");
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 			}
 			catch (final Exception e)
 			{

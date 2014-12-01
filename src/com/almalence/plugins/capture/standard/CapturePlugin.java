@@ -175,6 +175,7 @@ public class CapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		inCapture = false;
+		aboutToTakePicture = false;
 		
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.setCaptureFormat(CameraController.YUV);

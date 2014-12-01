@@ -187,6 +187,7 @@ public class NightCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		inCapture = false;
+		aboutToTakePicture = false;
 
 		MainScreen.getInstance().muteShutter(false);
 
@@ -209,6 +210,7 @@ public class NightCapturePlugin extends PluginCapture
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
 	}
+	
 
 	@Override
 	public void onGUICreate()

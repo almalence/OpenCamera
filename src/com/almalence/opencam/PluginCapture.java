@@ -68,6 +68,7 @@ public abstract class PluginCapture extends Plugin
 	public void onResume()
 	{
 		inCapture = false;
+		aboutToTakePicture = false;
 	}
 
 	@Override

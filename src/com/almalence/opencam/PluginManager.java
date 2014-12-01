@@ -536,13 +536,22 @@ public class PluginManager implements PluginManagerInterface
 			e.printStackTrace();
 		}
 	}
+	
+	protected boolean isRestart = false;
+	public void setSwitchModeType(boolean restart)
+	{
+		isRestart = restart;
+	}
 
 	public void switchMode(Mode mode)
 	{
-		Log.e("PluginManager", "swithMode: " + mode.modeName);
+		Log.e("PluginManager", "switchMode: " + mode.modeName);
+		
+//		boolean isHALv3 = CameraController.isUseHALv3();
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
-		MainScreen.getInstance().switchingMode(true);
+		MainScreen.getInstance().switchingMode(isRestart? false: true);
+//		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().pauseMain();
 		onStop();
 		onDestroy();
@@ -566,7 +575,8 @@ public class PluginManager implements PluginManagerInterface
 
 		onCreate();
 		onStart();
-		MainScreen.getInstance().switchingMode(true);
+		MainScreen.getInstance().switchingMode(isRestart? false: true);
+//		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().resumeMain();
 	}
 

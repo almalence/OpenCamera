@@ -90,6 +90,7 @@ public class BurstCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		imagesTakenRAW = 0;
 		inCapture = false;
+		aboutToTakePicture = false;
 //		refreshPreferences();
 		if(captureRAW)
 			MainScreen.setCaptureFormat(CameraController.RAW);

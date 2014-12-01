@@ -115,6 +115,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		inCapture = false;
+		aboutToTakePicture = false;
 		evRequested = 0;
 		evLatency = 0;
 

@@ -850,6 +850,10 @@ public class VideoCapturePlugin extends PluginCapture
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putBoolean("ContinuousCapturing", true).commit();
+		
+		prefs.edit()
+		.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+				false).commit();
 
 		shutterOff = false;
 		showRecording = false;
@@ -880,6 +884,7 @@ public class VideoCapturePlugin extends PluginCapture
 		prefs.edit()
 				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 						camera2Preference).commit();
+//		CameraController.useHALv3(camera2Preference);
 
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
@@ -928,11 +933,15 @@ public class VideoCapturePlugin extends PluginCapture
 			audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
 		}
 	}
+	
 
 	@Override
 	public void onStop()
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		
+		if(camera2Preference)
+			CameraController.useHALv3(true);
 	}
 
 	@Override
@@ -1852,9 +1861,12 @@ public class VideoCapturePlugin extends PluginCapture
 
 		camera2Preference = prefs.getBoolean(
 				MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
-		prefs.edit()
-				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-						false).commit();
+//		prefs.edit()
+//				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+//						false).commit();
+		
+		if(camera2Preference)
+			PluginManager.getInstance().setSwitchModeType(true);
 
 		videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
 

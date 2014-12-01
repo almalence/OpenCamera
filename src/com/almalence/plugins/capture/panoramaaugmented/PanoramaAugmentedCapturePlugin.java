@@ -467,7 +467,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		wbLockedByPanorama = false;
 		this.getPrefs();
 
-		MainScreen.setCaptureFormat(CameraController.JPEG);
+		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override

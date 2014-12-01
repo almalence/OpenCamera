@@ -66,6 +66,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	{
 		imagesTaken = 0;
 		inCapture = false;
+		aboutToTakePicture = false;
 //		refreshPreferences();
 
 		MainScreen.setCaptureFormat(CameraController.YUV);

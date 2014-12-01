@@ -76,6 +76,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		imagesTaken = 0;
 		inCapture = false;
+		aboutToTakePicture = false;
 
 		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
