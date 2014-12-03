@@ -134,6 +134,7 @@ public class HALv3
 	
 	public static void onCreateHALv3()
 	{
+		Log.e(TAG, "onCreateHALv3");
 		// HALv3 code ---------------------------------------------------------
 		// get manager for camera devices
 		HALv3.getInstance().manager = (CameraManager) MainScreen.getMainContext().getSystemService("camera");
@@ -154,7 +155,7 @@ public class HALv3
 	{
 		try
 		{
-			Log.e(TAG, "onResumeHALv3. CameraIndex = " + CameraController.CameraIndex);
+			Log.e(TAG, "checkHardwareLevel. CameraIndex = " + CameraController.CameraIndex);
 			HALv3.getInstance().camCharacter = HALv3.getInstance().manager.getCameraCharacteristics(CameraController
 					.cameraIdList[CameraController.CameraIndex]);
 			
@@ -1384,6 +1385,8 @@ public class HALv3
 					{
 						int tmp = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 								stillCaptureCallback, null);
+						
+						Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + tmp);
 						// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
 						if (evRequested == null) requestID = tmp;
 						
@@ -1455,8 +1458,10 @@ public class HALv3
 						try
 						{
 							// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
-							HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+							int tmp = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 									captureCallback, null);
+							
+							Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + tmp);
 							if(isRAWCapture)
 								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
 										captureCallback, null);	

@@ -301,7 +301,7 @@ public class CapturePlugin extends PluginCapture
 		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 		
 		if(captureRAW)

@@ -215,6 +215,8 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_CAMERA_CONFIGURED					= 160;
 	public static final int				MSG_CAMERA_READY						= 161;
 	public static final int				MSG_CAMERA_STOPED						= 162;
+	
+	public static final int				MSG_APPLICATION_STOP					= 163;
 
 	// For HALv3 code version
 	public static final int				MSG_CAMERA_OPENED						= 16;
@@ -553,7 +555,8 @@ public class PluginManager implements PluginManagerInterface
 		MainScreen.getInstance().switchingMode(isRestart? false: true);
 //		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().pauseMain();
-		onStop();
+		MainScreen.getInstance().onStop();
+//		onStop();
 		onDestroy();
 
 		// clear lists and fill with new active plugins
@@ -571,10 +574,19 @@ public class PluginManager implements PluginManagerInterface
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		Editor prefsEditor = prefs.edit();
 		prefsEditor.putString(MainScreen.sDefaultModeName, mode.modeID);
+		//prefsEditor.commit();
+		
+//		if(mode.modeID.equals("video"))
+//		{
+//			prefsEditor.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+//			CameraController.useHALv3(false);
+//		}
 		prefsEditor.commit();
+		
 
 		onCreate();
-		onStart();
+		MainScreen.getInstance().onStart();
+//		onStart();
 		MainScreen.getInstance().switchingMode(isRestart? false: true);
 //		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().resumeMain();
@@ -1795,7 +1807,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 
 	@TargetApi(21)
-	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID)
+	public boolean addToSharedMemExifTagsFromCaptureResult(final CaptureResult result, final long SessionID, final int num)
 	{
 		String exposure_time = String.valueOf(result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
 		String sensitivity = String.valueOf(result.get(CaptureResult.SENSOR_SENSITIVITY));
@@ -1804,7 +1816,9 @@ public class PluginManager implements PluginManagerInterface
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
 
-		if (exposure_time != null && !exposure_time.equals("null"))
+		if (num != -1 && exposure_time != null && !exposure_time.equals("null"))
+			addToSharedMem("exiftag_exposure_time" + num + SessionID, exposure_time);
+		else if(exposure_time != null && !exposure_time.equals("null"))
 			addToSharedMem("exiftag_exposure_time" + SessionID, exposure_time);
 		if (sensitivity != null && !sensitivity.equals("null"))
 			addToSharedMem("exiftag_spectral_sensitivity" + SessionID, sensitivity);

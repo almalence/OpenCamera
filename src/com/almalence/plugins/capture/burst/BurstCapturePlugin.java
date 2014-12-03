@@ -285,7 +285,7 @@ public class BurstCapturePlugin extends PluginCapture
 		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
 		}
 		
 		if(captureRAW)

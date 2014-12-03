@@ -651,7 +651,7 @@ public class NightCapturePlugin extends PluginCapture
 			AdjustExposureCaptureBurst();			
 
 		if (result.getSequenceId() == requestID && imagesTaken == 0)
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
 	}
 	
 	@Override

@@ -1319,7 +1319,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (this.isFirstFrame)
 			{
-				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
 				this.isFirstFrame = false;
 			}
 		}

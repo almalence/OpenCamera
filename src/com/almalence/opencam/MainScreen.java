@@ -241,6 +241,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private static boolean				isCreating						= false;
 	private static boolean				mApplicationStarted				= false;
 	private static boolean				mCameraStarted					= false;
+	private static boolean				isForceClose					= false;
 
 	// Clicked mode id from widget.
 	public static final String			EXTRA_ITEM						= "WidgetModeID";
@@ -429,6 +430,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		thiz = this;
 
 		mApplicationStarted = false;
+		isForceClose		= false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation
@@ -675,6 +677,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(21)
 	public static void createImageReaders()
 	{
+		Log.e("MainScreen", "createImageReaders");
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 		ImageFormat.YUV_420_888, 2);
@@ -1158,6 +1161,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	protected void onStop()
 	{
+		Log.e("MainScreen", "onStop");
 		super.onStop();
 		switchingMode = false;
 		mApplicationStarted = false;
@@ -1174,6 +1178,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(21)
 	private void stopImageReaders()
 	{
+		Log.e("MainScreen", "stopImageReaders");
 		// IamgeReader should be closed
 		if (mImageReaderPreviewYUV != null)
 		{
@@ -1263,6 +1268,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
+					Log.e("MainScreen", "CameraController.useHALv3(" + prefs.getBoolean(getResources()
+							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus()? true: false) + ")");
 					CameraController.useHALv3(prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus()? true: false));
 					prefs.edit().putBoolean(getResources()
@@ -1391,6 +1398,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	protected void onPause()
 	{
+		Log.e("MainScreen", "onPause start");
 		super.onPause();
 		mApplicationStarted = false;
 
@@ -1419,6 +1427,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 //		CameraController.onPause(CameraController.isUseHALv3()? false : switchingMode);
 		CameraController.onPause(switchingMode);
 		switchingMode = false;
+		
+		if (CameraController.isUseHALv3())
+			stopImageReaders();
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
 
@@ -1427,6 +1438,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			shutterPlayer.release();
 			shutterPlayer = null;
 		}
+		
+		Log.e("MainScreen", "onPause finished");
 	}
 
 	public void pauseMain()
@@ -1728,6 +1741,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				PluginManager.getInstance().onCameraSetup();
 				guiManager.onCameraSetup();
 				MainScreen.mApplicationStarted = true;
+				
+				if(MainScreen.isForceClose)
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_APPLICATION_STOP, 0);
 			}
 
 			@Override
@@ -2066,6 +2082,20 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// <!-- -+-
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
+			Log.e("MainScren", "KeyEvent.KEYCODE_BACK");
+			String modeID = PluginManager.getInstance().getActiveModeID();
+			if (modeID.equals("video"))
+			{
+				PreferenceManager.getDefaultSharedPreferences(thiz).edit()
+				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						false).commit();
+				isForceClose = true;
+				PluginManager.getInstance().switchMode(PluginManager.getInstance().getActiveMode());
+//				PluginManager.getInstance().switchMode(ConfigParser.getInstance().getMode("single"));
+				
+				return false;
+			}
+			
 			if (AppRater.showRateDialogIfNeeded(this))
 			{
 				return true;
@@ -2112,6 +2142,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		PluginManager.getInstance().onShutter();
 	}
+	
+	public boolean isForceClose()
+	{
+		return isForceClose;
+	}
 
 	// >>Description
 	// message processor
@@ -2127,6 +2162,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		switch (msg.what)
 		{
+		case PluginManager.MSG_APPLICATION_STOP:
+			this.setResult(RESULT_OK);
+			this.finish();
+			break;
 		case MSG_RETURN_CAPTURED:
 			this.setResult(RESULT_OK);
 			this.finish();

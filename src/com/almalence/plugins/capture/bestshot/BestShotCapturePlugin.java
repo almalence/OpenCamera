@@ -205,11 +205,8 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (result.getSequenceId() == requestID)
-		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
-		}
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
 	}
 
 	@Override
