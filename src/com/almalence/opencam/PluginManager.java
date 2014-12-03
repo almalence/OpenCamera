@@ -555,8 +555,8 @@ public class PluginManager implements PluginManagerInterface
 		MainScreen.getInstance().switchingMode(isRestart? false: true);
 //		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().pauseMain();
-		MainScreen.getInstance().onStop();
-//		onStop();
+//		MainScreen.getInstance().onStop();
+		onStop();
 		onDestroy();
 
 		// clear lists and fill with new active plugins
@@ -585,8 +585,8 @@ public class PluginManager implements PluginManagerInterface
 		
 
 		onCreate();
-		MainScreen.getInstance().onStart();
-//		onStart();
+//		MainScreen.getInstance().onStart();
+		onStart();
 		MainScreen.getInstance().switchingMode(isRestart? false: true);
 //		MainScreen.getInstance().switchingMode(true);
 		MainScreen.getInstance().resumeMain();

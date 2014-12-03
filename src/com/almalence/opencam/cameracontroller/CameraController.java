@@ -194,6 +194,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Handler							messageHandler;
 	private static Handler							pauseHandler;
 
+	private static boolean							needRelaunch					= false;
+	public static boolean							isVideoModeLaunched				= false;
+	
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
@@ -295,6 +298,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		pauseHandler = new Handler(CameraController.getInstance());
 		
 		appStarted = false;
+		
+		isVideoModeLaunched = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -730,7 +735,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onStop()
 	{
-		// Does nothing yet
+		if(needRelaunch)
+		{
+			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit();
+			prefEditor.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
+		}
 	}
 
 	public static void onDestroy()
@@ -790,6 +799,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isHALv3;
 	}
 	
+	public static void needCameraRelaunch(boolean relaunch)
+	{
+		needRelaunch = relaunch;
+	}
+	
+	public static boolean isCameraRelaunch()
+	{
+		return needRelaunch;
+	}
+	
 	
 	public static boolean isSuperModePossible()
 	{
@@ -826,7 +845,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isUseSuperMode()
 	{
-		return isSuperModePossible() && isHALv3;
+		return (isSuperModePossible() && isHALv3) || isVideoModeLaunched;
 	}
 	
 	public static boolean isNexus()

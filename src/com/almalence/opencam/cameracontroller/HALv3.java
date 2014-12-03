@@ -1673,15 +1673,22 @@ public class HALv3
 				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.previewRequestBuilder.build(),
 											captureCallback, null);
 				
-//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 //				if(!CameraController.appStarted)
 //				{
 //					CameraController.appStarted = true;
 //					MainScreen.getInstance().relaunchCamera();
 //				}
-//				else
-				Log.e(TAG, "session.setRepeatingRequest success. Session configured");
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				if(CameraController.isCameraRelaunch())
+				{
+					CameraController.needCameraRelaunch(false);
+					MainScreen.getInstance().relaunchCamera();
+				}
+				else
+				{
+					Log.e(TAG, "session.setRepeatingRequest success. Session configured");
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				}
 			}
 			catch (final Exception e)
 			{

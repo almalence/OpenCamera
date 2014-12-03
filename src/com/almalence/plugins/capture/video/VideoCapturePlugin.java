@@ -851,11 +851,11 @@ public class VideoCapturePlugin extends PluginCapture
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putBoolean("ContinuousCapturing", true).commit();
 		
-		Log.e(TAG, "onResume. useHALv3(false)");
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-		.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-				false).commit();
-		CameraController.useHALv3(false);
+//		Log.e(TAG, "onResume. useHALv3(false)");
+//		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+//		.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+//				false).commit();
+//		CameraController.useHALv3(false);
 
 		shutterOff = false;
 		showRecording = false;
@@ -883,14 +883,18 @@ public class VideoCapturePlugin extends PluginCapture
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 
-		if(!MainScreen.thiz.isForceClose())
-		{
-			Log.e(TAG, "onPause. camera2Preference = " + camera2Preference);
-			prefs.edit()
-					.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-							camera2Preference).commit();
-		}
-//		CameraController.useHALv3(camera2Preference);
+//		if(!MainScreen.thiz.isForceClose())
+//		{
+//			Log.e(TAG, "onPause. camera2Preference = " + camera2Preference);
+//			prefs.edit()
+//					.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+//							camera2Preference).commit();
+//		}
+////		CameraController.useHALv3(camera2Preference);
+		
+		prefs.edit()
+		.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+				camera2Preference).commit();
 
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
@@ -947,9 +951,11 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
-		Log.e(TAG, "onStop. camera2Preference = " + camera2Preference);
-		if(camera2Preference && !MainScreen.thiz.isForceClose())
-			CameraController.useHALv3(true);
+//		Log.e(TAG, "onStop. camera2Preference = " + camera2Preference);
+//		if(camera2Preference && !MainScreen.thiz.isForceClose())
+//			CameraController.useHALv3(true);
+		if(camera2Preference)
+			CameraController.needCameraRelaunch(true);
 	}
 
 	@Override
@@ -1869,12 +1875,15 @@ public class VideoCapturePlugin extends PluginCapture
 
 		camera2Preference = prefs.getBoolean(
 				MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
-//		prefs.edit()
-//				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-//						false).commit();
+		prefs.edit()
+				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						false).commit();
 		
 		if(camera2Preference)
+		{
+			CameraController.isVideoModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);
+		}
 
 		videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
 

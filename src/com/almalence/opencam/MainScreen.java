@@ -1267,7 +1267,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					setScreenBrightness(maxScreenBrightnessPreference);
 					
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
-
+					
 					Log.e("MainScreen", "CameraController.useHALv3(" + prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus()? true: false) + ")");
 					CameraController.useHALv3(prefs.getBoolean(getResources()
@@ -2083,18 +2083,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
 			Log.e("MainScren", "KeyEvent.KEYCODE_BACK");
-			String modeID = PluginManager.getInstance().getActiveModeID();
-			if (modeID.equals("video"))
-			{
-				PreferenceManager.getDefaultSharedPreferences(thiz).edit()
-				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-						false).commit();
-				isForceClose = true;
-				PluginManager.getInstance().switchMode(PluginManager.getInstance().getActiveMode());
-//				PluginManager.getInstance().switchMode(ConfigParser.getInstance().getMode("single"));
-				
-				return false;
-			}
+//			String modeID = PluginManager.getInstance().getActiveModeID();
+//			if (modeID.equals("video"))
+//			{
+//				PreferenceManager.getDefaultSharedPreferences(thiz).edit()
+//				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+//						false).commit();
+//				isForceClose = true;
+//				PluginManager.getInstance().switchMode(PluginManager.getInstance().getActiveMode());
+////				PluginManager.getInstance().switchMode(ConfigParser.getInstance().getMode("single"));
+//				
+//				return false;
+//			}
 			
 			if (AppRater.showRateDialogIfNeeded(this))
 			{
