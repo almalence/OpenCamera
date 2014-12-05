@@ -240,6 +240,13 @@ public class AlmalenceStore
 					.show();
 			MainScreen.getInstance().showPromoRedeemed = false;
 		}
+		if (MainScreen.getInstance().showPromoRedeemedJulius)
+		{
+			Toast.makeText(MainScreen.getInstance(),
+					"Successfully unlocked Panorama and Multishot modes.", Toast.LENGTH_LONG)
+					.show();
+			MainScreen.getInstance().showPromoRedeemedJulius = false;
+		}
 
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);

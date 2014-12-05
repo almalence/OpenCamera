@@ -3182,6 +3182,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	public boolean	showPromoRedeemed	= false;
+	public boolean	showPromoRedeemedJulius	= false;
 
 	// enter promo code to get smth
 	public void enterPromo()
@@ -3219,6 +3220,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				String[] sep = MainScreen.getInstance().summary_SKU_PROMO.split(";");
 				String promo = editText.getText().toString();
 				boolean matchPromo = false;
+				
+				///////////////////////////////////////////////////////
+				//juliusapp promotion
+				if (promo.equalsIgnoreCase("MONOMO")||promo.equalsIgnoreCase("RISPARMI"))
+				{
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					panoramaPurchased = true;
+					objectRemovalBurstPurchased = true;
+
+					Editor prefsEditor = prefs.edit();
+					prefsEditor.putBoolean("plugin_almalence_panorama", true);
+					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+					prefsEditor.commit();
+					dialog.dismiss();
+					guiManager.hideStore();
+					showPromoRedeemedJulius = true;
+					guiManager.showStore();
+					return;
+				}					
+				///////////////////////////////////////////////////////
 
 				for (int i = 0; i < sep.length; i++)
 				{
