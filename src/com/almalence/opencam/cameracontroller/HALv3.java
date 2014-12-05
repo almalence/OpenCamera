@@ -204,6 +204,7 @@ public class HALv3
 			Log.d(TAG, "Stop capture session repeating. Close capture session");
 			HALv3.getInstance().mCaptureSession.stopRepeating();
 			HALv3.getInstance().mCaptureSession.close();
+			Log.d(TAG, "Stop capture session repeating. Capture session has been closed");
 			HALv3.getInstance().mCaptureSession = null;
 		}
 		catch (final CameraAccessException e)
@@ -219,8 +220,9 @@ public class HALv3
 		finally
 		{
 			HALv3.getInstance().camDevice.close();
+			Log.e(TAG, "Stop capture session repeating. Camera device has been closed");
 			HALv3.getInstance().camDevice = null;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
 		}
 	}
 
@@ -1638,6 +1640,13 @@ public class HALv3
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
 //			dumpCameraCharacteristics();
+		}
+		
+		@Override
+		public void onClosed(CameraDevice arg0)
+		{
+			Log.d(TAG, "CameraDevice.StateCallback.onClosed");
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
 		}
 	};
 	

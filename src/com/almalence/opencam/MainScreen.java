@@ -2263,6 +2263,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			// preview.getHolder().getSurface().lockCanvas(null).drawColor(Color.BLACK);
 			glView.onPause();
+			glView.destroyDrawingCache();
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).removeView(glView);
 			glView = null;
 		}
