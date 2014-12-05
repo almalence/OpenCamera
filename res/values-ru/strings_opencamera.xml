@@ -38,6 +38,10 @@
     <string name="pref_timestamp_fontsize_normal">Средний</string>
     <string name="pref_timestamp_fontsize_big">Большой</string>
     
+    <string name="pref_shot_on_tap_none">Нет</string>
+    <string name="pref_shot_on_tap_one_click">Один клик</string>
+    <string name="pref_shot_on_tap_double_click">Двойной клик</string>
+    
     <string name="save_to_phone">Телефон</string>
     <string name="save_to_memorycard">Карта памяти</string>
     <string name="save_to_custom">Выбрать папку</string>

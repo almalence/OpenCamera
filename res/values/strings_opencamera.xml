@@ -46,6 +46,10 @@
     <string name="pref_timestamp_fontsize_normal">Medium</string>
     <string name="pref_timestamp_fontsize_big">Big</string>
     
+    <string name="pref_shot_on_tap_none">None</string>
+    <string name="pref_shot_on_tap_one_click">One click</string>
+    <string name="pref_shot_on_tap_double_click">Double click</string>
+    
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>
     <string name="save_to_custom">Custom folder</string>
