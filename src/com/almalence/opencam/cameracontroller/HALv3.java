@@ -69,14 +69,16 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-import com.almalence.opencam.CameraParameters;
+
 /* <!-- +++
 import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.CameraParameters;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.CameraParameters;
 //-+- -->
 
 //HALv3 camera's objects

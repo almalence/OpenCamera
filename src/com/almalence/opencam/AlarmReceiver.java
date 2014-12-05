@@ -22,10 +22,9 @@ import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 //<!-- -+-
+import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 //-+- -->
-
 /* <!-- +++
  import com.almalence.opencam_plus.ui.SelfTimerAndPhotoTimeLapse;
  +++ --> */

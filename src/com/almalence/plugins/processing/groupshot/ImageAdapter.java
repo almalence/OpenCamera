@@ -39,6 +39,8 @@ import android.widget.ImageView;
 /* <!-- +++
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;

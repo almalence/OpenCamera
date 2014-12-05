@@ -21,6 +21,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 public interface PluginManagerInterface
 {

@@ -64,8 +64,8 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
-import com.almalence.plugins.processing.night.AlmaShotNight;
 //-+- -->
+import com.almalence.plugins.processing.night.AlmaShotNight;
 
 import com.almalence.util.ImageConversion;
 

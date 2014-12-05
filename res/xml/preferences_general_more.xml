@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!-- -+- -->
+    <!-- -+-  -->
     <PreferenceScreen
         android:fragment="com.almalence.opencam.Fragment"
         android:summary="@string/Pref_SaveConfiguration_Summary"
@@ -9,9 +9,8 @@
             android:name="type"
             android:value="save_configuration" />
     </PreferenceScreen>
-    <!-- -+- -->
-    <!--
-    +++
+    <!--  -+- -->
+    <!-- +++
 	<PreferenceScreen
 		 android:fragment="com.almalence.opencam_plus.Fragment"
 		 android:title="@string/Pref_SaveConfiguration_Title"
@@ -20,8 +19,7 @@
 		 	android:name="type" 
 		 	android:value="save_configuration"/>
 	</PreferenceScreen>
-	+++
-    -->
+	+++ -->
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/Preference_CaptureRAWValue"
