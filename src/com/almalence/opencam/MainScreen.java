@@ -704,6 +704,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for RAW still images
 		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(),
 				ImageFormat.RAW_SENSOR, 2);
+		
+		thiz.guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
 
 	}
 
@@ -1865,7 +1867,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// sfl.add(mImageReaderJPEG.getSurface());
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
-		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
+//		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
 		// guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280,
 		// 960));
 

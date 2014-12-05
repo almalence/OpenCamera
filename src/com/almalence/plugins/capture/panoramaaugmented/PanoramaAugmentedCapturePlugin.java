@@ -458,9 +458,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		MainScreen.getInstance().muteShutter(false);
 
-		final Message msg = new Message();
-		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
-		MainScreen.getMessageHandler().sendMessage(msg);
+//		final Message msg = new Message();
+//		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+//		MainScreen.getMessageHandler().sendMessage(msg);
 
 		showGyroWarnOnce = false;
 		aeLockedByPanorama = false;
@@ -1049,6 +1049,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void startCapture()
 	{
+		final Message msg = new Message();
+		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+		MainScreen.getMessageHandler().sendMessage(msg);
+		
 		this.isFirstFrame = true;
 
 		this.setFocused();
@@ -1471,6 +1475,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
 			MainScreen.getMessageHandler().sendMessage(message);
+			
+			final Message msg = new Message();
+			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
+			MainScreen.getMessageHandler().sendMessage(msg);
 
 		}
 	}
