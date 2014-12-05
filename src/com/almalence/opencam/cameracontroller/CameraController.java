@@ -603,7 +603,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		Log.e(TAG, "modeID = "+ modeID);
 		if (modeID.equals("video"))
 			isHALv3 = false;
 //		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
@@ -683,7 +682,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onPause(boolean isModeSwitching)
 	{
-		Log.e(TAG, "onPause. isModeSwitching = " + isModeSwitching);
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
 		{
@@ -701,7 +699,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		// reset torch
 		if (!CameraController.isHALv3)
 		{
-			Log.e(TAG, "onPause. isHALv3 = false");
 			try
 			{
 				Camera.Parameters p = cameraController.getCameraParameters();
@@ -717,15 +714,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (camera != null)
 			{
-				Log.e(TAG, "onPause. camera good");
 				camera.setPreviewCallback(null);
 				if (!isModeSwitching)
 				{
-					Log.e(TAG, "onPause. release camera");
 					camera.stopPreview();
-					Log.e(TAG, "onPause. preview stopped");
 					camera.release();
-					Log.e(TAG, "onPause. camera released");
 					camera = null;
 				}
 			}
@@ -790,7 +783,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void useHALv3(boolean useHALv3)
 	{
-		Log.e(TAG, "useHALv3(" + useHALv3 + ")");
 		isHALv3 = useHALv3;
 	}
 

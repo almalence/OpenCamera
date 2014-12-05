@@ -192,7 +192,6 @@ public class HALv3
 
 	public static void onPauseHALv3()
 	{
-		Log.e(TAG, "onPause");
 		// HALv3 code -----------------------------------------
 		// if ((HALv3.getInstance().availCallback != null) &&
 		// (HALv3.getInstance().manager != null))
@@ -201,10 +200,8 @@ public class HALv3
 		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
 		try
 		{
-			Log.d(TAG, "Stop capture session repeating. Close capture session");
 			HALv3.getInstance().mCaptureSession.stopRepeating();
 			HALv3.getInstance().mCaptureSession.close();
-			Log.d(TAG, "Stop capture session repeating. Capture session has been closed");
 			HALv3.getInstance().mCaptureSession = null;
 		}
 		catch (final CameraAccessException e)
@@ -220,7 +217,6 @@ public class HALv3
 		finally
 		{
 			HALv3.getInstance().camDevice.close();
-			Log.e(TAG, "Stop capture session repeating. Camera device has been closed");
 			HALv3.getInstance().camDevice = null;
 //			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
 		}

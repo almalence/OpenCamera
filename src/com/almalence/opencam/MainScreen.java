@@ -1167,7 +1167,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	protected void onStop()
 	{
-		Log.e("MainScreen", "onStop");
 		super.onStop();
 		switchingMode = false;
 		mApplicationStarted = false;
@@ -1184,7 +1183,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@TargetApi(21)
 	private void stopImageReaders()
 	{
-		Log.e("MainScreen", "stopImageReaders");
 		// IamgeReader should be closed
 		if (mImageReaderPreviewYUV != null)
 		{
@@ -1274,10 +1272,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					Log.e("MainScreen",
-							"CameraController.useHALv3("
-									+ prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-											CameraController.isNexus() ? true : false) + ")");
 					CameraController.useHALv3(prefs.getBoolean(getResources()
 							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
 					prefs.edit()
@@ -1407,7 +1401,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	protected void onPause()
 	{
-		Log.e("MainScreen", "onPause start");
 		super.onPause();
 		mApplicationStarted = false;
 
@@ -1448,8 +1441,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			shutterPlayer.release();
 			shutterPlayer = null;
 		}
-
-		Log.e("MainScreen", "onPause finished");
 	}
 
 	public void pauseMain()
@@ -1475,8 +1466,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
-
-		Log.e("MainScreen", "SurfaceChanged." + width + "x" + height + " isCreating? " + isCreating);
 		mCameraSurface = holder.getSurface();
 
 		if (isCameraConfiguring)
@@ -1682,7 +1671,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				}
 			} catch (RuntimeException e)
 			{
-				Log.d("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
+				Log.d("MainScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 			}
 
 			if (cp != null)
@@ -1929,7 +1918,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		surfaceCreated = true;
 
-		Log.e("MainScreen", "SurfaceCreated");
 		mCameraSurface = surfaceHolder.getSurface();
 
 		Log.d("MainScreen", "SURFACE CREATED");
@@ -2109,21 +2097,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// <!-- -+-
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			Log.e("MainScren", "KeyEvent.KEYCODE_BACK");
-			// String modeID = PluginManager.getInstance().getActiveModeID();
-			// if (modeID.equals("video"))
-			// {
-			// PreferenceManager.getDefaultSharedPreferences(thiz).edit()
-			// .putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
-			// false).commit();
-			// isForceClose = true;
-			// PluginManager.getInstance().switchMode(PluginManager.getInstance().getActiveMode());
-			// //
-			// PluginManager.getInstance().switchMode(ConfigParser.getInstance().getMode("single"));
-			//
-			// return false;
-			// }
-
 			if (AppRater.showRateDialogIfNeeded(this))
 			{
 				return true;
@@ -2212,21 +2185,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 			break;
 		case PluginManager.MSG_CAMERA_OPENED:
-			Log.e("MainScreen", "PluginManager.MSG_CAMERA_OPENED");
 			if (mCameraStarted)
-			{
-				Log.e("MainScreen", "PluginManager.MSG_CAMERA_OPENED. mCameraStarted = true");
 				break;
-			}
 		case PluginManager.MSG_SURFACE_READY:
 			{
-				Log.e("MainScreen", "PluginManager.MSG_SURFACE_READY. mCameraStarted = " + mCameraStarted);
 				// if both surface is created and camera device is opened
 				// - ready to set up preview and other things
 				// if (surfaceCreated && (HALv3.getCamera2() != null))
 				if (surfaceCreated)
 				{
-					Log.e("MainScreen", "PluginManager.MSG_SURFACE_READY. surfaceCreated = true");
 					configureCamera();
 					if (!CameraController.isUseHALv3())
 					{
@@ -2235,8 +2202,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						// mCameraStarted = true;
 					}
 					mCameraStarted = true;
-				} else
-					Log.e("MainScreen", "PluginManager.MSG_SURFACE_READY. surfaceCreated = false");
+				}
 			}
 			break;
 		case PluginManager.MSG_SURFACE_CONFIGURED:
@@ -2245,12 +2211,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				PluginManager.getInstance().onGUICreate();
 				MainScreen.getGUIManager().onGUICreate();
 				mCameraStarted = true;
-				Log.e("MainScreen", "PluginManager.MSG_SURFACE_CONFIGURED. mCameraStarted = true");
 			}
 			break;
 		case PluginManager.MSG_CAMERA_STOPED:
 			mCameraStarted = false;
-			Log.e("MainScreen", "PluginManager.MSG_CAMERA_STOPED. mCameraStarted = false");
 			break;
 		default:
 			PluginManager.getInstance().handleMessage(msg);
