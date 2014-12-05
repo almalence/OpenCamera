@@ -50,7 +50,7 @@
     
     <string name="almalence_gui_selected">выбран</string>
     
-    <!-- <string name="sceneAuto">Авто</string>
+     <string name="sceneAuto">Авто</string>
     <string name="sceneAction">Движение</string>
     <string name="scenePortrait">Портрет</string>
     <string name="sceneLandscape">Ландшафт</string>
@@ -93,7 +93,7 @@
     <string name="flashRedEye">red-eye</string>
     <string name="flashTorch">фонарик</string>
     
-    <string name="isoAuto">авто</string> -->
+    <string name="isoAuto">авто</string> 
     
     <string name="settings_mode_scene">Сцена</string>
     <string name="settings_mode_wb">Баланс белого</string>
