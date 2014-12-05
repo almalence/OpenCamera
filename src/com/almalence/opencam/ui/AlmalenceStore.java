@@ -242,8 +242,8 @@ public class AlmalenceStore
 		}
 		if (MainScreen.getInstance().showPromoRedeemedJulius)
 		{
-			Toast.makeText(MainScreen.getInstance(),
-					"Successfully unlocked Panorama and Multishot modes.", Toast.LENGTH_LONG)
+			Toast.makeText(MainScreen.getInstance(),MainScreen.getInstance().getResources()
+					.getString(R.string.promoRedeemedJulius), Toast.LENGTH_LONG)
 					.show();
 			MainScreen.getInstance().showPromoRedeemedJulius = false;
 		}
