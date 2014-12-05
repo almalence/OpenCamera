@@ -102,7 +102,7 @@ public class AppWidgetNotifier
 
 		if (launch_count >= LAUNCHES_UNTIL_PROMPT)
 		{
-			if (System.currentTimeMillis() >= date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+			if (System.currentTimeMillis() >= date_firstLaunch + Long.valueOf((long)DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 			{
 				showNotifierDialog(mContext, prefs);
 

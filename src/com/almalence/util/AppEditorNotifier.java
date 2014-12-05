@@ -80,7 +80,7 @@ public class AppEditorNotifier
 			return true;
 		}
 
-		if (System.currentTimeMillis() < date_firstLaunch + (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
+		if (System.currentTimeMillis() < date_firstLaunch + Long.valueOf((long)DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 		{
 			MainScreen.getInstance().guiManager.openGallery(true);
 			return true;
