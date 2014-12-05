@@ -240,6 +240,13 @@ public class AlmalenceStore
 					.show();
 			MainScreen.getInstance().showPromoRedeemed = false;
 		}
+		if (MainScreen.getInstance().showPromoRedeemedJulius)
+		{
+			Toast.makeText(MainScreen.getInstance(),MainScreen.getInstance().getResources()
+					.getString(R.string.promoRedeemedJulius), Toast.LENGTH_LONG)
+					.show();
+			MainScreen.getInstance().showPromoRedeemedJulius = false;
+		}
 
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);

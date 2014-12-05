@@ -281,5 +281,7 @@
 	<string name="Preference_QuickControlButton2">quickControlButton2</string>
 	<string name="Preference_QuickControlButton3">quickControlButton3</string>
 	<string name="Preference_QuickControlButton4">quickControlButton4</string>
-	
+
+	<string name="promoRedeemedJulius">Successfully unlocked Panorama and Multishot modes.</string>
+		
 </resources>

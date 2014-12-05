@@ -360,10 +360,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				PanoramaAugmentedCapturePlugin.this.setMode();
 				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
 						.getMainContext());
-				Editor editor = prefs.edit();
-				editor.putBoolean(sModePref, modeSweep);
-				editor.commit();
-
+				prefs.edit().putBoolean(sModePref, modeSweep).commit();
 			}
 		});
 		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);

@@ -92,5 +92,6 @@
 	<string name="okText">OK</string>
 	
 	<string name="moreText">Más...</string>
-	
+
+	<string name="promoRedeemedJulius">Desbloqueo de fotos en modo panorama y multishots.</string>	
 </resources>
