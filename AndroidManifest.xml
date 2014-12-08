@@ -110,7 +110,12 @@
 		    </intent-filter>            
 		</receiver>
 		
+		<!-- +++
+		<receiver android:name="com.almalence.opencam_plus.AlarmReceiver"></receiver>
+		+++ -->
+		<!-- -+-  -->
 		<receiver android:name="com.almalence.opencam.AlarmReceiver"></receiver>
+		<!--  -+- -->
 
 		<!-- Uncomment for Amazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
