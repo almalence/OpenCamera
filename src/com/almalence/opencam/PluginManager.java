@@ -3303,11 +3303,11 @@ public class PluginManager implements PluginManagerInterface
 		paint.setColor(foreground);
 		if (resText.length > 0)
 		{
-			canvas.drawText(resText[0], imageWidth, imageHeight - 2 * textHeight, paint);
+			canvas.drawText(resText[0], imageWidth - 5*padding, imageHeight - 2 * textHeight, paint);
 		}
 		if (resText.length > 1)
 		{
-			canvas.drawText(resText[1], imageWidth - padding, imageHeight - textHeight / 2, paint);
+			canvas.drawText(resText[1], imageWidth - 5*padding, imageHeight - textHeight / 2, paint);
 		}
 	}
 
