@@ -69,10 +69,10 @@ public final class CameraParameters
 	
 	//FLASH
 	public static final int FLASH_MODE_OFF = 0;
-	public static final int FLASH_MODE_AUTO = 1;
-	public static final int FLASH_MODE_SINGLE = 2;
-	public static final int FLASH_MODE_REDEYE = 3;
-	public static final int FLASH_MODE_TORCH = 4;
+	public static final int FLASH_MODE_AUTO = 3;
+	public static final int FLASH_MODE_SINGLE = 1;
+	public static final int FLASH_MODE_REDEYE = 4;
+	public static final int FLASH_MODE_TORCH = 2;
 	
 	//ISO	
 	public static final int ISO_50 = 0;
@@ -83,6 +83,8 @@ public final class CameraParameters
 	public static final int ISO_800 = 5;
 	public static final int ISO_1600 = 6;
 	public static final int ISO_3200 = 7;
+	public static final int ISO_6400 = 8;
+	public static final int ISO_10000 = 9;
 	
 	//Possible names of iso in Camera.Parameters variable
 	public static final String isoParam = "iso";

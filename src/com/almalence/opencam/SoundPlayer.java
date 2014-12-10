@@ -107,7 +107,7 @@ public class SoundPlayer implements Runnable
 		this.mContext = mContext;
 
 		mAfd = afd;
-		mAudioStreamType = AudioManager.STREAM_MUSIC;
+		mAudioStreamType = AudioManager.STREAM_NOTIFICATION;
 	}
 
 	public SoundPlayer(Context mContext, AssetFileDescriptor afd, boolean enforceAudible)
@@ -120,7 +120,7 @@ public class SoundPlayer implements Runnable
 			mAudioStreamType = 7;
 		} else
 		{
-			mAudioStreamType = AudioManager.STREAM_MUSIC;
+			mAudioStreamType = AudioManager.STREAM_NOTIFICATION;
 		}
 	}
 

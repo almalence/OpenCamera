@@ -462,7 +462,10 @@ public class PluginManager implements PluginManagerInterface
 
 	public String getActiveModeID()
 	{
-		return getActiveMode().modeID;
+		Mode mode = getActiveMode();
+		if(mode != null)
+			return mode.modeID;
+		return "";
 	}
 
 	public Mode getActiveMode()
@@ -544,6 +547,11 @@ public class PluginManager implements PluginManagerInterface
 	public void setSwitchModeType(boolean restart)
 	{
 		isRestart = restart;
+	}
+	
+	public boolean isRestart()
+	{
+		return isRestart;
 	}
 
 	public void switchMode(Mode mode)

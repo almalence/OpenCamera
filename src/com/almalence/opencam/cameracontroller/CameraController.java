@@ -140,6 +140,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static String							iso800;
 	private static String							iso1600;
 	private static String							iso3200;
+	private static String							iso6400;
+	private static String							iso10000;
 
 	private static String							isoAuto_2;
 	private static String							iso50_2;
@@ -149,6 +151,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static String							iso800_2;
 	private static String							iso1600_2;
 	private static String							iso3200_2;
+	private static String							iso6400_2;
+	private static String							iso10000_2;
 
 	private static String							meteringAuto;
 	private static String							meteringMatrix;
@@ -353,6 +357,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		iso800 = mainContext.getResources().getString(R.string.iso800System);
 		iso1600 = mainContext.getResources().getString(R.string.iso1600System);
 		iso3200 = mainContext.getResources().getString(R.string.iso3200System);
+		iso6400 = mainContext.getResources().getString(R.string.iso6400System);
+		iso10000 = mainContext.getResources().getString(R.string.iso10000System);
 
 		isoAuto_2 = mainContext.getResources().getString(R.string.isoAutoDefaultSystem);
 		iso50_2 = mainContext.getResources().getString(R.string.iso50DefaultSystem);
@@ -362,6 +368,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		iso800_2 = mainContext.getResources().getString(R.string.iso800DefaultSystem);
 		iso1600_2 = mainContext.getResources().getString(R.string.iso1600DefaultSystem);
 		iso3200_2 = mainContext.getResources().getString(R.string.iso3200DefaultSystem);
+		iso6400_2 = mainContext.getResources().getString(R.string.iso6400DefaultSystem);
+		iso10000_2 = mainContext.getResources().getString(R.string.iso10000DefaultSystem);
 
 		meteringAuto = mainContext.getResources().getString(R.string.meteringAutoSystem);
 		meteringMatrix = mainContext.getResources().getString(R.string.meteringMatrixSystem);
@@ -502,6 +510,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				add(CameraParameters.ISO_800);
 				add(CameraParameters.ISO_1600);
 				add(CameraParameters.ISO_3200);
+				add(CameraParameters.ISO_6400);
+				add(CameraParameters.ISO_10000);
 			}
 		};
 
@@ -540,6 +550,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(CameraParameters.ISO_800, iso800);
 				put(CameraParameters.ISO_1600, iso1600);
 				put(CameraParameters.ISO_3200, iso3200);
+				put(CameraParameters.ISO_6400, iso6400);
+				put(CameraParameters.ISO_10000, iso10000);
 			}
 		};
 
@@ -554,6 +566,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(CameraParameters.ISO_800, iso800_2);
 				put(CameraParameters.ISO_1600, iso1600_2);
 				put(CameraParameters.ISO_3200, iso3200_2);
+				put(CameraParameters.ISO_6400, iso6400_2);
+				put(CameraParameters.ISO_10000, iso10000_2);
 			}
 		};
 
@@ -568,6 +582,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(CameraParameters.ISO_800, 800);
 				put(CameraParameters.ISO_1600, 1600);
 				put(CameraParameters.ISO_3200, 3200);
+				put(CameraParameters.ISO_6400, 6400);
+				put(CameraParameters.ISO_10000, 10000);
 			}
 		};
 
@@ -582,6 +598,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(iso800, CameraParameters.ISO_800);
 				put(iso1600, CameraParameters.ISO_1600);
 				put(iso3200, CameraParameters.ISO_3200);
+				put(iso6400, CameraParameters.ISO_6400);
+				put(iso10000, CameraParameters.ISO_10000);
 			}
 		};
 
@@ -596,6 +614,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(iso800_2, CameraParameters.ISO_800);
 				put(iso1600_2, CameraParameters.ISO_1600);
 				put(iso3200_2, CameraParameters.ISO_3200);
+				put(iso6400_2, CameraParameters.ISO_6400);
+				put(iso10000_2, CameraParameters.ISO_10000);
 			}
 		};
 
@@ -1531,21 +1551,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public static void setVideoStabilization(boolean stabilization)
 	{
-		if (camera != null && camera.getParameters() != null
-				&& camera.getParameters().isVideoStabilizationSupported())
+		if (!CameraController.isHALv3)
 		{
-			camera.getParameters().setVideoStabilization(stabilization);
-			setCameraParameters(camera.getParameters());
-		}
+			if (camera != null && camera.getParameters() != null
+					&& camera.getParameters().isVideoStabilizationSupported())
+			{
+				camera.getParameters().setVideoStabilization(stabilization);
+				setCameraParameters(camera.getParameters());
+			}
+		}		
 	}
 
 	@TargetApi(15)
 	public static boolean getVideoStabilizationSupported()
 	{
-		if (camera != null && camera.getParameters() != null)
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null || ( camera != null && camera.getParameters() == null))
+				return false;
+			
 			return camera.getParameters().isVideoStabilizationSupported();
-
-		return false;
+		}
+		else
+			return false;
 	}
 
 	public static boolean isVideoStabilizationSupported()
@@ -1756,8 +1784,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean getSceneModeSupported()
 	{
 		int[] supported_scene = getSupportedSceneModesInternal();
-		return supported_scene != null && supported_scene.length > 0
-				&& supported_scene[0] != CameraParameters.SCENE_MODE_AUTO;
+		
+		if(supported_scene != null && supported_scene.length == 1)
+			return supported_scene[0] != CameraParameters.SCENE_MODE_AUTO;
+		
+		return supported_scene != null && supported_scene.length > 0;
 	}
 
 	public static boolean isSceneModeSupported()
@@ -2330,7 +2361,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.setCameraFocusModeHALv3(mode);
 	}
 
-	public static void setCameraFlashMode(int mode)
+	public static void setCameraFlashMode(final int mode)
 	{
 		if (!CameraController.isHALv3)
 		{
@@ -2338,12 +2369,34 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					Camera.Parameters params = camera.getParameters();
+					final Camera.Parameters params = camera.getParameters();
 					if (params != null)
 					{
-						String flashmode = CameraController.mode_flash.get(mode);
-						params.setFlashMode(flashmode);
-						setCameraParameters(params);
+						String currentFlash = params.getFlashMode();
+						if(currentFlash.equals(flashTorch))
+						{
+							params.setFlashMode(flashOff);
+							setCameraParameters(params);
+							new CountDownTimer(10, 10)
+							{
+								public void onTick(long millisUntilFinished)
+								{
+								}
+
+								public void onFinish()
+								{
+									String flashmode = CameraController.mode_flash.get(mode);
+									params.setFlashMode(flashmode);
+									setCameraParameters(params);
+								}
+							}.start();
+						}
+						else
+						{
+							String flashmode = CameraController.mode_flash.get(mode);
+							params.setFlashMode(flashmode);
+							setCameraParameters(params);
+						}
 					}
 				}
 				catch(Exception e)
@@ -3103,6 +3156,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		case MSG_TAKE_IMAGE:
 			synchronized (SYNC_OBJECT)
 			{
+				if(imageSize == null)
+				{
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, null);
+					break;
+				}
+				
 				int imageWidth = imageSize.getWidth();
 				int imageHeight = imageSize.getHeight();
 				int previewWidth = MainScreen.getPreviewWidth();

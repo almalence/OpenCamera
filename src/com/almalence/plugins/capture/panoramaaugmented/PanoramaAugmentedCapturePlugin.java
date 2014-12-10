@@ -78,6 +78,7 @@ import com.almalence.util.HeapUtil;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -361,6 +362,22 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
 						.getMainContext());
 				prefs.edit().putBoolean(sModePref, modeSweep).commit();
+				
+//				PluginManager.getInstance().setSwitchModeType(true);
+//				MainScreen.getInstance().relaunchCamera();
+				new CountDownTimer(100, 100)
+				{
+					public void onTick(long millisUntilFinished)
+					{
+						// Not used
+					}
+
+					public void onFinish()
+					{
+						PluginManager.getInstance().switchMode(
+								ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
+					}
+				}.start();
 			}
 		});
 		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);
@@ -598,7 +615,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if (this.modeSweep)
 		{
 			previewSize = getOptimalSweepPreviewSize(CameraController.getSupportedPreviewSizes());
-		} else
+		}
+		else
 		{
 			previewSize = this.getOptimalPreviewSize(CameraController.getSupportedPreviewSizes(),
 					this.pictureWidth, this.pictureHeight);
