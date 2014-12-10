@@ -462,7 +462,10 @@ public class PluginManager implements PluginManagerInterface
 
 	public String getActiveModeID()
 	{
-		return getActiveMode().modeID;
+		Mode mode = getActiveMode();
+		if(mode != null)
+			return mode.modeID;
+		return "";
 	}
 
 	public Mode getActiveMode()
