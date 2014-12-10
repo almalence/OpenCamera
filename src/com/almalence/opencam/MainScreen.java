@@ -1355,7 +1355,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public void relaunchCamera()
 	{
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseHALv3() || PluginManager.getInstance().isRestart())
 		{
 			new CountDownTimer(100, 100)
 			{

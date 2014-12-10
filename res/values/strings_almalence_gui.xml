@@ -106,6 +106,8 @@
     <string name="iso800">"ISO800"</string>
     <string name="iso1600">ISO1600</string>
     <string name="iso3200">ISO3200</string>
+    <string name="iso6400">ISO6400</string>
+    <string name="iso10000">ISO10000</string>
     
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">action</string>
@@ -205,6 +207,8 @@
     <string name="iso800System">"ISO800"</string>
     <string name="iso1600System">ISO1600</string>
     <string name="iso3200System">ISO3200</string>
+    <string name="iso6400System">ISO6400</string>
+    <string name="iso10000System">ISO10000</string>
     
     <string name="isoAutoKey">0_auto</string>
     <string name="iso50Key">1_ISO50</string>
@@ -214,6 +218,8 @@
     <string name="iso800Key">"5_ISO800"</string>
     <string name="iso1600Key">6_ISO1600</string>
     <string name="iso3200Key">7_ISO3200</string>
+    <string name="iso6400Key">8_ISO6400</string>
+    <string name="iso10000Key">9_ISO10000</string>
     
     <string name="isoAutoDefaultSystem">auto</string>
     <string name="iso50DefaultSystem">50</string>    
@@ -223,6 +229,8 @@
     <string name="iso800DefaultSystem">"800"</string>
     <string name="iso1600DefaultSystem">1600</string>
     <string name="iso3200DefaultSystem">3200</string>
+    <string name="iso6400DefaultSystem">6400</string>
+    <string name="iso10000DefaultSystem">10000</string>
     
     <string name="meteringAutoSystem">Auto</string>
     <string name="meteringMatrixSystem">Matrix</string>

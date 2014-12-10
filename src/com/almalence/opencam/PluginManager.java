@@ -544,6 +544,11 @@ public class PluginManager implements PluginManagerInterface
 	{
 		isRestart = restart;
 	}
+	
+	public boolean isRestart()
+	{
+		return isRestart;
+	}
 
 	public void switchMode(Mode mode)
 	{

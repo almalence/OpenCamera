@@ -825,19 +825,28 @@ public class HALv3
 		{
 			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 			int max_iso = iso.getUpper();
+			int min_iso = iso.getLower();
 
+			int iso_count = 0;
 			int index = 0;
-			for (index = 0; index < CameraController.getIsoValuesList().size(); index++)
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
 			{
-				if (max_iso <= CameraController.getIsoValuesList().get(index))
-				{
-					++index;
-					break;
-				}
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					++iso_count;
 			}
-			int[] iso_values = new int[index];
-			for (int i = 0; i < index; i++)
-				iso_values[i] = CameraController.getIsoValuesList().get(i).byteValue();
+			int[] iso_values = new int[iso_count+1];
+//			for (int i = 0; i < index; i++)
+//				iso_values[i] = CameraController.getIsoValuesList().get(i).byteValue();
+			
+			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
+			int iso_index = 1;
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+			{
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
+			}
 
 			if (iso_values.length > 0)
 				return iso_values;
@@ -848,13 +857,14 @@ public class HALv3
 
 	public static boolean isISOModeSupportedHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
-		{
-			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-			if (iso.getLower() == iso.getUpper())
-				return false;
-			return true;
-		}
+		//CLOSED until manual exposure metering will be researched
+//		if (HALv3.getInstance().camCharacter != null && HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+//		{
+//			Range<Integer> iso = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+//			if (iso.getLower() == iso.getUpper())
+//				return false;
+//			return true;
+//		}
 
 		return false;
 	}
@@ -889,7 +899,16 @@ public class HALv3
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
 			}
 			else
+			{
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+//				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+//				
+//				Range<Long> expRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+//				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (expRange.getUpper()+expRange.getLower())/2);
+//				
+//				Long frameDuration = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION);
+//				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION, frameDuration);
+			}
 		
 			try
 			{
@@ -944,10 +963,8 @@ public class HALv3
 
 	public static void setCameraFocusModeHALv3(int mode)
 	{
-		Log.e(TAG, "setCameraFocusModeHALv3 start = " + mode);
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			Log.e(TAG, "setCameraFocusModeHALv3 = " + mode);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
 			try
 			{
@@ -976,20 +993,30 @@ public class HALv3
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
-			try
+			int currentFlash = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
+			.getInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_AUTO);
+			
+			int previewFlash = mode;
+			if(mode != CameraParameters.FLASH_MODE_TORCH && currentFlash == CameraParameters.FLASH_MODE_TORCH)
+				previewFlash = CameraParameters.FLASH_MODE_OFF;
+			
+			if(mode == CameraParameters.FLASH_MODE_TORCH || currentFlash == CameraParameters.FLASH_MODE_TORCH)
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback,
-						null);
-			}
-			catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			}
-			catch(IllegalStateException e2)
-			{
-				e2.printStackTrace();
+				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, previewFlash);
+				try
+				{
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+							HALv3.previewRequestBuilder.build(), captureCallback,
+							null);
+				}
+				catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+				catch(IllegalStateException e2)
+				{
+					e2.printStackTrace();
+				}
 			}
 		}
 

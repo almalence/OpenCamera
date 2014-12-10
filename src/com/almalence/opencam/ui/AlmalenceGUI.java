@@ -317,6 +317,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																							R.drawable.gui_almalence_settings_iso_1600);
 																					put(CameraParameters.ISO_3200,
 																							R.drawable.gui_almalence_settings_iso_3200);
+																					put(CameraParameters.ISO_6400,
+																							R.drawable.gui_almalence_settings_iso_6400);
+																					put(CameraParameters.ISO_10000,
+																							R.drawable.gui_almalence_settings_iso_10000);																					
 																				}
 																			};
 
@@ -371,6 +375,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																							.getString(
 																									R.string.iso3200DefaultSystem),
 																							R.drawable.gui_almalence_settings_iso_3200);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso6400DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_6400);
+																					put(MainScreen
+																							.getInstance()
+																							.getResources()
+																							.getString(
+																									R.string.iso10000DefaultSystem),
+																							R.drawable.gui_almalence_settings_iso_10000);																					
 																				}
 																			};
 
@@ -686,6 +702,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																									.getResources()
 																									.getString(
 																											R.string.iso3200));
+																					put(CameraParameters.ISO_6400,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso6400));
+																					put(CameraParameters.ISO_10000,
+																							MainScreen
+																									.getInstance()
+																									.getResources()
+																									.getString(
+																											R.string.iso10000));
 																				}
 																			};
 
