@@ -3156,6 +3156,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		case MSG_TAKE_IMAGE:
 			synchronized (SYNC_OBJECT)
 			{
+				if(imageSize == null)
+				{
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, null);
+					break;
+				}
+				
 				int imageWidth = imageSize.getWidth();
 				int imageHeight = imageSize.getHeight();
 				int previewWidth = MainScreen.getPreviewWidth();
