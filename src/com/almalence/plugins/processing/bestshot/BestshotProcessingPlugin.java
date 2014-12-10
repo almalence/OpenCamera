@@ -22,6 +22,7 @@ package com.almalence.plugins.processing.bestshot;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
