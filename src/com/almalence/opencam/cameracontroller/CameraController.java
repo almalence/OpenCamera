@@ -1551,21 +1551,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public static void setVideoStabilization(boolean stabilization)
 	{
-		if (camera != null && camera.getParameters() != null
-				&& camera.getParameters().isVideoStabilizationSupported())
+		if (!CameraController.isHALv3)
 		{
-			camera.getParameters().setVideoStabilization(stabilization);
-			setCameraParameters(camera.getParameters());
-		}
+			if (camera != null && camera.getParameters() != null
+					&& camera.getParameters().isVideoStabilizationSupported())
+			{
+				camera.getParameters().setVideoStabilization(stabilization);
+				setCameraParameters(camera.getParameters());
+			}
+		}		
 	}
 
 	@TargetApi(15)
 	public static boolean getVideoStabilizationSupported()
 	{
-		if (camera != null && camera.getParameters() != null)
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null || ( camera != null && camera.getParameters() == null))
+				return false;
+			
 			return camera.getParameters().isVideoStabilizationSupported();
-
-		return false;
+		}
+		else
+			return false;
 	}
 
 	public static boolean isVideoStabilizationSupported()
