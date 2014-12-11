@@ -376,7 +376,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	int fastmode = 0;
 
 	layout = (Uint8 *) malloc ((sx/ratio)*(sy/ratio)*sizeof(Uint8));
-	memset (layout, 0, (sx/ratio)*(sy/ratio)*sizeof(Uint8));
+	memset (layout, -1, (sx/ratio)*(sy/ratio)*sizeof(Uint8));
 
 	MovObj_Process(&instance, inputFrame, OutPic, layout, NULL, 256, sx, sy, nFrames,
 			sensitivity, minSize,	// sensitivity and min size of moving object
