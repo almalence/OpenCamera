@@ -1252,6 +1252,14 @@ public class HALv3
 
 		return 55.4f;
 	}
+	
+	public static int getSensorOrientation()
+	{
+		if(HALv3.getInstance().camCharacter != null)
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_ORIENTATION);
+		
+		return -1;
+	}
 
 
 	public static void CreateRequests

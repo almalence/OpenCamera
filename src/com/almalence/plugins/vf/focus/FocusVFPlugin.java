@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -195,7 +196,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onStop()
 	{
-		cancelAutoFocus();
+//		cancelAutoFocus();
 		mState = STATE_INACTIVE;
 		updateFocusUI();
 
@@ -226,6 +227,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		// replace here with [CF] mode as default.
 		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
 		// not available - set first available
+		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 	}
 
 	@Override
@@ -236,6 +239,8 @@ public class FocusVFPlugin extends PluginViewfinder
 				.edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		
+//		Log.e(TAG, "onPause. PUT INT FOCUS = " + preferenceFocusMode);
 		releaseSoundPlayer();
 		removeMessages();
 	}
@@ -243,7 +248,8 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onCameraParametersSetup()
 	{
-		preferenceFocusMode = CameraController.getFocusMode();
+//		preferenceFocusMode = CameraController.getFocusMode();
+//		Log.e(TAG, "onCameraParametersSetup. FOCUS = " + preferenceFocusMode);
 
 		initializeParameters();
 
@@ -649,6 +655,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			if (fm != preferenceFocusMode)
 			{
+//				Log.e(TAG, "cancelAutoFocus. setFocusMode = " + preferenceFocusMode);
 				CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
@@ -711,14 +718,14 @@ public class FocusVFPlugin extends PluginViewfinder
 		return mFocusMode;
 	}
 
-	public void setFocusMode(int focus_mode)
-	{
-		mPreferences
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, focus_mode).commit();
-		preferenceFocusMode = focus_mode;
-	}
+//	public void setFocusMode(int focus_mode)
+//	{
+//		mPreferences
+//				.edit()
+//				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+//						: MainScreen.sFrontFocusModePref, focus_mode).commit();
+//		preferenceFocusMode = focus_mode;
+//	}
 
 	public List<Area> getFocusAreas()
 	{

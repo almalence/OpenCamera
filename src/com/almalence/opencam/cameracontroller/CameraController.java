@@ -862,7 +862,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isNexus()
 	{
-		return Build.MODEL.contains("Nexus 5");
+		return Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 6");
 	}
 
 	public static boolean isHALv3Supported()
@@ -920,7 +920,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					camera.setDisplayOrientation(90);
+					int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
+					camera.setDisplayOrientation(result);
 				} catch (RuntimeException e)
 				{
 					Log.e(TAG, "Unable to set display orientation for camera");
@@ -946,7 +947,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			// screen rotation
 			try
 			{
-				camera.setDisplayOrientation(90);
+				int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
+				camera.setDisplayOrientation(result);
 			} catch (RuntimeException e)
 			{
 				Log.e(TAG, "Unable to set display orientation for camera");
@@ -2638,6 +2640,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return 46.66f;
 
 		return 42.7f;
+	}
+	
+	public static int getSensorOrientation()
+	{
+		if(!CameraController.isHALv3)
+		{
+			Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+			Camera.getCameraInfo(CameraIndex, cameraInfo);
+			return cameraInfo.orientation;
+		}
+		else
+			return HALv3.getInstance().getSensorOrientation();
 	}
 
 	// ^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES

@@ -198,6 +198,8 @@ public class NightCapturePlugin extends PluginCapture
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
 
 		MainScreen.setCaptureFormat(CameraController.YUV);
+		
+//		Log.e("Night", "onResume FOCUS PREF = " + preferenceFocusMode);
 	}
 
 	@Override
@@ -209,6 +211,12 @@ public class NightCapturePlugin extends PluginCapture
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+		
+//		Log.e("Night", "onPause FOCUS PREF = " + preferenceFocusMode);
+		
+		CameraController.setCameraSceneMode(preferenceSceneMode);
+		CameraController.setCameraFocusMode(preferenceFocusMode);
+		CameraController.setCameraFlashMode(preferenceFlashMode);
 	}
 	
 
