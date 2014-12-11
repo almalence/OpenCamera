@@ -145,6 +145,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private int							previewHeight				= -1;
 
 	private volatile boolean			isFirstFrame				= false;
+	private volatile boolean glContextCreated = false;
 
 	private volatile boolean			coordsRecorded;
 	private volatile boolean			previewRestartFlag;
@@ -746,6 +747,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void onGLSurfaceCreated(final GL10 gl, final EGLConfig config)
 	{
 		this.engine.onSurfaceCreated(gl, config);
+		this.glContextCreated = true;
 	}
 
 	@Override
@@ -1064,6 +1066,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 	private void startCapture()
 	{
+		this.glContextCreated = false;
 		final Message msg = new Message();
 		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
 		MainScreen.getMessageHandler().sendMessage(msg);
@@ -1148,7 +1151,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		synchronized (this.engine)
 		{
-			if (!this.takingAlready)
+			if (!this.takingAlready && this.glContextCreated)
 			{
 				final int state = this.engine.getPictureTakingState(this.modeSweep ? true : CameraController
 						.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
@@ -1490,12 +1493,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			message.obj = String.valueOf(SessionID);
 			message.what = PluginManager.MSG_CAPTURE_FINISHED;
 			MainScreen.getMessageHandler().sendMessage(message);
-			
-			final Message msg = new Message();
-			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
-			MainScreen.getMessageHandler().sendMessage(msg);
-
 		}
+		
+		final Message msg = new Message();
+		msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
+		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	private CameraController.Size getOptimalSweepPreviewSize(final List<CameraController.Size> sizes)
