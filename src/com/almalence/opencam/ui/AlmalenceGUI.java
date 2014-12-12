@@ -6296,7 +6296,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		try
 		{
-			MainScreen.getInstance().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			MainScreen.getInstance().startActivity(new Intent("com.android.camera.action.REVIEW", uri));
 		} catch (ActivityNotFoundException ex)
 		{
 			try
