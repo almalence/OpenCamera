@@ -247,29 +247,23 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_groupsho
 	#pragma omp parallel for
 	for (i=0; i<nFrames; ++i)
 	{
-//		//Rotate yuv if needed
-//		Uint8* dst;
-//
-//		if (needRotation || cameraMirrored)
-//		//if(rotationDegree != 0 || cameraMirrored)
-//			dst = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-//		else
-//			dst = inputFrame[i];
 
-		if (needRotation || cameraMirrored)
+		bool mirrored = cameraMirrored;
+//
+		if (needRotation || mirrored)
 			{
 				int nRotate = 0;
 				int flipUD = 0;
 				if(rotationDegree == 180 || rotationDegree == 270)
 				{
-					cameraMirrored = !cameraMirrored; //used to support 4-side rotation
+					mirrored = !mirrored; //used to support 4-side rotation
 					flipUD = 1; //used to support 4-side rotation
 				}
 				if(rotationDegree == 90 || rotationDegree == 270)
 					nRotate = 1; //used to support 4-side rotation
 
 				// not sure if it should be 'cameraMirrored, 0,' or '0, cameraMirrored,'
-				TransformNV21(yuv[i], inputFrame[i], sx, sy, NULL, cameraMirrored, flipUD, nRotate);
+				TransformNV21(yuv[i], inputFrame[i], sx, sy, NULL, mirrored, flipUD, nRotate);
 //				free(dst);
 			}
 
