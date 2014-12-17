@@ -3384,7 +3384,11 @@ public class PluginManager implements PluginManagerInterface
 
 	public String getFileFormat()
 	{
-		return getExportFileName(getActiveMode().modeSaveName);
+		if (CameraController.isUseHALv3()) {
+			return getExportFileName(getActiveMode().modeSaveNameHAL);
+		} else {
+			return getExportFileName(getActiveMode().modeSaveName);
+		}
 	}
 
 	public void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,
