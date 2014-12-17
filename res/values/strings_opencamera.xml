@@ -23,7 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Save to...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Select location to store images</string>
     <string name="choose_folder">Choose folder</string>
-    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard.</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard. Android limitations.</string>
     
     <string name="pref_timestamp_saving_date_title">Date</string>
     <string name="pref_timestamp_saving_abbreviation_title">Month name</string>
