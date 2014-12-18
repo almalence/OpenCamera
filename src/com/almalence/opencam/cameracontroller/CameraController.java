@@ -744,6 +744,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			HALv3.onPauseHALv3();
+		
+		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 	}
 
 	public static void onStop()
