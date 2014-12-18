@@ -81,8 +81,13 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID = SessionID;
 
-		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+		if (CameraController.isUseHALv3()) {
+			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
+					PluginManager.getInstance().getActiveMode().modeSaveNameHAL);
+		} else {
+			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
+					PluginManager.getInstance().getActiveMode().modeSaveName);
+		}
 
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"frameorientation1" + sessionID));

@@ -1355,7 +1355,6 @@ public class HALv3
 			final boolean isRAWCapture = (format == CameraController.RAW);
 
 			PluginManager.getInstance().createRequestIDList(nFrames);
-			
 			// ToDo: burst capture is implemented now in Camera2 API
 			/*
 			 * List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
