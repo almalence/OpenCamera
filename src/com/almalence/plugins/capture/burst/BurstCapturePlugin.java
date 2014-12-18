@@ -195,7 +195,6 @@ public class BurstCapturePlugin extends PluginCapture
 		return true;
 	}
 
-	protected int resultCompleted = 0;
 	public void takePicture()
 	{
 		refreshPreferences();
@@ -206,11 +205,10 @@ public class BurstCapturePlugin extends PluginCapture
 		Arrays.fill(pause, pauseBetweenShots);
 		if(captureRAW)
 		{
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true);
-//			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, new int[0], true);
+			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true);
 		}
 		else
-			requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true);
+			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true);
 	}
 
 	
@@ -282,10 +280,11 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 		
 		if(captureRAW)

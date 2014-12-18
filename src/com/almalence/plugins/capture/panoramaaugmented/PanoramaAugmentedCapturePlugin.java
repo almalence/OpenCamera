@@ -1196,7 +1196,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		
 		// Log.d(TAG, "Perform CAPTURE Panorama");
-		requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false);
+		CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false);
 	}
 
 	private void lockAEWB()
@@ -1337,6 +1337,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[0];
 		if (result.getSequenceId() == requestID)
 		{
 			if (this.isFirstFrame)

@@ -96,7 +96,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
+		resultCompleted = 0;
+		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
 				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true);
 	}
 
@@ -112,6 +113,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
+			resultCompleted = 0;
 			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
@@ -134,6 +136,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
+			resultCompleted = 0;
 			new CountDownTimer(5000, 5000)
 			{
 				public void onTick(long millisUntilFinished)
@@ -152,10 +155,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[resultCompleted];
+		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, imagesTaken);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 	}
 

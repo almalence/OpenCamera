@@ -1406,6 +1406,18 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
 	
+	public void createRequestIDList(int nFrames)
+	{
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).createRequestIDList(nFrames);
+	}
+	
+	public void addRequestID(int nFrame, int requestID)
+	{
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).addRequestID(nFrame, requestID);
+	}
+	
 	@Override
 	public void addToSharedMemExifTags(byte[] frameData)
 	{

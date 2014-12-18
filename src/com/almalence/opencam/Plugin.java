@@ -95,7 +95,8 @@ public abstract class Plugin
 
 	protected long					SessionID			= 0;
 
-	protected int					requestID			= -1;
+	protected int[]					requestIDArray;
+	protected int					requestIDArrayLenght = 0;;
 	
 	protected boolean				captureRAW 			= false;
 
@@ -474,6 +475,18 @@ public abstract class Plugin
 	public boolean photoTimeLapseCaptureSupported()
 	{
 		return false;
+	}
+	
+	public void createRequestIDList(int nFrames)
+	{
+		requestIDArray = new int[nFrames];
+		requestIDArrayLenght = nFrames;
+		
+	}
+	
+	public void addRequestID(int nFrame, int requestID)
+	{
+		requestIDArray[nFrame] = requestID;
 	}
 
 	/******************************************************************************************************

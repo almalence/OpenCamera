@@ -253,13 +253,11 @@ public class CapturePlugin extends PluginCapture
 		framesCaptured = 0;
 		resultCompleted = 0;
 		if (ModePreference.compareTo("0") == 0)
-			requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true);
 		else if(captureRAW)
-		{
-			requestID = CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true);
-		}
+			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true);
 		else
-			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true);
 	}
 
 	
@@ -298,7 +296,9 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
+//		Log.e("CapturePlugin", "onCaptureCompleted. resultCompleted = " +resultCompleted);
 		if (result.getSequenceId() == requestID)
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);

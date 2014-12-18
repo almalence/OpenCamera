@@ -314,12 +314,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void onCaptureCompleted(CaptureResult result)
 	{
 		Log.e("EXPO", "onCaptureCompleted. REQUEST ID = " + result.getSequenceId());
+		int requestID = requestIDArray[captureResult_num];
 		captureResult_num++;
 		if (result.getSequenceId() == requestID)
 		{
-			Log.e("ExpoBkt", "frame_num = " + frame_num);
-			if (evIdx[frame_num] == 0)
-				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, frame_num);
+//			Log.e("ExpoBkt", "frame_num = " + frame_num);
+//			if (evIdx[frame_num] == 0)
+			Log.e("EXPO", "addToSharedMemExifTagsFromCaptureResult REQUEST ID = " + requestID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, captureResult_num);
 		}
 		
 		if(captureRAW)
@@ -542,9 +544,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //		requestID = CameraController.captureImagesWithParams(total_frames, isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0], evValues, true);
 		
 		if(captureRAW)
-			requestID = CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, null, null, true);
+			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, null, null, true);
 		else
-			requestID = CameraController.captureImagesWithParams(total_frames, isHDRMode? CameraController.YUV : CameraController.JPEG, null, evValues, null, null, true);
+			CameraController.captureImagesWithParams(total_frames, isHDRMode? CameraController.YUV : CameraController.JPEG, null, evValues, null, null, true);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)

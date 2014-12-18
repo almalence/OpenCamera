@@ -355,7 +355,7 @@ public class NightCapturePlugin extends PluginCapture
 		// Note: excluding Nexus here because it will fire flash in night mode (?)
 		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
-				&& (!Build.MODEL.contains("Nexus")))
+				&& (!Build.MODEL.contains("Nexus")) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
 
@@ -373,27 +373,30 @@ public class NightCapturePlugin extends PluginCapture
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				SharedPreferences.Editor editor = prefs.edit();
 
-				if (FocusPreference.compareTo("0") == 0)
+				if(!usingSuperMode)
 				{
-					if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
+					if (FocusPreference.compareTo("0") == 0)
 					{
-						// should set to hyperfocal distance as per android doc
-						CameraController.setCameraFocusMode(CameraParameters.AF_MODE_FIXED);
-						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
+						if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_FIXED))
+						{
+							// should set to hyperfocal distance as per android doc
+							CameraController.setCameraFocusMode(CameraParameters.AF_MODE_FIXED);
+							editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
+						} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
+						{
+							CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+							editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+							editor.putString(nightCaptureFocusPref, "1");
+							FocusPreference = "1";
+						}
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 					{
 						CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
-						editor.putString(nightCaptureFocusPref, "1");
-						FocusPreference = "1";
 					}
-				} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
-				{
-					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-					editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-							: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 				}
 
 				PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -409,7 +412,7 @@ public class NightCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null)
+			if (flashModes != null && !usingSuperMode)
 			{
 				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
@@ -582,7 +585,7 @@ public class NightCapturePlugin extends PluginCapture
 		Arrays.fill(burstExposureArray, burstExposure);
 		
 		// capture the burst
-		requestID = CameraController.captureImagesWithParams(
+		CameraController.captureImagesWithParams(
 				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true);
 	}
 	
@@ -642,6 +645,8 @@ public class NightCapturePlugin extends PluginCapture
 				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 	
 				inCapture = false;
+				resultCompleted = 0;
+				imagesTaken = 0;
 			}
 		}
 	}
@@ -653,13 +658,16 @@ public class NightCapturePlugin extends PluginCapture
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
 		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 		
+		int requestID = requestIDArray[resultCompleted];
+		resultCompleted++;
+		
 		Log.i("NightCapturePlugin", "onCaptureCompleted gain: "+sensorGain+" expoTime: "+exposureTime+"ns");
 
 		if (takingImageForExposure && (frameForExposure != 0))
 			AdjustExposureCaptureBurst();			
 
-		if (result.getSequenceId() == requestID && imagesTaken == 0)
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
+		if (result.getSequenceId() == requestID)
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 	}
 	
 	@Override
@@ -676,6 +684,8 @@ public class NightCapturePlugin extends PluginCapture
 		sensorGain = 0;
 		exposureTime = 0;
 		frameForExposure = 0;
+		resultCompleted = 0;
+		imagesTaken = 0;
 		
 		if (usingSuperMode)
 		{
@@ -685,18 +695,18 @@ public class NightCapturePlugin extends PluginCapture
 			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
 			takingImageForExposure = true;
-			requestID = 0;
 			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true);
 		}
 		else
 		{
 			takingImageForExposure = false;
-			requestID = CameraController.captureImagesWithParams(
+			CameraController.captureImagesWithParams(
 					total_frames, CameraController.YUV_RAW, null, null, null, null, true);
 		}
 	}
 
 	// onPreviewFrame is used to collect frames for brightened VF output
+//	static int testFrame = 0;
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
@@ -717,6 +727,13 @@ public class NightCapturePlugin extends PluginCapture
 	
 					int imageWidth = MainScreen.getPreviewWidth();
 					int imageHeight = MainScreen.getPreviewHeight();
+					
+//					if(testFrame == 0)
+//					{
+//						Log.e("Night", "onPreviewFrame. preview size = " + imageWidth + "x" + imageHeight);
+//						Log.e("Night", "dataS lenght = " + dataS.length);
+//						testFrame++;
+//					}
 					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 					if (CameraController.isFrontCamera())

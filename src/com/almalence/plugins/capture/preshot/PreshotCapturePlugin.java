@@ -20,7 +20,9 @@ package com.almalence.plugins.capture.preshot;
 
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CaptureResult;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -300,6 +302,8 @@ public class PreshotCapturePlugin extends PluginCapture
 
 		MainScreen.getInstance().muteShutter(true);
 		
+		resultCompleted = 0;
+		
 		isBuffering = true;
 		if (!isSlowMode)
 		{
@@ -363,6 +367,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			isBuffering = false;
 
 		counter = 0;
+		resultCompleted = 0;
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(PreShot.GetImageCount()));
@@ -506,8 +511,21 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 	//				inCapture = true;
 	
-			requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false);
 			counter++;
+		}
+	}
+	
+	@TargetApi(21)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		int requestID = requestIDArray[0];
+		resultCompleted++;
+		Log.e("PreShotCapturePlugin", "onCaptureCompleted. resultCompleted = " +resultCompleted);
+		if (result.getSequenceId() == requestID)
+		{
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 	}
 
