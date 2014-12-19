@@ -2674,9 +2674,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean	takeYUVFrame		= false;
 
 	protected static boolean	resultInHeap		= false;
+	
+	protected static boolean    playShutterSound    = false;
 
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for Camera2 API at the moment
-	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain, long[] exposure, boolean resInHeap)
+	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain, long[] exposure, boolean resInHeap, boolean playSound)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -2689,6 +2691,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		previewWorking=false;
 		cdt = null;
+		
+		playShutterSound = playSound;
 
 		if (!CameraController.isHALv3)
 		{
@@ -2699,7 +2703,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				CameraController.sendMessage(MSG_TAKE_IMAGE);
 			return 0;
 		} else
-			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, gain, exposure, resultInHeap);
+			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, gain, exposure, resultInHeap, playShutterSound);
 	}
 
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
@@ -3183,7 +3187,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 				// play tick sound
 				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
+				if(playShutterSound)
+					MainScreen.getInstance().playShutter();
 
 				lastCaptureStarted = SystemClock.uptimeMillis();
 				if (imageWidth == previewWidth && imageHeight == previewHeight &&

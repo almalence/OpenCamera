@@ -253,11 +253,11 @@ public class CapturePlugin extends PluginCapture
 		framesCaptured = 0;
 		resultCompleted = 0;
 		if (ModePreference.compareTo("0") == 0)
-			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true, true);
 		else if(captureRAW)
-			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true, true);
 		else
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
 
 	

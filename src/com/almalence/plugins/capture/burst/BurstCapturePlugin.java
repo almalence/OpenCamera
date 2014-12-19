@@ -205,10 +205,10 @@ public class BurstCapturePlugin extends PluginCapture
 		Arrays.fill(pause, pauseBetweenShots);
 		if(captureRAW)
 		{
-			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true);
+			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true, true);
 		}
 		else
-			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true);
+			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true, true);
 	}
 
 	

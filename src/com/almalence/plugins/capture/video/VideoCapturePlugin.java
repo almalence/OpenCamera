@@ -2300,7 +2300,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true);
+		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
 
 	// timelapse values

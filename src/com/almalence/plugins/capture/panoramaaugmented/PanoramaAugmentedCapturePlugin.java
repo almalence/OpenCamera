@@ -1196,7 +1196,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		
 		// Log.d(TAG, "Perform CAPTURE Panorama");
-		CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false);
+		CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, true);
 	}
 
 	private void lockAEWB()

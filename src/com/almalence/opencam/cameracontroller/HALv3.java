@@ -109,6 +109,8 @@ public class HALv3
 	private static int					MAX_SUPPORTED_PREVIEW_SIZE	= 1920 * 1088;
 
 	protected static int				captureFormat				= CameraController.JPEG;
+	
+	protected static boolean			playShutterSound			= false;
 
 	public static HALv3 getInstance()
 	{
@@ -1344,7 +1346,7 @@ public class HALv3
 	}
 
 	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap)
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
 	{
 		int requestID = -1;
 
@@ -1367,6 +1369,7 @@ public class HALv3
 			// HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
 			resultInHeap = resInHeap;
+			playShutterSound = playShutter;
 			if (pause != null && Array.getLength(pause) > 0)
 			{
 				totalFrames = nFrames;
@@ -1384,7 +1387,8 @@ public class HALv3
 			{
 				pauseBetweenShots = new int[totalFrames];
 				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
+				if(playShutterSound)
+					MainScreen.getInstance().playShutter();
 
 				for (int n = 0; n < nFrames; ++n)
 				{
@@ -1463,7 +1467,8 @@ public class HALv3
 					{
 						// play tick sound
 						MainScreen.getGUIManager().showCaptureIndication();
-						MainScreen.getInstance().playShutter();
+						if(playShutterSound)
+							MainScreen.getInstance().playShutter();
 
 						SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
 

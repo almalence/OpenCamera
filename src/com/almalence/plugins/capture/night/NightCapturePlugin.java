@@ -586,7 +586,7 @@ public class NightCapturePlugin extends PluginCapture
 		
 		// capture the burst
 		CameraController.captureImagesWithParams(
-				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true);
+				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
 	}
 	
 	
@@ -647,6 +647,7 @@ public class NightCapturePlugin extends PluginCapture
 				inCapture = false;
 				resultCompleted = 0;
 				imagesTaken = 0;
+				Log.e("Super", "onImageTaken. Capture finished. result completed = " + resultCompleted);
 			}
 		}
 	}
@@ -658,6 +659,7 @@ public class NightCapturePlugin extends PluginCapture
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
 		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 		
+		Log.e("Super", "result completed = " + resultCompleted);
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
 		
@@ -695,13 +697,13 @@ public class NightCapturePlugin extends PluginCapture
 			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
 			takingImageForExposure = true;
-			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true);
+			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, false);
 		}
 		else
 		{
 			takingImageForExposure = false;
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, null, true);
+					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
 		}
 	}
 
@@ -730,6 +732,7 @@ public class NightCapturePlugin extends PluginCapture
 					
 //					if(testFrame == 0)
 //					{
+//						Log.e("Night", "Model = " + Build.MODEL);
 //						Log.e("Night", "onPreviewFrame. preview size = " + imageWidth + "x" + imageHeight);
 //						Log.e("Night", "dataS lenght = " + dataS.length);
 //						testFrame++;

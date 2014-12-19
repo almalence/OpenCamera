@@ -569,13 +569,13 @@ public class PluginManager implements PluginManagerInterface
 
 	public void switchMode(Mode mode)
 	{
-		Log.e("PluginManager", "switchMode: " + mode.modeName);
+//		Log.e("PluginManager", "switchMode: " + mode.modeName);
 		
 //		boolean isHALv3 = CameraController.isUseHALv3();
 		// disable old plugins
 		MainScreen.getGUIManager().onStop();
-		MainScreen.getInstance().switchingMode(isRestart? false: true);
-//		MainScreen.getInstance().switchingMode(true);
+		MainScreen.getInstance().switchingMode((isRestart || Build.BRAND.contains("sony"))? false: true);
+//		MainScreen.getInstance().switchingMode(false);
 		MainScreen.getInstance().pauseMain();
 //		MainScreen.getInstance().onStop();
 		onStop();
@@ -609,8 +609,8 @@ public class PluginManager implements PluginManagerInterface
 		onCreate();
 //		MainScreen.getInstance().onStart();
 		onStart();
-		MainScreen.getInstance().switchingMode(isRestart? false: true);
-//		MainScreen.getInstance().switchingMode(true);
+		MainScreen.getInstance().switchingMode((isRestart || Build.BRAND.contains("sony"))? false: true);
+//		MainScreen.getInstance().switchingMode(false);
 		MainScreen.getInstance().resumeMain();
 	}
 
