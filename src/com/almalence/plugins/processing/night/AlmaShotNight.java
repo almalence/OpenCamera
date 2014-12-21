@@ -34,7 +34,7 @@ public final class AlmaShotNight
 			int iso, int noisePref, int DeGhostPref,
 			int lumaEnh, int chromaEnh, int nImages,
 			int[] crop, int orientation, boolean mirror,
-			float zoom, boolean isHALv3);
+			float zoom, int cameraIndex, boolean isHALv3);
 
 	static
 	{
