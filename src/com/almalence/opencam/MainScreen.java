@@ -2645,7 +2645,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockGroup			= "$2.99";
 	public String								titleSubscriptionYear		= "$4.99";
 
-	public String								summary_SKU_PROMO			= "";
+	public String								summary_SKU_PROMO			= "alyrom0nap";
 	// public String summaryUnlockAll = "";
 	// public String summaryUnlockHDR = "";
 	// public String summaryUnlockPano = "";
