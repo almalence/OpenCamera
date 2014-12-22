@@ -113,6 +113,7 @@ public class NightCapturePlugin extends PluginCapture
 	private int                 minSensitivity = 100;
 	
 	private int                 sensorGain = 0;
+	private int                 burstGain = 0; 
 	private long                exposureTime = 0;
 	private int                 frameForExposure = 0;
 	
@@ -539,7 +540,7 @@ public class NightCapturePlugin extends PluginCapture
 		// free memory allocated for the frame
 		SwapHeap.FreeFromHeap(frameForExposure);
 		
-		int burstGain = Math.max(sensorGain, minSensitivity);
+		burstGain = Math.max(sensorGain, minSensitivity);
 		long burstExposure = exposureTime;
 
 		Log.i("NightCapturePlugin", "gain: "+burstGain+" expoTime: "+burstExposure+"ns clipped: "+clipped);
@@ -636,8 +637,8 @@ public class NightCapturePlugin extends PluginCapture
 						String.valueOf(zoom));
 				
 				// pass sensor gain to the image processing functions if it is known
-				PluginManager.getInstance().addToSharedMem("sensorGain" + SessionID,
-						String.valueOf(sensorGain));
+				PluginManager.getInstance().addToSharedMem("burstGain" + SessionID,
+						String.valueOf(burstGain));
 			}
 			
 			if (++imagesTaken == total_frames)

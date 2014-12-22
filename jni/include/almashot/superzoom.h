@@ -51,13 +51,13 @@ extern "C"
 #include "almashot.h"
 
 // Maximum accepted input frames
-#define SUPERZOOM_MAX_FRAMES	20
+#define SUPERZOOM_MAX_FRAMES	15
 
 // Input frames should be that much larger at each edge
 // to provide expected zoom level when SizeGuaranteeMode is set
 #define SIZE_GUARANTEE_BORDER	64
 
-#define SPARE_LINES_RESOLVE_FRAME	656
+#define SPARE_LINES_RESOLVE_FRAME	658 // 656
 
 // -------------------------------------------------------------------
 // Still image superzoom functions
