@@ -738,7 +738,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				camera.stopPreview();
 				if (!isModeSwitching)
 				{
-//					camera.stopPreview();
 					camera.release();
 					camera = null;
 				}
