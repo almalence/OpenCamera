@@ -2429,7 +2429,7 @@ public class PluginManager implements PluginManagerInterface
 			{
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 				
-				if(format.equalsIgnoreCase("dng"))
+				if(format != null && format.equalsIgnoreCase("dng"))
 					hasDNGResult = true;
 				
 				String idx = "";
