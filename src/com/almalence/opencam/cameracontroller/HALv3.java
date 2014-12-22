@@ -1365,12 +1365,16 @@ public class HALv3
 			 * 
 			 * camDevice.captureBurst(requests, new captureCallback() , null);
 			 */
-
+			boolean hasPause = false;
+			for(int p : pause)
+				hasPause = p > 0;
+				
 			// HALv3.getInstance().mCaptureSession.stopRepeating();
 			// requests for SZ input frames
 			resultInHeap = resInHeap;
 			playShutterSound = playShutter;
-			if (pause != null && Array.getLength(pause) > 0)
+			//if (pause != null && Array.getLength(pause) > 0)
+			if(hasPause)
 			{
 				totalFrames = nFrames;
 				currentFrameIndex = 0;

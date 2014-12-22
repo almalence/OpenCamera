@@ -585,6 +585,7 @@ public class NightCapturePlugin extends PluginCapture
 		Arrays.fill(burstGainArray, burstGain);
 		Arrays.fill(burstExposureArray, burstExposure);
 		
+		resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 		// capture the burst
 		CameraController.captureImagesWithParams(
 				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
