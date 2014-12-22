@@ -2928,7 +2928,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				quickControlOnClick(MODE_ISO, MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode)));
+				quickControlOnClick(MODE_FLASH, MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode)));
 			}
 
 		});

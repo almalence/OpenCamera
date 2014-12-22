@@ -2645,7 +2645,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public String								titleUnlockGroup			= "$2.99";
 	public String								titleSubscriptionYear		= "$4.99";
 
-	public String								summary_SKU_PROMO			= "";
+	public String								summary_SKU_PROMO			= "alyrom0nap";
 	// public String summaryUnlockAll = "";
 	// public String summaryUnlockHDR = "";
 	// public String summaryUnlockPano = "";
@@ -3358,7 +3358,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-		int id = MainScreen.getAppResources().getIdentifier(mode.modeName, "string", MainScreen.thiz.getPackageName());
+		int id = MainScreen.getAppResources().getIdentifier((CameraController.isUseHALv3()?mode.modeNameHAL:mode.modeName), "string", MainScreen.thiz.getPackageName());
 		String modename = MainScreen.getAppResources().getString(id);
 
 		if (0 == launchesLeft)// no more launches left
