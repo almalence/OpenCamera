@@ -2429,13 +2429,13 @@ public class PluginManager implements PluginManagerInterface
 			{
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 				
-				if(format.equalsIgnoreCase("dng"))
+				if(format != null && format.equalsIgnoreCase("dng"))
 					hasDNGResult = true;
 				
 				String idx = "";
 
 				if (imagesAmount != 1)
-					idx += "_" + ((!format.equalsIgnoreCase("dng") && hasDNGResult) ? i - imagesAmount/2 : i);
+					idx += "_" + ((format != null && !format.equalsIgnoreCase("dng") && hasDNGResult) ? i - imagesAmount/2 : i);
 
 				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
 				// define file name format. from settings!
