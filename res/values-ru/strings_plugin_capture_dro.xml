@@ -7,4 +7,6 @@
     <string name="Dro_level_medium">Нормальная</string>
     <string name="Dro_level_high">Высокая</string>
     
+    <string name="Pref_DroInputFrame_Save">Сохранять оригинал</string>
+    
 </resources>

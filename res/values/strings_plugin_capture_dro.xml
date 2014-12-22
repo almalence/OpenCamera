@@ -7,4 +7,7 @@
     <string name="Dro_level_medium">Normal</string>
     <string name="Dro_level_high">High</string>
     
+    <string name="Pref_DroInputFrame_Save">Save original frame</string>
+    
+    <string name="Preference_DroSaveInputPref">Preference_DroSaveInputPref</string>
 </resources>
