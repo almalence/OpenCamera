@@ -937,6 +937,8 @@ public class PluginManager implements PluginManagerInterface
 		}
 		for (int j = 0; j < listProcessing.size(); j++)
 		{
+			if (modeName.equals("video"))
+				return;
 			Plugin pg = listProcessing.get(j);
 			if (mode.Processing.equals(pg.getID()))
 			{
