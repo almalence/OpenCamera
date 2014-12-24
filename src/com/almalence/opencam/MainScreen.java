@@ -2144,9 +2144,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().onShutter();
 	}
 
-	public boolean isForceClose()
+	public static boolean isForceClose()
 	{
 		return isForceClose;
+	}
+	
+	public static boolean isApplicationStarted()
+	{
+		return mApplicationStarted;
 	}
 
 	// >>Description

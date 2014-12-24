@@ -3976,6 +3976,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onButtonClick(View button)
 	{
+		if (!MainScreen.isApplicationStarted())
+			return;
+		
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
