@@ -1313,6 +1313,16 @@ public class HALv3
 			rawRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 		}
+		
+		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				MainScreen.sFlashModePref, -1);
+		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
+			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+			
+			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+		}
 	}
 
 	private static void SetupPerFrameParameters(int ev, int gain, long expo, boolean isRAWCapture)
@@ -1342,6 +1352,16 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			}
+		}
+		
+		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				MainScreen.sFlashModePref, -1);
+		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
+			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+			
+			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
 		}
 	}
 
@@ -1612,6 +1632,12 @@ public class HALv3
 		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+		
+		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+		}
+		
 		if (HALv3.captureFormat != CameraController.RAW)
 			HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback,
