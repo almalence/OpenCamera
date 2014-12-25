@@ -1236,6 +1236,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		this.hideOpenGLLayer();
 	}
 
+	private CountDownTimer onResumeTimer = null;
+	
 	@Override
 	protected void onResume()
 	{
@@ -1244,7 +1246,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		isCameraConfiguring = false;
 
 		if (!isCreating)
-			new CountDownTimer(50, 50)
+			onResumeTimer = new CountDownTimer(50, 50)
 			{
 				public void onTick(long millisUntilFinished)
 				{
@@ -1402,6 +1404,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onPause()
 	{
 		super.onPause();
+		
+		if (onResumeTimer != null) {
+			onResumeTimer.cancel();
+		}
+		
 		mApplicationStarted = false;
 
 		MainScreen.getGUIManager().onPause();
