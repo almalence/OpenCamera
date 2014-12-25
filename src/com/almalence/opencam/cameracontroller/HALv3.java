@@ -179,11 +179,11 @@ public class HALv3
 					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 
 			int[] keys = HALv3.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+			CameraController.isRAWCaptureSupported = false;
 			for (int key : keys)
 				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
 					CameraController.isRAWCaptureSupported = true;
-				else
-					CameraController.isRAWCaptureSupported = false;
+					
 		} catch (CameraAccessException e)
 		{
 			// TODO Auto-generated catch block
