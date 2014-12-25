@@ -80,6 +80,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.CameraParameters;
 //-+- -->
+import com.almalence.opencam.ui.GUI.CameraParameter;
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
@@ -1016,7 +1017,33 @@ public class HALv3
 
 			if (mode == CameraParameters.FLASH_MODE_TORCH || currentFlash == CameraParameters.FLASH_MODE_TORCH)
 			{
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, previewFlash);
+				try
+				{
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+							HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				} catch (IllegalStateException e2)
+				{
+					e2.printStackTrace();
+				}
+			}
+			else if(mode == CameraParameters.FLASH_MODE_SINGLE || mode == CameraParameters.FLASH_MODE_AUTO || mode == CameraParameters.FLASH_MODE_REDEYE)
+			{
+				int correctedMode = mode;
+				if(mode == CameraParameters.FLASH_MODE_SINGLE)
+					correctedMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+				else if(mode == CameraParameters.FLASH_MODE_AUTO )
+					correctedMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
+				else
+					correctedMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
+				
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, correctedMode);
+				
 				try
 				{
 					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
@@ -1325,7 +1352,38 @@ public class HALv3
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
-
+		
+//		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+//				MainScreen.sSceneModePref, -1);
+//		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+//				MainScreen.sFlashModePref, -1);
+//		
+//		if(sceneMode == CameraParameters.SCENE_MODE_AUTO)
+//		{
+//			if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
+//			{
+////				stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+//				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+//				if (isRAWCapture)
+//				{
+////					rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+//					rawRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+//				}
+//			}
+////			if(flashMode != CameraParameters.FLASH_MODE_AUTO && flashMode != CameraParameters.FLASH_MODE_REDEYE)
+////			{
+////	//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+////				stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+////				if (isRAWCapture)
+////					rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+////			}
+////			else
+////			{
+////				stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+////				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+////			}
+//		}
+		
 		if (gain > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
@@ -1606,10 +1664,38 @@ public class HALv3
 		Log.e(TAG, "configurePreviewRequest()");
 		HALv3.previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+		
+		if (flashMode == CameraParameters.FLASH_MODE_TORCH)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+		}
+		else if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
+		{
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+			else if(flashMode == CameraParameters.FLASH_MODE_AUTO )
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
+			else
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
+			
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+		}
 		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
 		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
+		
+		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
+		{
+			HALv3.previewRequestBuilder
+					.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
+		}
+		else
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+		}
+		
 		HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		if (HALv3.captureFormat != CameraController.RAW)

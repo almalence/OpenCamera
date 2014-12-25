@@ -1957,10 +1957,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (isFlashModeSupported())
 			{
-				int[] flash = new int[3];
-				flash[0] = CameraParameters.FLASH_MODE_OFF;
-				flash[1] = CameraParameters.FLASH_MODE_SINGLE;
-				flash[2] = CameraParameters.FLASH_MODE_TORCH;
+				int[] flash = new int[5];
+				flash[0] = CameraParameters.FLASH_MODE_AUTO;
+				flash[1] = CameraParameters.FLASH_MODE_OFF;
+				flash[2] = CameraParameters.FLASH_MODE_SINGLE;
+				flash[3] = CameraParameters.FLASH_MODE_REDEYE;
+				flash[4] = CameraParameters.FLASH_MODE_TORCH;
 				return flash;
 			}
 		} else
@@ -2749,6 +2751,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
 						try
 						{
+							Camera.Parameters params = CameraController.getCameraParameters();
 							CameraController.getCamera().autoFocus(CameraController.getInstance());
 						} catch (Exception e)
 						{

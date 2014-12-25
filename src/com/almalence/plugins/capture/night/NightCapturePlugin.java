@@ -413,7 +413,7 @@ public class NightCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && !usingSuperMode)
+			if (flashModes != null && flashModes.length > 0 && !usingSuperMode)
 			{
 				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
