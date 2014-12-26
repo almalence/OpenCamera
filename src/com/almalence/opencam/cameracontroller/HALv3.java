@@ -1131,7 +1131,7 @@ public class HALv3
 				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				int currRegion = i;
-				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
+				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
 				// af_regions[currRegion] = r.left;
 				// af_regions[currRegion + 1] = r.top;
 				// af_regions[currRegion + 2] = r.right;
@@ -1141,7 +1141,7 @@ public class HALv3
 		} else
 		{
 			af_regions = new MeteringRectangle[1];
-			af_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 10);
+			af_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 1000);
 			// af_regions = new int[5];
 			// af_regions[0] = 0;
 			// af_regions[1] = 0;
@@ -1612,6 +1612,23 @@ public class HALv3
 			// if(af_regions != null)
 			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS,
 			// af_regions);
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
+			
+//			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+//					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+//			try
+//			{
+//				Log.e(TAG,
+//						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
+//				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+//						HALv3.previewRequestBuilder.build(), captureCallback, null);
+//			} catch (CameraAccessException e)
+//			{
+//				e.printStackTrace();
+//				return false;
+//			}
+			
+			
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			try
@@ -1625,9 +1642,10 @@ public class HALv3
 				e.printStackTrace();
 				return false;
 			}
-
+			
+			
 			HALv3.autoFocusTriggered = true;
-
+			
 			return true;
 		}
 
@@ -1718,11 +1736,6 @@ public class HALv3
 		
 		HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-		
-		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-		}
 		
 		if (HALv3.captureFormat != CameraController.RAW)
 			HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
@@ -2002,177 +2015,142 @@ public class HALv3
 	// }
 	// };
 
-	public final static CameraCaptureSession.CaptureCallback	captureCallback				= new CameraCaptureSession.CaptureCallback()
-																							{
-																								@Override
-																								public void onCaptureCompleted(
-																										CameraCaptureSession session,
-																										CaptureRequest request,
-																										TotalCaptureResult result)
-																								{
-																									// PluginManager.getInstance().onCaptureCompleted(result);
-																									try
-																									{
-																										// HALv3.exposureTime
-																										// =
-																										// result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-																										// Log.e(TAG,
-																										// "EXPOSURE TIME = "
-																										// +
-																										// HALv3.exposureTime);
-																										if (result
-																												.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
-																												&& HALv3.autoFocusTriggered)
-																										{
-																											// Log.e(TAG,
-																											// "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
-																											resetCaptureCallback();
-																											CameraController
-																													.onAutoFocus(true);
-																											HALv3.autoFocusTriggered = false;
-
-																										} else if (result
-																												.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
-																												&& HALv3.autoFocusTriggered)
-																										{
-																											// Log.e(TAG,
-																											// "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
-																											resetCaptureCallback();
-																											CameraController
-																													.onAutoFocus(false);
-																											HALv3.autoFocusTriggered = false;
-																										} else if (result
-																												.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
-																												&& HALv3.autoFocusTriggered)
-																										{
-																											// Log.e(TAG,
-																											// "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
-																											// resetCaptureCallback();
-																											// CameraController.onAutoFocus(false);
-																											// HALv3.autoFocusTriggered
-																											// =
-																											// false;
-																										} else if (result
-																												.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE
-																												&& HALv3.autoFocusTriggered)
-																										{
-																											// Log.e(TAG,
-																											// "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE");
-																											// resetCaptureCallback();
-																											// CameraController.onAutoFocus(false);
-																											// HALv3.autoFocusTriggered
-																											// =
-																											// false;
-																										}
-
-																									} catch (Exception e)
-																									{
-																										Log.e(TAG,
-																												"Exception: "
-																														+ e.getMessage());
-																									}
-
-																									// if(result.getSequenceId()
-																									// ==
-																									// iCaptureID)
-																									// {
-																									// //Log.e(TAG,
-																									// "Image metadata received. Capture timestamp = "
-																									// +
-																									// result.get(CaptureResult.SENSOR_TIMESTAMP));
-																									// iPreviewFrameID
-																									// =
-																									// result.get(CaptureResult.SENSOR_TIMESTAMP);
-																									// }
-
-																									// Note:
-																									// result
-																									// arriving
-																									// here
-																									// is
-																									// just
-																									// image
-																									// metadata,
-																									// not
-																									// the
-																									// image
-																									// itself
-																									// good
-																									// place
-																									// to
-																									// extract
-																									// sensor
-																									// gain
-																									// and
-																									// other
-																									// parameters
-
-																									// Note:
-																									// not
-																									// sure
-																									// which
-																									// units
-																									// are
-																									// used
-																									// for
-																									// exposure
-																									// time
-																									// (ms?)
-																									// currentExposure
-																									// =
-																									// result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-																									// currentSensitivity
-																									// =
-																									// result.get(CaptureResult.SENSOR_SENSITIVITY);
-
-																									// dumpCaptureResult(result);
-																								}
-
-																								private void resetCaptureCallback()
-																								{
-																									// if
-																									// (HALv3.getInstance().previewRequestBuilder
-																									// !=
-																									// null
-																									// &&
-																									// HALv3.getInstance().camDevice
-																									// !=
-																									// null)
-																									// {
-																									// int
-																									// focusMode
-																									// =
-																									// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-																									// CameraController.isFrontCamera()
-																									// ?
-																									// MainScreen.sRearFocusModePref
-																									// :
-																									// MainScreen.sFrontFocusModePref,
-																									// CameraParameters.AF_MODE_AUTO);
-																									// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-																									// focusMode);
-																									// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-																									// CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-																									// try
-																									// {
-																									// //
-																									// HALv3.getInstance().camDevice.stopRepeating();
-																									// CameraController.iCaptureID
-																									// =
-																									// HALv3.getInstance().mCaptureSession.capture(
-																									// HALv3.getInstance().previewRequestBuilder.build(),
-																									// null,
-																									// null);
-																									// }
-																									// catch
-																									// (CameraAccessException
-																									// e)
-																									// {
-																									// e.printStackTrace();
-																									// }
-																									// }
-																								}
-																							};
+	public final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
+	{
+		@Override
+		public void onCaptureCompleted(
+				CameraCaptureSession session,
+				CaptureRequest request,
+				TotalCaptureResult result)
+		{
+			// PluginManager.getInstance().onCaptureCompleted(result);
+			try
+			{
+				// HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+				// Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
+				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
+						&& HALv3.autoFocusTriggered)
+				{
+					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+					resetCaptureCallback();
+					CameraController.onAutoFocus(true);
+					HALv3.autoFocusTriggered = false;
+	
+				}
+				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
+						&& HALv3.autoFocusTriggered)
+				{
+					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+					resetCaptureCallback();
+					CameraController.onAutoFocus(false);
+					HALv3.autoFocusTriggered = false;
+				}
+//				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
+//						&& HALv3.autoFocusTriggered)
+//				{
+//					// Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
+//					// resetCaptureCallback();
+//					// CameraController.onAutoFocus(false);
+//					// HALv3.autoFocusTriggered = false;
+//				}
+//				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE
+//						&& HALv3.autoFocusTriggered)
+//				{
+//					// Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE");
+//					// resetCaptureCallback();
+//					// CameraController.onAutoFocus(false);
+//					// HALv3.autoFocusTriggered = false;
+//				}
+	
+			} catch (Exception e)
+			{
+				Log.e(TAG, "Exception: " + e.getMessage());
+			}
+	
+			// if(result.getSequenceId()
+			// ==
+			// iCaptureID)
+			// {
+			// //Log.e(TAG,
+			// "Image metadata received. Capture timestamp = "
+			// +
+			// result.get(CaptureResult.SENSOR_TIMESTAMP));
+			// iPreviewFrameID
+			// =
+			// result.get(CaptureResult.SENSOR_TIMESTAMP);
+			// }
+	
+			// Note: result arriving here is just image metadata, not the image itself
+			// good place to extract sensor gain and other parameters
+	
+			// Note: not sure which units are used for exposure time (ms?)
+			// currentExposure
+			// =
+			// result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+			// currentSensitivity
+			// =
+			// result.get(CaptureResult.SENSOR_SENSITIVITY);
+	
+			// dumpCaptureResult(result);
+		}
+	
+		private void resetCaptureCallback()
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+			try
+			{
+				Log.e(TAG,
+						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+			// if
+			// (HALv3.getInstance().previewRequestBuilder
+			// !=
+			// null
+			// &&
+			// HALv3.getInstance().camDevice
+			// !=
+			// null)
+			// {
+			// int
+			// focusMode
+			// =
+			// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+			// CameraController.isFrontCamera()
+			// ?
+			// MainScreen.sRearFocusModePref
+			// :
+			// MainScreen.sFrontFocusModePref,
+			// CameraParameters.AF_MODE_AUTO);
+			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+			// focusMode);
+			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+			// CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+			// try
+			// {
+			// //
+			// HALv3.getInstance().camDevice.stopRepeating();
+			// CameraController.iCaptureID
+			// =
+			// HALv3.getInstance().mCaptureSession.capture(
+			// HALv3.getInstance().previewRequestBuilder.build(),
+			// null,
+			// null);
+			// }
+			// catch
+			// (CameraAccessException
+			// e)
+			// {
+			// e.printStackTrace();
+			// }
+			// }
+		}
+	};
 
 	public final static CameraCaptureSession.CaptureCallback	stillCaptureCallback		= new CameraCaptureSession.CaptureCallback()
 																							{
