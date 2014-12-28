@@ -60,7 +60,6 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Range;
@@ -308,8 +307,9 @@ public class HALv3
 		// -------------------------------------------------------------------
 		MainScreen.createImageReaders();
 
-		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
-		backgroundThread.start();
+//		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
+//		backgroundThread.start();
+//		Handler backgroundHandler = new Handler(backgroundThread.getLooper());
 
 		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(imageAvailableListener, null);
 
@@ -1343,12 +1343,28 @@ public class HALv3
 		
 		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				MainScreen.sFlashModePref, -1);
-		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
-			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+//		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
+//			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+//					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+//			
+//			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+//					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+//		}
+		
+		if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
+		{
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+			else if(flashMode == CameraParameters.FLASH_MODE_AUTO )
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
+			else
+				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
 			
-			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+			
+			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 		}
 	}
 
@@ -1673,7 +1689,7 @@ public class HALv3
 
 		try
 		{
-			HALv3.getInstance().configurePreviewRequest();
+			HALv3.getInstance().configurePreviewRequest(true);
 		} catch (CameraAccessException e)
 		{
 			// TODO Auto-generated catch block
@@ -1683,7 +1699,7 @@ public class HALv3
 
 	}
 
-	public void configurePreviewRequest() throws CameraAccessException
+	public void configurePreviewRequest(boolean needZoom) throws CameraAccessException
 	{
 		if (camDevice == null)
 			return;
@@ -1734,11 +1750,14 @@ public class HALv3
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 		}
 		
-		HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+		if(needZoom)
+			HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+		
 		HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		
 		if (HALv3.captureFormat != CameraController.RAW)
 			HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+		
 		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback,
 				null);
 	}
@@ -1746,176 +1765,116 @@ public class HALv3
 	// HALv3 ------------------------------------------------ camera-related
 	// Callbacks
 	@SuppressLint("Override")
-	public final static CameraDevice.StateCallback				openCallback				= new CameraDevice.StateCallback()
-																							{
-																								@Override
-																								public void onDisconnected(
-																										CameraDevice arg0)
-																								{
-																									Log.e(TAG,
-																											"CameraDevice.StateCallback.onDisconnected");
-																									if (HALv3
-																											.getInstance().camDevice != null)
-																									{
-																										try
-																										{
-																											HALv3.getInstance().camDevice
-																													.close();
-																											HALv3.getInstance().camDevice = null;
-																										} catch (Exception e)
-																										{
-																											HALv3.getInstance().camDevice = null;
-																											Log.e(TAG,
-																													"close camera device failed: "
-																															+ e.getMessage());
-																											e.printStackTrace();
-																										}
-																									}
-																								}
+	public final static CameraDevice.StateCallback openCallback = new CameraDevice.StateCallback()
+	{
+		@Override
+		public void onDisconnected(CameraDevice arg0)
+		{
+			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
+			if (HALv3.getInstance().camDevice != null)
+			{
+				try
+				{
+					HALv3.getInstance().camDevice.close();
+					HALv3.getInstance().camDevice = null;
+				}
+				catch (Exception e)
+				{
+					HALv3.getInstance().camDevice = null;
+					Log.e(TAG, "close camera device failed: " + e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
 
-																								@Override
-																								public void onError(
-																										CameraDevice arg0,
-																										int arg1)
-																								{
-																									Log.e(TAG,
-																											"CameraDevice.StateCallback.onError: "
-																													+ arg1);
-																								}
+		@Override
+		public void onError(CameraDevice arg0, int arg1)
+		{
+			Log.e(TAG, "CameraDevice.StateCallback.onError: " + arg1);
+		}
 
-																								@Override
-																								public void onOpened(
-																										CameraDevice arg0)
-																								{
-																									Log.e(TAG,
-																											"CameraDevice.StateCallback.onOpened");
+		@Override
+		public void onOpened(CameraDevice arg0)
+		{
+			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
 
-																									HALv3.getInstance().camDevice = arg0;
+			HALv3.getInstance().camDevice = arg0;
 
-																									MainScreen
-																											.getMessageHandler()
-																											.sendEmptyMessage(
-																													PluginManager.MSG_CAMERA_OPENED);
+			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
 
-																									// dumpCameraCharacteristics();
-																								}
+			// dumpCameraCharacteristics();
+		}
 
-																								@Override
-																								public void onClosed(
-																										CameraDevice arg0)
-																								{
-																									Log.d(TAG,
-																											"CameraDevice.StateCallback.onClosed");
-																									PluginManager
-																											.getInstance()
-																											.sendMessage(
-																													PluginManager.MSG_CAMERA_STOPED,
-																													0);
-																								}
-																							};
+		@Override
+		public void onClosed(CameraDevice arg0)
+		{
+			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
+		}
+	};
 
-	public final static CameraCaptureSession.StateCallback		captureSessionStateCallback	= new CameraCaptureSession.StateCallback()
-																							{
-																								@Override
-																								public void onConfigureFailed(
-																										final CameraCaptureSession session)
-																								{
-																									Log.e(TAG,
-																											"CaptureSessionConfigure failed");
-																									onPauseHALv3();
-																									MainScreen
-																											.getInstance()
-																											.finish();
-																								}
+	public final static CameraCaptureSession.StateCallback captureSessionStateCallback = new CameraCaptureSession.StateCallback()
+	{
+		@Override
+		public void onConfigureFailed(final CameraCaptureSession session)
+		{
+			Log.e(TAG, "CaptureSessionConfigure failed");
+			onPauseHALv3();
+			MainScreen.getInstance().finish();
+		}
 
-																								@Override
-																								public void onConfigured(
-																										final CameraCaptureSession session)
-																								{
-																									HALv3.getInstance().mCaptureSession = session;
+		@Override
+		public void onConfigured(final CameraCaptureSession session)
+		{
+			HALv3.getInstance().mCaptureSession = session;
 
-																									try
-																									{
-																										int focusMode = PreferenceManager
-																												.getDefaultSharedPreferences(
-																														MainScreen
-																																.getMainContext())
-																												.getInt(CameraController
-																														.isFrontCamera() ? MainScreen.sRearFocusModePref
-																														: MainScreen.sFrontFocusModePref,
-																														-1);
+			try
+			{
+//				int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+//						CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+//
+//				Log.e(TAG, "configurePreviewRequest()");
+//				HALv3.previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+//				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+//				HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+//				if (HALv3.captureFormat != CameraController.RAW)
+//					HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+//				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback, null);
+				try
+				{
+					HALv3.getInstance().configurePreviewRequest(false);
+				} catch (CameraAccessException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-																										Log.e(TAG,
-																												"configurePreviewRequest()");
-																										HALv3.previewRequestBuilder = HALv3
-																												.getInstance().camDevice
-																												.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-																										HALv3.previewRequestBuilder
-																												.set(CaptureRequest.CONTROL_AF_MODE,
-																														focusMode);
-																										HALv3.previewRequestBuilder
-																												.addTarget(MainScreen
-																														.getInstance()
-																														.getCameraSurface());
-																										if (HALv3.captureFormat != CameraController.RAW)
-																											HALv3.previewRequestBuilder
-																													.addTarget(MainScreen
-																															.getInstance()
-																															.getPreviewYUVSurface());
-																										CameraController.iCaptureID = session
-																												.setRepeatingRequest(
-																														HALv3.previewRequestBuilder
-																																.build(),
-																														captureCallback,
-																														null);
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				// if(!CameraController.appStarted)
+				// {
+				// CameraController.appStarted
+				// =
+				// true;
+				// MainScreen.getInstance().relaunchCamera();
+				// }
+				if (CameraController.isCameraRelaunch())
+				{
+					CameraController.needCameraRelaunch(false);
+					MainScreen.getInstance().relaunchCamera();
+				} else
+				{
+					Log.e(TAG, "session.setRepeatingRequest success. Session configured");
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+				}
+			} catch (final Exception e)
+			{
+				e.printStackTrace();
+				Toast.makeText(MainScreen.getInstance(), "Unable to start preview: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+				MainScreen.getInstance().finish();
+			}
+		}
 
-																										PluginManager
-																												.getInstance()
-																												.sendMessage(
-																														PluginManager.MSG_CAMERA_CONFIGURED,
-																														0);
-																										// if(!CameraController.appStarted)
-																										// {
-																										// CameraController.appStarted
-																										// =
-																										// true;
-																										// MainScreen.getInstance().relaunchCamera();
-																										// }
-																										if (CameraController
-																												.isCameraRelaunch())
-																										{
-																											CameraController
-																													.needCameraRelaunch(false);
-																											MainScreen
-																													.getInstance()
-																													.relaunchCamera();
-																										} else
-																										{
-																											Log.e(TAG,
-																													"session.setRepeatingRequest success. Session configured");
-																											PluginManager
-																													.getInstance()
-																													.sendMessage(
-																															PluginManager.MSG_CAMERA_CONFIGURED,
-																															0);
-																										}
-																									} catch (final Exception e)
-																									{
-																										e.printStackTrace();
-																										Toast.makeText(
-																												MainScreen
-																														.getInstance(),
-																												"Unable to start preview: "
-																														+ e.getMessage(),
-																												Toast.LENGTH_SHORT)
-																												.show();
-																										MainScreen
-																												.getInstance()
-																												.finish();
-																									}
-																								}
-
-																							};
+	};
 
 	// Note: there other onCaptureXxxx methods in this Callback which we do not
 	// implement
@@ -2026,6 +1985,8 @@ public class HALv3
 			// PluginManager.getInstance().onCaptureCompleted(result);
 			try
 			{
+				if(HALv3.autoFocusTriggered)
+					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				// HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 				// Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
@@ -2152,364 +2113,176 @@ public class HALv3
 		}
 	};
 
-	public final static CameraCaptureSession.CaptureCallback	stillCaptureCallback		= new CameraCaptureSession.CaptureCallback()
-																							{
-																								@Override
-																								public void onCaptureCompleted(
-																										CameraCaptureSession session,
-																										CaptureRequest request,
-																										TotalCaptureResult result)
-																								{
-																									Log.e(TAG,
-																											"CAPTURE COMPLETED");
-																									PluginManager
-																											.getInstance()
-																											.onCaptureCompleted(
-																													result);
-																								}
-																							};
+	public final static CameraCaptureSession.CaptureCallback stillCaptureCallback = new CameraCaptureSession.CaptureCallback()
+	{
+		@Override
+		public void onCaptureCompleted(
+				CameraCaptureSession session,
+				CaptureRequest request,
+				TotalCaptureResult result)
+		{
+			Log.e(TAG, "CAPTURE COMPLETED");
+			PluginManager.getInstance().onCaptureCompleted(	result);
+		}
+	};
 
-	public final static ImageReader.OnImageAvailableListener	imageAvailableListener		= new ImageReader.OnImageAvailableListener()
-																							{
-																								@Override
-																								public void onImageAvailable(
-																										ImageReader ir)
-																								{
-																									// Contrary
-																									// to
-																									// what
-																									// is
-																									// written
-																									// in
-																									// Aptina
-																									// presentation
-																									// acquireLatestImage
-																									// is
-																									// not
-																									// working
-																									// as
-																									// described
-																									// Google:
-																									// Also,
-																									// not
-																									// working
-																									// as
-																									// described
-																									// in
-																									// android
-																									// docs
-																									// (should
-																									// work
-																									// the
-																									// same
-																									// as
-																									// acquireNextImage
-																									// in
-																									// our
-																									// case,
-																									// but
-																									// it
-																									// is
-																									// not)
-																									// Image
-																									// im
-																									// =
-																									// ir.acquireLatestImage();
+	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
+	{
+		@Override
+		public void onImageAvailable(ImageReader ir)
+		{
+			// Contrary to what is written in Aptina presentation acquireLatestImage is not working as described
+			// Google: Also, not working as described in android docs (should work the same as acquireNextImage in
+			// our case, but it is not)
+			// Image im = ir.acquireLatestImage();
 
-																									Image im = ir
-																											.acquireNextImage();
-																									// if(iPreviewFrameID
-																									// ==
-																									// im.getTimestamp())
-																									if (ir.getSurface() == CameraController.mPreviewSurface)
-																									{
-																										ByteBuffer Y = im
-																												.getPlanes()[0]
-																												.getBuffer();
-																										ByteBuffer U = im
-																												.getPlanes()[1]
-																												.getBuffer();
-																										ByteBuffer V = im
-																												.getPlanes()[2]
-																												.getBuffer();
+			Image im = ir.acquireNextImage();
+			// if(iPreviewFrameID == im.getTimestamp())
+			if (ir.getSurface() == CameraController.mPreviewSurface)
+			{
+				ByteBuffer Y = im.getPlanes()[0].getBuffer();
+				ByteBuffer U = im.getPlanes()[1].getBuffer();
+				ByteBuffer V = im.getPlanes()[2].getBuffer();
 
-																										if ((!Y.isDirect())
-																												|| (!U.isDirect())
-																												|| (!V.isDirect()))
-																										{
-																											Log.e(TAG,
-																													"Oops, YUV ByteBuffers isDirect failed");
-																											return;
-																										}
+				if ((!Y.isDirect())
+					|| (!U.isDirect())
+					|| (!V.isDirect()))
+				{
+					Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+					return;
+				}
 
-																										int imageWidth = im
-																												.getWidth();
-																										int imageHeight = im
-																												.getHeight();
-																										// Note:
-																										// android
-																										// documentation
-																										// guarantee
-																										// that:
-																										// -
-																										// Y
-																										// pixel
-																										// stride
-																										// is
-																										// always
-																										// 1
-																										// -
-																										// U
-																										// and
-																										// V
-																										// strides
-																										// are
-																										// the
-																										// same
-																										// So,
-																										// passing
-																										// all
-																										// these
-																										// parameters
-																										// is
-																										// a
-																										// bit
-																										// overkill
+				int imageWidth = im.getWidth();
+				int imageHeight = im.getHeight();
+				// Note:
+				// android documentation guarantee that:
+				// - Y pixel stride is always 1
+				// - U and V strides are the same
+				// So, passing all these parameters is a bit overkill
 
-																										byte[] data = YuvImage
-																												.CreateYUVImageByteArray(
-																														Y,
-																														U,
-																														V,
-																														im.getPlanes()[0]
-																																.getPixelStride(),
-																														im.getPlanes()[0]
-																																.getRowStride(),
-																														im.getPlanes()[1]
-																																.getPixelStride(),
-																														im.getPlanes()[1]
-																																.getRowStride(),
-																														im.getPlanes()[2]
-																																.getPixelStride(),
-																														im.getPlanes()[2]
-																																.getRowStride(),
-																														imageWidth,
-																														imageHeight);
+				byte[] data = YuvImage.CreateYUVImageByteArray(
+								Y,
+								U,
+								V,
+								im.getPlanes()[0].getPixelStride(),
+								im.getPlanes()[0].getRowStride(),
+								im.getPlanes()[1].getPixelStride(),
+								im.getPlanes()[1].getRowStride(),
+								im.getPlanes()[2].getPixelStride(),
+								im.getPlanes()[2].getRowStride(),
+								imageWidth,
+								imageHeight);
 
-																										PluginManager
-																												.getInstance()
-																												.onPreviewFrame(
-																														data);
-																									} else
-																									{
-																										Log.e("HALv3",
-																												"onImageAvailable");
+				PluginManager.getInstance().onPreviewFrame(data);
+			} else
+			{
+				Log.e("HALv3", "onImageAvailable");
 
-																										int frame = 0;
-																										byte[] frameData = new byte[0];
-																										int frame_len = 0;
-																										boolean isYUV = false;
+				int frame = 0;
+				byte[] frameData = new byte[0];
+				int frame_len = 0;
+				boolean isYUV = false;
 
-																										if (im.getFormat() == ImageFormat.YUV_420_888)
-																										{
-																											ByteBuffer Y = im
-																													.getPlanes()[0]
-																													.getBuffer();
-																											ByteBuffer U = im
-																													.getPlanes()[1]
-																													.getBuffer();
-																											ByteBuffer V = im
-																													.getPlanes()[2]
-																													.getBuffer();
+				if (im.getFormat() == ImageFormat.YUV_420_888)
+				{
+					ByteBuffer Y = im.getPlanes()[0].getBuffer();
+					ByteBuffer U = im.getPlanes()[1].getBuffer();
+					ByteBuffer V = im.getPlanes()[2].getBuffer();
 
-																											if ((!Y.isDirect())
-																													|| (!U.isDirect())
-																													|| (!V.isDirect()))
-																											{
-																												Log.e(TAG,
-																														"Oops, YUV ByteBuffers isDirect failed");
-																												return;
-																											}
+					if ((!Y.isDirect())
+						|| (!U.isDirect())
+						|| (!V.isDirect()))
+					{
+						Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+						return;
+					}
 
-																											CameraController.Size imageSize = CameraController
-																													.getCameraImageSize();
-																											// Note:
-																											// android
-																											// documentation
-																											// guarantee
-																											// that:
-																											// -
-																											// Y
-																											// pixel
-																											// stride
-																											// is
-																											// always
-																											// 1
-																											// -
-																											// U
-																											// and
-																											// V
-																											// strides
-																											// are
-																											// the
-																											// same
-																											// So,
-																											// passing
-																											// all
-																											// these
-																											// parameters
-																											// is
-																											// a
-																											// bit
-																											// overkill
-																											int status = YuvImage
-																													.CreateYUVImage(
-																															Y,
-																															U,
-																															V,
-																															im.getPlanes()[0]
-																																	.getPixelStride(),
-																															im.getPlanes()[0]
-																																	.getRowStride(),
-																															im.getPlanes()[1]
-																																	.getPixelStride(),
-																															im.getPlanes()[1]
-																																	.getRowStride(),
-																															im.getPlanes()[2]
-																																	.getPixelStride(),
-																															im.getPlanes()[2]
-																																	.getRowStride(),
-																															imageSize
-																																	.getWidth(),
-																															imageSize
-																																	.getHeight());
+					CameraController.Size imageSize = CameraController.getCameraImageSize();
+					// Note:
+					// android documentation guarantee that:
+					// - Y pixel stride is always 1
+					// - U and V strides are the same
+					// So, passing all these parameters is a bit overkill
+					int status = YuvImage
+							.CreateYUVImage(
+									Y,
+									U,
+									V,
+									im.getPlanes()[0].getPixelStride(),
+									im.getPlanes()[0].getRowStride(),
+									im.getPlanes()[1].getPixelStride(),
+									im.getPlanes()[1].getRowStride(),
+									im.getPlanes()[2].getPixelStride(),
+									im.getPlanes()[2].getRowStride(),
+									imageSize.getWidth(),
+									imageSize.getHeight());
 
-																											if (status != 0)
-																												Log.e(TAG,
-																														"Error while cropping: "
-																																+ status);
+					if (status != 0)
+						Log.e(TAG, "Error while cropping: "	+ status);
 
-																											PluginManager
-																													.getInstance()
-																													.addToSharedMemExifTags(
-																															null);
-																											if (!resultInHeap)
-																												frameData = YuvImage
-																														.GetByteFrame();
-																											else
-																												frame = YuvImage
-																														.GetFrame();
+					PluginManager.getInstance().addToSharedMemExifTags(null);
+					if (!resultInHeap)
+						frameData = YuvImage.GetByteFrame();
+					else
+						frame = YuvImage.GetFrame();
 
-																											frame_len = imageSize
-																													.getWidth()
-																													* imageSize
-																															.getHeight()
-																													+ imageSize
-																															.getWidth()
-																													* ((imageSize
-																															.getHeight() + 1) / 2);
+					frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()	* ((imageSize.getHeight() + 1) / 2);
 
-																											isYUV = true;
+					isYUV = true;
 
-																										} else if (im
-																												.getFormat() == ImageFormat.JPEG)
-																										{
-																											Log.e(TAG,
-																													"captured JPEG");
-																											ByteBuffer jpeg = im
-																													.getPlanes()[0]
-																													.getBuffer();
+				} else if (im.getFormat() == ImageFormat.JPEG)
+				{
+					Log.e(TAG, "captured JPEG");
+					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
-																											frame_len = jpeg
-																													.limit();
-																											frameData = new byte[frame_len];
-																											jpeg.get(
-																													frameData,
-																													0,
-																													frame_len);
+					frame_len = jpeg.limit();
+					frameData = new byte[frame_len];
+					jpeg.get(frameData,	0, frame_len);
 
-																											PluginManager
-																													.getInstance()
-																													.addToSharedMemExifTags(
-																															frameData);
-																											if (resultInHeap)
-																											{
-																												frame = SwapHeap
-																														.SwapToHeap(frameData);
-																												frameData = null;
-																											}
-																										} else if (im
-																												.getFormat() == ImageFormat.RAW_SENSOR)
-																										{
-																											Log.e(TAG,
-																													"captured RAW");
-																											ByteBuffer raw = im
-																													.getPlanes()[0]
-																													.getBuffer();
+					PluginManager.getInstance().addToSharedMemExifTags(frameData);
+					if (resultInHeap)
+					{
+						frame = SwapHeap.SwapToHeap(frameData);
+						frameData = null;
+					}
+				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
+				{
+					Log.e(TAG, "captured RAW");
+					ByteBuffer raw = im.getPlanes()[0].getBuffer();
 
-																											frame_len = raw
-																													.limit();
-																											frameData = new byte[frame_len];
-																											raw.get(frameData,
-																													0,
-																													frame_len);
+					frame_len = raw.limit();
+					frameData = new byte[frame_len];
+					raw.get(frameData, 0, frame_len);
 
-																											// PluginManager.getInstance().addToSharedMemExifTags(frameData);
-																											if (resultInHeap)
-																											{
-																												frame = SwapHeap
-																														.SwapToHeap(frameData);
-																												frameData = null;
-																											}
-																										}
+					// PluginManager.getInstance().addToSharedMemExifTags(frameData);
+					if (resultInHeap)
+					{
+						frame = SwapHeap.SwapToHeap(frameData);
+						frameData = null;
+					}
+				}
 
-																										if (im.getFormat() == ImageFormat.RAW_SENSOR)
-																											PluginManager
-																													.getInstance()
-																													.onImageTaken(
-																															frame,
-																															frameData,
-																															frame_len,
-																															CameraController.RAW);
-																										else
-																										{
-																											PluginManager
-																													.getInstance()
-																													.onImageTaken(
-																															frame,
-																															frameData,
-																															frame_len,
-																															isYUV ? CameraController.YUV
-																																	: CameraController.JPEG);
-																											HALv3.cancelAutoFocusHALv3();
-																										}
+				if (im.getFormat() == ImageFormat.RAW_SENSOR)
+					PluginManager.getInstance().onImageTaken(frame,	frameData, frame_len, CameraController.RAW);
+				else
+				{
+					PluginManager.getInstance().onImageTaken(frame,	frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
+					HALv3.cancelAutoFocusHALv3();
+				}
 
-																										if (++currentFrameIndex < totalFrames)
-																											captureNextImageWithParams(
-																													CameraController.frameFormat, currentFrameIndex,
-																													pauseBetweenShots == null ? 0
-																															: pauseBetweenShots[currentFrameIndex],
-																													evCompensation == null ? 0
-																															: evCompensation[currentFrameIndex],
-																													sensorGain == null ? 0
-																															: sensorGain[currentFrameIndex],
-																													exposureTime == null ? 0
-																															: exposureTime[currentFrameIndex]);
-																									}
+				if (++currentFrameIndex < totalFrames)
+					captureNextImageWithParams(
+							CameraController.frameFormat, currentFrameIndex,
+							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
+							sensorGain == null ? 0 : sensorGain[currentFrameIndex],
+							exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
+			}
 
-																									// Image
-																									// should
-																									// be
-																									// closed
-																									// after
-																									// we
-																									// are
-																									// done
-																									// with
-																									// it
-																									im.close();
-																								}
-																							};
+			// Image should be closed after we are done with it
+			im.close();
+		}
+	};
 	// ^^ HALv3 code
 	// --------------------------------------------------------------
 	// camera-related Callbacks

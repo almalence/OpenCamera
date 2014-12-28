@@ -683,8 +683,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 2);
-		// thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
-		// ImageFormat.YUV_420_888, 1);
+//		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
+//		 ImageFormat.YUV_420_888, 1);
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
