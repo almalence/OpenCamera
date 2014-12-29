@@ -152,6 +152,14 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"burstGain" + sessionID));
 		
+		if (Build.MODEL.contains("Nexus 6"))
+		{
+			if (mDisplayOrientation==0 || mDisplayOrientation==90)
+				mDisplayOrientation+=180;
+			else if (mDisplayOrientation==180 || mDisplayOrientation==270)
+				mDisplayOrientation-=180;
+		}
+		
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
 				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
 				9, SaturatedColors ? 9 : 0, imagesAmount,
