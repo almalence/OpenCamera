@@ -292,7 +292,12 @@ public class NightCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		if (!usingSuperMode)
-			OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+		{
+			if (Build.MODEL.contains("Nexus 6"))
+				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);
+			else
+				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+		}
 	}
 
 	@Override
@@ -744,7 +749,13 @@ public class NightCapturePlugin extends PluginCapture
 					if (CameraController.isFrontCamera())
 					{
 						dataRotated = new byte[dataS.length];
-						ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
+						
+						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
+						if (Build.MODEL.contains("Nexus 6"))
+							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
+						else
+						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
+							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
 	
 						yuvData = dataRotated;
 					} else

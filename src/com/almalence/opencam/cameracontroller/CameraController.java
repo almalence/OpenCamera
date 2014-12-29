@@ -2949,8 +2949,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				int dataLenght = data.length;
 				if (resultInHeap)
 				{
-					frame = SwapHeap.SwapToHeap(data);
+					////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
+					byte[] dataToSave = data;
+					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera() && PluginManager.getInstance().getActiveMode().modeSaveName.equalsIgnoreCase("NIGHT"))
+					{
+						byte[] dataRotated = new byte[data.length];
+						int imageWidth = MainScreen.getPreviewWidth();
+						int imageHeight = MainScreen.getPreviewHeight();
+						ImageConversion.TransformNV21(data, dataRotated, imageWidth, imageHeight, 1, 1, 0);
+						dataToSave = dataRotated;
+					}
+
+					frame = SwapHeap.SwapToHeap(dataToSave);
+					dataToSave = null;
 					data = null;
+					////////////REMOVE THIS TO NORMAL CODE!!!!!
 				}
 				
 				pluginManager.addToSharedMemExifTags(null);
