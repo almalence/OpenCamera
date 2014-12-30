@@ -171,15 +171,6 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 								Toast.LENGTH_LONG).show();
 					}
 
-					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-					{
-						Toast.makeText(
-								MainScreen.getInstance(),
-								MainScreen.getAppResources()
-										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
-								Toast.LENGTH_LONG).show();
-					}
-
 					if (v == 2)
 					{
 						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
