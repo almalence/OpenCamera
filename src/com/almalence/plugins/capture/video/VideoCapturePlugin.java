@@ -255,6 +255,8 @@ public class VideoCapturePlugin extends PluginCapture
 				} else
 				{
 					ModePreference = "1";
+					if (Build.MODEL.contains("Nexus 6"))
+						Toast.makeText(MainScreen.getMainContext(), "Not suported on Nexus 6 currently. Will be fixed in next release.", Toast.LENGTH_LONG).show();					
 				}
 
 				SharedPreferences.Editor editor = prefs.edit();
