@@ -35,6 +35,8 @@ import android.util.Log;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
@@ -42,6 +44,8 @@ import android.util.Log;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.GUI.CameraParameter;
+import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -60,6 +64,7 @@ public class BurstCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int				imageAmount			= 3;
 	private int				pauseBetweenShots	= 0;
+	private int				preferenceFlashMode;
 
 	private static String	sImagesAmountPref;
 	private static String	sPauseBetweenShotsPref;
@@ -74,10 +79,9 @@ public class BurstCapturePlugin extends PluginCapture
 	public void onCreate()
 	{
 		sImagesAmountPref = MainScreen.getAppResources().getString(R.string.Preference_BurstImagesAmount);
-		sPauseBetweenShotsPref = MainScreen.getAppResources()
-				.getString(R.string.Preference_BurstPauseBetweenShots);
+		sPauseBetweenShotsPref = MainScreen.getAppResources().getString(R.string.Preference_BurstPauseBetweenShots);
 	}
-	
+
 	@Override
 	public void onStart()
 	{
@@ -91,11 +95,50 @@ public class BurstCapturePlugin extends PluginCapture
 		imagesTakenRAW = 0;
 		inCapture = false;
 		aboutToTakePicture = false;
-//		refreshPreferences();
-		if(captureRAW)
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+
+		// refreshPreferences();
+		if (captureRAW)
 			MainScreen.setCaptureFormat(CameraController.RAW);
 		else
 			MainScreen.setCaptureFormat(CameraController.JPEG);
+	}
+
+	@Override
+	public void onGUICreate()
+	{
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+	}
+
+	@Override
+	public void setupCameraParameters()
+	{
+		try
+		{
+			int[] flashModes = CameraController.getSupportedFlashModes();
+			if (flashModes != null && flashModes.length > 0)
+			{
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+				editor.commit();
+			}
+		} catch (RuntimeException e)
+		{
+			Log.e("CameraTest", "MainScreen.setupCamera unable to setFlashMode");
+		}
+	}
+
+	@Override
+	public void onPause()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+		CameraController.setCameraFlashMode(preferenceFlashMode);
 	}
 
 	private void refreshPreferences()
@@ -105,7 +148,8 @@ public class BurstCapturePlugin extends PluginCapture
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "3"));
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
-			captureRAW = (prefs.getBoolean(MainScreen.sCaptureRAWPref, false) && CameraController.isRAWCaptureSupported());
+			captureRAW = (prefs.getBoolean(MainScreen.sCaptureRAWPref, false) && CameraController
+					.isRAWCaptureSupported());
 		} catch (Exception e)
 		{
 			Log.e("Burst capture", "Cought exception " + e.getMessage());
@@ -200,26 +244,25 @@ public class BurstCapturePlugin extends PluginCapture
 		refreshPreferences();
 		inCapture = true;
 		resultCompleted = 0;
-		
+
 		int[] pause = new int[imageAmount];
 		Arrays.fill(pause, pauseBetweenShots);
-		if(captureRAW)
+		if (captureRAW)
 		{
-			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true, true);
-		}
-		else
-			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true, true);
+			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true,
+					true);
+		} else
+			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true,
+					true);
 	}
 
-	
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		if (frame == 0)
 		{
 			Log.d("Burst", "Load to heap failed");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -227,18 +270,17 @@ public class BurstCapturePlugin extends PluginCapture
 			MainScreen.getInstance().muteShutter(false);
 			return;
 		}
-		
+
 		boolean isRAW = (format == CameraController.RAW);
-		if(isRAW)
+		if (isRAW)
 			imagesTakenRAW++;
-		
+
 		imagesTaken++;
 		PluginManager.getInstance().addToSharedMem("frame" + imagesTaken + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen" + imagesTaken + SessionID, String.valueOf(frame_len));
-		
+
 		PluginManager.getInstance().addToSharedMem("frameisraw" + imagesTaken + SessionID, String.valueOf(isRAW));
-		
-		
+
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
@@ -250,8 +292,7 @@ public class BurstCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.e("Burst", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
-					String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -260,20 +301,22 @@ public class BurstCapturePlugin extends PluginCapture
 			return;
 		}
 
-		if ((captureRAW && imagesTaken >= (imageAmount*2)) || (!captureRAW && imagesTaken >= imageAmount))
+		if ((captureRAW && imagesTaken >= (imageAmount * 2)) || (!captureRAW && imagesTaken >= imageAmount))
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(imagesTaken));
-			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, String.valueOf(imagesTakenRAW));
-			
+			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+					String.valueOf(imagesTaken));
+			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID,
+					String.valueOf(imagesTakenRAW));
+
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
 			resultCompleted = 0;
-			
+
 			inCapture = false;
 		}
-				
+
 	}
 
 	@TargetApi(21)
@@ -286,12 +329,12 @@ public class BurstCapturePlugin extends PluginCapture
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
-		
-		if(captureRAW)
-			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID, result);
+
+		if (captureRAW)
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID,
+					result);
 	}
-	
-	
+
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
