@@ -1797,7 +1797,7 @@ public class VideoCapturePlugin extends PluginCapture
 								: (MainScreen.getGUIManager().getDisplayOrientation() + 180) % 360) 
 						: MainScreen.getGUIManager().getDisplayOrientation());
 		}
-
+ 
 		// Step 6: Prepare configured MediaRecorder
 		try
 		{
