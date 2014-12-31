@@ -61,7 +61,6 @@ public class VerticalSeekBar extends SeekBar
 	{
 		c.rotate(-90);
 		c.translate(-getHeight(), 0);
-
 		super.onDraw(c);
 	}
 
