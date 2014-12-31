@@ -44,6 +44,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -288,6 +289,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private void HDRProcessing()
 	{
+		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		{
+			if (mDisplayOrientationOnStartProcessing==0 || mDisplayOrientationOnStartProcessing==90)
+				mDisplayOrientationOnStartProcessing+=180;
+			else if (mDisplayOrientationOnStartProcessing==180 || mDisplayOrientationOnStartProcessing==270)
+				mDisplayOrientationOnStartProcessing-=180;
+		}
+		
 		yuv = AlmaShotHDR.HDRProcess(mImageWidth, mImageHeight, HDRProcessingPlugin.crop,
 				mDisplayOrientationOnStartProcessing, mCameraMirrored);
 	}

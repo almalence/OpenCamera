@@ -152,7 +152,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"burstGain" + sessionID));
 		
-		if (Build.MODEL.contains("Nexus 6"))
+		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientation==0 || mDisplayOrientation==90)
 				mDisplayOrientation+=180;
