@@ -50,6 +50,7 @@ import android.annotation.TargetApi;
 import android.opengl.GLES10;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
+import android.os.Build;
 import android.util.Log;
 
 public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationReceiver
@@ -1316,11 +1317,18 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								if (CameraController.isFrontCamera())
 								{
-									ImageConversion.TransformNV21N(yuv_address,
-											yuv_address,
-											AugmentedPanoramaEngine.this.height,
-											AugmentedPanoramaEngine.this.width,
-											1, 0, 0);
+									if (Build.MODEL.contains("Nexus 6"))
+										ImageConversion.TransformNV21N(yuv_address,
+												yuv_address,
+												AugmentedPanoramaEngine.this.height,
+												AugmentedPanoramaEngine.this.width,
+												0, 1, 0);
+									else
+										ImageConversion.TransformNV21N(yuv_address,
+												yuv_address,
+												AugmentedPanoramaEngine.this.height,
+												AugmentedPanoramaEngine.this.width,
+												1, 0, 0);
 								}
 
 								ImageConversion.convertNV21toGLN(yuv_address,
