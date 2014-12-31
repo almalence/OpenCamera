@@ -96,8 +96,11 @@ public class BurstCapturePlugin extends PluginCapture
 		inCapture = false;
 		aboutToTakePicture = false;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		}
 
 		// refreshPreferences();
 		if (captureRAW)
@@ -109,7 +112,10 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		}
 	}
 
 	@Override
@@ -118,7 +124,8 @@ public class BurstCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3()
+					&& CameraController.isNexus())
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
@@ -136,9 +143,11 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
-		CameraController.setCameraFlashMode(preferenceFlashMode);
+		if (CameraController.isUseHALv3() && CameraController.isNexus()) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+			CameraController.setCameraFlashMode(preferenceFlashMode);
+		}
 	}
 
 	private void refreshPreferences()
