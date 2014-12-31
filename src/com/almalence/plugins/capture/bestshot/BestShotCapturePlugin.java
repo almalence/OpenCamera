@@ -78,9 +78,12 @@ public class BestShotCapturePlugin extends PluginCapture
 		aboutToTakePicture = false;
 		// refreshPreferences();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
-		
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		}
+
 		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
@@ -162,7 +165,8 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3()
+					&& CameraController.isNexus())
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
@@ -184,7 +188,10 @@ public class BestShotCapturePlugin extends PluginCapture
 				MainScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
 				"bestShotShowHelp");
 
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		}
 	}
 
 	public boolean delayedCaptureSupported()
@@ -195,9 +202,12 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
-		CameraController.setCameraFlashMode(preferenceFlashMode);
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+			CameraController.setCameraFlashMode(preferenceFlashMode);
+		}
 	}
 
 	public void takePicture()
