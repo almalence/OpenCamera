@@ -74,6 +74,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public static boolean		RefocusPreference;
 	public static boolean		UseLumaAdaptation;
 	private int					preferenceSceneMode;
+	private int					preferenceFlashMode;
 
 	// set exposure based on onpreviewframe
 	private boolean				previewMode				= true;
@@ -124,6 +125,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
 		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
+		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
 
 		if (prefs.contains(sExpoPreviewModePref))
 		{
@@ -148,6 +150,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		prefs.edit().putInt("EvCompensationValue", preferenceEVCompensationValue).commit();
 		prefs.edit().putInt("SceneModeValue", preferenceSceneMode).commit();
+		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+		
+		CameraController.setCameraFlashMode(preferenceFlashMode);
 	}
 
 	@Override
@@ -155,6 +160,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false);
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
 	}
 
 	public boolean delayedCaptureSupported()
@@ -176,6 +182,15 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		try
 		{
+			int[] flashModes = CameraController.getSupportedFlashModes();
+			if (flashModes != null && flashModes.length > 0)
+			{
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+				editor.commit();
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+			}
+			
 			int[] sceneModes = CameraController.getSupportedSceneModes();
 			if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
 			{

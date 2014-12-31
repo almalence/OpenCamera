@@ -132,6 +132,7 @@ public class HALv3
 	protected CameraDevice					camDevice				= null;
 
 	private static boolean					autoFocusTriggered		= false;
+	private static boolean 					precaptureProcess 		= false;
 
 	public static void onCreateHALv3()
 	{
@@ -1343,13 +1344,6 @@ public class HALv3
 		
 		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				MainScreen.sFlashModePref, -1);
-//		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
-//			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-//					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-//			
-//			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-//					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-//		}
 		
 		if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 		{
@@ -1409,7 +1403,7 @@ public class HALv3
 ////				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
 ////			}
 //		}
-		
+
 		if (gain > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
@@ -1427,18 +1421,83 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			}
 		}
-		
-		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				MainScreen.sFlashModePref, -1);
-		if (flashMode == CameraParameters.FLASH_MODE_SINGLE) {
-			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-			
-			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-					CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
-		}
 	}
 
+	public static int captureImageWithParamsHALv3Simple(final int nFrames, final int format, final int[] pause,
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter) {
+		
+		int requestID = -1;
+
+		final boolean isRAWCapture = (format == CameraController.RAW);
+
+		PluginManager.getInstance().createRequestIDList(isRAWCapture? nFrames*2 : nFrames);
+		// ToDo: burst capture is implemented now in Camera2 API
+		/*
+		 * List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
+		 * for (int n=0; n<NUM_FRAMES; ++n)
+		 * requests.add(stillRequestBuilder.build());
+		 * 
+		 * camDevice.captureBurst(requests, new captureCallback() , null);
+		 */
+		boolean hasPause = false;
+		if(pause != null)
+			for(int p : pause)
+				hasPause = p > 0;
+			
+		// HALv3.getInstance().mCaptureSession.stopRepeating();
+		// requests for SZ input frames
+		resultInHeap = resInHeap;
+		playShutterSound = playShutter;
+		//if (pause != null && Array.getLength(pause) > 0)
+		if(hasPause)
+		{
+			totalFrames = nFrames;
+			currentFrameIndex = 0;
+			pauseBetweenShots = pause;
+			evCompensation = evRequested;
+			sensorGain = gain;
+			exposureTime = exposure;
+			captureNextImageWithParams(format, 0,
+					pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+					evCompensation == null ? 0 : evCompensation[currentFrameIndex], sensorGain == null ? 0
+							: sensorGain[currentFrameIndex], exposureTime == null ? 0
+							: exposureTime[currentFrameIndex]);
+		} else
+		{
+			pauseBetweenShots = new int[totalFrames];
+			MainScreen.getGUIManager().showCaptureIndication();
+			if(playShutterSound)
+				MainScreen.getInstance().playShutter();
+
+			for (int n = 0; n < nFrames; ++n)
+			{
+				SetupPerFrameParameters(evRequested == null ? 0 : evRequested[n], gain == null ? 0 : gain[n],
+						exposure == null ? 0 : exposure[n], isRAWCapture);
+
+				try
+				{
+					requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+							stillCaptureCallback, null);
+
+					PluginManager.getInstance().addRequestID(n, requestID);
+					Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
+					// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
+//						if (evRequested == null) requestID = tmp;
+					
+					if(isRAWCapture)
+						HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+								stillCaptureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return requestID;
+
+	}
+	
 	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
 			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
 	{
@@ -1448,90 +1507,32 @@ public class HALv3
 		{
 			CreateRequests(format);
 
-			final boolean isRAWCapture = (format == CameraController.RAW);
-
-			PluginManager.getInstance().createRequestIDList(isRAWCapture? nFrames*2 : nFrames);
-			// ToDo: burst capture is implemented now in Camera2 API
-			/*
-			 * List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
-			 * for (int n=0; n<NUM_FRAMES; ++n)
-			 * requests.add(stillRequestBuilder.build());
-			 * 
-			 * camDevice.captureBurst(requests, new captureCallback() , null);
-			 */
-			boolean hasPause = false;
-			if(pause != null)
-				for(int p : pause)
-					hasPause = p > 0;
-				
-			// HALv3.getInstance().mCaptureSession.stopRepeating();
-			// requests for SZ input frames
-			resultInHeap = resInHeap;
-			playShutterSound = playShutter;
-			//if (pause != null && Array.getLength(pause) > 0)
-			if(hasPause)
+			if (checkHardwareLevel())
 			{
-				totalFrames = nFrames;
-				currentFrameIndex = 0;
-				pauseBetweenShots = pause;
-				evCompensation = evRequested;
-				sensorGain = gain;
-				exposureTime = exposure;
-				captureNextImageWithParams(format, 0,
-						pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-						evCompensation == null ? 0 : evCompensation[currentFrameIndex], sensorGain == null ? 0
-								: sensorGain[currentFrameIndex], exposureTime == null ? 0
-								: exposureTime[currentFrameIndex]);
+				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+				precaptureProcess = true;
+				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+						new CameraCaptureSession.CaptureCallback()
+						{
+							@Override
+							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+									TotalCaptureResult result)
+							{
+								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+								
+								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+								
+								captureImageWithParamsHALv3Simple(nFrames, format, pause,
+										evRequested, gain, exposure, resInHeap, playShutter);
+							}
+						}, null);
 			} else
 			{
-				pauseBetweenShots = new int[totalFrames];
-				MainScreen.getGUIManager().showCaptureIndication();
-				if(playShutterSound)
-					MainScreen.getInstance().playShutter();
-
-				for (int n = 0; n < nFrames; ++n)
-				{
-					SetupPerFrameParameters(evRequested == null ? 0 : evRequested[n], gain == null ? 0 : gain[n],
-							exposure == null ? 0 : exposure[n], isRAWCapture);
-
-					try
-					{
-						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-								stillCaptureCallback, null);
-
-						PluginManager.getInstance().addRequestID(n, requestID);
-						Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
-						// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
-//						if (evRequested == null) requestID = tmp;
-						
-						if(isRAWCapture)
-							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
-									stillCaptureCallback, null);
-					} catch (CameraAccessException e)
-					{
-						e.printStackTrace();
-					}
-				}
+				captureImageWithParamsHALv3Simple(nFrames, format, pause,
+						evRequested, gain, exposure, resInHeap, playShutter);
 			}
-
-			// requestID =
-			// HALv3.getInstance().camDevice.captureBurst(requestList,
-			// captureCallback , null);
-			// requestID =
-			// HALv3.getInstance().camDevice.capture(stillRequestBuilder.build(),
-			// captureCallback , null);
-			// Log.e("CameraController", "captureImage 4");
-			// One more capture for comparison with a standard frame
-			// stillRequestBuilder.set(CaptureRequest.EDGE_MODE,
-			// CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			// stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-			// CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-			// // set crop area for the scaler to have interpolation applied by
-			// camera HW
-			// stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION,
-			// zoomCrop);
-			// camDevice.capture(stillRequestBuilder.build(), new
-			// captureCallback() , null);
 		} catch (CameraAccessException e)
 		{
 			Log.e(TAG, "setting up still image capture request failed");
@@ -1542,7 +1543,70 @@ public class HALv3
 		return requestID;
 	}
 
-	private static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
+	private static int captureNextImageWithParamsSimple(final int format, final int frameIndex, final int pause, final int evRequested,
+			final int gain, final long exposure)
+	{
+		int requestID = -1;
+
+		final boolean isRAWCapture = (format == CameraController.RAW);
+
+		if (pause > 0)
+		{
+			new CountDownTimer(pause, pause)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+
+				}
+
+				public void onFinish()
+				{
+					// play tick sound
+					MainScreen.getGUIManager().showCaptureIndication();
+					if(playShutterSound)
+						MainScreen.getInstance().playShutter();
+					try
+					{
+						// FixMe: Why aren't requestID assigned if there is
+						// request with ev's being adjusted??
+						int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+								captureCallback, null);
+
+						PluginManager.getInstance().addRequestID(frameIndex, requestID);
+						Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
+						if (isRAWCapture)
+							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
+									null);
+					} catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}.start();
+
+		} else
+		{
+			// play tick sound
+			MainScreen.getGUIManager().showCaptureIndication();
+			MainScreen.getInstance().playShutter();
+
+			try
+			{
+				HALv3.getInstance().mCaptureSession
+						.capture(stillRequestBuilder.build(), stillCaptureCallback, null);
+				if (isRAWCapture)
+					HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), stillCaptureCallback,
+							null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return requestID;
+	}
+
+	public static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
 			final int gain, final long exposure)
 	{
 		int requestID = -1;
@@ -1552,63 +1616,31 @@ public class HALv3
 			CreateRequests(format);
 
 			final boolean isRAWCapture = (format == CameraController.RAW);
-
-			if (pause > 0)
+			SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
+			
+			if (checkHardwareLevel())
 			{
-				new CountDownTimer(pause, pause)
-				{
-					public void onTick(long millisUntilFinished)
-					{
-
-					}
-
-					public void onFinish()
-					{
-						// play tick sound
-						MainScreen.getGUIManager().showCaptureIndication();
-						if(playShutterSound)
-							MainScreen.getInstance().playShutter();
-
-						SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
-
-						try
+				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+				precaptureProcess = true;
+				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+						new CameraCaptureSession.CaptureCallback()
 						{
-							// FixMe: Why aren't requestID assigned if there is
-							// request with ev's being adjusted??
-							int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-									captureCallback, null);
-
-							PluginManager.getInstance().addRequestID(frameIndex, requestID);
-							Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
-							if (isRAWCapture)
-								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
-										null);
-						} catch (CameraAccessException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}.start();
-
+							@Override
+							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+									TotalCaptureResult result)
+							{
+								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+								
+								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+								
+								captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
+							}
+						}, null);
 			} else
 			{
-				// play tick sound
-				MainScreen.getGUIManager().showCaptureIndication();
-				MainScreen.getInstance().playShutter();
-
-				SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
-
-				try
-				{
-					HALv3.getInstance().mCaptureSession
-							.capture(stillRequestBuilder.build(), stillCaptureCallback, null);
-					if (isRAWCapture)
-						HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), stillCaptureCallback,
-								null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
-				}
+				captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
 			}
 		} catch (CameraAccessException e)
 		{
@@ -1619,7 +1651,7 @@ public class HALv3
 
 		return requestID;
 	}
-
+	
 	public static boolean autoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.autoFocusHALv3");
@@ -2176,6 +2208,12 @@ public class HALv3
 				PluginManager.getInstance().onPreviewFrame(data);
 			} else
 			{
+				if (precaptureProcess) {
+					precaptureProcess = false;
+					im.close();
+					return;
+				}
+				
 				Log.e("HALv3", "onImageAvailable");
 
 				int frame = 0;

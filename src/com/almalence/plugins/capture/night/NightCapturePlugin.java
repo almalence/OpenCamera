@@ -228,9 +228,9 @@ public class NightCapturePlugin extends PluginCapture
 		if (!usingSuperMode)
 		{
 			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
-			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
 		}
 		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
 	}
 	
 	@Override
@@ -418,14 +418,14 @@ public class NightCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && !usingSuperMode)
+			if (flashModes != null && flashModes.length > 0)
 			{
 				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				SharedPreferences.Editor editor = prefs.edit();
-				editor.putInt("FlashModeValue", CameraParameters.FLASH_MODE_OFF);
+				editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
 				editor.commit();
 			}
 		} catch (RuntimeException e)
