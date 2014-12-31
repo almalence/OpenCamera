@@ -66,6 +66,7 @@ import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
+import com.almalence.util.ImageConversion;
 
 /* <!-- +++
  import com.almalence.opencam_plus.CameraParameters;
@@ -1140,10 +1141,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
-	public void onPreviewFrame(final byte[] data)
+	public void onPreviewFrame(final byte[] dataOrig)
 	{
 		this.previewRestartFlag = false;
 
+		byte[] data = null;
+//		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+//		{
+//			 data = new byte[dataOrig.length];
+//			int imageWidth = MainScreen.getPreviewWidth();
+//			int imageHeight = MainScreen.getPreviewHeight();
+//			ImageConversion.TransformNV21(dataOrig, data, imageWidth, imageHeight, 0, 1, 0);
+//		}
+//		else
+			data = dataOrig;
+		
 		if (!this.prefHardwareGyroscope && this.sensorSoftGyroscope != null)
 		{
 			this.sensorSoftGyroscope.NewData(data);
@@ -1289,10 +1301,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	}
 
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
+	public void onImageTaken(int frame, byte[] frameDataOrig, int frame_len, int format)
 	{
 		final boolean goodPlace;
 
+		byte[] frameData = null;
+//		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+//		{
+//			frameData = new byte[frameDataOrig.length];
+//			int imageWidth = MainScreen.getPreviewWidth();
+//			int imageHeight = MainScreen.getPreviewHeight();
+//			ImageConversion.TransformNV21(frameDataOrig, frameData, imageWidth, imageHeight, 0, 1, 0);
+//		}
+//		else
+			frameData = frameDataOrig;
+		
 		synchronized (this.engine)
 		{
 			this.takingAlready = false;

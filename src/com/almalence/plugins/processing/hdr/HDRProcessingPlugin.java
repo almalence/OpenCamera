@@ -32,6 +32,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Matrix;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
@@ -89,6 +90,7 @@ import com.almalence.util.ImageConversion;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
+import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine;
 
 /***
  * Implements HDR processing plugin.
@@ -258,6 +260,18 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
+					
+					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+					{
+						int imageWidth = MainScreen.getPreviewWidth();
+						int imageHeight = MainScreen.getPreviewHeight();
+						ImageConversion.TransformNV21N(yuvBuffer,
+								yuvBuffer,
+								imageWidth,
+								imageHeight,
+								1, 1, 0);
+					}
+					
 					PluginManager.getInstance().writeData(os, true, sessionID, i, buffer, yuvBuffer, file);
 				}
 			} catch (IOException e)
@@ -503,7 +517,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				(bitmap.getHeight() - side) / 2, side, side);
 
 		System.gc();
-		final Bitmap output = Bitmap.createBitmap(side, side, Bitmap.Config.ARGB_8888);
+		Bitmap output = Bitmap.createBitmap(side, side, Bitmap.Config.ARGB_8888);
 
 		Canvas canvas = new Canvas(output);
 
