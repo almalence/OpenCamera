@@ -84,6 +84,9 @@
 				        
 		<activity android:name="com.almalence.opencam_plus.FolderPicker"
 		        		android:label="@string/choose_folder"/>
+		        		
+		<activity android:name="com.almalence.opencam_plus.FolderPickerLollipop"
+		        		android:label="@string/choose_folder"/>
 		+++ -->
 		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.Processing"
@@ -96,6 +99,9 @@
 				        android:hardwareAccelerated="true"/>
 		
 		<activity android:name="com.almalence.opencam.FolderPicker"
+		        		android:label="@string/choose_folder"/>
+		
+		<activity android:name="com.almalence.opencam.FolderPickerLollipop"
 		        		android:label="@string/choose_folder"/>
 		<!--  -+- -->
 				

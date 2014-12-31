@@ -867,6 +867,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 6");
 	}
 
+	public static boolean isNexus5()
+	{
+		return Build.MODEL.contains("Nexus 5");
+	}
+	
 	public static boolean isHALv3Supported()
 	{
 		return isHALv3Supported;

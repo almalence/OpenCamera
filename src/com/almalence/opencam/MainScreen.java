@@ -1275,7 +1275,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
 					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus5() ? true : false));
 					prefs.edit()
 							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 									CameraController.isUseHALv3()).commit();
