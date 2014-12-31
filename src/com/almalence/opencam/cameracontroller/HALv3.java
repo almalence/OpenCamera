@@ -79,7 +79,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.CameraParameters;
 //-+- -->
-import com.almalence.opencam.ui.GUI.CameraParameter;
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")

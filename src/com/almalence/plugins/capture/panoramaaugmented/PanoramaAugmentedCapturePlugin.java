@@ -76,6 +76,7 @@ import com.almalence.util.ImageConversion;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ import com.almalence.opencam_plus.ConfigParser;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
