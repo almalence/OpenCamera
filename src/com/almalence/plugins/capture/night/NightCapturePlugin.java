@@ -200,7 +200,12 @@ public class NightCapturePlugin extends PluginCapture
 
 		MainScreen.setCaptureFormat(CameraController.YUV);
 		
-//		Log.e("Night", "onResume FOCUS PREF = " + preferenceFocusMode);
+//		testFrame = 0;
+		
+		data1 = null;
+		data2 = null;
+		dataS = null;
+		yuvData = null;
 	}
 
 	@Override
@@ -218,6 +223,13 @@ public class NightCapturePlugin extends PluginCapture
 		CameraController.setCameraSceneMode(preferenceSceneMode);
 		CameraController.setCameraFocusMode(preferenceFocusMode);
 		CameraController.setCameraFlashMode(preferenceFlashMode);
+		
+		if (OpenGLPreference)
+		{
+			Message msg = new Message();
+			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
+			MainScreen.getMessageHandler().sendMessage(msg);
+		}
 	}
 	
 
@@ -433,6 +445,17 @@ public class NightCapturePlugin extends PluginCapture
 			Log.e("CameraTest", "MainScreen.setupCamera unable to setFlashMode");
 		}
 
+//		Message msg = new Message();
+//		if (OpenGLPreference)
+//			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+//		else
+//			msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
+//		MainScreen.getMessageHandler().sendMessage(msg);
+	}
+	
+	@Override
+	public void onCameraSetup()
+	{
 		Message msg = new Message();
 		if (OpenGLPreference)
 			msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
@@ -719,6 +742,9 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
+//		if(testFrame == 0)
+//			Log.e("Night", "onPreviewFrame first");
+		
 		if (!usingSuperMode)
 		{
 			if (OpenGLPreference && !inCapture)
@@ -744,6 +770,7 @@ public class NightCapturePlugin extends PluginCapture
 //						Log.e("Night", "dataS lenght = " + dataS.length);
 //						testFrame++;
 //					}
+//					Log.e("Night", "data lenght = " + data.length);
 					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 					if (CameraController.isFrontCamera())

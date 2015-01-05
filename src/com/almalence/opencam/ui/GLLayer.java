@@ -63,7 +63,7 @@ import android.view.SurfaceHolder;
  */
 public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Renderer
 {
-	public static final String	TAG						= "Almalence";
+	public static final String	TAG						= "GLLayer";
 
 	private static final int	GL_TEXTURE_EXTERNAL_OES	= 0x00008d65;
 
@@ -125,7 +125,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config)
 	{
-		Log.i("Almalence", "GLLayer.onSurfaceCreated()");
+		Log.i(TAG, "GLLayer.onSurfaceCreated()");
 
 		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 
