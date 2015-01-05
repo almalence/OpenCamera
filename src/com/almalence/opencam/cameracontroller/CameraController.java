@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -881,6 +882,36 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return isRAWCaptureSupported;
 	}
+	
+	
+	//Google doc's method to determine camera's display orientation
+	public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera)
+	{
+	     android.hardware.Camera.CameraInfo info =
+	             new android.hardware.Camera.CameraInfo();
+	     android.hardware.Camera.getCameraInfo(cameraId, info);
+	     int rotation = activity.getWindowManager().getDefaultDisplay()
+	             .getRotation();
+	     int degrees = 0;
+	     switch (rotation) {
+	         case Surface.ROTATION_0: degrees = 0; break;
+	         case Surface.ROTATION_90: degrees = 90; break;
+	         case Surface.ROTATION_180: degrees = 180; break;
+	         case Surface.ROTATION_270: degrees = 270; break;
+	     }
+
+	     int result;
+	     if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
+	     {
+	         result = (info.orientation + degrees) % 360;
+	         result = (360 - result) % 360;  // compensate the mirror
+	     }
+	     else
+	     {  // back-facing
+	         result = (info.orientation - degrees + 360) % 360;
+	     }
+	     camera.setDisplayOrientation(result);
+	 }
 
 	public static void setupCamera(SurfaceHolder holder)
 	{
@@ -927,8 +958,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
-					camera.setDisplayOrientation(result);
+//					int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
+//					camera.setDisplayOrientation(result);
+					setCameraDisplayOrientation(MainScreen.thiz, CameraIndex, camera);
 				} catch (RuntimeException e)
 				{
 					Log.e(TAG, "Unable to set display orientation for camera");
@@ -949,28 +981,28 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		pluginManager.selectDefaults();
 
-		if (!CameraController.isHALv3)
-		{
-			// screen rotation
-			try
-			{
-				int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
-				camera.setDisplayOrientation(result);
-			} catch (RuntimeException e)
-			{
-				Log.e(TAG, "Unable to set display orientation for camera");
-				e.printStackTrace();
-			}
-
-			try
-			{
-				camera.setPreviewDisplay(holder);
-			} catch (IOException e)
-			{
-				Log.e(TAG, "Unable to set preview display for camera");
-				e.printStackTrace();
-			}
-		}
+//		if (!CameraController.isHALv3)
+//		{
+//			// screen rotation
+//			try
+//			{
+//				int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
+//				camera.setDisplayOrientation(result);
+//			} catch (RuntimeException e)
+//			{
+//				Log.e(TAG, "Unable to set display orientation for camera");
+//				e.printStackTrace();
+//			}
+//
+//			try
+//			{
+//				camera.setPreviewDisplay(holder);
+//			} catch (IOException e)
+//			{
+//				Log.e(TAG, "Unable to set preview display for camera");
+//				e.printStackTrace();
+//			}
+//		}
 
 		CameraController.fillPreviewSizeList();
 		CameraController.fillPictureSizeList();

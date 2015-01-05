@@ -30,9 +30,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -120,7 +120,12 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
 		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
-		mCameraMirrored = CameraController.isFrontCamera();
+		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		
+		if (Build.MODEL.contains("Nexus 6") && mCameraMirrored)
+			mAngle = 180;
+		else
+			mAngle = 0;
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		int iSaveImageWidth = imageSize.getWidth();

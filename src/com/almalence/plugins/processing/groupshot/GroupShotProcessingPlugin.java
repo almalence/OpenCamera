@@ -31,6 +31,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -213,8 +214,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
 //		Log.d("GroupShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
-		mCameraMirrored = CameraController.isFrontCamera();
-
+		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 
 		int iImageWidth = imageSize.getWidth();
