@@ -122,11 +122,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
 		
-		if (Build.MODEL.contains("Nexus 6") && mCameraMirrored)
-			mAngle = 180;
-		else
-			mAngle = 0;
-
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		int iSaveImageWidth = imageSize.getWidth();
 		int iSaveImageHeight = imageSize.getHeight();
@@ -382,8 +377,9 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
+		//Nexus 6 has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(mDisplayOrientation));
+				String.valueOf((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
