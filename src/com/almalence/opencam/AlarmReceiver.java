@@ -20,7 +20,6 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 //<!-- -+-
 import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
@@ -156,8 +155,9 @@ public class AlarmReceiver extends BroadcastReceiver
 		pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 				PackageManager.DONT_KILL_APP);
 
-		if (wakeLock.isHeld())
-			wakeLock.release();
+		if (wakeLock == null)
+			if (wakeLock.isHeld())
+				wakeLock.release();
 	}
 
 	@SuppressLint("NewApi")
@@ -183,7 +183,8 @@ public class AlarmReceiver extends BroadcastReceiver
 			alarmMgr.cancel(alarmIntent);
 		}
 
-		if (wakeLock.isHeld())
-			wakeLock.release();
+		if (wakeLock != null)
+			if (wakeLock.isHeld())
+				wakeLock.release();
 	}
 }
