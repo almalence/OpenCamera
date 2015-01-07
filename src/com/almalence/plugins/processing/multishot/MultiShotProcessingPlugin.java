@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -42,6 +43,7 @@ import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateLayout;
+import com.almalence.util.ImageConversion;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -54,6 +56,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
+import com.almalence.opencam.cameracontroller.CameraController;
 
 /***
  * Implements multishot processing
@@ -250,6 +253,17 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 			mYUVBufferList.add(i - 1, yuv);
+			
+			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			{
+				int imageWidth = CameraController.getCameraImageSize().getWidth();
+				int imageHeight = CameraController.getCameraImageSize().getHeight();
+				ImageConversion.TransformNV21N(yuv,
+						yuv,
+						imageWidth,
+						imageHeight,
+						1, 1, 0);
+			}
 		}
 
 		if (mSaveInputPreference)

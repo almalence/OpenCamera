@@ -124,11 +124,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
 		
-		if (Build.MODEL.contains("Nexus 6") && mCameraMirrored)
-			mAngle = 180;
-		else
-			mAngle = 0;
-		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
@@ -311,7 +306,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		lp.height = thumbnailsArray[0].getHeight();
 		sequenceView.setLayoutParams(lp);
 
-		sequenceView.setRotation(mCameraMirrored && !Build.MODEL.contains("Nexus 6") ? 180 : 0);
+		sequenceView.setRotation(mCameraMirrored? 180 : 0);
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}
@@ -394,8 +389,9 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
+		//Nexus 6 has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(mDisplayOrientation));
+				String.valueOf((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
