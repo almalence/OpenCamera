@@ -2586,7 +2586,7 @@ public class PluginManager implements PluginManagerInterface
 					break;
 				case 180:
 //					orientation_tag = String.valueOf(180);
-					orientation_tag = cameraMirrored ? String.valueOf((270 - sensorOrientation)%360 + 180) : String.valueOf(180);
+					orientation_tag = cameraMirrored ? String.valueOf(((270 - sensorOrientation)%360 + 180)%360) : String.valueOf(180);
 					break;
 				case 270:
 //					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
@@ -2610,7 +2610,7 @@ public class PluginManager implements PluginManagerInterface
 //								: ExifInterface.ORIENTATION_ROTATE_90;
 						break;
 					case 180:
-						exif_orientation = exifOrientationMap.get(cameraMirrored ? (270 - sensorOrientation)%360 + 180 : 180);
+						exif_orientation = exifOrientationMap.get(cameraMirrored ? ((270 - sensorOrientation)%360 + 180)%360 : 180);
 //						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 						break;
 					case 270:
