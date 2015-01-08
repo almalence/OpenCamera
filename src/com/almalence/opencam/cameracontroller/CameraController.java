@@ -1046,9 +1046,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 	
 	@TargetApi(21)
-	public static void createCaptureSession(List<Surface> sfl)
+	public static boolean createCaptureSession(List<Surface> sfl)
 	{
-		HALv3.createCaptureSession(sfl);
+		return HALv3.createCaptureSession(sfl);
 	}
 
 	@TargetApi(21)
@@ -1438,40 +1438,47 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void updateCameraFeatures()
 	{
-		if (camera != null)
-			cameraParameters = camera.getParameters();
-
-		mEVSupported = getExposureCompensationSupported();
-		mSceneModeSupported = getSceneModeSupported();
-		mWBSupported = getWhiteBalanceSupported();
-		mFocusModeSupported = getFocusModeSupported();
-		mFlashModeSupported = getFlashModeSupported();
-		mISOSupported = getISOSupported();
-
-		if (!CameraController.isHALv3)
+		try
 		{
-			if (camera != null && cameraParameters != null)
+			if (camera != null)
+				cameraParameters = camera.getParameters();
+	
+			mEVSupported = getExposureCompensationSupported();
+			mSceneModeSupported = getSceneModeSupported();
+			mWBSupported = getWhiteBalanceSupported();
+			mFocusModeSupported = getFocusModeSupported();
+			mFlashModeSupported = getFlashModeSupported();
+			mISOSupported = getISOSupported();
+	
+			if (!CameraController.isHALv3)
 			{
-				minExpoCompensation = cameraParameters.getMinExposureCompensation();
-				maxExpoCompensation = cameraParameters.getMaxExposureCompensation();
-				expoCompensationStep = cameraParameters.getExposureCompensationStep();
+				if (camera != null && cameraParameters != null)
+				{
+					minExpoCompensation = cameraParameters.getMinExposureCompensation();
+					maxExpoCompensation = cameraParameters.getMaxExposureCompensation();
+					expoCompensationStep = cameraParameters.getExposureCompensationStep();
+				}
+			} else
+			{
+				minExpoCompensation = HALv3.getMinExposureCompensationHALv3();
+				maxExpoCompensation = HALv3.getMaxExposureCompensationHALv3();
+				expoCompensationStep = HALv3.getExposureCompensationStepHALv3();
 			}
-		} else
-		{
-			minExpoCompensation = HALv3.getMinExposureCompensationHALv3();
-			maxExpoCompensation = HALv3.getMaxExposureCompensationHALv3();
-			expoCompensationStep = HALv3.getExposureCompensationStepHALv3();
+	
+			supportedSceneModes = getSupportedSceneModesInternal();
+			supportedWBModes = getSupportedWhiteBalanceInternal();
+			supportedFocusModes = getSupportedFocusModesInternal();
+			supportedFlashModes = getSupportedFlashModesInternal();
+			supportedISOModes = getSupportedISOInternal();
+	
+			maxRegionsSupported = CameraController.getMaxNumFocusAreas();
+	
+			cameraParameters = null;
 		}
-
-		supportedSceneModes = getSupportedSceneModesInternal();
-		supportedWBModes = getSupportedWhiteBalanceInternal();
-		supportedFocusModes = getSupportedFocusModesInternal();
-		supportedFlashModes = getSupportedFlashModesInternal();
-		supportedISOModes = getSupportedISOInternal();
-
-		maxRegionsSupported = CameraController.getMaxNumFocusAreas();
-
-		cameraParameters = null;
+		catch(NullPointerException exp)
+		{
+			exp.printStackTrace();
+		}
 	}
 
 	@Override

@@ -182,7 +182,6 @@ public class HALv3
 			for (int key : keys)
 				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
 					CameraController.isRAWCaptureSupported = true;
-					
 		} catch (CameraAccessException e)
 		{
 			// TODO Auto-generated catch block
@@ -325,13 +324,16 @@ public class HALv3
 		HALv3.captureFormat = captureFormat;
 	}
 
-	public static void createCaptureSession(List<Surface> sfl)
+	public static boolean createCaptureSession(List<Surface> sfl)
 	{
 		try
 		{
+			CameraDevice camera = HALv3.getCamera2();
+			if(camera == null)
+				return false;
 			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
 			// Here, we create a CameraCaptureSession for camera preview.
-			HALv3.getCamera2().createCaptureSession(sfl, HALv3.captureSessionStateCallback, null);
+			camera.createCaptureSession(sfl, HALv3.captureSessionStateCallback, null);
 		} catch (IllegalArgumentException e)
 		{
 			Log.e(TAG, "Create capture session failed. IllegalArgumentException: " + e.getMessage());
@@ -341,6 +343,7 @@ public class HALv3
 			Log.e(TAG, "Create capture session failed. CameraAccessException: " + e.getMessage());
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	// /**
@@ -684,14 +687,7 @@ public class HALv3
 		zoomLevel = newZoom;
 		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 		HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
-		try
-		{
-			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-					HALv3.previewRequestBuilder.build(), captureCallback, null);
-		} catch (CameraAccessException e)
-		{
-			e.printStackTrace();
-		}
+		HALv3.setRepeatingRequest();
 	}
 
 	public static float getZoom()
@@ -768,14 +764,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 		}
 	}
 
@@ -831,39 +820,40 @@ public class HALv3
 
 	public static int[] getSupportedISOModesHALv3()
 	{
-		if (HALv3.getInstance().camCharacter != null
-				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
-		{
-			Range<Integer> iso = HALv3.getInstance().camCharacter
-					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-			int max_iso = iso.getUpper();
-			int min_iso = iso.getLower();
-
-			int iso_count = 0;
-			int index = 0;
-			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-			{
-				int iso_value = CameraController.getIsoModeHALv3().get(index);
-				if (max_iso >= iso_value && min_iso <= iso_value)
-					++iso_count;
-			}
-			int[] iso_values = new int[iso_count + 1];
-			// for (int i = 0; i < index; i++)
-			// iso_values[i] =
-			// CameraController.getIsoValuesList().get(i).byteValue();
-
-			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
-			int iso_index = 1;
-			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-			{
-				int iso_value = CameraController.getIsoModeHALv3().get(index);
-				if (max_iso >= iso_value && min_iso <= iso_value)
-					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
-			}
-
-			if (iso_values.length > 0)
-				return iso_values;
-		}
+		//Temprorary disable ISO in camera2 mode, because SENSOR_SENSITIVITY parameter is ignored by the camera.
+//		if (HALv3.getInstance().camCharacter != null
+//				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+//		{
+//			Range<Integer> iso = HALv3.getInstance().camCharacter
+//					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+//			int max_iso = iso.getUpper();
+//			int min_iso = iso.getLower();
+//
+//			int iso_count = 0;
+//			int index = 0;
+//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+//			{
+//				int iso_value = CameraController.getIsoModeHALv3().get(index);
+//				if (max_iso >= iso_value && min_iso <= iso_value)
+//					++iso_count;
+//			}
+//			int[] iso_values = new int[iso_count + 1];
+//			// for (int i = 0; i < index; i++)
+//			// iso_values[i] =
+//			// CameraController.getIsoValuesList().get(i).byteValue();
+//
+//			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
+//			int iso_index = 1;
+//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+//			{
+//				int iso_value = CameraController.getIsoModeHALv3().get(index);
+//				if (max_iso >= iso_value && min_iso <= iso_value)
+//					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
+//			}
+//
+//			if (iso_values.length > 0)
+//				return iso_values;
+//		}
 
 		return new int[0];
 	}
@@ -933,17 +923,7 @@ public class HALv3
 				// frameDuration);
 			}
 
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 
 		}
 
@@ -962,17 +942,7 @@ public class HALv3
 						.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
 
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -984,17 +954,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 		}
 
 		PreferenceManager
@@ -1019,17 +979,7 @@ public class HALv3
 			{
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, previewFlash);
-				try
-				{
-					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-							HALv3.previewRequestBuilder.build(), captureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
-				} catch (IllegalStateException e2)
-				{
-					e2.printStackTrace();
-				}
+				HALv3.setRepeatingRequest();
 			}
 			else if(mode == CameraParameters.FLASH_MODE_SINGLE || mode == CameraParameters.FLASH_MODE_AUTO || mode == CameraParameters.FLASH_MODE_REDEYE)
 			{
@@ -1043,18 +993,7 @@ public class HALv3
 				
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, correctedMode);
-				
-				try
-				{
-					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-							HALv3.previewRequestBuilder.build(), captureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
-				} catch (IllegalStateException e2)
-				{
-					e2.printStackTrace();
-				}
+				HALv3.setRepeatingRequest();
 			}
 		}
 
@@ -1067,19 +1006,11 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			if (mode != 1)
-				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, CameraController.getIsoModeHALv3()
-						.get(mode));
-			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
+				int iso = CameraController.getIsoModeHALv3().get(mode);
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 			}
+			HALv3.setRepeatingRequest();
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -1092,17 +1023,7 @@ public class HALv3
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, iEV);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -1156,17 +1077,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
 		}
 
 	}
@@ -1213,17 +1124,25 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, ae_regions);
-			try
-			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			} catch (IllegalStateException e2)
-			{
-				e2.printStackTrace();
-			}
+			HALv3.setRepeatingRequest();
+		}
+	}
+	
+	public static void setRepeatingRequest()
+	{
+		if(HALv3.getInstance().mCaptureSession == null)
+			return;
+
+		try
+		{
+			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
+					HALv3.previewRequestBuilder.build(), captureCallback, null);
+		} catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+		} catch (IllegalStateException e2)
+		{
+			e2.printStackTrace();
 		}
 	}
 
@@ -1704,6 +1623,9 @@ public class HALv3
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
+			if(HALv3.getInstance().mCaptureSession == null)
+				return;
+				
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
@@ -1747,13 +1669,13 @@ public class HALv3
 				0);
 
 		Log.e(TAG, "configurePreviewRequest()");
-		HALv3.previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		
 		if (flashMode == CameraParameters.FLASH_MODE_TORCH)
 		{
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
-			HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 		}
 		else if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 		{
@@ -1764,33 +1686,31 @@ public class HALv3
 			else
 				flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
 			
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 		}
-		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-		HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		
 		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
 		{
-			HALv3.previewRequestBuilder
-					.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
 		}
 		else
 		{
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 		}
 		
+		previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+		
+		if (captureFormat != CameraController.RAW)
+			previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+		
 		if(needZoom)
-			HALv3.previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 		
-		HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-		
-		if (HALv3.captureFormat != CameraController.RAW)
-			HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
-		
-		HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback,
-				null);
+		setRepeatingRequest();
 	}
 
 	// HALv3 ------------------------------------------------ camera-related

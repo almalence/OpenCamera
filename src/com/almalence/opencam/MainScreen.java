@@ -682,7 +682,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.e("MainScreen", "createImageReaders");
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-				ImageFormat.YUV_420_888, 2);
+				ImageFormat.YUV_420_888, 1);
 //		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
 //		 ImageFormat.YUV_420_888, 1);
 
@@ -1889,7 +1889,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		CameraController.setCaptureFormat(captureFormat);
 		// configure camera with all the surfaces to be ever used
 
-		CameraController.createCaptureSession(surfaceList);
+		//If camera device isn't initialized (equals null) just force stop application.
+		if(!CameraController.createCaptureSession(surfaceList))
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_APPLICATION_STOP, 0);
 	}
 
 	private void prepareMeteringAreas()
