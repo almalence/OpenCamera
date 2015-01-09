@@ -2573,6 +2573,8 @@ public class PluginManager implements PluginManagerInterface
 
 				String orientation_tag = String.valueOf(0);
 				int sensorOrientation = CameraController.getSensorOrientation();
+				int displayOrientation = CameraController.getDisplayOrientation();
+				sensorOrientation = (360+ sensorOrientation + (cameraMirrored ? -displayOrientation: displayOrientation))%360;
 				switch (orientation)
 				{
 				default:

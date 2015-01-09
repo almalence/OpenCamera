@@ -232,6 +232,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static int							CameraIndex						= 0;
 	protected static boolean						CameraMirrored					= false;
+	
+	protected static int							mDisplayOrientation				= 0;
 
 	// Image size index for capturing
 	private static int								CapIdx;
@@ -910,8 +912,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	     {  // back-facing
 	         result = (info.orientation - degrees + 360) % 360;
 	     }
-	     camera.setDisplayOrientation(result);
-	 }
+	     
+	     mDisplayOrientation = result;
+	     camera.setDisplayOrientation(mDisplayOrientation);
+	}
+	
+	public static int getDisplayOrientation()
+	{
+		return mDisplayOrientation;
+	}
 
 	public static void setupCamera(SurfaceHolder holder)
 	{
