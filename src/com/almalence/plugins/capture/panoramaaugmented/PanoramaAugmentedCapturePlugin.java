@@ -103,6 +103,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private final static List<Point>	ResolutionsPictureSizesList		= new ArrayList<Point>();
 	
 	private static boolean takingAlready = false;
+	
+	private boolean	camera2Preference;
 
 	public static List<Point> getResolutionspicturesizeslist()
 	{
@@ -469,6 +471,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		setMode();
 	}
+	
+	@Override
+	public void onStart()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		camera2Preference = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		
+		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		{
+			prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			
+			CameraController.isOldCameraOneModeLaunched = true;
+			PluginManager.getInstance().setSwitchModeType(true);
+		}
+	}
 
 	@Override
 	public void onResume()
@@ -507,6 +524,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				CameraController.setCameraParameters(cp);
 			}
 		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+
+		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
 	}
 
 	@Override
@@ -546,6 +567,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void onStop()
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		
+		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+			CameraController.needCameraRelaunch(true);
 	}
 
 	@Override
@@ -1166,8 +1190,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (!this.takingAlready && this.glContextCreated)
 			{
-				final int state = this.engine.getPictureTakingState(this.modeSweep ? true : CameraController
-						.getInstance().getFocusMode() == CameraParameters.AF_MODE_AUTO);
+				final int state = this.engine.getPictureTakingState(this.modeSweep ? true : 
+									CameraController.getFocusMode() == CameraParameters.AF_MODE_AUTO);
 
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE || this.isFirstFrame)
 				{

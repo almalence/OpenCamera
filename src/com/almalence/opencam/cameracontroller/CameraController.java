@@ -200,7 +200,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Handler							pauseHandler;
 
 	private static boolean							needRelaunch					= false;
-	public static boolean							isVideoModeLaunched				= false;
+	public static boolean							isOldCameraOneModeLaunched		= false;
 	
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
@@ -306,7 +306,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		
 		appStarted = false;
 		
-		isVideoModeLaunched = false;
+		isOldCameraOneModeLaunched = false;
 
 		sceneAuto = mainContext.getResources().getString(R.string.sceneAutoSystem);
 		sceneAction = mainContext.getResources().getString(R.string.sceneActionSystem);
@@ -626,7 +626,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("video"))
+		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
 			isHALv3 = false;
 //		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
 		try
@@ -862,7 +862,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isUseSuperMode()
 	{
-		return (isSuperModePossible() && isHALv3) || isVideoModeLaunched;
+		return (isSuperModePossible() && isHALv3) || isOldCameraOneModeLaunched;
 	}
 	
 	public static boolean isNexus()
@@ -919,7 +919,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static int getDisplayOrientation()
 	{
-		return mDisplayOrientation;
+		if(!isHALv3)
+			return mDisplayOrientation;
+		else
+			return 0;
 	}
 
 	public static void setupCamera(SurfaceHolder holder)
