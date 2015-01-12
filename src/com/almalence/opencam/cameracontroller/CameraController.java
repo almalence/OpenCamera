@@ -915,13 +915,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	     
 	     mDisplayOrientation = result;
 	     camera.setDisplayOrientation(mDisplayOrientation);
+	     
+//	     //Hack for Samsung SM-P601 (sensor orientation 0, display orientation 90)
+//	     if((info.orientation == 0 && mDisplayOrientation == 90) ||
+//    		 (info.orientation == 90 && mDisplayOrientation == 90) ||
+//    		 (info.orientation == 90 && mDisplayOrientation == 270))
+//	    	 mDisplayOrientation = 0;
 	}
 	
 	public static int getDisplayOrientation()
 	{
-		if(!isHALv3)
-			return mDisplayOrientation;
-		else
+//		if(!isHALv3)
+//			return mDisplayOrientation;
+//		else
 			return 0;
 	}
 
