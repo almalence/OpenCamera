@@ -1704,12 +1704,14 @@ public class HALv3
 		
 		previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
 		
-		if (captureFormat != CameraController.RAW)
+		
+		//Disable Image Reader for Nexus 6 according to slow focusing issue
+		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW)
 			previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
 		
 		if(needZoom)
 			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
-		
+
 		setRepeatingRequest();
 	}
 

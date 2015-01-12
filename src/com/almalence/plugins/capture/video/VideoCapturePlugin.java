@@ -1875,7 +1875,7 @@ public class VideoCapturePlugin extends PluginCapture
 		
 		if(camera2Preference)
 		{
-			CameraController.isVideoModeLaunched = true;
+			CameraController.isOldCameraOneModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);
 		}
 
