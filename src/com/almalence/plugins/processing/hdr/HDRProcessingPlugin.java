@@ -1220,13 +1220,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			HDRProcessing();
 //			Log.d("HDR", "HDRProcessing success");
 
-			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
-			{
-				byte[] dataRotated = new byte[yuv.length];
-				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
-
-				yuv = dataRotated;
-			}
+			//Why this code is presents here? It make a bad rotation of result image.
+//			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
+//			{
+//				byte[] dataRotated = new byte[yuv.length];
+//				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
+//
+//				yuv = dataRotated;
+//			}
 
 			int frame_len = yuv.length;
 			int frame = SwapHeap.SwapToHeap(yuv);
