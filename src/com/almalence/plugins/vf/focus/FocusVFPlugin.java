@@ -451,6 +451,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				|| mState == STATE_FOCUSING_SNAP_ON_FINISH
 				|| mState == STATE_INACTIVE
 				|| mFocusDisabled
+				|| !CameraController.isFocusModeSupported()
 				|| (!(needAutoFocusCall() || isContinuousFocusMode()) && !(MainScreen.isShotOnTap() > 0 && !PluginManager
 						.getInstance().getActiveMode().modeID.equals("video"))))
 			return false;
@@ -881,7 +882,8 @@ public class FocusVFPlugin extends PluginViewfinder
 																// auto-focus
 																// call
 				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled);
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled
+				|| !CameraController.isFocusModeSupported());
 	}
 
 	private boolean isContinuousFocusMode()

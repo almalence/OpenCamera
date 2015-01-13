@@ -1951,7 +1951,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean getFocusModeSupported()
 	{
 		int[] supported_focus = getSupportedFocusModesInternal();
-		return supported_focus != null && supported_focus.length > 0;
+		return (supported_focus != null && supported_focus.length > 0 && supported_focus[0] != CameraParameters.AF_MODE_OFF);
 	}
 
 	public static boolean isFocusModeSupported()
@@ -2621,7 +2621,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isAutoFocusPerform()
 	{
 		int focusMode = CameraController.getFocusMode();
-		if (focusMode != -1
+		if (CameraController.isFocusModeSupported() && focusMode != -1
 				&& (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
 						.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE

@@ -58,6 +58,7 @@ public final class CameraParameters
 	public static final int WB_MODE_SHADE = 8;
 	
 	//FOCUS
+	public static final int AF_MODE_OFF = 0;
 	public static final int AF_MODE_AUTO = 1;
 	public static final int AF_MODE_MACRO = 2;
 	public static final int AF_MODE_CONTINUOUS_VIDEO = 3;
