@@ -1275,7 +1275,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
 					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus5() ? true : false));
+							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
 					prefs.edit()
 							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 									CameraController.isUseHALv3()).commit();
@@ -1669,25 +1669,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			try
 			{
-//				List fpslists=CameraController.getCamera().getParameters().getSupportedPreviewFpsRange();
-//				int[] range = { 0, 0 };
-//				CameraController.getCamera().getParameters().getPreviewFpsRange(range);
-//				if (Build.MODEL.contains("Nexus 6"))
-//				{
-//					int[] range2 = { 0, 0 };
-//					CameraController.getCamera().getParameters().getPreviewFpsRange(range2);
-//					
-//					cp.setPreviewFpsRange(30000, 30000);
-//					CameraController.setCameraParameters(cp);
-//					cp = CameraController.getCameraParameters();
-//					
-//					int[] range = { 0, 0 };
-//					CameraController.getCamera().getParameters().getPreviewFpsRange(range);
-//					
-//					List fpslists=CameraController.getCamera().getParameters().getSupportedPreviewFpsRange();
-//					List fpslists2=CameraController.getCamera().getParameters().getSupportedPreviewFpsRange();
-//				}
-
 				// Nexus 5 is giving preview which is too dark without this
 				if (Build.MODEL.contains("Nexus 5"))
 				{
