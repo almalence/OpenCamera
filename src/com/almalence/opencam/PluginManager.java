@@ -1857,7 +1857,7 @@ public class PluginManager implements PluginManagerInterface
 		else if(exposure_time != null && !exposure_time.equals("null"))
 			addToSharedMem("exiftag_exposure_time" + SessionID, exposure_time);
 		if (sensitivity != null && !sensitivity.equals("null"))
-			addToSharedMem("exiftag_spectral_sensitivity" + SessionID, sensitivity);
+			addToSharedMem("exiftag_iso" + SessionID, sensitivity);
 		if (aperture != null && !aperture.equals("null"))
 			addToSharedMem("exiftag_aperture" + SessionID, aperture);
 		if (focal_lenght != null && !focal_lenght.equals("null"))
