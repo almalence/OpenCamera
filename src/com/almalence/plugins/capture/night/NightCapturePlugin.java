@@ -371,9 +371,10 @@ public class NightCapturePlugin extends PluginCapture
 		int[] sceneModes = CameraController.getSupportedSceneModes();
 		
 		// Note: excluding Nexus here because it will fire flash in night mode (?)
+		// exlude also LG G3 and some others modifications to prevent camera error in takePicture call.
 		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
-				&& (!Build.MODEL.contains("Nexus")) && !usingSuperMode)
+				&& (!Build.MODEL.contains("Nexus") && !Build.MODEL.contains("LG-D")) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
 
@@ -732,8 +733,7 @@ public class NightCapturePlugin extends PluginCapture
 		else
 		{
 			takingImageForExposure = false;
-			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
 		}
 	}
 
