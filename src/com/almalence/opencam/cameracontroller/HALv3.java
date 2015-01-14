@@ -1367,6 +1367,10 @@ public class HALv3
 		resultInHeap = resInHeap;
 		playShutterSound = playShutter;
 		//if (pause != null && Array.getLength(pause) > 0)
+		
+		int selectedEvCompensation = 0;
+		selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+		
 		if(hasPause)
 		{
 			totalFrames = nFrames;
@@ -1377,7 +1381,7 @@ public class HALv3
 			exposureTime = exposure;
 			captureNextImageWithParams(format, 0,
 					pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-					evCompensation == null ? 0 : evCompensation[currentFrameIndex], sensorGain == null ? 0
+					evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex], sensorGain == null ? 0
 							: sensorGain[currentFrameIndex], exposureTime == null ? 0
 							: exposureTime[currentFrameIndex]);
 		} else
@@ -1389,7 +1393,7 @@ public class HALv3
 
 			for (int n = 0; n < nFrames; ++n)
 			{
-				SetupPerFrameParameters(evRequested == null ? 0 : evRequested[n], gain == null ? 0 : gain[n],
+				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? 0 : gain[n],
 						exposure == null ? 0 : exposure[n], isRAWCapture);
 
 				try

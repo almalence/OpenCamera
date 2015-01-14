@@ -1827,7 +1827,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			return prefs.getInt(MainScreen.sEvPref, 0);
+			return prefs.getInt(MainScreen.sEvPref, 0) * HALv3.getExposureCompensationStepHALv3();
 		}
 	}
 
