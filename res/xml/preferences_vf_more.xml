@@ -3,6 +3,6 @@
 	    <CheckBoxPreference
 			android:title="@string/Pref_Common_DismissKeyguard_Title"
 			android:summary="@string/Pref_Common_DismissKeyguard_Summary"
-			android:defaultValue="false" 
+			android:defaultValue="true" 
 			android:key="dismissKeyguard" />
 </PreferenceScreen>
