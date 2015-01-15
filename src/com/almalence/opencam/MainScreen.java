@@ -1374,6 +1374,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
 				}
 			}.start();
+		} else {
+			// Need this for correct exposure control state, after switching DRO-on/DRO-off in single mode.
+			guiManager.onPluginsInitialized();
 		}
 	}
 

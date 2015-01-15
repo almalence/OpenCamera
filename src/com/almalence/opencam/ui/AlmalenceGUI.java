@@ -2254,6 +2254,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.modeLayout).bringToFront();
 		}
 		((Panel) guiView.findViewById(R.id.topPanel)).setOnPanelListener(pListener);
+		
+		// Create Exposure compensation button and slider with supported values
+		if (mEVSupported)
+		{
+			int maxValue = CameraController.getMaxExposureCompensation();
+
+			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
+			if (evBar != null)
+			{
+				int initValue = preferences.getInt(MainScreen.sEvPref, 0);
+				evBar.setProgress(initValue + maxValue);
+			}
+
+			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
+			but.setImageResource(ICON_EV);
+		} else
+			mEVSupported = false;
+
 	}
 
 	private boolean isCameraParameterSupported(String param)

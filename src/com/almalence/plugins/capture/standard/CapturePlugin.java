@@ -89,17 +89,21 @@ public class CapturePlugin extends PluginCapture
 		{
 			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.setCameraExposureCompensation(ev);
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+			.putInt(MainScreen.sEvPref, ev).commit();
 		}
 	}
 
 	@Override
 	public void onCreate()
 	{
+		
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
+		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 		modeSwitcher.setTextOn("DRO On");
 		modeSwitcher.setTextOff("DRO Off");
 		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
@@ -151,10 +155,9 @@ public class CapturePlugin extends PluginCapture
 	public void onCameraParametersSetup()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 //		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
 
-		if (ModePreference.compareTo("0") == 0)
+		if (ModePreference.equals("0"))
 		{
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, singleModeEV);
