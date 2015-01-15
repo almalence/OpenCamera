@@ -1091,6 +1091,7 @@ public class HALv3
 			for (int i = 0; i < meteringAreas.size(); i++)
 			{
 				Rect r = meteringAreas.get(i).rect;
+				Log.e(TAG, "meteringArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				Matrix matrix = new Matrix();
 				matrix.setScale(1, 1);
@@ -1100,6 +1101,7 @@ public class HALv3
 				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
 				matrix.mapRect(rectF);
 				Util.rectFToRect(rectF, r);
+				Log.e(TAG, "meteringArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				int currRegion = i;
 				ae_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
