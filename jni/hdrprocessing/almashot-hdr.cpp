@@ -200,7 +200,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 	Uint32 *pview;
 	int nTable[3] = {1,3,7};
 
-	//__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Preview CALLED %d %d", sx, sy);
+//	__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Preview CALLED %d %d", sx, sy);
 
 	pview = (Uint32 *)env->GetIntArrayElements(jpview, NULL);
 
@@ -225,11 +225,19 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 	if (pview_rgb)
 	{
 		if (noisePref<0)	// eval version
+		{
+//			__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Hdr_Preview eval version called");
 			Hdr_Preview(&instance, yuv, pview_rgb, NULL, NULL, 256,
 				expoPref, colorPref, ctrstPref, microPref, sx, sy, nFrames, 1, noSegmPref, 0, 0, 1, 0);
+		}
 		else
+		{
+//			__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Hdr_Preview called");
 			Hdr_Preview(&instance, yuv, pview_rgb, NULL, NULL, 256*nTable[noisePref],
 				expoPref, colorPref, ctrstPref, microPref, sx, sy, nFrames, 1, noSegmPref, 1, 1, 1, 0);
+		}
+
+//		__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "Hdr_Preview success");
 
 //		char s[1024];
 //
@@ -239,7 +247,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 //		fclose(f);
 //		__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "PREVIEW SAVCED");
 
+//		__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "AlmaShot_Preview2RGBi start");
 		AlmaShot_Preview2RGBi(pview_rgb, pview_rgb, sx/4, sy/4, 0, 0, sx/4, sy/4, (sx/4)*3);
+//		__android_log_print(ANDROID_LOG_ERROR, "CameraTest", "AlmaShot_Preview2RGBi success");
 
 		// construct preview in a form suitable for android bitmap
 		for (y=0; y<sy/4; ++y)

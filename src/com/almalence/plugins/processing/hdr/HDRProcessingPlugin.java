@@ -144,7 +144,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			MainScreen.getGUIManager().lockControls = true;
 		}
 
-//		Log.d("HDR", "start processing");
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -162,16 +161,16 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageHeight = imageSize.getHeight();
 
 		AlmaShotHDR.Initialize();
-//		Log.d("HDR", "almashot lib initialize success");
+//		Log.e("HDR", "almashot lib initialize success");
 
 		// hdr processing
 		HDRPreview();
-//		Log.d("HDR", "HDRPreview success");
+//		Log.e("HDR", "HDRPreview success");
 
 		if (!AutoAdjustments)
 		{
 			HDRProcessing();
-//			Log.d("HDR", "HDRProcessing success");
+//			Log.e("HDR", "HDRProcessing success");
 
 //			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
 //			{
@@ -289,6 +288,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 
 		int nf = HDRProcessingPlugin.getNoise();
+		
+		if(Build.MODEL.contains("Nexus 6") && CameraController.isUseHALv3())
+			nf = -1;
 
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
 				HDRProcessingPlugin.getVividness(true), HDRProcessingPlugin.getContrast(true),
