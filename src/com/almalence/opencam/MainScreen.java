@@ -2057,7 +2057,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return true;
 		}
 		
-		return false;
+		return super.onKeyUp(keyCode, event);
 	}
 	
 	@Override
@@ -2138,10 +2138,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		// -+- -->
 
-		if (super.onKeyDown(keyCode, event))
-			return true;
-		return false;
+		return super.onKeyDown(keyCode, event);
 	}
+	
 
 	@Override
 	public void onClick(View v)

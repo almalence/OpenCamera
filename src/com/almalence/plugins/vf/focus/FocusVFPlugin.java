@@ -130,7 +130,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private boolean				mFocusDisabled					= false;
 
-	private int					preferenceFocusMode;
+	private int					preferenceFocusMode             = -1;
 
 	private class MainHandler extends Handler
 	{
@@ -224,11 +224,21 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-		// replace here with [CF] mode as default.
-		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
-		// not available - set first available
-		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+//		// replace here with [CF] mode as default.
+//		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
+//		// not available - set first available
+//		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+//				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+//		
+//		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
+//		if(supportedFocusModes != null)
+//		{
+//			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
+//				if(CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
+//					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
+//				else
+//					preferenceFocusMode = supportedFocusModes[0];
+//		}
 	}
 
 	@Override
@@ -248,6 +258,23 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onCameraParametersSetup()
 	{
+		// replace here with [CF] mode as default.
+		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
+		// not available - set first available
+		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+		
+		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
+		if(supportedFocusModes != null)
+		{
+			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
+				if(CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
+					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
+				else
+					preferenceFocusMode = supportedFocusModes[0];
+		}
+		
+		
 //		preferenceFocusMode = CameraController.getFocusMode();
 //		Log.e(TAG, "onCameraParametersSetup. FOCUS = " + preferenceFocusMode);
 
