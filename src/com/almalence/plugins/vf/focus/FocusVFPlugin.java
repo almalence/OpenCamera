@@ -129,6 +129,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	private boolean				mMeteringAreaSupported			= false;
 
 	private boolean				mFocusDisabled					= false;
+	private boolean				isDoubleClick					= false;
 
 	private int					preferenceFocusMode             = -1;
 
@@ -434,7 +435,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 				if (MainScreen.isShotOnTap() == 2 && !modeID.equals("video"))
 				{
-					if (System.currentTimeMillis() - lastTouchTime1 < 1000)
+					if (isDoubleClick)
 					{
 						MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 					}
@@ -470,6 +471,12 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			lastTouchTime1 = lastTouchTime2;
 			lastTouchTime2 = System.currentTimeMillis();
+			
+			if (lastTouchTime2 - lastTouchTime1 < 1000) {
+				isDoubleClick = true;
+			} else {
+				isDoubleClick = false;
+			}
 		}
 
 		// Not handle touch event if no need of autoFocus and refuse 'shot on
@@ -628,7 +635,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap() == 2
 				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
 		{
-			if (System.currentTimeMillis() - lastTouchTime2 < 1000)
+			if (isDoubleClick)
 			{
 				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 			}
