@@ -683,8 +683,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for preview frames in YUV format
 		thiz.mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 2);
-//		 thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
-//		 ImageFormat.YUV_420_888, 1);
+		// thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
+		// ImageFormat.YUV_420_888, 1);
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -704,7 +704,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// ImageReader for RAW still images
 		thiz.mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(),
 				ImageFormat.RAW_SENSOR, 2);
-		
+
 		thiz.guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
 
 	}
@@ -1236,8 +1236,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		this.hideOpenGLLayer();
 	}
 
-	private CountDownTimer onResumeTimer = null;
-	
+	private CountDownTimer	onResumeTimer	= null;
+
 	@Override
 	protected void onResume()
 	{
@@ -1334,17 +1334,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					Toast.LENGTH_LONG).show();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", false);
+		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
 		if (dismissKeyguard)
 			getWindow()
 					.addFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		else
+		{
 			getWindow()
 					.clearFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		}
 
 		// <!-- -+-
 		if (isABCUnlockedInstalled(this))
@@ -1372,6 +1374,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
 				}
 			}.start();
+		} else {
+			// Need this for correct exposure control state, after switching DRO-on/DRO-off in single mode.
+			guiManager.onPluginsInitialized();
 		}
 	}
 
@@ -1404,11 +1409,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onPause()
 	{
 		super.onPause();
-		
-		if (onResumeTimer != null) {
+
+		if (onResumeTimer != null)
+		{
 			onResumeTimer.cancel();
 		}
-		
+
 		mApplicationStarted = false;
 
 		MainScreen.getGUIManager().onPause();
@@ -1829,8 +1835,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 
-		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW) // when capture RAW preview
-													// frames is not available
+		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW) // when
+																						// capture
+																						// RAW
+																						// preview
+			// frames is not available
 			surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
 																	// preview
 																	// yuv
@@ -1863,15 +1872,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// sfl.add(mImageReaderJPEG.getSurface());
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 
-//		guiManager.setupViewfinderPreviewSize(new CameraController.Size(this.previewWidth, this.previewHeight));
+		// guiManager.setupViewfinderPreviewSize(new
+		// CameraController.Size(this.previewWidth, this.previewHeight));
 		// guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280,
 		// 960));
 
 		CameraController.setCaptureFormat(captureFormat);
 		// configure camera with all the surfaces to be ever used
 
-		//If camera device isn't initialized (equals null) just force stop application.
-		if(!CameraController.createCaptureSession(surfaceList))
+		// If camera device isn't initialized (equals null) just force stop
+		// application.
+		if (!CameraController.createCaptureSession(surfaceList))
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_APPLICATION_STOP, 0);
 	}
 
@@ -2040,6 +2051,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// Prevent system sounds, for volume buttons.
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			return true;
+		}
+		
+		return super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		if (!mApplicationStarted)
@@ -2117,10 +2138,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		// -+- -->
 
-		if (super.onKeyDown(keyCode, event))
-			return true;
-		return false;
+		return super.onKeyDown(keyCode, event);
 	}
+	
 
 	@Override
 	public void onClick(View v)
@@ -2157,7 +2177,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return isForceClose;
 	}
-	
+
 	public static boolean isApplicationStarted()
 	{
 		return mApplicationStarted;
@@ -3161,7 +3181,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public boolean	showPromoRedeemed	= false;
+	public boolean	showPromoRedeemed		= false;
 	public boolean	showPromoRedeemedJulius	= false;
 
 	// enter promo code to get smth
@@ -3200,10 +3220,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				String[] sep = MainScreen.getInstance().summary_SKU_PROMO.split(";");
 				String promo = editText.getText().toString();
 				boolean matchPromo = false;
-				
-				///////////////////////////////////////////////////////
-				//juliusapp promotion
-				if (promo.equalsIgnoreCase("MONOMO")||promo.equalsIgnoreCase("RISPARMI"))
+
+				// /////////////////////////////////////////////////////
+				// juliusapp promotion
+				if (promo.equalsIgnoreCase("MONOMO") || promo.equalsIgnoreCase("RISPARMI"))
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					panoramaPurchased = true;
@@ -3218,8 +3238,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					showPromoRedeemedJulius = true;
 					guiManager.showStore();
 					return;
-				}					
-				///////////////////////////////////////////////////////
+				}
+				// /////////////////////////////////////////////////////
 
 				for (int i = 0; i < sep.length; i++)
 				{
@@ -3372,7 +3392,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 
 		int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
-		int id = MainScreen.getAppResources().getIdentifier((CameraController.isUseHALv3()?mode.modeNameHAL:mode.modeName), "string", MainScreen.thiz.getPackageName());
+		int id = MainScreen.getAppResources().getIdentifier(
+				(CameraController.isUseHALv3() ? mode.modeNameHAL : mode.modeName), "string",
+				MainScreen.thiz.getPackageName());
 		String modename = MainScreen.getAppResources().getString(id);
 
 		if (0 == launchesLeft)// no more launches left

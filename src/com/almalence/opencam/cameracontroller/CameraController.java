@@ -1827,7 +1827,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			return prefs.getInt(MainScreen.sEvPref, 0);
+			return prefs.getInt(MainScreen.sEvPref, 0) * HALv3.getExposureCompensationStepHALv3();
 		}
 	}
 
@@ -2554,6 +2554,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			HALv3.setCameraExposureCompensationHALv3(iEV);
+		
+		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
 	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)

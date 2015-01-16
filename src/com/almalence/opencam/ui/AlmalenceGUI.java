@@ -92,12 +92,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.googsharing.Thumbnail;
-
 import com.almalence.ui.Panel;
 import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
+
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
@@ -109,8 +109,8 @@ import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-
 //-+- -->
+
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -2254,6 +2254,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.modeLayout).bringToFront();
 		}
 		((Panel) guiView.findViewById(R.id.topPanel)).setOnPanelListener(pListener);
+		
+		// Create Exposure compensation button and slider with supported values
+		if (mEVSupported)
+		{
+			int maxValue = CameraController.getMaxExposureCompensation();
+
+			SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
+			if (evBar != null)
+			{
+				int initValue = preferences.getInt(MainScreen.sEvPref, 0);
+				evBar.setProgress(initValue + maxValue);
+			}
+
+			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
+			but.setImageResource(ICON_EV);
+		} else
+			mEVSupported = false;
+
 	}
 
 	private boolean isCameraParameterSupported(String param)
@@ -5998,14 +6016,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 	{
-
 		int iEv = progress - CameraController.getMaxExposureCompensation();
 		CameraController.setCameraExposureCompensation(iEv);
-
 		preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
-
 		mEV = iEv;
-
+		
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
 	}
 
@@ -6020,22 +6035,23 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void expoMinus()
 	{
+		if (!isEVEnabled) {
+			return;
+		}
+		
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
 			int minValue = CameraController.getMinExposureCompensation();
+			
 			int step = 1;
+			
 			int currProgress = evBar.getProgress();
 			int iEv = currProgress - step;
 			if (iEv < 0)
 				iEv = 0;
-
+			
 			CameraController.setCameraExposureCompensation(iEv + minValue);
-
-			preferences
-					.edit()
-					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep())).commit();
 
 			evBar.setProgress(iEv);
 		}
@@ -6043,6 +6059,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void expoPlus()
 	{
+		if (!isEVEnabled) {
+			return;
+		}
+		
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
@@ -6057,11 +6077,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				iEv = maxValue - minValue;
 
 			CameraController.setCameraExposureCompensation(iEv + minValue);
-
-			preferences
-					.edit()
-					.putInt(MainScreen.sEvPref,
-							Math.round((iEv + minValue) * CameraController.getExposureCompensationStep())).commit();
 
 			evBar.setProgress(iEv);
 		}
