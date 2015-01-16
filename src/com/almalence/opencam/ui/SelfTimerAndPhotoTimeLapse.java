@@ -31,6 +31,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -242,19 +243,41 @@ public class SelfTimerAndPhotoTimeLapse
 					intervalTimeLapse = 0;
 					intervalTimeLapseMeasurment = 0;
 				}
+				
+				// Fix for Acer Liquid E2 DUO
+				if (Build.MODEL.equals("V370")) {
+					for (int i = 0; i < stringTimelapseInterval.length; i++) {
+						if (stringTimelapseInterval[i].equals(String.valueOf(intervalTimeLapse))) {
+							intervalTimeLapse = i;
+							break;
+						}
+					}
+				}
+				
 				prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, swTimeLapseChecked);
 				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, intervalTimeLapse);
 				prefsEditor
 						.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, intervalTimeLapseMeasurment);
 
+				
 				// timer
 				int intervalTimer = 0;
-
 				if (swTimerChecked)
-					intervalTimeLapse = npTimer.getValue();
+					intervalTimer = npTimer.getValue();
 				else
-					intervalTimeLapse = 0;
-				int real_int = Integer.parseInt(stringTimerInterval[npTimer.getValue()]);
+					intervalTimer = 0;
+				
+				// Fix for Acer Liquid E2 DUO
+				if (Build.MODEL.equals("V370")) {
+					for (int i = 0; i < stringTimerInterval.length; i++) {
+						if (stringTimerInterval[i].equals(String.valueOf(intervalTimer))) {
+							intervalTimer = i;
+							break;
+						}
+					}
+				}
+				
+				int real_int = Integer.parseInt(stringTimerInterval[intervalTimer]);
 				prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swTimerChecked);
 				if (swTimerChecked)
 					prefsEditor.putInt(MainScreen.sDelayedCapturePref, real_int);
@@ -265,7 +288,7 @@ public class SelfTimerAndPhotoTimeLapse
 				}
 				prefsEditor.putBoolean(MainScreen.sDelayedFlashPref, flashCheckbox.isChecked());
 				prefsEditor.putBoolean(MainScreen.sDelayedSoundPref, soundCheckbox.isChecked());
-				prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, intervalTimeLapse);
+				prefsEditor.putInt(MainScreen.sDelayedCaptureIntervalPref, intervalTimer);
 
 				prefsEditor.commit();
 
