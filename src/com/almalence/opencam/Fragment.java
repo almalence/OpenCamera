@@ -175,13 +175,16 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 						{
 							Toast.makeText(
 									MainScreen.getInstance(),
-									"Under development for Android 5",
+									"Saving to SD card is under development for Android 5",
 									Toast.LENGTH_LONG).show();
 							
 //							Intent intent = new Intent(Preferences.thiz, FolderPickerLollipop.class);
 //							intent.putExtra(MainScreen.sSavePathPref, v_old);
 //							Preferences.thiz.startActivity(intent);
-							return true;
+							
+							//show notification, but let select custom folder
+							if (v == 1)
+								return false;
 						}
 					}
 
