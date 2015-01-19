@@ -99,7 +99,8 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 	jobjectArray jtrs,
 	jint cameraFOV,
 	jboolean useAll,
-	jboolean freeInput
+	jboolean freeInput,
+	jfloat intersection
 )
 {
 	const int nframesCount = env->GetArrayLength(jframes);
