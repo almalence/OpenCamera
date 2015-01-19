@@ -902,7 +902,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private void getPrefs()
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		this.modeSweep = prefs.getBoolean(sModePref, true);
+		this.modeSweep = prefs.getBoolean(sModePref, false);
 
 		try
 		{
