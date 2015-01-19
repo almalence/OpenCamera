@@ -58,6 +58,7 @@ import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -131,7 +132,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	private boolean				mFocusDisabled					= false;
 	private boolean				isDoubleClick					= false;
 
-	private int					preferenceFocusMode             = -1;
+	private int					preferenceFocusMode				= -1;
 
 	private class MainHandler extends Handler
 	{
@@ -197,7 +198,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onStop()
 	{
-//		cancelAutoFocus();
+		// cancelAutoFocus();
 		mState = STATE_INACTIVE;
 		updateFocusUI();
 
@@ -225,21 +226,27 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-//		// replace here with [CF] mode as default.
-//		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
-//		// not available - set first available
-//		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-//				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-//		
-//		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
-//		if(supportedFocusModes != null)
-//		{
-//			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
-//				if(CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
-//					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
-//				else
-//					preferenceFocusMode = supportedFocusModes[0];
-//		}
+		// // replace here with [CF] mode as default.
+		// // Also, check if [CF] is available, and if not - set [AF], if [AF]
+		// is
+		// // not available - set first available
+		// preferenceFocusMode =
+		// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+		// CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref :
+		// MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+		//
+		// int[] supportedFocusModes =
+		// CameraController.getSupportedFocusModes();
+		// if(supportedFocusModes != null)
+		// {
+		// if (!CameraController.isModeAvailable(supportedFocusModes,
+		// preferenceFocusMode))
+		// if(CameraController.isModeAvailable(supportedFocusModes,
+		// CameraParameters.AF_MODE_AUTO))
+		// preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
+		// else
+		// preferenceFocusMode = supportedFocusModes[0];
+		// }
 	}
 
 	@Override
@@ -250,8 +257,8 @@ public class FocusVFPlugin extends PluginViewfinder
 				.edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
-		
-//		Log.e(TAG, "onPause. PUT INT FOCUS = " + preferenceFocusMode);
+
+		// Log.e(TAG, "onPause. PUT INT FOCUS = " + preferenceFocusMode);
 		releaseSoundPlayer();
 		removeMessages();
 	}
@@ -263,21 +270,22 @@ public class FocusVFPlugin extends PluginViewfinder
 		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
 		// not available - set first available
 		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-		
+				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref,
+				MainScreen.sDefaultFocusValue);
+
 		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
-		if(supportedFocusModes != null)
+		if (supportedFocusModes != null)
 		{
 			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
-				if(CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
+				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
 					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
 				else
 					preferenceFocusMode = supportedFocusModes[0];
 		}
-		
-		
-//		preferenceFocusMode = CameraController.getFocusMode();
-//		Log.e(TAG, "onCameraParametersSetup. FOCUS = " + preferenceFocusMode);
+
+		// preferenceFocusMode = CameraController.getFocusMode();
+		// Log.e(TAG, "onCameraParametersSetup. FOCUS = " +
+		// preferenceFocusMode);
 
 		initializeParameters();
 
@@ -438,6 +446,7 @@ public class FocusVFPlugin extends PluginViewfinder
 					if (isDoubleClick)
 					{
 						MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+						isDoubleClick = false;
 					}
 				}
 			} else
@@ -467,14 +476,36 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onTouch(View view, MotionEvent e)
 	{
+		// Check if it's double click
 		if (e.getAction() == MotionEvent.ACTION_UP)
 		{
 			lastTouchTime1 = lastTouchTime2;
 			lastTouchTime2 = System.currentTimeMillis();
-			
-			if (lastTouchTime2 - lastTouchTime1 < 1000) {
+
+			if (lastTouchTime2 - lastTouchTime1 < 1000)
+			{
 				isDoubleClick = true;
-			} else {
+
+				// If shot on double click
+				if (MainScreen.isShotOnTap() == 2)
+				{
+					// Cancel delayed focus, which was created by second click
+					mHandler.removeMessages(START_TOUCH_FOCUS);
+					
+					// If state is Focused start capture
+					if (mState == STATE_SUCCESS)
+					{
+						String modeID = PluginManager.getInstance().getActiveMode().modeID;
+						if (!modeID.equals("video"))
+						{
+							MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+							isDoubleClick = false;
+						}
+					}
+					return true;
+				}
+			} else
+			{
 				isDoubleClick = false;
 			}
 		}
@@ -638,6 +669,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			if (isDoubleClick)
 			{
 				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+				isDoubleClick = false;
 			}
 		} else
 		{ // Just show the indicator in all other cases.
@@ -691,8 +723,9 @@ public class FocusVFPlugin extends PluginViewfinder
 			CameraController.cancelAutoFocus();
 			if (fm != preferenceFocusMode)
 			{
-//				Log.e(TAG, "cancelAutoFocus. setFocusMode = " + preferenceFocusMode);
-//				CameraController.cancelAutoFocus();
+				// Log.e(TAG, "cancelAutoFocus. setFocusMode = " +
+				// preferenceFocusMode);
+				// CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
 		}
@@ -754,14 +787,14 @@ public class FocusVFPlugin extends PluginViewfinder
 		return mFocusMode;
 	}
 
-//	public void setFocusMode(int focus_mode)
-//	{
-//		mPreferences
-//				.edit()
-//				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-//						: MainScreen.sFrontFocusModePref, focus_mode).commit();
-//		preferenceFocusMode = focus_mode;
-//	}
+	// public void setFocusMode(int focus_mode)
+	// {
+	// mPreferences
+	// .edit()
+	// .putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+	// : MainScreen.sFrontFocusModePref, focus_mode).commit();
+	// preferenceFocusMode = focus_mode;
+	// }
 
 	public List<Area> getFocusAreas()
 	{
@@ -916,8 +949,8 @@ public class FocusVFPlugin extends PluginViewfinder
 																// auto-focus
 																// call
 				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled
-				|| !CameraController.isFocusModeSupported());
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled || !CameraController
+					.isFocusModeSupported());
 	}
 
 	private boolean isContinuousFocusMode()
