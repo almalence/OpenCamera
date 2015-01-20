@@ -124,6 +124,7 @@ public class HALv3
 	private CameraCharacteristics			camCharacter			= null;
 
 	private static CaptureRequest.Builder	previewRequestBuilder	= null;
+	private static CaptureRequest.Builder	precaptureRequestBuilder= null;
 	private static CaptureRequest.Builder	stillRequestBuilder		= null;
 	private static CaptureRequest.Builder	rawRequestBuilder		= null;
 	private CameraCaptureSession			mCaptureSession			= null;
@@ -131,7 +132,6 @@ public class HALv3
 	protected CameraDevice					camDevice				= null;
 
 	private static boolean					autoFocusTriggered		= false;
-	private static boolean 					precaptureProcess 		= false;
 
 	public static void onCreateHALv3()
 	{
@@ -1211,17 +1211,24 @@ public class HALv3
 		final boolean isRAWCapture = (format == CameraController.RAW);
 
 		stillRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+		precaptureRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		rawRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		if (format == CameraController.YUV_RAW)
 		{
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			
+			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
+			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
 		} else if (isRAWCapture)
 		{
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-
+			
+			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 			rawRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 			rawRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
 		} else
@@ -1229,15 +1236,21 @@ public class HALv3
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
 			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
 					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			
+			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
+			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
+					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 		}
 
 		stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+		precaptureRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 		if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 		{
 			zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
 			stillRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
+			precaptureRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 		}
@@ -1245,6 +1258,7 @@ public class HALv3
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 
@@ -1259,6 +1273,8 @@ public class HALv3
 			rawRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
 			stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
 		}
+		precaptureRequestBuilder.addTarget(MainScreen.getPreviewYUVImageReader().getSurface());
+		
 		
 		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				MainScreen.sFlashModePref, -1);
@@ -1275,6 +1291,9 @@ public class HALv3
 			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 			HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 			
+			HALv3.precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+			HALv3.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+			
 			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 			HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 		}
@@ -1286,8 +1305,10 @@ public class HALv3
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		
@@ -1325,6 +1346,7 @@ public class HALv3
 		if (gain > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
+			precaptureRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
 		}
@@ -1333,6 +1355,9 @@ public class HALv3
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+
+			precaptureRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			if (isRAWCapture)
 			{
 				rawRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
@@ -1360,7 +1385,10 @@ public class HALv3
 		boolean hasPause = false;
 		if(pause != null)
 			for(int p : pause)
-				hasPause = p > 0;
+				if (p > 0) {
+					hasPause = true;
+					break;
+				}
 			
 		// HALv3.getInstance().mCaptureSession.stopRepeating();
 		// requests for SZ input frames
@@ -1431,19 +1459,16 @@ public class HALv3
 
 			if (checkHardwareLevel())
 			{
-				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				precaptureProcess = true;
-				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
 						new CameraCaptureSession.CaptureCallback()
 						{
 							@Override
 							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
 									TotalCaptureResult result)
 							{
-								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
-								
-								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
 								
 								captureImageWithParamsHALv3Simple(nFrames, format, pause,
@@ -1542,10 +1567,9 @@ public class HALv3
 			
 			if (checkHardwareLevel())
 			{
-				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				precaptureProcess = true;
-				requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
 						new CameraCaptureSession.CaptureCallback()
 						{
 							@Override
@@ -1554,7 +1578,7 @@ public class HALv3
 							{
 								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
 								
-								stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
 								
 								captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
@@ -2133,12 +2157,6 @@ public class HALv3
 				PluginManager.getInstance().onPreviewFrame(data);
 			} else
 			{
-				if (precaptureProcess) {
-					precaptureProcess = false;
-					im.close();
-					return;
-				}
-				
 				Log.e("HALv3", "onImageAvailable");
 
 				int frame = 0;
@@ -2233,7 +2251,8 @@ public class HALv3
 					HALv3.cancelAutoFocusHALv3();
 				}
 
-				if (++currentFrameIndex < totalFrames)
+				currentFrameIndex++;
+				if (currentFrameIndex < totalFrames)
 					captureNextImageWithParams(
 							CameraController.frameFormat, currentFrameIndex,
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
