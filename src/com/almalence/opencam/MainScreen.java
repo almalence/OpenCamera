@@ -1694,7 +1694,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			if (cp != null)
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "auto"));
+				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
 				switch(antibanding)
 				{
 					case 0:
