@@ -31,8 +31,10 @@ import android.preference.PreferenceManager;
 import android.view.Window;
 import android.view.WindowManager;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 
 /***
  * Preference activity class - manages preferences
@@ -42,6 +44,22 @@ public class Preferences extends PreferenceActivity
 {
 	public static PreferenceActivity	thiz;
 
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		// On some devices app crashes on start, because of MainScreen.thiz is null.
+		// If MainScreen.thiz is null, we need to start MainScreen to initialize it, before starting Preferences.
+		if (MainScreen.thiz == null) {
+			Intent intent = new Intent(this, MainScreen.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
+			finish();
+		}
+	}
+	
 	// Called only on Honeycomb and later
 	// loading headers for common and plugins
 	@Override
