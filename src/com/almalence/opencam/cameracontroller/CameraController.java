@@ -2484,23 +2484,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
+					boolean isSpecialDevice = Build.MODEL.contains("SM-N910");
 					Camera.Parameters params = camera.getParameters();
 					if (params != null)
 					{
+						String iso = isSpecialDevice? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
 						if (params.get(CameraParameters.isoParam) != null)
-							params.set(CameraParameters.isoParam, CameraController.mode_iso.get(mode));
+							params.set(CameraParameters.isoParam, iso);
 						else if (params.get(CameraParameters.isoParam2) != null)
-							params.set(CameraParameters.isoParam2, CameraController.mode_iso.get(mode));
+							params.set(CameraParameters.isoParam2, iso);
 						else if (params.get(CameraParameters.isoParam3) != null)
-							params.set(CameraParameters.isoParam3, CameraController.mode_iso.get(mode));
+							params.set(CameraParameters.isoParam3, iso);
 						if (!setCameraParameters(params))
 						{
+							iso = isSpecialDevice? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
 							if (params.get(CameraParameters.isoParam) != null)
-								params.set(CameraParameters.isoParam, CameraController.mode_iso2.get(mode));
+								params.set(CameraParameters.isoParam, iso);
 							else if (params.get(CameraParameters.isoParam2) != null)
-								params.set(CameraParameters.isoParam2, CameraController.mode_iso2.get(mode));
+								params.set(CameraParameters.isoParam2, iso);
 							else if (params.get(CameraParameters.isoParam3) != null)
-								params.set(CameraParameters.isoParam3, CameraController.mode_iso2.get(mode));
+								params.set(CameraParameters.isoParam3, iso);
 							
 							setCameraParameters(params);
 						}
