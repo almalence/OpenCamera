@@ -539,6 +539,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			break;
 		}
 
+//		Log.e(TAG, "call onTouchAreas. mState = " + mState + " delayedFocus = " + delayedFocus);
 		onTouchAreas(e);
 
 		return true;
@@ -610,19 +611,19 @@ public class FocusVFPlugin extends PluginViewfinder
 			// cancelAutoFocus then success focus state (FOCUS_LOCKED) return
 			// immediately and re-focusing occurs after
 			// image capturing is called.
-			// new CountDownTimer(100, 100)
-			// {
-			// public void onTick(long millisUntilFinished)
-			// {
-			// // Not used
-			// }
-			//
-			// public void onFinish()
-			// {
-			// setFocusParameters();
-			// autoFocus();
-			// }
-			// }.start();
+//			 new CountDownTimer(100, 100)
+//			 {
+//			 public void onTick(long millisUntilFinished)
+//			 {
+//			 // Not used
+//			 }
+//			
+//			 public void onFinish()
+//			 {
+//			 setFocusParameters();
+//			 autoFocus();
+//			 }
+//			 }.start();
 			// Back to direct call to work on S2. TODO: Check on Android 5
 			setFocusParameters();
 			autoFocus();
