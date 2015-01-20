@@ -522,7 +522,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			return false;
 
 		// Let users be able to cancel previous touch focus.
-		if ((mFocusArea != null) && (mState == STATE_FOCUSING) && !delayedFocus && MainScreen.isShotOnTap() != 2)
+		if ((mState == STATE_FOCUSING) && !delayedFocus && MainScreen.isShotOnTap() != 2)
 		{
 			focusCanceled = true;
 			cancelAutoFocus();
@@ -532,34 +532,39 @@ public class FocusVFPlugin extends PluginViewfinder
 			{
 				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
+			else if(Build.MODEL.contains("SM-N900")) //Kind of hack to prevent Note 3 of permanent 'auto focus failed' state
+			{
+				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+				CameraController.setCameraFocusMode(preferenceFocusMode);
+			}
 			return true;
 		}
 
 		switch (e.getAction())
 		{
 		case MotionEvent.ACTION_DOWN:
-			focusCanceled = false;
-			delayedFocus = false;
-			X = e.getX();
-			Y = e.getY();
-
-			lastEvent = MotionEvent.obtain(e);
-			mHandler.sendEmptyMessageDelayed(START_TOUCH_FOCUS, START_TOUCH_FOCUS_DELAY);
+				focusCanceled = false;
+				delayedFocus = false;
+				X = e.getX();
+				Y = e.getY();
+	
+				lastEvent = MotionEvent.obtain(e);
+				mHandler.sendEmptyMessageDelayed(START_TOUCH_FOCUS, START_TOUCH_FOCUS_DELAY);
 
 			return true;
 		case MotionEvent.ACTION_MOVE:
 			{
-				float difX = e.getX();
-				float difY = e.getY();
-
-				if ((Math.abs(difX - X) > 50 || Math.abs(difY - Y) > 50) && !focusCanceled)
-				{
-					focusCanceled = true;
-					cancelAutoFocus();
-					mHandler.removeMessages(START_TOUCH_FOCUS);
-					return true;
-				} else
-					return true;
+					float difX = e.getX();
+					float difY = e.getY();
+	
+					if ((Math.abs(difX - X) > 50 || Math.abs(difY - Y) > 50) && !focusCanceled)
+					{
+						focusCanceled = true;
+						cancelAutoFocus();
+						mHandler.removeMessages(START_TOUCH_FOCUS);
+						return true;
+					} else
+						return true;
 			}
 		case MotionEvent.ACTION_UP:
 			mHandler.removeMessages(START_TOUCH_FOCUS);
@@ -570,7 +575,6 @@ public class FocusVFPlugin extends PluginViewfinder
 			break;
 		}
 
-//		Log.e(TAG, "call onTouchAreas. mState = " + mState + " delayedFocus = " + delayedFocus);
 		onTouchAreas(e);
 
 		return true;
@@ -734,6 +738,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		// Reset the tap area before calling mListener.cancelAutofocus.
 		// Otherwise, focus mode stays at auto and the tap area passed to the
 		// driver is not reset.
+		CameraController.setCameraFocusAreas(null);
 		resetTouchFocus();
 
 		mState = STATE_IDLE;
