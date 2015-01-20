@@ -15,6 +15,7 @@
     <string name="Pref_Common_HWShutter_Title">HW shutter</string>
     <string name="Pref_Common_HWShutter_Summary">Use HW shutter to start application</string>
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
+    <string name="Pref_Common_Antibanding_Title">Antibanding</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_UseHALv3_Title">Use Сamera2 interface</string>
     <string name="Pref_Common_UseHALv3_Summary">Experimental mode. Will work on limited number of devices with Android 5</string>    

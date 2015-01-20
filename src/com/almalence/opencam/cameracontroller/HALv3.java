@@ -1695,10 +1695,15 @@ public class HALv3
 				MainScreen.sSceneModePref, -1);
 		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref,
 				0);
+		
+		int antibanding = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(MainScreen.sAntibandingPref,
+				"3"));
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
 		
 		if (flashMode == CameraParameters.FLASH_MODE_TORCH)
 		{

@@ -37,7 +37,7 @@
         android:defaultValue="95"
         android:entries="@array/JPEGQualityArrayCommon"
         android:entryValues="@array/JPEGQualityValuesCommon"
-        android:key="commonJPEGQuality"
+        android:key="@string/Preference_JPEGQualityCommonValue"
         android:title="@string/Pref_Common_JPEGQuality_Title" />
     <ListPreference
         android:defaultValue="0"
@@ -65,7 +65,13 @@
         android:key="@string/Preference_allowExternalGalleries"
         android:summary="@string/Pref_Common_Gallery_Summary"
         android:title="@string/Pref_Common_Gallery_Title" />
-
+    <ListPreference
+        android:defaultValue="3"
+        android:entries="@array/antibandingArrayCommon"
+        android:entryValues="@array/antibandingValuesCommon"
+        android:key="@string/Preference_AntibandingValue"
+        android:title="@string/Pref_Common_Antibanding_Title" />
+    
     <Preference
         android:key="about"
         android:summary="@string/Pref_About_Summary"

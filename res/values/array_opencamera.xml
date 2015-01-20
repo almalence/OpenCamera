@@ -117,5 +117,17 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="antibandingArrayCommon">
+        <item>@string/pref_antibanding_auto</item>
+        <item>50 Hz</item>
+        <item>60 Hz</item>
+         <item>@string/pref_antibanding_off</item>
+    </string-array>
+    <string-array name="antibandingValuesCommon">
+        <item>3</item>
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+    </string-array>
 
 </resources>
