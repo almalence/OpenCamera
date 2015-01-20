@@ -1835,7 +1835,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 
-		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW) // when
+		if (captureFormat != CameraController.RAW) // when
 																						// capture
 																						// RAW
 																						// preview
