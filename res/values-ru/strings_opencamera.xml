@@ -42,6 +42,9 @@
     <string name="pref_shot_on_tap_one_click">Один клик</string>
     <string name="pref_shot_on_tap_double_click">Двойной клик</string>
     
+    <string name="pref_antibanding_auto">Авто</string>
+    <string name="pref_antibanding_off">Отключено</string>
+    
     <string name="save_to_phone">Телефон</string>
     <string name="save_to_memorycard">Карта памяти</string>
     <string name="save_to_custom">Выбрать папку</string>

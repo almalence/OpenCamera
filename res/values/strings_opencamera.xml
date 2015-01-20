@@ -50,6 +50,9 @@
     <string name="pref_shot_on_tap_one_click">One click</string>
     <string name="pref_shot_on_tap_double_click">Double click</string>
     
+    <string name="pref_antibanding_auto">Auto</string>
+    <string name="pref_antibanding_off">Off</string>
+    
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>
     <string name="save_to_custom">Custom folder</string>

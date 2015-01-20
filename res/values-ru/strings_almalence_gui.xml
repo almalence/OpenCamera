@@ -15,6 +15,7 @@
     <string name="Pref_Common_HWShutter_Title">Кнопка камеры</string>
     <string name="Pref_Common_HWShutter_Summary">Запуск приложения по кнопке камеры на боковой панеле</string>
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
+    <string name="Pref_Common_Antibanding_Title">Антибендинг</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
     <string name="Pref_Common_UseHALv3_Title">Использовать новый интерфейс камеры</string>
     <string name="Pref_Common_UseHALv3_Summary">Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>

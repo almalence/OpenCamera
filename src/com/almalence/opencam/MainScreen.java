@@ -320,6 +320,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sInitModeListPref				= "initModeListPref";
 
 	public static String				sJPEGQualityPref;
+	
+	public static String				sAntibandingPref;
 
 	public static String				sDefaultInfoSetPref;
 	public static String				sSWCheckedPref;
@@ -397,6 +399,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
 
 		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
+		
+		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
 		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);
 		sSWCheckedPref = getResources().getString(R.string.Preference_SWCheckedValue);
@@ -1689,6 +1693,28 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			if (cp != null)
 			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "auto"));
+				switch(antibanding)
+				{
+					case 0:
+						cp.setAntibanding("off");
+						break;
+					case 1:
+						cp.setAntibanding("50hz");
+						break;
+					case 2:
+						cp.setAntibanding("60hz");
+						break;
+					case 3:
+						cp.setAntibanding("auto");
+						break;
+					default:
+						cp.setAntibanding("auto");
+						break;
+				}
+				CameraController.setCameraParameters(cp);
+				
 				previewWidth = cp.getPreviewSize().width;
 				previewHeight = cp.getPreviewSize().height;
 			}
