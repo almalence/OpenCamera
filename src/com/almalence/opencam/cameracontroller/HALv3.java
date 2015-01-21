@@ -656,6 +656,25 @@ public class HALv3
 	}
 
 	// Camera parameters interface
+	public static void setAutoExposureLock(boolean lock)
+	{
+		if (previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
+			setRepeatingRequest();
+		}
+	}
+	
+	public static void setAutoWhiteBalanceLock(boolean lock)
+	{
+		if (previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, lock);
+			setRepeatingRequest();
+		}
+	}
+	
+	
 	public static boolean isZoomSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null)
@@ -1698,12 +1717,18 @@ public class HALv3
 		
 		int antibanding = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(MainScreen.sAntibandingPref,
 				"3"));
+		
+		boolean aeLock = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sAELockPref, false);
+		boolean awbLock = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sAWBLockPref, false);
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
+		
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, aeLock);
+		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, awbLock);
 		
 		if (flashMode == CameraParameters.FLASH_MODE_TORCH)
 		{

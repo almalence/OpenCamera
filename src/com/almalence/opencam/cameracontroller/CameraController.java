@@ -1655,7 +1655,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return false;
 
 			return camera.getParameters().isAutoExposureLockSupported();
-		} else
+		} 
+		else
 			return true;
 	}
 
@@ -1667,8 +1668,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return false;
 
 			return camera.getParameters().getAutoExposureLock();
-		} else
+		}
+		else
 			return true;
+	}
+	
+	public static void setAutoExposureLock(boolean lock)
+	{
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null || ( camera != null && camera.getParameters() == null))
+				return;
+
+			Camera.Parameters params = camera.getParameters();
+			params.setAutoExposureLock(lock);
+			camera.setParameters(params);
+		}
+		else
+			HALv3.setAutoExposureLock(lock);
 	}
 
 	public static boolean isWhiteBalanceLockSupported()
@@ -1680,7 +1697,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().isAutoWhiteBalanceLockSupported();
 		} else
-			return false;
+			return true;
 	}
 
 	public static boolean isWhiteBalanceLock()
@@ -1692,7 +1709,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().getAutoWhiteBalanceLock();
 		} else
-			return false;
+			return true;
+	}
+	
+	public static void setAutoWhiteBalanceLock(boolean lock)
+	{
+		if (!CameraController.isHALv3)
+		{
+			if (camera == null || ( camera != null && camera.getParameters() == null))
+				return;
+
+			Camera.Parameters params = camera.getParameters();
+			params.setAutoWhiteBalanceLock(lock);
+			camera.setParameters(params);
+		} 
+		else
+			HALv3.setAutoWhiteBalanceLock(lock);
 	}
 
 	public static boolean isZoomSupported()
