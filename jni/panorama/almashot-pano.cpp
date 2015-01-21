@@ -156,42 +156,32 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 	//		width, height);
 
 #if 0 // debug dump
-		FILE *f = fopen("/sdcard/pano/pano_dims_LR.txt", "wb");
-		fprintf(f, "float pano_offs[%d][3][3] =\n{\t// Fov = %d\n", nframesCount, cameraFOV);
-		for (int i=0; i<nframesCount; ++i)
-		{
-			fprintf(f, "\t{ ");
-			for (int j=0; j<3; ++j)
-			{
-				fprintf(f, "{");
-				for (int k=0; k<3; ++k)
-				{
-					fprintf(f, " %3.4f", trs[i][j][k]);
-					if (k<2)
-						fprintf(f, ",");
-				}
-				fprintf(f, " }");
-				if (j<2)
-					fprintf(f, ",");
-			}
-			if (i<nframesCount-1)
-				fprintf(f, " },\n");
-			else
-				fprintf(f, " }\n");
+	{
+		int i;
+		FILE *fo = fopen("/sdcard/pano/pano.txt", "wb");
+		if (fo) {
+			fprintf(fo, "#pano (w = %i, h = %i, n = %i, fov = %i, overlap = %.2f)\n\n",
+					width, height, nframesCount, cameraFOV, intersection);
+			for (i = 0; i < nframesCount; i++)
+#define FMT "% 10.4f"
+				fprintf(fo, FMT","FMT","FMT";"FMT","FMT","FMT";"FMT","FMT","FMT";\n",
+#undef FMT
+						trs[i][0][0], trs[i][0][1], trs[i][0][2],
+						trs[i][1][0], trs[i][1][1], trs[i][1][2],
+						trs[i][2][0], trs[i][2][1], trs[i][2][2]);
+			fclose(fo);
 		}
-		fprintf(f, "};\n");
-		fclose(f);
-#endif
-#if 0 // debug dump
-		for (int i=0; i<nframesCount; ++i)
-		{
-			char str[1024];
 
-			sprintf (str, "/sdcard/pano/pi%d.yuv", i);
-			FILE *fi = fopen(str, "wb");
-			fwrite((Uint8*)nframes[i], width*height*3/2, 1, fi);
-			fclose(fi);
+		for (i = 0; i < nframesCount; i++) {
+			char str[64];
+			sprintf(str, "/sdcard/pano/pano%d.yuv", i);
+			fo = fopen(str, "wb");
+			if (fo) {
+				fwrite((Uint8*)nframes[i], 1, width*height*3/2, fo);
+				fclose(fo);
+			}
 		}
+	}
 #endif
 
 	Pano_PrepareFrames((Uint8**)nframes, width, height, nframesCount, framesSelected,
@@ -207,8 +197,8 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_pan
 	//for (int i=0; i<nframesCount; ++i)
 	//	free(framesRelevant[i]);
 
-	Pano_Preview(&instance, framesRelevant, NULL, NULL, NULL, 5 * 256, 0, 0, fx0, fy0, fsx, fsy,
-			out_width, out_height, nFramesSelected, 0);
+	Pano_Preview(&instance, framesRelevant, NULL, NULL, NULL, 5 * 256, 0, 0, intersection,
+			fx0, fy0, fsx, fsy, out_width, out_height, nFramesSelected, 0);
 
 	Pano_Preview2(instance, NULL);
 
