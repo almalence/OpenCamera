@@ -322,6 +322,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sJPEGQualityPref;
 	
 	public static String				sAntibandingPref;
+	
+	public static String				sAELockPref;
+	public static String				sAWBLockPref;
 
 	public static String				sDefaultInfoSetPref;
 	public static String				sSWCheckedPref;
@@ -401,6 +404,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
 		
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
+		
+		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
+		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
 		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);
 		sSWCheckedPref = getResources().getString(R.string.Preference_SWCheckedValue);
