@@ -2099,6 +2099,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			while (it.hasNext())
 			{
 				int metering_name = it.next();
+				
+				//Samsung Galaxy Note 3 supports only center-weighted metering mode
+				if((metering_name == 3 || metering_name == 1) && Build.MODEL.contains("SM-N900"))
+					continue;
+				
 				if (meteringModeButtons.containsKey(metering_name))
 				{
 					activeMetering.add(meteringModeButtons.get(metering_name));
