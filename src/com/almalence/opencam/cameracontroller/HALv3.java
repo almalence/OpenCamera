@@ -153,6 +153,8 @@ public class HALv3
 
 	public static boolean checkHardwareLevel()
 	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
 		try
 		{
 			Log.e(TAG, "checkHardwareLevel. CameraIndex = " + CameraController.CameraIndex);
