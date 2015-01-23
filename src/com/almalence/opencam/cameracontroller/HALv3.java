@@ -618,13 +618,15 @@ public class HALv3
 				.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		// Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
 		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
-		for (Size sz : cs)
-			if (sz.getWidth() * sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
-			{
-				// if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
-				// sz = new Size(1920, 1088);
-				previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
-			}
+		if (cs != null) {
+			for (Size sz : cs)
+				if (sz.getWidth() * sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
+				{
+					// if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
+					// sz = new Size(1920, 1088);
+					previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+				}
+		}
 
 		return previewSizes;
 	}
