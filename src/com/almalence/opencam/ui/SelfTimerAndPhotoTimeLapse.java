@@ -27,6 +27,7 @@ package com.almalence.opencam.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
@@ -45,12 +46,12 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.almalence.ui.RotateImageView;
-//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
+import com.almalence.ui.RotateImageView;
+//<!-- -+-
 //-+- -->
 
 /* <!-- +++
@@ -86,10 +87,13 @@ public class SelfTimerAndPhotoTimeLapse
 
 		npTimer = (NumberPicker) dialog.findViewById(R.id.numberPicker1);
 		npTimer.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		npTimer.setDisplayedValues(stringTimerInterval);
 		npTimer.setMaxValue(5);
 		npTimer.setMinValue(0);
-		npTimer.setValue(interval);
-		npTimer.setDisplayedValues(stringTimerInterval);
+		// Fix for Acer Liquid E2 Duo.
+		if (!Build.MODEL.equals("V370")) {
+			npTimer.setValue(interval);
+		}
 		npTimer.setWrapSelectorWheel(false);
 
 		flashCheckbox = (CheckBox) dialog.findViewById(R.id.flashCheckbox);
@@ -154,23 +158,28 @@ public class SelfTimerAndPhotoTimeLapse
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		timeLapseInterval = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
 		timeLapseMeasurementVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
-
 		swTimeLapseChecked = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 
 		npTimeLapse = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseInterval_numberPicker);
 		npTimeLapse.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		npTimeLapse.setDisplayedValues(stringTimelapseInterval);
 		npTimeLapse.setMaxValue(5);
 		npTimeLapse.setMinValue(0);
-		npTimeLapse.setValue(timeLapseInterval);
-		npTimeLapse.setDisplayedValues(stringTimelapseInterval);
+		// Fix for Acer Liquid E2 Duo.
+		if (!Build.MODEL.equals("V370")) {
+			npTimeLapse.setValue(timeLapseInterval);
+		}
 		npTimeLapse.setWrapSelectorWheel(false);
 
 		npTimeLapseMeasurment = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseMeasurment_numberPicker);
 		npTimeLapseMeasurment.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+		npTimeLapseMeasurment.setDisplayedValues(stringTimelapseMeasurement);
 		npTimeLapseMeasurment.setMaxValue(2);
 		npTimeLapseMeasurment.setMinValue(0);
-		npTimeLapseMeasurment.setValue(timeLapseMeasurementVal);
-		npTimeLapseMeasurment.setDisplayedValues(stringTimelapseMeasurement);
+		// Fix for Acer Liquid E2 Duo.
+		if (!Build.MODEL.equals("V370")) {
+			npTimeLapseMeasurment.setValue(timeLapseMeasurementVal);
+		}
 		npTimeLapseMeasurment.setWrapSelectorWheel(false);
 
 		final Switch sw = (Switch) dialog.findViewById(R.id.photoTimeLapseTitle_switcher);
@@ -244,16 +253,6 @@ public class SelfTimerAndPhotoTimeLapse
 					intervalTimeLapseMeasurment = 0;
 				}
 				
-				// Fix for Acer Liquid E2 DUO
-				if (Build.MODEL.equals("V370")) {
-					for (int i = 0; i < stringTimelapseInterval.length; i++) {
-						if (stringTimelapseInterval[i].equals(String.valueOf(intervalTimeLapse))) {
-							intervalTimeLapse = i;
-							break;
-						}
-					}
-				}
-				
 				prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, swTimeLapseChecked);
 				prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, intervalTimeLapse);
 				prefsEditor
@@ -266,16 +265,6 @@ public class SelfTimerAndPhotoTimeLapse
 					intervalTimer = npTimer.getValue();
 				else
 					intervalTimer = 0;
-				
-				// Fix for Acer Liquid E2 DUO
-				if (Build.MODEL.equals("V370")) {
-					for (int i = 0; i < stringTimerInterval.length; i++) {
-						if (stringTimerInterval[i].equals(String.valueOf(intervalTimer))) {
-							intervalTimer = i;
-							break;
-						}
-					}
-				}
 				
 				int real_int = Integer.parseInt(stringTimerInterval[intervalTimer]);
 				prefsEditor.putBoolean(MainScreen.sSWCheckedPref, swTimerChecked);
