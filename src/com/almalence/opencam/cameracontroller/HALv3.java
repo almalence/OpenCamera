@@ -153,6 +153,8 @@ public class HALv3
 
 	public static boolean checkHardwareLevel()
 	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
 		try
 		{
 			Log.e(TAG, "checkHardwareLevel. CameraIndex = " + CameraController.CameraIndex);
@@ -1053,14 +1055,17 @@ public class HALv3
 
 	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
 	{
+		if(activeRect == null)
+			return;
+		
 		Rect zoomRect = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-		if (focusAreas != null)
+		if (focusAreas != null && zoomRect != null)
 		{
 			af_regions = new MeteringRectangle[focusAreas.size()];
 			for (int i = 0; i < focusAreas.size(); i++)
 			{
 				Rect r = focusAreas.get(i).rect;
-				Log.e(TAG, "focusArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
+//				Log.e(TAG, "focusArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				Matrix matrix = new Matrix();
 				matrix.setScale(1, 1);
@@ -1070,7 +1075,7 @@ public class HALv3
 				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
 				matrix.mapRect(rectF);
 				Util.rectFToRect(rectF, r);
-				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
+//				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				int currRegion = i;
 				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
@@ -1091,9 +1096,9 @@ public class HALv3
 			// af_regions[3] = activeRect.height() - 1;
 			// af_regions[4] = 0;
 		}
-		Log.e(TAG, "activeRect: " + activeRect.left + " " + activeRect.top + " " + activeRect.right + " "
-				+ activeRect.bottom);
-		Log.e(TAG, "zoomRect: " + zoomRect.left + " " + zoomRect.top + " " + zoomRect.right + " " + zoomRect.bottom);
+//		Log.e(TAG, "activeRect: " + activeRect.left + " " + activeRect.top + " " + activeRect.right + " "
+//				+ activeRect.bottom);
+//		Log.e(TAG, "zoomRect: " + zoomRect.left + " " + zoomRect.top + " " + zoomRect.right + " " + zoomRect.bottom);
 
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
@@ -1105,8 +1110,11 @@ public class HALv3
 
 	public static void setCameraMeteringAreasHALv3(List<Area> meteringAreas)
 	{
+		if(activeRect == null)
+			return;
+		
 		Rect zoomRect = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-		if (meteringAreas != null)
+		if (meteringAreas != null && zoomRect != null)
 		{
 			ae_regions = new MeteringRectangle[meteringAreas.size()];
 			for (int i = 0; i < meteringAreas.size(); i++)
