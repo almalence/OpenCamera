@@ -2627,8 +2627,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					Camera.Parameters params = camera.getParameters();
 					if (params != null)
 					{
-							params.setMeteringAreas(meteringAreas);
-							cameraController.setCameraParameters(params);
+						params.setMeteringAreas(meteringAreas);
+						cameraController.setCameraParameters(params);
 					}
 				} catch (RuntimeException e)
 				{

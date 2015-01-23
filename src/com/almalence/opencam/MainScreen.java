@@ -1914,6 +1914,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private void prepareMeteringAreas()
 	{
+		boolean isNexus6 = Build.MODEL.contains("Nexus 6");
 		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
 				- previewWidth / 4, previewHeight - previewHeight / 4));
 		Rect topLeftRect = Util.convertToDriverCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
@@ -1923,8 +1924,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				previewWidth, previewHeight));
 		Rect bottomLeftRect = Util.convertToDriverCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
 				previewHeight));
-		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
-				previewWidth / 2 + 10, previewHeight / 2 + 10));
+		
+		//Nexus 6's metering algorithm works bad on small areas, enlarge metering area for that device
+		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2 - (10 + (isNexus6? 140 : 0)), previewHeight / 2 - (10 + (isNexus6? 140 : 0)),
+				previewWidth / 2 + (10 + (isNexus6? 140 : 0)), previewHeight / 2 + (10 + (isNexus6? 140 : 0))));
 
 		mMeteringAreaMatrix5.clear();
 		mMeteringAreaMatrix5.add(new Area(centerRect, 600));
