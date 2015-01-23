@@ -392,7 +392,10 @@ public class FocusVFPlugin extends PluginViewfinder
 			// Use the same area for focus and metering.
 			List<Area> area = getMeteringAreas();
 			if (area != null)
+			{
+//				CameraController.setCameraMeteringAreas(null);
 				CameraController.setCameraMeteringAreas(area);
+			}
 		}
 	}
 
@@ -476,7 +479,6 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onTouch(View view, MotionEvent e)
 	{
-		Log.e("TAG", e.getAction() + "");
 		// Check if it's double click
 		if (e.getAction() == MotionEvent.ACTION_UP)
 		{
@@ -597,7 +599,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		int xOffset = (focusLayout.getWidth() - previewWidth) / 2;
 		int yOffset = (focusLayout.getHeight() - previewHeight) / 2;
-
+		
 		if (mFocusArea == null)
 		{
 			mFocusArea = new ArrayList<Area>();
@@ -606,17 +608,19 @@ public class FocusVFPlugin extends PluginViewfinder
 			mMeteringArea.add(new Area(new Rect(), 1000));
 		}
 
+		
+		boolean isNexus6 = Build.MODEL.contains("Nexus 6");
 		// Convert the coordinates to driver format.
 		// AE area is bigger because exposure is sensitive and
 		// easy to over- or underexposure if area is too small.
 		calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
 				.getPreviewSurfaceView().getHeight(), mFocusArea.get(0).rect);
 		if (MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
-			calculateTapArea(20, 20, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
+			calculateTapArea(20 + (isNexus6? focusWidth : 0), 20 + (isNexus6? focusHeight : 0), 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
 					.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
 		else
 			mMeteringArea = null;
-
+		
 		// Use margin to set the focus indicator to the touched area.
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
 		int left = Util.clamp(x - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
