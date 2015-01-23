@@ -609,7 +609,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.init();
 
 		final List<CameraController.Size> cs = CameraController.getSupportedPictureSizes();
-		final CameraController.Size size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
+		final CameraController.Size size;
+		
+		// Paranoia check. In some unusual cases prefResolution value may be more then cs.size.
+		if (PanoramaAugmentedCapturePlugin.prefResolution >= cs.size()) {
+			int prefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
+			while (prefResolution >= cs.size()) {
+				prefResolution--;
+			}
+			
+			size = cs.get(prefResolution);
+		} else {
+			size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
+		}
 		
 		if (Build.MODEL.contains("HTC One X"))
 		{
