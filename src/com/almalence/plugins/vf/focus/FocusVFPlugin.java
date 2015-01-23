@@ -476,6 +476,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onTouch(View view, MotionEvent e)
 	{
+		Log.e("TAG", e.getAction() + "");
 		// Check if it's double click
 		if (e.getAction() == MotionEvent.ACTION_UP)
 		{
