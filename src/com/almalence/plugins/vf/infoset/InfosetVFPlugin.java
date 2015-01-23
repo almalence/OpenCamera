@@ -539,8 +539,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 						sceneInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 								.getDrawable(scene_id));
 				}
-				sceneInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
-						.getDrawable(MainScreen.getInstance().getSceneIcon(scene)));
+//				sceneInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
+//						.getDrawable(MainScreen.getInstance().getSceneIcon(scene)));
 			}
 		} else if (arg1 == PluginManager.MSG_WB_CHANGED)
 		{
@@ -553,8 +553,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 					if (wb_id != -1)
 						wbInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(wb_id));
 				}
-				wbInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
-						.getDrawable(MainScreen.getInstance().getWBIcon(wb)));
+//				wbInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
+//						.getDrawable(MainScreen.getInstance().getWBIcon(wb)));
 			}
 		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
@@ -568,8 +568,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 						focusInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 								.getDrawable(focus_id));
 				}
-				focusInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
-						.getDrawable(MainScreen.getInstance().getFocusIcon(focus)));
+//				focusInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
+//						.getDrawable(MainScreen.getInstance().getFocusIcon(focus)));
 			}
 		} else if (arg1 == PluginManager.MSG_FLASH_CHANGED)
 		{
@@ -583,8 +583,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 						flashInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
 								.getDrawable(flash_id));
 				}
-				flashInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
-						.getDrawable(MainScreen.getInstance().getFlashIcon(flash)));
+//				flashInfoImage.setImageDrawable(MainScreen.getMainContext().getResources()
+//						.getDrawable(MainScreen.getInstance().getFlashIcon(flash)));
 			}
 		} else if (arg1 == PluginManager.MSG_ISO_CHANGED)
 		{
