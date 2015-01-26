@@ -281,7 +281,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
 	public static String				sFrontFocusModePref;
+	public static String				sFrontFocusModeVideoPref;
 	public static String				sRearFocusModePref;
+	public static String				sRearFocusModeVideoPref;
 	public static String				sFlashModePref;
 	public static String				sISOPref;
 	public static String				sMeteringModePref;
@@ -355,7 +357,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sSceneModePref = getResources().getString(R.string.Preference_SceneModeValue);
 		sWBModePref = getResources().getString(R.string.Preference_WBModeValue);
 		sFrontFocusModePref = getResources().getString(R.string.Preference_FrontFocusModeValue);
+		sFrontFocusModeVideoPref = getResources().getString(R.string.Preference_FrontFocusModeVideoValue);
 		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
+		sRearFocusModeVideoPref = getResources().getString(R.string.Preference_RearFocusModeVideoValue);
 		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
 		sISOPref = getResources().getString(R.string.Preference_ISOValue);
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
