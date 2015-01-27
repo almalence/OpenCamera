@@ -22,7 +22,7 @@ package com.almalence.opencam_plus;
 //<!-- -+-
 package com.almalence.opencam;
 //-+- -->
-
+ 
 public interface ApplicationInterface
 {
 	public void configureCamera();
