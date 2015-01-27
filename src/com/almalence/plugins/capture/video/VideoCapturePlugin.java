@@ -1067,7 +1067,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (cp != null)
 		{
 			cp.setPreviewFrameRate(30);
-			if (cp != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+			if (!Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
 				cp.setRecordingHint(true);
 
 			CameraController.setCameraParameters(cp);
