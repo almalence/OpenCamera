@@ -89,7 +89,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		this.checkCoordinatesRemapRequired();
 
-		final Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
+		final Camera.Parameters cp = CameraController.getCameraParameters();
 		if (cp == null)
 		{
 			return;

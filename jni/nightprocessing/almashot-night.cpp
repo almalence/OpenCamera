@@ -24,6 +24,7 @@ by Almalence Inc. All Rights Reserved.
 
 #include "almashot.h"
 #include "blurless.h"
+#include "supersensor.h"
 #include "superzoom.h"
 
 #include "ImageConversionUtils.h"
@@ -32,7 +33,6 @@ by Almalence Inc. All Rights Reserved.
 static unsigned char *yuv[MAX_FRAMES] = {NULL};
 static void *instance = NULL;
 static int almashot_inited = 0;
-static Uint8 *OutPic = NULL;
 
 
 
@@ -111,6 +111,51 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_night_Al
 }
 
 
+extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_CheckClipping
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint in,
+	jint sx,
+	jint sy,
+	jint x0,
+	jint y0,
+	jint w,
+	jint h
+)
+{
+	int x, y;
+	int clipped;
+	int nClipped, nDark;
+	Uint8 *yuv = (Uint8 *)in;
+
+	nClipped = nDark = 0;
+	clipped = 0;
+
+	// checking every fourth row for the speed reasons
+	for (y=0; y<h; y+=4)
+	{
+		for (x=0; x<w; ++x)
+		{
+			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClipped;
+			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
+		}
+	}
+
+	// tolerate up to 1% clipped pixels in the image
+	if (nClipped > w*(h/4)/100) clipped = 1;
+
+	// if way too much dark areas in the scene - scratch the restoration of clipped,
+	// regardless of how much of how much clipping there is in a scene
+	if (nDark > 50*w*(h/4)/100) clipped = 0;
+
+	// if lots of dark and it's ratio to clipped is also high - disregard clipping
+	if ((nDark > 20*w*(h/4)/100) && (nDark > 10*nClipped)) clipped = 0;
+
+	return clipped;
+}
+
+
 extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_AlmaShotNight_Process
 (
 	JNIEnv* env,
@@ -129,6 +174,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jint orientation,
 	jboolean mirror,
 	jfloat zoom,
+	jint cameraIndex,
 	jboolean isHALv3
 )
 {
@@ -171,14 +217,35 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			}
 		}
 
-		// Note: sensor-dependent formula
-		//int sensorGain = (int)( 256*powf((float)iso/100, 0.7f) );
-		int sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
+		int gamma = (int)(0.5f/*fgamma*/ * 256 + 0.5f);
 
-		// slightly more sharpening at low zooms
-		int sharpen = 2;
-		if (sxo >= 3*sx_zoom) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
-		else if (sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2) sharpen = 1;
+		// threshold at which profiles are switched (about 1.5x zoom)
+		int zoomAbove15x = sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2;
+		int zoomAbove30x = sxo >= 3*sx_zoom;
+
+		int sensorGain, filter, sharpen;
+
+		if (cameraIndex == 100)		// Nexus 5
+		{
+			sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
+
+			// slightly more sharpening and less filtering at low zooms
+			sharpen = 2;
+			filter = 384; // 320; // 256;
+			if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
+			else if (zoomAbove15x) sharpen = 1;
+			else filter = 192;
+		}
+		else						// 103 = Nexus 6
+		{
+				sensorGain = (int)( 170*256/100*powf((float)iso/100, 0.5f) );
+
+				sharpen = 1;
+				filter = 256;
+				if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
+				if (!zoomAbove15x) filter = 320;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
+		}
+
 
 		Super_Process(
 				yuv, &OutPic,
@@ -186,10 +253,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				sensorGain,
 				deghostTable[DeGhostPref],
 				1,							// deghostFrames
-				nTable[noisePref],
+				filter,
 				sharpen,
-				0.5f,						// gamma
-				0,							// cameraIndex
+				gamma,
+				cameraIndex,
 				0);							// externalBuffers
 
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);

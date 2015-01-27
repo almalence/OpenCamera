@@ -30,9 +30,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -120,32 +120,20 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
 		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
-		mCameraMirrored = CameraController.isFrontCamera();
-
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int iSaveImageWidth = imageSize.getWidth();
+		int iSaveImageHeight = imageSize.getHeight();
 
 		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
 		{
-			imgWidthOR = MainScreen.getImageHeight();
-			imgHeightOR = MainScreen.getImageWidth();
+			imgWidthOR = imageSize.getHeight();
+			imgHeightOR = imageSize.getWidth();
 		} else
 		{
-			imgWidthOR = MainScreen.getImageWidth();
-			imgHeightOR = MainScreen.getImageHeight();
-		}
-
-		boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-		if(!isYUV)
-		{
-			Log.d("ObjectRemovalProcessingPlugin", "Input frames have to be in YUV format!");
-			try
-			{
-				throw new Exception("Expecting YUV format instead JPEG");
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+			imgWidthOR = imageSize.getWidth();
+			imgHeightOR = imageSize.getHeight();
 		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
@@ -154,7 +142,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 		try
 		{
-			Size input = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
 			int minSize = 1000;
@@ -290,7 +278,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		Point dis = new Point();
 		display.getSize(dis);
 
-		float imageRatio = (float) MainScreen.getImageWidth() / (float) MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		float imageRatio = (float) imageSize.getWidth() / (float) imageSize.getHeight();
 		float displayRatio = (float) dis.y / (float) dis.x;
 
 		if (imageRatio > displayRatio)
@@ -388,8 +377,9 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
+		//Nexus 6 has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(mDisplayOrientation));
+				String.valueOf((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));

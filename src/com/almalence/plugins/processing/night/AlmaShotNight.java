@@ -26,12 +26,15 @@ public final class AlmaShotNight
 
 	public static synchronized native void NightAddYUVFrames(int[] frame, int nFrames, int sx, int sy);
 
+	public static synchronized native boolean CheckClipping(
+			int frame, int sx, int sy, int x0, int y0, int w, int h);
+
 	public static synchronized native int Process(
 			int sx, int sy, int sxo, int syo,
 			int iso, int noisePref, int DeGhostPref,
 			int lumaEnh, int chromaEnh, int nImages,
 			int[] crop, int orientation, boolean mirror,
-			float zoom, boolean isHALv3);
+			float zoom, int cameraIndex, boolean isHALv3);
 
 	static
 	{

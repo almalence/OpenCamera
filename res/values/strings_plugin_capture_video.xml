@@ -25,4 +25,8 @@
     <string name="video_paused">Recording paused</string>
     
     <string name="dro_warning">Low FPS on your device. \n\nHDR Video needs lots of processing resources to make video with acceptable fps rate. Unfortunately not possible on your device. Your fps rate will be: </string>
+    
+    <string name="Pref_Video_Mute_Title">Mute buttons</string>
+    <string name="Pref_Video_Mute_Summary">Disable buttons sound. Some devices record it in result video.</string>
+    
 </resources>

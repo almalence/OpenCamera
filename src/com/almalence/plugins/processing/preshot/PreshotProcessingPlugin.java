@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -165,8 +166,22 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		
+		int iSaveImageWidth = 0;
+		int iSaveImageHeight = 0;
+		
+		if(isSlowMode)
+		{
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			iSaveImageWidth = imageSize.getWidth();
+			iSaveImageHeight = imageSize.getHeight();
+			
+		}
+		else
+		{
+			iSaveImageWidth = MainScreen.getPreviewWidth();
+			iSaveImageHeight = MainScreen.getPreviewHeight();
+		}
 
 		if (imagesAmount == 0)
 			imagesAmount = 1;
@@ -581,6 +596,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			}
 
+			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			{	
+				Matrix matrix = new Matrix();
+				matrix.postRotate(180);
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			}
+			
 			return bitmap;
 		} else
 		{// slow mode
@@ -605,6 +627,12 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			}
 
+			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			{	
+				Matrix matrix = new Matrix();
+				matrix.postRotate(180);
+				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+			}
 			return photo;
 		}
 	}
@@ -900,7 +928,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		} else if (isSlowMode)
 		{
-			byte[] data = PreShot.GetFromBufferSimpleNV21(i, MainScreen.getImageHeight(), MainScreen.getImageWidth());
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			byte[] data = PreShot.GetFromBufferSimpleNV21(i, imageSize.getWidth(), imageSize.getHeight());
 
 			if (data.length == 0)
 				return;

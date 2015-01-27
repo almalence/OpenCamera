@@ -15,9 +15,13 @@
     <string name="Pref_Common_HWShutter_Title">Кнопка камеры</string>
     <string name="Pref_Common_HWShutter_Summary">Запуск приложения по кнопке камеры на боковой панеле</string>
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
+    <string name="Pref_Common_Antibanding_Title">Антибендинг</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
     <string name="Pref_Common_UseHALv3_Title">Использовать новый интерфейс камеры</string>
-    <string name="Pref_Common_UseHALv3_Summary">Экспериментальный режим. Работает на ограниченном числе устройств (Google Nexus 5, 7 с Android L)</string>
+    <string name="Pref_Common_UseHALv3_Summary">Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>
+    <string name="Pref_Common_CaptureRAW_Title">Съёмка RAW+JPEG</string>
+    <string name="Pref_Common_CaptureRAW_Summary">Снимок сохраняется в формате DNG. Работает на ограниченном числе устройств</string>
+    <string name="Pref_Common_CaptureRAW_Description">Съёмка RAW возможна только в режимах Стандартный, Серия и Брекетинг экспозиции. Так же, в этом режиме не может быть показана гистограмма</string>
     <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>
     <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
     <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
@@ -41,13 +45,13 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Таймер съемки</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Компенсация экспозиции</string>
     <string name="Pref_Common_DelayedCapture_Title">Съемка по таймеру</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру на главном экране</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру/timelapse на главном экране</string>
     <string name="Pref_ShowHelp_Title">Показывать помощь</string>
     <string name="Pref_WhowHelp_Summary">Показывать помощь при запуске режима (режимы панорамы, Smart multishot)</string>
     
     <string name="almalence_gui_selected">выбран</string>
     
-    <!-- <string name="sceneAuto">Авто</string>
+     <string name="sceneAuto">Авто</string>
     <string name="sceneAction">Движение</string>
     <string name="scenePortrait">Портрет</string>
     <string name="sceneLandscape">Ландшафт</string>
@@ -90,7 +94,7 @@
     <string name="flashRedEye">red-eye</string>
     <string name="flashTorch">фонарик</string>
     
-    <string name="isoAuto">авто</string> -->
+    <string name="isoAuto">авто</string> 
     
     <string name="settings_mode_scene">Сцена</string>
     <string name="settings_mode_wb">Баланс белого</string>

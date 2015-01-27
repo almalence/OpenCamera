@@ -4,11 +4,11 @@
     <string name="trial_finished">Free %1$s shots exhausted, please unlock</string>
     <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera  v3.27\n(©) by Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera  v3.30\n(©) by Almalence Inc\n</string>
     <!--  -+- -->
     <!-- +++
     <string name="app_name">A Better Camera Unlocked</string>
-    <string name="Pref_About">A Better Camera Unlocked v3.27\n(©) by Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera Unlocked v3.30\n(©) by Almalence Inc\n</string>
     +++ -->
     <string name="cannot_create_jpeg">Error: Unable to save image!</string>
     <string name="choose_folder_pick">Use this folder</string>
@@ -23,7 +23,7 @@
     <string name="pref_advanced_saving_saveToPref_title">Save to...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Select location to store images</string>
     <string name="choose_folder">Choose folder</string>
-    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard.</string>
+    <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard. Android limitations.</string>
     
     <string name="pref_timestamp_saving_date_title">Date</string>
     <string name="pref_timestamp_saving_abbreviation_title">Month name</string>
@@ -31,6 +31,7 @@
     <string name="pref_timestamp_saving_separator_title">Separator</string>
     <string name="pref_timestamp_saving_custom_text_title">Text</string>
     <string name="pref_timestamp_saving_color_title">Color</string>
+    <string name="pref_timestamp_saving_font_size_title">Font size</string>
     
     <string name="pref_timestamp_separator_slash">"/" slash</string>
     <string name="pref_timestamp_separator_dots">"." dot</string>
@@ -40,6 +41,17 @@
     <string name="pref_timestamp_color_black">Black</string>
     <string name="pref_timestamp_color_white">White</string>
     <string name="pref_timestamp_color_yellow">Yellow</string>
+    
+    <string name="pref_timestamp_fontsize_small">Small</string>
+    <string name="pref_timestamp_fontsize_normal">Medium</string>
+    <string name="pref_timestamp_fontsize_big">Big</string>
+    
+    <string name="pref_shot_on_tap_none">None</string>
+    <string name="pref_shot_on_tap_one_click">One click</string>
+    <string name="pref_shot_on_tap_double_click">Double click</string>
+    
+    <string name="pref_antibanding_auto">Auto</string>
+    <string name="pref_antibanding_off">Off</string>
     
     <string name="save_to_phone">Phone</string>
     <string name="save_to_memorycard">Memory Card</string>

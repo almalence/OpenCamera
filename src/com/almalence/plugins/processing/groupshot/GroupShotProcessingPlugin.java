@@ -31,6 +31,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -150,13 +151,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	/*
 	 * Group shot testing start
 	 */
-	private static ArrayList<byte[]>	mJpegBufferList;
-
-	public static void setmJpegBufferList(ArrayList<byte[]> mJpegBufferList)
-	{
-		GroupShotProcessingPlugin.mJpegBufferList = mJpegBufferList;
-	}
-
 	private static ArrayList<Integer>	mYUVBufferList;
 
 	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
@@ -178,8 +172,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	// indicates that no more user interaction needed
 	private boolean				finishing				= false;
 	private boolean				changingFace			= false;
-
-	private static boolean		isYUV					= false;
 
 	public GroupShotProcessingPlugin()
 	{
@@ -222,26 +214,25 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
 //		Log.d("GroupShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
-		mCameraMirrored = CameraController.isFrontCamera();
+		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
-
-		int iImageWidth = MainScreen.getImageWidth();
-		int iImageHeight = MainScreen.getImageHeight();
+		int iImageWidth = imageSize.getWidth();
+		int iImageHeight = imageSize.getHeight();
 
 		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(MainScreen.getImageHeight(),
-					MainScreen.getImageWidth());
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(MainScreen.getImageHeight(),
-					MainScreen.getImageWidth());
+			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageHeight,
+					iImageWidth);
+			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageHeight,
+					iImageWidth);
 		} else
 		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(MainScreen.getImageWidth(),
-					MainScreen.getImageHeight());
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(MainScreen.getImageWidth(),
-					MainScreen.getImageHeight());
+			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageWidth,
+					iImageHeight);
+			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageWidth,
+					iImageHeight);
 		}
 
 		try
@@ -254,22 +245,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 			nFrames = imagesAmount;
 
-			isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
-
-			if (!isYUV)
+			mFrameCount = mYUVBufferList.size();
+			if(PreviewBmp != null)
 			{
-				mFrameCount = mJpegBufferList.size();
-				PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
-			} else
-			{
-				mFrameCount = mYUVBufferList.size();
-				if(PreviewBmp != null)
-				{
-					PreviewBmp.recycle();
-					PreviewBmp = null;
-				}
-				PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
+				PreviewBmp.recycle();
+				PreviewBmp = null;
 			}
+			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
 
 			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 			{
@@ -328,8 +310,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("resultfromshared" + sessionID, "false");
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, "1");
 
-		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iImageWidth));
+		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iImageHeight));
 		
 		PreviewBmp.recycle();
 		PreviewBmp = null;
@@ -349,9 +331,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 			int Scale;
 			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-				Scale = MainScreen.getImageHeight() / imgWidthFD;
+				Scale = CameraController.getCameraImageSize().getHeight() / imgWidthFD;
 			else
-				Scale = MainScreen.getImageWidth() / imgWidthFD;
+				Scale = CameraController.getCameraImageSize().getWidth() / imgWidthFD;
 
 			ArrayList<Rect> rect = new ArrayList<Rect>();
 			for (int i = 0; i < numberOfFacesDetected; i++)
@@ -380,7 +362,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		// correctness of w/h here depends on orientation while taking image,
 		// only product of inputSize is used later - this is why code still
 		// works
-		Size inputSize = new Size(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		Size inputSize = new Size(imageSize.getWidth(), imageSize.getHeight());
 		Size fdSize = new Size(imgWidthFD, imgHeightFD);
 
 		try
@@ -390,11 +373,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			int rotation = mCameraMirrored
 					&& (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360
 					: mDisplayOrientationOnStartProcessing;
-			if (!isYUV)
-				mSeamless.addJPEGInputFrames(mJpegBufferList, inputSize, fdSize, needRotation, false,
-						rotation);
-			else
-				mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
+			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
 			getFaceRects();
 
 			sortFaceList();
@@ -584,18 +563,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 
 		mImgView = ((ImageView) postProcessingView.findViewById(R.id.groupshotImageHolder));
-		if (!isYUV)
-			PreviewBmp = ImageConversion.decodeJPEGfromBuffer(mJpegBufferList.get(0));
-		else
+		if(PreviewBmp != null)
 		{
-			if(PreviewBmp != null)
-			{
-				PreviewBmp.recycle();
-				PreviewBmp = null;
-			}
-			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), MainScreen.getImageWidth(),
-					MainScreen.getImageHeight());
+			PreviewBmp.recycle();
+			PreviewBmp = null;
 		}
+		
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), imageSize.getWidth(),
+				imageSize.getHeight());
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
@@ -624,14 +600,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	private void setupImageSelector()
 	{
-		if (!isYUV)
-			mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mJpegBufferList,
-					mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-					mCameraMirrored);
-		else
-			mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mYUVBufferList,
-					mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-					mCameraMirrored, true);
+		mImageAdapter = new ImageAdapter(MainScreen.getMainContext(), mYUVBufferList,
+				mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
+				mCameraMirrored, true);
 		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 		mGallery.setAdapter(mImageAdapter);
 		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -697,14 +668,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		float ratioy;
 		float bWidth = bitmap.getWidth();
 		float bHeight = bitmap.getHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 		{
-			ratiox = (float) MainScreen.getImageHeight() / (float) bWidth;
-			ratioy = (float) MainScreen.getImageWidth() / (float) bHeight;
+			ratiox = (float) imageSize.getHeight() / (float) bWidth;
+			ratioy = (float) imageSize.getWidth() / (float) bHeight;
 		} else
 		{
-			ratiox = (float) MainScreen.getImageWidth() / (float) bWidth;
-			ratioy = (float) MainScreen.getImageHeight() / (float) bHeight;
+			ratiox = (float) imageSize.getWidth() / (float) bWidth;
+			ratioy = (float) imageSize.getHeight() / (float) bHeight;
 		}
 
 		Paint paint = new Paint();
@@ -729,14 +701,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		float ratiox;
 		float ratioy;
 
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
 		{
-			ratiox = (float) MainScreen.getImageHeight() / (float) previewBmpRealWidth;
-			ratioy = (float) MainScreen.getImageWidth() / (float) previewBmpRealHeight;
+			ratiox = (float) imageSize.getHeight() / (float) previewBmpRealWidth;
+			ratioy = (float) imageSize.getWidth() / (float) previewBmpRealHeight;
 		} else
 		{
-			ratiox = (float) MainScreen.getImageWidth() / (float) previewBmpRealWidth;
-			ratioy = (float) MainScreen.getImageHeight() / (float) previewBmpRealHeight;
+			ratiox = (float) imageSize.getWidth() / (float) previewBmpRealWidth;
+			ratioy = (float) imageSize.getHeight() / (float) previewBmpRealHeight;
 		}
 
 		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
@@ -936,7 +909,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
 			if (mSeamless != null)
 				mSeamless.release();
-			mJpegBufferList.clear();
 			for(int yuv: mYUVBufferList)
 			{
 				SwapHeap.FreeFromHeap(yuv);
@@ -1005,7 +977,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
 		{
 			Matrix matrix = new Matrix();
-			matrix.postRotate((mDisplayOrientationOnStartProcessing + 90 % 360));
+			matrix.postRotate(((mDisplayOrientationOnStartProcessing + 90) % 360));
 			PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix,
 					true);
 		} else if (!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
@@ -1039,7 +1011,10 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
+		//Nexus 6 has a original front camera sensor orientation, we have to manage it
+		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
+				String.valueOf(((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? 180 : 0)));
+//		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));

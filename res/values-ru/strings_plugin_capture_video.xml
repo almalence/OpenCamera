@@ -9,7 +9,7 @@
     
     <string name="Pref_Video_ImageSize_Title">Разрешение видео</string>
     <string name="Pref_Video_None">None</string>
-    
+
     <string name="setVideoText">Установить</string>
     
     <string name="Pref_Video_StartStandard_Title">Стандартная видео камера</string>
@@ -20,4 +20,7 @@
     
     <string name="video_paused">Запись приостановлена</string>
     <string name="dro_warning">Низкая кадровая частота. \n\nДля работы HDR видео режима необходимо более производительное устройство. На данном устройстве качество видео будет неудовлетварительным - кадровая частота в данный момент: </string>
+    
+    <string name="Pref_Video_Mute_Title">Отключить звук кнопок</string>
+    <string name="Pref_Video_Mute_Summary">Некоторые устройства записывают звук кнопок в результирующее видео.</string>
 </resources>

@@ -1,0 +1,16 @@
+1. Create OpenCamera folder in android-source/packages/apps directory
+
+2. Put attached Android.mk into this folder
+
+3. Build OpenCamera in Eclipse and put the result APK to the same directory (rename the APK to OpenCamera.apk)
+
+4. Extract lib folder from this OpenCamera.apk (using any zip archive tool) into the same directory
+
+5. At this point you should have 3 items in your android-source/packages/apps/OpenCamera directory:
+OpenCamera.apk
+Android.mk
+lib
+
+6. Now you need to add OpenCamera to build. To achieve it add OpenCamera to PRODUCT_PACKAGES variable assignment in android-source/build/target/product/core.mk
+
+7. Build Android

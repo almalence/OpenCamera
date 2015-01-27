@@ -20,7 +20,9 @@ package com.almalence.plugins.capture.preshot;
 
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CaptureResult;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -78,6 +80,8 @@ public class PreshotCapturePlugin extends PluginCapture
 	private Switch				modeSwitcher;
 
 	private boolean				captureStarted		= false;
+	
+	private boolean				camera2Preference;
 
 	public PreshotCapturePlugin()
 	{
@@ -89,6 +93,17 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onStart()
 	{
 		getPrefs();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		camera2Preference = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		
+		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		{
+			prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			
+			CameraController.isOldCameraOneModeLaunched = true;
+			PluginManager.getInstance().setSwitchModeType(true);
+		}
 	}
 
 	@Override
@@ -106,13 +121,13 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		StopBuffering();
 		inCapture = false;
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putBoolean("UseFocus", true)
-				.commit();
-		PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext())
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
+		prefs.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		
+		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
 
 	}
 
@@ -120,6 +135,9 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onStop()
 	{
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		
+		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+			CameraController.needCameraRelaunch(true);
 	}
 
 	@Override
@@ -207,10 +225,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -227,10 +245,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			try
 			{
-				if (CameraController.isModeAvailable(CameraController.getInstance().getSupportedFocusModes(),
+				if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 						CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 				{
-					CameraController.getInstance().setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 					PreferenceManager
 							.getDefaultSharedPreferences(MainScreen.getMainContext())
 							.edit()
@@ -276,9 +294,6 @@ public class PreshotCapturePlugin extends PluginCapture
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
-			if (CameraController.getCamera() == null)
-				return;
-			
 			if (!AutostartPreference && modeSwitcher != null)
 				modeSwitcher.setEnabled(false);
 			captureStarted = true;
@@ -305,20 +320,19 @@ public class PreshotCapturePlugin extends PluginCapture
 
 		MainScreen.getInstance().muteShutter(true);
 		
+		resultCompleted = 0;
+		
 		isBuffering = true;
 		if (!isSlowMode)
 		{
 			PreShot.FreeBuffer();
 			MainScreen.getGUIManager().startContinuousCaptureIndication();
-			preview_fps = CameraController.getInstance().getPreviewFrameRate();
+			preview_fps = CameraController.getPreviewFrameRate();
 			if (Build.MODEL.contains("HTC One"))
 				preview_fps = 30;
 
 			imW = MainScreen.getPreviewWidth();
 			imH = MainScreen.getPreviewHeight();
-
-			MainScreen.setSaveImageWidth(imW);
-			MainScreen.setSaveImageHeight(imH);
 
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 
@@ -339,11 +353,9 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			// full size code
 			PreShot.FreeBuffer();
-			imW = MainScreen.getImageWidth();
-			imH = MainScreen.getImageHeight();
-
-			MainScreen.setSaveImageWidth(imW);
-			MainScreen.setSaveImageHeight(imH);
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			imW = imageSize.getWidth();
+			imH = imageSize.getHeight();
 
 			int secondsAllocated = PreShot.AllocateBuffer(imW, imH, Integer.parseInt(FPS),
 					Integer.parseInt(PreShotInterval), 1);
@@ -373,6 +385,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			isBuffering = false;
 
 		counter = 0;
+		resultCompleted = 0;
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 				String.valueOf(PreShot.GetImageCount()));
@@ -412,37 +425,11 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (!inCapture)
 		{
 			inCapture = true;
-			takingAlready = false;
-
-			// start series
-			try
-			// some crappy models have autoFocus() = null
-			{
-				int focusMode = CameraController.getInstance().getFocusMode();
-				if (!(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| focusMode == CameraParameters.AF_MODE_INFINITY
-						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-						&& !MainScreen.getAutoFocusLock())
-				{
-					if (!CameraController.autoFocus())
-					{
-						this.CaptureFrame();
-						takingAlready = true;
-					}
-				} else if (!takingAlready)
-				{
-					this.CaptureFrame();
-					takingAlready = true;
-				}
-			} catch (NullPointerException e)
-			{
-				if (!takingAlready)
-				{
-					this.CaptureFrame();
-					takingAlready = true;
-				}
-			}
+			
+			if(CameraController.isAutoFocusPerform())
+				aboutToTakePicture = true;
+			else
+				CaptureFrame();
 		}
 	}
 
@@ -462,14 +449,12 @@ public class PreshotCapturePlugin extends PluginCapture
 	}
 	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 //		inCapture = false;
 
 		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
 
-		takingAlready = false;
-		
 		try
 		{
 			CameraController.startCameraPreview();
@@ -523,8 +508,12 @@ public class PreshotCapturePlugin extends PluginCapture
 					&& !MainScreen.getAutoFocusLock())
 			{
 				counter = 0;
+				aboutToTakePicture = true;
 				if (!CameraController.autoFocus())
+				{
+					aboutToTakePicture = false;
 					CaptureFrame();
+				}
 			} else
 			{
 				CaptureFrame();
@@ -534,21 +523,27 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	public void CaptureFrame()
 	{
-		try
+		if (isBuffering)
 		{
-			if (isBuffering)
-			{
-				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
-					return;
-//				inCapture = true;
-
-				requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0], new int[0], false);
-				counter++;
-			}
-		} catch (RuntimeException e)
+			if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
+				return;
+	//				inCapture = true;
+	
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
+			counter++;
+		}
+	}
+	
+	@TargetApi(21)
+	@Override
+	public void onCaptureCompleted(CaptureResult result)
+	{
+		int requestID = requestIDArray[0];
+		resultCompleted++;
+		Log.e("PreShotCapturePlugin", "onCaptureCompleted. resultCompleted = " +resultCompleted);
+		if (result.getSequenceId() == requestID)
 		{
-			Log.i("Preshot capture", "takePicture fail in CaptureFrame (called after release?)" + e.getMessage());
-			CameraController.startCameraPreview();
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 	}
 
@@ -559,11 +554,12 @@ public class PreshotCapturePlugin extends PluginCapture
 		// on motorola droid's onAutoFocus seem to be called at every
 		// startPreview,
 		// causing additional frame(s) taken after sequence is finished
-		if (!takingAlready && isSlowMode)
+		if (aboutToTakePicture && isSlowMode)
 		{
 			CaptureFrame();
-			takingAlready = true;
 		}
+		
+		aboutToTakePicture = false;
 	}
 
 	@Override

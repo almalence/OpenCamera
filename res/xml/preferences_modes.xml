@@ -1,6 +1,13 @@
 <!-- -+-  -->
 <PreferenceScreen
  xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+    	<PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_Dro_Preference_Title">
+			 <extra android:name="type" android:value="dro"/>
+		</PreferenceScreen>
+		
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_Burst_Title">
@@ -54,6 +61,13 @@
 <!-- +++
 <PreferenceScreen
  xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+ 		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Dro_Preference_Title">
+			 <extra android:name="type" android:value="dro"/>
+		</PreferenceScreen>
+ 
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam_plus.Fragment"
 			 android:title="@string/Pref_Burst_Title">

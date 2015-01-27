@@ -164,20 +164,28 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 
 					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 					{
-						Toast.makeText(
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+							Toast.makeText(
 								MainScreen.getInstance(),
 								MainScreen.getAppResources()
 										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
 								Toast.LENGTH_LONG).show();
-					}
-
-					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-					{
-						Toast.makeText(
-								MainScreen.getInstance(),
-								MainScreen.getAppResources()
-										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
-								Toast.LENGTH_LONG).show();
+						else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) 
+						//start new logic to save on sd
+						{
+							Toast.makeText(
+									MainScreen.getInstance(),
+									"Saving to SD card is under development for Android 5",
+									Toast.LENGTH_LONG).show();
+							
+//							Intent intent = new Intent(Preferences.thiz, FolderPickerLollipop.class);
+//							intent.putExtra(MainScreen.sSavePathPref, v_old);
+//							Preferences.thiz.startActivity(intent);
+							
+							//show notification, but let select custom folder
+							if (v == 1)
+								return false;
+						}
 					}
 
 					if (v == 2)

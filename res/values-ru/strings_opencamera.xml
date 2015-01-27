@@ -23,6 +23,7 @@
     <string name="pref_timestamp_saving_separator_title">Разделитель</string>
     <string name="pref_timestamp_saving_custom_text_title">Текст</string>
     <string name="pref_timestamp_saving_color_title">Цвет</string>
+    <string name="pref_timestamp_saving_font_size_title">Размер шрифта</string>
     
     <string name="pref_timestamp_separator_slash">"/" черта</string>
     <string name="pref_timestamp_separator_dots">"." точка</string>
@@ -32,6 +33,17 @@
     <string name="pref_timestamp_color_black">Черный</string>
     <string name="pref_timestamp_color_white">Белый</string>
     <string name="pref_timestamp_color_yellow">Желтый</string>
+    
+    <string name="pref_timestamp_fontsize_small">Мелкий</string>
+    <string name="pref_timestamp_fontsize_normal">Средний</string>
+    <string name="pref_timestamp_fontsize_big">Большой</string>
+    
+    <string name="pref_shot_on_tap_none">Нет</string>
+    <string name="pref_shot_on_tap_one_click">Один клик</string>
+    <string name="pref_shot_on_tap_double_click">Двойной клик</string>
+    
+    <string name="pref_antibanding_auto">Авто</string>
+    <string name="pref_antibanding_off">Отключено</string>
     
     <string name="save_to_phone">Телефон</string>
     <string name="save_to_memorycard">Карта памяти</string>

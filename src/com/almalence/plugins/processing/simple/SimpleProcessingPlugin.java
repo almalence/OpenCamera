@@ -19,16 +19,25 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.simple;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginProcessing;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
-
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /***
  * Implements simple processing plugin - just translate shared memory values
@@ -37,83 +46,129 @@ import com.almalence.opencam.PluginProcessing;
 
 public class SimpleProcessingPlugin extends PluginProcessing
 {
-	private long			sessionID				= 0;
+	private static final String	PREFERENCES_KEY_SAVEINPUT	= "Preference_DroSaveInputPref";
 
-	private static boolean	DROLocalTMPreference	= true;
-	private static int		prefPullYUV				= 7; // 9;
+	private long				sessionID					= 0;
+
+	private static boolean		DROLocalTMPreference		= true;
+	private static int			prefPullYUV					= 7;								// 9;
+
+	private int					modePrefDro					= 1;
+	private static boolean		saveInputPreference			= false;
 
 	public SimpleProcessingPlugin()
 	{
-		super("com.almalence.plugins.simpleprocessing", 0, 0, 0, null);
+		super("com.almalence.plugins.simpleprocessing", R.xml.preferences_capture_dro, 0, 0, null);
 	}
 
+	@Override
+	public void onResume()
+	{
+		getPrefs();
+	}
+	
+	private void getPrefs()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+				.getBaseContext());
+		saveInputPreference = prefs.getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
+	}
+	
 	@Override
 	public void onStartProcessing(long SessionID)
 	{
 		sessionID = SessionID;
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		modePrefDro = Integer.parseInt(prefs.getString("modePrefDro", "1"));
+
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
-
-		int mImageWidth = MainScreen.getImageWidth();
-		int mImageHeight = MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int mImageWidth = imageSize.getWidth();
+		int mImageHeight = imageSize.getHeight();
 
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
+
 		if (num == null)
 			return;
 		int imagesAmount = Integer.parseInt(num);
 
-		if (imagesAmount == 0)
-			imagesAmount = 1;
+		String numRAW = PluginManager.getInstance().getFromSharedMem("amountofcapturedrawframes" + sessionID);
+
+		int imagesAmountRAW = 0;
+		if (numRAW != null)
+			imagesAmountRAW = Integer.parseInt(numRAW);
+
+		int frameNumRAW = 0;
+		int frameNum = 0;
 
 		for (int i = 1; i <= imagesAmount; i++)
 		{
 			int orientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"frameorientation" + i + sessionID));
 			String isDRO = PluginManager.getInstance().getFromSharedMem("isdroprocessing" + sessionID);
-			boolean isYUV = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem("isyuv" + sessionID));
 
 			if (isDRO != null && isDRO.equals("0"))
 			{
 				AlmaShotDRO.Initialize();
 
 				int inputYUV = 0;
-				if (!isYUV)
+				inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
+
+				if (saveInputPreference)
 				{
-					int[] compressed_frame = new int[1];
-					int[] compressed_frame_len = new int[1];
+					try
+					{
+						File saveDir = PluginManager.getSaveDir(false);
 
-					compressed_frame[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
-							"frame" + i + sessionID));
-					compressed_frame_len[0] = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
-							"framelen" + i + sessionID));
+						String fileFormat = PluginManager.getInstance().getFileFormat();
+						fileFormat = fileFormat + "_DROSRC";
 
-					AlmaShotDRO.ConvertFromJpeg(compressed_frame, compressed_frame_len, 1, mImageWidth, mImageHeight);
+						File file = new File(saveDir, fileFormat + ".jpg");
+						FileOutputStream os = null;
+						try
+						{
+							os = new FileOutputStream(file);
+						} catch (Exception e)
+						{
+							// save always if not working saving to sdcard
+							e.printStackTrace();
+							saveDir = PluginManager.getSaveDir(true);
+							file = new File(saveDir, fileFormat + ".jpg");
+							os = new FileOutputStream(file);
+						}
 
-					inputYUV = AlmaShotDRO.GetYUVFrame(0);
-				} else
-					inputYUV = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
+						PluginManager.getInstance().writeData(os, true, sessionID, i - 1, null, inputYUV, file);
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
 
+				float[] gammaTable = new float[] { 0.5f, 0.6f, 0.7f };
 				int yuv = AlmaShotDRO.DroProcess(inputYUV, mImageWidth, mImageHeight, 1.5f, DROLocalTMPreference, 0,
-						prefPullYUV, 0.35f, 0.6f);
+						prefPullYUV, 0.35f, gammaTable[modePrefDro]);
 
 				AlmaShotDRO.Release();
 
 				if (orientation == 90 || orientation == 270)
 				{
 					PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID,
-							String.valueOf(iSaveImageHeight));
+							String.valueOf(mImageHeight));
 					PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID,
-							String.valueOf(iSaveImageWidth));
+							String.valueOf(mImageWidth));
 				} else
 				{
 					PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID,
-							String.valueOf(iSaveImageWidth));
+							String.valueOf(mImageWidth));
 					PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID,
-							String.valueOf(iSaveImageHeight));
+							String.valueOf(mImageHeight));
 				}
 
 				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(yuv));
@@ -122,14 +177,20 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 				int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
 
-				PluginManager.getInstance().addToSharedMem("resultframeformat" + i + sessionID, isYUV ? "" : "jpeg");
-				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(frame));
-				PluginManager.getInstance().addToSharedMem("resultframelen" + i + sessionID, String.valueOf(len));
+				boolean isRAW = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+						"frameisraw" + i + sessionID));
 
-				PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID,
-						String.valueOf(iSaveImageWidth));
-				PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID,
-						String.valueOf(iSaveImageHeight));
+				int frameIndex = isRAW ? (++frameNumRAW) : (imagesAmountRAW + (++frameNum));
+
+				PluginManager.getInstance().addToSharedMem("resultframeformat" + frameIndex + sessionID,
+						isRAW ? "dng" : "jpeg");
+				PluginManager.getInstance().addToSharedMem("resultframe" + frameIndex + sessionID,
+						String.valueOf(frame));
+				PluginManager.getInstance().addToSharedMem("resultframelen" + frameIndex + sessionID,
+						String.valueOf(len));
+
+				PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(mImageWidth));
+				PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(mImageHeight));
 			}
 
 			boolean cameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(

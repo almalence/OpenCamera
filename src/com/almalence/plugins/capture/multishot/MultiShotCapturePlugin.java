@@ -63,7 +63,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	// defaul val. value should come from config
 	private int		imageAmount			= 8;
-	private int[]	pauseBetweenShots	= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]	pauseBetweenShots			= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]	pauseBetweenShotsCamera2	= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
 
 	public MultiShotCapturePlugin()
 	{
@@ -73,11 +74,11 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		takingAlready = false;
 		imagesTaken = 0;
 		inCapture = false;
+		aboutToTakePicture = false;
 
-		MainScreen.setCaptureYUVFrames(true);
+		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override
@@ -95,30 +96,13 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		if (!inCapture)
-		{
-			inCapture = true;
-			takingAlready = true;
-
-			try
-			{
-				requestID = CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-						pauseBetweenShots, null, true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.e(TAG, "CameraController.captureImage failed: " + e.getMessage());
-				inCapture = false;
-				takingAlready = false;
-				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
-		}
+		resultCompleted = 0;
+		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
+				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
 	}
 
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		imagesTaken++;
 
@@ -129,6 +113,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
+			resultCompleted = 0;
 			MainScreen.getInstance().muteShutter(false);
 			inCapture = false;
 			return;
@@ -143,22 +128,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
-
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.i(TAG, "StartPreview fail");
-//
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-//
-//			imagesTaken = 0;
-//			MainScreen.getInstance().muteShutter(false);
-//			inCapture = false;
-//			return;
-//		}
 		if (imagesTaken >= imageAmount)
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -167,6 +136,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
+			resultCompleted = 0;
 			new CountDownTimer(5000, 5000)
 			{
 				public void onTick(long millisUntilFinished)
@@ -179,25 +149,19 @@ public class MultiShotCapturePlugin extends PluginCapture
 				}
 			}.start();
 		}
-		takingAlready = false;
 	}
 
 	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[resultCompleted];
+		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
-				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-		if (takingAlready)
-			takePicture();
 	}
 
 	@Override
@@ -216,11 +180,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
-			MainScreen.setSaveImageWidth(imgCaptureWidth);
-			MainScreen.setSaveImageHeight(imgCaptureHeight);
-
-			MainScreen.setImageWidth(imgCaptureWidth);
-			MainScreen.setImageHeight(imgCaptureHeight);
+			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
+//			MainScreen.setSaveImageWidth(imgCaptureWidth);
+//			MainScreen.setSaveImageHeight(imgCaptureHeight);
+//
+//			MainScreen.setImageWidth(imgCaptureWidth);
+//			MainScreen.setImageHeight(imgCaptureHeight);
 		}
 	}
 

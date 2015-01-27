@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.media.ExifInterface;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
@@ -61,6 +62,8 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	private int					mOrientation;
 	private int					out_ptr						= 0;
 
+	private static String				sFrameOverlapPref;
+	
 	public PanoramaProcessingPlugin()
 	{
 		super("com.almalence.plugins.panoramaprocessing", R.xml.preferences_processing_panorama, 0, 0, null);
@@ -70,6 +73,25 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	@Override
 	public void onStartProcessing(final long sessionID)
 	{
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		sFrameOverlapPref = MainScreen.getAppResources().getString(R.string.Preference_PanoramaFrameOverlap);
+		final int overlap = Integer.parseInt(prefs.getString(sFrameOverlapPref, "1"));
+		final float intersection;
+		switch (overlap)
+		{
+		case 0:
+			intersection = 0.70f;
+			break;
+		case 1:
+			intersection = 0.50f;
+			break;
+		case 2:
+			intersection = 0.30f;
+			break;
+		default:
+			intersection = 0.50f;
+			break;
+		}
 		// Log.d(TAG, "onStartProcessing");
 
 		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()).getBoolean(
@@ -125,7 +147,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 
 			AlmashotPanorama.initialize();
 			final int[] result = AlmashotPanorama.process(input_width, input_height, frames_ptrs, frame_trs,
-					camera_fov, use_all, free_input);
+					camera_fov, use_all, free_input, intersection);
 			this.out_ptr = result[0];
 			final int output_width = result[1];
 			final int output_height = result[2];
@@ -144,8 +166,6 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 				this.freeFrames(frames_ptrs, 0, frames_ptrs.length);
 			}
 
-			MainScreen.setSaveImageWidth(output_width);
-			MainScreen.setSaveImageHeight(output_height);
 			if (this.prefLandscape)
 			{
 				PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(output_height));

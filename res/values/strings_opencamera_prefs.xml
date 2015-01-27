@@ -12,13 +12,17 @@
     <string name="Preference_ImageSizePrefVideoBackValue">imageSizePrefVideoBack</string>
     <string name="Preference_ImageSizePrefVideoFrontValue">imageSizePrefVideoFront</string>
     
+    <string name="Preference_CaptureRAWValue">captureRAW</string>
+    
     <string name="Preference_JPEGQualityCommonValue">commonJPEGQuality</string>
     
     <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>
     <string name="Preference_SceneModeValue">Preference_SceneModeValue</string>
     <string name="Preference_WBModeValue">Preference_WBModeValue</string>
     <string name="Preference_FrontFocusModeValue">Preference_FrontFocusModeValue</string>
+    <string name="Preference_FrontFocusModeVideoValue">Preference_FrontFocusModeVideoValue</string>
     <string name="Preference_RearFocusModeValue">Preference_RearFocusModeValue</string>
+    <string name="Preference_RearFocusModeVideoValue">Preference_RearFocusModeVideoValue</string>
     <string name="Preference_FlashModeValue">Preference_FlashModeValue</string>
     <string name="Preference_ISOValue">Preference_ISOValue</string>
     <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
@@ -29,15 +33,25 @@
     <string name="Preference_DelayedFlashValue">Preference_DelayedFlashValue</string>
     <string name="Preference_DelayedCaptureIntervalValue">Preference_DelayedCaptureIntervalValue</string>
     
+    <string name="Preference_PhotoTimeLapseCaptureInterval">Preference_PhotoTimeLapseCaptureInterval</string>
+    <string name="Preference_PhotoTimeLapseCaptureIntervalMeasurment">Preference_PhotoTimeLapseCaptureIntervalMeasurment</string>
+    <string name="Preference_PhotoTimeLapseSWChecked">Preference_PhotoTimeLapseSWChecked</string>
+    <string name="Preference_PhotoTimeLapseIsRunning">"Preference_PhotoTimeLapseIsRunning"</string>
+    <string name="Preference_PhotoTimeLapseCount">"Preference_PhotoTimeLapseCount"</string>
+    
     <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
     <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>
-    <string name="Preference_ShotOnTapValue">Preference_ShotOnTapValue</string>
+    <string name="Preference_ShotOnTapValue">Preference_ShotOnTapListValue</string>
+    <string name="Preference_AntibandingValue">Preference_AntibandingListValue</string>
+    <string name="Preference_AELockValue">Preference_AELockValue</string>
+    <string name="Preference_AWBLockValue">Preference_AWBLockValue</string>
     <string name="Preference_VolumeButtonValue">volumeButtonPrefCommon</string>
     
     <string name="Preference_DefaultInfoSetValue">Preference_DefaultInfoSetValue</string>    
     <string name="Preference_SWCheckedValue">Preference_SWChekedValue</string>
     
     <string name="Preference_SavePathValue">Preference_SavePathValue</string>
+    <string name="Preference_SavePathLollipopValue">Preference_SavePathLollipopValue</string>
     <string name="Preference_ExportNameValue">Preference_ExportName</string>
     <string name="Preference_SaveToValue">Preference_SaveToValue</string>
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
@@ -52,6 +66,7 @@
     <string name="Preference_TimestampSeparatorValue">Preference_TimestampSeparatorValue</string>
     <string name="Preference_TimestampCustomTextValue">Preference_TimestampCustomTextValue</string>
     <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
+    <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>

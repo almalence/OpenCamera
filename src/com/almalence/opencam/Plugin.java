@@ -55,10 +55,13 @@ import com.almalence.asynctaskmanager.Task;
 
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
+
 
 /***
  * Abstract class for plugins
@@ -92,7 +95,10 @@ public abstract class Plugin
 
 	protected long					SessionID			= 0;
 
-	protected int					requestID			= -1;
+	protected int[]					requestIDArray;
+	protected int					requestIDArrayLenght = 0;;
+	
+	protected boolean				captureRAW 			= false;
 
 	public enum ViewfinderZone
 	{
@@ -240,7 +246,7 @@ public abstract class Plugin
 	{
 	}
 
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
 		
 	}
@@ -354,25 +360,23 @@ public abstract class Plugin
 		}
 
 		CameraController.setCameraImageSizeIndex(CaptureIdx, true);
-		MainScreen.setImageWidth(CaptureWidth);
-		MainScreen.setImageHeight(CaptureHeight);
-
-		MainScreen.setSaveImageWidth(CaptureWidth);
-		MainScreen.setSaveImageHeight(CaptureHeight);
+		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
 	}
 
 	public void setCameraPreviewSize()
 	{
-		List<CameraController.Size> cs = CameraController.getInstance().getSupportedPreviewSizes();
+		List<CameraController.Size> cs = CameraController.getSupportedPreviewSizes();
 
-		CameraController.Size os = getOptimalPreviewSize(cs, MainScreen.getImageWidth(), MainScreen.getImageHeight());
-		CameraController.getInstance().setCameraPreviewSize(os);
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
+		CameraController.setCameraPreviewSize(os);
 		MainScreen.setPreviewWidth(os.getWidth());
 		MainScreen.setPreviewHeight(os.getHeight());
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)
-	public void setCameraPictureSize()
+	// called to set specific plugin's camera parameters
+	public void setupCameraParameters()
 	{
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
@@ -381,12 +385,13 @@ public abstract class Plugin
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
-		Camera.Parameters cp = CameraController.getInstance().getCameraParameters();
-		cp.setPictureSize(MainScreen.getImageWidth(), MainScreen.getImageHeight());
+		Size imageSize = CameraController.getCameraImageSize();
+		Camera.Parameters cp = CameraController.getCameraParameters();
+		cp.setPictureSize(imageSize.getWidth(), imageSize.getHeight());
 		cp.setJpegQuality(jpegQuality);
 		try
 		{
-			CameraController.getInstance().setCameraParameters(cp);
+			CameraController.setCameraParameters(cp);
 		} catch (RuntimeException e)
 		{
 			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
@@ -440,10 +445,10 @@ public abstract class Plugin
 	{
 	}
 
-	// called to set specific plugin's camera parameters
-	public void setupCameraParameters()
-	{
-	}
+//	// called to set specific plugin's camera parameters
+//	public void setupCameraParameters()
+//	{
+//	}
 
 	// called before camera parameters setup - to set plugin specific options
 	public void onCameraParametersSetup()
@@ -465,6 +470,23 @@ public abstract class Plugin
 	public boolean delayedCaptureSupported()
 	{
 		return false;
+	}
+	
+	public boolean photoTimeLapseCaptureSupported()
+	{
+		return false;
+	}
+	
+	public void createRequestIDList(int nFrames)
+	{
+		requestIDArray = new int[nFrames];
+		requestIDArrayLenght = nFrames;
+		
+	}
+	
+	public void addRequestID(int nFrame, int requestID)
+	{
+		requestIDArray[nFrame] = requestID;
 	}
 
 	/******************************************************************************************************
@@ -526,16 +548,6 @@ public abstract class Plugin
 		return advancedPrefName;
 	}
 
-	// show preference's value in summary on start
-	public void showInitialSummary(PreferenceActivity prefActivity)
-	{
-		for (int i = 0; i < prefActivity.getPreferenceScreen().getPreferenceCount(); i++)
-		{
-			initSummary(prefActivity.getPreferenceScreen().getPreference(i));
-		}
-		onPreferenceCreate(prefActivity);
-	}
-
 	public void showInitialSummary(PreferenceFragment preferenceFragment)
 	{
 		for (int i = 0; i < preferenceFragment.getPreferenceScreen().getPreferenceCount(); i++)
@@ -578,11 +590,6 @@ public abstract class Plugin
 				p.setSummary(editTextPref.getText());
 			}
 		}
-	}
-
-	// method can be used to create some additional preferences programmatically
-	public void onPreferenceCreate(PreferenceActivity prefActivity)
-	{
 	}
 
 	public void onPreferenceCreate(PreferenceFragment preferenceFragment)

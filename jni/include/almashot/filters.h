@@ -306,11 +306,22 @@ void Filters_ResidualQuarterCompute
 	int sx,
 	int sy,
 	int sxs,
+	int sys
+);
+
+void Filters_ResidualQuarterCompute16bit
+(
+	Uint8 *in,
+	Int16 *quarterIn,
+	Int16 *quarterOut,
+	int sx,
+	int sy,
+	int sxs,
 	int sys,
 	int pressure
 );
 
-void Filters_ResidualQuarterCompute16bit
+void Filters_ResidualQuarterCompute16bit_neon
 (
 	Uint8 *in,
 	Int16 *quarterIn,

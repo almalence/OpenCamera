@@ -36,7 +36,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Samospoušť</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Kompenzace expozice</string>
     <string name="Pref_Common_DelayedCapture_Title">Samospoušť</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Ukázat tlačítko pro nastavení samospouště</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Ukázat tlačítko pro nastavení samospouště/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Ukázat nápovědu</string>
     <string name="Pref_WhowHelp_Summary">Ukázat nápovědu při přepnutí režimu (Panorama, Chytrý multisnímek)</string>
     <string name="Pref_Common_HeadsetTap_Title">Tlačítka Headsetu</string>

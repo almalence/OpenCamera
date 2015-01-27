@@ -27,16 +27,23 @@
 
     <EditTextPreference
         android:defaultValue=""
+        android:key="@string/Preference_TimestampCustomTextValue"
         android:maxLength="40"
         android:singleLine="true"
-        android:key="@string/Preference_TimestampCustomTextValue"
         android:title="@string/pref_timestamp_saving_custom_text_title" />
-    
+
     <ListPreference
         android:defaultValue="1"
         android:entries="@array/timestampColorArrayCommon"
         android:entryValues="@array/timestampColorValuesCommon"
         android:key="@string/Preference_TimestampColorValue"
         android:title="@string/pref_timestamp_saving_color_title" />
+    
+    <ListPreference
+        android:defaultValue="80"
+        android:entries="@array/timestampFontSizeArrayCommon"
+        android:entryValues="@array/timestampFontSizeValuesCommon"
+        android:key="@string/Preference_TimestampFontSizeValue"
+        android:title="@string/pref_timestamp_saving_font_size_title" />
 
 </PreferenceScreen>

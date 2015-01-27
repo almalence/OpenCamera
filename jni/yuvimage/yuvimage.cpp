@@ -21,45 +21,12 @@ by Almalence Inc. All Rights Reserved.
 #include <jni.h>
 #include <android/log.h>
 
-#include "CreateJavaOutputStreamAdaptor.h"
-#include "YuvToJpegEncoder.h"
 #include "YuvToJpegEncoderMT.h"
 
 static unsigned char *yuv;
 static int SX = 0;
 static int SY = 0;
 
-extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOut
-(
-	JNIEnv* env, jobject, jint jout,
-	int format, int width, int height, jintArray offsets,
-	jintArray strides, int jpegQuality, jobject jstream,
-	jbyteArray jstorage
-)
-{
-	jbyte* OutPic;
-
-	OutPic = (jbyte*)jout;
-
-	SkWStream* strm = CreateJavaOutputStreamAdaptor(env, jstream, jstorage);
-
-	jint* imgOffsets = env->GetIntArrayElements(offsets, NULL);
-	jint* imgStrides = env->GetIntArrayElements(strides, NULL);
-	YuvToJpegEncoder* encoder = YuvToJpegEncoder::create(format, imgStrides);
-	if (encoder == NULL)
-	{
-		free(OutPic);
-		return false;
-	}
-
-	bool result = encoder->encode(strm, OutPic, width, height, imgOffsets, jpegQuality);
-
-	delete encoder;
-	env->ReleaseIntArrayElements(offsets, imgOffsets, 0);
-	env->ReleaseIntArrayElements(strides, imgStrides, 0);
-
-	return result;
-}
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_YuvImage_SaveJpegFreeOutMT
 (

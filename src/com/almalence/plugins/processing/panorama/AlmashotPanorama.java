@@ -32,5 +32,5 @@ public class AlmashotPanorama
 	public static native int release();
 
 	public static native int[] process(int width, int height, int[] jframes, float[][][] jtrs, int cameraFOV,
-			boolean useAll, boolean freeInput);
+			boolean useAll, boolean freeInput, float intersection);
 }

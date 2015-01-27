@@ -39,10 +39,13 @@ import android.widget.ImageView;
 /* <!-- +++
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;
@@ -208,8 +211,9 @@ public class ImageAdapter extends BaseAdapter
 
 	private Bitmap decodeYUVfromData(int position)
 	{
-		int width = MainScreen.getImageWidth();
-		int height = MainScreen.getImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int width = imageSize.getWidth();
+		int height = imageSize.getHeight();
 		
 		int scaledWidth = 0;
 		int scaledHeight = 0;

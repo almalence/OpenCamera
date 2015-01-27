@@ -48,6 +48,50 @@
     <string name="blockingText">請稍等，正在處理…</string>
     <string name="almalence_gui_selected">已選</string>
 
+    <string name="sceneAuto">自動</string>
+    <string name="sceneAction">Action</string>
+    <string name="scenePortrait">人像</string>
+    <string name="sceneLandscape">景觀</string>
+    <string name="sceneNight">夜間</string>
+    <string name="sceneNightPortrait">夜間人像</string>
+    <string name="sceneTheatre">劇院</string>
+    <string name="sceneBeach">沙灘</string>
+    <string name="sceneSnow">雪地</string>
+    <string name="sceneSunset">黃昏</string>
+    <string name="sceneSteadyPhoto">防手震</string>
+    <string name="sceneFireworks">煙火</string>
+    <string name="sceneSports">運動</string>
+    <string name="sceneParty">派對</string>
+    <string name="sceneCandlelight">燭光</string>
+    <string name="sceneBarcode">條碼</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">自動</string>
+    <string name="wbIncandescent">白熾燈</string>
+    <string name="wbFluorescent">螢光燈</string>
+    <string name="wbWarmFluorescent">暖螢光燈</string>
+    <string name="wbDaylight">陽光</string>
+    <string name="wbCloudyDaylight">陰天</string>
+    <string name="wbTwilight">黃昏</string>
+    <string name="wbShade">陰影</string>
+    
+    <string name="focusAuto">自動</string>
+    <string name="focusInfinity">無限遠</string>
+    <string name="focusNormal">Normal</string>
+    <string name="focusMacro">微距</string>
+    <string name="focusFixed">固定</string>
+    <string name="focusEdof">Edof</string>
+    <string name="focusContinuousVideo">影片連續對焦</string>
+    <string name="focusContinuousPicture">連續對焦</string>
+    <string name="focusAFLock">AF lock</string>
+    
+    <string name="flashAuto">自動</string>
+    <string name="flashOn">On</string>
+    <string name="flashOff">Off</string>
+    <string name="flashRedEye">防紅眼</string>
+    <string name="flashTorch">持續開啟</string>
+
     <string name="settings_mode_scene">場景模式</string>
     <string name="settings_mode_wb">白平衡</string>
     <string name="settings_mode_focus">對焦模式</string>

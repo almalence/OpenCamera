@@ -35,7 +35,7 @@
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Temporizador automático</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Compensación de la exposición</string>
     <string name="Pref_Common_DelayedCapture_Title">Captura con temporizador automático</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Mostrar control del temporizador automático</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Mostrar control del temporizador automático/photo timelapse</string>
     <string name="Pref_ShowHelp_Title">Mostrar ayuda</string>
     <string name="Pref_WhowHelp_Summary">Mostrar ayuda al inicio de un modo (Panorama, Eliminación de objetos, Secuencia, Disparos múltiples)</string>
     <string name="Pref_Common_HeadsetTap_Title">Disparador de los auriculares</string>
@@ -92,5 +92,6 @@
 	<string name="okText">OK</string>
 	
 	<string name="moreText">Más...</string>
-	
+
+	<string name="promoRedeemedJulius">Desbloqueo de fotos en modo panorama y multishots.</string>	
 </resources>

@@ -28,8 +28,8 @@ public final class CameraParameters
 	private CameraParameters(){}
 	
 	//SCENE
-	public static final int SCENE_MODE_UNSUPPORTED = 0;
-	public static final int SCENE_MODE_AUTO = 1;
+	public static final int SCENE_MODE_DISABLED = -1;
+	public static final int SCENE_MODE_AUTO = 1;	
 	public static final int SCENE_MODE_ACTION = 2;
 	public static final int SCENE_MODE_PORTRAIT = 3;
 	public static final int SCENE_MODE_LANDSCAPE = 4;
@@ -45,6 +45,7 @@ public final class CameraParameters
 	public static final int SCENE_MODE_PARTY = 14;
 	public static final int SCENE_MODE_CANDLELIGHT = 15;
 	public static final int SCENE_MODE_BARCODE = 16;
+	public static final int SCENE_MODE_HIGH_SPEED_VIDEO = 17;
 	
 	//WHITE BALANCE
 	public static final int WB_MODE_AUTO = 1;
@@ -57,6 +58,7 @@ public final class CameraParameters
 	public static final int WB_MODE_SHADE = 8;
 	
 	//FOCUS
+	public static final int AF_MODE_OFF = 0;
 	public static final int AF_MODE_AUTO = 1;
 	public static final int AF_MODE_MACRO = 2;
 	public static final int AF_MODE_CONTINUOUS_VIDEO = 3;
@@ -68,10 +70,10 @@ public final class CameraParameters
 	
 	//FLASH
 	public static final int FLASH_MODE_OFF = 0;
-	public static final int FLASH_MODE_AUTO = 1;
-	public static final int FLASH_MODE_SINGLE = 2;
-	public static final int FLASH_MODE_REDEYE = 3;
-	public static final int FLASH_MODE_TORCH = 4;
+	public static final int FLASH_MODE_AUTO = 3;
+	public static final int FLASH_MODE_SINGLE = 1;
+	public static final int FLASH_MODE_REDEYE = 4;
+	public static final int FLASH_MODE_TORCH = 2;
 	
 	//ISO	
 	public static final int ISO_50 = 0;
@@ -82,10 +84,13 @@ public final class CameraParameters
 	public static final int ISO_800 = 5;
 	public static final int ISO_1600 = 6;
 	public static final int ISO_3200 = 7;
+	public static final int ISO_6400 = 8;
+	public static final int ISO_10000 = 9;
 	
 	//Possible names of iso in Camera.Parameters variable
 	public static final String isoParam = "iso";
 	public static final String isoParam2 = "iso-speed";
+	public static final String isoParam3 = "nv-picture-iso";
 	
 	public static final int meteringModeAuto = 0;
 	public static final int meteringModeMatrix = 1;	

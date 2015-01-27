@@ -19,6 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.night;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -59,6 +60,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 	private int				mDisplayOrientation	= 0;
 	private boolean			mCameraMirrored		= false;
+	private int                 cameraIndex = 0;
 
 	private int				mImageWidth;
 	private int				mImageHeight;
@@ -80,18 +82,25 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID = SessionID;
 
-		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+		if (CameraController.isUseHALv3()) {
+			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
+					PluginManager.getInstance().getActiveMode().modeSaveNameHAL);
+		} else {
+			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
+					PluginManager.getInstance().getActiveMode().modeSaveName);
+		}
 
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"frameorientation1" + sessionID));
 		mCameraMirrored = CameraController.isFrontCamera();
 
-		mImageWidth = MainScreen.getImageWidth();
-		mImageHeight = MainScreen.getImageHeight();
-
-		int iSaveImageWidth = MainScreen.getSaveImageWidth();
-		int iSaveImageHeight = MainScreen.getSaveImageHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		mImageWidth = imageSize.getWidth();
+		mImageHeight = imageSize.getHeight();
+		
+		// camera profile indexes in libalmalib
+		if (Build.MODEL.contains("Nexus 5")) cameraIndex = 100;
+		if (Build.MODEL.contains("Nexus 6")) cameraIndex = 103;
 
 		AlmaShotNight.Initialize();
 
@@ -115,8 +124,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, "1");
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(yuv));
 
-		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
+		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(mImageWidth));
+		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(mImageHeight));
 	}
 
 	private void nightProcessing()
@@ -138,18 +147,26 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem(
 				"zoom" + sessionID));
-		boolean isHALv3 = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
-				"isHALv3" + sessionID));
+		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
-				"sensorGain" + sessionID));
-
+				"burstGain" + sessionID));
+		
+		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		{
+			if (mDisplayOrientation==0 || mDisplayOrientation==90)
+				mDisplayOrientation+=180;
+			else if (mDisplayOrientation==180 || mDisplayOrientation==270)
+				mDisplayOrientation-=180;
+		}
+		
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mImageWidth, mImageHeight,
 				sensorGain, Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference),
 				9, SaturatedColors ? 9 : 0, imagesAmount,
 				NightProcessingPlugin.crop,
 				mDisplayOrientation,
 				mCameraMirrored,
-				zoom, isHALv3);
+				zoom, cameraIndex, isSuperMode);
 
 		AlmaShotNight.Release();
 	}

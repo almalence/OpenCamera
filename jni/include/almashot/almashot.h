@@ -31,7 +31,7 @@
  SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE, MISUSE OR
  INABILITY TO USE THE SOFTWARE OR RELATED DOCUMENTATION.
 
- COPYRIGHT 2010-2012, ALMALENCE, INC.
+ COPYRIGHT 2010-2014, ALMALENCE, INC.
 
  ---------------------------------------------------------------------------
 
@@ -76,6 +76,7 @@ typedef signed char Int8;
 #define ALMA_GL_CONTEXT_ERROR		6
 #define ALMA_GL_SURFACE_ERROR		7
 #define ALMA_INVALID_PARAMETER		8
+#define ALMA_INVALID_CAMERA			9
 
 
 // ---------------------------------------------------------------------------

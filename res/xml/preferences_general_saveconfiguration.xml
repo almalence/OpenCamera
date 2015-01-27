@@ -39,5 +39,9 @@
                        android:title="@string/Pref_SaveConfiguration_DelayedCapture_Title"
                        android:defaultValue="false"
                        android:key="SaveConfiguration_DelayedCapture"/>
+	<CheckBoxPreference
+                       android:title="@string/Pref_SaveConfiguration_TimelapseCapture_Title"
+                       android:defaultValue="false"
+                       android:key="SaveConfiguration_TimelapseCapture"/>
 	
 </PreferenceScreen>

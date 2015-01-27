@@ -63,7 +63,7 @@ public class CapturePlugin extends PluginCapture
 
 	private int					singleModeEV;
 	private int					droEvDiff;
-
+	
 	public CapturePlugin()
 	{
 		super("com.almalence.plugins.capture", 0, 0, 0, null);
@@ -75,7 +75,7 @@ public class CapturePlugin extends PluginCapture
 		{
 			// for still-image DRO - set Ev just a bit lower (-0.5Ev or less)
 			// than for standard shot
-			float expStep = CameraController.getInstance().getExposureCompensationStep();
+			float expStep = CameraController.getExposureCompensationStep();
 			int diff = (int) Math.floor(0.5 / expStep);
 			if (diff < 1)
 				diff = 1;
@@ -84,22 +84,26 @@ public class CapturePlugin extends PluginCapture
 			ev -= diff;
 		}
 
-		int minValue = CameraController.getInstance().getMinExposureCompensation();
+		int minValue = CameraController.getMinExposureCompensation();
 		if (ev >= minValue)
 		{
 			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
-			CameraController.getInstance().setCameraExposureCompensation(ev);
+			CameraController.setCameraExposureCompensation(ev);
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+			.putInt(MainScreen.sEvPref, ev).commit();
 		}
 	}
 
 	@Override
 	public void onCreate()
 	{
+		
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_standard_modeswitcher, null, false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
+		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 		modeSwitcher.setTextOn("DRO On");
 		modeSwitcher.setTextOff("DRO Off");
 		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
@@ -117,11 +121,11 @@ public class CapturePlugin extends PluginCapture
 					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
-					MainScreen.setCaptureYUVFrames(true);
+					MainScreen.setCaptureFormat(CameraController.YUV);
 				} else
 				{
 					ModePreference = "1";
-					MainScreen.setCaptureYUVFrames(false);
+					MainScreen.setCaptureFormat(CameraController.JPEG);
 
 //					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
@@ -151,10 +155,9 @@ public class CapturePlugin extends PluginCapture
 	public void onCameraParametersSetup()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
 //		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
 
-		if (ModePreference.compareTo("0") == 0)
+		if (ModePreference.equals("0"))
 		{
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, singleModeEV);
@@ -167,15 +170,25 @@ public class CapturePlugin extends PluginCapture
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
+		
+		captureRAW = (prefs.getBoolean(MainScreen.sCaptureRAWPref, false) && CameraController.isRAWCaptureSupported());
 	}
 
 	@Override
 	public void onResume()
 	{
+		inCapture = false;
+		aboutToTakePicture = false;
+		
 		if (ModePreference.compareTo("0") == 0)
-			MainScreen.setCaptureYUVFrames(true);
+			MainScreen.setCaptureFormat(CameraController.YUV);
 		else
-			MainScreen.setCaptureYUVFrames(false);
+		{
+			if(captureRAW)
+				MainScreen.setCaptureFormat(CameraController.RAW);
+			else
+				MainScreen.setCaptureFormat(CameraController.JPEG);
+		}
 	}
 
 	@Override
@@ -234,81 +247,71 @@ public class CapturePlugin extends PluginCapture
 		ModePreference = prefs.getString("modeStandardPref", "1");
 	}
 
+	protected int framesCaptured = 0;
+	protected int resultCompleted = 0;
 	@Override
 	public void takePicture()
 	{
 //		Log.d("CapturePlugin", "takePicture");
-		if (!inCapture)
-		{
-			inCapture = true;
-			takingAlready = true;
-
-			try
-			{
-				if (ModePreference.compareTo("0") == 0)
-					requestID = CameraController.captureImagesWithParams(1, CameraController.YUV, new int[0],
-							new int[0], true);
-				else
-					requestID = CameraController.captureImagesWithParams(1, CameraController.JPEG, new int[0],
-							new int[0], true);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				Log.d("Standard capture", "takePicture exception: " + e.getMessage());
-				takingAlready = false;
-				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-				MainScreen.getGUIManager().lockControls = false;
-			}
-		}
-
+		framesCaptured = 0;
+		resultCompleted = 0;
+		if (ModePreference.compareTo("0") == 0)
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true, true);
+		else if(captureRAW)
+			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true, true);
+		else
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
 
+	
 	@Override
-	public void onImageTaken(int frame, byte[] frameData, int frame_len, boolean isYUV)
+	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
-		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
+		framesCaptured++;
+		boolean isRAW = (format == CameraController.RAW);
+		
+		PluginManager.getInstance().addToSharedMem("frame" + framesCaptured + SessionID, String.valueOf(frame));
+		PluginManager.getInstance().addToSharedMem("framelen" + framesCaptured + SessionID, String.valueOf(frame_len));
+		
+		PluginManager.getInstance().addToSharedMem("frameisraw" + framesCaptured + SessionID, String.valueOf(isRAW));
+		
+		
+		PluginManager.getInstance().addToSharedMem("frameorientation" + framesCaptured + SessionID,
 				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
+		PluginManager.getInstance().addToSharedMem("framemirrored" + framesCaptured + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
-		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, "1");
+		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(framesCaptured));
+		PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, isRAW? "1" : "0");
 
-		PluginManager.getInstance().addToSharedMem("isyuv" + SessionID, String.valueOf(isYUV));
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
-//		try
-//		{
-//			CameraController.startCameraPreview();
-//		} catch (RuntimeException e)
-//		{
-//			Log.e("Capture", "StartPreview fail");
-//		}
-
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-		takingAlready = false;
-		inCapture = false;
+		if((captureRAW && framesCaptured == 2) || !captureRAW || ModePreference.compareTo("0") == 0)
+		{
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			inCapture = false;
+			framesCaptured = 0;
+			resultCompleted = 0;
+		}
 	}
 
 	@TargetApi(21)
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		int requestID = requestIDArray[resultCompleted];
+		resultCompleted++;
+//		Log.e("CapturePlugin", "onCaptureCompleted. resultCompleted = " +resultCompleted);
 		if (result.getSequenceId() == requestID)
 		{
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
-	}
-
-	@Override
-	public void onAutoFocus(boolean paramBoolean)
-	{
-//		Log.d("CapurePlugin", "onAutoFocus. takingAlready = " + takingAlready);
-		if (takingAlready)
-			takePicture();
+		
+		if(captureRAW)
+		{
+			Log.e("CapturePlugin", "onCaptureCompleted. resultCompleted = " + resultCompleted);
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID, result);
+		}
 	}
 
 	@Override
@@ -317,6 +320,11 @@ public class CapturePlugin extends PluginCapture
 	}
 
 	public boolean delayedCaptureSupported()
+	{
+		return true;
+	}
+
+	public boolean photoTimeLapseCaptureSupported()
 	{
 		return true;
 	}

@@ -15,13 +15,17 @@
     <string name="Pref_Common_HWShutter_Title">HW shutter</string>
     <string name="Pref_Common_HWShutter_Summary">Use HW shutter to start application</string>
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
+    <string name="Pref_Common_Antibanding_Title">Antibanding</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_UseHALv3_Title">Use Сamera2 interface</string>
-    <string name="Pref_Common_UseHALv3_Summary">Experimental mode. Will work on limited number of devices (Google Nexus 5, 7 with Android L)</string>    
+    <string name="Pref_Common_UseHALv3_Summary">Experimental mode. Will work on limited number of devices with Android 5</string>    
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
     <string name="Pref_Common_Gallery_Title">Allow to select external gallery</string>
     <string name="Pref_Common_Gallery_Summary">Do not use A Better Editor&amp;Effects as default viewer if installed</string>
+    <string name="Pref_Common_CaptureRAW_Title">Capture RAW</string>
+    <string name="Pref_Common_CaptureRAW_Summary">RAW format is DNG. Will work on limited number of devices</string>
+    <string name="Pref_Common_CaptureRAW_Description">RAW capture only works in Single, Burst and Expo-bracketing modes. Also, histogram can not be shown in this mode.</string>
     <string name="Pref_Common_JPEGQuality_Title">Jpeg quality</string>
     <string name="Pref_Common_VolumeButton_Title">Volume button</string>
     <string name="Pref_SaveConfiguration_Title">Save configuration</string>
@@ -35,9 +39,10 @@
     <string name="Pref_SaveConfiguration_FlashMode_Title">Flash mode</string>
     <string name="Pref_SaveConfiguration_FrontRear_Title">Selected camera</string>
     <string name="Pref_SaveConfiguration_DelayedCapture_Title">Self-timer</string>
+    <string name="Pref_SaveConfiguration_TimelapseCapture_Title">Timelapse</string>
     <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Exposure compensation</string>
     <string name="Pref_Common_DelayedCapture_Title">Self-timer capture</string>
-    <string name="Pref_Common_DelayedCapture_Summary">Show self-timer control</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Show self-timer/photo timelapse control</string>
     <string name="Pref_ShowHelp_Title">Show help</string>
     <string name="Pref_WhowHelp_Summary">Show help when mode started (Panorama, Smart multishot)</string>
     <string name="Pref_Common_HeadsetTap_Title">Headset shutter</string>
@@ -102,6 +107,8 @@
     <string name="iso800">"ISO800"</string>
     <string name="iso1600">ISO1600</string>
     <string name="iso3200">ISO3200</string>
+    <string name="iso6400">ISO6400</string>
+    <string name="iso10000">ISO10000</string>
     
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">action</string>
@@ -201,6 +208,8 @@
     <string name="iso800System">"ISO800"</string>
     <string name="iso1600System">ISO1600</string>
     <string name="iso3200System">ISO3200</string>
+    <string name="iso6400System">ISO6400</string>
+    <string name="iso10000System">ISO10000</string>
     
     <string name="isoAutoKey">0_auto</string>
     <string name="iso50Key">1_ISO50</string>
@@ -210,6 +219,8 @@
     <string name="iso800Key">"5_ISO800"</string>
     <string name="iso1600Key">6_ISO1600</string>
     <string name="iso3200Key">7_ISO3200</string>
+    <string name="iso6400Key">8_ISO6400</string>
+    <string name="iso10000Key">9_ISO10000</string>
     
     <string name="isoAutoDefaultSystem">auto</string>
     <string name="iso50DefaultSystem">50</string>    
@@ -219,6 +230,8 @@
     <string name="iso800DefaultSystem">"800"</string>
     <string name="iso1600DefaultSystem">1600</string>
     <string name="iso3200DefaultSystem">3200</string>
+    <string name="iso6400DefaultSystem">6400</string>
+    <string name="iso10000DefaultSystem">10000</string>
     
     <string name="meteringAutoSystem">Auto</string>
     <string name="meteringMatrixSystem">Matrix</string>
@@ -277,5 +290,7 @@
 	<string name="Preference_QuickControlButton2">quickControlButton2</string>
 	<string name="Preference_QuickControlButton3">quickControlButton3</string>
 	<string name="Preference_QuickControlButton4">quickControlButton4</string>
-	
+
+	<string name="promoRedeemedJulius">Successfully unlocked Panorama and Multishot modes.</string>
+		
 </resources>

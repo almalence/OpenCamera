@@ -36,6 +36,7 @@ import java.util.List;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.ui.RotateImageView;
 
@@ -64,7 +65,7 @@ public class AlmalenceStore
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
 
-	private static final int STORE_ELEMENTS_NUMBER = 5;
+	private static final int STORE_ELEMENTS_NUMBER = 4;
 	
 	AlmalenceStore(View gui)
 	{
@@ -90,18 +91,18 @@ public class AlmalenceStore
 		page.addView(store);
 		pages.add(page);
 
-		// page 2
-		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-		RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
-		final ImageView imgWhatNewNext = (ImageView) whatsnew.findViewById(R.id.storeFeatures);
-		final ImageView imgWhatNewPrev = (ImageView) whatsnew.findViewById(R.id.storeStore);
-		imgWhatNewNext.setVisibility(View.INVISIBLE);
-		imgWhatNewPrev.setVisibility(View.INVISIBLE);
-		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
-		text_whatsnew.setText(MainScreen.getAppResources().getString(R.string.storeWhatsnew));
-
-		page.addView(whatsnew);
-		pages.add(page);
+//		// page 2
+//		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
+//		RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
+//		final ImageView imgWhatNewNext = (ImageView) whatsnew.findViewById(R.id.storeFeatures);
+//		final ImageView imgWhatNewPrev = (ImageView) whatsnew.findViewById(R.id.storeStore);
+//		imgWhatNewNext.setVisibility(View.INVISIBLE);
+//		imgWhatNewPrev.setVisibility(View.INVISIBLE);
+//		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
+//		text_whatsnew.setText(MainScreen.getAppResources().getString(R.string.storeWhatsnew));
+//
+//		page.addView(whatsnew);
+//		pages.add(page);
 
 		// page 3
 		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
@@ -141,23 +142,25 @@ public class AlmalenceStore
 					// 0
 					imgStoreNext.setVisibility(View.VISIBLE);
 					// 1
-					imgWhatNewNext.setVisibility(View.INVISIBLE);
-					imgWhatNewPrev.setVisibility(View.INVISIBLE);
-					break;
-				case 1:
-					// 0
-					imgStoreNext.setVisibility(View.INVISIBLE);
-					// 1
-					imgWhatNewNext.setVisibility(View.VISIBLE);
-					imgWhatNewPrev.setVisibility(View.VISIBLE);
-					// 2
-					//imgFeaturesNext.setVisibility(View.INVISIBLE);
+//					imgWhatNewNext.setVisibility(View.INVISIBLE);
+//					imgWhatNewPrev.setVisibility(View.INVISIBLE);
 					imgFeaturesPrev.setVisibility(View.INVISIBLE);
 					break;
-				case 2:
+//				case 1:
+//					// 0
+//					imgStoreNext.setVisibility(View.INVISIBLE);
+//					// 1
+//					imgWhatNewNext.setVisibility(View.VISIBLE);
+//					imgWhatNewPrev.setVisibility(View.VISIBLE);
+//					// 2
+//					//imgFeaturesNext.setVisibility(View.INVISIBLE);
+//					imgFeaturesPrev.setVisibility(View.INVISIBLE);
+//					break;
+				case 1:
 					// 1
-					imgWhatNewNext.setVisibility(View.INVISIBLE);
-					imgWhatNewPrev.setVisibility(View.INVISIBLE);
+//					imgWhatNewNext.setVisibility(View.INVISIBLE);
+//					imgWhatNewPrev.setVisibility(View.INVISIBLE);
+					imgStoreNext.setVisibility(View.INVISIBLE);
 					// 2
 					//imgFeaturesNext.setVisibility(View.VISIBLE);
 					imgFeaturesPrev.setVisibility(View.VISIBLE);
@@ -185,20 +188,20 @@ public class AlmalenceStore
 			}
 		});
 		
-		imgWhatNewNext.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				viewPager.setCurrentItem(2);
-			}
-		});
-		imgWhatNewPrev.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				viewPager.setCurrentItem(0);
-			}
-		});
+//		imgWhatNewNext.setOnClickListener(new OnClickListener()
+//		{
+//			public void onClick(View v)
+//			{
+//				viewPager.setCurrentItem(2);
+//			}
+//		});
+//		imgWhatNewPrev.setOnClickListener(new OnClickListener()
+//		{
+//			public void onClick(View v)
+//			{
+//				viewPager.setCurrentItem(0);
+//			}
+//		});
 //		imgFeaturesNext.setOnClickListener(new OnClickListener()
 //		{
 //			public void onClick(View v)
@@ -210,7 +213,7 @@ public class AlmalenceStore
 		{
 			public void onClick(View v)
 			{
-				viewPager.setCurrentItem(1);
+				viewPager.setCurrentItem(0);
 			}
 		});
 //		imgTipsPrev.setOnClickListener(new OnClickListener()
@@ -236,6 +239,13 @@ public class AlmalenceStore
 					"The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG)
 					.show();
 			MainScreen.getInstance().showPromoRedeemed = false;
+		}
+		if (MainScreen.getInstance().showPromoRedeemedJulius)
+		{
+			Toast.makeText(MainScreen.getInstance(),MainScreen.getInstance().getResources()
+					.getString(R.string.promoRedeemedJulius), Toast.LENGTH_LONG)
+					.show();
+			MainScreen.getInstance().showPromoRedeemedJulius = false;
 		}
 
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
@@ -351,6 +361,7 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockHDR);
 				break;
+
 			case 2:
 				// Panorama
 				icon.setImageResource(R.drawable.store_panorama);
@@ -381,16 +392,7 @@ public class AlmalenceStore
 //				else
 //					price.setText(MainScreen.getInstance().titleUnlockGroup);
 //				break;
-			case 4:
-				// Promo code
-				icon.setImageResource(R.drawable.store_promo);
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText("");
-				break;
+
 			default:
 				break;
 			}
@@ -448,14 +450,6 @@ public class AlmalenceStore
 		case 3:// multishot
 			MainScreen.getInstance().purchaseMultishot();
 			break;
-//		case 4:// Groupshot
-//			MainScreen.getInstance().purchaseGroupshot();
-//			break;
-		case 4:// Promo
-			if (!MainScreen.getInstance().isPurchasedAll())
-				MainScreen.getInstance().enterPromo();
-			break;
-		
 		default:
 			break;
 		}
