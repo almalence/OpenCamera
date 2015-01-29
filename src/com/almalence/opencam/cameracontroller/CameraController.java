@@ -1042,9 +1042,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!CameraController.isHALv3)
 		{
-			Message msg = new Message();
-			msg.what = PluginManager.MSG_CAMERA_READY;
-			MainScreen.getMessageHandler().sendMessage(msg);
+//			Message msg = new Message();
+//			msg.what = PluginManager.MSG_CAMERA_READY;
+//			MainScreen.getMessageHandler().sendMessage(msg);
+			
+			if (CameraController.isCameraCreated())
+			{
+				MainScreen.thiz.configureCamera();
+				PluginManager.getInstance().onGUICreate();
+				MainScreen.getGUIManager().onGUICreate();
+			}
 		}
 	}
 
