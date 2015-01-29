@@ -20,7 +20,9 @@
     <string name="Preference_SceneModeValue">Preference_SceneModeValue</string>
     <string name="Preference_WBModeValue">Preference_WBModeValue</string>
     <string name="Preference_FrontFocusModeValue">Preference_FrontFocusModeValue</string>
+    <string name="Preference_FrontFocusModeVideoValue">Preference_FrontFocusModeVideoValue</string>
     <string name="Preference_RearFocusModeValue">Preference_RearFocusModeValue</string>
+    <string name="Preference_RearFocusModeVideoValue">Preference_RearFocusModeVideoValue</string>
     <string name="Preference_FlashModeValue">Preference_FlashModeValue</string>
     <string name="Preference_ISOValue">Preference_ISOValue</string>
     <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
