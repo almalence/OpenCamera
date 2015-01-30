@@ -777,6 +777,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.preview;
 	}
+	
+	public static int getPreviewSurfaceWidth()
+	{
+		return thiz.surfaceWidth;
+	}
+	
+	public static int getPreviewSurfaceHeight()
+	{
+		return thiz.surfaceHeight;
+	}
+	
+	public static void setPreviewSurfaceWidthInfo(int width)
+	{
+		thiz.surfaceWidth = width;
+	}
+	
+	public static void setPreviewSurfaceHeightInfo(int height)
+	{
+		thiz.surfaceHeight = height;
+	}
 
 	public static void setSurfaceHolderSize(int width, int height)
 	{
