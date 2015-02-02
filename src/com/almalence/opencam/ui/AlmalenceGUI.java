@@ -5730,10 +5730,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private MotionEvent		prevEvent;
 	private MotionEvent		downEvent;
 	private boolean			scrolling			= false;
+	private boolean			multiTouch			= false;
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
+		if (event.getPointerCount() > 1) {
+			multiTouch = true;
+			PluginManager.getInstance().onTouch(view, event);
+			return true;
+		}
+		
+		if (multiTouch && event.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			PluginManager.getInstance().onTouch(view, event);
+			multiTouch = false;
+		}
+
+		if (multiTouch)
+		{
+			return true;
+		}
+		
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 		{

@@ -1381,6 +1381,16 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onAutoFocus(paramBoolean);
 	}
+	
+	@Override
+	public void onAutoFocusMoving(boolean paramBoolean)
+	{
+		for (int i = 0; i < activeVF.size(); i++)
+			pluginList.get(activeVF.get(i)).onAutoFocusMoving(paramBoolean);
+
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onAutoFocusMoving(paramBoolean);
+	}
 
 	void takePicture()
 	{

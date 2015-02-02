@@ -2027,6 +2027,14 @@ public class HALv3
 					CameraController.onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
 				}
+				
+				if (result.get(CaptureResult.CONTROL_AF_MODE) == CaptureResult.CONTROL_AF_MODE_CONTINUOUS_PICTURE) {
+					if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED || result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED) {
+						CameraController.onAutoFocusMoving(false);
+					} else {
+						CameraController.onAutoFocusMoving(true);
+					}
+				} 
 //				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
 //						&& HALv3.autoFocusTriggered)
 //				{

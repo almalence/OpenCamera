@@ -945,6 +945,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							camera = Camera.open(CameraIndex);
 						else
 							camera = Camera.open();
+						
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+							camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback()
+							{
+								@Override
+								public void onAutoFocusMoving(boolean start, Camera camera)
+								{
+									CameraController.onAutoFocusMoving(start);
+								}
+							});
+						}
 					}
 					MainScreen.getInstance().switchingMode(false);
 
@@ -3021,6 +3032,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FAIL);
 	}
 
+	public static void onAutoFocusMoving (boolean start) {
+		pluginManager.onAutoFocusMoving(start);
+		if (start)
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
+		else
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
+	}
+	
 	public static void onAutoFocus(boolean focused)
 	{
 		pluginManager.onAutoFocus(focused);
