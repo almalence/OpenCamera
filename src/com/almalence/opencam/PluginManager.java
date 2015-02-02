@@ -215,7 +215,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
 
 	public static final int				MSG_CAMERA_CONFIGURED					= 160;
-//	public static final int				MSG_CAMERA_READY						= 161;
 	public static final int				MSG_CAMERA_STOPED						= 162;
 	
 	public static final int				MSG_APPLICATION_STOP					= 163;
@@ -229,8 +228,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_PROCESS_FINISHED					= 20;
 	public static final int				MSG_VOLUME_ZOOM							= 21;
 	// ^^ For HALv3 code version
-
-	public static final int				MSG_NEXT_FRAME							= 23;
 
 	public static final int				MSG_BAD_FRAME							= 24;
 	public static final int				MSG_OUT_OF_MEMORY						= 25;
@@ -1558,10 +1555,6 @@ public class PluginManager implements PluginManagerInterface
 		switch (msg.what)
 		{
 		case MSG_NO_CAMERA:
-			break;
-
-		case MSG_TAKE_PICTURE:
-			pluginManager.takePicture();
 			break;
 
 		case MSG_CAPTURE_FINISHED:

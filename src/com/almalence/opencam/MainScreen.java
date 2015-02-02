@@ -189,6 +189,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private int							surfaceWidth					= 0;
 	private int							surfaceHeight					= 0;
+	
+	private int							surfaceLayoutWidth				= 0;
+	private int							surfaceLayoutHeight				= 0;
 
 	// shared between activities
 	// private int imageWidth, imageHeight;
@@ -778,24 +781,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz.preview;
 	}
 	
-	public static int getPreviewSurfaceWidth()
+	public static int getPreviewSurfaceLayoutWidth()
 	{
-		return thiz.surfaceWidth;
+		return thiz.surfaceLayoutWidth;
 	}
 	
-	public static int getPreviewSurfaceHeight()
+	public static int getPreviewSurfaceLayoutHeight()
 	{
-		return thiz.surfaceHeight;
+		return thiz.surfaceLayoutHeight;
 	}
 	
-	public static void setPreviewSurfaceWidthInfo(int width)
+	public static void setPreviewSurfaceLayoutWidth(int width)
 	{
-		thiz.surfaceWidth = width;
+		thiz.surfaceLayoutWidth = width;
 	}
 	
-	public static void setPreviewSurfaceHeightInfo(int height)
+	public static void setPreviewSurfaceLayoutHeight(int height)
 	{
-		thiz.surfaceHeight = height;
+		thiz.surfaceLayoutHeight = height;
 	}
 
 	public static void setSurfaceHolderSize(int width, int height)
@@ -2011,6 +2014,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public Surface getPreviewYUVSurface()
 	{
 		return mImageReaderPreviewYUV.getSurface();
+	}
+	
+	//Probably used only by Panorama plugin. Added to avoid non direct interface (message/handler)
+	public static void takePicture()
+	{
+		PluginManager.getInstance().takePicture();
 	}
 
 	@TargetApi(14)

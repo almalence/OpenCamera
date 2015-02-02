@@ -1520,10 +1520,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 		
-		Log.e("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
+		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
-		MainScreen.setPreviewSurfaceWidthInfo(lp.width);
-		MainScreen.setPreviewSurfaceHeightInfo(lp.height);
+		MainScreen.setPreviewSurfaceLayoutWidth(lp.width);
+		MainScreen.setPreviewSurfaceLayoutHeight(lp.height);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 	}

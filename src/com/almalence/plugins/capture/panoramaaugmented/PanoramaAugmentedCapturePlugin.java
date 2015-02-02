@@ -841,44 +841,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public boolean onBroadcast(final int command, final int arg)
 	{
-		if (command == PluginManager.MSG_NEXT_FRAME)
-		{
-			this.previewRestartFlag = true;
-
-			CameraController.startCameraPreview();
-
-			// initSensors(); // attempt to fix LG G2 accelerometer slowdown
-
-			new CountDownTimer(1000, 330)
-			{
-				private boolean	first	= true;
-
-				public void onTick(final long millisUntilFinished)
-				{
-					if (this.first)
-					{
-						this.first = false;
-						return;
-					}
-
-					if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
-					{
-						Log.d("Almalence", String.format("Emergency preview restart"));
-						CameraController.setPreviewCallbackWithBuffer();
-					} else
-					{
-						this.cancel();
-					}
-				}
-
-				public void onFinish()
-				{
-
-				}
-			}.start();
-
-			return true;
-		} else if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
 		{
 			this.stopCapture();
 
@@ -1172,7 +1135,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			} else
 			{
 				this.takingAlready = true;
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_TAKE_PICTURE);
+				MainScreen.takePicture();
 			}
 		}
 	}
@@ -1383,7 +1346,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			PluginManager.getInstance()
 					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NOTIFY_LIMIT_REACHED);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NEXT_FRAME);
+		nextFrame();
 
 		if (!goodPlace)
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_BAD_FRAME);
@@ -1406,6 +1369,44 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.isFirstFrame = false;
 			}
 		}
+	}
+	
+	
+	private void nextFrame()
+	{
+		this.previewRestartFlag = true;
+
+		CameraController.startCameraPreview();
+
+		// initSensors(); // attempt to fix LG G2 accelerometer slowdown
+
+		new CountDownTimer(1000, 330)
+		{
+			private boolean	first	= true;
+
+			public void onTick(final long millisUntilFinished)
+			{
+				if (this.first)
+				{
+					this.first = false;
+					return;
+				}
+
+				if (PanoramaAugmentedCapturePlugin.this.previewRestartFlag)
+				{
+					Log.d("Almalence", String.format("Emergency preview restart"));
+					CameraController.setPreviewCallbackWithBuffer();
+				} else
+				{
+					this.cancel();
+				}
+			}
+
+			public void onFinish()
+			{
+
+			}
+		}.start();
 	}
 
 	@SuppressLint("FloatMath")
