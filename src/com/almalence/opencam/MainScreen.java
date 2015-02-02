@@ -189,6 +189,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private int							surfaceWidth					= 0;
 	private int							surfaceHeight					= 0;
+	
+	private int							surfaceLayoutWidth				= 0;
+	private int							surfaceLayoutHeight				= 0;
 
 	// shared between activities
 	// private int imageWidth, imageHeight;
@@ -776,6 +779,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static SurfaceView getPreviewSurfaceView()
 	{
 		return thiz.preview;
+	}
+	
+	public static int getPreviewSurfaceLayoutWidth()
+	{
+		return thiz.surfaceLayoutWidth;
+	}
+	
+	public static int getPreviewSurfaceLayoutHeight()
+	{
+		return thiz.surfaceLayoutHeight;
+	}
+	
+	public static void setPreviewSurfaceLayoutWidth(int width)
+	{
+		thiz.surfaceLayoutWidth = width;
+	}
+	
+	public static void setPreviewSurfaceLayoutHeight(int height)
+	{
+		thiz.surfaceLayoutHeight = height;
 	}
 
 	public static void setSurfaceHolderSize(int width, int height)
@@ -1675,7 +1698,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+			
+			onCameraConfigured();
 		}
 	}
 
@@ -1990,6 +2015,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return mImageReaderPreviewYUV.getSurface();
 	}
+	
+	//Probably used only by Panorama plugin. Added to avoid non direct interface (message/handler)
+	public static void takePicture()
+	{
+		PluginManager.getInstance().takePicture();
+	}
 
 	@TargetApi(14)
 	public boolean isFaceDetectionAvailable(Camera.Parameters params)
@@ -2238,16 +2269,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		case PluginManager.MSG_CAMERA_CONFIGURED:
 			onCameraConfigured();
 			break;
-		case PluginManager.MSG_CAMERA_READY:
-			{
-				if (CameraController.isCameraCreated())
-				{
-					configureCamera();
-					PluginManager.getInstance().onGUICreate();
-					MainScreen.getGUIManager().onGUICreate();
-				}
-			}
-			break;
+//		case PluginManager.MSG_CAMERA_READY:
+//			{
+//				if (CameraController.isCameraCreated())
+//				{
+//					configureCamera();
+//					PluginManager.getInstance().onGUICreate();
+//					MainScreen.getGUIManager().onGUICreate();
+//				}
+//			}
+//			break;
 		case PluginManager.MSG_CAMERA_OPENED:
 			if (mCameraStarted)
 				break;

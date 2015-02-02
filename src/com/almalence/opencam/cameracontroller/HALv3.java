@@ -1870,7 +1870,7 @@ public class HALv3
 					e.printStackTrace();
 				}
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 				// if(!CameraController.appStarted)
 				// {
 				// CameraController.appStarted

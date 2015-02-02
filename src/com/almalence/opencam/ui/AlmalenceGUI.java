@@ -1520,8 +1520,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 		
-		Log.e("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
+		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
+		MainScreen.setPreviewSurfaceLayoutWidth(lp.width);
+		MainScreen.setPreviewSurfaceLayoutHeight(lp.height);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 	}
@@ -2101,7 +2103,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int metering_name = it.next();
 				
 				//Samsung Galaxy Note 3 supports only center-weighted metering mode
-				if((metering_name == 3 || metering_name == 1) && Build.MODEL.contains("SM-N900"))
+				if((metering_name == 3 || metering_name == 1) && (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900")))
 					continue;
 				
 				if (meteringModeButtons.containsKey(metering_name))

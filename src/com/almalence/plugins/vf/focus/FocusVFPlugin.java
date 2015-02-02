@@ -349,8 +349,8 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void initialize(boolean mirror, int displayOrientation)
 	{
-		mPreviewWidth = MainScreen.getPreviewSurfaceView().getWidth();
-		mPreviewHeight = MainScreen.getPreviewSurfaceView().getHeight();
+		mPreviewWidth = MainScreen.getPreviewSurfaceLayoutWidth();
+		mPreviewHeight = MainScreen.getPreviewSurfaceLayoutHeight();
 
 		Matrix matrix = new Matrix();
 		Util.prepareMatrix(matrix, mirror, 90, mPreviewWidth, mPreviewHeight);
