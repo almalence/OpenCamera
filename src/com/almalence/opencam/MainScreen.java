@@ -1343,7 +1343,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					Toast.LENGTH_LONG).show();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
+		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", false);
 		if (dismissKeyguard)
 			getWindow()
 					.addFlags(
