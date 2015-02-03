@@ -879,6 +879,21 @@ public class PluginManager implements PluginManagerInterface
 					pluginList.get(activeCapture).onShutterClick();
 			} else
 			{
+				boolean keepScreenOn = prefs.getBoolean(MainScreen.sKeepScreenOn, false);
+				if (!keepScreenOn) {
+					MainScreen.getInstance().setKeepScreenOn(true);
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							MainScreen.getInstance().setKeepScreenOn(false);
+						}
+					}, delayInterval * 1000 + 500);
+				}
+				
+				
 				shutterRelease = false;
 				delayedCapture(delayInterval);
 			}

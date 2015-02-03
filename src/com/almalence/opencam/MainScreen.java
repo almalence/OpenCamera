@@ -272,6 +272,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private int							currentMeteringMode				= -1;
 
+	public static String				sKeepScreenOn;
+	
 	public static String				sTimestampDate;
 	public static String				sTimestampAbbreviation;
 	public static String				sTimestampTime;
@@ -426,6 +428,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
 
+		sKeepScreenOn = getResources().getString(R.string.Preference_KeepScreenOnValue);
+		
 		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
 		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
 		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
@@ -529,7 +533,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
 
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
@@ -1439,7 +1443,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
 				"-1");
 
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 	}
 
 	@Override
