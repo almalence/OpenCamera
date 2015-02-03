@@ -5737,22 +5737,25 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
+		// Handle MultiTouch event.
+		// Actually we need this only for FocusVFPlugin.
 		if (event.getPointerCount() > 1) {
 			multiTouch = true;
 			PluginManager.getInstance().onTouch(view, event);
 			return true;
 		}
-		
 		if (multiTouch && event.getAction() == MotionEvent.ACTION_DOWN)
 		{
 			PluginManager.getInstance().onTouch(view, event);
 			multiTouch = false;
 		}
-
+		
+		// We can't move on while staying in MultiTouch mode.
 		if (multiTouch)
 		{
 			return true;
 		}
+		//-- Handle MultiTouch event.
 		
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)

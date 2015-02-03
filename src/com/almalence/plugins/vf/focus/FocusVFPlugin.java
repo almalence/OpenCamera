@@ -182,8 +182,12 @@ public class FocusVFPlugin extends PluginViewfinder
 			@Override
 			public boolean onTouch(View v, MotionEvent event)
 			{
-				onTouchFocusArea(event);
-				return true;
+				if (splitMode) {
+					onTouchFocusArea(event);
+					return true;
+				} else {
+					return false;
+				}
 			}
 		});
 
@@ -664,6 +668,9 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void onTouchFocusArea(MotionEvent e)
 	{
+		if (!mFocusAreaSupported)
+			return;
+		
 		int xRaw = (int) e.getRawX();
 		int yRaw = (int) e.getRawY();
 
@@ -717,28 +724,26 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		// Set the focus area and metering area.
 		if (mFocusAreaSupported
-				&& (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP))
+				&& (e.getActionMasked() == MotionEvent.ACTION_UP || e.getActionMasked() == MotionEvent.ACTION_POINTER_UP))
 		{
 			int focusMode = CameraController.getFocusMode();
 			if (focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
 			{
 				CameraController.cancelAutoFocus();
 				autoFocus();
+			} else {
+				mState = STATE_FOCUSING; 
+				updateFocusUI();
 			}
-
-			mState = STATE_FOCUSING; 
-			updateFocusUI();
+			setFocusParameters();
 		}
-		setFocusParameters();
 		mFocusIndicatorRotateLayout.requestLayout();
 	}
 
 	public void onTouchMeteringArea(MotionEvent e)
 	{
 		if (!mMeteringAreaSupported)
-		{
 			return;
-		}
 
 		int xRaw = (int) e.getRawX();
 		int yRaw = (int) e.getRawY();
@@ -751,8 +756,8 @@ public class FocusVFPlugin extends PluginViewfinder
 			yRaw = (int) e.getY(1) + location[1];
 		} 
 
-		int focusWidth = mMeteringIndicatorRotateLayout.getWidth();
-		int focusHeight = mMeteringIndicatorRotateLayout.getHeight();
+		int meteringWidth = mMeteringIndicatorRotateLayout.getWidth();
+		int meteringHeight = mMeteringIndicatorRotateLayout.getHeight();
 		int previewWidth = mPreviewWidth;
 		int previewHeight = mPreviewHeight;
 		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
@@ -772,10 +777,10 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		// Use margin to set the metering indicator to the touched area.
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mMeteringIndicatorRotateLayout.getLayoutParams();
-		int left = Util.clamp(xRaw - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
+		int left = Util.clamp(xRaw - meteringWidth / 2 + xOffset, diffWidth / 2, (previewWidth - meteringWidth + xOffset * 2)
 				- diffWidth / 2);
-		int top = Util.clamp(yRaw - (focusHeight * 3 / 2) + yOffset, paramsLayoutHeight / 2, (previewHeight
-				- focusHeight + yOffset * 2)
+		int top = Util.clamp(yRaw - (meteringHeight * 3 / 2) + yOffset, paramsLayoutHeight / 2, (previewHeight
+				- meteringHeight + yOffset * 2)
 				- paramsLayoutHeight / 2);
 
 		p.leftMargin = left;
@@ -784,9 +789,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mMeteringIndicatorRotateLayout.setLayoutParams(p);
 
 		// Convert the coordinates to driver format.
-		// AE area is bigger because exposure is sensitive and
-		// easy to over- or underexposure if area is too small.
-		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+		calculateTapAreaByTopLeft(meteringWidth, meteringHeight, 1f, top, left,
 				MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
 				mMeteringArea.get(0).rect);
 
@@ -825,6 +828,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			mFocusArea = new ArrayList<Area>();
 			mFocusArea.add(new Area(new Rect(), 1000));
+		}
+		
+		if (mMeteringArea == null) {
 			mMeteringArea = new ArrayList<Area>();
 			mMeteringArea.add(new Area(new Rect(), 1000));
 		}
@@ -842,18 +848,20 @@ public class FocusVFPlugin extends PluginViewfinder
 		else
 			mMeteringArea = null;
 
-		// Use margin to set the focus indicator to the touched area.
-		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
-		int left = Util.clamp(x - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
-				- diffWidth / 2);
-		int top = Util.clamp(y - focusHeight / 2 + yOffset, paramsLayoutHeight / 2,
-				(previewHeight - focusHeight + yOffset * 2) - paramsLayoutHeight / 2);
-		p.setMargins(left, top, 0, 0);
-		// Disable "center" rule because we no longer want to put it in the
-		// center.
-		int[] rules = p.getRules();
-		rules[RelativeLayout.CENTER_IN_PARENT] = 0;
-		mFocusIndicatorRotateLayout.requestLayout();
+		if (mFocusAreaSupported) {
+			// Use margin to set the focus indicator to the touched area.
+			RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
+			int left = Util.clamp(x - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
+					- diffWidth / 2);
+			int top = Util.clamp(y - focusHeight / 2 + yOffset, paramsLayoutHeight / 2,
+					(previewHeight - focusHeight + yOffset * 2) - paramsLayoutHeight / 2);
+			p.setMargins(left, top, 0, 0);
+			// Disable "center" rule because we no longer want to put it in the
+			// center.
+			int[] rules = p.getRules();
+			rules[RelativeLayout.CENTER_IN_PARENT] = 0;
+			mFocusIndicatorRotateLayout.requestLayout();
+		}
 
 		// Set the focus area and metering area.
 		if (mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP))
@@ -905,7 +913,8 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		} else
 		{ // Just show the indicator in all other cases.
-			updateFocusUI();
+			autoFocus();
+//			updateFocusUI();
 			// Reset the metering area in 3 seconds.
 			mHandler.removeMessages(RESET_TOUCH_FOCUS);
 			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
