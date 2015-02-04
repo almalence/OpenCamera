@@ -227,7 +227,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int[]							supportedFlashModes;
 	private static int[]							supportedISOModes;
 
-	private static int								maxRegionsSupported;
+	private static int								maxFocusRegionsSupported;
+	private static int								maxMeteringRegionsSupported;
 
 	protected static int							CameraIndex						= 0;
 	protected static boolean						CameraMirrored					= false;
@@ -1501,7 +1502,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			supportedFlashModes = getSupportedFlashModesInternal();
 			supportedISOModes = getSupportedISOInternal();
 	
-			maxRegionsSupported = CameraController.getMaxNumFocusAreas();
+			maxFocusRegionsSupported = CameraController.getMaxNumFocusAreas();
+			maxMeteringRegionsSupported = CameraController.getMaxNumMeteringAreas();
 	
 			cameraParameters = null;
 		}
@@ -2216,11 +2218,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return 0;
 	}
 
-	public static int getMaxAreasSupported()
+	public static int getMaxFocusAreasSupported()
 	{
-		return maxRegionsSupported;
+		return maxFocusRegionsSupported;
 	}
 
+	public static int getMaxMeteringAreasSupported()
+	{
+		return maxMeteringRegionsSupported;
+	}
+	
 	public static int getCameraIndex()
 	{
 		return CameraIndex;

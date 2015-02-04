@@ -4,4 +4,6 @@
 	<string name="Pref_Focus_Preference_Title">Focus</string>
 	<string name="Pref_Focus_Preference_Summary">Focus</string>
 	
+	<string name="manual_exposure_unsupported">Device doesn\'t support manual exposure control.</string>
+	
 </resources>
