@@ -45,14 +45,13 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import com.almalence.ui.RotateImageView;
 
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
-import com.almalence.ui.RotateImageView;
-
 //-+- -->
 
 /* <!-- +++
