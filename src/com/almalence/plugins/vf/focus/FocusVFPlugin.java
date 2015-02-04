@@ -556,6 +556,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (splitMode && e.getAction() == MotionEvent.ACTION_DOWN)
 		{
 			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
+			MainScreen.getInstance().setCameraMeteringMode(MainScreen.getMeteringMode());
 			splitMode = false;
 		}
 
