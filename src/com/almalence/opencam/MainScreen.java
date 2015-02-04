@@ -102,6 +102,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adsmogo.interstitial.AdsMogoInterstitialManager;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppWidgetNotifier;
@@ -3694,5 +3695,66 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public boolean getSwitchingMode()
 	{
 		return switchingMode;
+	}
+	
+	/*China integration. MOGO's adv*/
+	
+	/**
+	* Initialize all interstitial instances
+	* Set the default AppKey and Activity first
+	*/
+	public void initInterstitial()
+	{
+		//Set AppKey
+		AdsMogoInterstitialManager.setDefaultInitAppKey("1cc7207250724851ae422bf4dda826ea");
+		//Set the Activity project
+		AdsMogoInterstitialManager.setInitActivity(this);
+		//Initialize(Only after finishing set the default AppKey and Activity)
+		AdsMogoInterstitialManager.shareInstance().initDefaultInterstitial();
+		//Set delegate
+		AdsMogoInterstitialManager.shareInstance().defaultInterstitial()
+		.setAdsMogoInterstitialListener(adsMogoInterstitialListener);
+	}
+	
+	/**
+	*Enter the impression moment
+	*When an app prepare to show full screen AD calls interstitialShow(boolean
+	isWait);
+	*Inform the SDK into the impression moment, the SDK will go to great lengths to
+	display ads, but the ads may not be shown immediately due to problems such as
+	network, you can use parameter isWait to control the SDK to display ads once the
+	ads arrived.
+	*/
+	public void showInterstitial()
+	{	
+		AdsMogoInterstitialManager.shareInstance().defaultInterstitialShow(true);
+	}
+	/**
+	*Exit to the impression moment
+	*If you enter the impression moment before and set the parameter of isWait to
+	YES, then you need to click interstitialCancel()to inform the SDK
+	*/
+	public void cancelShow()
+	{
+		AdsMogoInterstitialManager.shareInstance().defaultInterstitialCancel();
+	}
+	
+	/**
+	* Change the current Activity object on the top of the stack(栈顶)
+	* If there is any change to the current Activity and you didn’t change the
+	object in this way, it’s likely to lead to unproper display of ads or the
+	application crash.
+	*/
+	public void changeCurrentActivity()
+	{
+		AdsMogoInterstitialManager.shareInstance().defaultInterstitial().changeCurrentActivity(this);
+	}
+	
+	/**
+	* remove all the default interstitial instance
+	*/
+	public void removeInterstitial()
+	{
+		AdsMogoInterstitialManager.shareInstance().removeDefaultInterstitialInstance();
 	}
 }
