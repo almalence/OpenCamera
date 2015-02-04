@@ -347,6 +347,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
 
+	public static String				sKeepScreenOn;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -434,6 +436,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 
+		sKeepScreenOn = getResources().getString(R.string.Preference_KeepScreenOnValue);
+		
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
 		launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
@@ -521,7 +525,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
 
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
@@ -1411,7 +1415,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
 				"-1");
 
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 	}
 
 	@Override
