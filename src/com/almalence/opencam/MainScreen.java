@@ -3715,11 +3715,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		AdsMogoInterstitialManager.setDefaultInitAppKey("1cc7207250724851ae422bf4dda826ea");
 		//Set the Activity project
 		AdsMogoInterstitialManager.setInitActivity(this);
-		//Initialize(Only after finishing set the default AppKey and Activity)
-		AdsMogoInterstitialManager.shareInstance().initDefaultInterstitial();
-		//Set delegate
-		AdsMogoInterstitialManager.shareInstance().defaultInterstitial()
-		.setAdsMogoInterstitialListener(adsmogoFullListener);
+		
+		AdsMogoInterstitialManager.shareInstance().defaultInterstitial().setAdsMogoInterstitialListener(adsmogoFullListener);
 	}
 	
 	/**
