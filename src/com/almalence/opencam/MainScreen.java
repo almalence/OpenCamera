@@ -45,6 +45,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -102,7 +103,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adsmogo.adapters.AdsMogoCustomEventPlatformEnum;
+import com.adsmogo.adapters.AdsMogoInterstitialCustomEventPlatformAdapter;
+import com.adsmogo.informationflow.util.L;
+import com.adsmogo.interstitial.AdsMogoInterstitialListener;
 import com.adsmogo.interstitial.AdsMogoInterstitialManager;
+import com.adsmogo.util.AdsMogoUtil;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.util.AppWidgetNotifier;
@@ -3713,7 +3719,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		AdsMogoInterstitialManager.shareInstance().initDefaultInterstitial();
 		//Set delegate
 		AdsMogoInterstitialManager.shareInstance().defaultInterstitial()
-		.setAdsMogoInterstitialListener(adsMogoInterstitialListener);
+		.setAdsMogoInterstitialListener(adsmogoFullListener);
 	}
 	
 	/**
@@ -3757,4 +3763,107 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		AdsMogoInterstitialManager.shareInstance().removeDefaultInterstitialInstance();
 	}
+	
+	AdsMogoInterstitialListener adsmogoFullListener = new AdsMogoInterstitialListener() {
+
+		  
+		  @Override
+		  public void onInterstitialClickAd(String adName) {
+		   // TODO Auto-generated method stub
+		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialClickAd=====:" + adName);
+		  }
+
+		  @Override
+		  public void onInterstitialRealClickAd(String adName) {
+		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialRealClickAd=====:" + adName);
+		  }
+
+
+		  @Override
+		  public View onInterstitialGetView() {
+		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialGetView=====");
+		   return null;
+		  }
+
+
+		  @Override
+		  public boolean onInterstitialClickCloseButton() {
+		   // TODO Auto-generated method stub
+		   L.v(AdsMogoUtil.ADMOGO, "=====关闭按钮回调=====  ");
+		   AlertDialog dialog = new AlertDialog.Builder(MainScreen.getMainContext()).create();
+		   dialog.setMessage("是否关闭广告？");
+
+		   dialog.setButton("是", new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		     // TODO Auto-generated method stub
+		     // return true;
+		     if(AdsMogoInterstitialManager.shareInstance().defaultInterstitial() != null){
+		      AdsMogoInterstitialManager.shareInstance().defaultInterstitial().closeAdsMogoInterstitial();
+		     }
+		     dialog.dismiss();
+		    
+		    }
+		   });
+
+		   dialog.setButton2("否", new DialogInterface.OnClickListener() {
+
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		     // TODO Auto-generated method stub
+
+		     dialog.dismiss();
+		    }
+		   });
+
+		   dialog.show();
+		   return true;
+		  
+		  }
+
+		  @Override
+		  public void onInterstitialCloseAd(boolean isAutomaticClosing) {
+		   // TODO Auto-generated method stub
+		    // TODO Auto-generated method stub
+		   if(isAutomaticClosing){
+		    L.v(AdsMogoUtil.ADMOGO, "=====自动关闭=====  ");
+		   }else if(isAutomaticClosing == false){
+		    L.v(AdsMogoUtil.ADMOGO, "=====手动关闭=====  ");
+		   }
+		   
+		  }
+
+		  @Override
+		  public Class<? extends AdsMogoInterstitialCustomEventPlatformAdapter> getCustomEvemtPlatformAdapterClass(
+		    AdsMogoCustomEventPlatformEnum enumIndex) {
+		   // TODO Auto-generated method stub  
+		   return null;
+		  }
+
+		  @Override
+		  public void onShowInterstitialScreen(String adName) {
+		   // TODO Auto-generated method stub
+		   /**
+		    * 展示到屏幕上
+		    */
+		   L.v(AdsMogoUtil.ADMOGO, "======onShowInterstitialScreen=====");
+		  }
+
+		  @Override
+		  public boolean onInterstitialStaleDated(String adName) {
+		   // TODO Auto-generated method stub
+		   /**
+		    * 广告过期回调
+		    */
+		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialStaleDated=====");
+		   return false;
+		  }
+
+		  @Override
+		  public void onInitFinish() {
+		   // TODO Auto-generated method stub
+		   
+		  }
+		 };
 }
