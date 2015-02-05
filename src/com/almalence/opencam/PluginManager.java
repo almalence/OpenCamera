@@ -569,6 +569,8 @@ public class PluginManager implements PluginManagerInterface
 
 	public void switchMode(Mode mode)
 	{
+		MainScreen.thiz.showInterstitial();
+		
 //		Log.e("PluginManager", "switchMode: " + mode.modeName);
 		
 //		boolean isHALv3 = CameraController.isUseHALv3();

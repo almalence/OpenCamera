@@ -667,6 +667,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			guiManager.showStore();
 		}
 		// -+- -->
+		
+		initInterstitial();
 	}
 
 	/*
@@ -1255,6 +1257,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// -+- -->
 
 		this.hideOpenGLLayer();
+		
+		AdsMogoInterstitialManager.shareInstance().removeDefaultInterstitialInstance();
 	}
 
 	private CountDownTimer	onResumeTimer	= null;
@@ -3730,7 +3734,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	*/
 	public void showInterstitial()
 	{	
-		AdsMogoInterstitialManager.shareInstance().defaultInterstitialShow(true);
+		if (AdsMogoInterstitialManager.shareInstance().containDefaultInterstitia()) { 
+			AdsMogoInterstitialManager.shareInstance().defaultInterstitial().interstitialShow(true);   
+		}
 	}
 	/**
 	*Exit to the impression moment
@@ -3739,7 +3745,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	*/
 	public void cancelShow()
 	{
-		AdsMogoInterstitialManager.shareInstance().defaultInterstitialCancel();
+		if (AdsMogoInterstitialManager.shareInstance().containDefaultInterstitia()) { 
+			AdsMogoInterstitialManager.shareInstance().defaultInterstitial().interstitialCancel();   
+		}
 	}
 	
 	/**
@@ -3767,18 +3775,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		  @Override
 		  public void onInterstitialClickAd(String adName) {
 		   // TODO Auto-generated method stub
-		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialClickAd=====:" + adName);
+//		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialClickAd=====:" + adName);
 		  }
 
 		  @Override
 		  public void onInterstitialRealClickAd(String adName) {
-		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialRealClickAd=====:" + adName);
+//		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialRealClickAd=====:" + adName);
 		  }
 
 
 		  @Override
 		  public View onInterstitialGetView() {
-		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialGetView=====");
+//		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialGetView=====");
 		   return null;
 		  }
 
@@ -3786,35 +3794,35 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		  @Override
 		  public boolean onInterstitialClickCloseButton() {
 		   // TODO Auto-generated method stub
-		   L.v(AdsMogoUtil.ADMOGO, "=====关闭按钮回调=====  ");
-		   AlertDialog dialog = new AlertDialog.Builder(MainScreen.getMainContext()).create();
-		   dialog.setMessage("是否关闭广告？");
-
-		   dialog.setButton("是", new DialogInterface.OnClickListener() {
-
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		     // TODO Auto-generated method stub
-		     // return true;
-		     if(AdsMogoInterstitialManager.shareInstance().defaultInterstitial() != null){
-		      AdsMogoInterstitialManager.shareInstance().defaultInterstitial().closeAdsMogoInterstitial();
-		     }
-		     dialog.dismiss();
-		    
-		    }
-		   });
-
-		   dialog.setButton2("否", new DialogInterface.OnClickListener() {
-
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		     // TODO Auto-generated method stub
-
-		     dialog.dismiss();
-		    }
-		   });
-
-		   dialog.show();
+//		   L.v(AdsMogoUtil.ADMOGO, "=====关闭按钮回调=====  ");
+//		   AlertDialog dialog = new AlertDialog.Builder(MainScreen.getMainContext()).create();
+//		   dialog.setMessage("是否关闭广告？");
+//
+//		   dialog.setButton("是", new DialogInterface.OnClickListener() {
+//
+//		    @Override
+//		    public void onClick(DialogInterface dialog, int which) {
+//		     // TODO Auto-generated method stub
+//		     // return true;
+//		     if(AdsMogoInterstitialManager.shareInstance().defaultInterstitial() != null){
+//		      AdsMogoInterstitialManager.shareInstance().defaultInterstitial().closeAdsMogoInterstitial();
+//		     }
+//		     dialog.dismiss();
+//		    
+//		    }
+//		   });
+//
+//		   dialog.setButton2("否", new DialogInterface.OnClickListener() {
+//
+//		    @Override
+//		    public void onClick(DialogInterface dialog, int which) {
+//		     // TODO Auto-generated method stub
+//
+//		     dialog.dismiss();
+//		    }
+//		   });
+//
+//		   dialog.show();
 		   return true;
 		  
 		  }
@@ -3822,12 +3830,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		  @Override
 		  public void onInterstitialCloseAd(boolean isAutomaticClosing) {
 		   // TODO Auto-generated method stub
-		    // TODO Auto-generated method stub
-		   if(isAutomaticClosing){
-		    L.v(AdsMogoUtil.ADMOGO, "=====自动关闭=====  ");
-		   }else if(isAutomaticClosing == false){
-		    L.v(AdsMogoUtil.ADMOGO, "=====手动关闭=====  ");
-		   }
+//		    // TODO Auto-generated method stub
+//		   if(isAutomaticClosing){
+//		    L.v(AdsMogoUtil.ADMOGO, "=====自动关闭=====  ");
+//		   }else if(isAutomaticClosing == false){
+//		    L.v(AdsMogoUtil.ADMOGO, "=====手动关闭=====  ");
+//		   }
 		   
 		  }
 
@@ -3844,7 +3852,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		   /**
 		    * 展示到屏幕上
 		    */
-		   L.v(AdsMogoUtil.ADMOGO, "======onShowInterstitialScreen=====");
+//		   L.v(AdsMogoUtil.ADMOGO, "======onShowInterstitialScreen=====");
+			  Toast.makeText(MainScreen.thiz, "show ad", Toast.LENGTH_SHORT).show();
 		  }
 
 		  @Override
@@ -3853,7 +3862,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		   /**
 		    * 广告过期回调
 		    */
-		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialStaleDated=====");
+//		   L.v(AdsMogoUtil.ADMOGO, "=====onInterstitialStaleDated=====");
 		   return false;
 		  }
 
@@ -3863,4 +3872,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		   
 		  }
 		 };
+		 
+		/*
+		to show add
+		if (AdsMogoInterstitialManager.shareInstance().containDefaultInterstitia()) { 
+			AdsMogoInterstitialManager.shareInstance().defaultInterstitial().interstitialShow(true);   
+		}
+		
+		to hide add
+		if (AdsMogoInterstitialManager.shareInstance().containDefaultInterstitia()) { 
+			AdsMogoInterstitialManager.shareInstance().defaultInterstitial().interstitialCancel();   
+		}
+		*/
 }
