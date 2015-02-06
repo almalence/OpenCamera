@@ -253,10 +253,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		if (fgamma && (iso>0))
 		{
 			// iso 100 = +0.1
-			// iso 800 = -0.15
-			fgamma += 0.1f - (log2f(iso)-6.644f)*0.25f/3.f;
-			if (fgamma < 0.4f) fgamma = 0.45f;
-			if (fgamma > 0.65f) fgamma = 0.6f;
+			// iso 800 = -0.05
+			fgamma += 0.1f - (log2f(iso)-6.644f)*0.15f/3.f;
+			if (fgamma < 0.45f) fgamma = 0.45f;
+			if (fgamma > 0.6f) fgamma = 0.6f;
 		}
 
 		// for SR-only fgamma = 0, gamma will evaluate to 0 also
