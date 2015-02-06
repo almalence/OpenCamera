@@ -111,7 +111,6 @@ import com.adsmogo.interstitial.AdsMogoInterstitialManager;
 import com.adsmogo.util.AdsMogoUtil;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
-import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -120,7 +119,6 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.util.AppRater;
 
 //-+- -->
 /* <!-- +++
@@ -519,10 +517,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		/**** Billing *****/
 
 		// application rating helper
-		AppRater.app_launched(this);
+//		AppRater.app_launched(this);
 		// -+- -->
 
-		AppWidgetNotifier.app_launched(this);
+//		AppWidgetNotifier.app_launched(this);
 
 		try
 		{
@@ -2168,17 +2166,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return true;
 
 		// <!-- -+-
-		if (keyCode == KeyEvent.KEYCODE_BACK)
-		{
-			if (AppRater.showRateDialogIfNeeded(this))
-			{
-				return true;
-			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
-		}
+//		if (keyCode == KeyEvent.KEYCODE_BACK)
+//		{
+//			if (AppRater.showRateDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//		}
 		// -+- -->
 
 		return super.onKeyDown(keyCode, event);
@@ -3853,7 +3851,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		    * 展示到屏幕上
 		    */
 //		   L.v(AdsMogoUtil.ADMOGO, "======onShowInterstitialScreen=====");
-			  Toast.makeText(MainScreen.thiz, "show ad", Toast.LENGTH_SHORT).show();
 		  }
 
 		  @Override

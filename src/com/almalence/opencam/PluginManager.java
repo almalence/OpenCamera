@@ -280,6 +280,8 @@ public class PluginManager implements PluginManagerInterface
 	private static boolean				isDefaultsSelected						= false;
 	
 	private static Map<Integer, Integer>	exifOrientationMap;
+	
+	private static int					showAd 									= 0;
 
 	public static PluginManager getInstance()
 	{
@@ -569,8 +571,6 @@ public class PluginManager implements PluginManagerInterface
 
 	public void switchMode(Mode mode)
 	{
-		MainScreen.thiz.showInterstitial();
-		
 //		Log.e("PluginManager", "switchMode: " + mode.modeName);
 		
 //		boolean isHALv3 = CameraController.isUseHALv3();
@@ -1683,6 +1683,15 @@ public class PluginManager implements PluginManagerInterface
 				AlarmReceiver.getInstance().setNextAlarm(MainScreen.getInstance().getApplicationContext());
 				MainScreen.getInstance().guiManager.showCaptureIndication();
 			}
+			
+			showAd++;
+			if ((showAd%10)==0)
+			{
+				//show adv for China each 10 images
+				MainScreen.thiz.showInterstitial();
+				showAd=0;
+			}
+			
 			break;
 
 		case MSG_EXPORT_FINISHED_IOEXCEPTION:
