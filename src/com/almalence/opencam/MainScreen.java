@@ -210,7 +210,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private boolean						showHelp						= false;
 
-	private boolean						keepScreenOn					= false;
+	private boolean						keepScreenOn					= true;
 
 	private String						saveToPath;
 	private String						saveToPreference;
@@ -525,7 +525,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
 
-		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, true);
 
 		// set preview, on click listener and surface buffers
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
@@ -1415,7 +1415,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
 				"-1");
 
-		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
+		keepScreenOn = prefs.getBoolean(sKeepScreenOn, true);
 	}
 
 	@Override
