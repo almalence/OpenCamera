@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 
 import com.almalence.util.Util;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -269,9 +270,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		// replace here with [CF] mode as default.
 		// Also, check if [CF] is available, and if not - set [AF], if [AF] is
 		// not available - set first available
-		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref,
-				MainScreen.sDefaultFocusValue);
+		preferenceFocusMode = MainScreen.getInstance().getFocusModePref(MainScreen.sDefaultFocusValue);
 
 		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
 		if (supportedFocusModes != null)
@@ -978,24 +977,24 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_CONTROL_LOCKED)
+		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
 		{
 			mFocusDisabled = true;
 			cancelAutoFocus();
-		} else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED)
+		} else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
 		{
 			mFocusDisabled = false;
 			cancelAutoFocus();
-		} else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
+		} else if (arg1 == ApplicationInterface.MSG_CAPTURE_FINISHED)
 		{
 			mFocusDisabled = false;
 			cancelAutoFocus();
-		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_FOCUS_CHANGED)
 		{
 			int fm = CameraController.getFocusMode();
 			if (fm != -1)
 				preferenceFocusMode = fm;
-		} else if (arg1 == PluginManager.MSG_PREVIEW_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_PREVIEW_CHANGED)
 		{
 			initialize(CameraController.isFrontCamera(), 90);
 		}

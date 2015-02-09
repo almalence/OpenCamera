@@ -68,6 +68,7 @@ import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
 import com.almalence.util.ImageConversion;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.MainScreen;
@@ -493,7 +494,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.getInstance().muteShutter(false);
 
 //		final Message msg = new Message();
-//		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+//		msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
 //		MainScreen.getMessageHandler().sendMessage(msg);
 
 		showGyroWarnOnce = false;
@@ -546,7 +547,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 						if (result <= 0)
 						{
 							this.stopCapture();
-							PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT,
+							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
 									String.valueOf(SessionID));
 
 							if (PluginManager.getInstance().getProcessingCounter() == 0)
@@ -841,19 +842,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public boolean onBroadcast(final int command, final int arg)
 	{
-		if (command == PluginManager.MSG_FORCE_FINISH_CAPTURE)
+		if (command == ApplicationInterface.MSG_FORCE_FINISH_CAPTURE)
 		{
 			this.stopCapture();
 
 			return true;
-		} else if (command == PluginManager.MSG_BAD_FRAME)
+		} else if (command == ApplicationInterface.MSG_BAD_FRAME)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
 					MainScreen.getAppResources()
 							.getString(R.string.plugin_capture_panoramaaugmented_badframe), Toast.LENGTH_SHORT).show();
 			return true;
-		} else if (command == PluginManager.MSG_OUT_OF_MEMORY)
+		} else if (command == ApplicationInterface.MSG_OUT_OF_MEMORY)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
@@ -861,7 +862,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 							.getString(R.string.plugin_capture_panoramaaugmented_outofmemory), Toast.LENGTH_LONG)
 					.show();
 			return true;
-		} else if (command == PluginManager.MSG_NOTIFY_LIMIT_REACHED)
+		} else if (command == ApplicationInterface.MSG_NOTIFY_LIMIT_REACHED)
 		{
 			Toast.makeText(
 					MainScreen.getInstance(),
@@ -1069,7 +1070,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		this.glContextCreated = false;
 		final Message msg = new Message();
-		msg.what = PluginManager.MSG_OPENGL_LAYER_SHOW;
+		msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
 		MainScreen.getMessageHandler().sendMessage(msg);
 		
 		this.isFirstFrame = true;
@@ -1124,14 +1125,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				final boolean oom = this.engine.isMax();
 
 				if (oom && !done)
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_OUT_OF_MEMORY);
+					PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_OUT_OF_MEMORY);
 				else if (done)
 					PluginManager.getInstance()
-							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NOTIFY_LIMIT_REACHED);
+							.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_NOTIFY_LIMIT_REACHED);
 
 				if (done || oom)
 					PluginManager.getInstance()
-							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FORCE_FINISH_CAPTURE);
+							.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FORCE_FINISH_CAPTURE);
 			} else
 			{
 				this.takingAlready = true;
@@ -1208,6 +1209,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		
 		// Log.d(TAG, "Perform CAPTURE Panorama");
+		createRequestIDList(1);
 		CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, true);
 	}
 
@@ -1251,7 +1253,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			}
 		}
 		lock = false;
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_AEWB_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
 	}
 
 	private void unlockAEWB()
@@ -1278,7 +1280,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				aeLockedByPanorama = false;
 			}
 		}
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_AEWB_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
 	}
 
 	@Override
@@ -1341,19 +1343,19 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		final boolean oom = this.engine.isMax();
 
 		if (oom && !done)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_OUT_OF_MEMORY);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_OUT_OF_MEMORY);
 		else if (done)
 			PluginManager.getInstance()
-					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_NOTIFY_LIMIT_REACHED);
+					.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_NOTIFY_LIMIT_REACHED);
 
 		nextFrame();
 
 		if (!goodPlace)
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_BAD_FRAME);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_BAD_FRAME);
 
 		if (done || oom)
 			PluginManager.getInstance()
-					.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FORCE_FINISH_CAPTURE);
+					.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FORCE_FINISH_CAPTURE);
 	}
 
 	@TargetApi(21)
@@ -1553,12 +1555,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			Message message = new Message();
 			message.obj = String.valueOf(SessionID);
-			message.what = PluginManager.MSG_CAPTURE_FINISHED;
+			message.what = ApplicationInterface.MSG_CAPTURE_FINISHED;
 			MainScreen.getMessageHandler().sendMessage(message);
 		}
 		
 		final Message msg = new Message();
-		msg.what = PluginManager.MSG_OPENGL_LAYER_HIDE;
+		msg.what = ApplicationInterface.MSG_OPENGL_LAYER_HIDE;
 		MainScreen.getMessageHandler().sendMessage(msg);
 	}
 

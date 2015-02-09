@@ -32,6 +32,7 @@ import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
@@ -97,6 +98,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 		resultCompleted = 0;
+		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
 				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
 	}
@@ -110,7 +112,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			resultCompleted = 0;
@@ -133,7 +135,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			resultCompleted = 0;

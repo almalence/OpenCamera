@@ -90,6 +90,7 @@ import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -754,7 +755,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 		CameraController.startCameraPreview();
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_PREVIEW_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_PREVIEW_CHANGED);
 	}
 
 	@Override
@@ -872,8 +873,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.shouldPreviewToGPU())
 		{
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_SHOW_V2);
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_OPENGL_LAYER_SHOW_V2);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
 		}
 
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
@@ -889,9 +890,7 @@ public class VideoCapturePlugin extends PluginCapture
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 
-		prefs.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModeVideoPref
-						: MainScreen.sFrontFocusModeVideoPref, CameraController.getFocusMode()).commit();
+		MainScreen.getInstance().setFocusModePref(CameraController.getFocusMode());
 
 		prefs.edit()
 				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
@@ -1204,18 +1203,13 @@ public class VideoCapturePlugin extends PluginCapture
 		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 		CameraController.setJpegQuality(jpegQuality);
 
-		preferenceVideoFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModeVideoPref
-				: MainScreen.sFrontFocusModeVideoPref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+		preferenceVideoFocusMode = MainScreen.getInstance().getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 
 		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(),
 				preferenceVideoFocusMode))
 		{
 			CameraController.setCameraFocusMode(preferenceVideoFocusMode);
-			PreferenceManager
-					.getDefaultSharedPreferences(MainScreen.getMainContext())
-					.edit()
-					.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-							: MainScreen.sFrontFocusModePref, preferenceVideoFocusMode).commit();
+			MainScreen.getInstance().setFocusModePref(preferenceVideoFocusMode);
 		}
 	}
 
@@ -1411,7 +1405,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			e.printStackTrace();
 		}
-		MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+		MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 	}
 
 	private void startRecording()
@@ -1688,7 +1682,7 @@ public class VideoCapturePlugin extends PluginCapture
 				MainScreen.getGUIManager().lockControls = false;
 
 				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+						.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			}
 
 			lastUseProfile = useProfile;
@@ -1794,7 +1788,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("Video", "On shutter pressed " + e.getMessage());
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
@@ -1839,7 +1833,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Toast.makeText(MainScreen.getInstance(), "Failed to start video recording", Toast.LENGTH_LONG).show();
 
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
@@ -2337,6 +2331,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		createRequestIDList(1);
 		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
 
@@ -2474,7 +2469,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.i("View capture still image", "StartPreview fail");
 		}
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 	}
 
 	private int			frameCnt	= 0;

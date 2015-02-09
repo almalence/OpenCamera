@@ -43,6 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -105,11 +106,11 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
 		finishing = false;
 		Message msg = new Message();
-		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+		msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.getMessageHandler().sendMessage(msg);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+				ApplicationInterface.MSG_CONTROL_LOCKED);
 
 		MainScreen.getGUIManager().lockControls = true;
 
@@ -410,10 +411,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			postProcessingRun = true;
 			break;
 		case MSG_LEAVING:
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 

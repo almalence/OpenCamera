@@ -27,6 +27,7 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -124,8 +125,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		MainScreen.getInstance().muteShutter(false);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
-		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
+		preferenceEVCompensationValue = MainScreen.getInstance().getEVPref();
+		preferenceSceneMode = MainScreen.getInstance().getSceneModePref();
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
 
 		if (prefs.contains(sExpoPreviewModePref))
@@ -149,8 +150,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void onPause()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putInt(MainScreen.sEvPref, preferenceEVCompensationValue).commit();
-		prefs.edit().putInt(MainScreen.sSceneModePref, preferenceSceneMode).commit();
+		MainScreen.getInstance().setEVPref(preferenceEVCompensationValue);
+		MainScreen.getInstance().setSceneModePref(preferenceSceneMode);
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
@@ -203,10 +204,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_AUTO))
 			{
 				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
-
-				SharedPreferences.Editor editor = prefs.edit();
-				editor.putInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
-				editor.commit();
+				MainScreen.getInstance().setSceneModePref(CameraParameters.SCENE_MODE_AUTO);
 			}
 		} catch (RuntimeException e)
 		{
@@ -214,8 +212,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		}
 
 		CameraController.resetExposureCompensation();
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sEvPref, 0).commit();
+		MainScreen.getInstance().setEVPref(0);
 	}
 
 	public void onShutterClick()
@@ -329,7 +326,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				cdt = null;
 			}
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			CameraController.resetExposureCompensation();
 
@@ -577,6 +574,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0],
 		// evValues, true);
 
+		createRequestIDList(captureRAW? total_frames*2 : total_frames);
 		if (captureRAW)
 			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, null, null,
 					true, true);
@@ -616,8 +614,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// cdt.cancel();
 		// cdt = null;
 		// }
-		// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-		// PluginManager.MSG_TAKE_PICTURE);
+		// PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+		// ApplicationInterface.MSG_TAKE_PICTURE);
 		// }
 		// return;
 		// }

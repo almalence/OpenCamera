@@ -21,10 +21,108 @@ package com.almalence.opencam_plus;
 +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
+
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.media.ImageReader;
+
 //-+- -->
 
 public interface ApplicationInterface
 {
-	public void configureCamera();
+	// message codes
+	public static final int				MSG_NO_CAMERA							= 1;
+	public static final int				MSG_TAKE_PICTURE						= 2;
+	public static final int				MSG_CAPTURE_FINISHED					= 3;
+	public static final int				MSG_PROCESSING_FINISHED					= 4;
+	public static final int				MSG_START_POSTPROCESSING				= 5;
+	public static final int				MSG_POSTPROCESSING_FINISHED				= 6;
+	public static final int				MSG_FILTER_FINISHED						= 7;
+	public static final int				MSG_EXPORT_FINISHED						= 8;
+	public static final int				MSG_EXPORT_FINISHED_IOEXCEPTION			= 9;
+	public static final int				MSG_START_FX							= 10;
+	public static final int				MSG_FX_FINISHED							= 11;
+	public static final int				MSG_DELAYED_CAPTURE						= 12;
+	public static final int				MSG_FORCE_FINISH_CAPTURE				= 13;
+	public static final int				MSG_NOTIFY_LIMIT_REACHED				= 14;
+	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
+
+	public static final int				MSG_CAMERA_CONFIGURED					= 160;
+	public static final int				MSG_CAMERA_STOPED						= 162;
+	
+	public static final int				MSG_APPLICATION_STOP					= 163;
+
+	// For HALv3 code version
+	public static final int				MSG_CAMERA_OPENED						= 16;
+	public static final int				MSG_SURFACE_READY						= 17;
+	public static final int				MSG_SURFACE_CONFIGURED					= 170;
+	public static final int				MSG_NOT_LEVEL_FULL						= 18;
+	public static final int				MSG_PROCESS								= 19;
+	public static final int				MSG_PROCESS_FINISHED					= 20;
+	public static final int				MSG_VOLUME_ZOOM							= 21;
+	// ^^ For HALv3 code version
+
+	public static final int				MSG_BAD_FRAME							= 24;
+	public static final int				MSG_OUT_OF_MEMORY						= 25;
+
+	public static final int				MSG_FOCUS_STATE_CHANGED					= 28;
+
+	public static final int				MSG_RESTART_MAIN_SCREEN					= 30;
+
+	public static final int				MSG_RETURN_CAPTURED						= 31;
+
+	public static final int				MSG_RESULT_OK							= 40;
+	public static final int				MSG_RESULT_UNSAVED						= 41;
+
+	public static final int				MSG_CONTROL_LOCKED						= 50;
+	public static final int				MSG_CONTROL_UNLOCKED					= 51;
+	public static final int				MSG_PROCESSING_BLOCK_UI					= 52;
+	public static final int				MSG_PREVIEW_CHANGED						= 53;
+
+	public static final int				MSG_EV_CHANGED							= 60;
+	public static final int				MSG_SCENE_CHANGED						= 61;
+	public static final int				MSG_WB_CHANGED							= 62;
+	public static final int				MSG_FOCUS_CHANGED						= 63;
+	public static final int				MSG_FLASH_CHANGED						= 64;
+	public static final int				MSG_ISO_CHANGED							= 65;
+	public static final int				MSG_AEWB_CHANGED						= 66;
+
+	// OpenGL layer messages
+	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
+	public static final int				MSG_OPENGL_LAYER_HIDE					= 71;
+	public static final int				MSG_OPENGL_LAYER_SHOW_V2				= 72;
+	public static final int				MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS	= 73;
+	public static final int				MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY	= 74;
+
+	// events to pause/resume capture. for example to stop capturing in preshot
+	// when popup share opened
+	public static final int				MSG_STOP_CAPTURE						= 80;
+	public static final int				MSG_START_CAPTURE						= 81;
+
+	// broadcast will be resent to every active plugin
+	public static final int				MSG_BROADCAST							= 9999;
+	
+	
+	
+	//Methods to be implemented	
+	public void configureCamera(boolean createGUI);
 	public void addSurfaceCallback();
+	
+	public Activity getMainActivity();
+	
+	@TargetApi(21)
+	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
+	
+	//Set/Get camera parameters preference
+	public void setEVPref(int iEv);
+	public int  getEVPref();
+	
+	public void setSceneModePref(int iSceneMode);
+	public int  getSceneModePref();
+	
+	public void setWBModePref(int iWB);
+	public int  getWBModePref();
+	
+	public void setFocusModePref(int iFocusMode);
+	public int  getFocusModePref(int defaultMode);
 }

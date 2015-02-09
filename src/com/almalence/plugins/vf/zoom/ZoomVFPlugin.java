@@ -43,6 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -469,9 +470,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		if (!isEnabled)
 			return false;
-		if (arg1 == PluginManager.MSG_CONTROL_LOCKED)
+		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
 			mZoomDisabled = true;
-		else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED)
+		else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
 			mZoomDisabled = false;
 		return false;
 	}

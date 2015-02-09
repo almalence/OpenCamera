@@ -46,6 +46,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -106,11 +107,11 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		finishing = false;
 		released = false;
 		Message msg = new Message();
-		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+		msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.getMessageHandler().sendMessage(msg);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+				ApplicationInterface.MSG_CONTROL_LOCKED);
 
 		MainScreen.getGUIManager().lockControls = true;
 
@@ -411,12 +412,12 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		case MSG_LEAVING:
 			if (released)
 				return false;
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			
 			mYUVBufferList.clear();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 

@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.hardware.camera2.CaptureResult;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -89,8 +90,7 @@ public class CapturePlugin extends PluginCapture
 		{
 			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.setCameraExposureCompensation(ev);
-			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-			.putInt(MainScreen.sEvPref, ev).commit();
+			MainScreen.getInstance().setEVPref(ev);
 		}
 	}
 
@@ -103,7 +103,7 @@ public class CapturePlugin extends PluginCapture
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
-		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+		singleModeEV = MainScreen.getInstance().getEVPref();
 		modeSwitcher.setTextOn("DRO On");
 		modeSwitcher.setTextOff("DRO Off");
 		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
@@ -117,7 +117,7 @@ public class CapturePlugin extends PluginCapture
 
 				if (isDro)
 				{
-					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+					singleModeEV = MainScreen.getInstance().getEVPref();
 					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
@@ -255,6 +255,7 @@ public class CapturePlugin extends PluginCapture
 //		Log.d("CapturePlugin", "takePicture");
 		framesCaptured = 0;
 		resultCompleted = 0;
+		createRequestIDList(captureRAW? 2 : 1);
 		if (ModePreference.compareTo("0") == 0)
 			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true, true);
 		else if(captureRAW)
@@ -288,7 +289,7 @@ public class CapturePlugin extends PluginCapture
 
 		if((captureRAW && framesCaptured == 2) || !captureRAW || ModePreference.compareTo("0") == 0)
 		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 			inCapture = false;
 			framesCaptured = 0;
 			resultCompleted = 0;

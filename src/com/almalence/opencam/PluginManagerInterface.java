@@ -21,6 +21,8 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
+import android.hardware.camera2.CaptureResult;
 //-+- -->
 
 public interface PluginManagerInterface
@@ -37,6 +39,14 @@ public interface PluginManagerInterface
 
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format);
 	
-	public void addToSharedMemExifTags(byte[] paramArrayOfByte);
+	public void onCaptureCompleted(CaptureResult result);
+	
+	public void collectExifData(byte[] frameData);
+	
+	public void addRequestID(int nFrame, int requestID);
+	
+	public boolean isPreviewDependentMode();
+	
+	public boolean isCamera2InterfaceAllowed();
 
 }

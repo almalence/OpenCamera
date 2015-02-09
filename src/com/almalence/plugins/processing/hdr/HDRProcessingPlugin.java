@@ -70,6 +70,7 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -135,11 +136,11 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		if (AutoAdjustments)
 		{
 			Message msg = new Message();
-			msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+			msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 			MainScreen.getMessageHandler().sendMessage(msg);
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_LOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_LOCKED);
 
 			MainScreen.getGUIManager().lockControls = true;
 		}
@@ -278,7 +279,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			} catch (IOException e)
 			{
 				e.printStackTrace();
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+				MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -948,14 +949,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				AlmaShotHDR.HDRFreeInstance();
 				AlmaShotHDR.Release();
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+						ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 				MainScreen.getGUIManager().lockControls = false;
 
 				postProcessingRun = false;
 
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+				MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			}
 
 			return true;
@@ -1153,14 +1154,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 
 			postProcessingRun = false;
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 		} else if (v == this.buttonSave)
 		{
 			cancelAllTasks();
@@ -1354,12 +1355,12 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 		}
 	}
 }

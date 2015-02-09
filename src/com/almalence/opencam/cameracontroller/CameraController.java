@@ -60,7 +60,6 @@ import com.almalence.util.ImageConversion;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 //-+- -->
@@ -68,7 +67,6 @@ import com.almalence.opencam.R;
 import com.almalence.opencam_plus.ApplicationInterface;
 import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.MainScreen;
-import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginManagerInterface;
 import com.almalence.opencam_plus.R;
 +++ --> */
@@ -187,6 +185,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static PluginManagerInterface			pluginManager					= null;
 	private static ApplicationInterface				appInterface					= null;
 	protected static Context						mainContext						= null;
+	protected static Handler						messageHandler					= null;
 
 	// Old camera interface
 	private static Camera							camera							= null;
@@ -205,7 +204,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
 
-	protected static String[]								cameraIdList					= { "" };
+	protected static String[]						cameraIdList					= { "" };
 
 	// Flags to know which camera feature supported at current device
 	private static boolean							mEVSupported					= false;
@@ -294,11 +293,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	}
 
-	public static void onCreate(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase)
+	public static void onCreate(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase, Handler msgHandler)
 	{
 		pluginManager = pluginManagerBase;
 		appInterface = app;
 		mainContext = context;
+		
+		messageHandler = msgHandler;
 
 		pauseHandler = new Handler(CameraController.getInstance());
 		
@@ -623,19 +624,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
+		if (!pluginManager.isCamera2InterfaceAllowed())
 			isHALv3 = false;
-//		Boolean isNexus = (Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 7"));
+
 		try
 		{
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext
-					.getSystemService("camera") != null))
+			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-						.commit();
+				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 			} else
 				isHALv3Supported = true;
 		} catch (Exception e)
@@ -643,19 +641,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			e.printStackTrace();
 			isHALv3 = false;
 			isHALv3Supported = false;
-			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-					.commit();
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 		}
 
 		if (CameraController.isHALv3Supported)
 		{
-			HALv3.onCreateHALv3();
+			HALv3.onCreateHALv3(mainContext, appInterface, pluginManager, messageHandler);
 			if(!HALv3.checkHardwareLevel())
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-						.commit();
+				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 			}
 		}
 		
@@ -665,7 +661,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void createHALv3Manager()
 	{
 		if (CameraController.isHALv3Supported)
-			HALv3.onCreateHALv3();
+			HALv3.onCreateHALv3(mainContext, appInterface, pluginManager, messageHandler);
 	}
 
 	public static void onStart()
@@ -675,8 +671,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onResume()
 	{
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+		if (pluginManager.isPreviewDependentMode())
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
@@ -703,8 +698,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onPause(boolean isModeSwitching)
 	{
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+		if (pluginManager.isPreviewDependentMode())
 		{
 			evLatency=0;
 	        previewWorking=false;
@@ -753,8 +747,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if(needRelaunch)
 		{
-			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit();
-			prefEditor.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
+			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
+			prefEditor.putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
 		}
 	}
 
@@ -976,7 +970,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				{
 //					int result = (CameraController.getSensorOrientation() + (CameraMirrored ? 180 : 0)) % 360;
 //					camera.setDisplayOrientation(result);
-					setCameraDisplayOrientation(MainScreen.thiz, CameraIndex, camera);
+					setCameraDisplayOrientation(appInterface.getMainActivity(), CameraIndex, camera);
 				} catch (RuntimeException e)
 				{
 					Log.e(TAG, "Unable to set display orientation for camera");
@@ -1041,11 +1035,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (!CameraController.isHALv3)
 		{
 			if (CameraController.isCameraCreated())
-			{
-				MainScreen.thiz.configureCamera();
-				PluginManager.getInstance().onGUICreate();
-				MainScreen.getGUIManager().onGUICreate();
-			}
+				appInterface.configureCamera(true);
 		}
 	}
 
@@ -1266,7 +1256,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					CameraController.SupportedPreviewSizesList.get(1).getHeight());
 		}
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 		String prefIdx = prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
 
 		if (prefIdx.equals("-1"))
@@ -1585,12 +1575,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void startCameraPreview()
 	{
-		if (camera != null) {
+		if (camera != null)
+		{
 			camera.startPreview();
 
-			if (Build.MODEL.equals("Nexus 4")) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int initValue = prefs.getInt(MainScreen.sEvPref, 0);
+			if (Build.MODEL.equals("Nexus 4"))
+			{
+				int initValue = MainScreen.getInstance().getEVPref();
 				CameraController.setCameraExposureCompensation(initValue);
 			}
 		}
@@ -1858,10 +1849,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				return 0;
 		}
 		else
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			return prefs.getInt(MainScreen.sEvPref, 0) * HALv3.getExposureCompensationStepHALv3();
-		}
+			return appInterface.getEVPref() * HALv3.getExposureCompensationStepHALv3();
 	}
 
 	public static void resetExposureCompensation()
@@ -2230,7 +2218,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CapIdx = captureIndex;
 		if(init)
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			prefs.edit().putString(CameraIndex == 0 ? MainScreen.sImageSizeRearPref
 					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
 		}
@@ -2286,7 +2274,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sSceneModePref, -1);
+			return appInterface.getSceneModePref();
 
 		return -1;
 	}
@@ -2309,7 +2297,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sWBModePref, -1);
+			return appInterface.getWBModePref();
 
 		return -1;
 	}
@@ -2333,8 +2321,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.e(TAG, "getFocusMode exception: " + e.getMessage());
 			}
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(
-					CameraMirrored ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+			return appInterface.getFocusModePref(-1);
 
 		return -1;
 	}
@@ -2591,7 +2578,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			HALv3.setCameraExposureCompensationHALv3(iEV);
 		
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+		sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
 	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
@@ -2648,7 +2635,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		mFocusState = state;
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_STATE_CHANGED);
+		sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_STATE_CHANGED);
 	}
 
 	public static int getFocusState()
@@ -2895,7 +2882,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
 		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
-		pluginManager.addToSharedMemExifTags(paramArrayOfByte);
+		pluginManager.collectExifData(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
 
@@ -2941,7 +2928,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 			MainScreen.getInstance().muteShutter(false);
 			CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 			return;
@@ -2950,8 +2937,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		nextFrame();
 		
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+		if (pluginManager.isPreviewDependentMode())
 		{
 			//if preview not working
 			if (previewMode==false)
@@ -2967,7 +2953,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					{
 						Log.d(TAG, "previewMode DISABLED!");
 						previewMode=false;
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 						Editor prefsEditor = prefs.edit();
 						prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
 						prefsEditor.commit();
@@ -3050,7 +3036,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					data = null;
 				}
 				
-				pluginManager.addToSharedMemExifTags(null);
+				pluginManager.collectExifData(null);
 				pluginManager.onImageTaken(frame, data, dataLenght, CameraController.YUV);
 			} else
 			{
@@ -3066,8 +3052,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return;
 		}
 
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && evLatency > 0)
+		if (pluginManager.isPreviewDependentMode() && evLatency > 0)
 		{
 			Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
@@ -3183,7 +3168,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if(imageSize == null)
 			{
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, null);
+				sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT, null);
 				return;
 			}
 			
@@ -3231,7 +3216,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static void nextFrame()
 	{
 		Log.d(TAG, "MSG_NEXT_FRAME");
-		String modeID2 = PluginManager.getInstance().getActiveModeID();
 		if (++frame_num < total_frames)
 		{
 			if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)
@@ -3255,7 +3239,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
 			}
 		}
-		else if (modeID2.equals("hdrmode") || modeID2.equals("expobracketing"))
+		else if (pluginManager.isPreviewDependentMode())
 		{
 			previewWorking = true;
         	if (cdt!=null)
@@ -3281,8 +3265,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
 		}
 
-		String modeID = PluginManager.getInstance().getActiveModeID();
-		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && previewMode)
+		if (pluginManager.isPreviewDependentMode() && previewMode)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 			//if true - evLatency will be doubled. 
@@ -3314,6 +3297,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}.start();
 		}		
+	}
+	
+	public static void sendMessage(int what, int arg1)
+	{
+		Message message = new Message();
+		message.arg1 = arg1;
+		message.what = what;
+		messageHandler.sendMessage(message);
+	}
+	
+	public static void sendMessage(int what, String obj)
+	{
+		Message message = new Message();
+		message.obj = String.valueOf(obj);
+		message.what = what;
+		messageHandler.sendMessage(message);
 	}
 
 }

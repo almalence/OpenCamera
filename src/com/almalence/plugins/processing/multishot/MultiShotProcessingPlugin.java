@@ -44,6 +44,7 @@ import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlu
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateLayout;
 import com.almalence.util.ImageConversion;
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -199,7 +200,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				mButtonsLayout.setVisibility(View.VISIBLE);
 				MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.GONE);
 				Message msg = new Message();
-				msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+				msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 				MainScreen.getMessageHandler().sendMessage(msg);
 			}
 		});
@@ -310,7 +311,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			} catch (IOException e)
 			{
 				e.printStackTrace();
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+				MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 				return;
 			} catch (Exception e)
 			{
@@ -407,9 +408,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			mYUVBufferList.clear();
 			mJpegBufferList.clear();
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			selectedPlugin = CANCELLED;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			MainScreen.getGUIManager().lockControls = false;
 
 			return true;

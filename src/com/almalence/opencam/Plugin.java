@@ -477,16 +477,24 @@ public abstract class Plugin
 		return false;
 	}
 	
+	//Capture plugin may call that method if it want to know RequestID of each captured frames
+	//It used in camera2 mode
 	public void createRequestIDList(int nFrames)
 	{
 		requestIDArray = new int[nFrames];
 		requestIDArrayLenght = nFrames;
 		
+		Log.e("Plugin", "CREATE REQUEST ID LIST. SIZE = " + nFrames);
+		
 	}
 	
 	public void addRequestID(int nFrame, int requestID)
 	{
-		requestIDArray[nFrame] = requestID;
+		if(nFrame < requestIDArrayLenght)
+		{
+			Log.e("Plugin", "ADD REQUEST ID LIST. Frame " + nFrame);
+			requestIDArray[nFrame] = requestID;
+		}
 	}
 
 	/******************************************************************************************************

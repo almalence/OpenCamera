@@ -38,6 +38,7 @@ import android.hardware.camera2.CaptureResult;
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -213,8 +214,8 @@ public class BestShotCapturePlugin extends PluginCapture
 	{
 		int[] pause = new int[imageAmount];
 		Arrays.fill(pause, 50);
-		CameraController
-				.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, null, null, true, true);
+		createRequestIDList(imageAmount);
+		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, null, null, true, true);
 	}
 
 	@Override
@@ -225,7 +226,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		if (frame == 0)
 		{
 			Log.d("Bestshot", "Load to heap failed");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			MainScreen.getInstance().muteShutter(false);
@@ -246,7 +247,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			inCapture = false;

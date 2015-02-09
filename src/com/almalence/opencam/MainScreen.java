@@ -527,7 +527,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			Log.e("MainScreen", exp.getMessage());
 		}
-		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance());
+		CameraController.onCreate(MainScreen.thiz, MainScreen.thiz, PluginManager.getInstance(), MainScreen.thiz.messageHandler);
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
@@ -694,7 +694,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	@TargetApi(21)
-	public static void createImageReaders()
+	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
 	{
 		Log.e("MainScreen", "createImageReaders");
 		// ImageReader for preview frames in YUV format
@@ -723,7 +723,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				ImageFormat.RAW_SENSOR, 2);
 
 		thiz.guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
-
+		
+		
+		thiz.mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		thiz.mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		thiz.mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
+		thiz.mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
 	}
 
 	public static ImageReader getPreviewYUVImageReader()
@@ -745,7 +750,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.mImageReaderRAW;
 	}
-
+	
 	public static int getCaptureFormat()
 	{
 		return thiz.captureFormat;
@@ -1520,12 +1525,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		if (isCameraConfiguring)
 		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_SURFACE_CONFIGURED, 0);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
 			// updatePreferences();
 			// MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 			// configureHALv3Camera(captureFormat);
-			// messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+			// messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 		} else if (!isCreating)
 		{
 			new CountDownTimer(50, 50)
@@ -1550,8 +1555,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						} else
 						{
 							// CameraController.setupCamera(null);
-							Log.e("MainScreen", "surfaceChanged: sendEmptyMessage(PluginManager.MSG_SURFACE_READY)");
-							messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+							Log.e("MainScreen", "surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
+							messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 						}
 					}
 				}
@@ -1653,7 +1658,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			if (CameraController.isUseHALv3())
 			{
 				// CameraController.setupCamera(null);
-				messageHandler.sendEmptyMessage(PluginManager.MSG_SURFACE_READY);
+				messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 			} else
 			{
 				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
@@ -1671,7 +1676,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	boolean	isCameraConfiguring	= false;
 
 	@Override
-	public void configureCamera()
+	public void configureCamera(boolean createGUI)
 	{
 		Log.d("MainScreen", "configureCamera()");
 
@@ -1698,9 +1703,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
 			
 			onCameraConfigured();
+		}
+		
+		if(createGUI)
+		{
+			PluginManager.getInstance().onGUICreate();
+			MainScreen.getGUIManager().onGUICreate();
 		}
 	}
 
@@ -1811,7 +1822,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				MainScreen.mApplicationStarted = true;
 
 				if (MainScreen.isForceClose)
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_APPLICATION_STOP, 0);
+					PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 			}
 
 			@Override
@@ -1938,7 +1949,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// If camera device isn't initialized (equals null) just force stop
 		// application.
 		if (!CameraController.createCaptureSession(surfaceList))
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_APPLICATION_STOP, 0);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 	}
 
 	private void prepareMeteringAreas()
@@ -2258,7 +2269,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		switch (msg.what)
 		{
-		case PluginManager.MSG_APPLICATION_STOP:
+		case ApplicationInterface.MSG_APPLICATION_STOP:
 			this.setResult(RESULT_OK);
 			this.finish();
 			break;
@@ -2266,10 +2277,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			this.setResult(RESULT_OK);
 			this.finish();
 			break;
-		case PluginManager.MSG_CAMERA_CONFIGURED:
+		case ApplicationInterface.MSG_CAMERA_CONFIGURED:
 			onCameraConfigured();
 			break;
-//		case PluginManager.MSG_CAMERA_READY:
+//		case ApplicationInterface.MSG_CAMERA_READY:
 //			{
 //				if (CameraController.isCameraCreated())
 //				{
@@ -2279,28 +2290,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 //				}
 //			}
 //			break;
-		case PluginManager.MSG_CAMERA_OPENED:
+		case ApplicationInterface.MSG_CAMERA_OPENED:
 			if (mCameraStarted)
 				break;
-		case PluginManager.MSG_SURFACE_READY:
+		case ApplicationInterface.MSG_SURFACE_READY:
 			{
 				// if both surface is created and camera device is opened
 				// - ready to set up preview and other things
 				// if (surfaceCreated && (HALv3.getCamera2() != null))
 				if (surfaceCreated)
 				{
-					configureCamera();
-					if (!CameraController.isUseHALv3())
-					{
-						PluginManager.getInstance().onGUICreate();
-						MainScreen.getGUIManager().onGUICreate();
-						// mCameraStarted = true;
-					}
+					configureCamera(!CameraController.isUseHALv3());
 					mCameraStarted = true;
 				}
 			}
 			break;
-		case PluginManager.MSG_SURFACE_CONFIGURED:
+		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
 				createCaptureSession();
 				PluginManager.getInstance().onGUICreate();
@@ -2308,7 +2313,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				mCameraStarted = true;
 			}
 			break;
-		case PluginManager.MSG_CAMERA_STOPED:
+		case ApplicationInterface.MSG_CAMERA_STOPED:
 			mCameraStarted = false;
 			break;
 		default:
@@ -3724,4 +3729,102 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return switchingMode;
 	}
+	
+	@Override
+	public Activity getMainActivity()
+	{
+		return thiz;
+	}
+	
+	
+	//Set/Get camera parameters preference
+	
+	//EXPOSURE COMPENSATION PREFERENCE
+	@Override
+	public void setEVPref(int iEv)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+		.putInt(MainScreen.sEvPref, iEv).commit();
+	}
+	
+	@Override
+	public int  getEVPref()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sEvPref, 0);
+	}
+	
+	
+	//SCENE MODE PREFERENCE
+	@Override
+	public void setSceneModePref(int iSceneMode)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+		.putInt(MainScreen.sSceneModePref, iSceneMode).commit();
+	}
+	
+	@Override
+	public int  getSceneModePref()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sSceneModePref, MainScreen.sDefaultValue);
+	}
+	
+	
+	//WHITE BALANCE MODE PREFERENCE
+	@Override
+	public void setWBModePref(int iWB)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+		.putInt(MainScreen.sWBModePref, iWB).commit();
+	}
+	
+	@Override
+	public int  getWBModePref()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sWBModePref, MainScreen.sDefaultValue);
+	}
+	
+	
+	//FOCUS MODE PREFERENCE
+	@Override
+	public void setFocusModePref(int iFocusMode)
+	{
+		String modeName = PluginManager.getInstance().getActiveModeID();
+		String frontFocusMode = null;
+		String backFocusMode = null;
+		
+		if(modeName.contains("video"))
+		{
+			frontFocusMode = MainScreen.sFrontFocusModeVideoPref;
+			backFocusMode = MainScreen.sRearFocusModeVideoPref;
+		}
+		else
+		{
+			frontFocusMode = MainScreen.sFrontFocusModePref;
+			backFocusMode = MainScreen.sRearFocusModePref;
+		}
+		
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+		.putInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, iFocusMode).commit();
+	}
+	
+	@Override
+	public int  getFocusModePref(int defaultMode)
+	{
+		String modeName = PluginManager.getInstance().getActiveModeID();
+		String frontFocusMode = null;
+		String backFocusMode = null;
+		
+		if(modeName.contains("video"))
+		{
+			frontFocusMode = MainScreen.sFrontFocusModeVideoPref;
+			backFocusMode = MainScreen.sRearFocusModeVideoPref;
+		}
+		else
+		{
+			frontFocusMode = MainScreen.sFrontFocusModePref;
+			backFocusMode = MainScreen.sRearFocusModePref;
+		}
+		
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, defaultMode);
+	}	
 }

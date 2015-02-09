@@ -45,6 +45,7 @@ import android.util.Log;
 // <!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
@@ -256,6 +257,7 @@ public class BurstCapturePlugin extends PluginCapture
 
 		int[] pause = new int[imageAmount];
 		Arrays.fill(pause, pauseBetweenShots);
+		createRequestIDList(captureRAW? imageAmount * 2 : imageAmount);
 		if (captureRAW)
 		{
 			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true,
@@ -271,7 +273,7 @@ public class BurstCapturePlugin extends PluginCapture
 		if (frame == 0)
 		{
 			Log.d("Burst", "Load to heap failed");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -301,7 +303,7 @@ public class BurstCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.e("Burst", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -317,7 +319,7 @@ public class BurstCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID,
 					String.valueOf(imagesTakenRAW));
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;

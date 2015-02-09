@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -512,7 +513,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_EV_CHANGED)
+		if (arg1 == ApplicationInterface.MSG_EV_CHANGED)
 		{
 			if (this.useEVMonitor && evInfoText != null)
 			{
@@ -527,7 +528,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 					Log.e("InfosetVFPlugin", "onBroadcast exception: " + e.getMessage());
 				}
 			}
-		} else if (arg1 == PluginManager.MSG_SCENE_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_SCENE_CHANGED)
 		{
 			if (this.useSceneMonitor && sceneInfoImage != null)
 			{
@@ -540,7 +541,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 								.getDrawable(scene_id));
 				}
 			}
-		} else if (arg1 == PluginManager.MSG_WB_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_WB_CHANGED)
 		{
 			if (this.useWBMonitor && wbInfoImage != null)
 			{
@@ -552,7 +553,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 						wbInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(wb_id));
 				}
 			}
-		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_FOCUS_CHANGED)
 		{
 			if (this.useFocusMonitor && focusInfoImage != null)
 			{
@@ -565,7 +566,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 								.getDrawable(focus_id));
 				}
 			}
-		} else if (arg1 == PluginManager.MSG_FLASH_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_FLASH_CHANGED)
 		{
 			if (this.useFlashMonitor && flashInfoImage != null)
 			{
@@ -578,7 +579,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 								.getDrawable(flash_id));
 				}
 			}
-		} else if (arg1 == PluginManager.MSG_ISO_CHANGED)
+		} else if (arg1 == ApplicationInterface.MSG_ISO_CHANGED)
 		{
 			if (this.useISOMonitor && isoInfoImage != null)
 			{

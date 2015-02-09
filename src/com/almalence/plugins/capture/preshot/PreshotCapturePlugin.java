@@ -34,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -263,8 +264,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		}
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_FOCUS_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+				ApplicationInterface.MSG_FOCUS_CHANGED);
 	}
 
 	@Override
@@ -290,7 +291,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			captureStarted = false;
 			StopBuffering();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
@@ -496,9 +497,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		if (isBuffering)
 		{
-			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref,
-					-1);
+			int focusMode = MainScreen.getInstance().getFocusModePref(-1);
 			if (RefocusPreference
 					|| (counter >= REFOCUS_INTERVAL)
 					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
@@ -529,6 +528,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 	//				inCapture = true;
 	
+			createRequestIDList(1);
 			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
 			counter++;
 		}
@@ -565,11 +565,11 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_STOP_CAPTURE)
+		if (arg1 == ApplicationInterface.MSG_STOP_CAPTURE)
 		{
 			StopBuffering();
 			return true;
-		} else if (arg1 == PluginManager.MSG_START_CAPTURE)
+		} else if (arg1 == ApplicationInterface.MSG_START_CAPTURE)
 		{
 			if (PluginManager.getInstance().getProcessingCounter() == 0)
 				StartBuffering();

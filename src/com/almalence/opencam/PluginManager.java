@@ -197,77 +197,77 @@ public class PluginManager implements PluginManagerInterface
 	private Hashtable<String, String>				sharedMemory;
 	private Hashtable<String, CaptureResult>		rawCaptureResults;
 
-	// message codes
-	public static final int				MSG_NO_CAMERA							= 1;
-	public static final int				MSG_TAKE_PICTURE						= 2;
-	public static final int				MSG_CAPTURE_FINISHED					= 3;
-	public static final int				MSG_PROCESSING_FINISHED					= 4;
-	public static final int				MSG_START_POSTPROCESSING				= 5;
-	public static final int				MSG_POSTPROCESSING_FINISHED				= 6;
-	public static final int				MSG_FILTER_FINISHED						= 7;
-	public static final int				MSG_EXPORT_FINISHED						= 8;
-	public static final int				MSG_EXPORT_FINISHED_IOEXCEPTION			= 9;
-	public static final int				MSG_START_FX							= 10;
-	public static final int				MSG_FX_FINISHED							= 11;
-	public static final int				MSG_DELAYED_CAPTURE						= 12;
-	public static final int				MSG_FORCE_FINISH_CAPTURE				= 13;
-	public static final int				MSG_NOTIFY_LIMIT_REACHED				= 14;
-	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
-
-	public static final int				MSG_CAMERA_CONFIGURED					= 160;
-	public static final int				MSG_CAMERA_STOPED						= 162;
-	
-	public static final int				MSG_APPLICATION_STOP					= 163;
-
-	// For HALv3 code version
-	public static final int				MSG_CAMERA_OPENED						= 16;
-	public static final int				MSG_SURFACE_READY						= 17;
-	public static final int				MSG_SURFACE_CONFIGURED					= 170;
-	public static final int				MSG_NOT_LEVEL_FULL						= 18;
-	public static final int				MSG_PROCESS								= 19;
-	public static final int				MSG_PROCESS_FINISHED					= 20;
-	public static final int				MSG_VOLUME_ZOOM							= 21;
-	// ^^ For HALv3 code version
-
-	public static final int				MSG_BAD_FRAME							= 24;
-	public static final int				MSG_OUT_OF_MEMORY						= 25;
-
-	public static final int				MSG_FOCUS_STATE_CHANGED					= 28;
-
-	public static final int				MSG_RESTART_MAIN_SCREEN					= 30;
-
-	public static final int				MSG_RETURN_CAPTURED						= 31;
-
-	public static final int				MSG_RESULT_OK							= 40;
-	public static final int				MSG_RESULT_UNSAVED						= 41;
-
-	public static final int				MSG_CONTROL_LOCKED						= 50;
-	public static final int				MSG_CONTROL_UNLOCKED					= 51;
-	public static final int				MSG_PROCESSING_BLOCK_UI					= 52;
-	public static final int				MSG_PREVIEW_CHANGED						= 53;
-
-	public static final int				MSG_EV_CHANGED							= 60;
-	public static final int				MSG_SCENE_CHANGED						= 61;
-	public static final int				MSG_WB_CHANGED							= 62;
-	public static final int				MSG_FOCUS_CHANGED						= 63;
-	public static final int				MSG_FLASH_CHANGED						= 64;
-	public static final int				MSG_ISO_CHANGED							= 65;
-	public static final int				MSG_AEWB_CHANGED						= 66;
-
-	// OpenGL layer messages
-	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
-	public static final int				MSG_OPENGL_LAYER_HIDE					= 71;
-	public static final int				MSG_OPENGL_LAYER_SHOW_V2				= 72;
-	public static final int				MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS	= 73;
-	public static final int				MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY	= 74;
-
-	// events to pause/resume capture. for example to stop capturing in preshot
-	// when popup share opened
-	public static final int				MSG_STOP_CAPTURE						= 80;
-	public static final int				MSG_START_CAPTURE						= 81;
-
-	// broadcast will be resent to every active plugin
-	public static final int				MSG_BROADCAST							= 9999;
+//	// message codes
+//	public static final int				MSG_NO_CAMERA							= 1;
+//	public static final int				MSG_TAKE_PICTURE						= 2;
+//	public static final int				MSG_CAPTURE_FINISHED					= 3;
+//	public static final int				MSG_PROCESSING_FINISHED					= 4;
+//	public static final int				MSG_START_POSTPROCESSING				= 5;
+//	public static final int				MSG_POSTPROCESSING_FINISHED				= 6;
+//	public static final int				MSG_FILTER_FINISHED						= 7;
+//	public static final int				MSG_EXPORT_FINISHED						= 8;
+//	public static final int				MSG_EXPORT_FINISHED_IOEXCEPTION			= 9;
+//	public static final int				MSG_START_FX							= 10;
+//	public static final int				MSG_FX_FINISHED							= 11;
+//	public static final int				MSG_DELAYED_CAPTURE						= 12;
+//	public static final int				MSG_FORCE_FINISH_CAPTURE				= 13;
+//	public static final int				MSG_NOTIFY_LIMIT_REACHED				= 14;
+//	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
+//
+//	public static final int				MSG_CAMERA_CONFIGURED					= 160;
+//	public static final int				MSG_CAMERA_STOPED						= 162;
+//	
+//	public static final int				MSG_APPLICATION_STOP					= 163;
+//
+//	// For HALv3 code version
+//	public static final int				MSG_CAMERA_OPENED						= 16;
+//	public static final int				MSG_SURFACE_READY						= 17;
+//	public static final int				MSG_SURFACE_CONFIGURED					= 170;
+//	public static final int				MSG_NOT_LEVEL_FULL						= 18;
+//	public static final int				MSG_PROCESS								= 19;
+//	public static final int				MSG_PROCESS_FINISHED					= 20;
+//	public static final int				MSG_VOLUME_ZOOM							= 21;
+//	// ^^ For HALv3 code version
+//
+//	public static final int				MSG_BAD_FRAME							= 24;
+//	public static final int				MSG_OUT_OF_MEMORY						= 25;
+//
+//	public static final int				MSG_FOCUS_STATE_CHANGED					= 28;
+//
+//	public static final int				MSG_RESTART_MAIN_SCREEN					= 30;
+//
+//	public static final int				MSG_RETURN_CAPTURED						= 31;
+//
+//	public static final int				MSG_RESULT_OK							= 40;
+//	public static final int				MSG_RESULT_UNSAVED						= 41;
+//
+//	public static final int				MSG_CONTROL_LOCKED						= 50;
+//	public static final int				MSG_CONTROL_UNLOCKED					= 51;
+//	public static final int				MSG_PROCESSING_BLOCK_UI					= 52;
+//	public static final int				MSG_PREVIEW_CHANGED						= 53;
+//
+//	public static final int				MSG_EV_CHANGED							= 60;
+//	public static final int				MSG_SCENE_CHANGED						= 61;
+//	public static final int				MSG_WB_CHANGED							= 62;
+//	public static final int				MSG_FOCUS_CHANGED						= 63;
+//	public static final int				MSG_FLASH_CHANGED						= 64;
+//	public static final int				MSG_ISO_CHANGED							= 65;
+//	public static final int				MSG_AEWB_CHANGED						= 66;
+//
+//	// OpenGL layer messages
+//	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
+//	public static final int				MSG_OPENGL_LAYER_HIDE					= 71;
+//	public static final int				MSG_OPENGL_LAYER_SHOW_V2				= 72;
+//	public static final int				MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS	= 73;
+//	public static final int				MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY	= 74;
+//
+//	// events to pause/resume capture. for example to stop capturing in preshot
+//	// when popup share opened
+//	public static final int				MSG_STOP_CAPTURE						= 80;
+//	public static final int				MSG_START_CAPTURE						= 81;
+//
+//	// broadcast will be resent to every active plugin
+//	public static final int				MSG_BROADCAST							= 9999;
 
 	// Support flag to avoid plugin's view disappearance issue
 	static boolean						isRestarting							= false;
@@ -847,7 +847,7 @@ public class PluginManager implements PluginManagerInterface
 					MainScreen.getInstance().guiManager.stopCaptureIndication();
 					
 					MainScreen.getGUIManager().lockControls = false;
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+					PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 				} else
 				{
 					e.putInt(MainScreen.sPhotoTimeLapseCount, 0);
@@ -1405,12 +1405,14 @@ public class PluginManager implements PluginManagerInterface
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
 	
-	public void createRequestIDList(int nFrames)
-	{
-		if (null != pluginList.get(activeCapture))
-			pluginList.get(activeCapture).createRequestIDList(nFrames);
-	}
+//	@Override
+//	public void createRequestIDList(int nFrames)
+//	{
+//		if (null != pluginList.get(activeCapture))
+//			pluginList.get(activeCapture).createRequestIDList(nFrames);
+//	}
 	
+	@Override
 	public void addRequestID(int nFrame, int requestID)
 	{
 		if (null != pluginList.get(activeCapture))
@@ -1418,7 +1420,7 @@ public class PluginManager implements PluginManagerInterface
 	}
 	
 	@Override
-	public void addToSharedMemExifTags(byte[] frameData)
+	public void collectExifData(byte[] frameData)
 	{
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).addToSharedMemExifTags(frameData);
@@ -1554,10 +1556,10 @@ public class PluginManager implements PluginManagerInterface
 	{
 		switch (msg.what)
 		{
-		case MSG_NO_CAMERA:
+		case ApplicationInterface.MSG_NO_CAMERA:
 			break;
 
-		case MSG_CAPTURE_FINISHED:
+		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1588,12 +1590,12 @@ public class PluginManager implements PluginManagerInterface
 			{
 				MainScreen.getGUIManager().lockControls = false;
 				PluginManager.getInstance()
-						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+						.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			}
 			
 			break;
 
-		case MSG_CAPTURE_FINISHED_NORESULT:
+		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 			shutterRelease = true;
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -1606,7 +1608,7 @@ public class PluginManager implements PluginManagerInterface
 
 			MainScreen.getGUIManager().lockControls = false;
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().onExportFinished();
 
@@ -1615,18 +1617,18 @@ public class PluginManager implements PluginManagerInterface
 
 			break;
 
-		case MSG_START_POSTPROCESSING:
+		case ApplicationInterface.MSG_START_POSTPROCESSING:
 			if (null != pluginList.get(activeProcessing))
 			{
 				MainScreen.getGUIManager().lockControls = true;
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_LOCKED);
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
 
 				pluginList.get(activeProcessing).onStartPostProcessing();
 				MainScreen.getGUIManager().onPostProcessingStarted();
 			}
 			break;
 
-		case MSG_POSTPROCESSING_FINISHED:
+		case ApplicationInterface.MSG_POSTPROCESSING_FINISHED:
 			long sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
 			if (sSessionID != null)
@@ -1634,17 +1636,17 @@ public class PluginManager implements PluginManagerInterface
 
 			// notify GUI about saved images
 			MainScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().onPostProcessingFinished();
 			if (null != pluginList.get(activeExport) && 0 != sessionID)
 				pluginList.get(activeExport).onExportActive(sessionID);
 			else
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+				MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 
 			clearSharedMemory(sessionID);
 			break;
-		case MSG_EXPORT_FINISHED:
+		case ApplicationInterface.MSG_EXPORT_FINISHED:
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;
@@ -1666,7 +1668,7 @@ public class PluginManager implements PluginManagerInterface
 				if (MainScreen.getInstance().getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE)
 						&& MainScreen.getForceFilename() == null)
 				{
-					MainScreen.getMessageHandler().sendEmptyMessage(MSG_RETURN_CAPTURED);
+					MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_RETURN_CAPTURED);
 				}
 			}
 			
@@ -1676,7 +1678,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 			break;
 
-		case MSG_EXPORT_FINISHED_IOEXCEPTION:
+		case ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION:
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;
@@ -1702,7 +1704,7 @@ public class PluginManager implements PluginManagerInterface
 			}
 			break;
 
-		case MSG_DELAYED_CAPTURE:
+		case ApplicationInterface.MSG_DELAYED_CAPTURE:
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onShutterClick();
 			if (null != pluginList.get(activeCapture)
@@ -1710,36 +1712,36 @@ public class PluginManager implements PluginManagerInterface
 				pluginList.get(activeCapture).onShutterClick();
 			break;
 
-		case MSG_RETURN_CAPTURED:
+		case ApplicationInterface.MSG_RETURN_CAPTURED:
 			MainScreen.getInstance().setResult(Activity.RESULT_OK);
 			MainScreen.getInstance().finish();
 			break;
 
-		case MSG_OPENGL_LAYER_SHOW:
+		case ApplicationInterface.MSG_OPENGL_LAYER_SHOW:
 			MainScreen.getInstance().showOpenGLLayer(1);
 			break;
 
-		case MSG_OPENGL_LAYER_SHOW_V2:
+		case ApplicationInterface.MSG_OPENGL_LAYER_SHOW_V2:
 			MainScreen.getInstance().showOpenGLLayer(2);
 			break;
 
-		case MSG_OPENGL_LAYER_HIDE:
+		case ApplicationInterface.MSG_OPENGL_LAYER_HIDE:
 			MainScreen.getInstance().hideOpenGLLayer();
 			break;
 
-		case MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS:
+		case ApplicationInterface.MSG_OPENGL_LAYER_RENDERMODE_CONTINIOUS:
 			MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 			break;
 
-		case MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY:
+		case ApplicationInterface.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY:
 			MainScreen.getInstance().glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 			break;
 
-		case MSG_PROCESSING_BLOCK_UI:
+		case ApplicationInterface.MSG_PROCESSING_BLOCK_UI:
 			MainScreen.getGUIManager().processingBlockUI();
 			break;
 
-		case MSG_BROADCAST:
+		case ApplicationInterface.MSG_BROADCAST:
 			pluginManager.onBroadcast(msg.arg1, msg.arg2);
 			break;
 		default:
@@ -2055,7 +2057,7 @@ public class PluginManager implements PluginManagerInterface
 				processing.onStartProcessing(SessionID);
 				if (processing.isPostProcessingNeeded())
 				{
-					MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_START_POSTPROCESSING);
+					MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_START_POSTPROCESSING);
 					return null;
 				}
 			}
@@ -2063,7 +2065,7 @@ public class PluginManager implements PluginManagerInterface
 			if (null != export)
 				export.onExportActive(SessionID);
 			else
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+				MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 
 			clearSharedMemory(SessionID);
 			return null;
@@ -2239,7 +2241,7 @@ public class PluginManager implements PluginManagerInterface
 						CameraController.setCameraFlashMode(flashModeBackUp);
 
 				Message msg = new Message();
-				msg.what = PluginManager.MSG_DELAYED_CAPTURE;
+				msg.what = ApplicationInterface.MSG_DELAYED_CAPTURE;
 				MainScreen.getMessageHandler().sendMessage(msg);
 
 				timer = null;
@@ -2558,7 +2560,7 @@ public class PluginManager implements PluginManagerInterface
 					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 					if (!out.compressToJpeg(r, jpegQuality, os))
 					{
-						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 						return;
 					}
 					SwapHeap.FreeFromHeap(yuv);
@@ -3040,16 +3042,16 @@ public class PluginManager implements PluginManagerInterface
 				MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 			}
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 			return;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 		} finally
 		{
 			MainScreen.setForceFilename(null);
@@ -3509,6 +3511,24 @@ public class PluginManager implements PluginManagerInterface
 		}
 
 		MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+	
+	public boolean isPreviewDependentMode()
+	{
+		String modeID = getActiveModeID();
+		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isCamera2InterfaceAllowed()
+	{
+		String modeID = getActiveModeID();
+		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
+			return false;
+		else
+			return true;
 	}
 
 	public void sendMessage(int what, String obj, int arg1, int arg2)

@@ -26,6 +26,7 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
@@ -144,7 +145,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 					} catch (IOException e)
 					{
 						e.printStackTrace();
-						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 					} catch (Exception e)
 					{
 						e.printStackTrace();

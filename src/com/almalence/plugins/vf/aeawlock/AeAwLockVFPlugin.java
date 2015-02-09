@@ -32,6 +32,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -273,7 +274,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_AEWB_CHANGED)
+		if (arg1 == ApplicationInterface.MSG_AEWB_CHANGED)
 		{
 //			Camera.Parameters params = CameraController.getCameraParameters();
 			if (CameraController.isExposureLockSupported() && CameraController.isExposureLock())

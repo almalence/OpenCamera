@@ -53,6 +53,7 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -191,11 +192,11 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		finishing = false;
 		changingFace = false;
 		Message msg = new Message();
-		msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
+		msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 		MainScreen.getMessageHandler().sendMessage(msg);
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+				ApplicationInterface.MSG_CONTROL_LOCKED);
 
 		MainScreen.getGUIManager().lockControls = true;
 
@@ -906,7 +907,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			mGallery.setVisibility(View.GONE);
 			break;
 		case MSG_LEAVING:
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			if (mSeamless != null)
 				mSeamless.release();
 			for(int yuv: mYUVBufferList)
@@ -915,8 +916,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			}
 			mYUVBufferList.clear();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			MainScreen.getGUIManager().lockControls = false;
 
