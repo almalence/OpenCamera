@@ -44,8 +44,8 @@
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"
 	        android:summary="@string/Pref_KeepScreenOn_Summary"
-	        android:defaultValue="false"
-            android:key="keepScreenOn" />
+	        android:defaultValue="true"
+            android:key="@string/Preference_KeepScreenOnValue" />
 	    
 	    <CheckBoxPreference
 	        android:title="@string/Pref_MaxScreenBrightness"
