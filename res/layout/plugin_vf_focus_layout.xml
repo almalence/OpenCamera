@@ -25,6 +25,6 @@
 	    	<ImageView android:id="@+id/metering_indicator"
 	            android:layout_width="250dp"
 	            android:layout_height="100dp"
-	            android:src="@drawable/ic_focus_focusing"/>
+	            android:src="@drawable/ic_exposure"/>
 	</com.almalence.plugins.vf.focus.RotateLayout>	
 </RelativeLayout>
