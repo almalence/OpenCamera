@@ -6235,7 +6235,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (keyCode == KeyEvent.KEYCODE_CAMERA /*
 												 * || keyCode ==
 												 * KeyEvent.KEYCODE_DPAD_CENTER
-												 */)
+												 */
+			|| keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS
+			)
 		{
 			if (settingsControlsVisible || quickControlsChangeVisible || modeSelectorVisible)
 			{
