@@ -2491,7 +2491,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	static
 	{
-		// Yandex store
+		//Yandex store
 		OpenIabHelper.mapSku(SKU_SUPER, "com.yandex.store", "plugin_almalence_super");
 		OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
 		OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
@@ -2519,22 +2519,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// Samsung store
 		 OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018387");
+		 "100000104990/000001018387");
 		 OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018389");
+		 "100000104990/000001018389");
 		 OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001017613");
+		 "100000104990/000001017613");
 		 OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
-		 OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
+		 OpenIabHelper.NAME_SAMSUNG, "100000104990/000001018392");
 		 OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018391");
+		 "100000104990/000001018391");
 		 OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018384");
+		 "100000104990/000001018384");
 		
 		 OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018393");
+		 "100000104990/000001018393");
 		 OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
-		 "100000103369/000001018394");
+		 "100000104990/000001018394");
 
 	}
 
@@ -2942,17 +2942,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	// Callback for when purchase from preferences is finished
-	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-																				{
-																					public void onIabPurchaseFinished(
-																							IabResult result,
-																							Purchase purchase)
-																					{
-																						showStore = true;
-																						purchaseFinished(result,
-																								purchase);
-																					}
-																				};
+	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= 
+			new IabHelper.OnIabPurchaseFinishedListener()
+			{
+				public void onIabPurchaseFinished(
+						IabResult result,
+						Purchase purchase)
+				{
+					showStore = true;
+					purchaseFinished(result,
+							purchase);
+				}
+			};
 
 	private void purchaseFinished(IabResult result, Purchase purchase)
 	{
