@@ -248,7 +248,6 @@ void Dro_StreamingRender
 	float *mtx,
 	int sx,
 	int sy,
-	int filter,
 	float max_amplify,
 	int local_mapping,
 	int force_update,
