@@ -2869,7 +2869,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			return;
 
 		// now will call store with abc unlocked
-//		callStoreForUnlocked(this);
+		//UNCOMMENT for samsung!
+		//callStoreForUnlocked(this);
 		
 		//TODO: this is for all other markets!!!!! Do not call store!!!
 		String payload = "";
@@ -3332,13 +3333,31 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		try
 		{
-			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
-			activity.startActivity(intent);
+			//SAMSUNG ONLY!
+			Intent intent = new Intent();
+			intent.setData(Uri.parse("samsungapps://ProductDetail/com.almalence.opencam_plus")); // The string_of_uri is an 
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+			Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+			Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+			startActivity(intent);
+			
+//			Intent intent = new Intent(Intent.ACTION_VIEW);
+//			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
+//			activity.startActivity(intent);
 		} catch (ActivityNotFoundException e)
 		{
 			return;
 		}
+		
+//		try
+//		{
+//			Intent intent = new Intent(Intent.ACTION_VIEW);
+//			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
+//			activity.startActivity(intent);
+//		} catch (ActivityNotFoundException e)
+//		{
+//			return;
+//		}
 	}
 
 	// -+- -->
