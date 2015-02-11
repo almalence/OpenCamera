@@ -138,7 +138,7 @@
  </application>
 
 
-	<!-- Uncomment for Samsung market 
+	<!-- Uncomment for Samsung market
 	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
 	 -->
 

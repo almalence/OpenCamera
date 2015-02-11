@@ -255,6 +255,14 @@ void Filters_PostFilterUV
 	int sy
 );
 
+void Filters_PostFilterUV16bit_CPU
+(
+	void *instance,
+	Int16 *UV,
+	Int32 Scale,
+	int sx,
+    int sy
+);
 
 int Filters_DownscaleLowSpatial
 (
