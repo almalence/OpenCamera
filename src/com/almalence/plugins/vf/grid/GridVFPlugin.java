@@ -39,6 +39,7 @@ import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -65,20 +66,32 @@ public class GridVFPlugin extends PluginViewfinder
 	private void refreshPreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
+		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "4"));
 
 		switch (gridType)
 		{
 		case 0:
-			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_top_left;
 			break;
 		case 1:
-			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_bottom_left;
 			break;
 		case 2:
-			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_bottom_right;
 			break;
 		case 3:
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_top_right;
+			break;
+		case 4:
+			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
+			break;
+		case 5:
+			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon_topleft_bottomright;
+			break;
+		case 6:
+			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon_topright_bottomleft;
+			break;
+		case 7:
 			quickControlIconID = R.drawable.plugin_vf_grid_none;
 			break;
 		default:
@@ -107,31 +120,47 @@ public class GridVFPlugin extends PluginViewfinder
 	public void onQuickControlClick()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
+		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "4"));
 
-		if (gridType == 4)
+		if (gridType == 8)
 			return;
 
-		gridType = (gridType + 1) % 4;
+		gridType = (gridType + 1) % 8;
 
 		Editor editor = prefs.edit();
 		switch (gridType)
 		{
 		case 0:
-			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_top_left;
 			editor.putString("typePrefGrid", "0");
 			break;
 		case 1:
-			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_bottom_left;
 			editor.putString("typePrefGrid", "1");
 			break;
 		case 2:
-			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_bottom_right;
 			editor.putString("typePrefGrid", "2");
 			break;
 		case 3:
-			quickControlIconID = R.drawable.plugin_vf_grid_none;
+			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon_top_right;
 			editor.putString("typePrefGrid", "3");
+			break;
+		case 4:
+			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
+			editor.putString("typePrefGrid", "4");
+			break;
+		case 5:
+			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon_topleft_bottomright;
+			editor.putString("typePrefGrid", "5");
+			break;
+		case 6:
+			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon_topright_bottomleft;
+			editor.putString("typePrefGrid", "6");
+			break;
+		case 7:
+			quickControlIconID = R.drawable.plugin_vf_grid_none;
+			editor.putString("typePrefGrid", "7");
 			break;
 		default:
 			break;
@@ -171,7 +200,7 @@ public class GridVFPlugin extends PluginViewfinder
 		if (Math.abs(ratio - 1 / 1.f) < 0.1f)
 			ri = 4;
 		int resID = 0;
-		if (0 == gridType)
+		if (gridType == 0 || gridType == 1 || gridType == 2 || gridType == 3)
 		{
 			switch (ri)
 			{
@@ -187,8 +216,29 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_golden4x3;
 			}
+
 			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
-		} else if (1 == gridType)
+
+			grid.setScaleX(1.0f);
+			grid.setScaleY(1.0f);
+			switch (gridType)
+			{
+			case 0:
+				break;
+			case 1:
+				grid.setScaleY(-1.0f);
+				break;
+			case 2:
+				grid.setScaleX(-1.0f);
+				grid.setScaleY(-1.0f);
+				break;
+			case 3:
+				grid.setScaleX(-1.0f);
+				break;
+			default:
+			}
+			grid.requestLayout();
+		} else if (4 == gridType)
 		{
 			switch (ri)
 			{
@@ -205,7 +255,7 @@ public class GridVFPlugin extends PluginViewfinder
 				resID = R.drawable.plugin_vf_grid_thirds4x3;
 			}
 			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
-		} else if (2 == gridType)
+		} else if (5 == gridType || 6 == gridType)
 		{
 			switch (ri)
 			{
@@ -222,10 +272,14 @@ public class GridVFPlugin extends PluginViewfinder
 				resID = R.drawable.plugin_vf_grid_trisec4x3;
 			}
 			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
-		} else if (3 == gridType)
+			
+			grid.setScaleX(1.0f);
+			if (gridType == 6) {
+				grid.setScaleX(-1.0f);
+			}
+		} else if (7 == gridType)
 		{
-			grid.setImageDrawable(MainScreen.getAppResources()
-					.getDrawable(R.drawable.plugin_vf_grid_none_img));
+			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.plugin_vf_grid_none_img));
 		} else
 		{
 			switch (ri)
@@ -245,6 +299,6 @@ public class GridVFPlugin extends PluginViewfinder
 			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
 		}
 
-//		grid.requestLayout();
+		// grid.requestLayout();
 	}
 }
