@@ -71,6 +71,18 @@ int Super_Process
 );
 
 
+int Super_ExposureVerification
+(
+	Uint8 *yuv,
+	int sx,
+	int sy,
+	int x0,
+	int y0,
+	int w,
+	int h
+);
+
+
 #if defined __cplusplus
 }
 #endif
