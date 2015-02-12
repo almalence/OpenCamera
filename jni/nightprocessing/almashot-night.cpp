@@ -124,66 +124,9 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_plugins_processing_nigh
 	jint h
 )
 {
-	int x, y, wc, hc;
-	int clipped;
-	int nClippedCenter, nClippedEdge, nDark;
 	Uint8 *yuv = (Uint8 *)in;
 
-	nClippedCenter = nClippedEdge = nDark = 0;
-	clipped = 0;
-
-	wc = w/2;
-	hc = h/2;
-
-	// checking every fourth row for the speed reasons
-	for (y=0; y<h/2-hc/2; y+=4)
-	{
-		for (x=0; x<w; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClippedEdge;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-	}
-	for (; y<h/2+hc/2; y+=4)
-	{
-		for (x=0; x<w/2-wc/2; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClippedEdge;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-		for (; x<w/2+wc/2; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClippedCenter;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-		for (; x<w; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClippedEdge;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-	}
-	for (; y<h; y+=4)
-	{
-		for (x=0; x<w; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClippedEdge;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-	}
-
-	// tolerate up to 1% clipped pixels in the center of the image
-	// tolerate up to 5% clipped pixels at the edges of the image
-	if (nClippedCenter > wc*(hc/4)/100) clipped = 1;
-	if (nClippedEdge > 5*(w*(h/4)-wc*(hc/4))/100) clipped = 1;
-
-	// if way too much dark areas in the scene - scratch the restoration of clipped,
-	// regardless of how much of how much clipping there is in a scene
-	if (nDark > 50*w*(h/4)/100) clipped = 0;
-
-	// if lots of dark and it's ratio to clipped is also high - disregard clipping
-	if ((nDark > 20*w*(h/4)/100) && (nDark > 10*(nClippedCenter+nClippedEdge))) clipped = 0;
-
-	return clipped;
+	return Super_ExposureVerification(yuv, sx, sy, x0, y0, w, h);
 }
 
 
