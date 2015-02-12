@@ -731,24 +731,32 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		thiz.mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
 	}
 
-	public static ImageReader getPreviewYUVImageReader()
+	@TargetApi(19)
+	@Override
+	public Surface getPreviewYUVImageSurface()
 	{
-		return thiz.mImageReaderPreviewYUV;
+		return thiz.mImageReaderPreviewYUV.getSurface();
 	}
 
-	public static ImageReader getYUVImageReader()
+	@TargetApi(19)
+	@Override
+	public Surface getYUVImageSurface()
 	{
-		return thiz.mImageReaderYUV;
+		return thiz.mImageReaderYUV.getSurface();
 	}
 
-	public static ImageReader getJPEGImageReader()
+	@TargetApi(19)
+	@Override
+	public Surface getJPEGImageSurface()
 	{
-		return thiz.mImageReaderJPEG;
+		return thiz.mImageReaderJPEG.getSurface();
 	}
 
-	public static ImageReader getRAWImageReader()
+	@TargetApi(19)
+	@Override
+	public Surface getRAWImageSurface()
 	{
-		return thiz.mImageReaderRAW;
+		return thiz.mImageReaderRAW.getSurface();
 	}
 	
 	public static int getCaptureFormat()
@@ -819,6 +827,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			// thiz.surfaceHolder.setFixedSize(1280, 720);
 		}
 	}
+	
 
 	public static int getOrientation()
 	{
@@ -1029,7 +1038,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
 							thiz.imageSizeIdxPreference = newValue.toString();
-							CameraController.setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), false);
+							setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), false);
 							return true;
 						}
 					});
@@ -1323,8 +1332,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 									CameraController.isUseHALv3()).commit();
 
 					// Log.e("MainScreen",
-					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
-					CameraController.setSurfaceHolderFixedSize(1, 1);
+					if (CameraController.isUseHALv3())
+					{
+						MainScreen.setSurfaceHolderSize(1, 1);
+					}
 
 					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
@@ -1335,7 +1346,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
-						CameraController.setupCamera(null);
+						CameraController.setupCamera(null, !switchingMode);
 
 						if (glView != null)
 						{
@@ -1347,7 +1358,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							(surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 					{
 						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(surfaceHolder);
+						CameraController.setupCamera(surfaceHolder, !switchingMode);
 
 						if (glView != null)
 						{
@@ -1399,6 +1410,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// -+- -->
 	}
 
+	@Override
 	public void relaunchCamera()
 	{
 		if (CameraController.isUseHALv3() || PluginManager.getInstance().isRestart())
@@ -1551,7 +1563,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 								+ width + "x" + height);
 						if (!CameraController.isUseHALv3())
 						{
-							CameraController.setupCamera(holder);
+							CameraController.setupCamera(holder, !switchingMode);
 						} else
 						{
 							// CameraController.setupCamera(null);
@@ -1565,6 +1577,32 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			updatePreferences();
 		}
+	}
+	
+	public void setCameraImageSizeIndex(int captureIndex, boolean init)
+	{
+		CameraController.setCameraImageSizeIndex(captureIndex);
+		if(init)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+			prefs.edit().putString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
+					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
+		}
+	}
+	
+	@Override
+	public void setSpecialImageSizeIndexPref(int iIndex)
+	{
+		SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
+		prefEditor.putString(MainScreen.sImageSizeMultishotBackPref, String.valueOf(iIndex));
+		prefEditor.commit();
+	}
+	
+	@Override
+	public String  getSpecialImageSizeIndexPref()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		return prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
 	}
 
 	public static int selectImageDimensionMultishot()
@@ -1662,7 +1700,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			} else
 			{
 				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
-				CameraController.setupCamera(holder);
+				CameraController.setupCamera(holder, !switchingMode);
 			}
 		}
 	}
@@ -1679,6 +1717,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public void configureCamera(boolean createGUI)
 	{
 		Log.d("MainScreen", "configureCamera()");
+		switchingMode = false;
 
 		CameraController.updateCameraFeatures();
 
@@ -1847,7 +1886,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		Log.e("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
 
 		// surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
-		CameraController.setSurfaceHolderFixedSize(surfaceWidth, surfaceHeight);
+		setSurfaceHolderSize(surfaceWidth, surfaceHeight);
 		// surfaceHolder.setFixedSize(1280, 960);
 		// mCameraSurface = surfaceHolder.getSurface();
 		// surfaceList.add(mCameraSurface); // surface for viewfinder preview
@@ -2016,21 +2055,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	// SURFACES (preview, image readers)
+	@Override
 	public Surface getCameraSurface()
 	{
 		return mCameraSurface;
 	}
 
-	@TargetApi(21)
-	public Surface getPreviewYUVSurface()
-	{
-		return mImageReaderPreviewYUV.getSurface();
-	}
-	
 	//Probably used only by Panorama plugin. Added to avoid non direct interface (message/handler)
 	public static void takePicture()
 	{
 		PluginManager.getInstance().takePicture();
+	}
+	
+	@Override
+	public void captureFailed()
+	{
+		MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
+		MainScreen.getInstance().muteShutter(false);
 	}
 
 	@TargetApi(14)
@@ -2112,12 +2153,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	// all events translated to PluginManager
 	// Description<<
 
-	public static void setAutoFocusLock(boolean locked)
+	@Override
+	public void setAutoFocusLock(boolean locked)
 	{
 		mAFLocked = locked;
 	}
 
-	public static boolean getAutoFocusLock()
+	@Override
+	public boolean getAutoFocusLock()
 	{
 		return mAFLocked;
 	}
@@ -2359,6 +2402,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			glView = null;
 		}
 	}
+	
+	@Override
+	public void showCaptureIndication(boolean playShutter)
+	{
+		// play tick sound
+		MainScreen.getGUIManager().showCaptureIndication();
+		if(playShutter)
+			MainScreen.getInstance().playShutter();
+	}
 
 	public void playShutter(int sound)
 	{
@@ -2427,6 +2479,44 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	// {
 	// thiz.saveImageHeight = setSaveImageHeight;
 	// }
+	
+	@Override
+	public void setExpoPreviewPref(boolean previewMode)
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		Editor prefsEditor = prefs.edit();
+		prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, previewMode);
+		prefsEditor.commit();
+	}
+	
+	@Override
+	public boolean getExpoPreviewPref()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
+        {
+        	return prefs.getBoolean(MainScreen.sExpoPreviewModePref, true);
+        }
+        else
+        	return true;
+	}
+	
+	
+	@Override
+	public void setCameraPreviewSize(int iWidth, int iHeight)
+	{
+		if(CameraController.isUseHALv3())
+		{
+			setSurfaceHolderSize(iWidth, iHeight);
+			setPreviewWidth(iWidth);
+			setPreviewHeight(iHeight);
+		}
+		
+		CameraController.setCameraPreviewSize(new CameraController.Size(iWidth, iHeight));		
+		
+//		previewWidth = iWidth;
+//		previewHeight = iHeight;
+	}
 
 	public static int getPreviewWidth()
 	{
@@ -3736,6 +3826,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz;
 	}
 	
+	@Override
+	public void stopApplication()
+	{
+		finish();
+	}
+	
 	
 	//Set/Get camera parameters preference
 	
@@ -3826,5 +3922,53 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 		
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, defaultMode);
-	}	
+	}
+	
+	//FLASH MODE PREFERENCE
+	@Override
+	public void setFlashModePref(int iFlashMode)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+		.putInt(MainScreen.sFlashModePref, iFlashMode).commit();
+	}
+	
+	@Override
+	public int  getFlashModePref(int defaultMode)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sFlashModePref, defaultMode);
+	}
+	
+	
+	//ISO MODE PREFERENCE
+	@Override
+	public void setISOModePref(int iISOMode)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(MainScreen.sISOPref, iISOMode).commit();
+	}
+	
+	@Override
+	public int  getISOModePref(int defaultMode)
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sISOPref, defaultMode);
+	}
+	
+	
+	@Override
+	public int getAntibandingModePref()
+	{
+		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(MainScreen.sAntibandingPref,
+				"3"));
+	}
+	
+	@Override
+	public boolean getAELockPref()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(MainScreen.sAELockPref, false);
+	}
+	
+	@Override
+	public boolean getAWBLockPref()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(MainScreen.sAWBLockPref, false);
+	}
 }

@@ -59,14 +59,12 @@ import com.almalence.util.ImageConversion;
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationInterface;
 import com.almalence.opencam_plus.CameraParameters;
-import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginManagerInterface;
 import com.almalence.opencam_plus.R;
 +++ --> */
@@ -83,6 +81,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int							YUV_RAW							= 0x22;
 	public static final int							YUV								= 0x23;
 	public static final int							JPEG							= 0x100;
+	
+	private static int								captureFormat					= JPEG;
 
 	protected static final long						MPIX_1080						= 1920 * 1080;
 
@@ -237,6 +237,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int								CapIdx;
 	
 	private static Size								imageSize;
+	
+	private static int								iPreviewWidth;
+	private static int								iPreviewHeight;
 
 	public static final int							MIN_MPIX_SUPPORTED				= 1280 * 720;
 
@@ -673,13 +676,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (pluginManager.isPreviewDependentMode())
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			if (true == prefs.contains(MainScreen.sExpoPreviewModePref)) 
-	        {
-	        	previewMode = prefs.getBoolean(MainScreen.sExpoPreviewModePref, true);
-	        }
-	        else
-	        	previewMode = true;
+			previewMode = appInterface.getExpoPreviewPref();
 	        
 			evLatency=0;
 	        previewWorking=false;
@@ -756,6 +753,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		// Does nothing yet
 	}
+	
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -923,22 +921,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return 0;
 	}
 
-	public static void setupCamera(SurfaceHolder holder)
+	public static void setupCamera(SurfaceHolder holder, boolean openCamera)
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || MainScreen.getInstance().getSwitchingMode())
+			if (camera == null || !openCamera)
 			{
 				try
 				{
-					if (!MainScreen.getInstance().getSwitchingMode())
+					if (openCamera)
 					{
 						if (Camera.getNumberOfCameras() > 0)
 							camera = Camera.open(CameraIndex);
 						else
 							camera = Camera.open();
 					}
-					MainScreen.getInstance().switchingMode(false);
 
 					Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 					Camera.getCameraInfo(CameraIndex, cameraInfo);
@@ -1256,8 +1253,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					CameraController.SupportedPreviewSizesList.get(1).getHeight());
 		}
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		String prefIdx = prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
+		String prefIdx = appInterface.getSpecialImageSizeIndexPref();
 
 		if (prefIdx.equals("-1"))
 		{
@@ -1278,11 +1274,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 			if (CameraController.SupportedPreviewSizesList != null
 					&& CameraController.SupportedPreviewSizesList.size() > 0 && maxMpx >= MPIX_1080)
-			{
-				SharedPreferences.Editor prefEditor = prefs.edit();
-				prefEditor.putString(MainScreen.sImageSizeMultishotBackPref, String.valueOf(maxFastIdx));
-				prefEditor.commit();
-			}
+				appInterface.setSpecialImageSizeIndexPref(maxFastIdx);
 		}
 
 		return;
@@ -1377,12 +1369,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void setCameraPreviewSize(CameraController.Size sz)
 	{
+		iPreviewWidth = sz.mWidth;
+		iPreviewHeight = sz.mHeight;
+		
 		if (!CameraController.isHALv3)
 		{
 			Camera.Parameters params = getCameraParameters();
 			if (params != null)
 			{
-				params.setPreviewSize(sz.mWidth, sz.mHeight);
+				params.setPreviewSize(iPreviewWidth, iPreviewHeight);
 				setCameraParameters(params);
 			}
 		} else
@@ -1391,13 +1386,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 	
-	public static void setSurfaceHolderFixedSize(int width, int height)
-	{
-		if (CameraController.isHALv3)
-		{
-			MainScreen.setSurfaceHolderSize(width, height);
-		}
-	}
 
 	public static List<CameraController.Size> getSupportedPictureSizes()
 	{
@@ -1581,7 +1569,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			if (Build.MODEL.equals("Nexus 4"))
 			{
-				int initValue = MainScreen.getInstance().getEVPref();
+				int initValue = appInterface.getEVPref();
 				CameraController.setCameraExposureCompensation(initValue);
 			}
 		}
@@ -2213,15 +2201,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return CapIdx;
 	}
 
-	public static void setCameraImageSizeIndex(int captureIndex, boolean init)
+	public static void setCameraImageSizeIndex(int captureIndex)
 	{
 		CapIdx = captureIndex;
-		if(init)
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			prefs.edit().putString(CameraIndex == 0 ? MainScreen.sImageSizeRearPref
-					: MainScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
-		}
 	}
 	
 	public static void setCameraImageSize(Size imgSize)
@@ -2344,7 +2326,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sFlashModePref, -1);
+			return appInterface.getFlashModePref(-1);
 
 		return -1;
 	}
@@ -2370,7 +2352,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sISOPref, -1);
+			return appInterface.getISOModePref(-1);
 
 		return -1;
 	}
@@ -2437,7 +2419,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						String focusmode = CameraController.mode_focus.get(mode);
 						params.setFocusMode(focusmode);
 						setCameraParameters(params);
-						MainScreen.setAutoFocusLock(false);
+						appInterface.setAutoFocusLock(false);
 					}
 				}
 				catch(Exception e)
@@ -2653,7 +2635,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
 						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-				&& !MainScreen.getAutoFocusLock())
+				&& !appInterface.getAutoFocusLock())
 			return true;
 		else
 			return false;
@@ -2928,8 +2910,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.startCameraPreview();
 		} catch (RuntimeException e)
 		{
-			MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-			MainScreen.getInstance().muteShutter(false);
+			appInterface.captureFailed();
 			CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 			return;
 		}
@@ -2953,10 +2934,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					{
 						Log.d(TAG, "previewMode DISABLED!");
 						previewMode=false;
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-						Editor prefsEditor = prefs.edit();
-						prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
-						prefsEditor.commit();
+						appInterface.setExpoPreviewPref(previewMode);
 						evLatency=0;
 						CameraController.takeImage();
 					}
@@ -3174,16 +3152,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			int imageWidth = imageSize.getWidth();
 			int imageHeight = imageSize.getHeight();
-			int previewWidth = MainScreen.getPreviewWidth();
-			int previewHeight = MainScreen.getPreviewHeight();
-
+			
 			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			if(playShutterSound)
-				MainScreen.getInstance().playShutter();
+			appInterface.showCaptureIndication(playShutterSound);
 
 			lastCaptureStarted = SystemClock.uptimeMillis();
-			if (imageWidth == previewWidth && imageHeight == previewHeight &&
+			if (imageWidth == iPreviewWidth && imageHeight == iPreviewHeight &&
 					((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
 				takePreviewFrame = true; // Temporary make capture by
 											// preview frames only for YUV

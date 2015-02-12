@@ -359,7 +359,7 @@ public abstract class Plugin
 			}
 		}
 
-		CameraController.setCameraImageSizeIndex(CaptureIdx, true);
+		MainScreen.getInstance().setCameraImageSizeIndex(CaptureIdx, true);
 		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
 	}
 
@@ -369,9 +369,9 @@ public abstract class Plugin
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
-		CameraController.setCameraPreviewSize(os);
-		MainScreen.setPreviewWidth(os.getWidth());
-		MainScreen.setPreviewHeight(os.getHeight());
+		MainScreen.getInstance().setCameraPreviewSize(os.getWidth(), os.getHeight());
+//		MainScreen.setPreviewWidth(os.getWidth());
+//		MainScreen.setPreviewHeight(os.getHeight());
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)

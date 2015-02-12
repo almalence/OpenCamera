@@ -504,7 +504,7 @@ public class PreshotCapturePlugin extends PluginCapture
 							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 							|| focusMode == CameraParameters.AF_MODE_INFINITY
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-					&& !MainScreen.getAutoFocusLock())
+					&& !MainScreen.getInstance().getAutoFocusLock())
 			{
 				counter = 0;
 				aboutToTakePicture = true;

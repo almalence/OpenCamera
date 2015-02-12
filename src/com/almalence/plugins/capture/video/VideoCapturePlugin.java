@@ -1085,9 +1085,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 		Log.i(TAG, String.format("Preview size: %dx%d", sz.getWidth(), sz.getHeight()));
 
-		CameraController.setCameraPreviewSize(sz);
-		MainScreen.setPreviewWidth(sz.getWidth());
-		MainScreen.setPreviewHeight(sz.getHeight());
+		MainScreen.getInstance().setCameraPreviewSize(sz.getWidth(), sz.getHeight());
+//		MainScreen.setPreviewWidth(sz.getWidth());
+//		MainScreen.setPreviewHeight(sz.getHeight());
 	}
 
 	// Get optimal supported preview size with aspect ration 16:9 or 4:3

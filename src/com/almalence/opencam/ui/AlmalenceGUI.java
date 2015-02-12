@@ -1896,7 +1896,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								afMode = supported_focus[0];
 
 							CameraController.setCameraFocusMode(afMode);
-							MainScreen.setAutoFocusLock(true);
+							MainScreen.getInstance().setAutoFocusLock(true);
 
 							MainScreen.getInstance().setFocusModePref(afMode);
 
@@ -4514,7 +4514,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		MainScreen.setAutoFocusLock(false);
+		MainScreen.getInstance().setAutoFocusLock(false);
 	}
 
 	private void setFlashMode(int newMode)

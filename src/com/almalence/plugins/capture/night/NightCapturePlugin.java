@@ -353,9 +353,9 @@ public class NightCapturePlugin extends PluginCapture
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
-		CameraController.setCameraPreviewSize(os);
-		MainScreen.setPreviewWidth(os.getWidth());
-		MainScreen.setPreviewHeight(os.getHeight());
+		MainScreen.getInstance().setCameraPreviewSize(os.getWidth(), os.getHeight());
+//		MainScreen.setPreviewWidth(os.getWidth());
+//		MainScreen.setPreviewHeight(os.getHeight());
 	}
 
 	@Override

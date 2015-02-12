@@ -25,6 +25,7 @@ package com.almalence.opencam;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.ImageReader;
+import android.view.Surface;
 
 //-+- -->
 
@@ -110,8 +111,35 @@ public interface ApplicationInterface
 	
 	public Activity getMainActivity();
 	
+	public void stopApplication();
+	
+	public void relaunchCamera();
+	
+	public void captureFailed();
+	
 	@TargetApi(21)
 	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
+	
+	@TargetApi(19)
+	public Surface getPreviewYUVImageSurface();
+	
+	@TargetApi(19)
+	public Surface getYUVImageSurface();
+
+	@TargetApi(19)
+	public Surface getJPEGImageSurface();
+
+	@TargetApi(19)
+	public Surface getRAWImageSurface();
+	
+	//Surface of camera viewfinder
+	public Surface getCameraSurface();
+	
+	public void setCameraPreviewSize(int width, int height);
+	
+	public void setExpoPreviewPref(boolean previewMode);
+	public boolean getExpoPreviewPref();
+	
 	
 	//Set/Get camera parameters preference
 	public void setEVPref(int iEv);
@@ -125,4 +153,24 @@ public interface ApplicationInterface
 	
 	public void setFocusModePref(int iFocusMode);
 	public int  getFocusModePref(int defaultMode);
+	
+	public void setFlashModePref(int iFlashMode);
+	public int  getFlashModePref(int defaultMode);
+	
+	public void setISOModePref(int iISOMode);
+	public int  getISOModePref(int defaultMode);
+	
+	public int getAntibandingModePref();
+	
+	public boolean getAELockPref();
+	public boolean getAWBLockPref();
+	
+	public void    setSpecialImageSizeIndexPref(int iIndex);
+	public String  getSpecialImageSizeIndexPref();
+	
+	
+	public void showCaptureIndication(boolean playShutter);
+	
+	public void setAutoFocusLock(boolean locked);
+	public boolean getAutoFocusLock();
 }

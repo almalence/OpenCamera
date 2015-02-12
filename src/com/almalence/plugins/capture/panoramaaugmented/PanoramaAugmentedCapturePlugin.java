@@ -665,9 +665,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.previewWidth = previewSize.getWidth();
 		this.previewHeight = previewSize.getHeight();
 
-		CameraController.setCameraPreviewSize(previewSize);
-		MainScreen.setPreviewWidth(previewSize.getWidth());
-		MainScreen.setPreviewHeight(previewSize.getHeight());
+		MainScreen.getInstance().setCameraPreviewSize(previewSize.getWidth(), previewSize.getHeight());;
+//		MainScreen.setPreviewWidth(previewSize.getWidth());
+//		MainScreen.setPreviewHeight(previewSize.getHeight());
 	}
 
 	@Override
@@ -809,7 +809,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
 				&& !(fm == CameraParameters.AF_MODE_INFINITY || fm == CameraParameters.AF_MODE_FIXED
 						|| fm == CameraParameters.AF_MODE_EDOF || fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-				&& !MainScreen.getAutoFocusLock())
+				&& !MainScreen.getInstance().getAutoFocusLock())
 		{
 			// aboutToTakePicture = true;
 			this.focused = false;

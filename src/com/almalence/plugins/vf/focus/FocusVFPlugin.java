@@ -337,7 +337,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			if (mState == STATE_IDLE
 					&& !(preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& !MainScreen.getAutoFocusLock())
+					&& !MainScreen.getInstance().getAutoFocusLock())
 			{
 				if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 						|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
