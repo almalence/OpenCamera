@@ -10,100 +10,83 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray" />
 
-    <TextView
-        android:id="@+id/about_info"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="0dp"
-        android:gravity="center"
-        android:text="@string/Pref_About"
-        android:textSize="18sp" >
-    </TextView>
+        android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/about_fb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="8" >
-
-        <ImageView
-            android:id="@+id/about_fb_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:src="@drawable/fb_logo" />
-
-        <TextView
-            android:id="@+id/about_fb_link"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="7"
-            android:autoLink="web"
-            android:gravity="center"
-            android:text="@string/aboutFbLink"
-            android:textSize="18sp" >
-        </TextView>
-    </LinearLayout>
+            android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/about_gplus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="8" >
+            <TextView
+                android:id="@+id/about_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/Pref_About"
+                android:textSize="18sp" >
+            </TextView>
 
-        <ImageView
-            android:id="@+id/about_gplus_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:src="@drawable/g_plus_logo" />
+            <ImageView
+                android:id="@+id/about_fb_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:background="#FFFFFF"
+                android:padding="10dp"
+                android:src="@drawable/fb_find_us" />
 
-        <TextView
-            android:id="@+id/about_gplus_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="7"
-            android:autoLink="web"
-            android:gravity="center"
-            android:text="@string/aboutGplusLink"
-            android:textSize="18sp" >
-        </TextView>
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/about_gplus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
 
-    
-    <LinearLayout
-        android:id="@+id/about_support"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="8" >
+                <TextView
+                    android:id="@+id/about_gplus_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:autoLink="web"
+                    android:gravity="center"
+                    android:text="@string/aboutGplusLink"
+                    android:textSize="18sp" >
+                </TextView>
 
-        <ImageView
-            android:id="@+id/about_support_logo"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_weight="1"
-            android:src="@drawable/icon" />
+                <ImageView
+                    android:id="@+id/about_gplus_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/g_plus" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/about_support_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="7"
-            android:autoLink="email"
-            android:gravity="center"
-            android:text="@string/aboutSupportLink"
-            android:textSize="18sp" >
-        </TextView>
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/about_youtube_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/you_tube_logo" />
+
+            <TextView
+                android:id="@+id/about_support_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_weight="7"
+                android:autoLink="email"
+                android:text="@string/aboutSupportLink"
+                android:textSize="18sp" >
+            </TextView>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

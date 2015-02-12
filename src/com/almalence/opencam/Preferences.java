@@ -28,15 +28,17 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 /***
  * Preference activity class - manages preferences
@@ -126,11 +128,46 @@ public class Preferences extends PreferenceActivity
 		if (header.id == R.id.about_header)
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			
+			View view = getLayoutInflater().inflate(R.layout.about_dialog, null);
 			builder.setTitle(R.string.Pref_About_Title)
-					.setView(R.layout.about_dialog)
+					.setView(view)
 					.setCancelable(true);
 			AlertDialog alert = builder.create();
 			alert.show();
+			
+			ImageView img = (ImageView) alert.findViewById(R.id.about_fb_logo);
+			img.setOnClickListener(new View.OnClickListener(){
+			    public void onClick(View v){
+			        Intent intent = new Intent();
+			        intent.setAction(Intent.ACTION_VIEW);
+			        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			        intent.setData(Uri.parse("https://www.facebook.com/abettercam"));
+			        startActivity(intent);
+			    }
+			});
+			
+			img = (ImageView) alert.findViewById(R.id.about_gplus_logo);
+			img.setOnClickListener(new View.OnClickListener(){
+			    public void onClick(View v){
+			        Intent intent = new Intent();
+			        intent.setAction(Intent.ACTION_VIEW);
+			        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			        intent.setData(Uri.parse("https://plus.google.com/112729683723267883775"));
+			        startActivity(intent);
+			    }
+			});
+			
+			img = (ImageView) alert.findViewById(R.id.about_youtube_logo);
+			img.setOnClickListener(new View.OnClickListener(){
+			    public void onClick(View v){
+			        Intent intent = new Intent();
+			        intent.setAction(Intent.ACTION_VIEW);
+			        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			        intent.setData(Uri.parse("http://www.youtube.com/watch?v=s6AusctWugg"));
+			        startActivity(intent);
+			    }
+			});
 		}
 	}
 }
