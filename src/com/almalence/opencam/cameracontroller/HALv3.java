@@ -1485,6 +1485,16 @@ public class HALv3
 		try
 		{
 			CreateRequests(format);
+			
+			// Nexus 5 fix flash in dark conditions and exposure set to 0.
+			int selectedEvCompensation = 0;
+			selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+			if ((stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE)
+					&& evRequested == null && selectedEvCompensation == 0) {
+				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 1);
+			}
 
 			if (checkHardwareLevel())
 			{

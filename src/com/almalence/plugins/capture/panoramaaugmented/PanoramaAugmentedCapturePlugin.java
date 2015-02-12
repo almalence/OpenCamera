@@ -42,6 +42,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -1190,6 +1191,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		// startCapture();
 	}
 
+	private Handler captureDelayHandler = new Handler();
+	private Runnable captureDelayRunnable = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, true);
+			
+		}
+	};
 	@Override
 	public void takePicture()
 	{
@@ -1208,7 +1219,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.coordsRecorded = false;
 		
 		// Log.d(TAG, "Perform CAPTURE Panorama");
-		CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, true);
+		captureDelayHandler.postDelayed(captureDelayRunnable, 500);
 	}
 
 	private void lockAEWB()
