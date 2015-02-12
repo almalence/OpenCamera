@@ -71,20 +71,6 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			initSummary(getPreferenceScreen().getPreference(i));
 		}
 
-		Preference aboutPref = (Preference) findPreference("about");
-		if (aboutPref != null)
-			aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
-			{
-				public boolean onPreferenceClick(Preference preference)
-				{
-					Toast.makeText(MainScreen.getInstance(),
-							MainScreen.getAppResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
-							.show();
-
-					return true;
-				}
-			});
-
 		CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
 		if (helpPref != null)
 			helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
