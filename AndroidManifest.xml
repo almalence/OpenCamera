@@ -4,14 +4,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
-      android:versionCode="70"
+      android:versionCode="71"
       android:versionName="3.31">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="90"
+      android:versionCode="91"
       android:versionName="3.31">
 <!--  -+- -->
 
