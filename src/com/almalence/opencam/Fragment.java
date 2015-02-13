@@ -25,10 +25,19 @@ package com.almalence.opencam;
 //-+- -->
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -40,6 +49,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -52,7 +62,7 @@ import android.widget.Toast;
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
 	public static PreferenceFragment	thiz;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -71,6 +81,19 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			initSummary(getPreferenceScreen().getPreference(i));
 		}
 
+		Preference cameraParameters = findPreference("camera_parameters");
+		if (cameraParameters != null) {
+			cameraParameters.setOnPreferenceClickListener(new OnPreferenceClickListener()
+			{
+				@Override
+				public boolean onPreferenceClick(Preference preference)
+				{
+					showCameraParameters();
+					return true;
+				}
+			});
+		}
+		
 		CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
 		if (helpPref != null)
 			helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
@@ -352,5 +375,202 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				p.setSummary(editTextPref.getText());
 			}
 		}
+	}
+	
+	private void showCameraParameters()
+	{
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+		alertDialog.setTitle(R.string.Pref_CameraParameters_Title);
+		final StringBuilder about_string = new StringBuilder();
+		String version = "UNKNOWN_VERSION";
+		int version_code = -1;
+		try
+		{
+			PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+			version = pInfo.versionName;
+			version_code = pInfo.versionCode;
+		} catch (NameNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		about_string.append("\nAndroid API version: ");
+		about_string.append(Build.VERSION.SDK_INT);
+		about_string.append("\nDevice manufacturer: ");
+		about_string.append(Build.MANUFACTURER);
+		about_string.append("\nDevice model: ");
+		about_string.append(Build.MODEL);
+		about_string.append("\nDevice code-name: ");
+		about_string.append(Build.HARDWARE);
+		about_string.append("\nDevice variant: ");
+		about_string.append(Build.DEVICE);
+		{
+			ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
+			about_string.append("\nStandard max heap (MB): ");
+			about_string.append(activityManager.getMemoryClass());
+			about_string.append("\nLarge max heap (MB): ");
+			about_string.append(activityManager.getLargeMemoryClass());
+		}
+		{
+			Point display_size = new Point();
+			Display display = getActivity().getWindowManager().getDefaultDisplay();
+			display.getSize(display_size);
+			about_string.append("\nDisplay size: ");
+			about_string.append(display_size.x);
+			about_string.append("x");
+			about_string.append(display_size.y);
+		}
+
+		if (MainScreen.getInstance().preview_sizes != null)
+		{
+			about_string.append("\nPreview resolutions: ");
+			for (int i = 0; i < MainScreen.getInstance().preview_sizes.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().preview_sizes.get(i).getWidth());
+				about_string.append("x");
+				about_string.append(MainScreen.getInstance().preview_sizes.get(i).getHeight());
+			}
+		}
+
+		about_string.append("\nCurrent camera ID: ");
+        about_string.append(MainScreen.getInstance().cameraId);
+		
+		if (MainScreen.getInstance().picture_sizes != null)
+		{
+			about_string.append("\nPhoto resolutions: ");
+			for (int i = 0; i < MainScreen.getInstance().picture_sizes.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().picture_sizes.get(i).getWidth());
+				about_string.append("x");
+				about_string.append(MainScreen.getInstance().picture_sizes.get(i).getHeight());
+			}
+		}
+
+		if (MainScreen.getInstance().video_sizes != null)
+		{
+			about_string.append("\nVideo resolutions: ");
+			for (int i = 0; i < MainScreen.getInstance().video_sizes.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().video_sizes.get(i).getWidth());
+				about_string.append("x");
+				about_string.append(MainScreen.getInstance().video_sizes.get(i).getHeight());
+			}
+		}
+
+		about_string.append("\nVideo stabilization: ");
+		about_string.append(MainScreen.getInstance().supports_video_stabilization ? "true" : "false");
+
+		about_string.append("\nFlash modes: ");
+		if (MainScreen.getInstance().flash_values != null && MainScreen.getInstance().flash_values.size() > 0)
+		{
+			for (int i = 0; i < MainScreen.getInstance().flash_values.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().flash_values.get(i));
+			}
+		} else
+		{
+			about_string.append("None");
+		}
+
+		about_string.append("\nFocus modes: ");
+		if (MainScreen.getInstance().focus_values != null && MainScreen.getInstance().focus_values.size() > 0)
+		{
+			for (int i = 0; i < MainScreen.getInstance().focus_values.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().focus_values.get(i));
+			}
+		} else
+		{
+			about_string.append("None");
+		}
+
+		about_string.append("\nScene modes: ");
+		if (MainScreen.getInstance().scene_modes_values != null && MainScreen.getInstance().scene_modes_values.size() > 0)
+		{
+			for (int i = 0; i < MainScreen.getInstance().scene_modes_values.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().scene_modes_values.get(i));
+			}
+		} else
+		{
+			about_string.append("None");
+		}
+
+		about_string.append("\nWhite balances: ");
+		if (MainScreen.getInstance().white_balances_values != null && MainScreen.getInstance().white_balances_values.size() > 0)
+		{
+			for (int i = 0; i < MainScreen.getInstance().white_balances_values.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().white_balances_values.get(i));
+			}
+		} else
+		{
+			about_string.append("None");
+		}
+
+		about_string.append("\nISOs: ");
+		if (MainScreen.getInstance().isos != null && MainScreen.getInstance().isos.size() > 0)
+		{
+			for (int i = 0; i < MainScreen.getInstance().isos.size(); i++)
+			{
+				if (i > 0)
+				{
+					about_string.append(", ");
+				}
+				about_string.append(MainScreen.getInstance().isos.get(i));
+			}
+		} else
+		{
+			about_string.append("None");
+		}
+		
+		String save_location = MainScreen.getSaveToPath();
+		about_string.append("\nSave Location: " + save_location);
+
+		if (MainScreen.getInstance().flattenParamteters != null && !MainScreen.getInstance().flattenParamteters.equals("")) {
+			about_string.append("\nFULL INFO:\n");
+			about_string.append(MainScreen.getInstance().flattenParamteters);
+		}
+		
+		alertDialog.setMessage(about_string);
+		alertDialog.setPositiveButton(R.string.Pref_CameraParameters_Ok, null);
+		alertDialog.setNegativeButton(R.string.Pref_CameraParameters_CopyToClipboard, new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int id)
+			{
+				ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(
+						Activity.CLIPBOARD_SERVICE);
+				ClipData clip = ClipData.newPlainText("OpenCamera About", about_string);
+				clipboard.setPrimaryClip(clip);
+			}
+		});
+		alertDialog.show();
 	}
 }

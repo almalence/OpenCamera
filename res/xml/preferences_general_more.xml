@@ -71,4 +71,9 @@
         android:entryValues="@array/antibandingValuesCommon"
         android:key="@string/Preference_AntibandingValue"
         android:title="@string/Pref_Common_Antibanding_Title" />
+    
+    <Preference
+        android:id="@+id/camera_parameters"
+        android:key="camera_parameters"
+        android:title="@string/Pref_CameraParameters_Title" />
 </PreferenceScreen>

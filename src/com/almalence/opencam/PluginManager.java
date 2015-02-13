@@ -740,8 +740,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
-		Bundle bundle = MainScreen.getCameraParametersBundle();
-		settingsActivity.putExtras(bundle);
+		MainScreen.getInstance().getCameraParametersBundle();
 		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 
