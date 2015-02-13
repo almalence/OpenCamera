@@ -2592,7 +2592,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Map<String, String> storeKeys = new HashMap<String, String>();
 			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
-			mHelper = new OpenIabHelper(this, storeKeys);
+//			mHelper = new OpenIabHelper(this, storeKeys);
+//			OpenIabHelper.Options options = new OpenIabHelper.Options.Builder()
+//			.setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
+//            //set params
+//            .build();
+			
+			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
+            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
+            .addStoreKeys(storeKeys);
+			mHelper = new OpenIabHelper(this, builder.build());
 
 			OpenIabHelper.enableDebugLogging(true);
 
@@ -3055,19 +3065,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		Log.v("Main billing", "onActivityResult(" + requestCode + "," + resultCode + "," + data);
-
-		// Pass on the activity result to the helper for handling
-		if (!mHelper.handleActivityResult(requestCode, resultCode, data))
-		{
-			// not handled, so handle it ourselves (here's where you'd
-			// perform any handling of activity results not related to in-app
-			// billing...
-			super.onActivityResult(requestCode, resultCode, data);
-		} else
-		{
-			Log.v("Main billing", "onActivityResult handled by IABUtil.");
-		}
+//		try
+//		{
+			Log.v("Main billing", "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+	
+			// Pass on the activity result to the helper for handling
+			if (!mHelper.handleActivityResult(requestCode, resultCode, data))
+			{
+				// not handled, so handle it ourselves (here's where you'd
+				// perform any handling of activity results not related to in-app
+				// billing...
+				super.onActivityResult(requestCode, resultCode, data);
+			} else
+			{
+				Log.v("Main billing", "onActivityResult handled by IABUtil.");
+			}
+//		}
+//		catch(Exception e)
+//		{
+//			e.printStackTrace();
+//		}
 	}
 
 	public boolean	showPromoRedeemed		= false;
