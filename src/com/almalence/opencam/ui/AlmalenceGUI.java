@@ -3429,11 +3429,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 	
 	private void openMoreSettings() {
-		Bundle bundle = MainScreen.getCameraParametersBundle();
+		MainScreen.getInstance().getCameraParametersBundle();
 				
 		PluginManager.getInstance().onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
-		settingsActivity.putExtras(bundle);
 		MainScreen.getInstance().startActivity(settingsActivity);
 		((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 	}

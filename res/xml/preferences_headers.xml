@@ -38,12 +38,6 @@
         android:summary="@string/Pref_About_Summary"
         android:title="@string/Pref_About_Title">
     </header>
-    
-    <header 
-        android:id="@+id/camera_parameters_header"
-        android:key="camera_parameters"
-        android:title="@string/Pref_CameraParameters_Title">
-    </header>
 <!--  -+- -->
 <!-- +++
     <header 
@@ -76,12 +70,6 @@
         android:key="about"
         android:summary="@string/Pref_About_Summary"
         android:title="@string/Pref_About_Title">
-    </header>
-    
-    <header 
-        android:id="@+id/camera_parameters_header"
-        android:key="camera_parameters"
-        android:title="@string/Pref_CameraParameters_Title">
     </header>
 +++ -->
     
