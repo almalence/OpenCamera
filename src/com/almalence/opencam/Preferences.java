@@ -281,6 +281,9 @@ public class Preferences extends PreferenceActivity
 			}
 		}
 
+		about_string.append("\nCurrent camera ID: ");
+        about_string.append(cameraId);
+		
 		if (widths != null && heights != null)
 		{
 			about_string.append("\nPhoto resolutions: ");
