@@ -3385,7 +3385,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
 			
 			// Note 3 & LG G3 need more time to change exposure.
-			if (Build.MODEL.contains("SM-N900"))
+			if (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-N910"))
 				evLatency = 20*(isSlow?2:1);
 			else if (Build.MODEL.contains("LG-D855"))
 				evLatency = 30*(isSlow?2:1);
