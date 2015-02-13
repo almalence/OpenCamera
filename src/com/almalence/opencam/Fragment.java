@@ -88,7 +88,15 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				@Override
 				public boolean onPreferenceClick(Preference preference)
 				{
-					showCameraParameters();
+					try
+					{
+						showCameraParameters();
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+					
 					return true;
 				}
 			});
