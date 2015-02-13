@@ -74,6 +74,7 @@ import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
@@ -739,6 +740,8 @@ public class PluginManager implements PluginManagerInterface
 	{
 		onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
+		Bundle bundle = MainScreen.getCameraParametersBundle();
+		settingsActivity.putExtras(bundle);
 		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 

@@ -691,6 +691,76 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		return thiz.cameraController;
 	}
+	
+	static private void putBundleExtra(Bundle bundle, String key, List<String> values) {
+		if( values != null ) {
+			String [] values_arr = new String[values.size()];
+			int i=0;
+			for(String value: values) {
+				values_arr[i] = value;
+				i++;
+			}
+			bundle.putStringArray(key, values_arr);
+		}
+    }
+	
+	public static Bundle getCameraParametersBundle()
+	{
+		Bundle bundle = new Bundle();
+		bundle.putInt("cameraId", CameraController.getCameraIndex());
+		bundle.putBoolean("supports_video_stabilization", CameraController.getVideoStabilizationSupported());
+
+		putBundleExtra(bundle, "scene_modes", CameraController.getSupportedSceneModesNames());
+		putBundleExtra(bundle, "white_balances", CameraController.getSupportedWhiteBalanceNames());
+		putBundleExtra(bundle, "isos", CameraController.getSupportedISONames());
+
+		List<CameraController.Size> preview_sizes = CameraController.getSupportedPreviewSizes();
+		if( preview_sizes != null ) {
+			int [] widths = new int[preview_sizes.size()];
+			int [] heights = new int[preview_sizes.size()];
+			int i=0;
+			for(CameraController.Size size: preview_sizes) {
+				widths[i] = size.getWidth();
+				heights[i] = size.getHeight();
+				i++;
+			}
+			bundle.putIntArray("preview_widths", widths);
+			bundle.putIntArray("preview_heights", heights);
+		}
+		
+		List<CameraController.Size> sizes = CameraController.getSupportedPictureSizes();
+		if( sizes != null ) {
+			int [] widths = new int[sizes.size()];
+			int [] heights = new int[sizes.size()];
+			int i=0;
+			for(CameraController.Size size: sizes) {
+				widths[i] = size.getWidth();
+				heights[i] = size.getHeight();
+				i++;
+			}
+			bundle.putIntArray("resolution_widths", widths);
+			bundle.putIntArray("resolution_heights", heights);
+		}
+		
+		List<CameraController.Size> video_sizes = CameraController.getSupportedVideoSizes();
+		if( video_sizes != null ) {
+			int [] widths = new int[video_sizes.size()];
+			int [] heights = new int[video_sizes.size()];
+			int i=0;
+			for(CameraController.Size size: video_sizes) {
+				widths[i] = size.getWidth();
+				heights[i] = size.getHeight();
+				i++;
+			}
+			bundle.putIntArray("video_widths", widths);
+			bundle.putIntArray("video_heights", heights);
+		}
+		
+		putBundleExtra(bundle, "flash_values", CameraController.getSupportedFlashModesNames());
+		putBundleExtra(bundle, "focus_values", CameraController.getSupportedFocusModesNames());
+
+		return bundle;
+	}
 
 	public static GUI getGUIManager()
 	{

@@ -54,6 +54,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -3422,12 +3423,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				PluginManager.getInstance().onShowPreferences();
-				Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
-				MainScreen.getInstance().startActivity(settingsActivity);
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+				openMoreSettings();
 			}
 		});
+	}
+	
+	private void openMoreSettings() {
+		Bundle bundle = MainScreen.getCameraParametersBundle();
+				
+		PluginManager.getInstance().onShowPreferences();
+		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
+		settingsActivity.putExtras(bundle);
+		MainScreen.getInstance().startActivity(settingsActivity);
+		((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 	}
 
 	/***************************************************************************************

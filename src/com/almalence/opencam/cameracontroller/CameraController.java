@@ -257,6 +257,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
+	protected static List<CameraController.Size>	SupportedVideoSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS
 													= { " ", "4:3", "3:2", "16:9", "1:1" };
@@ -1444,6 +1445,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return pictureSizes;
 	}
 
+	public static List<CameraController.Size> getSupportedVideoSizes()
+	{
+		List<CameraController.Size> videoSizes = new ArrayList<CameraController.Size>();
+		if (!CameraController.isHALv3)
+		{
+			if (CameraController.SupportedVideoSizesList != null)
+			{
+				videoSizes = new ArrayList<CameraController.Size>(CameraController.SupportedVideoSizesList);
+			} else if (camera != null && camera.getParameters() != null)
+			{
+				List<Camera.Size> sizes = camera.getParameters().getSupportedVideoSizes();
+				for (Camera.Size sz : sizes)
+					videoSizes.add(new CameraController.Size(sz.width, sz.height));
+			} else
+			{
+				Log.d(TAG, "camera == null");
+			}
+		} else
+			videoSizes = null;
+//			HALv3.fillVideoSizeList(videoSizes);
+
+		return videoSizes;
+	}
+	
 	public static List<CameraController.Size> getResolutionsSizeList()
 	{
 		return CameraController.ResolutionsSizeList;
@@ -1945,6 +1970,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return supportedSceneModes;
 	}
+	
+	public static List<String> getSupportedSceneModesNames()
+	{
+		List<String> sceneModeNames = new ArrayList<String>();
+		for (int i : supportedSceneModes) {
+			sceneModeNames.add(mode_scene.get(i));
+		}
+		return sceneModeNames;
+	}
 
 	private static boolean getWhiteBalanceSupported()
 	{
@@ -1994,6 +2028,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedWBModes;
 	}
 
+	public static List<String> getSupportedWhiteBalanceNames() {
+		List<String> wbNames = new ArrayList<String>();
+		for (int i : supportedWBModes) {
+			wbNames.add(mode_wb.get(i));
+		}
+		return wbNames;
+	}
+	
 	private static boolean getFocusModeSupported()
 	{
 		int[] supported_focus = getSupportedFocusModesInternal();
@@ -2043,6 +2085,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedFocusModes;
 	}
 
+	public static List<String> getSupportedFocusModesNames()
+	{
+		ArrayList<String> focusModes = new ArrayList<String>();
+		int[] modes = getSupportedFocusModesInternal();
+		for (int i : modes) {
+			focusModes.add(mode_focus.get(i));
+		}
+		return focusModes;
+	}
+	
 	private static boolean getFlashModeSupported()
 	{
 		if (CameraController.isHALv3)
@@ -2109,6 +2161,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedFlashModes;
 	}
 
+	public static List<String> getSupportedFlashModesNames()
+	{
+		ArrayList<String> flashModes = new ArrayList<String>();
+		int[] modes = getSupportedFlashModesInternal();
+		for (int i : modes) {
+			flashModes.add(mode_flash.get(i));
+		}
+		return flashModes;
+	}
+	
 	private static boolean getISOSupported()
 	{
 		if (!CameraController.isHALv3)
@@ -2190,6 +2252,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static int[] getSupportedISO()
 	{
 		return supportedISOModes;
+	}
+	
+	public static List<String> getSupportedISONames() {
+		List<String> isoNames = new ArrayList<String>();
+		for (int i : supportedISOModes) {
+			isoNames.add(mode_iso.get(i));
+		}
+		return isoNames;
 	}
 
 	public static int getMaxNumMeteringAreas()

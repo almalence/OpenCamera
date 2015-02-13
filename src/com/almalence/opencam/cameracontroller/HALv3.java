@@ -24,40 +24,33 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
-import com.almalence.util.Util;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
-
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -68,17 +61,21 @@ import android.util.SizeF;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
+import com.almalence.util.Util;
+
+//<!-- -+-
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+//-+- -->
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
-//<!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.CameraParameters;
-//-+- -->
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
@@ -646,6 +643,17 @@ public class HALv3
 		}
 	}
 
+	public static void fillVideoSizeList(List<CameraController.Size> videoSizes)
+	{
+		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
+		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		Size[] cs = configMap.getOutputSizes(MediaRecorder.class);
+		for (Size sz : cs)
+		{
+			videoSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+		}
+	}
+	
 	public static CameraDevice getCamera2()
 	{
 		return HALv3.getInstance().camDevice;
