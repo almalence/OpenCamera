@@ -197,7 +197,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		{
 			// iso 100 = +0.1
 			// iso 800 = -0.05
-			fgamma += 0.1f - (log2f(iso)-6.644f)*0.15f/3.f;
+			fgamma += 0.1f - ( logf(iso) * 3.321928095f-6.644f)*0.15f/3.f;
 			if (fgamma < 0.45f) fgamma = 0.45f;
 			if (fgamma > 0.6f) fgamma = 0.6f;
 		}
