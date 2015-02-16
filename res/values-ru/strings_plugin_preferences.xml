@@ -12,5 +12,9 @@
     <string name="Pref_About_Title">О программе</string>
     <string name="Pref_About_Summary">Версия, лицензии, контакты</string>
     
+    <string name="Pref_CameraParameters_Title">Характеристики камеры</string>
+    <string name="Pref_CameraParameters_Ok">OK</string>
+    <string name="Pref_CameraParameters_CopyToClipboard">Копировать в буфер</string>
+    
     <string name="Pref_Only_Advanced">Доступны только расширенные настройки.</string>
 </resources>

@@ -4,7 +4,7 @@
     <string name="trial_finished">Free %1$s shots exhausted, please unlock</string>
     <!-- -+-  -->
     <string name="app_name">A Better Camera</string>
-    <string name="Pref_About">A Better Camera  v3.31\n(©) by Almalence Inc\n</string>
+    <string name="Pref_About">A Better Camera  v3.31\n(©) by Almalence Inc</string>
     <!--  -+- -->
     <!-- +++
     <string name="app_name">A Better Camera Unlocked</string>
@@ -72,5 +72,9 @@
     
     <string name="raterSendReview"> We care about your opinion and want to make ABC better. Send your review directly to support.</string>
     <string name="raterSend">Send</string>
+    
+    <string name="aboutFbLink">https://www.facebook.com/abettercam</string>
+    <string name="aboutGplusLink">Follow us on: </string>
+    <string name="aboutSupportLink">support@abc.almalence.com</string>
     
 </resources>
