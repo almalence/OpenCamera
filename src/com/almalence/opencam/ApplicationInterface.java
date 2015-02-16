@@ -29,6 +29,11 @@ import android.view.Surface;
 
 //-+- -->
 
+/*
+ * Application interface used by CameraController and secondary classes as HALv3
+ * to communicate with implementation of OpenCameraApplication class.
+ * Commonly provides methods related to camera functionality
+ */
 public interface ApplicationInterface
 {
 	// message codes
@@ -111,15 +116,20 @@ public interface ApplicationInterface
 	
 	public Activity getMainActivity();
 	
+	//Method to force close application (some exception or unpredictable situation)
 	public void stopApplication();
 	
+	//Used to re-initialize camera object if needed.
 	public void relaunchCamera();
 	
+	//Inform Application that current capturing is failed.
 	public void captureFailed();
 	
+	//ImageReaders is used in camera2 mode. Pass created image available listener
 	@TargetApi(21)
 	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
 	
+	//Commonly camera2 applications uses 4 types of surfaces - JPEG, YUV, RAW and Preview (YUV)
 	@TargetApi(19)
 	public Surface getPreviewYUVImageSurface();
 	
@@ -132,14 +142,17 @@ public interface ApplicationInterface
 	@TargetApi(19)
 	public Surface getRAWImageSurface();
 	
+	
 	//Surface of camera viewfinder
 	public Surface getCameraSurface();
 	
+	//Method to initialize appropriate objects and variables with size of camera's preview
 	public void setCameraPreviewSize(int width, int height);
 	
-	public void setExpoPreviewPref(boolean previewMode);
-	public boolean getExpoPreviewPref();
 	
+	//Specific prefernce to check that onPreviewFrame is working
+	public void setExpoPreviewPref(boolean previewMode);
+	public boolean getExpoPreviewPref();	
 	
 	//Set/Get camera parameters preference
 	public void setEVPref(int iEv);
@@ -165,12 +178,14 @@ public interface ApplicationInterface
 	public boolean getAELockPref();
 	public boolean getAWBLockPref();
 	
+	//Some application modes are uses separate image sizes
 	public void    setSpecialImageSizeIndexPref(int iIndex);
 	public String  getSpecialImageSizeIndexPref();
 	
-	
+	//Indicate on GUI capturing and play sound if neeeded
 	public void showCaptureIndication(boolean playShutter);
 	
+	//Auto focus lock
 	public void setAutoFocusLock(boolean locked);
 	public boolean getAutoFocusLock();
 }
