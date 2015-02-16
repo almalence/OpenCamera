@@ -981,12 +981,12 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getFocusMode();
 		if (fm != -1)
 		{
-			CameraController.cancelAutoFocus();
+//			CameraController.cancelAutoFocus();
 			if (fm != preferenceFocusMode)
 			{
 				// Log.e(TAG, "cancelAutoFocus. setFocusMode = " +
 				// preferenceFocusMode);
-				// CameraController.cancelAutoFocus();
+				CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
 		}
@@ -1270,15 +1270,15 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (arg1 == PluginManager.MSG_CONTROL_LOCKED)
 		{
 			mFocusDisabled = true;
-			cancelAutoFocus();
+//			cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED)
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();
+//			cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();
+//			cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
 			int fm = CameraController.getFocusMode();
