@@ -27,4 +27,6 @@ public interface ApplicationInterface
 {
 	public void configureCamera();
 	public void addSurfaceCallback();
+	
+	public void stopApplication();
 }

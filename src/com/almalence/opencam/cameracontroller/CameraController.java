@@ -201,7 +201,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							needRelaunch					= false;
 	public static boolean							isOldCameraOneModeLaunched		= false;
 	
-	private static boolean							isHALv3							= false;
+	private static boolean							isHALv3							= true;
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
 
@@ -624,7 +624,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
-		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
+		isHALv3 = true;
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
 			isHALv3 = false;
@@ -638,6 +638,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				isHALv3Supported = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
 						.commit();
+				Toast.makeText(mainContext, "Device doesn't support Camera2 API. A Better Camera closed", Toast.LENGTH_LONG).show();
+				appInterface.stopApplication();
+				
 			} else
 				isHALv3Supported = true;
 		} catch (Exception e)

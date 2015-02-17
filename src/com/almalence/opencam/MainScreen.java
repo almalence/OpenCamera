@@ -367,6 +367,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	String								flattenParamteters;
 
 	@Override
+	public void stopApplication()
+	{
+		this.finish();
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -1374,11 +1380,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
-					prefs.edit()
-							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-									CameraController.isUseHALv3()).commit();
+					CameraController.useHALv3(prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false));
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
