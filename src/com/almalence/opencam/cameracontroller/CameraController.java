@@ -946,7 +946,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						else
 							camera = Camera.open();
 						
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && !(Build.DEVICE.equals("grouper") && Build.MODEL.equals("Nexus 7")))
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 							setAutoFocusMoveCallback(camera);
 					}
 					MainScreen.getInstance().switchingMode(false);
@@ -1057,14 +1057,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(16)
 	protected static void setAutoFocusMoveCallback(Camera camera)
 	{
-		camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback()
+		try
 		{
-			@Override
-			public void onAutoFocusMoving(boolean start, Camera camera)
+			camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback()
 			{
-				CameraController.onAutoFocusMoving(start);
-			}
-		});		
+				@Override
+				public void onAutoFocusMoving(boolean start, Camera camera)
+				{
+					CameraController.onAutoFocusMoving(start);
+				}
+			});
+		}
+		catch(Exception e)
+		{
+			Log.e(TAG, "setAutoFocusModeCallback failed");
+		}
 	}
 
 	public static boolean isCameraCreated()
