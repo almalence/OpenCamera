@@ -661,6 +661,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				isHALv3Supported = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
 						.commit();
+				Toast.makeText(mainContext, "Device doesn't support full Camera2 API. A Better Camera closed", Toast.LENGTH_LONG).show();
+				appInterface.stopApplication();
 			}
 		}
 		
