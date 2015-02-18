@@ -1380,7 +1380,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					CameraController.useHALv3(prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false));
+					CameraController.useHALv3(prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), true));
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
