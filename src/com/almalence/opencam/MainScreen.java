@@ -1859,7 +1859,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						CameraController.startCameraPreview();
 					} catch (RuntimeException e)
 					{
-						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						Toast.makeText(MainScreen.thiz, "Unable to start preview", Toast.LENGTH_LONG).show();
 						return;
 					}
 
