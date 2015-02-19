@@ -538,10 +538,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		/**** Billing *****/
 
 		// application rating helper
-		AppRater.app_launched(this);
+		//AppRater.app_launched(this);
 		// -+- -->
 
-		AppWidgetNotifier.app_launched(this);
+		//AppWidgetNotifier.app_launched(this);
 
 		try
 		{
@@ -2261,14 +2261,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// <!-- -+-
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (AppRater.showRateDialogIfNeeded(this))
-			{
-				return true;
-			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
+//			if (AppRater.showRateDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
 		}
 		// -+- -->
 
