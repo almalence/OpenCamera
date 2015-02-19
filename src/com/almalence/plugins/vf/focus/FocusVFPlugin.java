@@ -693,7 +693,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		int previewWidth = mPreviewWidth;
 		int previewHeight = mPreviewHeight;
 		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int displayHeight = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 		int diffWidth = displayWidth - previewWidth;
+		int diffHeight = displayHeight - previewHeight;
 
 		// Initialize variables.
 		int paramsLayoutHeight = 0;
@@ -711,9 +713,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
 		int left = Util.clamp(xRaw - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
 				- diffWidth / 2);
-		int top = Util.clamp(yRaw - (focusHeight * 3 / 2) + yOffset, paramsLayoutHeight / 2, (previewHeight
-				- focusHeight + yOffset * 2)
-				- paramsLayoutHeight / 2);
+		int top = Util.clamp(yRaw - focusHeight / 2 + yOffset - diffHeight / 2, 0,
+				previewHeight - focusHeight + yOffset * 2);
 
 		p.leftMargin = left;
 		p.topMargin = top;
@@ -774,7 +775,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		int previewWidth = mPreviewWidth;
 		int previewHeight = mPreviewHeight;
 		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int displayHeight = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 		int diffWidth = displayWidth - previewWidth;
+		int diffHeight = displayHeight - previewHeight;
 
 		// Initialize variables.
 		int paramsLayoutHeight = 0;
@@ -792,9 +795,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mMeteringIndicatorRotateLayout.getLayoutParams();
 		int left = Util.clamp(xRaw - meteringWidth / 2 + xOffset, diffWidth / 2,
 				(previewWidth - meteringWidth + xOffset * 2) - diffWidth / 2);
-		int top = Util.clamp(yRaw - (meteringHeight * 3 / 2) + yOffset, paramsLayoutHeight / 2, (previewHeight
-				- meteringHeight + yOffset * 2)
-				- paramsLayoutHeight / 2);
+		int top = Util.clamp(yRaw - meteringHeight / 2 + yOffset - diffHeight / 2, 0,
+				previewHeight - meteringHeight + yOffset * 2);		
+		
+		Log.e("TAG", "diffHeight = " + diffHeight);
+		Log.e("TAG", "yOffset = " + yOffset);
 
 		p.leftMargin = left;
 		p.topMargin = top;
