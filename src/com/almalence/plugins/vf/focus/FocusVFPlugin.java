@@ -798,9 +798,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		int top = Util.clamp(yRaw - meteringHeight / 2 + yOffset - diffHeight / 2, 0,
 				previewHeight - meteringHeight + yOffset * 2);		
 		
-		Log.e("TAG", "diffHeight = " + diffHeight);
-		Log.e("TAG", "yOffset = " + yOffset);
-
 		p.leftMargin = left;
 		p.topMargin = top;
 
