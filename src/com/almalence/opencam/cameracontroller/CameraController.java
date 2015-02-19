@@ -636,8 +636,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-						.commit();
+//				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
+//						.commit();
 				Toast.makeText(mainContext, "Device doesn't support Camera2 API. A Better Camera closed", Toast.LENGTH_LONG).show();
 				appInterface.stopApplication();
 				
@@ -648,8 +648,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			e.printStackTrace();
 			isHALv3 = false;
 			isHALv3Supported = false;
-			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-					.commit();
+//			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
+//					.commit();
 		}
 
 		if (CameraController.isHALv3Supported)
@@ -659,13 +659,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
-						.commit();
+//				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false)
+//						.commit();
 				Toast.makeText(mainContext, "Device doesn't support full Camera2 API. A Better Camera closed", Toast.LENGTH_LONG).show();
 				appInterface.stopApplication();
 			}
 		}
-		
 		
 	}
 
@@ -758,11 +757,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void onStop()
 	{
-		if(needRelaunch)
-		{
-			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit();
-			prefEditor.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
-		}
+//		if(needRelaunch)
+//		{
+//			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit();
+//			prefEditor.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
+//		}
 	}
 
 	public static void onDestroy()

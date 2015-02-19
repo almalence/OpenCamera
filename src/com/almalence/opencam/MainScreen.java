@@ -1153,42 +1153,42 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
-		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
-				R.string.Preference_UseHALv3Key));
+//		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
+//				R.string.Preference_UseHALv3Key));
 		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 
-		if (cp != null)
-		{
-			if (!CameraController.isHALv3Supported())
-				cp.setEnabled(false);
-			else
-				cp.setEnabled(true);
-
-			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-			{
-				public boolean onPreferenceChange(Preference preference, Object useCamera2)
-				{
-					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-							.putBoolean(MainScreen.sInitModeListPref, true).commit();
-
-					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
-					if (new_value)
-					{
-						if (fp != null && CameraController.isRAWCaptureSupported())
-							fp.setEnabled(true);
-						else
-							fp.setEnabled(false);
-					} else if (fp != null)
-					{
-						PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-								.putBoolean(MainScreen.sCaptureRAWPref, false).commit();
-						fp.setEnabled(false);
-					}
-
-					return true;
-				}
-			});
-		}
+//		if (cp != null)
+//		{
+//			if (!CameraController.isHALv3Supported())
+//				cp.setEnabled(false);
+//			else
+//				cp.setEnabled(true);
+//
+//			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+//			{
+//				public boolean onPreferenceChange(Preference preference, Object useCamera2)
+//				{
+//					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+//							.putBoolean(MainScreen.sInitModeListPref, true).commit();
+//
+//					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
+//					if (new_value)
+//					{
+//						if (fp != null && CameraController.isRAWCaptureSupported())
+//							fp.setEnabled(true);
+//						else
+//							fp.setEnabled(false);
+//					} else if (fp != null)
+//					{
+//						PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+//								.putBoolean(MainScreen.sCaptureRAWPref, false).commit();
+//						fp.setEnabled(false);
+//					}
+//
+//					return true;
+//				}
+//			});
+//		}
 
 		final PreferenceFragment mPref = prefActivity;
 
@@ -1380,7 +1380,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					CameraController.useHALv3(prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), true));
+//					CameraController.useHALv3(prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), true));
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
