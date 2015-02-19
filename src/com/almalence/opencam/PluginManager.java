@@ -1871,7 +1871,9 @@ public class PluginManager implements PluginManagerInterface
 		String focal_lenght = String.valueOf(result.get(CaptureResult.LENS_FOCAL_LENGTH));
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
-
+		String manufacturer = Build.MANUFACTURER;
+		String model = Build.MODEL;
+		
 		if (num != -1 && exposure_time != null && !exposure_time.equals("null"))
 			addToSharedMem("exiftag_exposure_time" + num + SessionID, exposure_time);
 		else if(exposure_time != null && !exposure_time.equals("null"))
@@ -1886,6 +1888,10 @@ public class PluginManager implements PluginManagerInterface
 			addToSharedMem("exiftag_flash" + SessionID, flash_mode);
 		if (awb_mode != null && !awb_mode.equals("null"))
 			addToSharedMem("exiftag_white_balance" + SessionID, awb_mode);
+		if (manufacturer != null && !manufacturer.equals("null"))
+			addToSharedMem("exiftag_make" + SessionID, manufacturer);
+		if (model != null && !model.equals("null"))
+			addToSharedMem("exiftag_model" + SessionID, model);
 
 		return true;
 	}
