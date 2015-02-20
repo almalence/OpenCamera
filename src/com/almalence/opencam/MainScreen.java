@@ -2723,7 +2723,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Map<String, String> storeKeys = new HashMap<String, String>();
 			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
-			mHelper = new OpenIabHelper(this, storeKeys);
+			
+			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
+            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
+            .addStoreKeys(storeKeys);
+			
+			mHelper = new OpenIabHelper(this, builder.build());
 
 			OpenIabHelper.enableDebugLogging(true);
 
