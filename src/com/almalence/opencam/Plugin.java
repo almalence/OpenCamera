@@ -237,6 +237,11 @@ public abstract class Plugin
 	public void onAutoFocus(boolean paramBoolean)
 	{
 	}
+	
+	public void onAutoFocusMoving(boolean paramBoolean)
+	{
+	}
+
 
 	public void takePicture()
 	{

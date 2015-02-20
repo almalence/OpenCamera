@@ -33,7 +33,7 @@
 		 	android:value="save_configuration"/>
 	</PreferenceScreen>
 	+++ -->
-<ListPreference
+	<ListPreference
         android:defaultValue="95"
         android:entries="@array/JPEGQualityArrayCommon"
         android:entryValues="@array/JPEGQualityValuesCommon"
@@ -73,8 +73,7 @@
         android:title="@string/Pref_Common_Antibanding_Title" />
     
     <Preference
-        android:key="about"
-        android:summary="@string/Pref_About_Summary"
-        android:title="@string/Pref_About_Title" />
-
+        android:id="@+id/camera_parameters"
+        android:key="camera_parameters"
+        android:title="@string/Pref_CameraParameters_Title" />
 </PreferenceScreen>

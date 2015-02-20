@@ -74,6 +74,7 @@ import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
@@ -215,7 +216,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
 
 	public static final int				MSG_CAMERA_CONFIGURED					= 160;
-	public static final int				MSG_CAMERA_READY						= 161;
 	public static final int				MSG_CAMERA_STOPED						= 162;
 	
 	public static final int				MSG_APPLICATION_STOP					= 163;
@@ -229,8 +229,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_PROCESS_FINISHED					= 20;
 	public static final int				MSG_VOLUME_ZOOM							= 21;
 	// ^^ For HALv3 code version
-
-	public static final int				MSG_NEXT_FRAME							= 23;
 
 	public static final int				MSG_BAD_FRAME							= 24;
 	public static final int				MSG_OUT_OF_MEMORY						= 25;
@@ -742,6 +740,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
+		MainScreen.getInstance().getCameraParametersBundle();
 		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 
@@ -1396,6 +1395,16 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onAutoFocus(paramBoolean);
 	}
+	
+	@Override
+	public void onAutoFocusMoving(boolean paramBoolean)
+	{
+		for (int i = 0; i < activeVF.size(); i++)
+			pluginList.get(activeVF.get(i)).onAutoFocusMoving(paramBoolean);
+
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onAutoFocusMoving(paramBoolean);
+	}
 
 	void takePicture()
 	{
@@ -1573,10 +1582,6 @@ public class PluginManager implements PluginManagerInterface
 		switch (msg.what)
 		{
 		case MSG_NO_CAMERA:
-			break;
-
-		case MSG_TAKE_PICTURE:
-			pluginManager.takePicture();
 			break;
 
 		case MSG_CAPTURE_FINISHED:
@@ -1866,7 +1871,9 @@ public class PluginManager implements PluginManagerInterface
 		String focal_lenght = String.valueOf(result.get(CaptureResult.LENS_FOCAL_LENGTH));
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
-
+		String manufacturer = Build.MANUFACTURER;
+		String model = Build.MODEL;
+		
 		if (num != -1 && exposure_time != null && !exposure_time.equals("null"))
 			addToSharedMem("exiftag_exposure_time" + num + SessionID, exposure_time);
 		else if(exposure_time != null && !exposure_time.equals("null"))
@@ -1881,6 +1888,10 @@ public class PluginManager implements PluginManagerInterface
 			addToSharedMem("exiftag_flash" + SessionID, flash_mode);
 		if (awb_mode != null && !awb_mode.equals("null"))
 			addToSharedMem("exiftag_white_balance" + SessionID, awb_mode);
+		if (manufacturer != null && !manufacturer.equals("null"))
+			addToSharedMem("exiftag_make" + SessionID, manufacturer);
+		if (model != null && !model.equals("null"))
+			addToSharedMem("exiftag_model" + SessionID, model);
 
 		return true;
 	}

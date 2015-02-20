@@ -189,6 +189,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	private int							surfaceWidth					= 0;
 	private int							surfaceHeight					= 0;
 
+	private int							surfaceLayoutWidth				= 0;
+	private int							surfaceLayoutHeight				= 0;
+
 	// shared between activities
 	// private int imageWidth, imageHeight;
 	private int							previewWidth, previewHeight;
@@ -321,9 +324,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sInitModeListPref				= "initModeListPref";
 
 	public static String				sJPEGQualityPref;
-	
+
 	public static String				sAntibandingPref;
-	
+
 	public static String				sAELockPref;
 	public static String				sAWBLockPref;
 
@@ -346,6 +349,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+
+	// Camera parameters info
+	int									cameraId;
+	List<CameraController.Size> 		preview_sizes;
+	List<CameraController.Size> 		video_sizes;
+	List<CameraController.Size> 		picture_sizes;
+	boolean								supports_video_stabilization;
+	List<String>						flash_values;
+	List<String>						focus_values;
+	List<String>						scene_modes_values;
+	List<String>						white_balances_values;
+	List<String>						isos;
+	String								flattenParamteters;
 
 	public static String				sKeepScreenOn;
 
@@ -407,9 +423,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
 
 		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
-		
+
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
-		
+
 		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
 		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
@@ -423,6 +439,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
 		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
+
+		sKeepScreenOn = getResources().getString(R.string.Preference_KeepScreenOnValue);
 
 		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
 		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
@@ -684,6 +702,52 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return thiz.cameraController;
 	}
 
+	static private void putBundleExtra(Bundle bundle, String key, List<String> values)
+	{
+		if (values != null)
+		{
+			String[] values_arr = new String[values.size()];
+			int i = 0;
+			for (String value : values)
+			{
+				values_arr[i] = value;
+				i++;
+			}
+			bundle.putStringArray(key, values_arr);
+		}
+	}
+
+	public void getCameraParametersBundle()
+	{
+		try
+		{
+			cameraId = CameraController.getCameraIndex();
+			supports_video_stabilization = CameraController.getVideoStabilizationSupported();
+
+			scene_modes_values = CameraController.getSupportedSceneModesNames();
+			white_balances_values = CameraController.getSupportedWhiteBalanceNames();
+			isos = CameraController.getSupportedISONames();
+
+			preview_sizes = CameraController.getSupportedPreviewSizes();
+
+			picture_sizes = CameraController.getSupportedPictureSizes();
+
+			video_sizes = CameraController.getSupportedVideoSizes();
+
+			flash_values = CameraController.getSupportedFlashModesNames();
+			focus_values = CameraController.getSupportedFocusModesNames();
+
+			Camera.Parameters params = CameraController.getCameraParameters();
+			if (params != null)
+			{
+				flattenParamteters = params.flatten();
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public static GUI getGUIManager()
 	{
 		return thiz.guiManager;
@@ -775,6 +839,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static SurfaceView getPreviewSurfaceView()
 	{
 		return thiz.preview;
+	}
+
+	public static int getPreviewSurfaceLayoutWidth()
+	{
+		return thiz.surfaceLayoutWidth;
+	}
+
+	public static int getPreviewSurfaceLayoutHeight()
+	{
+		return thiz.surfaceLayoutHeight;
+	}
+
+	public static void setPreviewSurfaceLayoutWidth(int width)
+	{
+		thiz.surfaceLayoutWidth = width;
+	}
+
+	public static void setPreviewSurfaceLayoutHeight(int height)
+	{
+		thiz.surfaceLayoutHeight = height;
 	}
 
 	public static void setSurfaceHolderSize(int width, int height)
@@ -1387,8 +1471,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 							ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
 				}
 			}.start();
-		} else {
-			// Need this for correct exposure control state, after switching DRO-on/DRO-off in single mode.
+		} else
+		{
+			// Need this for correct exposure control state, after switching
+			// DRO-on/DRO-off in single mode.
 			guiManager.onPluginsInitialized();
 		}
 	}
@@ -1674,7 +1760,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+			// PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED,
+			// 0);
+
+			onCameraConfigured();
 		}
 	}
 
@@ -1704,26 +1793,26 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			{
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
-				switch(antibanding)
+				switch (antibanding)
 				{
-					case 0:
-						cp.setAntibanding("off");
-						break;
-					case 1:
-						cp.setAntibanding("50hz");
-						break;
-					case 2:
-						cp.setAntibanding("60hz");
-						break;
-					case 3:
-						cp.setAntibanding("auto");
-						break;
-					default:
-						cp.setAntibanding("auto");
-						break;
+				case 0:
+					cp.setAntibanding("off");
+					break;
+				case 1:
+					cp.setAntibanding("50hz");
+					break;
+				case 2:
+					cp.setAntibanding("60hz");
+					break;
+				case 3:
+					cp.setAntibanding("auto");
+					break;
+				default:
+					cp.setAntibanding("auto");
+					break;
 				}
 				CameraController.setCameraParameters(cp);
-				
+
 				previewWidth = cp.getPreviewSize().width;
 				previewHeight = cp.getPreviewSize().height;
 			}
@@ -1767,7 +1856,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						CameraController.startCameraPreview();
 					} catch (RuntimeException e)
 					{
-						Toast.makeText(MainScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						Toast.makeText(MainScreen.thiz, "Unable to start preview", Toast.LENGTH_LONG).show();
 						return;
 					}
 
@@ -1870,8 +1959,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 
-//		if (captureFormat != CameraController.RAW) // when capture RAW preview frames is not available
-		surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
+		// if (captureFormat != CameraController.RAW) // when capture RAW
+		// preview frames is not available
+		surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
+																// preview yuv
 		// images
 		if (captureFormat == CameraController.YUV)
 		{
@@ -1990,6 +2081,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return mImageReaderPreviewYUV.getSurface();
 	}
 
+	// Probably used only by Panorama plugin. Added to avoid non direct
+	// interface (message/handler)
+	public static void takePicture()
+	{
+		PluginManager.getInstance().takePicture();
+	}
+
 	@TargetApi(14)
 	public boolean isFaceDetectionAvailable(Camera.Parameters params)
 	{
@@ -2080,15 +2178,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event)
+	{
 		// Prevent system sounds, for volume buttons.
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+		{
 			return true;
 		}
-		
+
 		return super.onKeyUp(keyCode, event);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -2169,7 +2269,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		return super.onKeyDown(keyCode, event);
 	}
-	
 
 	@Override
 	public void onClick(View v)
@@ -2237,16 +2336,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		case PluginManager.MSG_CAMERA_CONFIGURED:
 			onCameraConfigured();
 			break;
-		case PluginManager.MSG_CAMERA_READY:
-			{
-				if (CameraController.isCameraCreated())
-				{
-					configureCamera();
-					PluginManager.getInstance().onGUICreate();
-					MainScreen.getGUIManager().onGUICreate();
-				}
-			}
-			break;
+		// case PluginManager.MSG_CAMERA_READY:
+		// {
+		// if (CameraController.isCameraCreated())
+		// {
+		// configureCamera();
+		// PluginManager.getInstance().onGUICreate();
+		// MainScreen.getGUIManager().onGUICreate();
+		// }
+		// }
+		// break;
 		case PluginManager.MSG_CAMERA_OPENED:
 			if (mCameraStarted)
 				break;

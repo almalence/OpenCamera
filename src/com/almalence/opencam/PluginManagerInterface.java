@@ -32,6 +32,8 @@ public interface PluginManagerInterface
 	public boolean shouldPreviewToGPU();
 
 	public void onAutoFocus(boolean focused);
+	
+	public void onAutoFocusMoving(boolean start);
 
 	public void onPreviewFrame(byte[] data);
 

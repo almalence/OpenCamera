@@ -1064,7 +1064,7 @@ public class VideoCapturePlugin extends PluginCapture
 		editor.commit();
 
 		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null)
+		if (cp != null  && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
 		{
 			cp.setPreviewFrameRate(30);
 			if (!Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))

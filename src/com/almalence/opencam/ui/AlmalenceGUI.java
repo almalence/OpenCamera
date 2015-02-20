@@ -54,6 +54,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -1520,8 +1521,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 		
-		Log.e("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
+		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
+		MainScreen.setPreviewSurfaceLayoutWidth(lp.width);
+		MainScreen.setPreviewSurfaceLayoutHeight(lp.height);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
 		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 	}
@@ -2101,7 +2104,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int metering_name = it.next();
 				
 				//Samsung Galaxy Note 3 supports only center-weighted metering mode
-				if((metering_name == 3 || metering_name == 1) && Build.MODEL.contains("SM-N900"))
+				if((metering_name == 3 || metering_name == 1) && (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900")))
 					continue;
 				
 				if (meteringModeButtons.containsKey(metering_name))
@@ -3420,12 +3423,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				PluginManager.getInstance().onShowPreferences();
-				Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
-				MainScreen.getInstance().startActivity(settingsActivity);
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+				openMoreSettings();
 			}
 		});
+	}
+	
+	private void openMoreSettings() {
+		MainScreen.getInstance().getCameraParametersBundle();
+				
+		PluginManager.getInstance().onShowPreferences();
+		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
+		MainScreen.getInstance().startActivity(settingsActivity);
+		((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 	}
 
 	/***************************************************************************************
@@ -5730,10 +5739,31 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private MotionEvent		prevEvent;
 	private MotionEvent		downEvent;
 	private boolean			scrolling			= false;
+	private boolean			multiTouch			= false;
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
+		// Handle MultiTouch event.
+		// Actually we need this only for FocusVFPlugin.
+		if (event.getPointerCount() > 1) {
+			multiTouch = true;
+			PluginManager.getInstance().onTouch(view, event);
+			return true;
+		}
+		if (multiTouch && event.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			PluginManager.getInstance().onTouch(view, event);
+			multiTouch = false;
+		}
+		
+		// We can't move on while staying in MultiTouch mode.
+		if (multiTouch)
+		{
+			return true;
+		}
+		//-- Handle MultiTouch event.
+		
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 		{

@@ -24,40 +24,33 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
-import com.almalence.util.Util;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
-
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -68,17 +61,21 @@ import android.util.SizeF;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
+import com.almalence.SwapHeap;
+import com.almalence.YuvImage;
+import com.almalence.util.Util;
+
+//<!-- -+-
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+//-+- -->
 
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
-//<!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.CameraParameters;
-//-+- -->
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
@@ -646,6 +643,17 @@ public class HALv3
 		}
 	}
 
+	public static void fillVideoSizeList(List<CameraController.Size> videoSizes)
+	{
+		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
+		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+		Size[] cs = configMap.getOutputSizes(MediaRecorder.class);
+		for (Size sz : cs)
+		{
+			videoSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+		}
+	}
+	
 	public static CameraDevice getCamera2()
 	{
 		return HALv3.getInstance().camDevice;
@@ -1485,6 +1493,16 @@ public class HALv3
 		try
 		{
 			CreateRequests(format);
+			
+			// Nexus 5 fix flash in dark conditions and exposure set to 0.
+			int selectedEvCompensation = 0;
+			selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+			if ((stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE)
+					&& evRequested == null && selectedEvCompensation == 0) {
+				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 1);
+			}
 
 			if (checkHardwareLevel())
 			{
@@ -1870,7 +1888,7 @@ public class HALv3
 					e.printStackTrace();
 				}
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
 				// if(!CameraController.appStarted)
 				// {
 				// CameraController.appStarted
@@ -2027,6 +2045,14 @@ public class HALv3
 					CameraController.onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
 				}
+				
+				if (result.get(CaptureResult.CONTROL_AF_MODE) == CaptureResult.CONTROL_AF_MODE_CONTINUOUS_PICTURE) {
+					if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED || result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED) {
+						CameraController.onAutoFocusMoving(false);
+					} else {
+						CameraController.onAutoFocusMoving(true);
+					}
+				} 
 //				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
 //						&& HALv3.autoFocusTriggered)
 //				{

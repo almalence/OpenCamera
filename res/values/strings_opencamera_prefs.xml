@@ -50,8 +50,6 @@
     <string name="Preference_DefaultInfoSetValue">Preference_DefaultInfoSetValue</string>    
     <string name="Preference_SWCheckedValue">Preference_SWChekedValue</string>
     
-    <string name="Preference_KeepScreenOnValue">Preference_KeepScreenOnValue</string>
-    
     <string name="Preference_SavePathValue">Preference_SavePathValue</string>
     <string name="Preference_SavePathLollipopValue">Preference_SavePathLollipopValue</string>
     <string name="Preference_ExportNameValue">Preference_ExportName</string>
@@ -61,6 +59,8 @@
     <string name="Preference_SavePathPostfixValue">Preference_SavePathPostfixValue</string>
     <string name="Preference_EnableExifTagOrientationValue">Preference_EnableExifTagOrientationValue</string>
     <string name="Preference_AdditionalRotationValue">Preference_AdditionalRotationValue</string>
+    
+    <string name="Preference_KeepScreenOnValue">Preference_KeepScreenOnValue</string>
     
     <string name="Preference_TimestampDateValue">Preference_TimestampDateValue</string>
     <string name="Preference_TimestampAbbreviationValue">Preference_TimestampAbbreviationValue</string>

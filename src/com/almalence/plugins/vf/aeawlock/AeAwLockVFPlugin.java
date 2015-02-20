@@ -208,8 +208,11 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		if (CameraController.isExposureLockSupported())
 			CameraController.setAutoExposureLock(false);
 		
-		Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
-		aeLockButton.setImageDrawable(icon);
+		if (aeLockButton!=null)
+		{
+			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
+			aeLockButton.setImageDrawable(icon);
+		}
 	
 		aeLocked = false;
 		
@@ -221,8 +224,11 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	{
 		if (CameraController.isWhiteBalanceLockSupported())
 			CameraController.setAutoWhiteBalanceLock(false);
-		Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
-		awLockButton.setImageDrawable(icon);
+		if (aeLockButton!=null)
+		{
+			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
+			awLockButton.setImageDrawable(icon);
+		}
 	
 		awLocked = false;
 		
@@ -251,6 +257,12 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	public void onCaptureFinished()
 	{
 		Camera.Parameters params = CameraController.getCameraParameters();
+		if (params == null)
+		{
+			AeUnlock();
+			AwUnlock();
+			return;
+		}
 		if (aeLocked && CameraController.isExposureLockSupported() && !params.getAutoExposureLock())
 			AeUnlock();
 		if (awLocked && CameraController.isWhiteBalanceLockSupported()

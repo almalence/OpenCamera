@@ -124,35 +124,9 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_plugins_processing_nigh
 	jint h
 )
 {
-	int x, y;
-	int clipped;
-	int nClipped, nDark;
 	Uint8 *yuv = (Uint8 *)in;
 
-	nClipped = nDark = 0;
-	clipped = 0;
-
-	// checking every fourth row for the speed reasons
-	for (y=0; y<h; y+=4)
-	{
-		for (x=0; x<w; ++x)
-		{
-			if (yuv[x+x0+(y+y0)*sx] > 250) ++nClipped;
-			if (yuv[x+x0+(y+y0)*sx] < 32) ++nDark;
-		}
-	}
-
-	// tolerate up to 1% clipped pixels in the image
-	if (nClipped > w*(h/4)/100) clipped = 1;
-
-	// if way too much dark areas in the scene - scratch the restoration of clipped,
-	// regardless of how much of how much clipping there is in a scene
-	if (nDark > 50*w*(h/4)/100) clipped = 0;
-
-	// if lots of dark and it's ratio to clipped is also high - disregard clipping
-	if ((nDark > 20*w*(h/4)/100) && (nDark > 10*nClipped)) clipped = 0;
-
-	return clipped;
+	return Super_ExposureVerification(yuv, sx, sy, x0, y0, w, h);
 }
 
 
@@ -217,7 +191,19 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			}
 		}
 
-		int gamma = (int)(0.5f/*fgamma*/ * 256 + 0.5f);
+		float fgamma = 0.5f;
+
+		if (fgamma && (iso>0))
+		{
+			// iso 100 = +0.1
+			// iso 800 = -0.05
+			fgamma += 0.1f - ( logf(iso) * 3.321928095f-6.644f)*0.15f/3.f;
+			if (fgamma < 0.45f) fgamma = 0.45f;
+			if (fgamma > 0.6f) fgamma = 0.6f;
+		}
+
+		// for SR-only fgamma = 0, gamma will evaluate to 0 also
+		int gamma = (int)(fgamma * 256 + 0.5f);
 
 		// threshold at which profiles are switched (about 1.5x zoom)
 		int zoomAbove15x = sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2;

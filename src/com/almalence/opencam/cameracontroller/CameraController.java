@@ -196,7 +196,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	// Message handler for multishot capturing with pause between shots
 	// and different exposure compensations
-	private static Handler							messageHandler;
 	private static Handler							pauseHandler;
 
 	private static boolean							needRelaunch					= false;
@@ -228,7 +227,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int[]							supportedFlashModes;
 	private static int[]							supportedISOModes;
 
-	private static int								maxRegionsSupported;
+	private static int								maxFocusRegionsSupported;
+	private static int								maxMeteringRegionsSupported;
 
 	protected static int							CameraIndex						= 0;
 	protected static boolean						CameraMirrored					= false;
@@ -257,6 +257,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
+	protected static List<CameraController.Size>	SupportedVideoSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS
 													= { " ", "4:3", "3:2", "16:9", "1:1" };
@@ -301,7 +302,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		appInterface = app;
 		mainContext = context;
 
-		messageHandler = new Handler(CameraController.getInstance());
 		pauseHandler = new Handler(CameraController.getInstance());
 		
 		appStarted = false;
@@ -945,6 +945,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							camera = Camera.open(CameraIndex);
 						else
 							camera = Camera.open();
+						
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+							setAutoFocusMoveCallback(camera);
 					}
 					MainScreen.getInstance().switchingMode(false);
 
@@ -1042,9 +1045,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!CameraController.isHALv3)
 		{
-			Message msg = new Message();
-			msg.what = PluginManager.MSG_CAMERA_READY;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			if (CameraController.isCameraCreated())
+			{
+				MainScreen.thiz.configureCamera();
+				PluginManager.getInstance().onGUICreate();
+				MainScreen.getGUIManager().onGUICreate();
+			}
+		}
+	}
+	
+	@TargetApi(16)
+	protected static void setAutoFocusMoveCallback(Camera camera)
+	{
+		try
+		{
+			camera.setAutoFocusMoveCallback(new Camera.AutoFocusMoveCallback()
+			{
+				@Override
+				public void onAutoFocusMoving(boolean start, Camera camera)
+				{
+					CameraController.onAutoFocusMoving(start);
+				}
+			});
+		}
+		catch(Exception e)
+		{
+			Log.e(TAG, "setAutoFocusModeCallback failed");
 		}
 	}
 
@@ -1431,6 +1457,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return pictureSizes;
 	}
 
+	public static List<CameraController.Size> getSupportedVideoSizes()
+	{
+		List<CameraController.Size> videoSizes = new ArrayList<CameraController.Size>();
+		if (!CameraController.isHALv3)
+		{
+			if (CameraController.SupportedVideoSizesList != null)
+			{
+				videoSizes = new ArrayList<CameraController.Size>(CameraController.SupportedVideoSizesList);
+			} else if (camera != null && camera.getParameters() != null)
+			{
+				List<Camera.Size> sizes = camera.getParameters().getSupportedVideoSizes();
+				for (Camera.Size sz : sizes)
+					videoSizes.add(new CameraController.Size(sz.width, sz.height));
+			} else
+			{
+				Log.d(TAG, "camera == null");
+			}
+		} else
+			videoSizes = null;
+//			HALv3.fillVideoSizeList(videoSizes);
+
+		return videoSizes;
+	}
+	
 	public static List<CameraController.Size> getResolutionsSizeList()
 	{
 		return CameraController.ResolutionsSizeList;
@@ -1489,7 +1539,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			supportedFlashModes = getSupportedFlashModesInternal();
 			supportedISOModes = getSupportedISOInternal();
 	
-			maxRegionsSupported = CameraController.getMaxNumFocusAreas();
+			maxFocusRegionsSupported = CameraController.getMaxNumFocusAreas();
+			maxMeteringRegionsSupported = CameraController.getMaxNumMeteringAreas();
 	
 			cameraParameters = null;
 		}
@@ -1931,6 +1982,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return supportedSceneModes;
 	}
+	
+	public static List<String> getSupportedSceneModesNames()
+	{
+		List<String> sceneModeNames = new ArrayList<String>();
+		for (int i : supportedSceneModes) {
+			sceneModeNames.add(mode_scene.get(i));
+		}
+		return sceneModeNames;
+	}
 
 	private static boolean getWhiteBalanceSupported()
 	{
@@ -1980,6 +2040,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedWBModes;
 	}
 
+	public static List<String> getSupportedWhiteBalanceNames() {
+		List<String> wbNames = new ArrayList<String>();
+		for (int i : supportedWBModes) {
+			wbNames.add(mode_wb.get(i));
+		}
+		return wbNames;
+	}
+	
 	private static boolean getFocusModeSupported()
 	{
 		int[] supported_focus = getSupportedFocusModesInternal();
@@ -2029,6 +2097,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedFocusModes;
 	}
 
+	public static List<String> getSupportedFocusModesNames()
+	{
+		ArrayList<String> focusModes = new ArrayList<String>();
+		int[] modes = getSupportedFocusModesInternal();
+		for (int i : modes) {
+			focusModes.add(mode_focus.get(i));
+		}
+		return focusModes;
+	}
+	
 	private static boolean getFlashModeSupported()
 	{
 		if (CameraController.isHALv3)
@@ -2095,6 +2173,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedFlashModes;
 	}
 
+	public static List<String> getSupportedFlashModesNames()
+	{
+		ArrayList<String> flashModes = new ArrayList<String>();
+		int[] modes = getSupportedFlashModesInternal();
+		for (int i : modes) {
+			flashModes.add(mode_flash.get(i));
+		}
+		return flashModes;
+	}
+	
 	private static boolean getISOSupported()
 	{
 		if (!CameraController.isHALv3)
@@ -2177,6 +2265,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return supportedISOModes;
 	}
+	
+	public static List<String> getSupportedISONames() {
+		List<String> isoNames = new ArrayList<String>();
+		for (int i : supportedISOModes) {
+			isoNames.add(mode_iso.get(i));
+		}
+		return isoNames;
+	}
 
 	public static int getMaxNumMeteringAreas()
 	{
@@ -2204,11 +2300,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return 0;
 	}
 
-	public static int getMaxAreasSupported()
+	public static int getMaxFocusAreasSupported()
 	{
-		return maxRegionsSupported;
+		return maxFocusRegionsSupported;
 	}
 
+	public static int getMaxMeteringAreasSupported()
+	{
+		return maxMeteringRegionsSupported;
+	}
+	
 	public static int getCameraIndex()
 	{
 		return CameraIndex;
@@ -2798,9 +2899,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 			if (evRequested != null && evRequested.length >= total_frames)
-				CameraController.sendMessage(MSG_SET_EXPOSURE);
+				CameraController.setExposure();
 			else
-				CameraController.sendMessage(MSG_TAKE_IMAGE);
+				CameraController.takeImage();
 			return 0;
 		} else
 			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, gain, exposure, resultInHeap, playShutterSound);
@@ -2947,7 +3048,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
 
-		CameraController.sendMessage(MSG_NEXT_FRAME);
+		nextFrame();
 		
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
@@ -2971,7 +3072,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						prefsEditor.putBoolean(MainScreen.sExpoPreviewModePref, false);
 						prefsEditor.commit();
 						evLatency=0;
-						CameraController.sendMessage(MSG_TAKE_IMAGE);
+						CameraController.takeImage();
 					}
 				}
 			};
@@ -3021,6 +3122,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.setFocusState(CameraController.FOCUS_STATE_FAIL);
 	}
 
+	public static void onAutoFocusMoving (boolean start) {
+		pluginManager.onAutoFocusMoving(start);
+		if (start)
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
+		else
+			CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSED);
+	}
+	
 	public static void onAutoFocus(boolean focused)
 	{
 		pluginManager.onAutoFocus(focused);
@@ -3061,7 +3170,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 
 			// pluginManager.onPictureTaken(data, true);
-			CameraController.sendMessage(MSG_NEXT_FRAME);
+			nextFrame();
 			return;
 		}
 
@@ -3078,7 +3187,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					cdt.cancel();
 					cdt = null;
 				}
-				CameraController.sendMessage(MSG_TAKE_IMAGE);
+				CameraController.takeImage();
 			}
 			return;
 		}
@@ -3168,166 +3277,151 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static CountDownTimer	cdt					= null;
 	private static long				lastCaptureStarted	= 0;
 
-	public static final int	MSG_SET_EXPOSURE	= 01;
-	public static final int	MSG_NEXT_FRAME		= 02;
-	public static final int	MSG_TAKE_IMAGE		= 03;
-
-	public static void sendMessage(int what)
-	{
-		Message message = new Message();
-		message.what = what;
-		messageHandler.sendMessage(message);
-	}
-
 	// Handle messages only for old camera interface logic
 	@Override
 	public boolean handleMessage(Message msg)
 	{
-
-		switch (msg.what)
-		{
-		case MSG_SET_EXPOSURE:
-			try
-			{
-				// Note: LumaAdaptation is obsolete and unlikely to be relevant for Android >= 4.0
-				// if (UseLumaAdaptation && LumaAdaptationAvailable)
-				// CameraController.setLumaAdaptation(evValues[frame_num]);
-				// else
-				if (evValues != null && evValues.length > frame_num)
-					CameraController.setCameraExposureCompensation(evValues[frame_num]);
-			} catch (RuntimeException e)
-			{
-				Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
-			}
-
-			String modeID = PluginManager.getInstance().getActiveModeID();
-			if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && previewMode)
-			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-				//if true - evLatency will be doubled. 
-				boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
-				
-				// Note 3 & LG G3 need more time to change exposure.
-				if (Build.MODEL.contains("SM-N900"))
-					evLatency = 20*(isSlow?2:1);
-				else if (Build.MODEL.contains("LG-D855"))
-					evLatency = 30*(isSlow?2:1);
-				else
-				{
-					// message to capture image will be emitted a few frames after
-					// setExposure
-					evLatency = 10*(isSlow?2:1);// the minimum value at which Galaxy Nexus is
-												// changing exposure in a stable way
-				}
-			} else
-			{
-				new CountDownTimer(500, 500)
-				{
-					public void onTick(long millisUntilFinished)
-					{
-					}
-
-					public void onFinish()
-					{
-						CameraController.sendMessage(MSG_TAKE_IMAGE);
-					}
-				}.start();
-			}
-
-			return true;
-
-		case MSG_NEXT_FRAME:
-			Log.d(TAG, "MSG_NEXT_FRAME");
-			String modeID2 = PluginManager.getInstance().getActiveModeID();
-			if (++frame_num < total_frames)
-			{
-				if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)
-				{
-					if (evValues != null && evValues.length >= total_frames)
-						CameraController.sendMessage(MSG_SET_EXPOSURE);
-					else
-						CameraController.sendMessage(MSG_TAKE_IMAGE);
-				} else
-				{
-					pauseHandler.postDelayed(new Runnable()
-					{
-						public void run()
-						{
-							if (evValues != null && evValues.length >= total_frames)
-								CameraController.sendMessage(MSG_SET_EXPOSURE);
-							else
-								CameraController.sendMessage(MSG_TAKE_IMAGE);
-						}
-					},
-					pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
-				}
-			}
-			else if (modeID2.equals("hdrmode") || modeID2.equals("expobracketing"))
-			{
-				previewWorking = true;
-            	if (cdt!=null)
-            	{
-            		cdt.cancel();
-            		cdt = null;
-            	}
-			}
-			break;
-		case MSG_TAKE_IMAGE:
-			synchronized (SYNC_OBJECT)
-			{
-				if(imageSize == null)
-				{
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, null);
-					break;
-				}
-				
-				int imageWidth = imageSize.getWidth();
-				int imageHeight = imageSize.getHeight();
-				int previewWidth = MainScreen.getPreviewWidth();
-				int previewHeight = MainScreen.getPreviewHeight();
-
-				// play tick sound
-				MainScreen.getGUIManager().showCaptureIndication();
-				if(playShutterSound)
-					MainScreen.getInstance().playShutter();
-
-				lastCaptureStarted = SystemClock.uptimeMillis();
-				if (imageWidth == previewWidth && imageHeight == previewHeight &&
-						((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
-					takePreviewFrame = true; // Temporary make capture by
-												// preview frames only for YUV
-												// requests to avoid slow YUV to
-												// JPEG conversion
-				else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
-				{
-					try
-					{
-						mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
-						camera.setPreviewCallback(null);
-						camera.takePicture(null, null, null, CameraController.getInstance());
-					}
-					catch(Exception exp)
-					{
-						previewWorking = true;
-		            	if (cdt!=null)
-		            	{
-		            		cdt.cancel();
-		            		cdt = null;
-		            	}
-		            	
-						Log.e(TAG, "takePicture exception. Message: " + exp.getMessage());
-						exp.printStackTrace();
-						
-//						PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, 0);
-					}
-
-				}
-			}
-			break;
-		default:
-			break;
-		}
-
 		return true;
 	}
+
+	private static void takeImage()
+	{
+		Log.e(TAG, "takeImage called");
+		synchronized (SYNC_OBJECT)
+		{
+			if(imageSize == null)
+			{
+				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, null);
+				return;
+			}
+			
+			int imageWidth = imageSize.getWidth();
+			int imageHeight = imageSize.getHeight();
+			int previewWidth = MainScreen.getPreviewWidth();
+			int previewHeight = MainScreen.getPreviewHeight();
+
+			// play tick sound
+			MainScreen.getGUIManager().showCaptureIndication();
+			if(playShutterSound)
+				MainScreen.getInstance().playShutter();
+
+			lastCaptureStarted = SystemClock.uptimeMillis();
+			if (imageWidth == previewWidth && imageHeight == previewHeight &&
+					((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
+				takePreviewFrame = true; // Temporary make capture by
+											// preview frames only for YUV
+											// requests to avoid slow YUV to
+											// JPEG conversion
+			else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+			{
+				try
+				{
+					mCaptureState = CameraController.CAPTURE_STATE_CAPTURING;
+					camera.setPreviewCallback(null);
+					camera.takePicture(null, null, null, CameraController.getInstance());
+				}
+				catch(Exception exp)
+				{
+					previewWorking = true;
+	            	if (cdt!=null)
+	            	{
+	            		cdt.cancel();
+	            		cdt = null;
+	            	}
+	            	
+					Log.e(TAG, "takePicture exception. Message: " + exp.getMessage());
+					exp.printStackTrace();
+				}
+			}
+		}		
+	}
+	
+	private static void nextFrame()
+	{
+		Log.d(TAG, "MSG_NEXT_FRAME");
+		String modeID2 = PluginManager.getInstance().getActiveModeID();
+		if (++frame_num < total_frames)
+		{
+			if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)
+			{
+				if (evValues != null && evValues.length >= total_frames)
+					CameraController.setExposure();
+				else
+					CameraController.takeImage();
+			} else
+			{
+				pauseHandler.postDelayed(new Runnable()
+				{
+					public void run()
+					{
+						if (evValues != null && evValues.length >= total_frames)
+							CameraController.setExposure();
+						else
+							CameraController.takeImage();
+					}
+				},
+				pauseBetweenShots[frame_num] - (SystemClock.uptimeMillis() - lastCaptureStarted));
+			}
+		}
+		else if (modeID2.equals("hdrmode") || modeID2.equals("expobracketing"))
+		{
+			previewWorking = true;
+        	if (cdt!=null)
+        	{
+        		cdt.cancel();
+        		cdt = null;
+        	}
+		}		
+	}
+	
+	private static void setExposure()
+	{
+		try
+		{
+			// Note: LumaAdaptation is obsolete and unlikely to be relevant for Android >= 4.0
+			// if (UseLumaAdaptation && LumaAdaptationAvailable)
+			// CameraController.setLumaAdaptation(evValues[frame_num]);
+			// else
+			if (evValues != null && evValues.length > frame_num)
+				CameraController.setCameraExposureCompensation(evValues[frame_num]);
+		} catch (RuntimeException e)
+		{
+			Log.e(TAG, "setExpo fail in MSG_SET_EXPOSURE");
+		}
+
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && previewMode)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+			//if true - evLatency will be doubled. 
+			boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
+			
+			// Note 3 & LG G3 need more time to change exposure.
+			if (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-N910"))
+				evLatency = 20*(isSlow?2:1);
+			else if (Build.MODEL.contains("LG-D855"))
+				evLatency = 30*(isSlow?2:1);
+			else
+			{
+				// message to capture image will be emitted a few frames after
+				// setExposure
+				evLatency = 10*(isSlow?2:1);// the minimum value at which Galaxy Nexus is
+											// changing exposure in a stable way
+			}
+		} else
+		{
+			new CountDownTimer(500, 500)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+				}
+
+				public void onFinish()
+				{
+					CameraController.takeImage();
+				}
+			}.start();
+		}		
+	}
+
 }

@@ -9,10 +9,22 @@
 	<com.almalence.plugins.vf.focus.RotateLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	        android:id="@+id/focus_indicator_rotate_layout"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"	        
+	        android:layout_height="wrap_content"	
 	        android:layout_centerInParent="true">
 	    	<com.almalence.plugins.vf.focus.FocusIndicatorView android:id="@+id/focus_indicator"
 	            android:layout_width="250dp"
 	            android:layout_height="100dp"/>
+	</com.almalence.plugins.vf.focus.RotateLayout>	
+	
+	<com.almalence.plugins.vf.focus.RotateLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:id="@+id/metering_indicator_rotate_layout"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:visibility="gone"
+	        android:clickable="true">
+	    	<ImageView android:id="@+id/metering_indicator"
+	            android:layout_width="250dp"
+	            android:layout_height="100dp"
+	            android:src="@drawable/ic_exposure"/>
 	</com.almalence.plugins.vf.focus.RotateLayout>	
 </RelativeLayout>

@@ -6,7 +6,7 @@
 			<ListPreference
 	                        android:title="@string/Pref_Grid_Types_Title"
 	                        android:key="typePrefGrid"
-	                        android:defaultValue="1"
+	                        android:defaultValue="4"
 	                        android:entries="@array/typeArrayGrid"
 	                        android:entryValues="@array/typeValuesGrid" />
 <!--    	</PreferenceCategory>  -->    
