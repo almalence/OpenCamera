@@ -814,7 +814,7 @@ public class PluginManager implements PluginManagerInterface
 		// check if plugin payed
 		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture())
 		{
-			if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
+			if (!MainScreen.checkLaunches(getActiveMode()))
 			{
 				MainScreen.getGUIManager().lockControls = false;
 				return;
@@ -893,7 +893,7 @@ public class PluginManager implements PluginManagerInterface
 		// check if plugin payed
 		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture())
 		{
-			if (!MainScreen.getInstance().checkLaunches(getActiveMode()))
+			if (!MainScreen.checkLaunches(getActiveMode()))
 			{
 				MainScreen.getGUIManager().lockControls = false;
 				return;
@@ -1243,7 +1243,7 @@ public class PluginManager implements PluginManagerInterface
 			// <!-- -+-
 			pf.getActivity().finish();
 			Preferences.closePrefs();
-			MainScreen.getInstance().setShowStore(true);
+			MainScreen.setShowStore(true);
 			// -+- -->
 		}
 	}
@@ -1757,7 +1757,7 @@ public class PluginManager implements PluginManagerInterface
 		Mode mode = getActiveMode();
 		if (mode.SKU != null)
 			if (!mode.SKU.isEmpty())
-				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
+				MainScreen.decrementLeftLaunches(mode.modeID);
 	}
 
 	// -+- -->
@@ -2252,7 +2252,7 @@ public class PluginManager implements PluginManagerInterface
 
 	public void TickEverySecond(boolean isLastSecond)
 	{
-		if (MainScreen.isShutterSoundEnabled())
+		if (MainScreen.getInstance().isShutterSoundEnabled())
 			return;
 		if (delayedCaptureSoundPrefCommon)
 		{

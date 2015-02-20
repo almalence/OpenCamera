@@ -374,7 +374,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		showBarcodeViewDialog(barcode);
 
 		if (mSoundPlayer != null)
-			if (!MainScreen.isShutterSoundEnabled())
+			if (!MainScreen.getInstance().isShutterSoundEnabled())
 				mSoundPlayer.play();
 		
 		decodedProcessing = false;

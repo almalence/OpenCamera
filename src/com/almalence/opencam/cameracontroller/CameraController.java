@@ -798,6 +798,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void useHALv3(boolean useHALv3)
 	{
+		Log.e(TAG, "useHALv3 " + useHALv3);
 		isHALv3 = useHALv3;
 	}
 

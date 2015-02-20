@@ -434,7 +434,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				 * && mSoundPlayerOK != null)
 				 */
 				if (mSoundPlayerOK != null)
-					if (!MainScreen.isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
+					if (!MainScreen.getInstance().isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
 						mSoundPlayerOK.play();
 
 				// With enabled preference 'Shot on tap' perform shutter button
@@ -454,7 +454,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			} else
 			{
 				if (mSoundPlayerFalse != null)
-					if (!MainScreen.isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
+					if (!MainScreen.getInstance().isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
 						mSoundPlayerFalse.play();
 				mState = STATE_FAIL;
 			}

@@ -994,8 +994,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 					return;
 
-				if (MainScreen.getInstance().titleUnlockAll == null
-						|| MainScreen.getInstance().titleUnlockAll.endsWith("check for sale"))
+				if (MainScreen.titleUnlockAll == null
+						|| MainScreen.titleUnlockAll.endsWith("check for sale"))
 				{
 					Toast.makeText(MainScreen.getMainContext(),
 							"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
@@ -1469,10 +1469,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		help.bringToFront();
 
 		// <!-- -+-
-		if (MainScreen.getInstance().isShowStore())
+		if (MainScreen.isShowStore())
 		{
 			showStore();
-			MainScreen.getInstance().setShowStore(false);
+			MainScreen.setShowStore(false);
 		}
 		// -+- -->
 	}
@@ -5106,7 +5106,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// <!-- -+-
-		if (!MainScreen.getInstance().checkLaunches(tmpActiveMode))
+		if (!MainScreen.checkLaunches(tmpActiveMode))
 			return false;
 		// -+- -->
 

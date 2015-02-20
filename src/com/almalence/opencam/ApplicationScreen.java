@@ -104,6 +104,7 @@ import com.almalence.util.Util;
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.HALv3;
+import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 
@@ -134,91 +135,80 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	private static final int			MSG_RETURN_CAPTURED				= -1;
+	protected static final int			MSG_RETURN_CAPTURED				= -1;
 //
-//	private static final int			MODE_GENERAL					= 0;
-//	private static final int			MODE_SMART_MULTISHOT_AND_NIGHT	= 1;
-//	private static final int			MODE_PANORAMA					= 2;
-//	private static final int			MODE_VIDEO						= 3;
+//	protected static final int			MODE_GENERAL					= 0;
+//	protected static final int			MODE_SMART_MULTISHOT_AND_NIGHT	= 1;
+//	protected static final int			MODE_PANORAMA					= 2;
+//	protected static final int			MODE_VIDEO						= 3;
 //
-//	private static final int			MIN_MPIX_PREVIEW				= 600 * 400;
+//	protected static final int			MIN_MPIX_PREVIEW				= 600 * 400;
 
-	public static ApplicationScreen			thiz;
+	public static ApplicationScreen		thiz;
 	public Context						mainContext;
-	private Handler						messageHandler;
+	protected Handler					messageHandler;
 
 	// Interface to HALv3 camera and Old style camera
-	private CameraController			cameraController				= null;
+	protected CameraController			cameraController				= null;
 
-	// HALv3 camera's objects
-//	private ImageReader					mImageReaderPreviewYUV;
-//	private ImageReader					mImageReaderYUV;
-//	private ImageReader					mImageReaderJPEG;
-//	private ImageReader					mImageReaderRAW;
-
-//	private int							captureFormat					= CameraController.JPEG;
+	protected int							captureFormat					= CameraController.JPEG;
 
 	public GUI							guiManager						= null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
-	private GLLayer						glView;
+	protected GLLayer						glView;
 
-	private boolean						mPausing						= false;
+	protected boolean						mPausing						= false;
 
-//	private File						forceFilename					= null;
-//	private Uri							forceFilenameUri;
+	protected SurfaceHolder				surfaceHolder;
+	protected SurfaceView					preview;
+	protected Surface						mCameraSurface					= null;
+	protected OrientationEventListener	orientListener;
+	protected boolean						landscapeIsNormal				= false;
+	protected boolean						surfaceCreated					= false;
 
-//	private SurfaceHolder				surfaceHolder;
-//	private SurfaceView					preview;
-//	private Surface						mCameraSurface					= null;
-//	private OrientationEventListener	orientListener;
-//	private boolean						landscapeIsNormal				= false;
-//	private boolean						surfaceCreated					= false;
-//
-//	private int							surfaceWidth					= 0;
-//	private int							surfaceHeight					= 0;
+	protected int							surfaceWidth					= 0;
+	protected int							surfaceHeight					= 0;
 //	
-//	private int							surfaceLayoutWidth				= 0;
-//	private int							surfaceLayoutHeight				= 0;
+	protected int							surfaceLayoutWidth				= 0;
+	protected int							surfaceLayoutHeight				= 0;
 
 	// shared between activities
-	// private int imageWidth, imageHeight;
-//	private int							previewWidth, previewHeight;
+	// protected int imageWidth, imageHeight;
+	protected int							previewWidth, previewHeight;
 
-	private CountDownTimer				screenTimer						= null;
-	private boolean						isScreenTimerRunning			= false;
+	protected CountDownTimer				screenTimer						= null;
+	protected boolean						isScreenTimerRunning			= false;
 
-	private static boolean				wantLandscapePhoto				= false;
-	private int							orientationMain					= 0;
-	private int							orientationMainPrevious			= 0;
+	protected static boolean				wantLandscapePhoto				= false;
+	protected int							orientationMain					= 0;
+	protected int							orientationMainPrevious			= 0;
 
-	private SoundPlayer					shutterPlayer					= null;
+	protected SoundPlayer					shutterPlayer					= null;
 
 	// Common preferences
-//	private String						imageSizeIdxPreference;
-//	private String						multishotImageSizeIdxPreference;
-//	private boolean						shutterPreference				= true;
-//	private int							shotOnTapPreference				= 0;
+//	protected String						imageSizeIdxPreference;
+//	protected String						multishotImageSizeIdxPreference;
+//	protected boolean						shutterPreference				= true;
+//	protected int							shotOnTapPreference				= 0;
 //
-//	private boolean						showHelp						= false;
+//	protected boolean						showHelp						= false;
 //
-//	private boolean						keepScreenOn					= false;
+	protected boolean						keepScreenOn					= false;
 //
-//	private String						saveToPath;
-//	private String						saveToPreference;
-//	private boolean						sortByDataPreference;
+//	protected String						saveToPath;
+//	protected String						saveToPreference;
+//	protected boolean						sortByDataPreference;
 //
-//	private boolean						captureRAW;
+//	protected boolean						captureRAW;
 //
-//	private List<Surface>				surfaceList;
+	protected List<Surface>				surfaceList;
 //
-//	private static boolean				maxScreenBrightnessPreference;
-//
-//	private static boolean				mAFLocked						= false;
+	protected static boolean				mAFLocked						= false;
 //
 //	// shows if mode is currently switching
-//	private boolean						switchingMode					= false;
+//	protected boolean						switchingMode					= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -230,78 +220,56 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	private static boolean				isCreating						= false;
-	private static boolean				mApplicationStarted				= false;
-	private static boolean				mCameraStarted					= false;
-	private static boolean				isForceClose					= false;
+	protected static boolean				isCreating						= false;
+	protected static boolean				mApplicationStarted				= false;
+	protected static boolean				mCameraStarted					= false;
+	protected static boolean				isForceClose					= false;
 
-//	// Clicked mode id from widget.
-//	public static final String			EXTRA_ITEM						= "WidgetModeID";
-//
-//	public static final String			EXTRA_TORCH						= "WidgetTorchMode";
-//	public static final String			EXTRA_BARCODE					= "WidgetBarcodeMode";
-//	public static final String			EXTRA_SHOP						= "WidgetGoShopping";
+	protected static final int			VOLUME_FUNC_SHUTTER				= 0;
+	protected static final int			VOLUME_FUNC_EXPO				= 2;
+	protected static final int			VOLUME_FUNC_NONE				= 3;
 
-//	private static boolean				launchTorch						= false;
-//	private static boolean				launchBarcode					= false;
-//	private static boolean				goShopping						= false;
+	protected static List<Area>			mMeteringAreaMatrix5			= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix4			= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix1			= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaCenter				= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaSpot				= new ArrayList<Area>();
 
-//	private static int					prefFlash						= -1;
-//	private static boolean				prefBarcode						= false;
+	protected int						currentMeteringMode				= -1;
 
-	private static final int			VOLUME_FUNC_SHUTTER				= 0;
-	private static final int			VOLUME_FUNC_EXPO				= 2;
-	private static final int			VOLUME_FUNC_NONE				= 3;
+	public static String				sEvPref;
+	public static String				sSceneModePref;
+	public static String				sWBModePref;
+	public static String				sFrontFocusModePref;
+	public static String				sFrontFocusModeVideoPref;
+	public static String				sRearFocusModePref;
+	public static String				sRearFocusModeVideoPref;
+	public static String				sFlashModePref;
+	public static String				sISOPref;
+	public static String				sMeteringModePref;
 
-	private static List<Area>			mMeteringAreaMatrix5			= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaMatrix4			= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaMatrix1			= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaCenter				= new ArrayList<Area>();
-	private static List<Area>			mMeteringAreaSpot				= new ArrayList<Area>();
-
-	private int							currentMeteringMode				= -1;
-
-	public static String				sTimestampDate;
-	public static String				sTimestampAbbreviation;
-	public static String				sTimestampTime;
-	public static String				sTimestampSeparator;
-	public static String				sTimestampCustomText;
-	public static String				sTimestampColor;
-	public static String				sTimestampFontSize;
-
-//	public static String				sEvPref;
-//	public static String				sSceneModePref;
-//	public static String				sWBModePref;
-//	public static String				sFrontFocusModePref;
-//	public static String				sFrontFocusModeVideoPref;
-//	public static String				sRearFocusModePref;
-//	public static String				sRearFocusModeVideoPref;
-//	public static String				sFlashModePref;
-//	public static String				sISOPref;
-//	public static String				sMeteringModePref;
-//
 //	public static String				sDelayedCapturePref;
 //	public static String				sShowDelayedCapturePref;
 //	public static String				sDelayedSoundPref;
 //	public static String				sDelayedFlashPref;
 //	public static String				sDelayedCaptureIntervalPref;
-//
+
 //	public static String				sPhotoTimeLapseCaptureIntervalPref;
 //	public static String				sPhotoTimeLapseCaptureIntervalMeasurmentPref;
 //	public static String				sPhotoTimeLapseActivePref;
 //	public static String				sPhotoTimeLapseIsRunningPref;
 //	public static String				sPhotoTimeLapseCount;
 
-//	public static String				sUseFrontCameraPref;
-//	private static String				sShutterPref;
-//	private static String				sShotOnTapPref;
-//	private static String				sVolumeButtonPref;
-//
-//	public static String				sImageSizeRearPref;
-//	public static String				sImageSizeFrontPref;
-//
-//	public static String				sImageSizeMultishotBackPref;
-//	public static String				sImageSizeMultishotFrontPref;
+	public static String				sUseFrontCameraPref;
+//	protected static String				sShutterPref;
+//	protected static String				sShotOnTapPref;
+//	protected static String				sVolumeButtonPref;
+
+	public static String				sImageSizeRearPref;
+	public static String				sImageSizeFrontPref;
+
+	public static String				sImageSizeMultishotBackPref;
+	public static String				sImageSizeMultishotFrontPref;
 //
 //	public static String				sImageSizePanoramaBackPref;
 //	public static String				sImageSizePanoramaFrontPref;
@@ -315,10 +283,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //
 //	public static String				sJPEGQualityPref;
 //	
-//	public static String				sAntibandingPref;
+	public static String				sAntibandingPref;
 //	
-//	public static String				sAELockPref;
-//	public static String				sAWBLockPref;
+	public static String				sAELockPref;
+	public static String				sAWBLockPref;
 //
 //	public static String				sDefaultInfoSetPref;
 //	public static String				sSWCheckedPref;
@@ -331,24 +299,185 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	public static String				sEnableExifOrientationTagPref;
 //	public static String				sAdditionalRotationPref;
 //
-//	public static String				sExpoPreviewModePref;
+	public static String				sExpoPreviewModePref;
 //
 //	public static String				sDefaultModeName;
 //
-//	public static int					sDefaultValue					= CameraParameters.SCENE_MODE_AUTO;
-//	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
-//	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
-//	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+	public static int					sDefaultValue					= CameraParameters.SCENE_MODE_AUTO;
+	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
 
-	abstract public void onCreate(Bundle savedInstanceState);
+	
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		sEvPref = getResources().getString(R.string.Preference_EvCompensationValue);
+		sSceneModePref = getResources().getString(R.string.Preference_SceneModeValue);
+		sWBModePref = getResources().getString(R.string.Preference_WBModeValue);
+		sFrontFocusModePref = getResources().getString(R.string.Preference_FrontFocusModeValue);
+		sFrontFocusModeVideoPref = getResources().getString(R.string.Preference_FrontFocusModeVideoValue);
+		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
+		sRearFocusModeVideoPref = getResources().getString(R.string.Preference_RearFocusModeVideoValue);
+		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
+		sISOPref = getResources().getString(R.string.Preference_ISOValue);
+		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
+
+		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
+
+		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
+		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
+
+		sImageSizeMultishotBackPref = getResources()
+				.getString(R.string.Preference_ImageSizePrefSmartMultishotBackValue);
+		sImageSizeMultishotFrontPref = getResources().getString(
+				R.string.Preference_ImageSizePrefSmartMultishotFrontValue);
+		
+		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
+
+		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
+		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
+
+		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
+
+		mainContext = this.getBaseContext();
+		messageHandler = new Handler(this);
+		thiz = this;
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// ensure landscape orientation
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		// set to fullscreen
+		getWindow().addFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		
+		// set some common view here
+		setContentView(R.layout.opencamera_main_layout);
+		
+		duringOnCreate();
+		
+		try
+		{
+			cameraController = CameraController.getInstance();
+		} catch (VerifyError exp)
+		{
+			Log.e("MainScreen", exp.getMessage());
+		}
+		CameraController.onCreate(ApplicationScreen.thiz, ApplicationScreen.thiz, PluginManager.getInstance(), ApplicationScreen.thiz.messageHandler);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
+		
+		// set preview, on click listener and surface buffers
+		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+		preview.setOnClickListener(this);
+		preview.setOnTouchListener(this);
+		preview.setKeepScreenOn(true);
+
+		surfaceHolder = preview.getHolder();
+		surfaceHolder.addCallback(this);
+		
+		orientListener = new OrientationEventListener(this)
+		{
+			@Override
+			public void onOrientationChanged(int orientation)
+			{
+				// figure landscape or portrait
+				if (ApplicationScreen.thiz.landscapeIsNormal)
+				{
+					orientation += 90;
+				}
+
+				if ((orientation < 45) || (orientation > 315 && orientation < 405)
+						|| ((orientation > 135) && (orientation < 225)))
+				{
+					if (ApplicationScreen.wantLandscapePhoto)
+					{
+						ApplicationScreen.wantLandscapePhoto = false;
+					}
+				} else
+				{
+					if (!ApplicationScreen.wantLandscapePhoto)
+					{
+						ApplicationScreen.wantLandscapePhoto = true;
+					}
+				}
+
+				// orient properly for video
+				if ((orientation > 135) && (orientation < 225))
+					orientationMain = 270;
+				else if ((orientation < 45) || (orientation > 315))
+					orientationMain = 90;
+				else if ((orientation < 325) && (orientation > 225))
+					orientationMain = 0;
+				else if ((orientation < 135) && (orientation > 45))
+					orientationMain = 180;
+
+				if (orientationMain != orientationMainPrevious)
+				{
+					orientationMainPrevious = orientationMain;
+				}
+			}
+		};
+		
+		// prevent power drain
+		screenTimer = new CountDownTimer(180000, 180000)
+		{
+			public void onTick(long millisUntilFinished)
+			{
+				// Not used
+			}
+
+			public void onFinish()
+			{
+				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
+						.getBoolean("videorecording", false);
+				if (isVideoRecording || keepScreenOn)
+				{
+					// restart timer
+					screenTimer.start();
+					isScreenTimerRunning = true;
+					preview.setKeepScreenOn(true);
+					return;
+				}
+				preview.setKeepScreenOn(keepScreenOn);
+				isScreenTimerRunning = false;
+			}
+		};
+		screenTimer.start();
+		isScreenTimerRunning = true;		
+		
+		PluginManager.getInstance().setupDefaultMode();
+		// init gui manager
+		guiManager = new AlmalenceGUI();
+		guiManager.createInitialGUI();
+		this.findViewById(R.id.mainLayout1).invalidate();
+		this.findViewById(R.id.mainLayout1).requestLayout();
+		guiManager.onCreate();
+
+		// init plugin manager
+		PluginManager.getInstance().onCreate();
+		
+		afterOnCreate();
+	}
+	
+	//At this point CameraController, GUIManager are not created yet.
+	//Use this method to initialize some shared preferences or do any other
+	//logic that isn't depended from OpenCamera core's objects.
+	abstract protected void duringOnCreate();
+	
+	//At this point all OpenCamera main objects are created.
+	abstract protected void afterOnCreate();
 
 	/*
-	 * Get/Set method for private variables
+	 * Get/Set method for protected variables
 	 */
-	public static ApplicationScreen getInstance()
-	{
-		return thiz;
-	}
+//	public static ApplicationScreen getInstance()
+//	{
+//		return thiz;
+//	}
 
 	public static Context getMainContext()
 	{
@@ -393,19 +522,56 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	abstract public Surface getRAWImageSurface();
 	
 	
-	abstract public SurfaceHolder getPreviewSurfaceHolder();
+	public static SurfaceHolder getPreviewSurfaceHolder()
+	{
+		return thiz.surfaceHolder;
+	}
 
-	abstract public SurfaceView getPreviewSurfaceView();
+	public static SurfaceView getPreviewSurfaceView()
+	{
+		return thiz.preview;
+	}
 	
-	abstract public int getPreviewSurfaceLayoutWidth();
 	
-	abstract public int getPreviewSurfaceLayoutHeight();
-	
-	abstract public void setPreviewSurfaceLayoutWidth(int width);
-	
-	abstract public void setPreviewSurfaceLayoutHeight(int height);
+	public static int getCaptureFormat()
+	{
+		return thiz.captureFormat;
+	}
 
-	abstract public void setSurfaceHolderSize(int width, int height);
+	public static void setCaptureFormat(int capture)
+	{
+		thiz.captureFormat = capture;
+	}
+	
+	public static int getPreviewSurfaceLayoutWidth()
+	{
+		return thiz.surfaceLayoutWidth;
+	}
+	
+	public static int getPreviewSurfaceLayoutHeight()
+	{
+		return thiz.surfaceLayoutHeight;
+	}
+	
+	public static void setPreviewSurfaceLayoutWidth(int width)
+	{
+		thiz.surfaceLayoutWidth = width;
+	}
+	
+	public static void setPreviewSurfaceLayoutHeight(int height)
+	{
+		thiz.surfaceLayoutHeight = height;
+	}
+
+	public static void setSurfaceHolderSize(int width, int height)
+	{
+		if (thiz.surfaceHolder != null)
+		{
+			thiz.surfaceWidth = width;
+			thiz.surfaceHeight = height;
+			thiz.surfaceHolder.setFixedSize(width, height);
+		}
+	}
 	
 	abstract public boolean isShutterSoundEnabled();
 
@@ -420,8 +586,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	/*
-	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Get/Set method for private variables
+	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Get/Set method for protected variables
 	 */
+	
+	abstract public void onPreferenceCreate(PreferenceFragment prefActivity);
+	abstract public void onAdvancePreferenceCreate(PreferenceFragment prefActivity);
 
 	public void glSetRenderingMode(final int renderMode)
 	{
@@ -470,6 +639,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onStart()
 	{
 		super.onStart();
+		onApplicationStart();
+	}
+	
+	protected void onApplicationStart()
+	{
 		CameraController.onStart();
 		ApplicationScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
@@ -479,6 +653,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onStop()
 	{
 		super.onStop();
+		onApplicationStop();
+	}
+	
+	protected void onApplicationStop()
+	{
 		mApplicationStarted = false;
 		orientationMain = 0;
 		orientationMainPrevious = 0;
@@ -487,7 +666,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		CameraController.onStop();
 
 		if (CameraController.isUseHALv3())
-			stopImageReaders();
+			stopImageReaders();		
 	}
 
 	@TargetApi(21)
@@ -498,20 +677,30 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		super.onDestroy();
 		
+		onApplicationDestroy();
+	}
+	
+	protected void onApplicationDestroy()
+	{
 		ApplicationScreen.getGUIManager().onDestroy();
 		PluginManager.getInstance().onDestroy();
 		CameraController.onDestroy();
 
-		this.hideOpenGLLayer();
+		this.hideOpenGLLayer();		
 	}
 
-	private CountDownTimer	onResumeTimer	= null;
+	protected CountDownTimer	onResumeTimer	= null;
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
 
+		onApplicationResume();
+	}
+	
+	protected void onApplicationResume()
+	{
 		isCameraConfiguring = false;
 
 		if (!isCreating)
@@ -527,33 +716,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-					updatePreferences();
-
-					preview.setKeepScreenOn(keepScreenOn);
-
+					preview.setKeepScreenOn(true);
+					
 					captureFormat = CameraController.JPEG;
-
-					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
-							.getAbsolutePath());
-					saveToPreference = prefs.getString(ApplicationScreen.sSaveToPref, "0");
-					sortByDataPreference = prefs.getBoolean(ApplicationScreen.sSortByDataPref, false);
-
-					maxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
-					setScreenBrightness(maxScreenBrightnessPreference);
-
-					captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
-
-					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
-					prefs.edit()
-							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-									CameraController.isUseHALv3()).commit();
-
-					// Log.e("MainScreen",
-					if (CameraController.isUseHALv3())
-					{
-						ApplicationScreen.setSurfaceHolderSize(1, 1);
-					}
 
 					ApplicationScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
@@ -563,25 +728,18 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					if (CameraController.isUseHALv3())
 					{
 						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
-						CameraController.setupCamera(null, !switchingMode);
+						CameraController.setupCamera(null, true);
 
 						if (glView != null)
-						{
 							glView.onResume();
-							Log.d("GL", "glView onResume");
-						}
-					} else if ((surfaceCreated && (!CameraController.isCameraCreated())) ||
-					// this is for change mode without camera restart!
-							(surfaceCreated && ApplicationScreen.getInstance().getSwitchingMode()))
+					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
 					{
 						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(surfaceHolder, !switchingMode);
+						CameraController.setupCamera(surfaceHolder, true);
 
 						if (glView != null)
 						{
 							glView.onResume();
-							Log.d("GL", "glView onResume");
 						}
 					}
 					orientListener.enable();
@@ -617,15 +775,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					.clearFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		}
-
-//		// <!-- -+-
-//		if (isABCUnlockedInstalled(this))
-//		{
-//			unlockAllPurchased = true;
-//			prefs.edit().putBoolean("unlock_all_forever", true).commit();
-//		}
-//		// -+- -->
+		}		
 	}
 
 	@Override
@@ -652,7 +802,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		}
 	}
 
-	private long getAvailableInternalMemory()
+	protected long getAvailableInternalMemory()
 	{
 		File path = Environment.getDataDirectory();
 		StatFs stat = new StatFs(path.getPath());
@@ -661,27 +811,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return availableBlocks * blockSize / 1048576;
 	}
 
-	private void updatePreferences()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		CameraController.setCameraIndex(!prefs.getBoolean(ApplicationScreen.sUseFrontCameraPref, false) ? 0 : 1);
-		shutterPreference = prefs.getBoolean(ApplicationScreen.sShutterPref, false);
-		shotOnTapPreference = Integer.parseInt(prefs.getString(ApplicationScreen.sShotOnTapPref, "0"));
-		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeRearPref
-				: ApplicationScreen.sImageSizeFrontPref, "-1");
-
-		multishotImageSizeIdxPreference = prefs.getString(
-				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
-				"-1");
-
-		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
-	}
-
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
 
+		onApplicationPause();
+	}
+	
+	protected void onApplicationPause()
+	{
 		if (onResumeTimer != null)
 		{
 			onResumeTimer.cancel();
@@ -693,12 +832,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		PluginManager.getInstance().onPause(true);
 
 		orientListener.disable();
-
-		if (shutterPreference)
-		{
-			AudioManager mgr = (AudioManager) ApplicationScreen.thiz.getSystemService(ApplicationScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
-		}
 
 		this.mPausing = true;
 
@@ -713,8 +846,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		// CameraController.onPause(CameraController.isUseHALv3()? false :
 		// switchingMode);
-		CameraController.onPause(switchingMode);
-		switchingMode = false;
+		CameraController.onPause(true);
 
 		if (CameraController.isUseHALv3())
 			stopImageReaders();
@@ -725,7 +857,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			shutterPlayer.release();
 			shutterPlayer = null;
-		}
+		}		
 	}
 
 	public void pauseMain()
@@ -751,17 +883,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
+		Log.e("ApplicationScreen", "SURFACE CHANGED");
 		mCameraSurface = holder.getSurface();
 
 		if (isCameraConfiguring)
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-			// updatePreferences();
-			// MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-			// configureHALv3Camera(captureFormat);
-			// messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
-		} else if (!isCreating)
+		}
+		else if (!isCreating)
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -772,156 +902,61 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				public void onFinish()
 				{
-					updatePreferences();
-
 					if (!ApplicationScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						Log.d("MainScreen", "surfaceChanged: CameraController.setupCamera(null). SurfaceSize = "
-								+ width + "x" + height);
 						if (!CameraController.isUseHALv3())
 						{
-							CameraController.setupCamera(holder, !switchingMode);
-						} else
-						{
-							// CameraController.setupCamera(null);
-							Log.e("MainScreen", "surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
-							messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
+							CameraController.setupCamera(holder, true);
 						}
+						else
+							messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 					}
 				}
 			}.start();
-		} else
-		{
-			updatePreferences();
 		}
 	}
 	
 	public void setCameraImageSizeIndex(int captureIndex, boolean init)
 	{
 		CameraController.setCameraImageSizeIndex(captureIndex);
-		if(init)
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-			prefs.edit().putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeRearPref
-					: ApplicationScreen.sImageSizeFrontPref, String.valueOf(captureIndex)).commit();
-		}
 	}
 	
+	//Used if some modes want to set special image size
 	@Override
 	public void setSpecialImageSizeIndexPref(int iIndex)
 	{
-		SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
-		prefEditor.putString(ApplicationScreen.sImageSizeMultishotBackPref, String.valueOf(iIndex));
-		prefEditor.commit();
 	}
 	
 	@Override
 	public String  getSpecialImageSizeIndexPref()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		return prefs.getString(ApplicationScreen.sImageSizeMultishotBackPref, "-1");
+		return "-1";
 	}
 
+	//Method used only in Almalence's multishot modes
 	public static int selectImageDimensionMultishot()
 	{
-		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
-		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
-												// x 4 - compressed input jpegs,
-												// 1Mb - safe reserve
-
-		// if (maxMpix < MIN_MPIX_SUPPORTED)
-		// {
-		// String msg;
-		// msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-		// // Log.d("MultishotCapturePlugin",
-		// // "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-		// // Log.d("MultishotCapturePlugin", msg);
-		// }
-
-		// find index selected in preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		int prefIdx = Integer.parseInt(prefs.getString(
-				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
-				"-1"));
-
-		// ----- Find max-resolution capture dimensions
-		int minMPIX = MIN_MPIX_PREVIEW;
-
-		int defaultCaptureIdx = -1;
-		long defaultCaptureMpix = 0;
-		long captureMpix = 0;
-		int captureIdx = -1;
-		boolean prefFound = false;
-
-		// figure default resolution
-		for (int ii = 0; ii < CameraController.MultishotResolutionsSizeList.size(); ++ii)
-		{
-			CameraController.Size s = CameraController.MultishotResolutionsSizeList.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((mpix >= minMPIX) && (mpix < maxMpix) && (mpix > defaultCaptureMpix))
-			{
-				defaultCaptureIdx = ii;
-				defaultCaptureMpix = mpix;
-			}
-		}
-
-		for (int ii = 0; ii < CameraController.MultishotResolutionsSizeList.size(); ++ii)
-		{
-			CameraController.Size s = CameraController.MultishotResolutionsSizeList.get(ii);
-			long mpix = (long) s.getWidth() * s.getHeight();
-
-			if ((Integer.valueOf(CameraController.MultishotResolutionsIdxesList.get(ii)) == prefIdx)
-					&& (mpix >= minMPIX))
-			{
-				prefFound = true;
-				captureIdx = ii;
-				captureMpix = mpix;
-				break;
-			}
-
-			if (mpix > captureMpix)
-			{
-				captureIdx = ii;
-				captureMpix = mpix;
-			}
-		}
-
-		if (defaultCaptureMpix > 0 && !prefFound)
-		{
-			captureIdx = defaultCaptureIdx;
-			captureMpix = defaultCaptureMpix;
-		}
-
-		return captureIdx;
+		return 0;
 	}
 
-	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		CameraController.setCameraIndex(!prefs.getBoolean(sUseFrontCameraPref, false) ? 0 : 1);
-
-		shutterPreference = prefs.getBoolean(sShutterPref, false);
-		shotOnTapPreference = Integer.parseInt(prefs.getString(ApplicationScreen.sShotOnTapPref, "0"));
-		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? sImageSizeRearPref
-				: sImageSizeFrontPref, "-1");
-
-		if (!ApplicationScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
-		{
-			ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-
-			if (CameraController.isUseHALv3())
-			{
-				// CameraController.setupCamera(null);
-				messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
-			} else
-			{
-				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
-				CameraController.setupCamera(holder, !switchingMode);
-			}
-		}
-	}
+//	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
+//	{
+//		if (!ApplicationScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+//		{
+//			ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+//
+//			if (CameraController.isUseHALv3())
+//			{
+//				// CameraController.setupCamera(null);
+//				messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
+//			} else
+//			{
+//				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
+//				CameraController.setupCamera(holder, true);
+//			}
+//		}
+//	}
 
 	@Override
 	public void addSurfaceCallback()
@@ -934,9 +969,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void configureCamera(boolean createGUI)
 	{
-		Log.d("MainScreen", "configureCamera()");
-		switchingMode = false;
-
 		CameraController.updateCameraFeatures();
 
 		// ----- Select preview dimensions with ratio correspondent to
@@ -944,24 +976,18 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		PluginManager.getInstance().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
 		if (CameraController.isUseHALv3())
-		{
-			// Log.e("MainScreen",
-			// "configureCamera. Set isCameraConfiguring to TRUE");
-			// isCameraConfiguring = true;
 			configureHALv3Camera(captureFormat);
-		} else
+		else
 		{
 			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 
-			Log.e("MainScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
+			Log.e("ApplicationScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
 			guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
 			CameraController.allocatePreviewBuffer(sz.width * sz.height
 					* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8);
 
 			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
-//			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
-			
 			onCameraConfigured();
 		}
 		
@@ -972,7 +998,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		}
 	}
 
-	private void onCameraConfigured()
+	protected void onCameraConfigured()
 	{
 		PluginManager.getInstance().setupCameraParameters();
 
@@ -991,13 +1017,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				}
 			} catch (RuntimeException e)
 			{
-				Log.d("MainScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
+				Log.d("ApplicationScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
 			}
-
+			
 			if (cp != null)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-				int antibanding = Integer.parseInt(prefs.getString(ApplicationScreen.sAntibandingPref, "3"));
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
 				switch(antibanding)
 				{
 					case 0:
@@ -1021,7 +1047,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				previewWidth = cp.getPreviewSize().width;
 				previewHeight = cp.getPreviewSize().height;
 			}
-
 		}
 
 		try
@@ -1091,125 +1116,19 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@TargetApi(21)
-	private void configureHALv3Camera(int captureFormat)
+	protected void configureHALv3Camera(int captureFormat)
 	{
 		isCameraConfiguring = true;
 
 		surfaceList = new ArrayList<Surface>();
 
-		// Log.d("MainScreen",
-		// "configureHALv3Camera. mImageReaderPreviewYUV size = " +
-		// mImageReaderPreviewYUV.getWidth() + " x " +
-		// mImageReaderPreviewYUV.getHeight());
-		Log.e("MainScreen", "configureHALv3Camera. surfaceHolder size = " + surfaceWidth + " x " + surfaceHeight);
-
-		// surfaceHolder.setFixedSize(surfaceWidth, surfaceHeight);
 		setSurfaceHolderSize(surfaceWidth, surfaceHeight);
-		// surfaceHolder.setFixedSize(1280, 960);
-		// mCameraSurface = surfaceHolder.getSurface();
-		// surfaceList.add(mCameraSurface); // surface for viewfinder preview
-		//
-		// if(captureFormat != CameraController.RAW) //when capture RAW preview
-		// frames is not available
-		// surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
-		// preview yuv
-		// // images
-		// if (captureFormat == CameraController.YUV)
-		// {
-		// Log.d("MainScreen", "add mImageReaderYUV " +
-		// mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-		// surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
-		// image
-		// // capture
-		// } else if(captureFormat == CameraController.JPEG)
-		// {
-		// Log.d("MainScreen", "add mImageReaderJPEG " +
-		// mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
-		// surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-		// image
-		// // capture
-		// }
-		// else if(captureFormat == CameraController.RAW)
-		// {
-		// Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " +
-		// mImageReaderRAW.getWidth() + " x " + mImageReaderRAW.getHeight());
-		// surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-		// image
-		// // capture
-		// if(CameraController.isRAWCaptureSupported())
-		// surfaceList.add(mImageReaderRAW.getSurface());
-		// }
-		//
-		// // sfl.add(mImageReaderJPEG.getSurface());
-		// CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
-		//
-		// guiManager.setupViewfinderPreviewSize(new
-		// CameraController.Size(this.previewWidth, this.previewHeight));
-		// // guiManager.setupViewfinderPreviewSize(new
-		// CameraController.Size(1280, 960));
-		//
-		// CameraController.setCaptureFormat(captureFormat);
-		// // configure camera with all the surfaces to be ever used
-		// // CameraController.createCaptureSession(sfl);
-		//
-		// // isCameraConfiguring = false;
-
-		// ^^ HALv3 code
-		// -------------------------------------------------------------------
 	}
 
 	@TargetApi(21)
-	public void createCaptureSession()
-	{
-		mCameraSurface = surfaceHolder.getSurface();
-		surfaceList.add(mCameraSurface); // surface for viewfinder preview
+	abstract public void createCaptureSession();	
 
-//		if (captureFormat != CameraController.RAW) // when capture RAW preview frames is not available
-		surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for preview yuv
-		// images
-		if (captureFormat == CameraController.YUV)
-		{
-			Log.d("MainScreen",
-					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
-															// image
-			// capture
-		} else if (captureFormat == CameraController.JPEG)
-		{
-			Log.d("MainScreen",
-					"add mImageReaderJPEG " + mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
-			surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-															// image
-			// capture
-		} else if (captureFormat == CameraController.RAW)
-		{
-			Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x "
-					+ mImageReaderRAW.getHeight());
-			surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-															// image
-			// capture
-			if (CameraController.isRAWCaptureSupported())
-				surfaceList.add(mImageReaderRAW.getSurface());
-		}
-
-		// sfl.add(mImageReaderJPEG.getSurface());
-		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
-
-		// guiManager.setupViewfinderPreviewSize(new
-		// CameraController.Size(this.previewWidth, this.previewHeight));
-		// guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280,
-		// 960));
-
-		CameraController.setCaptureFormat(captureFormat);
-		// configure camera with all the surfaces to be ever used
-
-		// If camera device isn't initialized (equals null) just force stop
-		// application.
-		if (!CameraController.createCaptureSession(surfaceList))
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
-	}
-
-	private void prepareMeteringAreas()
+	protected void prepareMeteringAreas()
 	{
 		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
 				- previewWidth / 4, previewHeight - previewHeight / 4));
@@ -1249,6 +1168,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
+		Log.e("ApplicationScreen", "SURFACE CREATED");
 		// ----- Find 'normal' orientation of the device
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -1289,7 +1209,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public void captureFailed()
 	{
 		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-		ApplicationScreen.getInstance().muteShutter(false);
+		ApplicationScreen.thiz.muteShutter(false);
 	}
 
 	@TargetApi(14)
@@ -1434,42 +1354,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			}
 		}
 
-		// check if volume button has some functions except Zoom-ing
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-			int buttonFunc = Integer.parseInt(prefs.getString(ApplicationScreen.sVolumeButtonPref, "0"));
-			if (buttonFunc == VOLUME_FUNC_SHUTTER)
-			{
-				ApplicationScreen.getGUIManager().onHardwareFocusButtonPressed();
-				ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
-				return true;
-			} else if (buttonFunc == VOLUME_FUNC_EXPO)
-			{
-				ApplicationScreen.getGUIManager().onVolumeBtnExpo(keyCode);
-				return true;
-			} else if (buttonFunc == VOLUME_FUNC_NONE)
-				return true;
-		}
-
 		if (PluginManager.getInstance().onKeyDown(true, keyCode, event))
 			return true;
 		if (guiManager.onKeyDown(true, keyCode, event))
 			return true;
-
-		// <!-- -+-
-		if (keyCode == KeyEvent.KEYCODE_BACK)
-		{
-			if (AppRater.showRateDialogIfNeeded(this))
-			{
-				return true;
-			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
-		}
-		// -+- -->
 
 		return super.onKeyDown(keyCode, event);
 	}
@@ -1622,82 +1510,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 	
 	@Override
-	public void showCaptureIndication(boolean playShutter)
-	{
-		// play tick sound
-		ApplicationScreen.getGUIManager().showCaptureIndication();
-		if(playShutter)
-			ApplicationScreen.getInstance().playShutter();
-	}
-
-	public void playShutter(int sound)
-	{
-		if (!ApplicationScreen.isShutterSoundEnabled())
-		{
-			MediaPlayer mediaPlayer = MediaPlayer.create(ApplicationScreen.thiz, sound);
-			mediaPlayer.start();
-		}
-	}
-
-	public void playShutter()
-	{
-		if (!ApplicationScreen.isShutterSoundEnabled())
-		{
-			if (shutterPlayer != null)
-				shutterPlayer.play();
-		}
-	}
+	abstract public void showCaptureIndication(boolean playShutter);
+	
 
 	// set TRUE to mute and FALSE to unmute
 	public void muteShutter(boolean mute)
 	{
-		if (ApplicationScreen.isShutterSoundEnabled())
-		{
 			AudioManager mgr = (AudioManager) ApplicationScreen.thiz.getSystemService(ApplicationScreen.AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
-		}
 	}
 
-	// public static int getImageWidth()
-	// {
-	// return thiz.imageWidth;
-	// }
-	//
-	// public static void setImageWidth(int setImageWidth)
-	// {
-	// thiz.imageWidth = setImageWidth;
-	// }
-	//
-	// public static int getImageHeight()
-	// {
-	// return thiz.imageHeight;
-	// }
-	//
-	// public static void setImageHeight(int setImageHeight)
-	// {
-	// thiz.imageHeight = setImageHeight;
-	// }
-
-	// public static int getSaveImageWidth()
-	// {
-	// return thiz.saveImageWidth;
-	// }
-	//
-	// public static void setSaveImageWidth(int setSaveImageWidth)
-	// {
-	// thiz.saveImageWidth = setSaveImageWidth;
-	// }
-	//
-	// public static int getSaveImageHeight()
-	// {
-	// return thiz.saveImageHeight;
-	// }
-	//
-	// public static void setSaveImageHeight(int setSaveImageHeight)
-	// {
-	// thiz.saveImageHeight = setSaveImageHeight;
-	// }
-	
 	@Override
 	public void setExpoPreviewPref(boolean previewMode)
 	{
@@ -1731,9 +1553,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		}
 		
 		CameraController.setCameraPreviewSize(new CameraController.Size(iWidth, iHeight));		
-		
-//		previewWidth = iWidth;
-//		previewHeight = iHeight;
 	}
 
 	public static int getPreviewWidth()
@@ -1800,22 +1619,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	/*******************************************************/
 //	/************************ Billing ************************/
 //
-//	private boolean		showStore					= false;
+//	protected boolean		showStore					= false;
 //	// <!-- -+-
 //	OpenIabHelper		mHelper;
 //
-//	private boolean		bOnSale						= false;
-//	private boolean		couponSale					= false;
+//	protected boolean		bOnSale						= false;
+//	protected boolean		couponSale					= false;
 //
-//	private boolean		unlockAllPurchased			= false;
-//	private boolean		superPurchased				= false;
-//	private boolean		hdrPurchased				= false;
-//	private boolean		panoramaPurchased			= false;
-//	private boolean		objectRemovalBurstPurchased	= false;
-//	private boolean		groupShotPurchased			= false;
+//	protected boolean		unlockAllPurchased			= false;
+//	protected boolean		superPurchased				= false;
+//	protected boolean		hdrPurchased				= false;
+//	protected boolean		panoramaPurchased			= false;
+//	protected boolean		objectRemovalBurstPurchased	= false;
+//	protected boolean		groupShotPurchased			= false;
 //
-//	private boolean		unlockAllSubscriptionMonth	= false;
-//	private boolean		unlockAllSubscriptionYear	= false;
+//	protected boolean		unlockAllSubscriptionMonth	= false;
+//	protected boolean		unlockAllSubscriptionYear	= false;
 //
 //	static final String	SKU_SUPER					= "plugin_almalence_super";
 //	static final String	SKU_HDR						= "plugin_almalence_hdr";
@@ -1924,16 +1743,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	}
 //
 //	// controls subscription status request
-//	private boolean	subscriptionStatusRequest	= false;
-//	private long	timeLastSubscriptionCheck	= 0;							// should
+//	protected boolean	subscriptionStatusRequest	= false;
+//	protected long	timeLastSubscriptionCheck	= 0;							// should
 //																				// check
 //																				// each
 //																				// 32
 //																				// days
 //																				// 32*24*60*60*1000
-//	private long	days32						= 32 * 24 * 60 * 60 * 1000L;
+//	protected long	days32						= 32 * 24 * 60 * 60 * 1000L;
 //
-//	private void createBillingHandler()
+//	protected void createBillingHandler()
 //	{
 //		try
 //		{
@@ -2030,7 +1849,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //		}
 //	}
 //
-//	private void destroyBillingHandler()
+//	protected void destroyBillingHandler()
 //	{
 //		try
 //		{
@@ -2244,13 +2063,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //																				}
 //																			};
 //
-//	private int									HDR_REQUEST					= 100;
-//	private int									SUPER_REQUEST				= 107;
-//	private int									PANORAMA_REQUEST			= 101;
-//	private int									ALL_REQUEST					= 102;
-//	private int									OBJECTREM_BURST_REQUEST		= 103;
-//	private int									GROUPSHOT_REQUEST			= 104;
-//	private int									SUBSCRIPTION_YEAR_REQUEST	= 106;
+//	protected int									HDR_REQUEST					= 100;
+//	protected int									SUPER_REQUEST				= 107;
+//	protected int									PANORAMA_REQUEST			= 101;
+//	protected int									ALL_REQUEST					= 102;
+//	protected int									OBJECTREM_BURST_REQUEST		= 103;
+//	protected int									GROUPSHOT_REQUEST			= 104;
+//	protected int									SUBSCRIPTION_YEAR_REQUEST	= 106;
 //
 //	public boolean isPurchasedAll()
 //	{
@@ -2415,7 +2234,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //																					}
 //																				};
 //
-//	private void purchaseFinished(IabResult result, Purchase purchase)
+//	protected void purchaseFinished(IabResult result, Purchase purchase)
 //	{
 //		Log.v("Main billing", "Purchase finished: " + result + ", purchase: " + purchase);
 //		if (result.isFailure())
@@ -2687,7 +2506,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	}
 //
 //	// writes number of launches left into memory
-//	private void WriteLaunches(File projDir, int left)
+//	protected void WriteLaunches(File projDir, int left)
 //	{
 //		FileOutputStream fos = null;
 //		try
@@ -2705,7 +2524,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	}
 //
 //	// reads number of launches left from memory
-//	private int ReadLaunches(File projDir)
+//	protected int ReadLaunches(File projDir)
 //	{
 //		int left = 0;
 //		FileInputStream fis = null;
@@ -2792,7 +2611,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //		return true;
 //	}
 //
-//	private boolean isInstalled(String packageName)
+//	protected boolean isInstalled(String packageName)
 //	{
 //		PackageManager pm = getPackageManager();
 //		boolean installed = false;
@@ -2807,7 +2626,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //		return installed;
 //	}
 //
-//	private void showSubscriptionDialog()
+//	protected void showSubscriptionDialog()
 //	{
 //		final float density = getResources().getDisplayMetrics().density;
 //
@@ -2858,7 +2677,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //		dialog.show();
 //	}
 //
-//	private boolean isABCUnlockedInstalled(Activity activity)
+//	protected boolean isABCUnlockedInstalled(Activity activity)
 //	{
 //		try
 //		{
@@ -2871,7 +2690,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //		return true;
 //	}
 //
-//	private void callStoreForUnlocked(Activity activity)
+//	protected void callStoreForUnlocked(Activity activity)
 //	{
 //		try
 //		{
@@ -2889,154 +2708,17 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	/************************ Billing ************************/
 //	/*******************************************************/
 
-	// <!-- -+-
+	abstract protected void resetOrSaveSettings();	
 
-	// Application rater code
-	public static void callStoreFree(Activity act)
-	{
-		try
-		{
-			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("market://details?id=com.almalence.opencam"));
-			act.startActivity(intent);
-		} catch (ActivityNotFoundException e)
-		{
-			return;
-		}
-	}
-
-	// -+- -->
-
-	// installing packages from play store
-	public static void callStoreInstall(Activity act, String id)
-	{
-		try
-		{
-			Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("market://details?id=" + id));
-			act.startActivity(intent);
-		} catch (ActivityNotFoundException e)
-		{
-			return;
-		}
-	}
-
-	private void resetOrSaveSettings()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		Editor prefsEditor = prefs.edit();
-		boolean isSaving = prefs.getBoolean("SaveConfiguration_Mode", true);
-		if (!isSaving)
-		{
-			prefsEditor.putString("defaultModeName", "single");
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_ImageSize", true);
-		if (!isSaving)
-		{
-			// general settings - image size
-			prefsEditor.putString(sImageSizeRearPref, "-1");
-			prefsEditor.putString(sImageSizeFrontPref, "-1");
-
-			// multishot and night
-			prefsEditor.putString(sImageSizeMultishotBackPref, "-1");
-			prefsEditor.putString(sImageSizeMultishotFrontPref, "-1");
-
-			// panorama
-			prefsEditor.remove(sImageSizePanoramaBackPref);
-			prefsEditor.remove(sImageSizePanoramaFrontPref);
-
-			// video
-			prefsEditor.putString(sImageSizeVideoBackPref, "-1");
-			prefsEditor.putString(sImageSizeVideoFrontPref, "-1");
-
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_SceneMode", false);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(sSceneModePref, sDefaultValue);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_FocusMode", true);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(sRearFocusModePref, sDefaultFocusValue);
-			prefsEditor.putInt(sFrontFocusModePref, sDefaultFocusValue);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_WBMode", false);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(sWBModePref, sDefaultValue);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", false);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(sISOPref, sDefaultValue);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_FlashMode", true);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(sFlashModePref, sDefaultValue);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_FrontRearCamera", true);
-		if (!isSaving)
-		{
-			prefsEditor.putBoolean(sUseFrontCameraPref, false);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_ExpoCompensation", false);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(ApplicationScreen.sEvPref, 0);
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_DelayedCapture", false);
-		if (!isSaving)
-		{
-			prefsEditor.putInt(ApplicationScreen.sDelayedCapturePref, 0);
-			prefsEditor.putBoolean(ApplicationScreen.sSWCheckedPref, false);
-			prefsEditor.putBoolean(ApplicationScreen.sDelayedFlashPref, false);
-			prefsEditor.putBoolean(ApplicationScreen.sDelayedSoundPref, false);
-			prefsEditor.putInt(ApplicationScreen.sDelayedCaptureIntervalPref, 0);
-
-			prefsEditor.commit();
-		}
-
-		isSaving = prefs.getBoolean("SaveConfiguration_TimelapseCapture", false);
-		if (!isSaving && !prefs.getBoolean(sPhotoTimeLapseIsRunningPref, false))
-		{
-			prefsEditor.putInt(ApplicationScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
-			prefsEditor.putInt(ApplicationScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
-			prefsEditor.putBoolean(ApplicationScreen.sPhotoTimeLapseIsRunningPref, false);
-			prefsEditor.putBoolean(ApplicationScreen.sPhotoTimeLapseActivePref, false);
-
-			prefsEditor.commit();
-		}
-	}
-
-	public void switchingMode(boolean isModeSwitching)
-	{
-		switchingMode = isModeSwitching;
-	}
-
-	public boolean getSwitchingMode()
-	{
-		return switchingMode;
-	}
+//	public void switchingMode(boolean isModeSwitching)
+//	{
+//		switchingMode = isModeSwitching;
+//	}
+//
+//	public boolean getSwitchingMode()
+//	{
+//		return switchingMode;
+//	}
 	
 	@Override
 	public Activity getMainActivity()
