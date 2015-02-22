@@ -2704,7 +2704,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
             .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
             //.setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP)
             //.addPreferredStoreName(OpenIabHelper.NAME_SAMSUNG)
-            .addStoreKeys(storeKeys);
+            //.addStoreKeys(storeKeys);
+            ;
 			*/
 			
 			//FOR PLAY STORE
@@ -2713,6 +2714,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
             .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
             .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
             .addStoreKeys(storeKeys);
+			
 			
 			mHelper = new OpenIabHelper(this, builder.build());
 
