@@ -206,10 +206,10 @@ public class MainScreen extends ApplicationScreen
 	//
 	// Description<<
 
-	private static boolean				isCreating						= false;
-	private static boolean				mApplicationStarted				= false;
-	private static boolean				mCameraStarted					= false;
-	private static boolean				isForceClose					= false;
+//	private static boolean				isCreating						= false;
+//	private static boolean				mApplicationStarted				= false;
+//	private static boolean				mCameraStarted					= false;
+//	private static boolean				isForceClose					= false;
 
 	// Clicked mode id from widget.
 	public static final String			EXTRA_ITEM						= "WidgetModeID";
@@ -446,6 +446,17 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void afterOnCreate()
 	{
+		PluginManager.getInstance().setupDefaultMode();
+		// init gui manager
+		guiManager = new AlmalenceGUI();
+		guiManager.createInitialGUI();
+		this.findViewById(R.id.mainLayout1).invalidate();
+		this.findViewById(R.id.mainLayout1).requestLayout();
+		guiManager.onCreate();
+
+		// init plugin manager
+		PluginManager.getInstance().onCreate();
+		
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
 		
@@ -1720,17 +1731,17 @@ public class MainScreen extends ApplicationScreen
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	public boolean onKeyUpEvent(int keyCode, KeyEvent event) {
 		// Prevent system sounds, for volume buttons.
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 			return true;
 		}
 		
-		return super.onKeyUp(keyCode, event);
+		return false;
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
+	public boolean onKeyDownEvent(int keyCode, KeyEvent event)
 	{
 		if (!mApplicationStarted)
 			return true;
@@ -1807,7 +1818,7 @@ public class MainScreen extends ApplicationScreen
 		}
 		// -+- -->
 
-		return super.onKeyDown(keyCode, event);
+		return false;
 	}
 	
 
@@ -1835,12 +1846,12 @@ public class MainScreen extends ApplicationScreen
 //	{
 //		MainScreen.getGUIManager().onButtonClick(v);
 //	}
-
-	@Override
-	public void onShutter()
-	{
-		PluginManager.getInstance().onShutter();
-	}
+//
+//	@Override
+//	public void onShutter()
+//	{
+//		PluginManager.getInstance().onShutter();
+//	}
 
 	public static boolean isForceClose()
 	{

@@ -220,10 +220,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static boolean				isCreating						= false;
-	protected static boolean				mApplicationStarted				= false;
-	protected static boolean				mCameraStarted					= false;
-	protected static boolean				isForceClose					= false;
+	protected static boolean			isCreating						= false;
+	protected static boolean			mApplicationStarted				= false;
+	protected static boolean			mCameraStarted					= false;
+	protected static boolean			isForceClose					= false;
 
 	protected static final int			VOLUME_FUNC_SHUTTER				= 0;
 	protected static final int			VOLUME_FUNC_EXPO				= 2;
@@ -448,17 +448,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		};
 		screenTimer.start();
 		isScreenTimerRunning = true;		
-		
-		PluginManager.getInstance().setupDefaultMode();
-		// init gui manager
-		guiManager = new AlmalenceGUI();
-		guiManager.createInitialGUI();
-		this.findViewById(R.id.mainLayout1).invalidate();
-		this.findViewById(R.id.mainLayout1).requestLayout();
-		guiManager.onCreate();
-
-		// init plugin manager
-		PluginManager.getInstance().onCreate();
 		
 		afterOnCreate();
 	}
@@ -1304,68 +1293,32 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		// Prevent system sounds, for volume buttons.
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+	public boolean onKeyUp(int keyCode, KeyEvent event)
+	{
+		if (onKeyUpEvent(keyCode, event))
 			return true;
-		}
 		
 		return super.onKeyUp(keyCode, event);
 	}
 	
+	abstract boolean onKeyUpEvent(int keyCode, KeyEvent event);
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		if (!mApplicationStarted)
-			return true;
-
-		// menu button processing
-		if (keyCode == KeyEvent.KEYCODE_MENU)
-		{
-			menuButtonPressed();
-			return true;
-		}
-		// shutter/camera button processing
-		if (keyCode == KeyEvent.KEYCODE_CAMERA || keyCode == KeyEvent.KEYCODE_DPAD_CENTER)
-		{
-			ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
-			return true;
-		}
-		// focus/half-press button processing
-		if (keyCode == KeyEvent.KEYCODE_FOCUS)
-		{
-			if (event.getDownTime() == event.getEventTime())
-			{
-				ApplicationScreen.getGUIManager().onHardwareFocusButtonPressed();
-			}
-			return true;
-		}
-
-		// check if Headset Hook button has some functions except standard
-		if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
-			if (headsetFunc)
-			{
-				ApplicationScreen.getGUIManager().onHardwareFocusButtonPressed();
-				ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
-				return true;
-			}
-		}
-
-		if (PluginManager.getInstance().onKeyDown(true, keyCode, event))
-			return true;
-		if (guiManager.onKeyDown(true, keyCode, event))
+		if (onKeyDownEvent(keyCode, event))
 			return true;
 
 		return super.onKeyDown(keyCode, event);
 	}
 	
+	abstract boolean onKeyDownEvent(int keyCode, KeyEvent event);
+	
 
 	@Override
 	public void onClick(View v)
 	{
+		Log.e("ApplicationScreen", "onClick");
 		if (mApplicationStarted)
 			ApplicationScreen.getGUIManager().onClick(v);
 	}
@@ -1373,6 +1326,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
+		Log.e("ApplicationScreen", "onTouch");
 		if (mApplicationStarted)
 			return ApplicationScreen.getGUIManager().onTouch(view, event);
 		return true;
@@ -1380,17 +1334,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public boolean onTouchSuper(View view, MotionEvent event)
 	{
+		Log.e("ApplicationScreen", "onTouchSuper");
 		return super.onTouchEvent(event);
 	}
 
 	public void onButtonClick(View v)
 	{
+		Log.e("ApplicationScreen", "onButtonClick");
 		ApplicationScreen.getGUIManager().onButtonClick(v);
 	}
 
 	@Override
 	public void onShutter()
 	{
+		Log.e("ApplicationScreen", "onShutter");
 		PluginManager.getInstance().onShutter();
 	}
 
