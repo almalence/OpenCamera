@@ -422,7 +422,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			cancelAutoFocus();
 			resetTouchFocus();
 			autoFocus();
-			}
+		}
 	}
 
 	public void setFocusParameters()
