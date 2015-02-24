@@ -142,6 +142,7 @@ public class NightCapturePlugin extends PluginCapture
 	@TargetApi(21)
 	public void onCreate()
 	{
+		//onCreate called once at application starts. Initialize variables for camera2 API detection.
 		usingCamera2API = CameraController.isUseHALv3(); 
 		usingSuperMode = CameraController.isUseSuperMode();
 
@@ -164,8 +165,28 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	@Override
+	@TargetApi(21)
 	public void onStart()
 	{
+		//Between switches from camera1 to camera2 APIs via preference screen application doesn't calls onCreate
+		//Re-initialize camera2 detection variables again.
+		usingCamera2API = CameraController.isUseHALv3(); 
+		usingSuperMode = CameraController.isUseSuperMode();
+		
+		if (usingSuperMode)
+		{
+			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
+			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
+			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
+			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
+			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
+			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
+		}
+		else
+		{
+			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
+		}
+		
 		getPrefs();
 
 		if (OpenGLPreference)
@@ -180,6 +201,7 @@ public class NightCapturePlugin extends PluginCapture
 		
 		if (usingSuperMode)
 		{
+			OpenGLPreference = false;
 			quickControlIconID = -1;
 		}
 	}
@@ -310,6 +332,8 @@ public class NightCapturePlugin extends PluginCapture
 			else
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
 		}
+		else
+			OpenGLPreference = false;
 	}
 
 	@Override
@@ -535,7 +559,7 @@ public class NightCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		total_frames = HI_RES_FRAMES;
 
-		if (FocusPreference.compareTo("0") == 0)
+		if (!usingSuperMode && FocusPreference.compareTo("0") == 0)
 			takePicture();
 		else
 		{

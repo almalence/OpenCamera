@@ -1259,6 +1259,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStart()
 	{
 		super.onStart();
+		
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
+		CameraController.useHALv3(prefs.getBoolean(getResources()
+				.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+		prefs.edit()
+				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+						CameraController.isUseHALv3()).commit();
+		
 		CameraController.onStart();
 		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
@@ -1374,11 +1384,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
-					prefs.edit()
-							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-									CameraController.isUseHALv3()).commit();
+//					CameraController.useHALv3(prefs.getBoolean(getResources()
+//							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+//					prefs.edit()
+//							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+//									CameraController.isUseHALv3()).commit();
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
