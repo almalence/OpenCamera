@@ -116,6 +116,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 						prefsEditor.putBoolean("droShowHelp", true);
 						prefsEditor.putBoolean("sequenceRemovalShowHelp", true);
 						prefsEditor.putBoolean("panoramaShowHelp", true);
+						prefsEditor.putBoolean("superShowHelp", true);
 						prefsEditor.putBoolean("groupshotRemovalShowHelp", true);
 						prefsEditor.putBoolean("objectRemovalShowHelp", true);
 						prefsEditor.putBoolean("bestShotShowHelp", true);

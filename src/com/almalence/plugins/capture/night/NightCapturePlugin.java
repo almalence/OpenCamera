@@ -154,6 +154,11 @@ public class NightCapturePlugin extends PluginCapture
 			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
 			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
 			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
+			
+			
+			MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Super_Help_Header),
+					MainScreen.getAppResources().getString(R.string.Super_Help),
+					R.drawable.store_super, "superShowHelp");
 		}
 		else
 		{
