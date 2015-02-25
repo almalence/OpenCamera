@@ -971,9 +971,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 
+			try
+			{
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-				cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
-
+				CameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+			} catch (Exception e)
+			{
+				Log.e(TAG, "Unable to set preview display for camera");
+				e.printStackTrace();
+				CameraController.mVideoStabilizationSupported = false;
+			}
+			
 			// screen rotation
 			if (!pluginManager.shouldPreviewToGPU())
 			{
