@@ -790,56 +790,55 @@ public class HALv3
 	public static int[] getSupportedISOModesHALv3()
 	{
 		//Temprorary disable ISO in camera2 mode, because SENSOR_SENSITIVITY parameter is ignored by the camera.
-//		if (HALv3.getInstance().camCharacter != null
-//				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
-//		{
-//			Range<Integer> iso = HALv3.getInstance().camCharacter
-//					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-//			int max_iso = iso.getUpper();
-//			int min_iso = iso.getLower();
-//
-//			int iso_count = 0;
-//			int index = 0;
-//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-//			{
-//				int iso_value = CameraController.getIsoModeHALv3().get(index);
-//				if (max_iso >= iso_value && min_iso <= iso_value)
-//					++iso_count;
-//			}
-//			int[] iso_values = new int[iso_count + 1];
-//			// for (int i = 0; i < index; i++)
-//			// iso_values[i] =
-//			// CameraController.getIsoValuesList().get(i).byteValue();
-//
-//			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
-//			int iso_index = 1;
-//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-//			{
-//				int iso_value = CameraController.getIsoModeHALv3().get(index);
-//				if (max_iso >= iso_value && min_iso <= iso_value)
-//					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
-//			}
-//
-//			if (iso_values.length > 0)
-//				return iso_values;
-//		}
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+		{
+			Range<Integer> iso = HALv3.getInstance().camCharacter
+					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			int max_iso = iso.getUpper();
+			int min_iso = iso.getLower();
 
+			int iso_count = 0;
+			int index = 0;
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+			{
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					++iso_count;
+			}
+			int[] iso_values = new int[iso_count + 1];
+			// for (int i = 0; i < index; i++)
+			// iso_values[i] =
+			// CameraController.getIsoValuesList().get(i).byteValue();
+
+			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
+			int iso_index = 1;
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+			{
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
+			}
+
+			if (iso_values.length > 0)
+				return iso_values;
+		}
 		return new int[0];
 	}
 
 	public static boolean isISOModeSupportedHALv3()
 	{
 		// CLOSED until manual exposure metering will be researched
-		// if (HALv3.getInstance().camCharacter != null &&
-		// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE)
-		// != null)
-		// {
-		// Range<Integer> iso =
-		// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-		// if (iso.getLower() == iso.getUpper())
-		// return false;
-		// return true;
-		// }
+		 if (HALv3.getInstance().camCharacter != null &&
+		 HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE)
+		 != null)
+		 {
+			 Range<Integer> iso =
+			 HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			 if (iso.getLower() == iso.getUpper())
+				 return false;
+			 return true;
+		 }
 
 		return false;
 	}
@@ -969,6 +968,7 @@ public class HALv3
 			if (mode != 1)
 			{
 				int iso = CameraController.getIsoModeHALv3().get(mode);
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 			}
 			HALv3.setRepeatingRequest();
@@ -987,6 +987,19 @@ public class HALv3
 		}
 
 		appInterface.setEVPref(iEV);
+	}
+	
+	public static void setCameraExposureTimeHALv3(long iTime)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
+				&& HALv3.getInstance().mCaptureSession != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
+			HALv3.setRepeatingRequest();
+		}
+
+//		appInterface.setEVPref(iEV);
 	}
 
 	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
