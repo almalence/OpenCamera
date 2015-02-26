@@ -204,6 +204,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
+	protected static boolean						isManualSensorSupported			= false;
 
 	protected static String[]								cameraIdList					= { "" };
 
@@ -883,6 +884,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isRAWCaptureSupported()
 	{
 		return isRAWCaptureSupported;
+	}
+	
+	public static boolean isManualSensorSupported()
+	{
+		return isManualSensorSupported;
 	}
 	
 	
@@ -2274,13 +2280,44 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedISOModes;
 	}
 	
-	public static List<String> getSupportedISONames() {
+	public static List<String> getSupportedISONames()
+	{
 		List<String> isoNames = new ArrayList<String>();
 		for (int i : supportedISOModes) {
 			isoNames.add(mode_iso.get(i));
 		}
 		return isoNames;
 	}
+	
+	
+	
+	/*
+	 * Manual sensor parameters: focus distance and exposure time.
+	 * Available only in Camera2 mode.
+	*/
+	public static boolean isManualFocusSupported()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.isManualFocusSupportedHALv3();
+		else
+			return false;
+	}
+	
+	public static float getMinimumFocusDistance()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMinimumFocusDistance();
+		else
+			return 0;
+	}
+	
+	public static boolean isManualExposureTimeSupported()
+	{
+		return CameraController.isHALv3;
+	}
+	//////////////////////////////////////////////////////
+	
+	
 
 	public static int getMaxNumMeteringAreas()
 	{

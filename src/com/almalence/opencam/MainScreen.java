@@ -283,6 +283,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sTimestampFontSize;
 
 	public static String				sEvPref;
+	public static String				sExposureTimePref;
+	public static String				sFocusDistancePref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
 	public static String				sFrontFocusModePref;

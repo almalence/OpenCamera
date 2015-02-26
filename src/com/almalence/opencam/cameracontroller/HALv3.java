@@ -178,9 +178,12 @@ public class HALv3
 
 			int[] keys = HALv3.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
 			CameraController.isRAWCaptureSupported = false;
+			CameraController.isManualSensorSupported = false;
 			for (int key : keys)
 				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
 					CameraController.isRAWCaptureSupported = true;
+				else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
+					CameraController.isManualSensorSupported = true;
 		} catch (CameraAccessException e)
 		{
 			// TODO Auto-generated catch block
@@ -905,6 +908,30 @@ public class HALv3
 
 		return false;
 	}
+	
+	public static boolean isManualFocusSupportedHALv3()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
+		{
+			float minFocusDistance = HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
+			
+			//If the lens is fixed-focus, minimum focus distance will be 0.
+			if(minFocusDistance > 0.0f)
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public static float getCameraMinimumFocusDistance()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
+		
+		return 0;
+	}
 
 	public static int getMaxNumMeteringAreasHALv3()
 	{
@@ -1039,6 +1066,7 @@ public class HALv3
 			if (mode != 1)
 			{
 				int iso = CameraController.getIsoModeHALv3().get(mode);
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 			}
 			HALv3.setRepeatingRequest();
@@ -1060,6 +1088,39 @@ public class HALv3
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putInt(MainScreen.sEvPref, iEV).commit();
 	}
+	
+	
+	/*
+	 * Manual sensor parameters: focus distance and exposure time.
+	 * Available only in Camera2 mode.
+	*/
+	public static void setCameraExposureTimeHALv3(long iTime)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
+				&& HALv3.getInstance().mCaptureSession != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
+			HALv3.setRepeatingRequest();
+		}
+
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+				.putLong(MainScreen.sExposureTimePref, iTime).commit();
+	}
+	
+	
+	public static void setCameraFocusDistanceHALv3(float fDistance)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
+				&& HALv3.getInstance().mCaptureSession != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, fDistance);
+			HALv3.setRepeatingRequest();
+		}
+
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+				.putFloat(MainScreen.sFocusDistancePref, fDistance).commit();
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
 
 	public static void setCameraFocusAreasHALv3(List<Area> focusAreas)
 	{
