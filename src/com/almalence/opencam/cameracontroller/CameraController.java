@@ -2659,7 +2659,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		            
 		            
 		            myOutWriter.append("MODEL = " + Build.MODEL + "\n");
-					boolean isSpecialDevice = Build.MODEL.contains("SM-N910");
+					boolean isSpecialDevice = Build.MODEL.contains("SM-N910") || Build.MODEL.contains("ALCATEL ONE TOUCH");
 					Camera.Parameters params = camera.getParameters();
 					myOutWriter.append("\n+++++++++++++++ Camera.Parameters ++++++++++++++++++++++++\n" + params.flatten() + "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 					if (params != null)
