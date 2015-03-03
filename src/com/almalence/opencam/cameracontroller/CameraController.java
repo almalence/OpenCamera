@@ -2295,12 +2295,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	 * Manual sensor parameters: focus distance and exposure time.
 	 * Available only in Camera2 mode.
 	*/
-	public static boolean isManualFocusSupported()
+	public static boolean isManualFocusDistanceSupported()
 	{
-		if(CameraController.isHALv3)
-			return HALv3.isManualFocusSupportedHALv3();
-		else
-			return false;
+//		if(CameraController.isHALv3)
+//			return HALv3.isManualFocusDistanceSupportedHALv3();
+//		else
+//			return false;
+		return false;
 	}
 	
 	public static float getMinimumFocusDistance()
@@ -2313,7 +2314,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isManualExposureTimeSupported()
 	{
-		return CameraController.isHALv3;
+//		if(CameraController.isHALv3)
+//		{
+//			if(getMinimumExposureTime() != getMaximumExposureTime())
+//				return true;
+//			
+//			return false;
+//		}
+//		else
+//			return false;
+		return false;
+	}
+	
+	public static long getMinimumExposureTime()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMinimumExposureTime();
+		else
+			return 0;
+	}
+	
+	public static long getMaximumExposureTime()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMaximumExposureTime();
+		else
+			return 0;
 	}
 	//////////////////////////////////////////////////////
 	
@@ -2737,6 +2763,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.setCameraExposureCompensationHALv3(iEV);
 		
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+	}
+	
+	public static void setCameraExposureTime(long iTime)
+	{
+		if(CameraController.isHALv3)
+			HALv3.setCameraExposureTimeHALv3(iTime);
+	}
+	
+	
+	public static void resetCameraAEMode()
+	{
+		if(CameraController.isHALv3)
+			HALv3.resetCameraAEModeHALv3();
+	}
+	
+	public static void setCameraFocusDistance(float fDistance)
+	{
+		if(CameraController.isHALv3)
+			HALv3.setCameraFocusDistanceHALv3(fDistance);
 	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)

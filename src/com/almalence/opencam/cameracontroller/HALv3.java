@@ -909,7 +909,7 @@ public class HALv3
 		return false;
 	}
 	
-	public static boolean isManualFocusSupportedHALv3()
+	public static boolean isManualFocusDistanceSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null
 				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
@@ -929,6 +929,30 @@ public class HALv3
 		if (HALv3.getInstance().camCharacter != null
 				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
+		
+		return 0;
+	}
+	
+	public static long getCameraMinimumExposureTime()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE) != null)
+		{
+			Range<Long> exposureTimeRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+			return exposureTimeRange.getLower();
+		}
+		
+		return 0;
+	}
+	
+	public static long getCameraMaximumExposureTime()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE) != null)
+		{
+			Range<Long> exposureTimeRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+			return exposureTimeRange.getUpper();
+		}
 		
 		return 0;
 	}
@@ -1099,6 +1123,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
 		}
@@ -1107,12 +1132,29 @@ public class HALv3
 				.putLong(MainScreen.sExposureTimePref, iTime).commit();
 	}
 	
+	public static void resetCameraAEModeHALv3()
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
+				&& HALv3.getInstance().mCaptureSession != null)
+		{
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 	public static void setCameraFocusDistanceHALv3(float fDistance)
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, fDistance);
 			HALv3.setRepeatingRequest();
 		}

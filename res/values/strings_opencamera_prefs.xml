@@ -26,6 +26,10 @@
     <string name="Preference_FlashModeValue">Preference_FlashModeValue</string>
     <string name="Preference_ISOValue">Preference_ISOValue</string>
     <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
+    <string name="Preference_ExposureTimeValue">Preference_ExposureTimeValue</string>
+    <string name="Preference_ExposureTimeModeValue">Preference_ExposureTimeModeValue</string>
+    <string name="Preference_FocusDistanceValue">Preference_FocusDistanceValue</string>
+    <string name="Preference_FocusDistanceModeValue">Preference_FocusDistanceModeValue</string>
     
     <string name="Preference_DelayedCaptureValue">Preference_DelayedCaptureValue</string>
     <string name="Preference_ShowDelayedCaptureValue">Preference_ShowDelayedCaptureValue</string>

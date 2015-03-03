@@ -247,6 +247,8 @@
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
     <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_exposuretime">Exposure time</string>
+    <string name="settings_mode_focusdistance">Focus distance</string>
     <string name="settings_mode_moresettings">More settings</string>
     <string name="settings_mode_aeaflock">AE\\AF Locked</string>
     <string name="settings_mode_aeafunlock">AE\\AF UnLocked</string>

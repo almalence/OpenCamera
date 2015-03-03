@@ -84,6 +84,7 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,11 +92,13 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.almalence.googsharing.Thumbnail;
 import com.almalence.ui.Panel;
 import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.Switch.Switch;
 import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 
@@ -111,6 +114,7 @@ import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -148,7 +152,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public enum SettingsType
 	{
-		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, MORE
+		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, EXTIME, FDIST, MORE
 	}
 
 	private OrientationEventListener			orientListener;
@@ -194,6 +198,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final Integer				ICON_EV						= R.drawable.gui_almalence_settings_exposure;
 	private static final Integer				ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
 	private static final Integer				ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
+	
+	private static final Integer				ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_exposure;
+	private static final Integer				ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_exposure;
+	private static final Integer				ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_exposure;
 
 	private static final int					FOCUS_AF_LOCK				= 10;
 
@@ -404,7 +412,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																							R.drawable.gui_almalence_settings_metering_spot);
 																				}
 																			};
-
+																			
 	// List of localized names for camera parameters values
 	private static final Map<Integer, String>	NAMES_SCENE					= new HashMap<Integer, String>()
 																			{
@@ -773,7 +781,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final int					MODE_ISO					= R.id.isoButton;
 	private static final int					MODE_CAM					= R.id.camerachangeButton;
 	private static final int					MODE_MET					= R.id.meteringButton;
-
+	private static final int					MODE_EXPOSURE_TIME			= R.id.exposureTimeButton;
+	private static final int					MODE_FOCUS_DISTANCE			= R.id.focusDistanceButton;
+	
 	private Map<Integer, View>					topMenuButtons;
 
 	// Each plugin may have one top menu (and appropriate quick control) button
@@ -822,6 +832,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private boolean								isIsoEnabled				= true;
 	private boolean								isCameraChangeEnabled		= true;
 	private boolean								isMeteringEnabled			= true;
+	private boolean								isExposureTimeEnabled		= true;
+	private boolean								isFocusDistanceEnabled		= true;
 
 	// GUI Layout
 	private View								guiView;
@@ -834,6 +846,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private int									mWB							= -1;
 	private int									mISO						= -1;
 	private int									mMeteringMode				= -1;
+	
+	private long								mExposureTime				= -1;	
+	private float								mFocusDistance				= -1;		
 
 	private float								fScreenDensity;
 
@@ -1043,6 +1058,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				((RotateImageView) topMenuButtons.get(MODE_ISO)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 				((RotateImageView) topMenuButtons.get(MODE_CAM)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 				((RotateImageView) topMenuButtons.get(MODE_MET)).setOrientation(AlmalenceGUI.mDeviceOrientation);
+				((RotateImageView) topMenuButtons.get(MODE_EXPOSURE_TIME)).setOrientation(AlmalenceGUI.mDeviceOrientation);
+				((RotateImageView) topMenuButtons.get(MODE_FOCUS_DISTANCE)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 
 				Set<String> keys = topMenuPluginButtons.keySet();
 				Iterator<String> it = keys.iterator();
@@ -1185,6 +1202,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_METERING, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EXPTIME, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FDISTANCE, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, true);
 
 		// if first launch - show layout with hints
@@ -1247,6 +1266,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.isoButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.meteringButton).setOnTouchListener(MainScreen.getInstance());
+		guiView.findViewById(R.id.exposureTimeButton).setOnTouchListener(MainScreen.getInstance());
+		guiView.findViewById(R.id.focusDistanceButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.camerachangeButton).setOnTouchListener(MainScreen.getInstance());
 
 		// Long clicks are needed to open quick controls customization layout
@@ -1257,6 +1278,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.isoButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.meteringButton).setOnLongClickListener(this);
+		guiView.findViewById(R.id.exposureTimeButton).setOnLongClickListener(this);
+		guiView.findViewById(R.id.focusDistanceButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.camerachangeButton).setOnLongClickListener(this);
 
 		// Get all top menu buttons
@@ -1267,6 +1290,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		topMenuButtons.put(MODE_FLASH, guiView.findViewById(R.id.flashButton));
 		topMenuButtons.put(MODE_ISO, guiView.findViewById(R.id.isoButton));
 		topMenuButtons.put(MODE_MET, guiView.findViewById(R.id.meteringButton));
+		topMenuButtons.put(MODE_EXPOSURE_TIME, guiView.findViewById(R.id.exposureTimeButton));
+		topMenuButtons.put(MODE_FOCUS_DISTANCE, guiView.findViewById(R.id.focusDistanceButton));
 		topMenuButtons.put(MODE_CAM, guiView.findViewById(R.id.camerachangeButton));
 
 		sceneModeButtons = initCameraParameterModeButtons(ICONS_SCENE, NAMES_SCENE, sceneModeButtons, MODE_SCENE);
@@ -1673,6 +1698,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		mFlashModeSupported = false;
 		mISOSupported = false;
 		mMeteringAreasSupported = false;
+		mManualExposureTimeSupported = false;
+		mManualFocusDistanceSupported = false;
 		mCameraChangeSupported = false;
 
 		mEVLockSupported = false;
@@ -2157,7 +2184,133 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.mMeteringAreasSupported = false;
 			this.mMeteringMode = -1;
 		}
+		
+		
+		// Create Manual Exposure time button and slider with supported values
+		if (CameraController.isManualExposureTimeSupported())
+		{
+			mManualExposureTimeSupported = true;
+			
+			boolean isAutoExposureTime = preferences.getBoolean(MainScreen.sExposureTimeModePref, true);
 
+			SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
+			if (exBar != null)
+			{
+				long initValue = preferences.getLong(MainScreen.sExposureTimePref, CameraController.getMinimumExposureTime());
+				exBar.setMax((int)CameraController.getMaximumExposureTime());
+				exBar.setProgress((int)initValue);
+				
+				Long minValue = CameraController.getMinimumExposureTime();
+				Long maxValue = CameraController.getMaximumExposureTime();
+
+				TextView leftText = (TextView) guiView.findViewById(R.id.exposureTimeLeftText);
+				TextView rightText = (TextView) guiView.findViewById(R.id.exposureTimeRightText);
+
+				String minString = String.valueOf(minValue);
+				String maxString = String.valueOf(maxValue);
+
+				//TODO: EXPOSURE TIME
+				leftText.setText(minString);
+				rightText.setText(maxString);
+
+				mExposureTime = initValue;
+				
+				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.exposureTimeSeekBarAndButtonsLayout);
+				seekBarLayout.setVisibility(isAutoExposureTime? View.GONE : View.VISIBLE);
+				
+				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.exposureTimeModeSwitcher);
+				modeSwitcher.setChecked(isAutoExposureTime);
+				modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
+				{
+					@Override
+					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+					{
+						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked);
+						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
+						
+						long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, CameraController.getMinimumExposureTime());
+						
+						if(!isChecked)
+							CameraController.setCameraExposureTime(expTimeValue);
+						else
+							CameraController.resetCameraAEMode();
+
+					}
+				});
+				
+				if(!isAutoExposureTime)
+					CameraController.setCameraExposureTime(mExposureTime);
+
+				exBar.setOnSeekBarChangeListener(this);
+			}
+
+				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EXPOSURE_TIME);
+				but.setImageResource(isAutoExposureTime? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME);
+		} else
+			mManualExposureTimeSupported = false;
+		
+		
+		// Create Manual Focus distance button and slider with supported values
+		if (CameraController.isManualFocusDistanceSupported())
+		{
+			mManualFocusDistanceSupported = true;
+			
+			boolean isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
+			
+			SeekBar focusBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
+			if (focusBar != null)
+			{
+				float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
+
+				TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
+				TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
+				
+				float maxValue = CameraController.getMinimumFocusDistance();
+
+				String maxString = String.valueOf(maxValue);
+
+				//TODO: FOCUS DISTANCE
+				leftText.setText("Infinite");
+				rightText.setText(maxString);
+				
+				mFocusDistance = initValue;
+				
+				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceSeekBarAndButtonsLayout);
+				seekBarLayout.setVisibility(isAutoFocusDistance? View.GONE : View.VISIBLE);
+				
+				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.focusDistanceModeSwitcher);
+				modeSwitcher.setChecked(isAutoFocusDistance);
+				modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
+				{
+					@Override
+					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+					{
+						preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked);
+						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
+						
+						float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
+						
+						if(!isChecked)
+							CameraController.setCameraFocusDistance(fDistValue);
+						else
+							CameraController.resetCameraAEMode();
+
+					}
+				});
+				
+				if(!isAutoFocusDistance)
+					CameraController.setCameraFocusDistance(mFocusDistance);
+
+				focusBar.setOnSeekBarChangeListener(this);
+			}
+
+				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS_DISTANCE);
+				but.setImageResource(ICON_FOCUS_DISTANCE);
+		} else
+			mManualFocusDistanceSupported = false;
+		
+		
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
 		{
 			addCameraChangeButton();
@@ -2315,6 +2468,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				return mISOSupported;
 			case MODE_MET:
 				return mMeteringAreasSupported;
+			case MODE_EXPOSURE_TIME:
+				return mManualExposureTimeSupported;
+			case MODE_FOCUS_DISTANCE:
+				return mManualFocusDistanceSupported;
 			case MODE_CAM:
 				return mCameraChangeSupported;
 			default:
@@ -2359,6 +2516,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case CAMERA_PARAMETER_METERING:
 			topMenuView = topMenuButtons.get(MODE_MET);
 			isMeteringEnabled = !bDisable;
+			break;
+		case CAMERA_PARAMETER_EXPTIME:
+			topMenuView = topMenuButtons.get(MODE_EXPOSURE_TIME);
+			isExposureTimeEnabled = !bDisable;
+			break;
+		case CAMERA_PARAMETER_FDISTANCE:
+			topMenuView = topMenuButtons.get(MODE_FOCUS_DISTANCE);
+			isFocusDistanceEnabled = !bDisable;
 			break;
 		case CAMERA_PARAMETER_CAMERACHANGE:
 			topMenuView = topMenuButtons.get(MODE_CAM);
@@ -2648,6 +2813,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_exposure);
 			isEnabled = isEVEnabled;
 			break;
+		case EXTIME:
+			icon_id = preferences.getBoolean(MainScreen.sExposureTimeModePref, true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME;
+			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_exposuretime);
+			isEnabled = isExposureTimeEnabled;
+			break;
+		case FDIST:
+			icon_id = ICON_FOCUS_DISTANCE;
+			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_focusdistance);
+			isEnabled = isFocusDistanceEnabled;
+			break;
 		case MORE:
 			icon_id = ICON_SETTINGS;
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_moresettings);
@@ -2722,6 +2897,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			else
 				createSettingEVOnClick(settingView);
 			break;
+		case EXTIME:
+			if (isQuickControl)
+				createQuickControlExTimeOnClick(settingView);
+			else
+				createSettingExTimeOnClick(settingView);
+			break;
+		case FDIST:
+			if (isQuickControl)
+				createQuickControlFDistOnClick(settingView);
+			else
+				createSettingFDistOnClick(settingView);
+			break;			
 		case MORE:
 			if (isQuickControl)
 				return;
@@ -2814,6 +3001,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, true);
+				break;
+			case R.id.exposureTimeButton:
+				if (mEVSupported)
+					addQuickSetting(SettingsType.EXTIME, true);
+				break;
+			case R.id.focusDistanceButton:
+				if (mEVSupported)
+					addQuickSetting(SettingsType.FDIST, true);
 				break;
 			default:
 				break;
@@ -2913,6 +3108,31 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			public void onClick(View v)
 			{
 				quickControlOnClick(MODE_EV, MainScreen.getMainContext().getResources().getDrawable(ICON_EV));
+			}
+
+		});
+	}
+	
+	private void createQuickControlExTimeOnClick(View ev)
+	{
+		ev.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				quickControlOnClick(MODE_EXPOSURE_TIME, MainScreen.getMainContext().getResources().
+						getDrawable(preferences.getBoolean(MainScreen.sExposureTimeModePref, true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME));
+			}
+
+		});
+	}
+	
+	private void createQuickControlFDistOnClick(View ev)
+	{
+		ev.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				quickControlOnClick(MODE_FOCUS_DISTANCE, MainScreen.getMainContext().getResources().getDrawable(ICON_FOCUS_DISTANCE));
 			}
 
 		});
@@ -3083,6 +3303,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_FLASH), isFlashEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_ISO), isIsoEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_MET), isMeteringEnabled);
+		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_EXPOSURE_TIME), isExposureTimeEnabled);
+		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_FOCUS_DISTANCE), isFocusDistanceEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_CAM), isCameraChangeEnabled);
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
@@ -3170,6 +3392,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case R.id.meteringButton:
 				if (mMeteringAreasSupported)
 					addQuickSetting(SettingsType.METERING, false);
+				break;
+			case R.id.exposureTimeButton:
+				if (mManualExposureTimeSupported)
+					addQuickSetting(SettingsType.EXTIME, false);
+				break;
+			case R.id.focusDistanceButton:
+				if (mManualFocusDistanceSupported)
+					addQuickSetting(SettingsType.FDIST, false);
 				break;
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
@@ -3423,6 +3653,64 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					showParams(MODE_EV);
 				} else
 					hideSecondaryMenus();
+			}
+		});
+	}
+	
+	private void createSettingExTimeOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isExposureTimeEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
+					return;
+				}
+				
+				if(CameraController.isManualExposureTimeSupported())
+				{
+					if (iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	
+					if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();
+						showParams(MODE_EXPOSURE_TIME);
+					} else
+						hideSecondaryMenus();
+				}
+			}
+		});
+	}
+	
+	private void createSettingFDistOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (!isFocusDistanceEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
+					return;
+				}
+				
+				if(CameraController.isManualFocusDistanceSupported())
+				{
+					if (iScreenType == 0)
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	
+					if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
+					{
+						hideSecondaryMenus();
+						showParams(MODE_FOCUS_DISTANCE);
+					} else
+						hideSecondaryMenus();
+				}
 			}
 		});
 	}
@@ -4292,6 +4580,60 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 			}
 			break;
+		case R.id.exposureTimeButton:
+			{
+				if (changeQuickControlIfVisible(button))
+					break;
+	
+				if (!isExposureTimeEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
+					break;
+				}
+	
+				LinearLayout layout = (LinearLayout) guiView.findViewById(R.id.exposureTimeLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					unselectPrimaryTopMenuButtons(MODE_EXPOSURE_TIME);
+					hideSecondaryMenus();
+					showParams(MODE_EXPOSURE_TIME);
+					quickControlsVisible = true;
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;
+		case R.id.focusDistanceButton:
+			{
+				if (changeQuickControlIfVisible(button))
+					break;
+	
+				if (!isFocusDistanceEnabled)
+				{
+					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
+					break;
+				}
+	
+				LinearLayout layout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
+				if (layout.getVisibility() == View.GONE)
+				{
+					unselectPrimaryTopMenuButtons(MODE_FOCUS_DISTANCE);
+					hideSecondaryMenus();
+					showParams(MODE_FOCUS_DISTANCE);
+					quickControlsVisible = true;
+				} else
+				{
+					quickControlsVisible = false;
+					unselectPrimaryTopMenuButtons(-1);
+					hideSecondaryMenus();
+				}
+			}
+			break;			
 		case R.id.camerachangeButton:
 			{
 				if (changeQuickControlIfVisible(button))
@@ -4318,6 +4660,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case R.id.evPlusButton:
 			expoPlus();
 			break;
+		//TODO: EXPOSURE TIME BUTTONS + FOCUS DISTANCE BUTTONS
 		default:
 			break;
 		}
@@ -4704,6 +5047,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (isMeteringEnabled)
 				isEnabled = true;
 			break;
+		case MODE_EXPOSURE_TIME:
+			if (isExposureTimeEnabled)
+				isEnabled = true;
+			break;
+		case MODE_FOCUS_DISTANCE:
+			if (isFocusDistanceEnabled)
+				isEnabled = true;
+			break;
 		case MODE_CAM:
 			if (isCameraChangeEnabled)
 				isEnabled = true;
@@ -4729,6 +5080,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashmodeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.isoLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.meteringLayout).setVisibility(View.GONE);
+		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
+		guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);
 
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
@@ -4744,6 +5097,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				|| guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE
+				|| guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.VISIBLE
+				|| guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
 			return true;
 		return false;
@@ -4817,6 +5172,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case MODE_ISO:
 			guiView.findViewById(R.id.isoLayout).setVisibility(View.VISIBLE);
+			break;
+		case MODE_EXPOSURE_TIME:
+			guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
+			break;
+		case MODE_FOCUS_DISTANCE:
+			guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 			break;
 		case MODE_MET:
 			guiView.findViewById(R.id.meteringLayout).setVisibility(View.VISIBLE);
@@ -5789,6 +6150,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		if (view == (LinearLayout) guiView.findViewById(R.id.evLayout)
+				|| view == (LinearLayout) guiView.findViewById(R.id.exposureTimeLayout)
+				|| view == (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout)
 				|| (lockControls && !PluginManager.getInstance().getActiveModeID().equals("video")))
 			return true;
 
@@ -6061,12 +6424,25 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 	{
-		int iEv = progress - CameraController.getMaxExposureCompensation();
-		CameraController.setCameraExposureCompensation(iEv);
-		preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
-		mEV = iEv;
-		
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+		if(seekBar == (SeekBar) guiView.findViewById(R.id.evSeekBar))
+		{
+			int iEv = progress - CameraController.getMaxExposureCompensation();
+			CameraController.setCameraExposureCompensation(iEv);
+			preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
+			mEV = iEv;
+			
+			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+		}
+		else if(seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
+		{
+			int iTime = progress;
+			CameraController.setCameraExposureTime(iTime);
+			preferences.edit().putLong(MainScreen.sExposureTimePref, (long)iTime).commit();
+			mExposureTime = iTime;
+			
+//			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+		}
+		//TODO: EXPOSURE TIME SEEK BAR + FOCUS DISTANCE SEEK BAR
 	}
 
 	@Override
