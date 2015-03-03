@@ -2248,16 +2248,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (camera != null)
 			{
-				try 
-				{
-		            File myFile = new File("/sdcard/Download/abc_iso_test_01.txt");
-		            myFile.createNewFile();
-		            FileOutputStream fOut = new FileOutputStream(myFile);
-		            OutputStreamWriter myOutWriter = 
-		                                    new OutputStreamWriter(fOut);
-		            myOutWriter.append("===========\ngetSupportedISOInternal\n=========\nISO list:\n\n");
-		           
-		       
 				List<String> isoModes = null;
 				Camera.Parameters camParams = CameraController.getCameraParameters();
 				String supportedIsoValues = camParams.get("iso-values");
@@ -2282,20 +2272,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					isoModes = new ArrayList<String>();
 					for (int i = 0; i < isoList.length; i++)
 						isoModes.add(isoList[i]);
-				} else
+				}
+				else
 					return new int[0];
 
 				int supportedISOCount = 0;
 				for (int i = 0; i < isoModes.size(); i++)
 				{
 					String mode = isoModes.get(i);
-					myOutWriter.append("mode = " + mode + "\n" );
 					if (CameraController.key_iso.containsKey(mode))
 						supportedISOCount++;
 					else if (CameraController.key_iso2.containsKey(mode))
 						supportedISOCount++;
 				}
-				myOutWriter.append("--------------\nkey_iso:\n\n");
 
 				int[] iso = new int[supportedISOCount];
 				for (int i = 0, index = 0; i < isoModes.size(); i++)
@@ -2304,28 +2293,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (CameraController.key_iso.containsKey(mode))
 					{
 						iso[index++] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
-						myOutWriter.append("iso[index] = " + iso[index-1] + "\n");
 					}
 					else if (CameraController.key_iso2.containsKey(mode))
 					{
 						iso[index++] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
-						myOutWriter.append("iso[index] = " + iso[index-1] + "\n");
 					}
 					
 					
 				}
-				myOutWriter.append("===========================\n");
-
-				myOutWriter.close();
-	            fOut.close();
 		            
 				return iso;
-				
-				}
-				catch (Exception e)
-				{
-					return new int[0];
-				}
 			}
 
 			return new int[0];
@@ -2753,67 +2730,29 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					File myFile = new File("/sdcard/Download/abc_iso_test_02.txt");
-		            myFile.createNewFile();
-		            FileOutputStream fOut = new FileOutputStream(myFile);
-		            OutputStreamWriter myOutWriter = 
-		                                    new OutputStreamWriter(fOut);
-		            myOutWriter.append("\n===========\nsetCameraISO(" + mode +")\n==============\n");
-		            
-		            
-		            myOutWriter.append("MODEL = " + Build.MODEL + "\n");
 					boolean isSpecialDevice = Build.MODEL.contains("SM-N910") || Build.MODEL.contains("ALCATEL ONE TOUCH");
 					Camera.Parameters params = camera.getParameters();
-					myOutWriter.append("\n+++++++++++++++ Camera.Parameters ++++++++++++++++++++++++\n" + params.flatten() + "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 					if (params != null)
 					{
 						String iso = isSpecialDevice? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
-						myOutWriter.append("iso from mode_iso = " + iso + "\n");
 						if (params.get(CameraParameters.isoParam) != null)
-						{
 							params.set(CameraParameters.isoParam, iso);
-							myOutWriter.append("params.set(" + CameraParameters.isoParam + ", " + iso + ")\n");
-						}
 						else if (params.get(CameraParameters.isoParam2) != null)
-						{
 							params.set(CameraParameters.isoParam2, iso);
-							myOutWriter.append("params.set(" + CameraParameters.isoParam2 + ", " + iso + ")\n");
-						}
 						else if (params.get(CameraParameters.isoParam3) != null)
-						{
 							params.set(CameraParameters.isoParam3, iso);
-							myOutWriter.append("params.set(" + CameraParameters.isoParam3 + ", " + iso + ")\n");
-						}
 						if (!setCameraParameters(params))
 						{
-							myOutWriter.append("\n!!!!!! setCameraParameters failed");
 							iso = isSpecialDevice? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
-							myOutWriter.append("iso from mode_iso2 = " + iso + "\n");
 							if (params.get(CameraParameters.isoParam) != null)
-							{
 								params.set(CameraParameters.isoParam, iso);
-								myOutWriter.append("params.set(" + CameraParameters.isoParam + ", " + iso + ")\n");
-							}
 							else if (params.get(CameraParameters.isoParam2) != null)
-							{
 								params.set(CameraParameters.isoParam2, iso);
-								myOutWriter.append("params.set(" + CameraParameters.isoParam2 + ", " + iso + ")\n");
-							}
 							else if (params.get(CameraParameters.isoParam3) != null)
-							{
 								params.set(CameraParameters.isoParam3, iso);
-								myOutWriter.append("params.set(" + CameraParameters.isoParam3 + ", " + iso + ")\n");
-							}
 							
 							setCameraParameters(params);
 						}
-						else
-							myOutWriter.append("\nsetCameraParameters success\n");
-						
-						myOutWriter.append("===========================\n");
-
-						myOutWriter.close();
-			            fOut.close();
 					}
 				}
 				catch(Exception e)
