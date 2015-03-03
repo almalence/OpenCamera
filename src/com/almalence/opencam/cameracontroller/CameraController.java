@@ -1698,10 +1698,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || ( camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || ( camera != null && camera.getParameters() == null))
+					return false;
+				
+				return camera.getParameters().isVideoStabilizationSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-			
-			return camera.getParameters().isVideoStabilizationSupported();
+			}
 		}
 		else
 			return false;
@@ -1714,12 +1722,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isExposureLockSupported()
 	{
+		
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || ( camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || ( camera != null && camera.getParameters() == null))
+					return false;
+	
+				return camera.getParameters().isAutoExposureLockSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-
-			return camera.getParameters().isAutoExposureLockSupported();
+			}
 		} 
 		else
 			return true;
@@ -1796,10 +1813,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera || camera.getParameters() == null)
+			try
+			{
+				if (null == camera || camera.getParameters() == null)
+					return false;
+				
+				return camera.getParameters().isZoomSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-			
-			return camera.getParameters().isZoomSupported();
+			}
 		} else
 		{
 			return HALv3.isZoomSupportedHALv3();
@@ -2347,12 +2372,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static int getMaxNumMeteringAreas()
 	{
-		if (CameraController.isHALv3)
-			return HALv3.getMaxNumMeteringAreasHALv3();
-		else if (camera != null)
+		try
 		{
-			Camera.Parameters camParams = camera.getParameters();
-			return camParams.getMaxNumMeteringAreas();
+			if (CameraController.isHALv3)
+				return HALv3.getMaxNumMeteringAreasHALv3();
+			else if (camera != null)
+			{
+				Camera.Parameters camParams = camera.getParameters();
+				return camParams.getMaxNumMeteringAreas();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
 		return 0;
