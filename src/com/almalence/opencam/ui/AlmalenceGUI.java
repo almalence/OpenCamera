@@ -1498,26 +1498,36 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int screen_height = metrics.heightPixels;
 
-		lp.width = previewSurfaceWidth;
-		lp.height = previewSurfaceHeight;
-		if (Math.abs(surfaceAspect - cameraAspect) > 0.05d)
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		if (prefs.getBoolean("changePreviewProportions", false))
 		{
-			if (surfaceAspect > cameraAspect && (Math.abs(1 - cameraAspect) > 0.05d))
+			lp.width = previewSize.getHeight();
+			lp.height = previewSize.getWidth();
+			lp.topMargin =  (screen_height - lp.height)/2;
+		}
+		else
+		{
+			lp.width = previewSurfaceWidth;
+			lp.height = previewSurfaceHeight;
+			if (Math.abs(surfaceAspect - cameraAspect) > 0.05d)
 			{
-				int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
-				// if wide-screen - decrease width of surface
-				lp.width = previewSurfaceWidth;
-
-				lp.height = (int) (screen_height - 2 * paramsLayoutHeight);
-				lp.topMargin = (int) (paramsLayoutHeight);
-			} else if (surfaceAspect > cameraAspect)
-			{
-				int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
-				// if wide-screen - decrease width of surface
-				lp.width = previewSurfaceWidth;
-
-				lp.height = previewSurfaceWidth;
-				lp.topMargin = (int) (paramsLayoutHeight);
+				if (surfaceAspect > cameraAspect && (Math.abs(1 - cameraAspect) > 0.05d))
+				{
+					int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
+					// if wide-screen - decrease width of surface
+					lp.width = previewSurfaceWidth;
+	
+					lp.height = (int) (screen_height - 2 * paramsLayoutHeight);
+					lp.topMargin = (int) (paramsLayoutHeight);
+				} else if (surfaceAspect > cameraAspect)
+				{
+					int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
+					// if wide-screen - decrease width of surface
+					lp.width = previewSurfaceWidth;
+	
+					lp.height = previewSurfaceWidth;
+					lp.topMargin = (int) (paramsLayoutHeight);
+				}
 			}
 		}
 		

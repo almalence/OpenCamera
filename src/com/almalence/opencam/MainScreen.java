@@ -280,6 +280,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sTimestampFontSize;
 
 	public static String				sEvPref;
+	public static String				sExposureTimePref;
+	public static String				sFocusDistancePref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
 	public static String				sFrontFocusModePref;
@@ -1256,6 +1258,16 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStart()
 	{
 		super.onStart();
+		
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(MainScreen.getMainContext());
+		
+		CameraController.useHALv3(prefs.getBoolean(getResources()
+				.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+		prefs.edit()
+				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+						CameraController.isUseHALv3()).commit();
+		
 		CameraController.onStart();
 		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
@@ -1371,11 +1383,11 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-					CameraController.useHALv3(prefs.getBoolean(getResources()
-							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
-					prefs.edit()
-							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-									CameraController.isUseHALv3()).commit();
+//					CameraController.useHALv3(prefs.getBoolean(getResources()
+//							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+//					prefs.edit()
+//							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+//									CameraController.isUseHALv3()).commit();
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
@@ -2714,7 +2726,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
             .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
             .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
             .addStoreKeys(storeKeys);
-			
 			
 			mHelper = new OpenIabHelper(this, builder.build());
 

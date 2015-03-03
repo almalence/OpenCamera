@@ -11,4 +11,7 @@
 	
 	<string name="Pref_Common_DismissKeyguard_Title">Dismiss keyguard</string>
 	<string name="Pref_Common_DismissKeyguard_Summary">Skip non secure lock keyguard when device is turned on</string>
+	
+	<string name="Pref_Common_ChangePreviewProportions_Title">Change proportions</string>
+	<string name="Pref_Common_ChangePreviewProportions_Summary">Select if preview proportions are incorrect</string>
 </resources>

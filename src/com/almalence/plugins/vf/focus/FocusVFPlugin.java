@@ -417,9 +417,12 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onFocusButtonClick()
 	{
-		cancelAutoFocus();
-		resetTouchFocus();
-		autoFocus();
+		if (needAutoFocusCall() && !focusOnShutterDisabled())
+		{
+			cancelAutoFocus();
+			resetTouchFocus();
+			autoFocus();
+		}
 	}
 
 	public void setFocusParameters()

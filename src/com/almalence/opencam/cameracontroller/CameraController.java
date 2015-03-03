@@ -204,6 +204,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isHALv3							= false;
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
+	protected static boolean						isManualSensorSupported			= false;
 
 	protected static String[]								cameraIdList					= { "" };
 
@@ -885,6 +886,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isRAWCaptureSupported;
 	}
 	
+	public static boolean isManualSensorSupported()
+	{
+		return isManualSensorSupported;
+	}
+	
 	
 	//Google doc's method to determine camera's display orientation
 	public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera)
@@ -971,9 +977,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 
+			try
+			{
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-				cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
-
+				CameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+			} catch (Exception e)
+			{
+				Log.e(TAG, "Unable to set preview display for camera");
+				e.printStackTrace();
+				CameraController.mVideoStabilizationSupported = false;
+			}
+			
 			// screen rotation
 			if (!pluginManager.shouldPreviewToGPU())
 			{
@@ -1684,10 +1698,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || ( camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || ( camera != null && camera.getParameters() == null))
+					return false;
+				
+				return camera.getParameters().isVideoStabilizationSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-			
-			return camera.getParameters().isVideoStabilizationSupported();
+			}
 		}
 		else
 			return false;
@@ -1700,12 +1722,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isExposureLockSupported()
 	{
+		
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || ( camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || ( camera != null && camera.getParameters() == null))
+					return false;
+	
+				return camera.getParameters().isAutoExposureLockSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-
-			return camera.getParameters().isAutoExposureLockSupported();
+			}
 		} 
 		else
 			return true;
@@ -1782,10 +1813,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (null == camera || camera.getParameters() == null)
+			try
+			{
+				if (null == camera || camera.getParameters() == null)
+					return false;
+				
+				return camera.getParameters().isZoomSupported();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 				return false;
-			
-			return camera.getParameters().isZoomSupported();
+			}
 		} else
 		{
 			return HALv3.isZoomSupportedHALv3();
@@ -2266,22 +2305,60 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return supportedISOModes;
 	}
 	
-	public static List<String> getSupportedISONames() {
+	public static List<String> getSupportedISONames()
+	{
 		List<String> isoNames = new ArrayList<String>();
 		for (int i : supportedISOModes) {
 			isoNames.add(mode_iso.get(i));
 		}
 		return isoNames;
 	}
+	
+	
+	
+	/*
+	 * Manual sensor parameters: focus distance and exposure time.
+	 * Available only in Camera2 mode.
+	*/
+	public static boolean isManualFocusSupported()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.isManualFocusSupportedHALv3();
+		else
+			return false;
+	}
+	
+	public static float getMinimumFocusDistance()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMinimumFocusDistance();
+		else
+			return 0;
+	}
+	
+	public static boolean isManualExposureTimeSupported()
+	{
+		return CameraController.isHALv3;
+	}
+	//////////////////////////////////////////////////////
+	
+	
 
 	public static int getMaxNumMeteringAreas()
 	{
-		if (CameraController.isHALv3)
-			return HALv3.getMaxNumMeteringAreasHALv3();
-		else if (camera != null)
+		try
 		{
-			Camera.Parameters camParams = camera.getParameters();
-			return camParams.getMaxNumMeteringAreas();
+			if (CameraController.isHALv3)
+				return HALv3.getMaxNumMeteringAreasHALv3();
+			else if (camera != null)
+			{
+				Camera.Parameters camParams = camera.getParameters();
+				return camParams.getMaxNumMeteringAreas();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
 		return 0;
