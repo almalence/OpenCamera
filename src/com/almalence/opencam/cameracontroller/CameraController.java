@@ -184,6 +184,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Map<Integer, Integer>			mode_iso_HALv3;
 	private static Map<String, Integer>				key_iso;
 	private static Map<String, Integer>				key_iso2;
+	private static boolean							isUseISO2Keys					= false;
 
 	private static CameraController					cameraController				= null;
 
@@ -2293,10 +2294,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					if (CameraController.key_iso.containsKey(mode))
 					{
 						iso[index++] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
+						isUseISO2Keys = false;
 					}
 					else if (CameraController.key_iso2.containsKey(mode))
 					{
 						iso[index++] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
+						isUseISO2Keys = true;
 					}
 					
 					
@@ -2730,11 +2733,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					boolean isSpecialDevice = Build.MODEL.contains("SM-N910") || Build.MODEL.contains("ALCATEL ONE TOUCH");
+					//boolean isSpecialDevice = Build.MODEL.contains("SM-N910") || Build.MODEL.contains("ALCATEL ONE TOUCH");
 					Camera.Parameters params = camera.getParameters();
 					if (params != null)
 					{
-						String iso = isSpecialDevice? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
+						String iso = isUseISO2Keys? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
 						if (params.get(CameraParameters.isoParam) != null)
 							params.set(CameraParameters.isoParam, iso);
 						else if (params.get(CameraParameters.isoParam2) != null)
@@ -2743,7 +2746,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam3, iso);
 						if (!setCameraParameters(params))
 						{
-							iso = isSpecialDevice? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
+							iso = isUseISO2Keys? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
 							if (params.get(CameraParameters.isoParam) != null)
 								params.set(CameraParameters.isoParam, iso);
 							else if (params.get(CameraParameters.isoParam2) != null)
