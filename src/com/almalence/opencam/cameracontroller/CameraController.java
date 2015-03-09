@@ -2335,11 +2335,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	*/
 	public static boolean isManualFocusDistanceSupported()
 	{
-//		if(CameraController.isHALv3)
-//			return HALv3.isManualFocusDistanceSupportedHALv3();
-//		else
-//			return false;
-		return false;
+		if(CameraController.isHALv3)
+			return isManualSensorSupported && HALv3.isManualFocusDistanceSupportedHALv3();
+		else
+			return false;
+//		return false;
 	}
 	
 	public static float getMinimumFocusDistance()
@@ -2352,16 +2352,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isManualExposureTimeSupported()
 	{
-//		if(CameraController.isHALv3)
-//		{
-//			if(getMinimumExposureTime() != getMaximumExposureTime())
-//				return true;
-//			
-//			return false;
-//		}
-//		else
-//			return false;
-		return false;
+		if(CameraController.isHALv3)
+		{
+			if(isManualSensorSupported && (getMinimumExposureTime() != getMaximumExposureTime()))
+				return true;
+			
+			return false;
+		}
+		else
+			return false;
+//		return false;
 	}
 	
 	public static long getMinimumExposureTime()

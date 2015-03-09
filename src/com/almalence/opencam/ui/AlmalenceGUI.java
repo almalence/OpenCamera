@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -772,6 +773,93 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																				}
 																			};
 
+	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES 	= new LinkedHashMap<Integer, Long>()
+																			{
+																				{
+																					put(0, 250000l);
+																					put(1, 500000l);
+																					put(2, 666667l);
+																					put(3, 800000l);
+																					put(4, 1250000l);
+																					put(5, 2000000l);
+																					put(6, 2857143l);
+																					put(7, 4000000l);
+																					put(8, 5000000l);
+																					put(9, 6250000l);
+																					put(10, 8000000l);
+																					put(11, 12500000l);
+																					put(12, 16666667l);
+																					put(13, 22222222l);
+																					put(14, 33333333l);
+																					put(15, 50000000l);
+																					put(16, 66666666l);
+																					put(17, 100000000l);
+																					put(18, 142857142l);
+																					put(19, 200000000l);
+																					put(20, 333333333l);
+																					put(21, 500000000l);
+																					put(22, 800000000l);
+																				}
+																			};
+																					
+	protected static final LinkedHashMap<Long, Integer>		EXPOSURE_TIME_INDEXES 	= new LinkedHashMap<Long, Integer>()
+																			{
+																				{
+																					put(250000l, 0);
+																					put(500000l, 1);
+																					put(666667l, 2);
+																					put(800000l, 3);
+																					put(1250000l, 4);
+																					put(2000000l, 5);
+																					put(2857143l, 6);
+																					put(4000000l, 7);
+																					put(5000000l, 8);
+																					put(6250000l, 9);
+																					put(8000000l, 10);
+																					put(12500000l, 11);
+																					put(16666667l, 12);
+																					put(22222222l, 13);
+																					put(33333333l, 14);
+																					put(50000000l, 15);
+																					put(66666666l, 16);
+																					put(100000000l, 17);
+																					put(142857142l, 18);
+																					put(200000000l, 19);
+																					put(333333333l, 20);
+																					put(500000000l, 21);
+																					put(800000000l, 22);
+																				}
+																			};
+																			
+	protected static final LinkedHashMap<Integer, String>		EXPOSURE_TIME_NAMES 	= new LinkedHashMap<Integer, String>()
+																			{
+																				{
+																					put(0, "1/4000");
+																					put(1, "1/2000");
+																					put(2, "1/1500");
+																					put(3, "1/1250");
+																					put(4, "1/800");
+																					put(5, "1/500");
+																					put(6, "1/350");
+																					put(7, "1/250");
+																					put(8, "1/200");
+																					put(9, "1/160");
+																					put(10, "1/125");
+																					put(11, "1/80");
+																					put(12, "1/60");
+																					put(13, "1/45");
+																					put(14, "1/30");
+																					put(15, "1/20");
+																					put(16, "1/15");
+																					put(17, "1/10");
+																					put(18, "1/7");
+																					put(19, "1/5");
+																					put(20, "1/3");
+																					put(21, "0,5\"");
+																					put(22, "0,8\"");
+																				}
+																			};																			
+
 	// Defining for top menu buttons (camera parameters settings)
 	private static final int					MODE_EV						= R.id.evButton;
 	private static final int					MODE_SCENE					= R.id.sceneButton;
@@ -848,7 +936,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private int									mMeteringMode				= -1;
 	
 	private long								mExposureTime				= -1;	
-	private float								mFocusDistance				= -1;		
+	private float								mFocusDistance				= -1;
+	private int									mOriginalFocusMode			= -1; //Remember auto focus mode while using manual focus.
+	
+	private int									iExposureTimeIndexRange		= 0;
+	private int									iExposureTimeMinIndex		= 0;
+	private int									iExposureTimeMaxIndex		= 0;
 
 	private float								fScreenDensity;
 
@@ -1745,7 +1838,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				int initValue = preferences.getInt(MainScreen.sEvPref, 0);
 				evBar.setMax(maxValue - minValue);
-				evBar.setProgress(initValue + maxValue);
+				evBar.setProgress(initValue + minValue);
 
 				TextView leftText = (TextView) guiView.findViewById(R.id.seekBarLeftText);
 				TextView rightText = (TextView) guiView.findViewById(R.id.seekBarRightText);
@@ -1988,6 +2081,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					}
 				}
 
+				mOriginalFocusMode= mFocusMode;
 				if (mFocusMode == FOCUS_AF_LOCK)
 				{
 					int afMode = -1;
@@ -2196,27 +2290,46 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
 			if (exBar != null)
 			{
-				long initValue = preferences.getLong(MainScreen.sExposureTimePref, CameraController.getMinimumExposureTime());
-				exBar.setMax((int)CameraController.getMaximumExposureTime());
-				exBar.setProgress((int)initValue);
-				
+				long initValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
 				Long minValue = CameraController.getMinimumExposureTime();
 				Long maxValue = CameraController.getMaximumExposureTime();
+				
+				iExposureTimeMinIndex = getMinExposureTimeIndex(minValue);
+				iExposureTimeMaxIndex = getMaxExposureTimeIndex(maxValue);
+				
+				iExposureTimeIndexRange = iExposureTimeMaxIndex - iExposureTimeMinIndex;
+				
+				exBar.setMax(iExposureTimeIndexRange);
+				
+				int initValueIndex = 0;
+				
+				if(EXPOSURE_TIME_INDEXES.containsKey(initValue))
+					initValueIndex = EXPOSURE_TIME_INDEXES.get(initValue);
+				else
+				{
+					initValueIndex = iExposureTimeMinIndex;
+					initValue = EXPOSURE_TIME_VALUES.get(iExposureTimeMinIndex);
+				}
+				
+				exBar.setProgress(initValueIndex - iExposureTimeMinIndex);
+				
+				
 
 				TextView leftText = (TextView) guiView.findViewById(R.id.exposureTimeLeftText);
 				TextView rightText = (TextView) guiView.findViewById(R.id.exposureTimeRightText);
 
-				String minString = String.valueOf(minValue);
-				String maxString = String.valueOf(maxValue);
-
 				//TODO: EXPOSURE TIME
-				leftText.setText(minString);
-				rightText.setText(maxString);
+				leftText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMinIndex));
+				rightText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMaxIndex));
 
 				mExposureTime = initValue;
 				
 				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.exposureTimeSeekBarAndButtonsLayout);
 				seekBarLayout.setVisibility(isAutoExposureTime? View.GONE : View.VISIBLE);
+				
+				final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
+				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(initValueIndex));
+				expTimeValueText.setVisibility(isAutoExposureTime? View.GONE : View.VISIBLE);
 				
 				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.exposureTimeModeSwitcher);
 				modeSwitcher.setChecked(isAutoExposureTime);
@@ -2227,8 +2340,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					{
 						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked);
 						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
+						expTimeValueText.setVisibility(isChecked? View.GONE : View.VISIBLE);
 						
-						long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, CameraController.getMinimumExposureTime());
+						long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
 						
 						if(!isChecked)
 							CameraController.setCameraExposureTime(expTimeValue);
@@ -2261,6 +2375,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (focusBar != null)
 			{
 				float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
+				focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
+				focusBar.setProgress((int)initValue);
 
 				TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
 				TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
@@ -2270,8 +2386,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				String maxString = String.valueOf(maxValue);
 
 				//TODO: FOCUS DISTANCE
-				leftText.setText("Infinite");
-				rightText.setText(maxString);
+				rightText.setText("Nearest");
+				leftText.setText("Further");
 				
 				mFocusDistance = initValue;
 				
@@ -2291,9 +2407,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
 						
 						if(!isChecked)
+						{
+							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+						}
 						else
+						{
 							CameraController.resetCameraAEMode();
+							setFocusMode(mOriginalFocusMode);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
+						}
 
 					}
 				});
@@ -2378,6 +2503,43 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
 		}
 
+	}
+	
+	
+	protected int getMinExposureTimeIndex(long expTime)
+	{
+		Long minKey = 0l;
+		for(Long key : EXPOSURE_TIME_INDEXES.keySet())
+		{
+			if(key > expTime)
+			{
+				minKey = key;
+				break;
+			}
+		}
+		
+		if(EXPOSURE_TIME_INDEXES.containsKey(minKey))
+			return EXPOSURE_TIME_INDEXES.get(minKey);
+		
+		return 0;
+	}
+	
+	
+	protected int getMaxExposureTimeIndex(long expTime)
+	{
+		Long maxKey = 0l;
+		for(Long key : EXPOSURE_TIME_INDEXES.keySet())
+		{
+			if(key < expTime)
+				maxKey = key;
+			else
+				break;
+		}
+		
+		if(EXPOSURE_TIME_INDEXES.containsKey(maxKey))
+			return EXPOSURE_TIME_INDEXES.get(maxKey);
+		
+		return EXPOSURE_TIME_INDEXES.keySet().size() - 1;
 	}
 
 	@Override
@@ -4660,6 +4822,22 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case R.id.evPlusButton:
 			expoPlus();
 			break;
+			
+		// EXPOSURE TIME BUTTONS (-\+)
+		case R.id.exposureTimeMinusButton:
+			exposureTimeMinus();
+			break;
+		case R.id.exposureTimePlusButton:
+			exposureTimePlus();
+			break;
+						
+		// FOCUS DISTANCE BUTTONS (-\+)
+		case R.id.focusDistanceMinusButton:
+			focusDistanceMinus();
+			break;
+		case R.id.focusDistancePlusButton:
+			focusDistancePlus();
+			break;
 		//TODO: EXPOSURE TIME BUTTONS + FOCUS DISTANCE BUTTONS
 		default:
 			break;
@@ -6435,12 +6613,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		else if(seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
-			int iTime = progress;
+			int expIndex = progress + iExposureTimeMinIndex;
+			Long iTime = EXPOSURE_TIME_VALUES.get(expIndex);
 			CameraController.setCameraExposureTime(iTime);
-			preferences.edit().putLong(MainScreen.sExposureTimePref, (long)iTime).commit();
+			preferences.edit().putLong(MainScreen.sExposureTimePref, iTime).commit();
 			mExposureTime = iTime;
 			
-//			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+			final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
+			expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
+		}
+		else if(seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
+		{
+			int iDistance = progress;
+			CameraController.setCameraFocusDistance(iDistance/100);
+			preferences.edit().putFloat(MainScreen.sFocusDistancePref, (float)iDistance/100).commit();
+			mFocusDistance = iDistance;
 		}
 		//TODO: EXPOSURE TIME SEEK BAR + FOCUS DISTANCE SEEK BAR
 	}
@@ -6500,6 +6687,94 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			CameraController.setCameraExposureCompensation(iEv + minValue);
 
 			evBar.setProgress(iEv);
+		}
+	}
+	
+	
+	private void exposureTimeMinus()
+	{
+		if (!isExposureTimeEnabled)
+			return;
+		
+		SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
+		if (exBar != null)
+		{
+			int currProgress = exBar.getProgress();
+			int iIndex = currProgress - 1;
+			if (iIndex < 0)
+				iIndex = 0;
+
+			Long iEv = EXPOSURE_TIME_VALUES.get(iIndex + iExposureTimeMinIndex);
+			CameraController.setCameraExposureTime(iEv);
+
+			exBar.setProgress(iIndex);
+		}
+	}
+
+	private void exposureTimePlus()
+	{
+		if (!isExposureTimeEnabled)
+			return;
+		
+		SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
+		if (exBar != null)
+		{
+			int currProgress = exBar.getProgress();
+			int iIndex = currProgress + 1;
+			if (iIndex > (iExposureTimeMaxIndex - iExposureTimeMinIndex))
+				iIndex = (iExposureTimeMaxIndex - iExposureTimeMinIndex);
+
+			Long iEv = EXPOSURE_TIME_VALUES.get(iIndex + iExposureTimeMinIndex);
+			CameraController.setCameraExposureTime(iEv);
+
+			exBar.setProgress(iIndex);
+		}
+	}
+	
+	
+	private void focusDistanceMinus()
+	{
+		if (!isFocusDistanceEnabled)
+			return;
+		
+		SeekBar fdistBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
+		if (fdistBar != null)
+		{
+			float maxValue = CameraController.getMinimumFocusDistance();
+
+			int step = 10;
+
+			int currProgress = fdistBar.getProgress();
+			float fFDist = currProgress - step;
+			if (fFDist < 0)
+				fFDist = 0;
+
+			CameraController.setCameraFocusDistance(fFDist/100);
+
+			fdistBar.setProgress((int)fFDist);
+		}
+	}
+
+	private void focusDistancePlus()
+	{
+		if (!isFocusDistanceEnabled)
+			return;
+		
+		SeekBar fdistBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
+		if (fdistBar != null)
+		{
+			float maxValue = CameraController.getMinimumFocusDistance();
+
+			int step = 10;
+
+			int currProgress = fdistBar.getProgress();
+			float fFDist = currProgress + step;
+			if (fFDist > maxValue*100)
+				fFDist = maxValue*100;
+
+			CameraController.setCameraFocusDistance(fFDist/100);
+
+			fdistBar.setProgress((int)fFDist);
 		}
 	}
 

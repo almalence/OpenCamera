@@ -1283,7 +1283,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		} else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
 		{
 			mFocusDisabled = false;
-//			cancelAutoFocus();
+			cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_FOCUS_CHANGED)
 		{
 			int fm = CameraController.getFocusMode();
@@ -1295,5 +1295,12 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 
 		return false;
+	}
+	
+	@Override
+	public void onCaptureFinished()
+	{
+		mFocusDisabled = false;
+		cancelAutoFocus();
 	}
 }

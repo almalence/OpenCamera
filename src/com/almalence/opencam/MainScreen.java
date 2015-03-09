@@ -356,6 +356,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+	public static Long					lDefaultExposureTimeValue		= 33333333l;
 
 	// Camera parameters info
 	int									cameraId;
