@@ -1838,7 +1838,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				int initValue = preferences.getInt(MainScreen.sEvPref, 0);
 				evBar.setMax(maxValue - minValue);
-				evBar.setProgress(initValue + minValue);
+				evBar.setProgress(initValue + maxValue);
 
 				TextView leftText = (TextView) guiView.findViewById(R.id.seekBarLeftText);
 				TextView rightText = (TextView) guiView.findViewById(R.id.seekBarRightText);
