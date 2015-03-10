@@ -200,9 +200,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final Integer				ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
 	private static final Integer				ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
 	
-	private static final Integer				ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_exposure;
-	private static final Integer				ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_exposure;
-	private static final Integer				ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_exposure;
+	private static final Integer				ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_shutter_speed_priority;
+	private static final Integer				ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_shutter_speed_priority;
+	private static final Integer				ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_focus_manual;
 
 	private static final int					FOCUS_AF_LOCK				= 10;
 
@@ -2369,22 +2369,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			mManualFocusDistanceSupported = true;
 			
-			boolean isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
+			isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
 			
 			SeekBar focusBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
 			if (focusBar != null)
 			{
 				float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
 				focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
-				focusBar.setProgress((int)initValue);
+				focusBar.setProgress((int)initValue*100);
 
 				TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
 				TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
 				
-				float maxValue = CameraController.getMinimumFocusDistance();
-
-				String maxString = String.valueOf(maxValue);
-
 				//TODO: FOCUS DISTANCE
 				rightText.setText("Nearest");
 				leftText.setText("Further");
@@ -2408,23 +2404,30 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						
 						if(!isChecked)
 						{
+							isAutoFocusDistance = false;
 							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
 						}
 						else
 						{
-							CameraController.resetCameraAEMode();
+							CameraController.resetCameraFocusDistance();
 							setFocusMode(mOriginalFocusMode);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
+							isAutoFocusDistance = true;
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
 						}
 
 					}
 				});
 				
 				if(!isAutoFocusDistance)
+				{
 					CameraController.setCameraFocusDistance(mFocusDistance);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+				}
 
 				focusBar.setOnSeekBarChangeListener(this);
 			}
@@ -6627,7 +6630,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			int iDistance = progress;
 			CameraController.setCameraFocusDistance(iDistance/100);
 			preferences.edit().putFloat(MainScreen.sFocusDistancePref, (float)iDistance/100).commit();
-			mFocusDistance = iDistance;
+			mFocusDistance = iDistance/100;
 		}
 		//TODO: EXPOSURE TIME SEEK BAR + FOCUS DISTANCE SEEK BAR
 	}
@@ -6740,8 +6743,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SeekBar fdistBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
 		if (fdistBar != null)
 		{
-			float maxValue = CameraController.getMinimumFocusDistance();
-
 			int step = 10;
 
 			int currProgress = fdistBar.getProgress();
