@@ -209,8 +209,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
 	protected static boolean						isManualSensorSupported			= false;
+	
+	protected static boolean						isManualFocus					= false;
 
-	protected static String[]								cameraIdList					= { "" };
+	protected static String[]						cameraIdList					= { "" };
 
 	// Flags to know which camera feature supported at current device
 	private static boolean							mEVSupported					= false;
@@ -2674,7 +2676,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					e.printStackTrace();
 				}
 			}
-		} else
+		}
+		else
 			HALv3.setCameraFocusModeHALv3(mode);
 	}
 
@@ -2826,7 +2829,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void setCameraFocusDistance(float fDistance)
 	{
 		if(CameraController.isHALv3)
+		{
+			isManualFocus = true;
 			HALv3.setCameraFocusDistanceHALv3(fDistance);
+		}
+	}
+	
+	public static void resetCameraFocusDistance()
+	{
+		if(CameraController.isHALv3)
+			isManualFocus = false;
 	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
@@ -2901,7 +2913,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
 						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-				&& !MainScreen.getAutoFocusLock())
+				&& !MainScreen.getAutoFocusLock()
+				&& !isManualFocus)
 			return true;
 		else
 			return false;

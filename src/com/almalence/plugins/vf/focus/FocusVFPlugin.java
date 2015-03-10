@@ -135,6 +135,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	private boolean				mMeteringAreaSupported			= false;
 
 	private boolean				mFocusDisabled					= false;
+	private boolean				mFocusLocked					= false;
 	private boolean				isDoubleClick					= false;
 
 	private int					preferenceFocusMode				= -1;
@@ -1254,7 +1255,7 @@ public class FocusVFPlugin extends PluginViewfinder
 																// auto-focus
 																// call
 				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled || !CameraController
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled || mFocusLocked || !CameraController
 					.isFocusModeSupported());
 	}
 
@@ -1280,7 +1281,15 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			mFocusDisabled = false;
 //			cancelAutoFocus();
-		} else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
+		} else if (arg1 == PluginManager.MSG_FOCUS_LOCKED)
+		{
+			mFocusLocked = true;
+		}
+		else if (arg1 == PluginManager.MSG_FOCUS_UNLOCKED)
+		{
+			mFocusLocked = false;
+		}
+		else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
 		{
 			mFocusDisabled = false;
 			cancelAutoFocus();

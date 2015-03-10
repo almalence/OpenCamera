@@ -672,12 +672,14 @@
 				        android:id="@+id/exposureTimeModeSwitcher"/>
 	    			<TextView android:id="@+id/exposureTimeValueText"
 		    		    	  android:layout_width="@dimen/exposureTitleWidth"
-		    		    	  android:layout_height="wrap_content"		    		    	  
+		    		    	  android:layout_height="wrap_content"
+		    		    	  android:layout_margin="10dip"		    		    	  
 							  android:textSize="@dimen/exposureTitleSize"
 							  android:paddingLeft="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"							  
 							  android:gravity="left"
+							  android:layout_gravity="center_vertical"
 							  android:visibility="gone"/>
 	    		</LinearLayout>
 	    		<LinearLayout

@@ -73,6 +73,8 @@ public abstract class GUI
 	
 	public boolean			mManualExposureTimeSupported  	= false;
 	public boolean			mManualFocusDistanceSupported	= false;
+	
+	public boolean			isAutoFocusDistance				= true;
 
 	// Lists of added plugin's controls
 	List<View>				VFViews;

@@ -1401,10 +1401,13 @@ public class HALv3
 
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		if (isRAWCapture)
-			rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			if (isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		}
 
 		if (format == CameraController.JPEG)
 		{
@@ -1803,7 +1806,9 @@ public class HALv3
 	public static void cancelAutoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -1860,7 +1865,9 @@ public class HALv3
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		
+		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
 		
