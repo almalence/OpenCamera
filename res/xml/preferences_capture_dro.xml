@@ -8,6 +8,13 @@
             android:key="modePrefDro"
             android:title="@string/Pref_Dro_Mode_Title" />
 
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/noiseArrayHDR"
+            android:entryValues="@array/noiseValuesHDR"
+            android:key="noisePrefDro"
+            android:title="@string/Pref_HDR_NoiseReduction_Title" />
+        
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/Preference_DroSaveInputPref"

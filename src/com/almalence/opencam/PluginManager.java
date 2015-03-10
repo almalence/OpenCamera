@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,7 +75,6 @@ import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
@@ -100,7 +100,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -144,8 +145,6 @@ import com.almalence.opencam_plus.cameracontroller.CameraController;
 import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
 /***
@@ -2836,6 +2835,21 @@ public class PluginManager implements PluginManagerInterface
 						{
 							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
 							value.setRationals(ratValue);
+							exifDriver.getIfdExif().put(ExifDriver.TAG_FNUMBER, value);
+						}
+						
+						// TAG_FNUMBER and TAG_APERTURE_VALUE have same value. But it's stored in different ways.
+						// TAG_APERTURE_VALUE is actual aperture value of lens when the image was taken. 
+						// To convert this value to ordinary F-number(F-stop), 
+						// calculate this value's power of root 2 (=1.4142). 
+						// For example, if value is '5', F-number is 1.4142^5 = F5.6.
+						// So, to get actual aperture value from F-number we need to take Log. 
+						Double aperture = Math.log(Double.valueOf(tag_aperture)) / Math.log(Double.valueOf(Math.sqrt(2.d)));
+						int[][] ratValueApp = ExifManager.stringToRational(String.format("%.3f", aperture));
+						if (ratValueApp != null)
+						{
+							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+							value.setRationals(ratValueApp);
 							exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
 						}
 					}

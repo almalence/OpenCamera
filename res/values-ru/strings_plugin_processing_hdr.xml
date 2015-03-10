@@ -31,7 +31,7 @@
 	<string name="Pref_HDR_Normal">Нормальный</string>
 	<string name="Pref_HDR_High">Высокий</string>
 	<string name="Pref_HDR_Bright">Яркий</string>
-	<string name="Pref_HDR_None">Нету</string>
+	<string name="Pref_HDR_None">Нет</string>
 	<string name="Pref_HDR_Minor">Слабо</string>
 	<string name="Pref_HDR_Hard">Сильно</string>
 	<string name="Pref_HDR_BnW">Черно-белое</string>
