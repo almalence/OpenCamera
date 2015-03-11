@@ -44,11 +44,7 @@
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"
 	        android:summary="@string/Pref_KeepScreenOn_Summary"
-<<<<<<< HEAD
 	        android:defaultValue="true"
-=======
-	        android:defaultValue="false"
->>>>>>> refs/heads/master
             android:key="@string/Preference_KeepScreenOnValue" />
 	    
 	    <CheckBoxPreference
