@@ -2344,15 +2344,30 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
 						
 						if(!isChecked)
+						{
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
 							CameraController.setCameraExposureTime(expTimeValue);
+						}
 						else
+						{
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
 							CameraController.resetCameraAEMode();
+						}
 
 					}
 				});
 				
 				if(!isAutoExposureTime)
+				{
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
 					CameraController.setCameraExposureTime(mExposureTime);
+				}
 
 				exBar.setOnSeekBarChangeListener(this);
 			}
@@ -2424,6 +2439,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				
 				if(!isAutoFocusDistance)
 				{
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
 					CameraController.setCameraFocusDistance(mFocusDistance);
 					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
 				}
