@@ -2338,7 +2338,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					@Override
 					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
 					{
-						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked);
+						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked).commit();
 						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
 						expTimeValueText.setVisibility(isChecked? View.GONE : View.VISIBLE);
 						
@@ -2349,6 +2349,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
 							CameraController.setCameraExposureTime(expTimeValue);
 						}
 						else
@@ -2356,6 +2358,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true);
 							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true);
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
 							CameraController.resetCameraAEMode();
 						}
 
@@ -2367,6 +2371,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
+					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
 					CameraController.setCameraExposureTime(mExposureTime);
 				}
 
@@ -2412,7 +2418,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					@Override
 					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
 					{
-						preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked);
+						preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked).commit();
 						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
 						
 						float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
