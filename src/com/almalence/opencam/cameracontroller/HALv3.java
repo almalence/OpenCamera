@@ -909,7 +909,7 @@ public class HALv3
 		return false;
 	}
 	
-	public static boolean isManualFocusSupportedHALv3()
+	public static boolean isManualFocusDistanceSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null
 				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
@@ -929,6 +929,30 @@ public class HALv3
 		if (HALv3.getInstance().camCharacter != null
 				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) != null)
 			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
+		
+		return 0;
+	}
+	
+	public static long getCameraMinimumExposureTime()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE) != null)
+		{
+			Range<Long> exposureTimeRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+			return exposureTimeRange.getLower();
+		}
+		
+		return 0;
+	}
+	
+	public static long getCameraMaximumExposureTime()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE) != null)
+		{
+			Range<Long> exposureTimeRange = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+			return exposureTimeRange.getUpper();
+		}
 		
 		return 0;
 	}
@@ -1099,6 +1123,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
 		}
@@ -1107,18 +1132,39 @@ public class HALv3
 				.putLong(MainScreen.sExposureTimePref, iTime).commit();
 	}
 	
+	public static void resetCameraAEModeHALv3()
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
+				&& HALv3.getInstance().mCaptureSession != null)
+		{
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 	public static void setCameraFocusDistanceHALv3(float fDistance)
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, fDistance);
 			HALv3.setRepeatingRequest();
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putFloat(MainScreen.sFocusDistancePref, fDistance).commit();
+		
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+				: MainScreen.sFrontFocusModePref, CaptureRequest.CONTROL_AF_MODE_OFF).commit();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 
@@ -1355,10 +1401,13 @@ public class HALv3
 
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		if (isRAWCapture)
-			rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+			if (isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		}
 
 		if (format == CameraController.JPEG)
 		{
@@ -1757,7 +1806,9 @@ public class HALv3
 	public static void cancelAutoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -1795,14 +1846,16 @@ public class HALv3
 
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				MainScreen.sFlashModePref, -1);
-		int wbMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				MainScreen.sWBModePref, -1);
-		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				MainScreen.sSceneModePref, -1);
-		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref,
-				0);
+		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sFlashModePref, -1);
+		int wbMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sWBModePref, -1);
+		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sSceneModePref, -1);
+		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+		
+		long exTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getLong(MainScreen.sExposureTimePref, 0);
+		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sExposureTimeModePref, true);
+		
+		float fDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getFloat(MainScreen.sFocusDistancePref, 0);
+		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sFocusDistanceModePref, true);
 		
 		int antibanding = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(MainScreen.sAntibandingPref,
 				"3"));
@@ -1812,7 +1865,9 @@ public class HALv3
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+		
+		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
 		

@@ -23,7 +23,10 @@ package com.almalence.opencam_plus.cameracontroller;
 package com.almalence.opencam.cameracontroller;
 //-+- -->
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -181,6 +184,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Map<Integer, Integer>			mode_iso_HALv3;
 	private static Map<String, Integer>				key_iso;
 	private static Map<String, Integer>				key_iso2;
+	private static boolean							isUseISO2Keys					= false;
 
 	private static CameraController					cameraController				= null;
 
@@ -205,8 +209,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isHALv3Supported				= false;
 	protected static boolean						isRAWCaptureSupported			= false;
 	protected static boolean						isManualSensorSupported			= false;
+	
+	protected static boolean						isManualFocus					= false;
 
-	protected static String[]								cameraIdList					= { "" };
+	protected static String[]						cameraIdList					= { "" };
 
 	// Flags to know which camera feature supported at current device
 	private static boolean							mEVSupported					= false;
@@ -2269,7 +2275,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					isoModes = new ArrayList<String>();
 					for (int i = 0; i < isoList.length; i++)
 						isoModes.add(isoList[i]);
-				} else
+				}
+				else
 					return new int[0];
 
 				int supportedISOCount = 0;
@@ -2287,11 +2294,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				{
 					String mode = isoModes.get(i);
 					if (CameraController.key_iso.containsKey(mode))
+					{
 						iso[index++] = CameraController.key_iso.get(isoModes.get(i)).byteValue();
+						isUseISO2Keys = false;
+					}
 					else if (CameraController.key_iso2.containsKey(mode))
+					{
 						iso[index++] = CameraController.key_iso2.get(isoModes.get(i)).byteValue();
+						isUseISO2Keys = true;
+					}
+					
+					
 				}
-
+		            
 				return iso;
 			}
 
@@ -2320,12 +2335,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	 * Manual sensor parameters: focus distance and exposure time.
 	 * Available only in Camera2 mode.
 	*/
-	public static boolean isManualFocusSupported()
+	public static boolean isManualFocusDistanceSupported()
 	{
 		if(CameraController.isHALv3)
-			return HALv3.isManualFocusSupportedHALv3();
+			return isManualSensorSupported && HALv3.isManualFocusDistanceSupportedHALv3();
 		else
 			return false;
+//		return false;
 	}
 	
 	public static float getMinimumFocusDistance()
@@ -2338,7 +2354,32 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isManualExposureTimeSupported()
 	{
-		return CameraController.isHALv3;
+		if(CameraController.isHALv3)
+		{
+			if(isManualSensorSupported && (getMinimumExposureTime() != getMaximumExposureTime()))
+				return true;
+			
+			return false;
+		}
+		else
+			return false;
+//		return false;
+	}
+	
+	public static long getMinimumExposureTime()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMinimumExposureTime();
+		else
+			return 0;
+	}
+	
+	public static long getMaximumExposureTime()
+	{
+		if(CameraController.isHALv3)
+			return HALv3.getCameraMaximumExposureTime();
+		else
+			return 0;
 	}
 	//////////////////////////////////////////////////////
 	
@@ -2635,7 +2676,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					e.printStackTrace();
 				}
 			}
-		} else
+		}
+		else
 			HALv3.setCameraFocusModeHALv3(mode);
 	}
 
@@ -2694,11 +2736,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				try
 				{
-					boolean isSpecialDevice = Build.MODEL.contains("SM-N910");
+					//boolean isSpecialDevice = Build.MODEL.contains("SM-N910") || Build.MODEL.contains("ALCATEL ONE TOUCH");
 					Camera.Parameters params = camera.getParameters();
 					if (params != null)
 					{
-						String iso = isSpecialDevice? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
+						String iso = isUseISO2Keys? CameraController.mode_iso2.get(mode) : CameraController.mode_iso.get(mode);
 						if (params.get(CameraParameters.isoParam) != null)
 							params.set(CameraParameters.isoParam, iso);
 						else if (params.get(CameraParameters.isoParam2) != null)
@@ -2707,7 +2749,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam3, iso);
 						if (!setCameraParameters(params))
 						{
-							iso = isSpecialDevice? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
+							iso = isUseISO2Keys? CameraController.mode_iso.get(mode) : CameraController.mode_iso2.get(mode);
 							if (params.get(CameraParameters.isoParam) != null)
 								params.set(CameraParameters.isoParam, iso);
 							else if (params.get(CameraParameters.isoParam2) != null)
@@ -2769,6 +2811,34 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.setCameraExposureCompensationHALv3(iEV);
 		
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
+	}
+	
+	public static void setCameraExposureTime(long iTime)
+	{
+		if(CameraController.isHALv3)
+			HALv3.setCameraExposureTimeHALv3(iTime);
+	}
+	
+	
+	public static void resetCameraAEMode()
+	{
+		if(CameraController.isHALv3)
+			HALv3.resetCameraAEModeHALv3();
+	}
+	
+	public static void setCameraFocusDistance(float fDistance)
+	{
+		if(CameraController.isHALv3)
+		{
+			isManualFocus = true;
+			HALv3.setCameraFocusDistanceHALv3(fDistance);
+		}
+	}
+	
+	public static void resetCameraFocusDistance()
+	{
+		if(CameraController.isHALv3)
+			isManualFocus = false;
 	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
@@ -2843,7 +2913,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
 						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-				&& !MainScreen.getAutoFocusLock())
+				&& !MainScreen.getAutoFocusLock()
+				&& !isManualFocus)
 			return true;
 		else
 			return false;

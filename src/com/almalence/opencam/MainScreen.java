@@ -280,7 +280,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static String				sTimestampFontSize;
 
 	public static String				sEvPref;
+	public static String				sExposureTimeModePref;
 	public static String				sExposureTimePref;
+	public static String				sFocusDistanceModePref;
 	public static String				sFocusDistancePref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
@@ -351,6 +353,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+	public static Long					lDefaultExposureTimeValue		= 33333333l;
 
 	// Camera parameters info
 	int									cameraId;
@@ -382,6 +385,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
 		sISOPref = getResources().getString(R.string.Preference_ISOValue);
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
+		sExposureTimePref = getResources().getString(R.string.Preference_ExposureTimeValue);
+		sExposureTimeModePref = getResources().getString(R.string.Preference_ExposureTimeModeValue);
+		sFocusDistancePref = getResources().getString(R.string.Preference_FocusDistanceValue);
+		sFocusDistanceModePref = getResources().getString(R.string.Preference_FocusDistanceModeValue);
 
 		sDelayedCapturePref = getResources().getString(R.string.Preference_DelayedCaptureValue);
 		sShowDelayedCapturePref = getResources().getString(R.string.Preference_ShowDelayedCaptureValue);
@@ -1262,8 +1269,13 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
-		CameraController.useHALv3(prefs.getBoolean(getResources()
-				.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
+		boolean isHALv3 = prefs.getBoolean(getResources()
+				.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false);
+		String modeID = PluginManager.getInstance().getActiveModeID();
+		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
+			isHALv3 = false;
+		
+		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 						CameraController.isUseHALv3()).commit();
