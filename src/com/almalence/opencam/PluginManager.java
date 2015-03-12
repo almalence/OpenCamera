@@ -100,8 +100,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -145,6 +143,8 @@ import com.almalence.opencam_plus.cameracontroller.CameraController;
 import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
  +++ --> */
 //<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
 /***
