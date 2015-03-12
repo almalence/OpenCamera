@@ -137,9 +137,9 @@
  </application>
 
 
-	<!-- Uncomment for Samsung market
+	<!-- Uncomment for Samsung market-->
 	<uses-permission android:name="com.sec.android.iap.permission.BILLING" />
-	  -->
+	<!--  -->
 
 	<uses-sdk 	android:minSdkVersion="14"
 	    		android:targetSdkVersion="21"/>
