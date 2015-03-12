@@ -24,6 +24,9 @@ package com.almalence.opencam;
 
 //-+- -->
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -54,6 +57,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+/* <!-- +++
+import com.almalence.opencam_plus.ui.SeekBarPreference;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.ui.SeekBarPreference;
+
+//-+- -->
+
 /***
  * New interface for preferences. Loads sections for Common preferences.
  ***/
@@ -62,7 +73,7 @@ import android.widget.Toast;
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
 	public static PreferenceFragment	thiz;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -81,6 +92,46 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			initSummary(getPreferenceScreen().getPreference(i));
 		}
 
+		Preference nightPreference = findPreference("night");
+		if (nightPreference != null) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			if (prefs.getBoolean("useHALv3Pref", false)) {
+				getPreferenceScreen().removePreference(nightPreference);
+			} else {
+				Preference superPreference = findPreference("super");
+				getPreferenceScreen().removePreference(superPreference);
+			}
+		}
+		
+		final SeekBarPreference brightnessPref = (SeekBarPreference) this.findPreference("brightnessPref");
+		if (brightnessPref != null) {
+			// Set seekbar summary :
+			float gamma = PreferenceManager.getDefaultSharedPreferences(getActivity()).getFloat("gammaPref", 0.5f);
+			brightnessPref.setSummary(this.getString(R.string.Pref_Super_BrightnessEnhancementValue).replace("$1", ""+ gamma));
+			brightnessPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				private final Map<Integer, Float> gamma_map = new HashMap<Integer, Float>()
+						{
+							{
+								put(0, 0.5f);
+								put(1, 0.55f);
+								put(2, 0.6f);
+								put(3, 0.65f);
+								put(4, 0.7f);
+							}
+						};
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					int radius = (Integer) newValue;
+			        float gamma = gamma_map.get(radius);
+			        PreferenceManager.getDefaultSharedPreferences(Fragment.thiz.getActivity().getApplicationContext()).edit().putFloat("gammaPref", gamma).commit();
+			        brightnessPref.setSummary(getActivity().getString(R.string.Pref_Super_BrightnessEnhancementValue).replace("$1", ""+ gamma));
+					return true;
+				}
+			});
+		}
+		
 		Preference cameraParameters = findPreference("camera_parameters");
 		if (cameraParameters != null) {
 			cameraParameters.setOnPreferenceClickListener(new OnPreferenceClickListener()
@@ -385,7 +436,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			}
 		}
 	}
-	
+
 	private void showCameraParameters()
 	{
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -413,7 +464,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		about_string.append("\nDevice variant: ");
 		about_string.append(Build.DEVICE);
 		{
-			ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
+			ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(
+					Activity.ACTIVITY_SERVICE);
 			about_string.append("\nStandard max heap (MB): ");
 			about_string.append(activityManager.getMemoryClass());
 			about_string.append("\nLarge max heap (MB): ");
@@ -445,8 +497,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 
 		about_string.append("\nCurrent camera ID: ");
-        about_string.append(MainScreen.getInstance().cameraId);
-		
+		about_string.append(MainScreen.getInstance().cameraId);
+
 		if (MainScreen.getInstance().picture_sizes != null)
 		{
 			about_string.append("\nPhoto resolutions: ");
@@ -513,7 +565,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 
 		about_string.append("\nScene modes: ");
-		if (MainScreen.getInstance().scene_modes_values != null && MainScreen.getInstance().scene_modes_values.size() > 0)
+		if (MainScreen.getInstance().scene_modes_values != null
+				&& MainScreen.getInstance().scene_modes_values.size() > 0)
 		{
 			for (int i = 0; i < MainScreen.getInstance().scene_modes_values.size(); i++)
 			{
@@ -529,7 +582,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 
 		about_string.append("\nWhite balances: ");
-		if (MainScreen.getInstance().white_balances_values != null && MainScreen.getInstance().white_balances_values.size() > 0)
+		if (MainScreen.getInstance().white_balances_values != null
+				&& MainScreen.getInstance().white_balances_values.size() > 0)
 		{
 			for (int i = 0; i < MainScreen.getInstance().white_balances_values.size(); i++)
 			{
@@ -559,27 +613,30 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		{
 			about_string.append("None");
 		}
-		
+
 		String save_location = MainScreen.getSaveToPath();
 		about_string.append("\nSave Location: " + save_location);
 
-		if (MainScreen.getInstance().flattenParamteters != null && !MainScreen.getInstance().flattenParamteters.equals("")) {
+		if (MainScreen.getInstance().flattenParamteters != null
+				&& !MainScreen.getInstance().flattenParamteters.equals(""))
+		{
 			about_string.append("\nFULL INFO:\n");
 			about_string.append(MainScreen.getInstance().flattenParamteters);
 		}
-		
+
 		alertDialog.setMessage(about_string);
 		alertDialog.setPositiveButton(R.string.Pref_CameraParameters_Ok, null);
-		alertDialog.setNegativeButton(R.string.Pref_CameraParameters_CopyToClipboard, new DialogInterface.OnClickListener()
-		{
-			public void onClick(DialogInterface dialog, int id)
-			{
-				ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(
-						Activity.CLIPBOARD_SERVICE);
-				ClipData clip = ClipData.newPlainText("OpenCamera About", about_string);
-				clipboard.setPrimaryClip(clip);
-			}
-		});
+		alertDialog.setNegativeButton(R.string.Pref_CameraParameters_CopyToClipboard,
+				new DialogInterface.OnClickListener()
+				{
+					public void onClick(DialogInterface dialog, int id)
+					{
+						ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(
+								Activity.CLIPBOARD_SERVICE);
+						ClipData clip = ClipData.newPlainText("OpenCamera About", about_string);
+						clipboard.setPrimaryClip(clip);
+					}
+				});
 		alertDialog.show();
 	}
 }

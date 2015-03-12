@@ -143,6 +143,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jint DeGhostPref,
 	jint lumaEnh,
 	jint chromaEnh,
+	jfloat fgamma,
 	jint nImages,
 	jintArray jcrop,
 	jint orientation,
@@ -190,8 +191,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 					memmove(&yuv[i][sx_zoom*sy_zoom+y*sx_zoom], &yuv[i][sx*sy+x0+(y+y0/2)*sx], sx_zoom);
 			}
 		}
-
-		float fgamma = 0.5f;
 
 		if (fgamma && (iso>0))
 		{
@@ -274,9 +273,9 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	// 90/270-degree rotations are out-ot-place
 	OutNV21 = OutPic;
 	if (rotate90)
-		OutNV21 = (Uint8 *)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
+		OutNV21 = (Uint8 *)malloc(sxo*syo+2*((sxo+1)/2)*((syo+1)/2));
 
-	TransformNV21(OutPic, OutNV21, sx, sy, crop, flipLeftRight, flipUpDown, rotate90);
+	TransformNV21(OutPic, OutNV21, sxo, syo, crop, flipLeftRight, flipUpDown, rotate90);
 
 	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "After rotation");
 
