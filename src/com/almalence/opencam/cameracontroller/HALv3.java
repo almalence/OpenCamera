@@ -1361,6 +1361,8 @@ public class HALv3
 		stillRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		precaptureRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		rawRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+		
+		//Set Noise reduction and Edge modes for different capture formats.
 		if (format == CameraController.YUV_RAW)
 		{
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
@@ -1390,10 +1392,19 @@ public class HALv3
 					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
 		}
 
+		//Optical stabilization
+		stillRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		precaptureRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		if (isRAWCapture)
+			rawRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		
+		//Tonemap quality
 		stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 		precaptureRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
+		
+		//Zoom
 		if ((zoomLevel > 1.0f) && (format != CameraController.YUV_RAW))
 		{
 			zoomCropCapture = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
@@ -1403,6 +1414,8 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 		}
 
+		
+		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
 		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF && !isManualExposure)
