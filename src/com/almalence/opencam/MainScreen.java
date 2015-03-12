@@ -36,7 +36,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.onepf.oms.OpenIabHelper;
-import org.onepf.oms.appstore.SamsungApps;
 import org.onepf.oms.appstore.googleUtils.IabHelper;
 import org.onepf.oms.appstore.googleUtils.IabResult;
 import org.onepf.oms.appstore.googleUtils.Inventory;
@@ -2758,13 +2757,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 //            //set params
 //            .build();
 			
-			
+/*
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>			
 			/////FOR SAMSUNG???
-			
-			//!!!!!!REMOVE additionalSkuList.add for SUPER and PROMO for samsung!!!
-			//!!!!!!
+			/////////////////////
+			// REMOVE additionalSkuList.add for SUPER and PROMO for samsung!!!
 			// correct purchaseAll()
 			// correct manifest
+			/////////////////////
 			
 			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
             .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
@@ -2775,13 +2775,17 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			
             //SamsungApps.isSamsungTestMode = true;
 			
-			
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+*/
+	
+/**/			
 			//FOR PLAY STORE
 			
-//			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
-//            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
-//            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
-//            .addStoreKeys(storeKeys);
+			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
+            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
+            .addStoreKeys(storeKeys);
+/**/			
 			
 			mHelper = new OpenIabHelper(this, builder.build());
 
@@ -2803,14 +2807,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						}
 
 						List<String> additionalSkuList = new ArrayList<String>();
-//						additionalSkuList.add(SKU_SUPER);
+						additionalSkuList.add(SKU_SUPER);
 						additionalSkuList.add(SKU_HDR);
 						additionalSkuList.add(SKU_PANORAMA);
 						additionalSkuList.add(SKU_UNLOCK_ALL);
 						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
 						additionalSkuList.add(SKU_MOVING_SEQ);
 						additionalSkuList.add(SKU_GROUPSHOT);
-//						additionalSkuList.add(SKU_PROMO);
+						additionalSkuList.add(SKU_PROMO);
 
 						// for sale
 						additionalSkuList.add(SKU_SALE1);
@@ -3061,23 +3065,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// now will call store with abc unlocked
 		//UNCOMMENT for samsung!
-		callStoreForUnlocked(this);
+		//callStoreForUnlocked(this);
 		
-//		//TODO: this is for all other markets!!!!! Do not call store!!!
-//		String payload = "";
-//		try 
-//		{
-//			mHelper.launchPurchaseFlow(MainScreen.thiz,
-//					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(MainScreen.thiz,
-//					"Error during purchase " + e.getMessage(),
-//					Toast.LENGTH_LONG).show();
-//		}
+		//TODO: this is for all other markets!!!!! Do not call store!!!
+		String payload = "";
+		try 
+		{
+			mHelper.launchPurchaseFlow(MainScreen.thiz,
+					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
+					mPreferencePurchaseFinishedListener, payload);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Main billing", "Purchase result " + e.getMessage());
+			Toast.makeText(MainScreen.thiz,
+					"Error during purchase " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
 
 
 	}
