@@ -211,6 +211,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean						isManualSensorSupported			= false;
 	
 	protected static boolean						isManualFocus					= false;
+	protected static boolean						isManualExposure				= false;
 
 	protected static String[]						cameraIdList					= { "" };
 
@@ -2816,14 +2817,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void setCameraExposureTime(long iTime)
 	{
 		if(CameraController.isHALv3)
+		{
+			isManualExposure = true;
 			HALv3.setCameraExposureTimeHALv3(iTime);
+		}
 	}
 	
 	
 	public static void resetCameraAEMode()
 	{
 		if(CameraController.isHALv3)
+		{
+			isManualExposure = false;
 			HALv3.resetCameraAEModeHALv3();
+		}
 	}
 	
 	public static void setCameraFocusDistance(float fDistance)
@@ -2914,7 +2921,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
 						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
 				&& !MainScreen.getAutoFocusLock()
-				&& !isManualFocus)
+				&& !isManualFocus && !isManualExposure)
 			return true;
 		else
 			return false;

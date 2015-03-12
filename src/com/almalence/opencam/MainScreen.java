@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.onepf.oms.OpenIabHelper;
@@ -1802,13 +1803,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			try
 			{
-				// Nexus 5 is giving preview which is too dark without this
-				if (Build.MODEL.contains("Nexus 5"))
+				// Nexus 5 and LG G Flex2 is giving preview which is too dark without this
+				if (Build.MODEL.contains("Nexus 5") || 
+					Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510"))
 				{
-					cp.setPreviewFpsRange(7000, 30000);
-					CameraController.setCameraParameters(cp);
+					findOptimalPreviewFPSRange(cp);
 					cp = CameraController.getCameraParameters();
 				}
+				
+				
 			} catch (RuntimeException e)
 			{
 				Log.d("MainScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
@@ -1908,6 +1911,37 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				// Not used
 			}
 		}.start();
+	}
+	
+	
+	//Optimal preview FPS range is the widest range with highest max fps.
+	private void findOptimalPreviewFPSRange(Camera.Parameters cp)
+	{
+		List<int[]> supportedFps = cp.getSupportedPreviewFpsRange();
+		
+		//Take very first range as defaul
+		int bestRangeIndex = 0;
+		int maxFps = supportedFps.get(0)[1];
+		int maxDiff = supportedFps.get(0)[1] - supportedFps.get(0)[0];
+		for(int i = 0; i < supportedFps.size(); i++)
+		{
+			int[] range = supportedFps.get(i);
+			int fps = range[1];
+			int diff = range[1] - range[0];
+			
+			//Check for widest range or for max fps in the case of equals ranges
+			if(diff > maxDiff || (diff == maxDiff && fps > maxFps))
+			{
+				maxFps  = fps;
+				maxDiff = diff;
+				bestRangeIndex = i;
+			}
+		}
+		
+		cp.setPreviewFpsRange(supportedFps.get(bestRangeIndex)[0], supportedFps.get(bestRangeIndex)[1]);
+		//Let the auto exposure routine work
+		cp.setAutoExposureLock(false);
+		CameraController.setCameraParameters(cp);
 	}
 
 	@TargetApi(21)
