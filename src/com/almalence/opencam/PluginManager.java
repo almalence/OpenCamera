@@ -942,6 +942,11 @@ public class PluginManager implements PluginManagerInterface
 
 	private void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
+		if (modeName.equals("super")) {
+			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
+			return;
+		}
+		
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
 		for (int j = 0; j < listCapture.size(); j++)
 		{
@@ -1075,6 +1080,9 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("night".equals(settings))
 		{
 			AddModeSettings("nightmode", pf);
+		} else if ("super".equals(settings))
+		{
+			AddModeSettings("super", pf);
 		} else if ("video".equals(settings))
 		{
 			AddModeSettings("video", pf);

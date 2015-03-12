@@ -32,7 +32,7 @@ public final class AlmaShotNight
 	public static synchronized native int Process(
 			int sx, int sy, int sxo, int syo,
 			int iso, int noisePref, int DeGhostPref,
-			int lumaEnh, int chromaEnh, int nImages,
+			int lumaEnh, int chromaEnh, float fgamma, int nImages,
 			int[] crop, int orientation, boolean mirror,
 			float zoom, int cameraIndex, boolean isHALv3);
 
