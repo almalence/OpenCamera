@@ -16,7 +16,8 @@
 	<string name="Pref_Night_Minor">Слабо</string>
 	<string name="Pref_Night_Hard">Сильно</string>
 	
-	<string name="Pref_Super_TitleUpscale">Увеличение разрешения (x2.25)</string>
+	<string name="Pref_Super_TitleUpscale">Увеличение разрешения</string>
+	<string name="Pref_Super_SummaryUpscale">до $1</string>
 	<string name="Pref_Super_TitleBrightnessEnhancement">Повышение яркости</string>
 	<string name="Pref_Super_BrightnessEnhancementValue">Текущее значение $1</string>
 </resources>
