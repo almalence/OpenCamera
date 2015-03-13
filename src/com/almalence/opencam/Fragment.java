@@ -57,14 +57,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.CameraController.Size;
+
 /* <!-- +++
  import com.almalence.opencam_plus.ui.SeekBarPreference;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ui.SeekBarPreference;
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
 
 /***
