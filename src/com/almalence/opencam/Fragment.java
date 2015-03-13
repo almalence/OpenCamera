@@ -145,7 +145,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		final CheckBoxPreference upscalePref = (CheckBoxPreference) this.findPreference("upscaleResult");
 		if (upscalePref != null)
 		{
-			Size size = CameraController.getCameraImageSize();
+			Size size = CameraController.getMaxCameraImageSize(CameraController.YUV);
 			long resMpx = 0;
 			float mpix = 0.0f;
 			if (size != null)
