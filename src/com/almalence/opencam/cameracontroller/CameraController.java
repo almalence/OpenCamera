@@ -3206,7 +3206,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		nextFrame();
 		
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("hdrmode") || modeID.equals("expobracketing") && (frame_num < total_frames))
+		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && (frame_num < total_frames))
 		{
 			//if preview not working
 			if (previewMode==false)
