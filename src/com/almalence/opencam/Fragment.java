@@ -57,12 +57,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+
 /* <!-- +++
-import com.almalence.opencam_plus.ui.SeekBarPreference;
-+++ --> */
+ import com.almalence.opencam_plus.ui.SeekBarPreference;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ui.SeekBarPreference;
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
 
 /***
@@ -93,47 +97,74 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 
 		Preference nightPreference = findPreference("night");
-		if (nightPreference != null) {
+		if (nightPreference != null)
+		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			if (prefs.getBoolean("useHALv3Pref", false)) {
+			if (prefs.getBoolean("useHALv3Pref", false))
+			{
 				getPreferenceScreen().removePreference(nightPreference);
-			} else {
+			} else
+			{
 				Preference superPreference = findPreference("super");
 				getPreferenceScreen().removePreference(superPreference);
 			}
 		}
-		
+
 		final SeekBarPreference brightnessPref = (SeekBarPreference) this.findPreference("brightnessPref");
-		if (brightnessPref != null) {
+		if (brightnessPref != null)
+		{
 			// Set seekbar summary :
 			float gamma = PreferenceManager.getDefaultSharedPreferences(getActivity()).getFloat("gammaPref", 0.5f);
-			brightnessPref.setSummary(this.getString(R.string.Pref_Super_BrightnessEnhancementValue).replace("$1", ""+ gamma));
+			brightnessPref.setSummary(this.getString(R.string.Pref_Super_BrightnessEnhancementValue).replace("$1",
+					"" + gamma));
 			brightnessPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
-				private final Map<Integer, Float> gamma_map = new HashMap<Integer, Float>()
-						{
-							{
-								put(0, 0.5f);
-								put(1, 0.55f);
-								put(2, 0.6f);
-								put(3, 0.65f);
-								put(4, 0.7f);
-							}
-						};
+				private final Map<Integer, Float>	gamma_map	= new HashMap<Integer, Float>()
+																{
+																	{
+																		put(0, 0.5f);
+																		put(1, 0.55f);
+																		put(2, 0.6f);
+																		put(3, 0.65f);
+																		put(4, 0.7f);
+																	}
+																};
+
 				@Override
 				public boolean onPreferenceChange(Preference preference, Object newValue)
 				{
 					int radius = (Integer) newValue;
-			        float gamma = gamma_map.get(radius);
-			        PreferenceManager.getDefaultSharedPreferences(Fragment.thiz.getActivity().getApplicationContext()).edit().putFloat("gammaPref", gamma).commit();
-			        brightnessPref.setSummary(getActivity().getString(R.string.Pref_Super_BrightnessEnhancementValue).replace("$1", ""+ gamma));
+					float gamma = gamma_map.get(radius);
+					PreferenceManager.getDefaultSharedPreferences(Fragment.thiz.getActivity().getApplicationContext())
+							.edit().putFloat("gammaPref", gamma).commit();
+					brightnessPref.setSummary(getActivity().getString(R.string.Pref_Super_BrightnessEnhancementValue)
+							.replace("$1", "" + gamma));
 					return true;
 				}
 			});
 		}
-		
+
+		final CheckBoxPreference upscalePref = (CheckBoxPreference) this.findPreference("upscaleResult");
+		if (upscalePref != null)
+		{
+			Size size = CameraController.getMaxCameraImageSize(CameraController.YUV);
+			long resMpx = 0;
+			float mpix = 0.0f;
+			if (size != null)
+			{
+				resMpx = (long) ((long)size.getWidth() * (long)size.getHeight() * 2.25);
+				mpix = (float) resMpx / 1000000.f;
+			}
+			
+			String name = String.format("%3.1f Mpix ", mpix);
+			
+			upscalePref
+					.setSummary(getActivity().getString(R.string.Pref_Super_SummaryUpscale).replace("$1", "" + name));
+		}
+
 		Preference cameraParameters = findPreference("camera_parameters");
-		if (cameraParameters != null) {
+		if (cameraParameters != null)
+		{
 			cameraParameters.setOnPreferenceClickListener(new OnPreferenceClickListener()
 			{
 				@Override
@@ -142,17 +173,16 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					try
 					{
 						showCameraParameters();
-					}
-					catch(Exception e)
+					} catch (Exception e)
 					{
 						e.printStackTrace();
 					}
-					
+
 					return true;
 				}
 			});
 		}
-		
+
 		CheckBoxPreference helpPref = (CheckBoxPreference) findPreference("showHelpPrefCommon");
 		if (helpPref != null)
 			helpPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
@@ -235,23 +265,22 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
 							Toast.makeText(
-								MainScreen.getInstance(),
-								MainScreen.getAppResources()
-										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
-								Toast.LENGTH_LONG).show();
-						else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) 
-						//start new logic to save on sd
-						{
-							Toast.makeText(
 									MainScreen.getInstance(),
-									"Saving to SD card is under development for Android 5",
-									Toast.LENGTH_LONG).show();
-							
-//							Intent intent = new Intent(Preferences.thiz, FolderPickerLollipop.class);
-//							intent.putExtra(MainScreen.sSavePathPref, v_old);
-//							Preferences.thiz.startActivity(intent);
-							
-							//show notification, but let select custom folder
+									MainScreen.getAppResources().getString(
+											R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG)
+									.show();
+						else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+						// start new logic to save on sd
+						{
+							Toast.makeText(MainScreen.getInstance(),
+									"Saving to SD card is under development for Android 5", Toast.LENGTH_LONG).show();
+
+							// Intent intent = new Intent(Preferences.thiz,
+							// FolderPickerLollipop.class);
+							// intent.putExtra(MainScreen.sSavePathPref, v_old);
+							// Preferences.thiz.startActivity(intent);
+
+							// show notification, but let select custom folder
 							if (v == 1)
 								return false;
 						}
