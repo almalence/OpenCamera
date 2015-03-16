@@ -6638,14 +6638,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		else if(seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
-			int expIndex = progress + iExposureTimeMinIndex;
-			Long iTime = EXPOSURE_TIME_VALUES.get(expIndex);
-			CameraController.setCameraExposureTime(iTime);
-			preferences.edit().putLong(MainScreen.sExposureTimePref, iTime).commit();
-			mExposureTime = iTime;
-			
-			final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
-			expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
+			boolean isAutoExposureTime = preferences.getBoolean(MainScreen.sExposureTimeModePref, true);
+			if(!isAutoExposureTime)
+			{
+				int expIndex = progress + iExposureTimeMinIndex;
+				Long iTime = EXPOSURE_TIME_VALUES.get(expIndex);
+				CameraController.setCameraExposureTime(iTime);
+				preferences.edit().putLong(MainScreen.sExposureTimePref, iTime).commit();
+				mExposureTime = iTime;
+				
+				final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
+				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
+			}
 		}
 		else if(seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
