@@ -1314,8 +1314,13 @@ public class HALv3
 			float[] focalLenghts = HALv3.getInstance().camCharacter
 					.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
 			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
-			float sensorHeight = sensorSize.getHeight();
+			
+			// sensorSize contains pixel size, not physical sensor size.
+			if (sensorSize.getHeight() == sensorSize.getWidth()) {
+				sensorSize = new SizeF(sensorSize.getWidth() * activeRect.width() / 1000, sensorSize.getWidth() * activeRect.height() / 1000);
+			}
 
+			float sensorHeight = sensorSize.getHeight();
 			float alphaRad = (float) (2 * Math.atan2(sensorHeight, 2 * focalLenghts[0]));
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
@@ -1334,8 +1339,13 @@ public class HALv3
 			float[] focalLenghts = HALv3.getInstance().camCharacter
 					.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
 			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
-			float sensorWidth = sensorSize.getWidth();
 
+			// sensorSize contains pixel size, not physical sensor size.
+			if (sensorSize.getHeight() == sensorSize.getWidth()) {
+				sensorSize = new SizeF(sensorSize.getWidth() * activeRect.width() / 1000, sensorSize.getWidth() * activeRect.height() / 1000);
+			}
+			
+			float sensorWidth = sensorSize.getWidth();
 			float alphaRad = (float) (2 * Math.atan2(sensorWidth, 2 * focalLenghts[0]));
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
