@@ -32,6 +32,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -876,6 +877,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isNexus()
 	{
 		return Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 6");
+	}
+	
+	public static boolean isFlex2()
+	{
+		return Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")|| 
+			   Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510");
 	}
 
 //	public static boolean isNexus5()
@@ -3206,7 +3213,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		nextFrame();
 		
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("hdrmode") || modeID.equals("expobracketing"))
+		if ((modeID.equals("hdrmode") || modeID.equals("expobracketing")) && (frame_num < total_frames))
 		{
 			//if preview not working
 			if (previewMode==false)

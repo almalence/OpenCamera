@@ -651,7 +651,7 @@
 				<LinearLayout
 			 	 	android:id="@+id/exposureTimeModeButtonsLayout"		 	 	    	 	 	    
 			 	 	android:orientation="horizontal"
-			 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+			 	 	android:layout_width="wrap_content"
 	    			android:layout_height="wrap_content">
 		    		<!-- -+-  -->
 		    		<com.almalence.ui.Switch.Switch
@@ -695,7 +695,7 @@
 		    		    	  android:layout_width="@dimen/exposureTitleWidth"
 		    		    	  android:layout_height="wrap_content"
 		    		    	  android:layout_margin="10dip"		    		    	  
-							  android:textSize="@dimen/exposureTitleSize"
+							  android:textSize="@dimen/exposureTimeTitleSize"
 							  android:paddingLeft="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"							  
@@ -736,7 +736,7 @@
 		    		<TextView android:id="@+id/exposureTimeLeftText"
 		    		    	  android:layout_width="@dimen/exposureTitleWidth"
 		    		    	  android:layout_height="wrap_content"		    		    	  
-							  android:textSize="@dimen/exposureTitleSize"
+							  android:textSize="@dimen/exposureTimeTitleSize"
 							  android:paddingLeft="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"							  
@@ -747,7 +747,7 @@
 		    		<TextView android:id="@+id/exposureTimeRightText"
 		    		    	  android:layout_width="@dimen/exposureTitleWidth"
 		    		    	  android:layout_height="wrap_content"		    		          
-							  android:textSize="@dimen/exposureTitleSize"
+							  android:textSize="@dimen/exposureTimeTitleSize"
 							  android:paddingRight="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"
@@ -780,7 +780,7 @@
 	    		<LinearLayout
 			 	 	android:id="@+id/focusDistanceModeButtonsLayout"		 	 	    	 	 	    
 			 	 	android:orientation="horizontal"
-			 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+			 	 	android:layout_width="wrap_content"
 	    			android:layout_height="wrap_content">
 	    			<!-- -+-  -->
 		    		<com.almalence.ui.Switch.Switch
@@ -851,23 +851,23 @@
 		    		<LinearLayout
 			 	 	android:id="@+id/focusDistanceTextLayout"		 	 	    	 	 	    
 			 	 	android:orientation="horizontal"
-			 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+			 	 	android:layout_width="wrap_content"
 		    		android:layout_height="wrap_content">
 		    		<TextView android:id="@+id/focusDistanceLeftText"
-		    		    	  android:layout_width="@dimen/exposureTitleWidth"
+		    		    	  android:layout_width="wrap_content"
 		    		    	  android:layout_height="wrap_content"		    		    	  
-							  android:textSize="@dimen/exposureTitleSize"
+							  android:textSize="@dimen/exposureTimeTitleSize"
 							  android:paddingLeft="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"							  
 							  android:gravity="left"/>
-		    		<Space    android:layout_width="@dimen/exposureTitleWidth"
+		    		<Space    android:layout_width="@dimen/exposureTimeTitleWidth"
 		    		    	  android:layout_height="wrap_content"		    		    	  
 							  android:gravity="center" />
 		    		<TextView android:id="@+id/focusDistanceRightText"
-		    		    	  android:layout_width="@dimen/exposureTitleWidth"
+		    		    	  android:layout_width="wrap_content"
 		    		    	  android:layout_height="wrap_content"		    		          
-							  android:textSize="@dimen/exposureTitleSize"
+							  android:textSize="@dimen/exposureTimeTitleSize"
 							  android:paddingRight="10dp"							  
 							  android:textStyle="bold"
 							  android:textColor="@android:color/white"

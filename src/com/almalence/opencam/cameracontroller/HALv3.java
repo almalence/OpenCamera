@@ -987,8 +987,7 @@ public class HALv3
 		{
 			if (mode != CameraParameters.SCENE_MODE_AUTO)
 			{
-				HALv3.previewRequestBuilder
-						.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, mode);
 			} else
 			{
@@ -1126,6 +1125,7 @@ public class HALv3
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
 			isManualExposure = true;
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
@@ -1976,6 +1976,7 @@ public class HALv3
 		
 		if(!isAutoExpTime)
 		{
+			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 		}

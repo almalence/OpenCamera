@@ -169,27 +169,25 @@ public class VideoCapturePlugin extends PluginCapture
 	private boolean								displayTakePicture;
 	private ContentValues						values;
 
-	private static Hashtable<Integer, Boolean>	previewSizes					= new Hashtable<Integer, Boolean>()
-																				{
-																					/**
-		 * 
-		 */
-																					private static final long	serialVersionUID	= -6076051817063312974L;
-
-																					{
-																						put(CamcorderProfile.QUALITY_QCIF,
-																								false);
-																						put(CamcorderProfile.QUALITY_CIF,
-																								false);
-																						put(CamcorderProfile.QUALITY_480P,
-																								false);
-																						put(CamcorderProfile.QUALITY_720P,
-																								false);
-																						put(CamcorderProfile.QUALITY_1080P,
-																								false);
-																						put(QUALITY_4K, false);
-																					}
-																				};
+	private static Hashtable<Integer, Boolean>	previewSizes					
+	= new Hashtable<Integer, Boolean>()
+	{
+		private static final long	serialVersionUID	= -6076051817063312974L;
+	
+		{
+			put(CamcorderProfile.QUALITY_QCIF,
+					false);
+			put(CamcorderProfile.QUALITY_CIF,
+					false);
+			put(CamcorderProfile.QUALITY_480P,
+					false);
+			put(CamcorderProfile.QUALITY_720P,
+					false);
+			put(CamcorderProfile.QUALITY_1080P,
+					false);
+			put(QUALITY_4K, false);
+		}
+	};
 
 	private boolean								qualityCIFSupported				= false;
 	private boolean								qualityQCIFSupported			= false;

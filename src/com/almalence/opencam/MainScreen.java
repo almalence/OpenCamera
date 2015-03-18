@@ -1271,7 +1271,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				.getDefaultSharedPreferences(MainScreen.getMainContext());
 		
 		boolean isHALv3 = prefs.getBoolean(getResources()
-				.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false);
+				.getString(R.string.Preference_UseHALv3Key), (CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
 		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
 			isHALv3 = false;

@@ -45,6 +45,7 @@
    <dimen name="exposureTitleWidth">110dp</dimen>
    <dimen name="exposureCenterTitleWidth">110dp</dimen>
    <dimen name="exposureTitleSize">24sp</dimen>
+   <dimen name="exposureTimeTitleSize">20sp</dimen>
 
    <dimen name="blockingTitleSize">32sp</dimen>
    
