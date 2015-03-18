@@ -2842,7 +2842,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public String								titleUnlockAll				= "$6.95";
+	public String								titleUnlockAll				= "";
 	public String								titleUnlockAllCoupon		= "$3.95";
 	public String								titleUnlockHDR				= "$2.99";
 	public String								titleUnlockSuper			= "$2.99";

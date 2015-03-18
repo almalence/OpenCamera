@@ -65,7 +65,7 @@ public class AlmalenceStore
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
 
-	private static final int STORE_ELEMENTS_NUMBER = 4;
+	private static final int STORE_ELEMENTS_NUMBER = 1;
 	
 	AlmalenceStore(View gui)
 	{
