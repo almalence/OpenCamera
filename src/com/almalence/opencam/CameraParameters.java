@@ -96,4 +96,5 @@ public final class CameraParameters
 	public static final int meteringModeMatrix = 1;	
 	public static final int meteringModeCenter = 2;
 	public static final int meteringModeSpot = 3;
+	public static final int meteringModeManual = 4;
 }
