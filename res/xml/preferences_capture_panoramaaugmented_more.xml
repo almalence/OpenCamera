@@ -17,10 +17,11 @@
         android:defaultValue="false" 
         android:summary="@string/pref_plugin_capture_panoramaaugmented_memory_summary" 
         android:key="pref_plugin_capture_panoramaaugmented_memory" />
+    <!-- 
     <CheckBoxPreference 
         android:title="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_title" 
         android:defaultValue="false" 
         android:summary="@string/pref_plugin_capture_panoramaaugmented_usehardwaregyro_summary" 
         android:key="pref_plugin_capture_panoramaaugmented_usehardwaregyro" />
-
+ 	-->
 </PreferenceScreen>
