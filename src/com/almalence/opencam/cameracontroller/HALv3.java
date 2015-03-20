@@ -1883,18 +1883,19 @@ public class HALv3
 			{
 				e.printStackTrace();
 			}
+			
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			HALv3.autoFocusTriggered = false;
 		}
 
-		try
-		{
-			HALv3.getInstance().configurePreviewRequest(true);
-		} catch (CameraAccessException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		HALv3.autoFocusTriggered = false;
 
 	}

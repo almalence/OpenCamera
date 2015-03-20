@@ -1129,7 +1129,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 				
-				Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
@@ -2137,12 +2136,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							mFocusMode = FOCUS_MF;
 
+							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, true).commit();
 							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
 							
 							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
 							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+							
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_CHANGED);
 
 							initSettingsMenu(true);
 							hideSecondaryMenus();
@@ -2153,7 +2155,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							
 							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-							Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 						}
 					});
@@ -2180,9 +2181,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						leftText.setText("Further");
 						
 						mFocusDistance = initValue;
-						
-						LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
-						seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 						
 //						Switch modeSwitcher = (Switch) guiView.findViewById(R.id.focusDistanceModeSwitcher);
 //						modeSwitcher.setChecked(isAutoFocusDistance);
@@ -2253,6 +2251,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						Log.e("onCameraCreate", "icons_focus.get exception: " + e.getMessage());
 					}
 				}
+				
+				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
+				if(mFocusMode == FOCUS_MF)
+					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 
 				mOriginalFocusMode= mFocusMode;
 				if (mFocusMode == FOCUS_AF_LOCK)
@@ -2461,6 +2464,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
 
 						mMeteringMode = CameraParameters.meteringModeManual;
+						
+						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
@@ -2479,7 +2484,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						
 						guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 						manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-						Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 						manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 					}
 				});
@@ -2600,6 +2604,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				
 				if(mMeteringMode == CameraParameters.meteringModeManual)
 				{
+					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
+					
+					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
@@ -2608,7 +2616,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					CameraController.setCameraExposureTime(mExposureTime);
 				}
 				else
+				{
+					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
+					
+					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 					CameraController.resetCameraAEMode();
+				}
 
 				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
 			} else
@@ -5199,23 +5212,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case R.id.evPlusButton:
 			expoPlus();
 			break;
-			
-		// EXPOSURE TIME BUTTONS (-\+)
-		case R.id.exposureTimeMinusButton:
-			exposureTimeMinus();
-			break;
-		case R.id.exposureTimePlusButton:
-			exposureTimePlus();
-			break;
-						
-		// FOCUS DISTANCE BUTTONS (-\+)
-		case R.id.focusDistanceMinusButton:
-			focusDistanceMinus();
-			break;
-		case R.id.focusDistancePlusButton:
-			focusDistancePlus();
-			break;
-		//TODO: EXPOSURE TIME BUTTONS + FOCUS DISTANCE BUTTONS
 		default:
 			break;
 		}
@@ -5426,6 +5422,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
 		}
 
+		preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, true).commit();
 		final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 		seekBarLayout.setVisibility(View.GONE);
 		CameraController.resetCameraFocusDistance();
@@ -5506,6 +5503,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
+		
+		preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 		
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
@@ -5629,14 +5628,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (isMeteringEnabled)
 				isEnabled = true;
 			break;
-//		case MODE_EXPOSURE_TIME:
-//			if (isExposureTimeEnabled)
-//				isEnabled = true;
-//			break;
-//		case MODE_FOCUS_DISTANCE:
-//			if (isFocusDistanceEnabled)
-//				isEnabled = true;
-//			break;
 		case MODE_CAM:
 			if (isCameraChangeEnabled)
 				isEnabled = true;
@@ -5662,16 +5653,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashmodeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.isoLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.meteringLayout).setVisibility(View.GONE);
-//		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-//		guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);
 
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
 		
-//		if(manualControlsOpened)
-//		RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
-//		manualControlsLayout.setVisibility(View.VISIBLE);
-
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 	}
 
@@ -5683,8 +5668,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				|| guiView.findViewById(R.id.focusmodeLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.flashmodeLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.isoLayout).getVisibility() == View.VISIBLE
-//				|| guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.VISIBLE
-//				|| guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.VISIBLE
 				|| guiView.findViewById(R.id.meteringLayout).getVisibility() == View.VISIBLE)
 			return true;
 		return false;
@@ -5762,12 +5745,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case MODE_ISO:
 			guiView.findViewById(R.id.isoLayout).setVisibility(View.VISIBLE);
 			break;
-//		case MODE_EXPOSURE_TIME:
-//			guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-//			break;
-//		case MODE_FOCUS_DISTANCE:
-//			guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
-//			break;
 		case MODE_MET:
 			guiView.findViewById(R.id.meteringLayout).setVisibility(View.VISIBLE);
 			break;
@@ -7039,7 +7016,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
 				
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-				Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
 		}
@@ -7114,91 +7090,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 	
 	
-	private void exposureTimeMinus()
-	{
-		if (!isExposureTimeEnabled)
-			return;
-		
-		SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
-		if (exBar != null)
-		{
-			int currProgress = exBar.getProgress();
-			int iIndex = currProgress - 1;
-			if (iIndex < 0)
-				iIndex = 0;
-
-			Long iEv = EXPOSURE_TIME_VALUES.get(iIndex + iExposureTimeMinIndex);
-			CameraController.setCameraExposureTime(iEv);
-
-			exBar.setProgress(iIndex);
-		}
-	}
-
-	private void exposureTimePlus()
-	{
-		if (!isExposureTimeEnabled)
-			return;
-		
-		SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
-		if (exBar != null)
-		{
-			int currProgress = exBar.getProgress();
-			int iIndex = currProgress + 1;
-			if (iIndex > (iExposureTimeMaxIndex - iExposureTimeMinIndex))
-				iIndex = (iExposureTimeMaxIndex - iExposureTimeMinIndex);
-
-			Long iEv = EXPOSURE_TIME_VALUES.get(iIndex + iExposureTimeMinIndex);
-			CameraController.setCameraExposureTime(iEv);
-
-			exBar.setProgress(iIndex);
-		}
-	}
 	
-	
-	private void focusDistanceMinus()
-	{
-		if (!isFocusDistanceEnabled)
-			return;
-		
-		SeekBar fdistBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
-		if (fdistBar != null)
-		{
-			int step = 10;
-
-			int currProgress = fdistBar.getProgress();
-			float fFDist = currProgress - step;
-			if (fFDist < 0)
-				fFDist = 0;
-
-			CameraController.setCameraFocusDistance(fFDist/100);
-
-			fdistBar.setProgress((int)fFDist);
-		}
-	}
-
-	private void focusDistancePlus()
-	{
-		if (!isFocusDistanceEnabled)
-			return;
-		
-		SeekBar fdistBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
-		if (fdistBar != null)
-		{
-			float maxValue = CameraController.getMinimumFocusDistance();
-
-			int step = 10;
-
-			int currProgress = fdistBar.getProgress();
-			float fFDist = currProgress + step;
-			if (fFDist > maxValue*100)
-				fFDist = maxValue*100;
-
-			CameraController.setCameraFocusDistance(fFDist/100);
-
-			fdistBar.setProgress((int)fFDist);
-		}
-	}
-
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar)
 	{

@@ -1310,6 +1310,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	public void onCaptureFinished()
 	{
 		mFocusDisabled = false;
-		cancelAutoFocus();
+		if(!mFocusLocked)
+			cancelAutoFocus();
 	}
 }
