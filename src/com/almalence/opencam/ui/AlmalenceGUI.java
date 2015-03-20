@@ -1028,6 +1028,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	
 	protected void hideManualControls()
 	{
+		Log.e("GUI", "received CLOSE_MANUAL_CONTROLS");
 		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 	}
@@ -1128,6 +1129,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 				
+				Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
+				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
 		});
@@ -2150,6 +2153,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							
 							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+							Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 						}
 					});
@@ -2475,6 +2479,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						
 						guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 						manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+						Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 						manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 					}
 				});
@@ -7034,6 +7039,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
 				
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+				Log.e("GUI", "manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY)");
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
 		}
