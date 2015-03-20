@@ -637,8 +637,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
+		
+		// Temp fix HDR modes for LG G Flex 2.
+		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US)
+				.replace(" ", "").contains("lg-h959")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+						.contains("lg-h510")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+						.contains("lg-f510k");
+		
 		if (modeID.equals("video")
-				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
+				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))) 
+				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			isHALv3 = false;
 		// Boolean isNexus = (Build.MODEL.contains("Nexus 5") ||
 		// Build.MODEL.contains("Nexus 7"));

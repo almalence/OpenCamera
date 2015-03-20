@@ -327,8 +327,7 @@
 			    		<SeekBar android:id="@+id/exposureTimeSeekBar"
 								 android:layout_width="@dimen/exposureSeekBarWidth"
 								 android:layout_height="wrap_content"
-								 android:orientation="horizontal"
-								 android:progressDrawable="@drawable/ev_bar"/>
+								 android:orientation="horizontal"/>
 			    		<RelativeLayout
 					 	 	android:id="@+id/exposureTimeTextLayout"		 	 	    	 	 	    
 					 	 	android:orientation="horizontal"
@@ -386,8 +385,7 @@
 		    		<SeekBar android:id="@+id/focusDistanceSeekBar"
 							 android:layout_width="@dimen/exposureSeekBarWidth"
 							 android:layout_height="wrap_content"
-							 android:orientation="horizontal"
-							 android:progressDrawable="@drawable/ev_bar"/>
+							 android:orientation="horizontal"/>
 		    		<RelativeLayout
 				 	 	android:id="@+id/focusDistanceTextLayout"		 	 	    	 	 	    
 				 	 	android:orientation="horizontal"
@@ -684,8 +682,7 @@
 		    		<SeekBar android:id="@+id/evSeekBar"
 							 android:layout_width="@dimen/exposureSeekBarWidth"
 							 android:layout_height="wrap_content"
-							 android:orientation="horizontal"
-							 android:progressDrawable="@drawable/ev_bar"/>
+							 android:orientation="horizontal"/>
 		    		<LinearLayout
 			 	 	android:id="@+id/seekbartextLayout"		 	 	    	 	 	    
 			 	 	android:orientation="horizontal"
