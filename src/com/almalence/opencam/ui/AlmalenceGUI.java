@@ -2602,6 +2602,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
 					CameraController.setCameraExposureTime(mExposureTime);
 				}
+				else
+					CameraController.resetCameraAEMode();
 
 				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
 			} else
@@ -5492,19 +5494,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void setMeteringMode(int newMode)
 	{
-		if (newMode != -1 && mMeteringMode != newMode)
-		{
-			mMeteringMode = newMode;
-			setButtonSelected(meteringModeButtons, mMeteringMode);
-
-			preferences.edit().putInt(MainScreen.sMeteringModePref, newMode).commit();
-			MainScreen.getInstance().setCameraMeteringMode(newMode);
-		}
-
-		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
-		int icon_id = ICONS_METERING.get(mMeteringMode);
-		but.setImageResource(icon_id);
-		
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
 		if(guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
 		{
@@ -5520,7 +5509,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true);
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
 		CameraController.resetCameraAEMode();
+		
+		if (newMode != -1 && mMeteringMode != newMode)
+		{
+			mMeteringMode = newMode;
+			setButtonSelected(meteringModeButtons, mMeteringMode);
 
+			preferences.edit().putInt(MainScreen.sMeteringModePref, newMode).commit();
+			MainScreen.getInstance().setCameraMeteringMode(newMode);
+		}
+
+		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
+		int icon_id = ICONS_METERING.get(mMeteringMode);
+		but.setImageResource(icon_id);
+		
 		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
