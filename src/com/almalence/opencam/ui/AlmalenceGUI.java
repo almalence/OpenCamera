@@ -2136,8 +2136,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							mFocusMode = FOCUS_MF;
 
-							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, true).commit();
-							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
+							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
+							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
 							
 							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
@@ -2156,6 +2156,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+							
+							preferences
+							.edit()
+							.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
 						}
 					});
 
@@ -2254,7 +2259,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				
 				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 				if(mFocusMode == FOCUS_MF)
+				{
+					preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
+					
+					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
+					
+					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+					manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+				}
 				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 
 				mOriginalFocusMode= mFocusMode;

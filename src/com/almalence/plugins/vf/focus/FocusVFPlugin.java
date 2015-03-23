@@ -344,11 +344,13 @@ public class FocusVFPlugin extends PluginViewfinder
 		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
 		if (supportedFocusModes != null)
 		{
-			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
+			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode) && preferenceFocusMode != CameraParameters.MF_MODE)
+			{
 				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
 					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
 				else
 					preferenceFocusMode = supportedFocusModes[0];
+			}
 		}
 
 		// preferenceFocusMode = CameraController.getFocusMode();
@@ -657,13 +659,14 @@ public class FocusVFPlugin extends PluginViewfinder
 			cancelAutoFocus();
 			int fm = CameraController.getFocusMode();
 			if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& fm != -1 && preferenceFocusMode != CameraController.getFocusMode())
+					&& fm != -1 && preferenceFocusMode != CameraController.getFocusMode() && preferenceFocusMode != CameraParameters.MF_MODE)
 			{
 				CameraController.setCameraFocusMode(preferenceFocusMode);
-			} else if (Build.MODEL.contains("SM-N900")) // Kind of hack to
-														// prevent Note 3 of
-														// permanent 'auto focus
-														// failed' state
+			} else if (Build.MODEL.contains("SM-N900") && preferenceFocusMode != CameraParameters.MF_MODE) 
+			// Kind of hack to
+			// prevent Note 3 of
+			// permanent 'auto focus
+			// failed' state
 			{
 				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 				CameraController.setCameraFocusMode(preferenceFocusMode);
@@ -1142,8 +1145,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getFocusMode();
 		if (fm != -1)
 		{
-			// CameraController.cancelAutoFocus();
-			if (fm != preferenceFocusMode)
+//			CameraController.cancelAutoFocus();
+			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE)
 			{
 				// Log.e(TAG, "cancelAutoFocus. setFocusMode = " +
 				// preferenceFocusMode);
@@ -1410,7 +1413,9 @@ public class FocusVFPlugin extends PluginViewfinder
 																// auto-focus
 																// call
 				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled || mFocusLocked || !CameraController
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO 
+				|| focusMode == CameraParameters.MF_MODE
+				|| mFocusDisabled || mFocusLocked || !CameraController
 					.isFocusModeSupported());
 	}
 

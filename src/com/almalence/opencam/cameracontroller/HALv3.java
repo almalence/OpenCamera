@@ -1168,7 +1168,7 @@ public class HALv3
 		
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-				: MainScreen.sFrontFocusModePref, CaptureRequest.CONTROL_AF_MODE_OFF).commit();
+				: MainScreen.sFrontFocusModePref, CameraParameters.MF_MODE).commit();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 
@@ -1428,7 +1428,7 @@ public class HALv3
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1868,7 +1868,7 @@ public class HALv3
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -1927,7 +1927,7 @@ public class HALv3
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
-		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		else if(isManualExposure)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
