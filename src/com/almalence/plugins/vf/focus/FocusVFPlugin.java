@@ -969,7 +969,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 				isDoubleClick = false;
 			}
-		} else
+		} else if (e.getAction() == MotionEvent.ACTION_UP)
 		{ // Just show the indicator in all other cases.
 			autoFocus();
 			// updateFocusUI();
