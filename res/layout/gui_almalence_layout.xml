@@ -273,7 +273,7 @@
           	<com.almalence.ui.RotateImageView 
 		    android:id="@+id/expandManualControls"
 			android:background="@android:color/transparent"
-			android:src="@drawable/expand_control"					
+			android:src="@drawable/gui_almalence_manual_expand"					
 			android:layout_height="40dip"
 			android:layout_width="40dip"
 	   		android:layout_gravity="top|left"
