@@ -130,7 +130,7 @@ public class HALv3
 
 	private static boolean					autoFocusTriggered		= false;
 	
-	protected static boolean				isManualExposure		= false;
+//	protected static boolean				isManualExposure		= false;
 
 	public static void onCreateHALv3()
 	{
@@ -1124,8 +1124,8 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
-			isManualExposure = true;
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
+//			isManualExposure = true;
+//			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
@@ -1140,7 +1140,7 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
-			isManualExposure = false;
+//			isManualExposure = false;
 			try
 			{
 				HALv3.getInstance().configurePreviewRequest(true);
@@ -1428,7 +1428,8 @@ public class HALv3
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+//		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1450,6 +1451,7 @@ public class HALv3
 		precaptureRequestBuilder.addTarget(MainScreen.getPreviewYUVImageReader().getSurface());
 		
 		
+		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sExposureTimeModePref, true);
 		long exTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getLong(MainScreen.sExposureTimePref, 0);
 		
 		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sFocusDistanceModePref, true);
@@ -1471,7 +1473,7 @@ public class HALv3
 		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				MainScreen.sFlashModePref, -1);
 		
-		if(!isManualExposure)
+		if(isAutoExTime)
 		{
 			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
@@ -1927,14 +1929,17 @@ public class HALv3
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
-		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-		else if(isManualExposure)
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+
+//		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
+//		else if(isManualExposure)
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
 		
-		if(!isManualExposure)
+		if(isAutoExpTime)
 		{
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, aeLock);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, awbLock);
@@ -1945,7 +1950,7 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, true);			
 		}
 		
-		if(!isManualExposure)
+		if(isAutoExpTime)
 		{
 			if (flashMode == CameraParameters.FLASH_MODE_TORCH)
 			{
@@ -1987,7 +1992,7 @@ public class HALv3
 		
 		if(!isAutoExpTime)
 		{
-			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 		}
@@ -2228,8 +2233,8 @@ public class HALv3
 			// PluginManager.getInstance().onCaptureCompleted(result);
 			try
 			{
-				if(HALv3.autoFocusTriggered)
-					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
+//				if(HALv3.autoFocusTriggered)
+//					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				// HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 				// Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
