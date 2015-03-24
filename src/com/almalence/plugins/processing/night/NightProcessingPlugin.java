@@ -18,6 +18,8 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.night;
 
+import java.util.Locale;
+
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;

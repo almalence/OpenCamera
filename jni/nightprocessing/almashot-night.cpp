@@ -70,7 +70,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	if (almashot_inited == 1)
 	{
 		AlmaShot_Release();
-s
+
 		almashot_inited = 0;
 	}
 
