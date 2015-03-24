@@ -3,9 +3,10 @@
 	        android:title="@string/Pref_ShowGyroVF"
 	        android:defaultValue="false"
             android:key="PrefGyroVF" />
-        
+        <!-- 
         <CheckBoxPreference
 	        android:title="@string/Pref_GyroTypeVF"
 	        android:defaultValue="false"
             android:key="PrefGyroTypeVF" />
+             -->
 </PreferenceScreen>
