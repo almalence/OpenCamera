@@ -358,9 +358,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	// Camera parameters info
 	int									cameraId;
-	List<CameraController.Size> 		preview_sizes;
-	List<CameraController.Size> 		video_sizes;
-	List<CameraController.Size> 		picture_sizes;
+	List<CameraController.Size>			preview_sizes;
+	List<CameraController.Size>			video_sizes;
+	List<CameraController.Size>			picture_sizes;
 	boolean								supports_video_stabilization;
 	List<String>						flash_values;
 	List<String>						focus_values;
@@ -1010,25 +1010,31 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), VideoCapturePlugin.QUALITY_4K))
 			{
 				entriesTmp[idx] = "4K";
-				entryValuesTmp[idx] = "5";
+				entryValuesTmp[idx] = "6";
+				idx++;
+			}
+			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_2160P))
+			{
+				entriesTmp[idx] = "2160p";
+				entryValuesTmp[idx] = "2";
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_1080P))
 			{
 				entriesTmp[idx] = "1080p";
-				entryValuesTmp[idx] = "2";
+				entryValuesTmp[idx] = "3";
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_720P))
 			{
 				entriesTmp[idx] = "720p";
-				entryValuesTmp[idx] = "3";
+				entryValuesTmp[idx] = "4";
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_480P))
 			{
 				entriesTmp[idx] = "480p";
-				entryValuesTmp[idx] = "4";
+				entryValuesTmp[idx] = "5";
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_CIF))
@@ -1266,21 +1272,28 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	protected void onStart()
 	{
 		super.onStart();
-		
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext());
-		
-		boolean isHALv3 = prefs.getBoolean(getResources()
-				.getString(R.string.Preference_UseHALv3Key), (CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+
+		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+				(CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		if (modeID.equals("video") || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))))
+
+		// Temp fix HDR modes for LG G Flex 2.
+		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+
+		if (modeID.equals("video")
+				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
+				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			isHALv3 = false;
-		
+
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
-				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-						CameraController.isUseHALv3()).commit();
-		
+				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
+				.commit();
+
 		CameraController.onStart();
 		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
@@ -1396,11 +1409,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 
-//					CameraController.useHALv3(prefs.getBoolean(getResources()
-//							.getString(R.string.Preference_UseHALv3Key), CameraController.isNexus() ? true : false));
-//					prefs.edit()
-//							.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-//									CameraController.isUseHALv3()).commit();
+					// CameraController.useHALv3(prefs.getBoolean(getResources()
+					// .getString(R.string.Preference_UseHALv3Key),
+					// CameraController.isNexus() ? true : false));
+					// prefs.edit()
+					// .putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+					// CameraController.isUseHALv3()).commit();
 
 					// Log.e("MainScreen",
 					// "onResume. CameraController.setSurfaceHolderFixedSize(0, 0)");
@@ -1802,15 +1816,15 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		{
 			try
 			{
-				// Nexus 5 and LG G Flex2 is giving preview which is too dark without this
-				if (Build.MODEL.contains("Nexus 5") || 
-					Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510"))
+				// Nexus 5 and LG G Flex2 is giving preview which is too dark
+				// without this
+				if (Build.MODEL.contains("Nexus 5")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510"))
 				{
 					findOptimalPreviewFPSRange(cp);
 					cp = CameraController.getCameraParameters();
 				}
-				
-				
+
 			} catch (RuntimeException e)
 			{
 				Log.d("MainScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
@@ -1911,34 +1925,34 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			}
 		}.start();
 	}
-	
-	
-	//Optimal preview FPS range is the widest range with highest max fps.
+
+	// Optimal preview FPS range is the widest range with highest max fps.
 	private void findOptimalPreviewFPSRange(Camera.Parameters cp)
 	{
 		List<int[]> supportedFps = cp.getSupportedPreviewFpsRange();
-		
-		//Take very first range as defaul
+
+		// Take very first range as defaul
 		int bestRangeIndex = 0;
 		int maxFps = supportedFps.get(0)[1];
 		int maxDiff = supportedFps.get(0)[1] - supportedFps.get(0)[0];
-		for(int i = 0; i < supportedFps.size(); i++)
+		for (int i = 0; i < supportedFps.size(); i++)
 		{
 			int[] range = supportedFps.get(i);
 			int fps = range[1];
 			int diff = range[1] - range[0];
-			
-			//Check for widest range or for max fps in the case of equals ranges
-			if(diff > maxDiff || (diff == maxDiff && fps > maxFps))
+
+			// Check for widest range or for max fps in the case of equals
+			// ranges
+			if (diff > maxDiff || (diff == maxDiff && fps > maxFps))
 			{
-				maxFps  = fps;
+				maxFps = fps;
 				maxDiff = diff;
 				bestRangeIndex = i;
 			}
 		}
-		
+
 		cp.setPreviewFpsRange(supportedFps.get(bestRangeIndex)[0], supportedFps.get(bestRangeIndex)[1]);
-		//Let the auto exposure routine work
+		// Let the auto exposure routine work
 		cp.setAutoExposureLock(false);
 		CameraController.setCameraParameters(cp);
 	}
@@ -2766,6 +2780,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			// correct manifest
 			/////////////////////
 			
+
 			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
             .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
             //.setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP)
@@ -2777,7 +2792,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-			
 			mHelper = new OpenIabHelper(this, builder.build());
 
 			OpenIabHelper.enableDebugLogging(true);

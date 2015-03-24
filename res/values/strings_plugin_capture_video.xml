@@ -28,5 +28,6 @@
     
     <string name="Pref_Video_Mute_Title">Mute buttons</string>
     <string name="Pref_Video_Mute_Summary">Disable buttons sound. Some devices record it in result video.</string>
-    
+    <string name="Pref_Video_MaxQuaity_Title">Max quality</string>
+    <string name="Pref_Video_MaxQuaity_Summary">Max quality, available on device.</string>
 </resources>

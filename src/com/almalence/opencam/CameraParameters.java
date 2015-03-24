@@ -68,6 +68,8 @@ public final class CameraParameters
 	public static final int AF_MODE_NORMAL = 7;	
 	public static final int AF_MODE_FIXED = 8;
 	
+	public static final int MF_MODE = 11; //Manual focus mode
+	
 	//FLASH
 	public static final int FLASH_MODE_OFF = 0;
 	public static final int FLASH_MODE_AUTO = 3;
@@ -96,4 +98,5 @@ public final class CameraParameters
 	public static final int meteringModeMatrix = 1;	
 	public static final int meteringModeCenter = 2;
 	public static final int meteringModeSpot = 3;
+	public static final int meteringModeManual = 4;
 }
