@@ -2710,19 +2710,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						{
 							params.setFlashMode(flashOff);
 							setCameraParameters(params);
-							new CountDownTimer(10, 10)
+							Handler handler = new Handler();
+							handler.postDelayed(new Runnable()
 							{
-								public void onTick(long millisUntilFinished)
-								{
-								}
-
-								public void onFinish()
+								@Override
+								public void run()
 								{
 									String flashmode = CameraController.mode_flash.get(mode);
 									params.setFlashMode(flashmode);
 									setCameraParameters(params);
 								}
-							}.start();
+							}, 50);
 						} else
 						{
 							String flashmode = CameraController.mode_flash.get(mode);
@@ -3495,11 +3493,28 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			lastCaptureStarted = SystemClock.uptimeMillis();
 			if (imageWidth == previewWidth && imageHeight == previewHeight
-					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
-				takePreviewFrame = true; // Temporary make capture by
-											// preview frames only for YUV
-											// requests to avoid slow YUV to
-											// JPEG conversion
+					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW))) 
+			{
+				if (CameraController.getFlashMode() == CameraParameters.FLASH_MODE_SINGLE) {
+					// Turn on torch to emulate flash for preview images.
+					CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							takePreviewFrame = true;
+							
+						}
+					}, 500);
+				} else {
+					takePreviewFrame = true; // Temporary make capture by
+					// preview frames only for YUV
+					// requests to avoid slow YUV to
+					// JPEG conversion
+				}
+			}
 			else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 			{
 				try
