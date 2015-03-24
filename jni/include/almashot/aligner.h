@@ -52,7 +52,7 @@ extern "C"
 #include "almashot.h"
 
 
-#define SCRATCH_SIZE	360448
+#define SCRATCH_SIZE	720896
 
 
 void AlmaShot_EstimateGlobalTranslation

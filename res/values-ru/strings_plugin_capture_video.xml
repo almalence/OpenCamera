@@ -23,4 +23,6 @@
     
     <string name="Pref_Video_Mute_Title">Отключить звук кнопок</string>
     <string name="Pref_Video_Mute_Summary">Некоторые устройства записывают звук кнопок в результирующее видео.</string>
+    <string name="Pref_Video_MaxQuaity_Title">Максимальное качество</string>
+    <string name="Pref_Video_MaxQuaity_Summary">Максимальое качество, доступное на устройстве.</string>
 </resources>

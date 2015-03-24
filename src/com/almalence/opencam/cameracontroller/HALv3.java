@@ -1168,7 +1168,7 @@ public class HALv3
 		
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-				: MainScreen.sFrontFocusModePref, CaptureRequest.CONTROL_AF_MODE_OFF).commit();
+				: MainScreen.sFrontFocusModePref, CameraParameters.MF_MODE).commit();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 
@@ -1314,8 +1314,13 @@ public class HALv3
 			float[] focalLenghts = HALv3.getInstance().camCharacter
 					.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
 			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
-			float sensorHeight = sensorSize.getHeight();
+			
+			// sensorSize contains pixel size, not physical sensor size.
+			if (sensorSize.getHeight() == sensorSize.getWidth()) {
+				sensorSize = new SizeF(sensorSize.getWidth() * activeRect.width() / 1000, sensorSize.getWidth() * activeRect.height() / 1000);
+			}
 
+			float sensorHeight = sensorSize.getHeight();
 			float alphaRad = (float) (2 * Math.atan2(sensorHeight, 2 * focalLenghts[0]));
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
@@ -1334,8 +1339,13 @@ public class HALv3
 			float[] focalLenghts = HALv3.getInstance().camCharacter
 					.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
 			SizeF sensorSize = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
-			float sensorWidth = sensorSize.getWidth();
 
+			// sensorSize contains pixel size, not physical sensor size.
+			if (sensorSize.getHeight() == sensorSize.getWidth()) {
+				sensorSize = new SizeF(sensorSize.getWidth() * activeRect.width() / 1000, sensorSize.getWidth() * activeRect.height() / 1000);
+			}
+			
+			float sensorWidth = sensorSize.getWidth();
 			float alphaRad = (float) (2 * Math.atan2(sensorWidth, 2 * focalLenghts[0]));
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
@@ -1418,7 +1428,7 @@ public class HALv3
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1858,7 +1868,7 @@ public class HALv3
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CaptureRequest.CONTROL_AF_MODE_OFF)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -1873,18 +1883,19 @@ public class HALv3
 			{
 				e.printStackTrace();
 			}
+			
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			HALv3.autoFocusTriggered = false;
 		}
 
-		try
-		{
-			HALv3.getInstance().configurePreviewRequest(true);
-		} catch (CameraAccessException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		HALv3.autoFocusTriggered = false;
 
 	}
@@ -1916,7 +1927,7 @@ public class HALv3
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
-		if(focusMode != CaptureRequest.CONTROL_AF_MODE_OFF && !isManualExposure)
+		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		else if(isManualExposure)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);

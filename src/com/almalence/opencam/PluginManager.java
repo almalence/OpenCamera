@@ -1603,6 +1603,11 @@ public class PluginManager implements PluginManagerInterface
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
+			// Returns actual flash mode if it was changed during capturing.
+			if (!CameraController.isUseHALv3()) {
+				CameraController.setCameraFlashMode(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sFlashModePref, -1));
+			}
+			
 			int id = MainScreen.getAppResources().getIdentifier(getActiveMode().modeName, "string",
 					MainScreen.getInstance().getPackageName());
 			String modeName = MainScreen.getAppResources().getString(id);
