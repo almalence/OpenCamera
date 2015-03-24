@@ -70,7 +70,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	if (almashot_inited == 1)
 	{
 		AlmaShot_Release();
-
+s
 		almashot_inited = 0;
 	}
 
@@ -208,35 +208,52 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		int zoomAbove15x = sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2;
 		int zoomAbove30x = sxo >= 3*sx_zoom;
 
-		int sensorGain, filter, sharpen;
 
-		if (cameraIndex == 100)		// Nexus 5
+		int sensorGain, deGhostGain, filter, sharpen;
+
+		switch (cameraIndex)
 		{
+		case 100:		// Nexus 5
+			deGhostGain = 256;
 			sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
 
 			// slightly more sharpening and less filtering at low zooms
 			sharpen = 2;
 			filter = 384; // 320; // 256;
-			if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
+			if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen at high zoom levels
 			else if (zoomAbove15x) sharpen = 1;
 			else filter = 192;
-		}
-		else						// 103 = Nexus 6
-		{
-				sensorGain = (int)( 170*256/100*powf((float)iso/100, 0.5f) );
+			break;
+		case 103:		// Nexus 6
+			deGhostGain = 256;
+			sensorGain = (int)( 170*256/100*powf((float)iso/100, 0.5f) );
 
-				sharpen = 1;
-				filter = 256;
-				if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen
-				if (!zoomAbove15x) filter = 320;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
-		}
+			sharpen = 1;
+			filter = 256;
+			if (!zoomAbove15x) filter = 320;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
+			break;
+		case 507:		// LG G Flex2
+			deGhostGain = 256*60/100;
+			sensorGain = (int)( 2*256*powf((float)iso/100, 0.45f) );
 
+			sharpen = 1;
+			filter = 300;
+			if (!zoomAbove15x) filter = 192;	// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
+			break;
+		default:
+			__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Error: Unknown camera");
+			break;
+		}
+		if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen at high zoom levels
+
+		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before Super_Process, sensorGain: %d, deghostGain: %d, filter: %d, sharpen: %d, nImages: %d cameraIndex: %d",
+		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
 		Super_Process(
 				yuv, &OutPic,
 				sx_zoom, sy_zoom, sxo, syo, nImages,
 				sensorGain,
-				deghostTable[DeGhostPref],
+				deGhostGain*deghostTable[DeGhostPref]/256,
 				1,							// deghostFrames
 				filter,
 				sharpen,

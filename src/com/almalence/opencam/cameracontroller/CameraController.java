@@ -876,9 +876,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			 * nroffAvailable ) SuperModeOk = true;
 			 */
 
-			// hard-code to enable Nexus 5 only, as we have no profiles for
+			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus())
+			if (CameraController.isNexus() || CameraController.isFlex2())
 				SuperModeOk = true;
 		}
 
