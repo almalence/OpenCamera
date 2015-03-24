@@ -213,8 +213,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean						isRAWCaptureSupported			= false;
 	protected static boolean						isManualSensorSupported			= false;
 
-	protected static boolean						isManualFocus					= false;
-	protected static boolean						isManualExposure				= false;
+//	protected static boolean						isManualFocus					= false;
+//	protected static boolean						isManualExposure				= false;
 
 	protected static String[]						cameraIdList					= { "" };
 
@@ -2826,7 +2826,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			isManualExposure = true;
+//			isManualExposure = true;
 			HALv3.setCameraExposureTimeHALv3(iTime);
 		}
 	}
@@ -2835,7 +2835,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			isManualExposure = false;
+//			isManualExposure = false;
 			HALv3.resetCameraAEModeHALv3();
 		}
 	}
@@ -2844,16 +2844,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			isManualFocus = true;
+//			isManualFocus = true;
 			HALv3.setCameraFocusDistanceHALv3(fDistance);
 		}
 	}
 
-	public static void resetCameraFocusDistance()
-	{
-		if (CameraController.isHALv3)
-			isManualFocus = false;
-	}
+//	public static void resetCameraFocusDistance()
+//	{
+////		if (CameraController.isHALv3)
+////			isManualFocus = false;
+//	}
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
 	{
@@ -2927,8 +2927,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
-						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-				&& !MainScreen.getAutoFocusLock() && !isManualFocus && !isManualExposure)
+						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF
+						|| focusMode == CameraParameters.MF_MODE)
+				&& !MainScreen.getAutoFocusLock()/* && !isManualFocus && !isManualExposure*/)
 			return true;
 		else
 			return false;
