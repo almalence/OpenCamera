@@ -1132,7 +1132,7 @@ public class HALv3
 		{
 //			isManualExposure = true;
 //			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
@@ -1953,7 +1953,7 @@ public class HALv3
 		}
 		else
 		{
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true);
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, true);			
 		}
 		
@@ -1977,9 +1977,10 @@ public class HALv3
 				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 			}
 		}
+		else
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);	
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		
 		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
 		{
@@ -2000,7 +2001,7 @@ public class HALv3
 		if(!isAutoExpTime)
 		{
 //			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 		}
