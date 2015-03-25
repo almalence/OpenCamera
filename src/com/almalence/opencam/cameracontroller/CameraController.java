@@ -1782,7 +1782,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().getAutoExposureLock();
 		} else
-			return true;
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).
+					getBoolean(MainScreen.sAELockPref, false);
 	}
 
 	public static void setAutoExposureLock(boolean lock)
@@ -1820,7 +1821,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().getAutoWhiteBalanceLock();
 		} else
-			return true;
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).
+					getBoolean(MainScreen.sAWBLockPref, false);
 	}
 
 	public static void setAutoWhiteBalanceLock(boolean lock)

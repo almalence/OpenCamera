@@ -679,6 +679,9 @@ public class HALv3
 		{
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
 			setRepeatingRequest();
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+			.putBoolean(MainScreen.sAELockPref, lock).commit();
 		}
 	}
 	
@@ -688,6 +691,9 @@ public class HALv3
 		{
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, lock);
 			setRepeatingRequest();
+			
+			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+			.putBoolean(MainScreen.sAWBLockPref, lock).commit();
 		}
 	}
 	
@@ -796,7 +802,7 @@ public class HALv3
 
 	public static void resetExposureCompensationHALv3()
 	{
-		Log.e(TAG, "RESET EXPOSURE COMPENSATION");
+//		Log.e(TAG, "RESET EXPOSURE COMPENSATION");
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);

@@ -256,17 +256,9 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public void onCaptureFinished()
 	{
-		Camera.Parameters params = CameraController.getCameraParameters();
-		if (params == null)
-		{
+		if (aeLocked && CameraController.isExposureLockSupported() && !CameraController.isExposureLock())
 			AeUnlock();
-			AwUnlock();
-			return;
-		}
-		if (aeLocked && CameraController.isExposureLockSupported() && !params.getAutoExposureLock())
-			AeUnlock();
-		if (awLocked && CameraController.isWhiteBalanceLockSupported()
-				&& !params.getAutoWhiteBalanceLock())
+		if (awLocked && CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLock())
 			AwUnlock();
 	}
 
