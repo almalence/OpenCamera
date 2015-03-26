@@ -1843,6 +1843,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		mManualExposureTimeSupported = false;
 		mManualFocusDistanceSupported = false;
 		mCameraChangeSupported = false;
+		
+		boolean isManualControlsUsed = false;
 
 		mEVLockSupported = false;
 		mWBLockSupported = false;
@@ -2257,7 +2259,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					}
 				}
 				
-				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
+//				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 				if(mFocusMode == FOCUS_MF)
 				{
 					preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
@@ -2271,10 +2273,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 					
+					isManualControlsUsed = true;
+					
 //					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 //					manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 				}
-				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
+				else
+				{
+					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);	
+				}
+//				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 
 				mOriginalFocusMode= mFocusMode;
 				if (mFocusMode == FOCUS_AF_LOCK)
@@ -2645,6 +2653,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					
 					CameraController.resetCameraAEMode();
 					CameraController.setCameraExposureTime(mExposureTime);
+					
+					isManualControlsUsed = true;
 				}
 				else
 				{
@@ -2846,6 +2856,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //		} else
 //			mManualFocusDistanceSupported = false;
 		
+		if(!isManualControlsUsed)
+		{
+			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+		}
 		
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
