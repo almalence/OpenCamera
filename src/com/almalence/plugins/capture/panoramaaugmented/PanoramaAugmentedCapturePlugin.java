@@ -571,7 +571,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		{
 			CameraController.needCameraRelaunch(true);
+			CameraController.useHALv3(camera2Preference);
+		}
 	}
 
 	@Override
