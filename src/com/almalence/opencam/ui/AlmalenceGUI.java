@@ -1864,6 +1864,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		mManualExposureTimeSupported = false;
 		mManualFocusDistanceSupported = false;
 		mCameraChangeSupported = false;
+		
+		boolean isManualControlsUsed = false;
 
 		mEVLockSupported = false;
 		mWBLockSupported = false;
@@ -2058,7 +2060,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				mFocusModeSupported = true;
 				defaultQuickControl3 = String.valueOf(MODE_FOCUS);
 
-				// Add Focus lock control
+				
+				//Add Focus lock control
 				if (CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO)
 						|| CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
 				{
@@ -2120,12 +2123,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					activeFocus.add(focusModeButtons.get(FOCUS_AF_LOCK));
 					activeFocusNames.add(FOCUS_AF_LOCK);
 				}
-
-				// Add Manual Focus control
+				
+				
+				//Add Manual Focus control
 				if (CameraController.isManualFocusDistanceSupported())
 				{
 					mManualFocusDistanceSupported = true;
-
+					
 					LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 					View paramMode = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
 
@@ -2149,25 +2153,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								e.printStackTrace();
 								Log.d("set Manual focus failed", "icons_focus.get exception: " + e.getMessage());
 							}
-
+							
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 
 							mFocusMode = FOCUS_MF;
 
 							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
-							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref,
-									CameraController.getMinimumFocusDistance());
-
-							mOriginalFocusMode = preferences.getInt(
-									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
+							
+							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
-							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-									PluginManager.MSG_FOCUS_LOCKED);
-
-							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-									PluginManager.MSG_FOCUS_CHANGED);
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+							
+							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_CHANGED);
 
 							initSettingsMenu(true);
 							hideSecondaryMenus();
@@ -2175,92 +2175,78 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 							quickControlsVisible = false;
-
+							
 							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
-									CLOSE_MANUAL_CONTROLS_DELAY);
-
+							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+							
 							preferences
-									.edit()
-									.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-											: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
+							.edit()
+							.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+									: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
 						}
 					});
 
 					focusModeButtons.put(FOCUS_MF, paramMode);
 					activeFocus.add(focusModeButtons.get(FOCUS_MF));
 					activeFocusNames.add(FOCUS_MF);
-
+					
+					
 					isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
-
+					
 					SeekBar focusBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
 					if (focusBar != null)
 					{
-						float initValue = preferences.getFloat(MainScreen.sFocusDistancePref,
-								CameraController.getMinimumFocusDistance());
-						focusBar.setMax((int) CameraController.getMinimumFocusDistance() * 100);
-						focusBar.setProgress((int) initValue * 100);
+						float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
+						focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
+						focusBar.setProgress((int)initValue*100);
 
 						TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
 						TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
-
-						// TODO: FOCUS DISTANCE
+						
+						//TODO: FOCUS DISTANCE
 						rightText.setText("Nearest");
 						leftText.setText("Further");
-
+						
 						mFocusDistance = initValue;
-
-						// Switch modeSwitcher = (Switch)
-						// guiView.findViewById(R.id.focusDistanceModeSwitcher);
-						// modeSwitcher.setChecked(isAutoFocusDistance);
-						// modeSwitcher.setOnCheckedChangeListener(new
-						// OnCheckedChangeListener()
-						// {
-						// @Override
-						// public void onCheckedChanged(final CompoundButton
-						// buttonView, final boolean isChecked)
-						// {
-						// preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref,
-						// isChecked).commit();
-						// seekBarLayout.setVisibility(isChecked? View.GONE :
-						// View.VISIBLE);
-						//
-						// float fDistValue =
-						// preferences.getFloat(MainScreen.sFocusDistancePref,
-						// 0);
-						//
-						// if(!isChecked)
-						// {
-						// isAutoFocusDistance = false;
-						// mOriginalFocusMode =
-						// preferences.getInt(CameraController.isFrontCamera() ?
-						// MainScreen.sRearFocusModePref
-						// : MainScreen.sFrontFocusModePref,
-						// MainScreen.sDefaultFocusValue);
-						// CameraController.setCameraFocusDistance(fDistValue);
-						// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS,
-						// true, true);
-						// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-						// PluginManager.MSG_FOCUS_LOCKED);
-						// }
-						// else
-						// {
-						// CameraController.resetCameraFocusDistance();
-						// setFocusMode(mOriginalFocusMode);
-						// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS,
-						// false, true);
-						// isAutoFocusDistance = true;
-						// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-						// PluginManager.MSG_FOCUS_UNLOCKED);
-						// }
-						//
-						// }
-						// });
-
+						
+//						Switch modeSwitcher = (Switch) guiView.findViewById(R.id.focusDistanceModeSwitcher);
+//						modeSwitcher.setChecked(isAutoFocusDistance);
+//						modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
+//						{
+//							@Override
+//							public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+//							{
+//								preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked).commit();
+//								seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
+//								
+//								float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
+//								
+//								if(!isChecked)
+//								{
+//									isAutoFocusDistance = false;
+//									mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+//											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+//									CameraController.setCameraFocusDistance(fDistValue);
+//									disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+//									PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+//								}
+//								else
+//								{
+//									CameraController.resetCameraFocusDistance();
+//									setFocusMode(mOriginalFocusMode);
+//									disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
+//									isAutoFocusDistance = true;
+//									PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
+//								}
+//
+//							}
+//						});
+						
 						focusBar.setOnSeekBarChangeListener(this);
 					}
-				} else
+				}
+				else
 					mManualFocusDistanceSupported = false;
 
 				focusmodeAdapter.Elements = activeFocus;
@@ -2293,28 +2279,33 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						Log.e("onCameraCreate", "icons_focus.get exception: " + e.getMessage());
 					}
 				}
-
-				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
-				if (mFocusMode == FOCUS_MF)
+				
+//				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
+				if(mFocusMode == FOCUS_MF)
 				{
 					preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
-
-					if (guiView.findViewById(R.id.expandManualControls).getVisibility() == View.GONE)
+					
+					if(guiView.findViewById(R.id.expandManualControls).getVisibility() == View.GONE)
 					{
 						guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 					}
-					// guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-					// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+//					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
-
-					// manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-					// manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
-					// CLOSE_MANUAL_CONTROLS_DELAY);
+					
+					isManualControlsUsed = true;
+					
+//					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+//					manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 				}
-				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF ? View.GONE : View.VISIBLE);
+				else
+				{
+					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);	
+				}
+//				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 
-				mOriginalFocusMode = mFocusMode;
+				mOriginalFocusMode= mFocusMode;
 				if (mFocusMode == FOCUS_AF_LOCK)
 				{
 					int afMode = -1;
@@ -2326,12 +2317,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						afMode = supported_focus[0];
 
 					CameraController.setCameraFocusMode(afMode);
-				} else if (mFocusMode == FOCUS_MF)
+				}
+				else if(mFocusMode == FOCUS_MF)
 				{
-					CameraController.setCameraFocusDistance(mFocusDistance);
-					PluginManager.getInstance()
-							.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-				} else
+						CameraController.setCameraFocusDistance(mFocusDistance);
+						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+				}
+				else
 					CameraController.setCameraFocusMode(mFocusMode);
 			} else
 			{
@@ -2702,7 +2694,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					CameraController.resetCameraAEMode();
 					CameraController.setCameraExposureTime(mExposureTime);
-				} else
+					
+					isManualControlsUsed = true;
+				}
+				else
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
 
@@ -2869,99 +2864,86 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// mManualExposureTimeSupported = false;
 
 		// Create Manual Focus distance button and slider with supported values
-		// if (CameraController.isManualFocusDistanceSupported())
-		// {
-		// mManualFocusDistanceSupported = true;
-		//
-		// isAutoFocusDistance =
-		// preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
-		//
-		// SeekBar focusBar = (SeekBar)
-		// guiView.findViewById(R.id.focusDistanceSeekBar);
-		// if (focusBar != null)
-		// {
-		// float initValue = preferences.getFloat(MainScreen.sFocusDistancePref,
-		// CameraController.getMinimumFocusDistance());
-		// focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
-		// focusBar.setProgress((int)initValue*100);
-		//
-		// TextView leftText = (TextView)
-		// guiView.findViewById(R.id.focusDistanceLeftText);
-		// TextView rightText = (TextView)
-		// guiView.findViewById(R.id.focusDistanceRightText);
-		//
-		// //TODO: FOCUS DISTANCE
-		// rightText.setText("Nearest");
-		// leftText.setText("Further");
-		//
-		// mFocusDistance = initValue;
-		//
-		// final LinearLayout seekBarLayout = (LinearLayout)
-		// guiView.findViewById(R.id.focusDistanceSeekBarAndButtonsLayout);
-		// seekBarLayout.setVisibility(isAutoFocusDistance? View.GONE :
-		// View.VISIBLE);
-		//
-		// Switch modeSwitcher = (Switch)
-		// guiView.findViewById(R.id.focusDistanceModeSwitcher);
-		// modeSwitcher.setChecked(isAutoFocusDistance);
-		// modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
-		// {
-		// @Override
-		// public void onCheckedChanged(final CompoundButton buttonView, final
-		// boolean isChecked)
-		// {
-		// preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref,
-		// isChecked).commit();
-		// seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
-		//
-		// float fDistValue =
-		// preferences.getFloat(MainScreen.sFocusDistancePref, 0);
-		//
-		// if(!isChecked)
-		// {
-		// isAutoFocusDistance = false;
-		// mOriginalFocusMode =
-		// preferences.getInt(CameraController.isFrontCamera() ?
-		// MainScreen.sRearFocusModePref
-		// : MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-		// CameraController.setCameraFocusDistance(fDistValue);
-		// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true,
-		// true);
-		// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-		// PluginManager.MSG_FOCUS_LOCKED);
-		// }
-		// else
-		// {
-		// CameraController.resetCameraFocusDistance();
-		// setFocusMode(mOriginalFocusMode);
-		// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false,
-		// true);
-		// isAutoFocusDistance = true;
-		// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-		// PluginManager.MSG_FOCUS_UNLOCKED);
-		// }
-		//
-		// }
-		// });
-		//
-		// if(!isAutoFocusDistance)
-		// {
-		// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true,
-		// true);
-		// CameraController.setCameraFocusDistance(mFocusDistance);
-		// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
-		// PluginManager.MSG_FOCUS_LOCKED);
-		// }
-		//
-		// focusBar.setOnSeekBarChangeListener(this);
-		// }
-		//
-		// RotateImageView but = (RotateImageView)
-		// topMenuButtons.get(MODE_FOCUS_DISTANCE);
-		// but.setImageResource(ICON_FOCUS_DISTANCE);
-		// } else
-		// mManualFocusDistanceSupported = false;
-
+//		if (CameraController.isManualFocusDistanceSupported())
+//		{
+//			mManualFocusDistanceSupported = true;
+//			
+//			isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
+//			
+//			SeekBar focusBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
+//			if (focusBar != null)
+//			{
+//				float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
+//				focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
+//				focusBar.setProgress((int)initValue*100);
+//
+//				TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
+//				TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
+//				
+//				//TODO: FOCUS DISTANCE
+//				rightText.setText("Nearest");
+//				leftText.setText("Further");
+//				
+//				mFocusDistance = initValue;
+//				
+//				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceSeekBarAndButtonsLayout);
+//				seekBarLayout.setVisibility(isAutoFocusDistance? View.GONE : View.VISIBLE);
+//				
+//				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.focusDistanceModeSwitcher);
+//				modeSwitcher.setChecked(isAutoFocusDistance);
+//				modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
+//				{
+//					@Override
+//					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+//					{
+//						preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked).commit();
+//						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
+//						
+//						float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
+//						
+//						if(!isChecked)
+//						{
+//							isAutoFocusDistance = false;
+//							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+//									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+//							CameraController.setCameraFocusDistance(fDistValue);
+//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+//						}
+//						else
+//						{
+//							CameraController.resetCameraFocusDistance();
+//							setFocusMode(mOriginalFocusMode);
+//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
+//							isAutoFocusDistance = true;
+//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
+//						}
+//
+//					}
+//				});
+//				
+//				if(!isAutoFocusDistance)
+//				{
+//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
+//					CameraController.setCameraFocusDistance(mFocusDistance);
+//					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+//				}
+//
+//				focusBar.setOnSeekBarChangeListener(this);
+//			}
+//
+//				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS_DISTANCE);
+//				but.setImageResource(ICON_FOCUS_DISTANCE);
+//		} else
+//			mManualFocusDistanceSupported = false;
+		
+		if(!isManualControlsUsed)
+		{
+			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+		}
+		
+		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
 		{
 			addCameraChangeButton();

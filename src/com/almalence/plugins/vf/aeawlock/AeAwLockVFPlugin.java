@@ -92,6 +92,9 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		awLocked = false;
 		prefs.edit().putBoolean(MainScreen.sAWBLockPref, aeLocked).commit();
 		prefs.edit().putBoolean(MainScreen.sAWBLockPref, awLocked).commit();
+		
+		AeUnlock();
+		AwUnlock();
 	}
 
 	@Override

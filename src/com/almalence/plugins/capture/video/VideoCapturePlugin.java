@@ -921,9 +921,9 @@ public class VideoCapturePlugin extends PluginCapture
 				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 
-		prefs.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModeVideoPref
-						: MainScreen.sFrontFocusModeVideoPref, CameraController.getFocusMode()).commit();
+//		prefs.edit()
+//				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModeVideoPref
+//						: MainScreen.sFrontFocusModeVideoPref, CameraController.getFocusMode()).commit();
 
 		prefs.edit()
 				.putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
