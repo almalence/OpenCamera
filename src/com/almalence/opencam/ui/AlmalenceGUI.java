@@ -2485,7 +2485,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 
 			// Add manual exposure time
-			if (CameraController.isManualExposureTimeSupported())
+			String modeID = PluginManager.getInstance().getActiveModeID();
+			if (CameraController.isManualExposureTimeSupported() && !(modeID.equals("hdrmode") || modeID.equals("expobracketing")))
 			{
 				mManualExposureTimeSupported = true;
 
