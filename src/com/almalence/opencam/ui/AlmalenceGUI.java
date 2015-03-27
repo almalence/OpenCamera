@@ -2679,6 +2679,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		
 		if(!isManualControlsUsed)
 		{
+			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		}
@@ -7009,6 +7010,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			if (mMeteringMode == CameraParameters.meteringModeManual)
 			{
+				Log.e("MainScreen", "onProgress");
 				int expIndex = progress + iExposureTimeMinIndex;
 				Long iTime = EXPOSURE_TIME_VALUES.get(expIndex);
 				CameraController.setCameraExposureTime(iTime);
