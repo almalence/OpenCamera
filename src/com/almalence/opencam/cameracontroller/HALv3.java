@@ -1068,7 +1068,6 @@ public class HALv3
 			{
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, previewFlash);
-				Log.e(TAG, "setCameraFlashMode(int mode). Mode = " + previewFlash);
 				HALv3.setRepeatingRequest();
 			}
 			else if(mode == CameraParameters.FLASH_MODE_SINGLE || mode == CameraParameters.FLASH_MODE_AUTO || mode == CameraParameters.FLASH_MODE_REDEYE)
@@ -1088,7 +1087,6 @@ public class HALv3
 			else if(mode == CameraParameters.FLASH_MODE_OFF)
 			{
 				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
-				Log.e(TAG, "setCameraFlashMode(int mode). mode == FLASH_MODE_OFF. Mode = " + previewFlash);
 				HALv3.setRepeatingRequest();
 			}
 		}
@@ -1510,8 +1508,6 @@ public class HALv3
 				
 				HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				HALv3.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
-				
-				Log.e(TAG, "CreateRequests. set AE_MODE = " + flashMode);
 			}
 		}
 		else
@@ -1976,7 +1972,6 @@ public class HALv3
 			{
 				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-				Log.e(TAG, "configurePreviewRequest. set FLASH_MODE to " + flashMode);
 			}
 			else if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
@@ -1993,7 +1988,6 @@ public class HALv3
 			else if(flashMode == CameraParameters.FLASH_MODE_OFF)
 			{
 				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-				Log.e(TAG, "configurePreviewRequest. set FLASH_MODE to " + flashMode);
 			}
 			
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);	
@@ -2022,7 +2016,6 @@ public class HALv3
 //			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 //			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
-			Log.e(TAG, "configurePreviewRequest. set FLASH_MODE to FLASH_MODE_OFF");
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 		}
