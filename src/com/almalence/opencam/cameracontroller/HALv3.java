@@ -1084,6 +1084,11 @@ public class HALv3
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, correctedMode);
 				HALv3.setRepeatingRequest();
 			}
+			else if(mode == CameraParameters.FLASH_MODE_OFF)
+			{
+				HALv3.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, mode);
+				HALv3.setRepeatingRequest();
+			}
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
@@ -1977,6 +1982,8 @@ public class HALv3
 				previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 			}
+			else if(flashMode == CameraParameters.FLASH_MODE_OFF)
+				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);	
 		}
