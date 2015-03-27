@@ -127,6 +127,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
 		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+			editor.commit();
+		}
 
 		if (prefs.contains(sExpoPreviewModePref))
 		{
