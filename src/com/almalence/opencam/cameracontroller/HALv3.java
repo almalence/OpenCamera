@@ -1139,7 +1139,6 @@ public class HALv3
 //			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
 //			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
-			Log.e(TAG, "setCameraExposureTimeHALv3. set flash mode to FLASH_MODE_OFF");
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
 			HALv3.setRepeatingRequest();
