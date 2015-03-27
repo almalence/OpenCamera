@@ -190,7 +190,7 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
-			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 		}
 	}
 
