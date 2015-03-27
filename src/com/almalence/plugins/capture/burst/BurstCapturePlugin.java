@@ -100,6 +100,10 @@ public class BurstCapturePlugin extends PluginCapture
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+			
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+			editor.commit();
 		}
 
 		// refreshPreferences();

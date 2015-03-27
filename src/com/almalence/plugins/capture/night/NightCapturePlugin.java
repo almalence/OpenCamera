@@ -224,6 +224,13 @@ public class NightCapturePlugin extends PluginCapture
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 				: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		
+		if(usingSuperMode)
+		{
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+			editor.commit();
+		}
 
 		MainScreen.setCaptureFormat(CameraController.YUV);
 		
@@ -240,15 +247,19 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		prefs.edit().putInt(MainScreen.sSceneModePref, preferenceSceneMode).commit();
-		prefs.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		if(!usingSuperMode)
+		{
+			prefs.edit()
+					.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+							: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		}
 		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
 		
 //		Log.e("Night", "onPause FOCUS PREF = " + preferenceFocusMode);
 		
 		CameraController.setCameraSceneMode(preferenceSceneMode);
-		CameraController.setCameraFocusMode(preferenceFocusMode);
+		if(!usingSuperMode)
+			CameraController.setCameraFocusMode(preferenceFocusMode);
 		CameraController.setCameraFlashMode(preferenceFlashMode);
 		
 		if (OpenGLPreference)

@@ -82,82 +82,15 @@ public class BestShotCapturePlugin extends PluginCapture
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 			preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+			
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+			editor.commit();
 		}
 
 		MainScreen.setCaptureFormat(CameraController.YUV);
 	}
 
-	// private void refreshPreferences()
-	// {
-	// try
-	// {
-	// SharedPreferences prefs =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-	// imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
-	// } catch (Exception e)
-	// {
-	// Log.v("Bestshot capture", "Cought exception " + e.getMessage());
-	// }
-	//
-	// switch (imageAmount)
-	// {
-	// case 3:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-	// break;
-	// case 5:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-	// break;
-	// case 10:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-	// break;
-	// default:
-	// break;
-	// }
-	// }
-
-	// @Override
-	// public void onQuickControlClick()
-	// {
-	// SharedPreferences prefs =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-	// int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
-	// int selected = 0;
-	// switch (val)
-	// {
-	// case 3:
-	// selected = 0;
-	// break;
-	// case 5:
-	// selected = 1;
-	// break;
-	// case 10:
-	// selected = 2;
-	// break;
-	// default:
-	// break;
-	// }
-	// selected = (selected + 1) % 3;
-	//
-	// Editor editor = prefs.edit();
-	// switch (selected)
-	// {
-	// case 0:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst3;
-	// editor.putString("BestshotImagesAmount", "3");
-	// break;
-	// case 1:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst5;
-	// editor.putString("BestshotImagesAmount", "5");
-	// break;
-	// case 2:
-	// quickControlIconID = R.drawable.gui_almalence_mode_burst10;
-	// editor.putString("BestshotImagesAmount", "10");
-	// break;
-	// default:
-	// break;
-	// }
-	// editor.commit();
-	// }
 
 	@Override
 	public void setupCameraParameters()
