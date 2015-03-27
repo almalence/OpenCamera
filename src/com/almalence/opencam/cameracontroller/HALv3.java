@@ -1482,14 +1482,16 @@ public class HALv3
 		
 		if(isAutoExTime)
 		{
-			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE || flashMode == CameraParameters.FLASH_MODE_TORCH)
 			{
 				if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
 				else if(flashMode == CameraParameters.FLASH_MODE_AUTO )
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
-				else
+				else if(flashMode == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE )
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
+				else if(flashMode == CameraParameters.FLASH_MODE_TORCH )
+					flashMode = CaptureRequest.FLASH_MODE_TORCH;
 				
 				HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				HALv3.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
