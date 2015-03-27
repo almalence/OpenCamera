@@ -3769,7 +3769,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 
-		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 	}
 
 	/***************************************************************************************
@@ -7212,7 +7212,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			} else if (settingsControlsVisible)
 			{
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				res++;
 			} else if (modeSelectorVisible)
 			{
@@ -7249,7 +7249,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (settingsControlsVisible)
 				{
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					return false;
 				}
 				if (modeSelectorVisible)
