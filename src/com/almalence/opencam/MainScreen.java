@@ -2465,9 +2465,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().menuButtonPressed();
 	}
 
-	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu)
+	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
 	{
-		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
+		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu, bModeInit);
 	}
 
 	public void showOpenGLLayer(final int version)
