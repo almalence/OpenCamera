@@ -202,6 +202,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final Integer							ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
 	private static final Integer							ICON_SELF_TIMER_ACTIVE		= R.drawable.gui_almalence_mode_selftimer_controlcative;
 	private static final Integer							ICON_SELF_TIMER_INACTIVE	= R.drawable.gui_almalence_mode_selftimer_control;
+	
+	private static final Integer							ICON_QC_SELF_TIMER_ACTIVE	= R.drawable.gui_almalence_mode_selftimer_control_ative;
+	private static final Integer							ICON_QC_SELF_TIMER_INACTIVE	= R.drawable.gui_almalence_mode_selftimer_control_off;
 
 	private static final Integer							ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_shutter_speed_priority;
 	private static final Integer							ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_shutter_speed_priority;
@@ -2668,9 +2671,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		boolean showSelfTimer = preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false);
 		RotateImageView buttonSelfTimer = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
 		if (showSelfTimer) {
-			buttonSelfTimer.setImageResource(ICON_SELF_TIMER_ACTIVE);
+			buttonSelfTimer.setImageResource(ICON_QC_SELF_TIMER_ACTIVE);
 		} else {
-			buttonSelfTimer.setImageResource(ICON_SELF_TIMER_INACTIVE);
+			buttonSelfTimer.setImageResource(ICON_QC_SELF_TIMER_INACTIVE);
 		}
 		// Set Self-timer end
 		
@@ -3240,9 +3243,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// break;
 		case SELF_TIMER:
 			if (preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false))
-				icon_id = ICON_SELF_TIMER_ACTIVE;
+				icon_id = ICON_QC_SELF_TIMER_ACTIVE;
 			else
-				icon_id = ICON_SELF_TIMER_INACTIVE;
+				icon_id = ICON_QC_SELF_TIMER_INACTIVE;
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_self_timer);
 			break;
 		case MORE:
@@ -4196,10 +4199,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 
 				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
-				int icon_id = ICON_SELF_TIMER_ACTIVE;
+				int icon_id = ICON_QC_SELF_TIMER_ACTIVE;
 				if (show)
 				{
-					icon_id = ICON_SELF_TIMER_INACTIVE;
+					icon_id = ICON_QC_SELF_TIMER_INACTIVE;
 				}
 				but.setImageResource(icon_id);
 
@@ -5103,10 +5106,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 
 				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
-				int icon_id = ICON_SELF_TIMER_ACTIVE;
+				int icon_id = ICON_QC_SELF_TIMER_ACTIVE;
 				if (show)
 				{
-					icon_id = ICON_SELF_TIMER_INACTIVE;
+					icon_id = ICON_QC_SELF_TIMER_INACTIVE;
 				}
 				but.setImageResource(icon_id);
 
