@@ -3611,8 +3611,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
 
-			// show appstore for this mode
-			launchPurchase(100);
+			// show google store with paid version
+			callStoreForUnlocked(this);
+			
 			return false;
 		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
 		{
@@ -3621,6 +3622,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
+			
+			if ((1 == launchesLeft) || (2 == launchesLeft) || (10 == launchesLeft) || (20 == launchesLeft))
+				// show internal store
+				launchPurchase(100);
 		}
 		return true;
 	}
