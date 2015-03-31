@@ -30,7 +30,7 @@ import android.hardware.camera2.CaptureResult;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
@@ -40,7 +40,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -68,7 +68,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onCreate()
 	{
 		// sImagesAmountPref =
-		// MainScreen.getAppResources().getString(R.string.Preference_BestShotImagesAmount);
+		// ApplicationScreen.getAppResources().getString(R.string.Preference_BestShotImagesAmount);
 	}
 
 	@Override
@@ -81,11 +81,11 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+			preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
 		}
 
-		MainScreen.setCaptureFormat(CameraController.YUV);
+		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	// private void refreshPreferences()
@@ -93,7 +93,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	// try
 	// {
 	// SharedPreferences prefs =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+	// PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 	// imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
 	// } catch (Exception e)
 	// {
@@ -120,7 +120,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	// public void onQuickControlClick()
 	// {
 	// SharedPreferences prefs =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+	// PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 	// int val = Integer.parseInt(prefs.getString(sImagesAmountPref, "5"));
 	// int selected = 0;
 	// switch (val)
@@ -171,27 +171,27 @@ public class BestShotCapturePlugin extends PluginCapture
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 				SharedPreferences.Editor editor = prefs.edit();
-				editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+				editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
 				editor.commit();
 			}
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "MainScreen.setupCamera unable to setFlashMode");
+			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
 	}
 
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Bestshot_Help_Header),
-				MainScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
+		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.Bestshot_Help_Header),
+				ApplicationScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
 				"bestShotShowHelp");
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
-			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
 		}
 	}
 
@@ -204,8 +204,8 @@ public class BestShotCapturePlugin extends PluginCapture
 	public void onPause()
 	{
 		if (CameraController.isUseHALv3() && CameraController.isNexus()) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
 		}
 	}
@@ -229,7 +229,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
-			MainScreen.getInstance().muteShutter(false);
+			ApplicationScreen.instance.muteShutter(false);
 			return;
 		}
 		String frameName = "frame" + imagesTaken;
@@ -238,7 +238,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 

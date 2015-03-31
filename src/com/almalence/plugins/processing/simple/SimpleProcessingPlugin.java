@@ -19,7 +19,7 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.simple;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
@@ -27,7 +27,7 @@ import com.almalence.opencam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -70,7 +70,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	
 	private void getPrefs()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		saveInputPreference = prefs.getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 	}
@@ -80,7 +80,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	{
 		sessionID = SessionID;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		modePrefDro = Integer.parseInt(prefs.getString("modePrefDro", "1"));
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -145,7 +145,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 					} catch (IOException e)
 					{
 						e.printStackTrace();
-						MainScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 					} catch (Exception e)
 					{
 						e.printStackTrace();

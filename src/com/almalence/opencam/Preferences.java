@@ -49,10 +49,10 @@ public class Preferences extends PreferenceActivity
 	{
 		super.onCreate(savedInstanceState);
 		
-		// On some devices app crashes on start, because of MainScreen.thiz is null.
-		// If MainScreen.thiz is null, we need to start MainScreen to initialize it, before starting Preferences.
-		if (MainScreen.thiz == null) {
-			Intent intent = new Intent(this, MainScreen.class);
+		// On some devices app crashes on start, because of ApplicationScreen.instance is null.
+		// If ApplicationScreen.instance is null, we need to start ApplicationScreen to initialize it, before starting Preferences.
+		if (ApplicationScreen.instance == null) {
+			Intent intent = new Intent(this, ApplicationScreen.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);

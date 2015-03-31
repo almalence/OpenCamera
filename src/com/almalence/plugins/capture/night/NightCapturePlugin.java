@@ -51,7 +51,7 @@ import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
@@ -59,7 +59,7 @@ import com.almalence.opencam.ApplicationInterface;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -136,7 +136,7 @@ public class NightCapturePlugin extends PluginCapture
 				R.xml.preferences_capture_night,
 				R.xml.preferences_capture_night_more,
 				R.drawable.plugin_capture_night_nightvision_on,
-				MainScreen.getAppResources().getString(R.string.NightVisionOn));
+				ApplicationScreen.getAppResources().getString(R.string.NightVisionOn));
 	}
 
 	@Override
@@ -157,11 +157,11 @@ public class NightCapturePlugin extends PluginCapture
 		}
 		else
 		{
-			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
+			cameraPreview = new GLCameraPreview(ApplicationScreen.getMainContext());
 		}
 		
-		nightVisionLayerShowPref = MainScreen.getAppResources().getString(R.string.NightVisionLayerShow);
-		nightCaptureFocusPref = MainScreen.getAppResources().getString(R.string.NightCaptureFocusPref);
+		nightVisionLayerShowPref = ApplicationScreen.getAppResources().getString(R.string.NightVisionLayerShow);
+		nightCaptureFocusPref = ApplicationScreen.getAppResources().getString(R.string.NightCaptureFocusPref);
 	}
 
 	@Override
@@ -172,11 +172,11 @@ public class NightCapturePlugin extends PluginCapture
 		if (OpenGLPreference)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOn);
+			quickControlTitle = ApplicationScreen.getAppResources().getString(R.string.NightVisionOn);
 		} else
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
+			quickControlTitle = ApplicationScreen.getAppResources().getString(R.string.NightVisionOff);
 		}
 		
 		if (usingSuperMode)
@@ -191,15 +191,15 @@ public class NightCapturePlugin extends PluginCapture
 		inCapture = false;
 		aboutToTakePicture = false;
 
-		MainScreen.getInstance().muteShutter(false);
+		ApplicationScreen.instance.muteShutter(false);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		preferenceSceneMode = MainScreen.getInstance().getSceneModePref();
-		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-				: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
+		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+				: ApplicationScreen.sFrontFocusModePref, ApplicationScreen.sDefaultFocusValue);
+		preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
 
-		MainScreen.setCaptureFormat(CameraController.YUV);
+		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 		
 //		testFrame = 0;
 		
@@ -212,10 +212,10 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		MainScreen.getInstance().setSceneModePref(preferenceSceneMode);
-		MainScreen.getInstance().setFocusModePref(preferenceFocusMode);
-		prefs.edit().putInt(MainScreen.sFlashModePref, preferenceFlashMode).commit();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		ApplicationScreen.instance.setSceneModePref(preferenceSceneMode);
+		ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
+		prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 		
 //		Log.e("Night", "onPause FOCUS PREF = " + preferenceFocusMode);
 		
@@ -227,7 +227,7 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			Message msg = new Message();
 			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_HIDE;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			ApplicationScreen.getMessageHandler().sendMessage(msg);
 		}
 	}
 	
@@ -235,13 +235,13 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		// FixMe: why are we doing it via MainScreen and not directly via guiManager?
+		// FixMe: why are we doing it via ApplicationScreen and not directly via guiManager?
 		if (!usingSuperMode)
 		{
-			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
+			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, false);
 		}
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
+		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
 	}
 	
 	@Override
@@ -258,13 +258,13 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		Message msg = new Message();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		SharedPreferences.Editor editor = prefs.edit();
 
 		if (quickControlIconID == R.drawable.plugin_capture_night_nightvision_on)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_off;
-			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOff);
+			quickControlTitle = ApplicationScreen.getAppResources().getString(R.string.NightVisionOff);
 
 			editor.putBoolean(nightVisionLayerShowPref, false);
 			editor.commit();
@@ -281,7 +281,7 @@ public class NightCapturePlugin extends PluginCapture
 		} else if (quickControlIconID == R.drawable.plugin_capture_night_nightvision_off)
 		{
 			quickControlIconID = R.drawable.plugin_capture_night_nightvision_on;
-			quickControlTitle = MainScreen.getAppResources().getString(R.string.NightVisionOn);
+			quickControlTitle = ApplicationScreen.getAppResources().getString(R.string.NightVisionOn);
 
 			editor.putBoolean(nightVisionLayerShowPref, true);
 			editor.commit();
@@ -291,7 +291,7 @@ public class NightCapturePlugin extends PluginCapture
 			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
 		}
 
-		MainScreen.getMessageHandler().sendMessage(msg);
+		ApplicationScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	@SuppressLint("CommitPrefEdits")
@@ -300,7 +300,7 @@ public class NightCapturePlugin extends PluginCapture
 		String defaultFocus = "0";
 
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		if (!usingSuperMode)
 		{
@@ -316,7 +316,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		String defaultFocus = "0";
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 	}
 
@@ -325,7 +325,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		String defaultFocus = "0";
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 	}
 
@@ -335,7 +335,7 @@ public class NightCapturePlugin extends PluginCapture
 		//max size will be used in supermode
 		int captureIndex = 0;
 		if (!usingSuperMode)
-			captureIndex = MainScreen.selectImageDimensionMultishot();
+			captureIndex = ApplicationScreen.selectImageDimensionMultishot();
 		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
@@ -353,9 +353,9 @@ public class NightCapturePlugin extends PluginCapture
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
-		MainScreen.getInstance().setCameraPreviewSize(os.getWidth(), os.getHeight());
-//		MainScreen.setPreviewWidth(os.getWidth());
-//		MainScreen.setPreviewHeight(os.getHeight());
+		ApplicationScreen.instance.setCameraPreviewSize(os.getWidth(), os.getHeight());
+//		ApplicationScreen.setPreviewWidth(os.getWidth());
+//		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
 	@Override
@@ -376,7 +376,7 @@ public class NightCapturePlugin extends PluginCapture
 				&& (!Build.MODEL.contains("Nexus") && !Build.MODEL.contains("LG-D")) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
-			MainScreen.getInstance().setSceneModePref(CameraParameters.SCENE_MODE_NIGHT);
+			ApplicationScreen.instance.setSceneModePref(CameraParameters.SCENE_MODE_NIGHT);
 		}
 
 		try
@@ -384,7 +384,7 @@ public class NightCapturePlugin extends PluginCapture
 			int[] focusModes = CameraController.getSupportedFocusModes();
 			if (focusModes != null)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 				SharedPreferences.Editor editor = prefs.edit();
 
 				if(!usingSuperMode)
@@ -395,31 +395,31 @@ public class NightCapturePlugin extends PluginCapture
 						{
 							// should set to hyperfocal distance as per android doc
 							CameraController.setCameraFocusMode(CameraParameters.AF_MODE_FIXED);
-							editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
+							editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_FIXED);
 						} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 						{
 							CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-							editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+							editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 							editor.putString(nightCaptureFocusPref, "1");
 							FocusPreference = "1";
 						}
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 					{
 						CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-						editor.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-								: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+						editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+								: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 					}
 				}
 
-				MainScreen.getInstance().setSceneModePref(CameraController.getSceneMode());
+				ApplicationScreen.instance.setSceneModePref(CameraController.getSceneMode());
 			}
 
-			Log.i("NightCapturePlugin", "MainScreen.setupCamera setFocusMode success");
+			Log.i("NightCapturePlugin", "ApplicationScreen.setupCamera setFocusMode success");
 		} catch (RuntimeException e)
 		{
-			Log.e("NightCapturePlugin", "MainScreen.setupCamera unable to setFocusMode");
+			Log.e("NightCapturePlugin", "ApplicationScreen.setupCamera unable to setFocusMode");
 		}
 
 		try
@@ -430,14 +430,14 @@ public class NightCapturePlugin extends PluginCapture
 				CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_AUTO);
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 				SharedPreferences.Editor editor = prefs.edit();
-				editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+				editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
 				editor.commit();
 			}
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "MainScreen.setupCamera unable to setFlashMode");
+			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
 
 //		Message msg = new Message();
@@ -445,7 +445,7 @@ public class NightCapturePlugin extends PluginCapture
 //			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
 //		else
 //			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_HIDE;
-//		MainScreen.getMessageHandler().sendMessage(msg);
+//		ApplicationScreen.getMessageHandler().sendMessage(msg);
 	}
 	
 	@Override
@@ -456,7 +456,7 @@ public class NightCapturePlugin extends PluginCapture
 			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
 		else
 			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_HIDE;
-		MainScreen.getMessageHandler().sendMessage(msg);
+		ApplicationScreen.getMessageHandler().sendMessage(msg);
 	}
 
 	@Override
@@ -511,16 +511,16 @@ public class NightCapturePlugin extends PluginCapture
 
 	private void startCaptureSequence()
 	{
-		MainScreen.getInstance().muteShutter(true);
+		ApplicationScreen.instance.muteShutter(true);
 
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
-		LinearLayout bottom_layout = (LinearLayout) MainScreen.getInstance().findViewById(R.id.mainButtons);
+		LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
 
 		if (!usingCamera2API)
 		{
-			capturingDialog = Toast.makeText(MainScreen.getInstance(), R.string.hold_still, Toast.LENGTH_SHORT);
+			capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.hold_still, Toast.LENGTH_SHORT);
 			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
 			capturingDialog.show();
 		}
@@ -638,7 +638,7 @@ public class NightCapturePlugin extends PluginCapture
 			// ToDo: there is no need to pass orientation for every frame, just for the first one
 			// also, amountofcapturedframes can be set only once to total_frames
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
-					String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+					String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -757,8 +757,8 @@ public class NightCapturePlugin extends PluginCapture
 					else if (dataS.length < data2.length)
 						dataS = new byte[data2.length];
 	
-					int imageWidth = MainScreen.getPreviewWidth();
-					int imageHeight = MainScreen.getPreviewHeight();
+					int imageWidth = ApplicationScreen.getPreviewWidth();
+					int imageHeight = ApplicationScreen.getPreviewHeight();
 					
 //					if(testFrame == 0)
 //					{
@@ -871,7 +871,7 @@ public class NightCapturePlugin extends PluginCapture
 					try
 					{
 						// Draw the square
-						cameraPreview.draw(gl, yuvData, MainScreen.getMainContext());
+						cameraPreview.draw(gl, yuvData, ApplicationScreen.getMainContext());
 					} catch (RuntimeException e)
 					{
 						Log.e("onGLDrawFrame", "onGLDrawFrame in Night some exception" + e.getMessage());

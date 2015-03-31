@@ -79,11 +79,11 @@ public abstract class PluginCapture extends Plugin
 		{
 			inCapture = true;
 
-			MainScreen.getGUIManager().lockControls = true;
+			ApplicationScreen.getGUIManager().lockControls = true;
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
-			MainScreen.getInstance().muteShutter(true);
+			ApplicationScreen.instance.muteShutter(true);
 
 			if (CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;

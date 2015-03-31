@@ -25,7 +25,7 @@ import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
@@ -33,7 +33,7 @@ import com.almalence.opencam_plus.R;
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -79,14 +79,14 @@ public class MultiShotCapturePlugin extends PluginCapture
 		inCapture = false;
 		aboutToTakePicture = false;
 
-		MainScreen.setCaptureFormat(CameraController.YUV);
+		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
-				MainScreen.getAppResources().getString(R.string.MultiShot_Help),
+		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
+				ApplicationScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}
 
@@ -116,7 +116,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 			imagesTaken = 0;
 			resultCompleted = 0;
-			MainScreen.getInstance().muteShutter(false);
+			ApplicationScreen.instance.muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -126,7 +126,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
@@ -183,17 +183,17 @@ public class MultiShotCapturePlugin extends PluginCapture
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
 		{
 			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
-//			MainScreen.setSaveImageWidth(imgCaptureWidth);
-//			MainScreen.setSaveImageHeight(imgCaptureHeight);
+//			ApplicationScreen.setSaveImageWidth(imgCaptureWidth);
+//			ApplicationScreen.setSaveImageHeight(imgCaptureHeight);
 //
-//			MainScreen.setImageWidth(imgCaptureWidth);
-//			MainScreen.setImageHeight(imgCaptureHeight);
+//			ApplicationScreen.setImageWidth(imgCaptureWidth);
+//			ApplicationScreen.setImageHeight(imgCaptureHeight);
 		}
 	}
 
 	public static void selectImageDimensionMultishot()
 	{
-		captureIndex = MainScreen.selectImageDimensionMultishot();
+		captureIndex = ApplicationScreen.selectImageDimensionMultishot();
 		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}

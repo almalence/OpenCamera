@@ -49,7 +49,7 @@ public class AlarmReceiver extends BroadcastReceiver
 			thiz = new AlarmReceiver();
 			if (wakeLock == null)
 			{
-				PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext()
+				PowerManager pm = (PowerManager) ApplicationScreen.instance.getApplicationContext()
 						.getSystemService(Context.POWER_SERVICE);
 				wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
 						| PowerManager.ON_AFTER_RELEASE, TAG);
@@ -63,7 +63,7 @@ public class AlarmReceiver extends BroadcastReceiver
 	{
 		if (wakeLock == null)
 		{
-			PowerManager pm = (PowerManager) MainScreen.getInstance().getApplicationContext()
+			PowerManager pm = (PowerManager) ApplicationScreen.instance.getApplicationContext()
 					.getSystemService(Context.POWER_SERVICE);
 			wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
 					| PowerManager.ON_AFTER_RELEASE, TAG);
@@ -77,9 +77,9 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		try
 		{
-			if (MainScreen.getCameraController().getCamera() == null)
+			if (ApplicationScreen.getCameraController().getCamera() == null)
 			{
-				Intent dialogIntent = new Intent(context, MainScreen.class);
+				Intent dialogIntent = new Intent(context, ApplicationScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 						| Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				context.startActivity(dialogIntent);
@@ -100,7 +100,7 @@ public class AlarmReceiver extends BroadcastReceiver
 			return;
 		}
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
@@ -117,7 +117,7 @@ public class AlarmReceiver extends BroadcastReceiver
 
 	public void setNextAlarm(Context context)
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
 		pauseBetweenShotsVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, -1);
 		if (pauseBetweenShotsVal == -1)

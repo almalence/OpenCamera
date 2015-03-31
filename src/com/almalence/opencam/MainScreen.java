@@ -176,8 +176,8 @@ public class MainScreen extends ApplicationScreen
 //	private SoundPlayer					shutterPlayer					= null;
 
 	// Common preferences
-	private String						imageSizeIdxPreference;
-	private String						multishotImageSizeIdxPreference;
+	private int							imageSizeIdxPreference;
+	private int							multishotImageSizeIdxPreference;
 	private boolean						shutterPreference				= true;
 	private int							shotOnTapPreference				= 0;
 
@@ -194,7 +194,7 @@ public class MainScreen extends ApplicationScreen
 	private static boolean				maxScreenBrightnessPreference;
 
 	// shows if mode is currently switching
-	private boolean						switchingMode					= false;
+//	private boolean						switchingMode					= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -279,30 +279,22 @@ public class MainScreen extends ApplicationScreen
 //	public static String				sImageSizeMultishotBackPref;
 //	public static String				sImageSizeMultishotFrontPref;
 
-	public static String				sImageSizePanoramaBackPref;
-	public static String				sImageSizePanoramaFrontPref;
+//	public static String				sImageSizePanoramaBackPref;
+//	public static String				sImageSizePanoramaFrontPref;
 
-	public static String				sImageSizeVideoBackPref;
-	public static String				sImageSizeVideoFrontPref;
-
-	public static String				sCaptureRAWPref;
+//	public static String				sImageSizeVideoBackPref;
+//	public static String				sImageSizeVideoFrontPref;
 
 	public static String				sInitModeListPref				= "initModeListPref";
 
-	public static String				sJPEGQualityPref;
-	
-	public static String				sAntibandingPref;
-	
 //	public static String				sAELockPref;
 //	public static String				sAWBLockPref;
 
 	public static String				sDefaultInfoSetPref;
 	public static String				sSWCheckedPref;
-	public static String				sSavePathPref;
 	public static String				sExportNamePref;
 	public static String				sExportNamePrefixPref;
 	public static String				sExportNamePostfixPref;
-	public static String				sSaveToPref;
 	public static String				sSortByDataPref;
 	public static String				sEnableExifOrientationTagPref;
 	public static String				sAdditionalRotationPref;
@@ -348,23 +340,12 @@ public class MainScreen extends ApplicationScreen
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
 		sVolumeButtonPref = getResources().getString(R.string.Preference_VolumeButtonValue);
 
-		sImageSizePanoramaBackPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaBackValue);
-		sImageSizePanoramaFrontPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaFrontValue);
-
-		sImageSizeVideoBackPref = getResources().getString(R.string.Preference_ImageSizePrefVideoBackValue);
-		sImageSizeVideoFrontPref = getResources().getString(R.string.Preference_ImageSizePrefVideoFrontValue);
-
-		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
-
-		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
-		
 		sDefaultInfoSetPref = getResources().getString(R.string.Preference_DefaultInfoSetValue);
 		sSWCheckedPref = getResources().getString(R.string.Preference_SWCheckedValue);
-		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
+		
 		sExportNamePref = getResources().getString(R.string.Preference_ExportNameValue);
 		sExportNamePrefixPref = getResources().getString(R.string.Preference_SavePathPrefixValue);
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
-		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
 		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
@@ -630,12 +611,14 @@ public class MainScreen extends ApplicationScreen
 		return thiz.orientationMain;
 	}
 
-	public static String getImageSizeIndex()
+	@Override
+	public int getImageSizeIndex()
 	{
 		return MainScreen.getInstance().imageSizeIdxPreference;
 	}
 
-	public static String getMultishotImageSizeIndex()
+	@Override
+	public int getMultishotImageSizeIndex()
 	{
 		return MainScreen.getInstance().multishotImageSizeIdxPreference;
 	}
@@ -646,9 +629,10 @@ public class MainScreen extends ApplicationScreen
 		return shutterPreference;
 	}
 
-	public static int isShotOnTap()
+	@Override
+	public int isShotOnTap()
 	{
-		return MainScreen.getInstance().shotOnTapPreference;
+		return shotOnTapPreference;
 	}
 
 	public static boolean isShowHelp()
@@ -661,17 +645,20 @@ public class MainScreen extends ApplicationScreen
 		MainScreen.getInstance().showHelp = show;
 	}
 
-	public static String getSaveToPath()
+	@Override
+	public String getSaveToPath()
 	{
 		return MainScreen.getInstance().saveToPath;
 	}
 
-	public static String getSaveTo()
+	@Override
+	public String getSaveTo()
 	{
 		return MainScreen.getInstance().saveToPreference;
 	}
 
-	public static boolean isSortByData()
+	@Override
+	public boolean isSortByData()
 	{
 		return MainScreen.getInstance().sortByDataPreference;
 	}
@@ -708,7 +695,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			opt1 = sImageSizeRearPref;
 			opt2 = sImageSizeFrontPref;
-			currentIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
+			currentIdx = MainScreen.thiz.getImageSizeIndex();
 
 			if (currentIdx == -1)
 			{
@@ -731,8 +718,8 @@ public class MainScreen extends ApplicationScreen
 					.toArray(new CharSequence[CameraController.MultishotResolutionsIdxesList.size()]);
 		} else if (mode == MODE_PANORAMA)
 		{
-			opt1 = sImageSizePanoramaBackPref;
-			opt2 = sImageSizePanoramaFrontPref;
+			opt1 = PanoramaAugmentedCapturePlugin.sImageSizePanoramaBackPref;
+			opt2 = PanoramaAugmentedCapturePlugin.sImageSizePanoramaFrontPref;
 			PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 			currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
 			entries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
@@ -835,7 +822,7 @@ public class MainScreen extends ApplicationScreen
 					{
 						public boolean onPreferenceChange(Preference preference, Object newValue)
 						{
-							thiz.imageSizeIdxPreference = newValue.toString();
+							thiz.imageSizeIdxPreference = Integer.parseInt(newValue.toString());
 							setCameraImageSizeIndex(Integer.parseInt(newValue.toString()), false);
 							return true;
 						}
@@ -1235,12 +1222,12 @@ public class MainScreen extends ApplicationScreen
 		CameraController.setCameraIndex(!prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) ? 0 : 1);
 		shutterPreference = prefs.getBoolean(MainScreen.sShutterPref, false);
 		shotOnTapPreference = Integer.parseInt(prefs.getString(MainScreen.sShotOnTapPref, "0"));
-		imageSizeIdxPreference = prefs.getString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
-				: MainScreen.sImageSizeFrontPref, "-1");
+		imageSizeIdxPreference = prefs.getInt(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
+				: MainScreen.sImageSizeFrontPref, -1);
 
-		multishotImageSizeIdxPreference = prefs.getString(
+		multishotImageSizeIdxPreference = prefs.getInt(
 				CameraController.getCameraIndex() == 0 ? sImageSizeMultishotBackPref : sImageSizeMultishotFrontPref,
-				"-1");
+				-1);
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 	}
@@ -3255,8 +3242,8 @@ public class MainScreen extends ApplicationScreen
 			prefsEditor.putString(sImageSizeMultishotFrontPref, "-1");
 
 			// panorama
-			prefsEditor.remove(sImageSizePanoramaBackPref);
-			prefsEditor.remove(sImageSizePanoramaFrontPref);
+			prefsEditor.remove(PanoramaAugmentedCapturePlugin.sImageSizePanoramaBackPref);
+			prefsEditor.remove(PanoramaAugmentedCapturePlugin.sImageSizePanoramaFrontPref);
 
 			// video
 			prefsEditor.putString(sImageSizeVideoBackPref, "-1");

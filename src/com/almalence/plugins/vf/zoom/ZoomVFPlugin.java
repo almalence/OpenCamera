@@ -46,13 +46,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
@@ -109,12 +109,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onCreate()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 
 		panelOpened = false;
 
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		zoomPanelView = inflator.inflate(R.layout.plugin_vf_zoom_layout, null, false);
 		this.zoomPanel = (LinearLayout) zoomPanelView.findViewById(R.id.zoomLayout);
 		this.zoomPanel.setOnTouchListener(new OnTouchListener()
@@ -200,7 +200,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onStart()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 		zoomStopping = false;
 	}
@@ -209,19 +209,19 @@ public class ZoomVFPlugin extends PluginViewfinder
 	public void onStop()
 	{
 		zoomStopping = true;
-		MainScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
+		ApplicationScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
 	}
 
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
+		ApplicationScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
 
-		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) MainScreen.getInstance()
+		RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) ApplicationScreen.instance
 				.findViewById(R.id.specialPluginsLayout).getLayoutParams();
 		mainLayoutHeight = lp.height;
 
-		zoomPanelWidth = MainScreen.getAppResources().getDrawable(R.drawable.scrubber_control_pressed_holo)
+		zoomPanelWidth = ApplicationScreen.getAppResources().getDrawable(R.drawable.scrubber_control_pressed_holo)
 				.getMinimumWidth();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
@@ -232,20 +232,20 @@ public class ZoomVFPlugin extends PluginViewfinder
 		params.addRule(RelativeLayout.CENTER_VERTICAL);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(this.zoomPanel,
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(this.zoomPanel,
 				params);
 
 		this.zoomPanel.setLayoutParams(params);
 //		this.zoomPanel.requestLayout();
 
-//		((RelativeLayout) MainScreen.getInstasnce().findViewById(R.id.specialPluginsLayout)).requestLayout();
+//		((RelativeLayout) ApplicationScreen.getInstasnce().findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	@Override
 	public void onResume()
 	{
 		zoomStopping = false;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 
 		if (!isEnabled)
@@ -348,7 +348,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 				if (zoomStopping)
 				{
 					List<View> specialView = new ArrayList<View>();
-					RelativeLayout specialLayout = (RelativeLayout) MainScreen.getInstance().findViewById(
+					RelativeLayout specialLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(
 							R.id.specialPluginsLayout);
 					for (int i = 0; i < specialLayout.getChildCount(); i++)
 						specialView.add(specialLayout.getChildAt(i));
@@ -370,7 +370,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 										// it works without the runOnUiThread,
 										// but all UI updates must
 										// be done on the UI thread
-										MainScreen.getInstance().runOnUiThread(new Runnable()
+										ApplicationScreen.instance.runOnUiThread(new Runnable()
 										{
 											public void run()
 											{

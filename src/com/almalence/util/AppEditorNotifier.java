@@ -31,11 +31,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 
 //-+- -->
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -65,7 +67,7 @@ public class AppEditorNotifier
 	{
 		final SharedPreferences prefs = mContext.getSharedPreferences("appeditornotifier", 0);
 		// check if installed
-		if (isABCEditorInstalled(MainScreen.getInstance()))
+		if (isABCEditorInstalled(ApplicationScreen.instance))
 		{
 			return false;
 		}
@@ -82,7 +84,7 @@ public class AppEditorNotifier
 
 		if (System.currentTimeMillis() < date_firstLaunch + Long.valueOf((long)DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000))
 		{
-			MainScreen.getInstance().guiManager.openGallery(true);
+			ApplicationScreen.instance.guiManager.openGallery(true);
 			return true;
 		}
 
@@ -103,17 +105,17 @@ public class AppEditorNotifier
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);
-		tv.setText(MainScreen.getAppResources().getString(R.string.editorAdvText));
+		tv.setText(ApplicationScreen.getAppResources().getString(R.string.editorAdvText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button bInstall = new Button(mContext);
-		bInstall.setText(MainScreen.getAppResources().getString(R.string.editorInstallText));
+		bInstall.setText(ApplicationScreen.getAppResources().getString(R.string.editorInstallText));
 		ll.addView(bInstall);
 
 		Button bLater = new Button(mContext);
-		bLater.setText(MainScreen.getAppResources().getString(R.string.editorNoText));
+		bLater.setText(ApplicationScreen.getAppResources().getString(R.string.editorNoText));
 		ll.addView(bLater);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -124,7 +126,7 @@ public class AppEditorNotifier
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				MainScreen.getInstance().guiManager.openGallery(true);
+				ApplicationScreen.instance.guiManager.openGallery(true);
 			}
 		});
 
@@ -143,7 +145,7 @@ public class AppEditorNotifier
 			public void onClick(View v)
 			{
 				dialog.dismiss();
-				MainScreen.getInstance().guiManager.openGallery(true);
+				ApplicationScreen.instance.guiManager.openGallery(true);
 
 				if (DAYS_UNTIL_PROMPT <= 10)
 					DAYS_UNTIL_PROMPT = 30;

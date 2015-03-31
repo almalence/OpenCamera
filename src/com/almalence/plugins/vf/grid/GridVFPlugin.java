@@ -28,13 +28,13 @@ import android.widget.ImageView.ScaleType;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.Plugin;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
@@ -64,7 +64,7 @@ public class GridVFPlugin extends PluginViewfinder
 
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
 
 		switch (gridType)
@@ -92,7 +92,7 @@ public class GridVFPlugin extends PluginViewfinder
 		refreshPreferences();
 
 		if (grid == null)
-			grid = new ImageView(MainScreen.getMainContext());
+			grid = new ImageView(ApplicationScreen.getMainContext());
 
 		setProperGrid();
 
@@ -106,7 +106,7 @@ public class GridVFPlugin extends PluginViewfinder
 	@Override
 	public void onQuickControlClick()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
 
 		if (gridType == 4)
@@ -138,14 +138,14 @@ public class GridVFPlugin extends PluginViewfinder
 		}
 		editor.commit();
 
-		MainScreen.getGUIManager().removeViewQuick(grid);
+		ApplicationScreen.getGUIManager().removeViewQuick(grid);
 
 		try
 		{
 			setProperGrid();
 			grid.setScaleType(ScaleType.FIT_XY);
 			clearViews();
-			MainScreen.getGUIManager().addViewQuick(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
+			ApplicationScreen.getGUIManager().addViewQuick(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -156,8 +156,8 @@ public class GridVFPlugin extends PluginViewfinder
 	private void setProperGrid()
 	{
 
-		CameraController.Size previewSize = new CameraController.Size(MainScreen.getPreviewWidth(),
-				MainScreen.getPreviewHeight());
+		CameraController.Size previewSize = new CameraController.Size(ApplicationScreen.getPreviewWidth(),
+				ApplicationScreen.getPreviewHeight());
 
 		float ratio = (float) previewSize.getWidth() / previewSize.getHeight();
 
@@ -187,7 +187,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_golden4x3;
 			}
-			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
+			grid.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(resID));
 		} else if (1 == gridType)
 		{
 			switch (ri)
@@ -204,7 +204,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_thirds4x3;
 			}
-			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
+			grid.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(resID));
 		} else if (2 == gridType)
 		{
 			switch (ri)
@@ -221,10 +221,10 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_trisec4x3;
 			}
-			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
+			grid.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(resID));
 		} else if (3 == gridType)
 		{
-			grid.setImageDrawable(MainScreen.getAppResources()
+			grid.setImageDrawable(ApplicationScreen.getAppResources()
 					.getDrawable(R.drawable.plugin_vf_grid_none_img));
 		} else
 		{
@@ -242,7 +242,7 @@ public class GridVFPlugin extends PluginViewfinder
 			default:
 				resID = R.drawable.plugin_vf_grid_thirds4x3;
 			}
-			grid.setImageDrawable(MainScreen.getAppResources().getDrawable(resID));
+			grid.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(resID));
 		}
 
 //		grid.requestLayout();

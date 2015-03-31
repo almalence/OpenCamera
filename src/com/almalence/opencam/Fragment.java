@@ -77,8 +77,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			{
 				public boolean onPreferenceClick(Preference preference)
 				{
-					Toast.makeText(MainScreen.getInstance(),
-							MainScreen.getAppResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
+					Toast.makeText(ApplicationScreen.instance,
+							ApplicationScreen.getAppResources().getString(R.string.Pref_About), Toast.LENGTH_LONG)
 							.show();
 
 					return true;
@@ -93,7 +93,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				{
 					if (((CheckBoxPreference) preference).isChecked())
 					{
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
 								.getMainContext());
 						Editor prefsEditor = prefs.edit();
 						prefsEditor.putBoolean("droShowHelp", true);
@@ -166,20 +166,20 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
 							Toast.makeText(
-								MainScreen.getInstance(),
-								MainScreen.getAppResources()
+								ApplicationScreen.instance,
+								ApplicationScreen.getAppResources()
 										.getString(R.string.pref_advanced_saving_saveToPref_CantSaveToSD),
 								Toast.LENGTH_LONG).show();
 						else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) 
 						//start new logic to save on sd
 						{
 							Toast.makeText(
-									MainScreen.getInstance(),
+									ApplicationScreen.instance,
 									"Saving to SD card is under development for Android 5",
 									Toast.LENGTH_LONG).show();
 							
 //							Intent intent = new Intent(Preferences.thiz, FolderPickerLollipop.class);
-//							intent.putExtra(MainScreen.sSavePathPref, v_old);
+//							intent.putExtra(ApplicationScreen.sSavePathPref, v_old);
 //							Preferences.thiz.startActivity(intent);
 							
 							//show notification, but let select custom folder
@@ -192,7 +192,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					{
 						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
 
-						intent.putExtra(MainScreen.sSavePathPref, v_old);
+						intent.putExtra(ApplicationScreen.sSavePathPref, v_old);
 
 						Preferences.thiz.startActivity(intent);
 					}
@@ -335,7 +335,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				R.string.Preference_ExportNameValue));
 		if (exportNameList != null)
 		{
-			String[] names = MainScreen.getAppResources().getStringArray(R.array.exportNameArray);
+			String[] names = ApplicationScreen.getAppResources().getStringArray(R.array.exportNameArray);
 			CharSequence[] newNames = new CharSequence[names.length];
 			int i = 0;
 			for (String name : names)

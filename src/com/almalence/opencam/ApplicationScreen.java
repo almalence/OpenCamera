@@ -117,7 +117,7 @@ import com.almalence.opencam.ui.GUI;
  +++ --> */
 
 /***
- * MainScreen - main activity screen with camera functionality
+ * ApplicationScreen - main activity screen with camera functionality
  * 
  * Passes all main events to PluginManager
  ***/
@@ -144,7 +144,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //
 //	protected static final int			MIN_MPIX_PREVIEW				= 600 * 400;
 
-	public static ApplicationScreen		thiz;
+	public static ApplicationScreen		instance;
 	public Context						mainContext;
 	protected Handler					messageHandler;
 
@@ -208,7 +208,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected static boolean				mAFLocked						= false;
 //
 //	// shows if mode is currently switching
-//	protected boolean						switchingMode					= false;
+	protected boolean						switchingMode					= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -274,14 +274,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //	public static String				sImageSizePanoramaBackPref;
 //	public static String				sImageSizePanoramaFrontPref;
 //
-//	public static String				sImageSizeVideoBackPref;
-//	public static String				sImageSizeVideoFrontPref;
+	public static String				sImageSizeVideoBackPref;
+	public static String				sImageSizeVideoFrontPref;
 //
-//	public static String				sCaptureRAWPref;
+	public static String				sCaptureRAWPref;
 //
 //	public static String				sInitModeListPref				= "initModeListPref";
 //
-//	public static String				sJPEGQualityPref;
+	public static String				sJPEGQualityPref;
 //	
 	public static String				sAntibandingPref;
 //	
@@ -290,11 +290,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 //
 //	public static String				sDefaultInfoSetPref;
 //	public static String				sSWCheckedPref;
-//	public static String				sSavePathPref;
+	public static String				sSavePathPref;
 //	public static String				sExportNamePref;
 //	public static String				sExportNamePrefixPref;
 //	public static String				sExportNamePostfixPref;
-//	public static String				sSaveToPref;
+	public static String				sSaveToPref;
 //	public static String				sSortByDataPref;
 //	public static String				sEnableExifOrientationTagPref;
 //	public static String				sAdditionalRotationPref;
@@ -334,8 +334,18 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sImageSizeMultishotFrontPref = getResources().getString(
 				R.string.Preference_ImageSizePrefSmartMultishotFrontValue);
 		
+		sImageSizeVideoBackPref = getResources().getString(R.string.Preference_ImageSizePrefVideoBackValue);
+		sImageSizeVideoFrontPref = getResources().getString(R.string.Preference_ImageSizePrefVideoFrontValue);
+		
+		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
+		
+		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
+		
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
+		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
+		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
+		
 		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
 		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
@@ -343,7 +353,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
-		thiz = this;
+		instance = this;
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation
@@ -363,11 +373,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			cameraController = CameraController.getInstance();
 		} catch (VerifyError exp)
 		{
-			Log.e("MainScreen", exp.getMessage());
+			Log.e("ApplicationScreen", exp.getMessage());
 		}
-		CameraController.onCreate(ApplicationScreen.thiz, ApplicationScreen.thiz, PluginManager.getInstance(), ApplicationScreen.thiz.messageHandler);
+		CameraController.onCreate(ApplicationScreen.instance, ApplicationScreen.instance, PluginManager.getInstance(), ApplicationScreen.instance.messageHandler);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 		
 		// set preview, on click listener and surface buffers
@@ -385,7 +395,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			public void onOrientationChanged(int orientation)
 			{
 				// figure landscape or portrait
-				if (ApplicationScreen.thiz.landscapeIsNormal)
+				if (ApplicationScreen.instance.landscapeIsNormal)
 				{
 					orientation += 90;
 				}
@@ -432,7 +442,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 			public void onFinish()
 			{
-				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext())
+				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
 						.getBoolean("videorecording", false);
 				if (isVideoRecording || keepScreenOn)
 				{
@@ -470,22 +480,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static Context getMainContext()
 	{
-		return thiz.mainContext;
+		return instance.mainContext;
 	}
 
 	public static Handler getMessageHandler()
 	{
-		return thiz.messageHandler;
+		return instance.messageHandler;
 	}
 
 	public static CameraController getCameraController()
 	{
-		return thiz.cameraController;
+		return instance.cameraController;
 	}
 
 	public static GUI getGUIManager()
 	{
-		return thiz.guiManager;
+		return instance.guiManager;
 	}
 
 	@TargetApi(21)
@@ -513,65 +523,72 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{
-		return thiz.surfaceHolder;
+		return instance.surfaceHolder;
 	}
 
 	public static SurfaceView getPreviewSurfaceView()
 	{
-		return thiz.preview;
+		return instance.preview;
 	}
 	
 	
 	public static int getCaptureFormat()
 	{
-		return thiz.captureFormat;
+		return instance.captureFormat;
 	}
 
 	public static void setCaptureFormat(int capture)
 	{
-		thiz.captureFormat = capture;
+		instance.captureFormat = capture;
 	}
 	
 	public static int getPreviewSurfaceLayoutWidth()
 	{
-		return thiz.surfaceLayoutWidth;
+		return instance.surfaceLayoutWidth;
 	}
 	
 	public static int getPreviewSurfaceLayoutHeight()
 	{
-		return thiz.surfaceLayoutHeight;
+		return instance.surfaceLayoutHeight;
 	}
 	
 	public static void setPreviewSurfaceLayoutWidth(int width)
 	{
-		thiz.surfaceLayoutWidth = width;
+		instance.surfaceLayoutWidth = width;
 	}
 	
 	public static void setPreviewSurfaceLayoutHeight(int height)
 	{
-		thiz.surfaceLayoutHeight = height;
+		instance.surfaceLayoutHeight = height;
 	}
 
 	public static void setSurfaceHolderSize(int width, int height)
 	{
-		if (thiz.surfaceHolder != null)
+		if (instance.surfaceHolder != null)
 		{
-			thiz.surfaceWidth = width;
-			thiz.surfaceHeight = height;
-			thiz.surfaceHolder.setFixedSize(width, height);
+			instance.surfaceWidth = width;
+			instance.surfaceHeight = height;
+			instance.surfaceHolder.setFixedSize(width, height);
 		}
 	}
-	
+
+	abstract public int getImageSizeIndex();
+	abstract public int getMultishotImageSizeIndex();
 	abstract public boolean isShutterSoundEnabled();
+	abstract public int isShotOnTap();
+	
+	abstract public  String getSaveToPath();
+	abstract public String getSaveTo();
+	abstract public boolean isSortByData();
 
 	public static int getOrientation()
 	{
-		return thiz.orientationMain;
+		return instance.orientationMain;
 	}
 
 	public static int getMeteringMode()
 	{
-		return thiz.currentMeteringMode;
+		return instance.currentMeteringMode;
 	}
 
 	/*
@@ -712,18 +729,18 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					ApplicationScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
 					CameraController.onResume();
-					ApplicationScreen.thiz.mPausing = false;
+					ApplicationScreen.instance.mPausing = false;
 
 					if (CameraController.isUseHALv3())
 					{
-						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						CameraController.setupCamera(null, true);
 
 						if (glView != null)
 							glView.onResume();
 					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
 					{
-						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						CameraController.setupCamera(surfaceHolder, true);
 
 						if (glView != null)
@@ -891,9 +908,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				public void onFinish()
 				{
-					if (!ApplicationScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+					if (!ApplicationScreen.instance.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
-						ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						if (!CameraController.isUseHALv3())
 						{
 							CameraController.setupCamera(holder, true);
@@ -929,28 +946,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return 0;
 	}
 
-//	public void onSurfaceChangedMain(final SurfaceHolder holder, final int width, final int height)
-//	{
-//		if (!ApplicationScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
-//		{
-//			ApplicationScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-//
-//			if (CameraController.isUseHALv3())
-//			{
-//				// CameraController.setupCamera(null);
-//				messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
-//			} else
-//			{
-//				Log.d("MainScreen", "surfaceChangedMain: CameraController.setupCamera(null)");
-//				CameraController.setupCamera(holder, true);
-//			}
-//		}
-//	}
-
 	@Override
 	public void addSurfaceCallback()
 	{
-		thiz.surfaceHolder.addCallback(thiz);
+		instance.surfaceHolder.addCallback(instance);
 	}
 
 	boolean	isCameraConfiguring	= false;
@@ -1006,13 +1005,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				}
 			} catch (RuntimeException e)
 			{
-				Log.d("ApplicationScreen", "MainScreen.setupCamera unable setParameters " + e.getMessage());
+				Log.d("ApplicationScreen", "ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
 			}
 			
 			if (cp != null)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-				int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+				int antibanding = Integer.parseInt(prefs.getString(ApplicationScreen.sAntibandingPref, "3"));
 				switch(antibanding)
 				{
 					case 0:
@@ -1075,7 +1074,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						CameraController.startCameraPreview();
 					} catch (RuntimeException e)
 					{
-						Toast.makeText(ApplicationScreen.thiz, "Unable to start camera", Toast.LENGTH_LONG).show();
+						Toast.makeText(ApplicationScreen.instance, "Unable to start camera", Toast.LENGTH_LONG).show();
 						return;
 					}
 
@@ -1157,22 +1156,19 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.e("ApplicationScreen", "SURFACE CREATED");
 		// ----- Find 'normal' orientation of the device
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		int rotation = display.getRotation();
 		if ((rotation == Surface.ROTATION_90) || (rotation == Surface.ROTATION_270))
 			landscapeIsNormal = true; // false; - if landscape view orientation
-										// set for MainScreen
+										// set for ApplicationScreen
 		else
 			landscapeIsNormal = false;
 
 		surfaceCreated = true;
 
 		mCameraSurface = surfaceHolder.getSurface();
-
-		Log.d("MainScreen", "SURFACE CREATED");
 	}
 
 	@Override
@@ -1198,7 +1194,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public void captureFailed()
 	{
 		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-		ApplicationScreen.thiz.muteShutter(false);
+		ApplicationScreen.instance.muteShutter(false);
 	}
 
 	@TargetApi(14)
@@ -1386,16 +1382,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		case ApplicationInterface.MSG_CAMERA_CONFIGURED:
 			onCameraConfigured();
 			break;
-//		case ApplicationInterface.MSG_CAMERA_READY:
-//			{
-//				if (CameraController.isCameraCreated())
-//				{
-//					configureCamera();
-//					PluginManager.getInstance().onGUICreate();
-//					MainScreen.getGUIManager().onGUICreate();
-//				}
-//			}
-//			break;
 		case ApplicationInterface.MSG_CAMERA_OPENED:
 			if (mCameraStarted)
 				break;
@@ -1473,7 +1459,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// set TRUE to mute and FALSE to unmute
 	public void muteShutter(boolean mute)
 	{
-			AudioManager mgr = (AudioManager) ApplicationScreen.thiz.getSystemService(ApplicationScreen.AUDIO_SERVICE);
+			AudioManager mgr = (AudioManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.AUDIO_SERVICE);
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
 	}
 
@@ -1514,22 +1500,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static int getPreviewWidth()
 	{
-		return thiz.previewWidth;
+		return instance.previewWidth;
 	}
 
 	public static void setPreviewWidth(int iWidth)
 	{
-		thiz.previewWidth = iWidth;
+		instance.previewWidth = iWidth;
 	}
 
 	public static int getPreviewHeight()
 	{
-		return thiz.previewHeight;
+		return instance.previewHeight;
 	}
 
 	public static void setPreviewHeight(int iHeight)
 	{
-		thiz.previewHeight = iHeight;
+		instance.previewHeight = iHeight;
 	}
 
 	public static boolean getWantLandscapePhoto()
@@ -1570,1117 +1556,25 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static Resources getAppResources()
 	{
-		return ApplicationScreen.thiz.getResources();
+		return ApplicationScreen.instance.getResources();
 	}
-
-//	/*******************************************************/
-//	/************************ Billing ************************/
-//
-//	protected boolean		showStore					= false;
-//	// <!-- -+-
-//	OpenIabHelper		mHelper;
-//
-//	protected boolean		bOnSale						= false;
-//	protected boolean		couponSale					= false;
-//
-//	protected boolean		unlockAllPurchased			= false;
-//	protected boolean		superPurchased				= false;
-//	protected boolean		hdrPurchased				= false;
-//	protected boolean		panoramaPurchased			= false;
-//	protected boolean		objectRemovalBurstPurchased	= false;
-//	protected boolean		groupShotPurchased			= false;
-//
-//	protected boolean		unlockAllSubscriptionMonth	= false;
-//	protected boolean		unlockAllSubscriptionYear	= false;
-//
-//	static final String	SKU_SUPER					= "plugin_almalence_super";
-//	static final String	SKU_HDR						= "plugin_almalence_hdr";
-//	static final String	SKU_PANORAMA				= "plugin_almalence_panorama";
-//	static final String	SKU_UNLOCK_ALL				= "unlock_all_forever";
-//
-//	// barcode coupon
-//	static final String	SKU_UNLOCK_ALL_COUPON		= "unlock_all_forever_coupon";
-//
-//	// multishot currently
-//	static final String	SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
-//
-//	// unused. but if someone payed - will be unlocked multishot
-//	static final String	SKU_GROUPSHOT				= "plugin_almalence_groupshot";
-//	// subscription
-//	static final String	SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
-//	static final String	SKU_SUBSCRIPTION_YEAR_NEW	= "subscription_unlock_all_year_3free";
-//	static final String	SKU_SUBSCRIPTION_YEAR_CTRL	= "subscription_unlock_all_year_controller";
-//
-//	static final String	SKU_SALE1					= "abc_sale_controller1";
-//	static final String	SKU_SALE2					= "abc_sale_controller2";
-//
-//	static final String	SKU_PROMO					= "abc_promo";
-//
-//	static
-//	{
-//		// Yandex store
-//		OpenIabHelper.mapSku(SKU_SUPER, "com.yandex.store", "plugin_almalence_super");
-//		OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
-//		OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
-//		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
-//		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
-//		OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
-//		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
-//		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
-//		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, "com.yandex.store", "subscription_unlock_all_year_3free");
-//		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
-//
-//		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
-//		OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
-//		OpenIabHelper.mapSku(SKU_PROMO, "com.yandex.store", "abc_promo");
-//
-//		// Amazon store
-//		OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_AMAZON, "plugin_almalence_super_amazon");
-//		OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
-//		OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_AMAZON, "plugin_almalence_panorama_amazon");
-//		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_amazon");
-//		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
-//		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
-//		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
-//		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
-//		OpenIabHelper
-//				.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_3free");
-//		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON,
-//				"subscription_unlock_all_year_controller");
-//
-//		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
-//		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
-//		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
-//
-//		// Samsung store
-//		// OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018387");
-//		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018387");
-//		// OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018389");
-//		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001017613");
-//		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
-//		// OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
-//		// OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018391");
-//		// OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018384");
-//		//
-//		// OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018393");
-//		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
-//		// "100000103369/000001018394");
-//	}
-//
-//	public void setShowStore(boolean show)
-//	{
-//		showStore = show;
-//	}
-//
-//	public boolean isShowStore()
-//	{
-//		return showStore;
-//	}
-//
-//	public void activateCouponSale()
-//	{
-//		couponSale = true;
-//	}
-//
-//	public boolean isCouponSale()
-//	{
-//		return couponSale;
-//	}
-//
-//	public boolean isUnlockedAll()
-//	{
-//		return unlockAllPurchased;
-//	}
-//
-//	// controls subscription status request
-//	protected boolean	subscriptionStatusRequest	= false;
-//	protected long	timeLastSubscriptionCheck	= 0;							// should
-//																				// check
-//																				// each
-//																				// 32
-//																				// days
-//																				// 32*24*60*60*1000
-//	protected long	days32						= 32 * 24 * 60 * 60 * 1000L;
-//
-//	protected void createBillingHandler()
-//	{
-//		try
-//		{
-//			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-//
-//			timeLastSubscriptionCheck = prefs.getLong("timeLastSubscriptionCheck", 0);
-//			if ((System.currentTimeMillis() - timeLastSubscriptionCheck) > days32)
-//				subscriptionStatusRequest = true;
-//			else
-//				subscriptionStatusRequest = false;
-//
-//			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
-//			{
-//				hdrPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
-//			}
-//			if (isInstalled("com.almalence.panorama.smoothpanorama"))
-//			{
-//				panoramaPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
-//			}
-//
-//			String base64EncodedPublicKeyGoogle = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
-//			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
-//			// Create the helper, passing it our context and the public key to
-//			// verify signatures with
-//			// Log.v("Main billing", "Creating IAB helper.");
-//			Map<String, String> storeKeys = new HashMap<String, String>();
-//			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
-//			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
-//			mHelper = new OpenIabHelper(this, storeKeys);
-//
-//			OpenIabHelper.enableDebugLogging(true);
-//
-//			// Log.v("Main billing", "Starting setup.");
-//			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
-//			{
-//				public void onIabSetupFinished(IabResult result)
-//				{
-//					try
-//					{
-//						Log.v("Main billing", "Setup finished.");
-//
-//						if (!result.isSuccess())
-//						{
-//							Log.v("Main billing", "Problem setting up in-app billing: " + result);
-//							return;
-//						}
-//
-//						List<String> additionalSkuList = new ArrayList<String>();
-//						additionalSkuList.add(SKU_SUPER);
-//						additionalSkuList.add(SKU_HDR);
-//						additionalSkuList.add(SKU_PANORAMA);
-//						additionalSkuList.add(SKU_UNLOCK_ALL);
-//						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
-//						additionalSkuList.add(SKU_MOVING_SEQ);
-//						additionalSkuList.add(SKU_GROUPSHOT);
-//						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_CTRL);
-//						additionalSkuList.add(SKU_PROMO);
-//
-//						if (subscriptionStatusRequest)
-//						{
-//							// subscription year
-//							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
-//							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_NEW);
-//							// reset subscription status
-//							unlockAllSubscriptionYear = false;
-//							prefs.edit().putBoolean("subscription_unlock_all_year", false).commit();
-//
-//							timeLastSubscriptionCheck = System.currentTimeMillis();
-//							prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-//						}
-//
-//						// for sale
-//						additionalSkuList.add(SKU_SALE1);
-//						additionalSkuList.add(SKU_SALE2);
-//
-//						// Log.v("Main billing",
-//						// "Setup successful. Querying inventory.");
-//						mHelper.queryInventoryAsync(true, additionalSkuList, mGotInventoryListener);
-//					} catch (Exception e)
-//					{
-//						e.printStackTrace();
-//						Log.e("Main billing", "onIabSetupFinished exception: " + e.getMessage());
-//					}
-//				}
-//			});
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "createBillingHandler exception: " + e.getMessage());
-//		}
-//	}
-//
-//	protected void destroyBillingHandler()
-//	{
-//		try
-//		{
-//			if (mHelper != null)
-//				mHelper.dispose();
-//			mHelper = null;
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "destroyBillingHandler exception: " + e.getMessage());
-//		}
-//	}
-//
-//	public String								titleUnlockAll				= "$6.95";
-//	public String								titleUnlockAllCoupon		= "$3.95";
-//	public String								titleUnlockHDR				= "$2.99";
-//	public String								titleUnlockSuper			= "$2.99";
-//	public String								titleUnlockPano				= "$2.99";
-//	public String								titleUnlockMoving			= "$3.99";
-//	public String								titleUnlockGroup			= "$2.99";
-//	public String								titleSubscriptionYear		= "$4.99";
-//
-//	public String								summary_SKU_PROMO			= "alyrom0nap";
-//	// public String summaryUnlockAll = "";
-//	// public String summaryUnlockHDR = "";
-//	// public String summaryUnlockPano = "";
-//	// public String summaryUnlockMoving = "";
-//	// public String summaryUnlockGroup = "";
-//	//
-//	// public String summarySubscriptionMonth = "";
-//	// public String summarySubscriptionYear = "";
-//
-//	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
-//																			{
-//																				public void onQueryInventoryFinished(
-//																						IabResult result,
-//																						Inventory inventory)
-//																				{
-//																					if (inventory == null)
-//																					{
-//																						Log.e("Main billing",
-//																								"mGotInventoryListener inventory null ");
-//																						return;
-//																					}
-//
-//																					SharedPreferences prefs = PreferenceManager
-//																							.getDefaultSharedPreferences(ApplicationScreen
-//																									.getMainContext());
-//
-//																					Editor prefsEditor = prefs.edit();
-//																					if (inventory
-//																							.hasPurchase(SKU_SUPER))
-//																					{
-//																						superPurchased = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"plugin_almalence_super",
-//																										true).commit();
-//																					}
-//																					if (inventory.hasPurchase(SKU_HDR))
-//																					{
-//																						hdrPurchased = true;
-//																						prefsEditor.putBoolean(
-//																								"plugin_almalence_hdr",
-//																								true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_PANORAMA))
-//																					{
-//																						panoramaPurchased = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"plugin_almalence_panorama",
-//																										true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_UNLOCK_ALL))
-//																					{
-//																						unlockAllPurchased = true;
-//																						prefsEditor.putBoolean(
-//																								"unlock_all_forever",
-//																								true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
-//																					{
-//																						unlockAllPurchased = true;
-//																						prefsEditor.putBoolean(
-//																								"unlock_all_forever",
-//																								true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_MOVING_SEQ))
-//																					{
-//																						objectRemovalBurstPurchased = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"plugin_almalence_moving_burst",
-//																										true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_GROUPSHOT))
-//																					{
-//																						groupShotPurchased = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"plugin_almalence_moving_burst",
-//																										true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-//																					{
-//																						unlockAllSubscriptionYear = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"subscription_unlock_all_year",
-//																										true).commit();
-//																						unlockAllPurchased = true;
-//																						prefsEditor.putBoolean(
-//																								"unlock_all_forever",
-//																								true).commit();
-//																					}
-//																					if (inventory
-//																							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
-//																					{
-//																						unlockAllSubscriptionYear = true;
-//																						prefsEditor
-//																								.putBoolean(
-//																										"subscription_unlock_all_year",
-//																										true).commit();
-//																						unlockAllPurchased = true;
-//																						prefsEditor.putBoolean(
-//																								"unlock_all_forever",
-//																								true).commit();
-//																					}
-//
-//																					try
-//																					{
-//																						String[] separated = inventory
-//																								.getSkuDetails(
-//																										SKU_SALE1)
-//																								.getPrice().split(",");
-//																						int price1 = Integer
-//																								.valueOf(separated[0]);
-//																						String[] separated2 = inventory
-//																								.getSkuDetails(
-//																										SKU_SALE2)
-//																								.getPrice().split(",");
-//																						int price2 = Integer
-//																								.valueOf(separated2[0]);
-//
-//																						if (price1 < price2)
-//																							bOnSale = true;
-//																						else
-//																							bOnSale = false;
-//
-//																						prefsEditor.putBoolean(
-//																								"bOnSale", bOnSale)
-//																								.commit();
-//																					} catch (Exception e)
-//																					{
-//																						Log.e("Main billing SALE",
-//																								"No sale data available");
-//																						bOnSale = false;
-//																					}
-//
-//																					try
-//																					{
-//																						titleUnlockAll = inventory
-//																								.getSkuDetails(
-//																										SKU_UNLOCK_ALL)
-//																								.getPrice();
-//																						titleUnlockAllCoupon = inventory
-//																								.getSkuDetails(
-//																										SKU_UNLOCK_ALL_COUPON)
-//																								.getPrice();
-//																						titleUnlockSuper = inventory
-//																								.getSkuDetails(
-//																										SKU_SUPER)
-//																								.getPrice();
-//																						titleUnlockHDR = inventory
-//																								.getSkuDetails(SKU_HDR)
-//																								.getPrice();
-//																						titleUnlockPano = inventory
-//																								.getSkuDetails(
-//																										SKU_PANORAMA)
-//																								.getPrice();
-//																						titleUnlockMoving = inventory
-//																								.getSkuDetails(
-//																										SKU_MOVING_SEQ)
-//																								.getPrice();
-//																						titleUnlockGroup = inventory
-//																								.getSkuDetails(
-//																										SKU_GROUPSHOT)
-//																								.getPrice();
-//
-//																						titleSubscriptionYear = inventory
-//																								.getSkuDetails(
-//																										SKU_SUBSCRIPTION_YEAR_CTRL)
-//																								.getPrice();
-//
-//																						summary_SKU_PROMO = inventory
-//																								.getSkuDetails(
-//																										SKU_PROMO)
-//																								.getDescription();
-//																					} catch (Exception e)
-//																					{
-//																						Log.e("Market",
-//																								"Error Getting data for store!!!!!!!!");
-//																					}
-//																				}
-//																			};
-//
-//	protected int									HDR_REQUEST					= 100;
-//	protected int									SUPER_REQUEST				= 107;
-//	protected int									PANORAMA_REQUEST			= 101;
-//	protected int									ALL_REQUEST					= 102;
-//	protected int									OBJECTREM_BURST_REQUEST		= 103;
-//	protected int									GROUPSHOT_REQUEST			= 104;
-//	protected int									SUBSCRIPTION_YEAR_REQUEST	= 106;
-//
-//	public boolean isPurchasedAll()
-//	{
-//		return unlockAllPurchased;
-//	}
-//
-//	public boolean isPurchasedSuper()
-//	{
-//		return superPurchased;
-//	}
-//
-//	public boolean isPurchasedHDR()
-//	{
-//		return hdrPurchased;
-//	}
-//
-//	public boolean isPurchasedPanorama()
-//	{
-//		return panoramaPurchased;
-//	}
-//
-//	public boolean isPurchasedMoving()
-//	{
-//		return objectRemovalBurstPurchased;
-//	}
-//
-//	public boolean isPurchasedGroupshot()
-//	{
-//		return groupShotPurchased;
-//	}
-//
-//	public boolean isPurchasedUnlockAllSubscriptionMonth()
-//	{
-//		return unlockAllSubscriptionMonth;
-//	}
-//
-//	public boolean isPurchasedUnlockAllSubscriptionYear()
-//	{
-//		return unlockAllSubscriptionYear;
-//	}
-//
-//	public void purchaseAll()
-//	{
-//		if (isPurchasedAll())
-//			return;
-//
-//		// now will call store with abc unlocked
-//		callStoreForUnlocked(this);
-//
-//		// TODO: this is for all other markets!!!!! Do not call store!!!
-//		// String payload = "";
-//		// try
-//		// {
-//		// mHelper.launchPurchaseFlow(MainScreen.thiz,
-//		// isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
-//		// mPreferencePurchaseFinishedListener, payload);
-//		// }
-//		// catch (Exception e) {
-//		// e.printStackTrace();
-//		// Log.e("Main billing", "Purchase result " + e.getMessage());
-//		// Toast.makeText(MainScreen.thiz,
-//		// "Error during purchase " + e.getMessage(),
-//		// Toast.LENGTH_LONG).show();
-//		// }
-//	}
-//
-//	public void purchaseSuper()
-//	{
-//		if (isPurchasedSuper() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(ApplicationScreen.thiz, SKU_SUPER, SUPER_REQUEST, mPreferencePurchaseFinishedListener,
-//					payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(ApplicationScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	public void purchaseHDR()
-//	{
-//		if (isPurchasedHDR() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(ApplicationScreen.thiz, SKU_HDR, HDR_REQUEST, mPreferencePurchaseFinishedListener,
-//					payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(ApplicationScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	public void purchasePanorama()
-//	{
-//		if (isPurchasedPanorama() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(ApplicationScreen.thiz, SKU_PANORAMA, PANORAMA_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(ApplicationScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	public void purchaseMultishot()
-//	{
-//		if (isPurchasedMoving() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(ApplicationScreen.thiz, SKU_MOVING_SEQ, OBJECTREM_BURST_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(ApplicationScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	public void purchasedUnlockAllSubscriptionYear()
-//	{
-//		if (isPurchasedUnlockAllSubscriptionYear() || isPurchasedAll())
-//			return;
-//		String payload = "";
-//		try
-//		{
-//			mHelper.launchPurchaseFlow(ApplicationScreen.thiz, SKU_SUBSCRIPTION_YEAR_NEW, SUBSCRIPTION_YEAR_REQUEST,
-//					mPreferencePurchaseFinishedListener, payload);
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Log.e("Main billing", "Purchase result " + e.getMessage());
-//			Toast.makeText(ApplicationScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	// Callback for when purchase from preferences is finished
-//	IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-//																				{
-//																					public void onIabPurchaseFinished(
-//																							IabResult result,
-//																							Purchase purchase)
-//																					{
-//																						showStore = true;
-//																						purchaseFinished(result,
-//																								purchase);
-//																					}
-//																				};
-//
-//	protected void purchaseFinished(IabResult result, Purchase purchase)
-//	{
-//		Log.v("Main billing", "Purchase finished: " + result + ", purchase: " + purchase);
-//		if (result.isFailure())
-//		{
-//			Log.v("Main billing", "Error purchasing: " + result);
-//			return;
-//		}
-//
-//		Log.v("Main billing", "Purchase successful.");
-//
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-//
-//		if (purchase.getSku().equals(SKU_HDR))
-//		{
-//			Log.v("Main billing", "Purchase HDR.");
-//			hdrPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_SUPER))
-//		{
-//			Log.v("Main billing", "Purchase SUPER.");
-//			superPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("plugin_almalence_super", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_PANORAMA))
-//		{
-//			Log.v("Main billing", "Purchase Panorama.");
-//			panoramaPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_UNLOCK_ALL))
-//		{
-//			Log.v("Main billing", "Purchase unlock_all_forever.");
-//			unlockAllPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON))
-//		{
-//			Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
-//			unlockAllPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_MOVING_SEQ))
-//		{
-//			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-//			objectRemovalBurstPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_GROUPSHOT))
-//		{
-//			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-//			objectRemovalBurstPurchased = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
-//		{
-//			Log.v("Main billing", "Purchase year subscription.");
-//			unlockAllSubscriptionYear = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
-//
-//			timeLastSubscriptionCheck = System.currentTimeMillis();
-//			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-//
-//			unlockAllPurchased = true;
-//			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-//		}
-//		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR_NEW))
-//		{
-//			Log.v("Main billing", "Purchase year subscription.");
-//			unlockAllSubscriptionYear = true;
-//
-//			Editor prefsEditor = prefs.edit();
-//			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
-//
-//			timeLastSubscriptionCheck = System.currentTimeMillis();
-//			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-//
-//			unlockAllPurchased = true;
-//			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-//		}
-//	}
-//
-//	public void launchPurchase(int requestID)
-//	{
-//		try
-//		{
-//			guiManager.showStore();
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//			Toast.makeText(this, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-//		}
-//	}
-//
-//	IabHelper.OnIabPurchaseFinishedListener	mPurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-//																		{
-//																			public void onIabPurchaseFinished(
-//																					IabResult result, Purchase purchase)
-//																			{
-//
-//																				guiManager.showStore();
-//																				purchaseFinished(result, purchase);
-//																			}
-//																		};
-//
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-//	{
-//		Log.v("Main billing", "onActivityResult(" + requestCode + "," + resultCode + "," + data);
-//
-//		// Pass on the activity result to the helper for handling
-//		if (!mHelper.handleActivityResult(requestCode, resultCode, data))
-//		{
-//			// not handled, so handle it ourselves (here's where you'd
-//			// perform any handling of activity results not related to in-app
-//			// billing...
-//			super.onActivityResult(requestCode, resultCode, data);
-//		} else
-//		{
-//			Log.v("Main billing", "onActivityResult handled by IABUtil.");
-//		}
-//	}
-//
-//	public boolean	showPromoRedeemed		= false;
-//	public boolean	showPromoRedeemedJulius	= false;
-//
-//	// enter promo code to get smth
-//	public void enterPromo()
-//	{
-//		final float density = getResources().getDisplayMetrics().density;
-//
-//		LinearLayout ll = new LinearLayout(this);
-//		ll.setOrientation(LinearLayout.VERTICAL);
-//		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
-//
-//		// rating bar
-//		final EditText editText = new EditText(this);
-//		editText.setHint(R.string.Pref_Upgrde_PromoCode_Text);
-//		editText.setHintTextColor(Color.WHITE);
-//
-//		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-//				LayoutParams.WRAP_CONTENT);
-//		params.gravity = Gravity.CENTER_HORIZONTAL;
-//		params.setMargins(0, 20, 0, 30);
-//		editText.setLayoutParams(params);
-//		ll.addView(editText);
-//
-//		Button b3 = new Button(this);
-//		b3.setText(getResources().getString(R.string.Pref_Upgrde_PromoCode_DoneText));
-//		ll.addView(b3);
-//
-//		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setView(ll);
-//		final AlertDialog dialog = builder.create();
-//
-//		b3.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				String[] sep = ApplicationScreen.getInstance().summary_SKU_PROMO.split(";");
-//				String promo = editText.getText().toString();
-//				boolean matchPromo = false;
-//
-//				// /////////////////////////////////////////////////////
-//				// juliusapp promotion
-//				if (promo.equalsIgnoreCase("MONOMO") || promo.equalsIgnoreCase("RISPARMI"))
-//				{
-//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-//					panoramaPurchased = true;
-//					objectRemovalBurstPurchased = true;
-//
-//					Editor prefsEditor = prefs.edit();
-//					prefsEditor.putBoolean("plugin_almalence_panorama", true);
-//					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-//					prefsEditor.commit();
-//					dialog.dismiss();
-//					guiManager.hideStore();
-//					showPromoRedeemedJulius = true;
-//					guiManager.showStore();
-//					return;
-//				}
-//				// /////////////////////////////////////////////////////
-//
-//				for (int i = 0; i < sep.length; i++)
-//				{
-//					if (promo.equalsIgnoreCase(sep[i]))
-//						matchPromo = true;
-//				}
-//
-//				// if (promo.equalsIgnoreCase("appoftheday") ||
-//				// promo.equalsIgnoreCase("stelapps"))
-//				if (matchPromo)
-//				{
-//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-//					unlockAllPurchased = true;
-//
-//					Editor prefsEditor = prefs.edit();
-//					prefsEditor.putBoolean("unlock_all_forever", true);
-//					prefsEditor.commit();
-//					dialog.dismiss();
-//					guiManager.hideStore();
-//					showPromoRedeemed = true;
-//					guiManager.showStore();
-//				} else
-//				{
-//					editText.setText("");
-//					editText.setHint(R.string.Pref_Upgrde_PromoCode_IncorrectText);
-//				}
-//			}
-//		});
-//
-//		dialog.show();
-//	}
-//
-//	// next methods used to store number of free launches.
-//	// using files to store this info
-//
-//	// returns number of launches left
-//	public int getLeftLaunches(String modeID)
-//	{
-//		String dirPath = getFilesDir().getAbsolutePath() + File.separator + modeID;
-//		File projDir = new File(dirPath);
-//		if (!projDir.exists())
-//		{
-//			projDir.mkdirs();
-//			WriteLaunches(projDir, 30);
-//		}
-//		int left = ReadLaunches(projDir);
-//		return left;
-//	}
-//
-//	// decrements number of launches left
-//	public void decrementLeftLaunches(String modeID)
-//	{
-//		String dirPath = getFilesDir().getAbsolutePath() + File.separator + modeID;
-//		File projDir = new File(dirPath);
-//		if (!projDir.exists())
-//		{
-//			projDir.mkdirs();
-//			WriteLaunches(projDir, 30);
-//		}
-//
-//		int left = ReadLaunches(projDir);
-//		if (left > 0)
-//			WriteLaunches(projDir, left - 1);
-//
-//		if (left == 5 || left == 3)
-//		{
-//			// show subscription dialog
-//			showSubscriptionDialog();
-//			return;
-//		}
-//	}
-//
-//	// writes number of launches left into memory
-//	protected void WriteLaunches(File projDir, int left)
-//	{
-//		FileOutputStream fos = null;
-//		try
-//		{
-//			fos = new FileOutputStream(projDir + "/left");
-//			fos.write(left);
-//			fos.close();
-//		} catch (FileNotFoundException e)
-//		{
-//			e.printStackTrace();
-//		} catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	// reads number of launches left from memory
-//	protected int ReadLaunches(File projDir)
-//	{
-//		int left = 0;
-//		FileInputStream fis = null;
-//		try
-//		{
-//			fis = new FileInputStream(projDir + "/left");
-//			left = fis.read();
-//			fis.close();
-//		} catch (FileNotFoundException e)
-//		{
-//			e.printStackTrace();
-//		} catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
-//		return left;
-//	}
-//
-//	public boolean checkLaunches(Mode mode)
-//	{
-//		// if mode free
-//		if (mode.SKU == null)
-//			return true;
-//		if (mode.SKU.isEmpty())
-//			return true;
-//
-//		// if all unlocked
-//		if (unlockAllPurchased)
-//			return true;
-//
-//		// if current mode unlocked
-//		if (mode.SKU.equals("plugin_almalence_super"))
-//		{
-//			if (superPurchased || !CameraController.isUseSuperMode())
-//				return true;
-//		}
-//		if (mode.SKU.equals("plugin_almalence_hdr"))
-//		{
-//			if (hdrPurchased)
-//				return true;
-//		}
-//		if (mode.SKU.equals("plugin_almalence_video"))
-//		{
-//			if (hdrPurchased)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
-//		{
-//			if (panoramaPurchased)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_moving_burst"))
-//		{
-//			if (objectRemovalBurstPurchased)
-//				return true;
-//		} else if (mode.SKU.equals("plugin_almalence_groupshot"))
-//		{
-//			if (groupShotPurchased)
-//				return true;
-//		}
-//
-//		int launchesLeft = ApplicationScreen.thiz.getLeftLaunches(mode.modeID);
-//		int id = ApplicationScreen.getAppResources().getIdentifier(
-//				(CameraController.isUseHALv3() ? mode.modeNameHAL : mode.modeName), "string",
-//				ApplicationScreen.thiz.getPackageName());
-//		String modename = ApplicationScreen.getAppResources().getString(id);
-//
-//		if (0 == launchesLeft)// no more launches left
-//		{
-//			String left = String.format(getResources().getString(R.string.trial_finished), modename);
-//			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
-//			toast.setGravity(Gravity.CENTER, 0, 0);
-//			toast.show();
-//
-//			// show appstore for this mode
-//			launchPurchase(100);
-//			return false;
-//		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
-//		{
-//			// show appstore button and say that it cost money
-//			String left = String.format(getResources().getString(R.string.trial_left), modename, launchesLeft);
-//			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
-//			toast.setGravity(Gravity.CENTER, 0, 0);
-//			toast.show();
-//		}
-//		return true;
-//	}
-//
-//	protected boolean isInstalled(String packageName)
-//	{
-//		PackageManager pm = getPackageManager();
-//		boolean installed = false;
-//		try
-//		{
-//			pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-//			installed = true;
-//		} catch (PackageManager.NameNotFoundException e)
-//		{
-//			installed = false;
-//		}
-//		return installed;
-//	}
-//
-//	protected void showSubscriptionDialog()
-//	{
-//		final float density = getResources().getDisplayMetrics().density;
-//
-//		LinearLayout ll = new LinearLayout(this);
-//		ll.setOrientation(LinearLayout.VERTICAL);
-//		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
-//
-//		ImageView img = new ImageView(this);
-//		img.setImageResource(R.drawable.store_subscription);
-//		img.setAdjustViewBounds(true);
-//		ll.addView(img);
-//
-//		TextView tv = new TextView(this);
-//		tv.setText(ApplicationScreen.getAppResources().getString(R.string.subscriptionText));
-//		tv.setWidth((int) (250 * density));
-//		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
-//		ll.addView(tv);
-//
-//		Button bNo = new Button(this);
-//		bNo.setText(ApplicationScreen.getAppResources().getString(R.string.subscriptionNoText));
-//		ll.addView(bNo);
-//
-//		Button bSubscribe = new Button(this);
-//		bSubscribe.setText(ApplicationScreen.getAppResources().getString(R.string.subscriptionYesText));
-//		ll.addView(bSubscribe);
-//
-//		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setView(ll);
-//		final AlertDialog dialog = builder.create();
-//
-//		bSubscribe.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				purchasedUnlockAllSubscriptionYear();
-//				dialog.dismiss();
-//			}
-//		});
-//
-//		bNo.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				dialog.dismiss();
-//			}
-//		});
-//
-//		dialog.show();
-//	}
-//
-//	protected boolean isABCUnlockedInstalled(Activity activity)
-//	{
-//		try
-//		{
-//			activity.getPackageManager().getInstallerPackageName("com.almalence.opencam_plus");
-//		} catch (IllegalArgumentException e)
-//		{
-//			return false;
-//		}
-//
-//		return true;
-//	}
-//
-//	protected void callStoreForUnlocked(Activity activity)
-//	{
-//		try
-//		{
-//			Intent intent = new Intent(Intent.ACTION_VIEW);
-//			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
-//			activity.startActivity(intent);
-//		} catch (ActivityNotFoundException e)
-//		{
-//			return;
-//		}
-//	}
-//
-//	// -+- -->
-//
-//	/************************ Billing ************************/
-//	/*******************************************************/
 
 	abstract protected void resetOrSaveSettings();	
 
-//	public void switchingMode(boolean isModeSwitching)
-//	{
-//		switchingMode = isModeSwitching;
-//	}
-//
-//	public boolean getSwitchingMode()
-//	{
-//		return switchingMode;
-//	}
+	public void switchingMode(boolean isModeSwitching)
+	{
+		switchingMode = isModeSwitching;
+	}
+
+	public boolean getSwitchingMode()
+	{
+		return switchingMode;
+	}
 	
 	@Override
 	public Activity getMainActivity()
 	{
-		return thiz;
+		return instance;
 	}
 	
 	@Override

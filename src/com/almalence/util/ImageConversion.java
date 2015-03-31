@@ -27,10 +27,10 @@ import android.view.Display;
 import android.view.WindowManager;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 //-+- -->
 
 import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
@@ -85,7 +85,7 @@ public class ImageConversion
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 
-		Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay();
 		int mDisplayWidth = display.getHeight();
 		int mDisplayHeight = display.getWidth();
@@ -134,7 +134,7 @@ public class ImageConversion
 		Size mInputFrameSize = new Size(width, height);
 		Size mOutputFrameSize = null;
 		
-		Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay();
 		int mDisplayWidth = display.getHeight();
 		int mDisplayHeight = display.getWidth();

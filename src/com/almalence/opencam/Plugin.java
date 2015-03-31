@@ -282,7 +282,7 @@ public abstract class Plugin
 		int prefIdx = -1;
 		try
 		{
-			prefIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
+			prefIdx = ApplicationScreen.instance.getImageSizeIndex();
 		} catch (IndexOutOfBoundsException e)
 		{
 			prefIdx = -1;
@@ -359,7 +359,7 @@ public abstract class Plugin
 			}
 		}
 
-		MainScreen.getInstance().setCameraImageSizeIndex(CaptureIdx, true);
+		ApplicationScreen.instance.setCameraImageSizeIndex(CaptureIdx, true);
 		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
 	}
 
@@ -369,9 +369,9 @@ public abstract class Plugin
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
-		MainScreen.getInstance().setCameraPreviewSize(os.getWidth(), os.getHeight());
-//		MainScreen.setPreviewWidth(os.getWidth());
-//		MainScreen.setPreviewHeight(os.getHeight());
+		ApplicationScreen.instance.setCameraPreviewSize(os.getWidth(), os.getHeight());
+//		ApplicationScreen.setPreviewWidth(os.getWidth());
+//		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
 	// Used only in old camera interface (HALv3 don't use it)
@@ -382,8 +382,8 @@ public abstract class Plugin
 		if (null == camera)
 			return;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 
 		Size imageSize = CameraController.getCameraImageSize();
 		Camera.Parameters cp = CameraController.getCameraParameters();
@@ -394,7 +394,7 @@ public abstract class Plugin
 			CameraController.setCameraParameters(cp);
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "MainScreen.setupCamera unable setParameters " + e.getMessage());
+			Log.e("CameraTest", "ApplicationScreen.setupCamera unable setParameters " + e.getMessage());
 		}
 	}
 
@@ -733,7 +733,7 @@ public abstract class Plugin
 		if (this.quickControlView != null)
 		{
 			int icon_id = this.getQuickControlIconID();
-			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_id);
+			Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_id);
 			((ImageView) this.quickControlView.findViewById(R.id.imageView)).setImageDrawable(icon);
 		}
 	}

@@ -33,6 +33,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
@@ -41,6 +42,7 @@ import android.widget.RelativeLayout;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
@@ -91,7 +93,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 	void updatePreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		mBarcodeScannerState = prefs.getBoolean("PrefBarcodescannerVF", false);
 
 		if (mBarcodeScannerState == ON)
@@ -111,24 +113,24 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		mOrientation = orientation;
 		if (mBarcodesListButton != null)
 		{
-			mBarcodesListButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+			mBarcodesListButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
 			mBarcodesListButton.invalidate();
 			mBarcodesListButton.requestLayout();
 		}
 		if (barcodeHistoryDialog != null)
 		{
-			barcodeHistoryDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
+			barcodeHistoryDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
 		}
 		if (barcodeViewDialog != null)
 		{
-			barcodeViewDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
+			barcodeViewDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
 		}
 	}
 
 	@Override
 	public void onQuickControlClick()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		Editor editor = prefs.edit();
 
 		if (mBarcodeScannerState == ON)
@@ -190,7 +192,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 	public void initializeSoundPlayer()
 	{
-		mSoundPlayer = new SoundPlayer(MainScreen.getMainContext(), MainScreen.getMainContext().getResources()
+		mSoundPlayer = new SoundPlayer(ApplicationScreen.getMainContext(), ApplicationScreen.getMainContext().getResources()
 				.openRawResourceFd(R.raw.plugin_vf_focus_ok));
 	}
 
@@ -243,16 +245,16 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		mBound = new BoundingView(MainScreen.getMainContext());
+		mBound = new BoundingView(ApplicationScreen.getMainContext());
 		mBound.setVisibility(View.VISIBLE);
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT);
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mBound, params);
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(mBound, params);
 
 		mBound.setLayoutParams(params);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	/**
@@ -260,13 +262,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	 */
 	public void createScreenButton()
 	{
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_vf_barcodescanner_layout, null, false);
 		mButtonsLayout.setVisibility(View.VISIBLE);
 
 		mBarcodesListButton = (RotateImageView) mButtonsLayout.findViewById(R.id.buttonBarcodesList);
 
-		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+		ApplicationScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 
 		mBarcodesListButton.setOnClickListener(new OnClickListener()
 		{
@@ -283,23 +285,23 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout,
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).addView(mButtonsLayout,
 				params);
 
 		mButtonsLayout.setLayoutParams(params);
 		mButtonsLayout.requestLayout();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).requestLayout();
 
-		mBarcodesListButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+		mBarcodesListButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
 		mBarcodesListButton.invalidate();
 		mBarcodesListButton.requestLayout();
 	}
 
 	protected void showBarcodesHistoryDialog()
 	{
-		barcodeHistoryDialog = new BarcodeHistoryListDialog(MainScreen.getInstance());
-		barcodeHistoryDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
+		barcodeHistoryDialog = new BarcodeHistoryListDialog(ApplicationScreen.instance);
+		barcodeHistoryDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
 
 		barcodeHistoryDialog.list.setOnItemClickListener(new OnItemClickListener()
 		{
@@ -335,7 +337,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		new DecodeAsyncTask(MainScreen.getPreviewWidth(), MainScreen.getPreviewHeight()).execute(data);
+		new DecodeAsyncTask(ApplicationScreen.getPreviewWidth(), ApplicationScreen.getPreviewHeight()).execute(data);
 
 		mFrameCounter = 0;
 	}
@@ -364,7 +366,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		if (barcode.getData().equals("abc.almalence.com/qrpromo") && !MainScreen.getInstance().isUnlockedAll())
 		{
 			MainScreen.getInstance().activateCouponSale();
-			MainScreen.getGUIManager().showStore();
+			ApplicationScreen.getGUIManager().showStore();
 			return;
 		}
 		// -+- -->
@@ -374,7 +376,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		showBarcodeViewDialog(barcode);
 
 		if (mSoundPlayer != null)
-			if (!MainScreen.getInstance().isShutterSoundEnabled())
+			if (!ApplicationScreen.instance.isShutterSoundEnabled())
 				mSoundPlayer.play();
 		
 		decodedProcessing = false;
@@ -384,8 +386,8 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	{
 		try
 		{
-			barcodeViewDialog = new BarcodeViewDialog(MainScreen.getInstance(), barcode);
-			barcodeViewDialog.setRotate(MainScreen.getGUIManager().getLayoutOrientation());
+			barcodeViewDialog = new BarcodeViewDialog(ApplicationScreen.instance, barcode);
+			barcodeViewDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
 			showGUI();
 
 			barcodeViewDialog.setOnDismissListener(new OnDismissListener()
@@ -412,10 +414,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		double heightFraction = BOUNDS_FRACTION;
 		double widthFraction = BOUNDS_FRACTION;
 
-		int height = (int) (MainScreen.getPreviewHeight() * heightFraction);
-		int width = (int) (MainScreen.getPreviewWidth() * widthFraction);
-		int left = (int) (MainScreen.getPreviewWidth() * ((1 - widthFraction) / 2));
-		int top = (int) (MainScreen.getPreviewHeight() * ((1 - heightFraction) / 2));
+		int height = (int) (ApplicationScreen.getPreviewHeight() * heightFraction);
+		int width = (int) (ApplicationScreen.getPreviewWidth() * widthFraction);
+		int left = (int) (ApplicationScreen.getPreviewWidth() * ((1 - widthFraction) / 2));
+		int top = (int) (ApplicationScreen.getPreviewHeight() * ((1 - heightFraction) / 2));
 		int right = left + width;
 		int bottom = top + height;
 
@@ -520,13 +522,13 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	{
 		File file = null;
 		byte[] dataRotated = new byte[datas[0].length];
-		ImageConversion.TransformNV21(datas[0], dataRotated, MainScreen.getPreviewWidth(),
-				MainScreen.getPreviewHeight(), 0, 0, 1);
+		ImageConversion.TransformNV21(datas[0], dataRotated, ApplicationScreen.getPreviewWidth(),
+				ApplicationScreen.getPreviewHeight(), 0, 0, 1);
 		datas[0] = dataRotated;
 
-		Rect rect = new Rect(0, 0, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth());
-		YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, MainScreen.getPreviewHeight(),
-				MainScreen.getPreviewWidth(), null);
+		Rect rect = new Rect(0, 0, ApplicationScreen.getPreviewHeight(), ApplicationScreen.getPreviewWidth());
+		YuvImage img = new YuvImage(datas[0], ImageFormat.NV21, ApplicationScreen.getPreviewHeight(),
+				ApplicationScreen.getPreviewWidth(), null);
 
 		Calendar d = Calendar.getInstance();
 		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
@@ -572,7 +574,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 				matrix.postRotate(mOrientation - 90);
 
 				// We rotate the same Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, MainScreen.getPreviewHeight(), MainScreen.getPreviewWidth(),
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, ApplicationScreen.getPreviewHeight(), ApplicationScreen.getPreviewWidth(),
 						matrix, false);
 
 				// We dump the rotated Bitmap to the stream

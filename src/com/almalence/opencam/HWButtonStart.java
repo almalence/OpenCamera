@@ -37,7 +37,7 @@ public class HWButtonStart extends BroadcastReceiver
 	{
 		try
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			boolean useHWShutterButtonLauncher = prefs.getBoolean("useHWShutterButtonLauncher", false);
 
 			if (!useHWShutterButtonLauncher)
@@ -46,8 +46,8 @@ public class HWButtonStart extends BroadcastReceiver
 			abortBroadcast();
 
 			Intent startActivity = new Intent();
-			startActivity.setClass(context, MainScreen.class);
-			startActivity.setAction(MainScreen.class.getName());
+			startActivity.setClass(context, ApplicationScreen.class);
+			startActivity.setAction(ApplicationScreen.class.getName());
 			startActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			context.startActivity(startActivity);
 		} catch (Exception e)
