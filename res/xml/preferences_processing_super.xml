@@ -5,7 +5,7 @@
         android:key="upscaleResult"
         android:title="@string/Pref_Super_TitleUpscale" />
 
-<!-- -+- -->
+<!-- -+-  -->
 <com.almalence.opencam.ui.SeekBarPreference
     android:defaultValue="0"
     android:dialogMessage=""
@@ -15,7 +15,7 @@
     android:text=""
     android:title="@string/Pref_Super_TitleBrightnessEnhancement" />
 
-<!-- -+- -->
+<!--  -+- -->
 <!-- +++
 	<com.almalence.opencam_plus.ui.SeekBarPreference
         android:defaultValue="0"
