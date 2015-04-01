@@ -6697,7 +6697,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 
 	// mode help procedure
-	@Override
 	public void showHelp(String modeName, String text, int imageID, String preferences)
 	{
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());

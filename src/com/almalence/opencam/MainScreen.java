@@ -100,6 +100,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
+import com.almalence.opencam.ui.TemplateGUI;
 import com.almalence.util.AppRater;
 
 //-+- -->
@@ -416,7 +417,7 @@ public class MainScreen extends ApplicationScreen
 	{
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
-		guiManager = new AlmalenceGUI();
+		guiManager = new TemplateGUI();
 		guiManager.createInitialGUI();
 		this.findViewById(R.id.mainLayout1).invalidate();
 		this.findViewById(R.id.mainLayout1).requestLayout();
@@ -630,6 +631,12 @@ public class MainScreen extends ApplicationScreen
 	public static void setShowHelp(boolean show)
 	{
 		MainScreen.getInstance().showHelp = show;
+	}
+	
+	public static void showHelp(String modeName, String text, int imageID, String preferences)
+	{
+//		AlmalenceGUI guiManager = (AlmalenceGUI)getGUIManager();
+//		guiManager.showHelp(modeName, text, imageID, preferences);
 	}
 
 	@Override

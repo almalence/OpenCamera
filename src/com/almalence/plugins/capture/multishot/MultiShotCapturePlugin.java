@@ -26,6 +26,7 @@ import android.hardware.camera2.CaptureResult;
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;
 import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.MainScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.R;
@@ -34,6 +35,7 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -85,7 +87,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
+		MainScreen.showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
 				ApplicationScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}

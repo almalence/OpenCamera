@@ -72,6 +72,7 @@ import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
@@ -83,6 +84,7 @@ import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -593,7 +595,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.clearViews();
 
-		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.Panorama_Help_Header),
+		MainScreen.showHelp(ApplicationScreen.instance.getString(R.string.Panorama_Help_Header),
 				ApplicationScreen.getAppResources().getString(R.string.Panorama_Help),
 				R.drawable.plugin_help_panorama, "panoramaShowHelp");
 

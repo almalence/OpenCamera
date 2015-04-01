@@ -34,12 +34,14 @@ import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -141,7 +143,7 @@ public class CapturePlugin extends PluginCapture
 				ApplicationScreen.instance.relaunchCamera();
 
 				if (ModePreference.compareTo("0") == 0)
-					ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.Dro_Help_Header),
+					MainScreen.showHelp(ApplicationScreen.instance.getString(R.string.Dro_Help_Header),
 							ApplicationScreen.getAppResources().getString(R.string.Dro_Help),
 							R.drawable.plugin_help_dro, "droShowHelp");
 			}
@@ -222,7 +224,7 @@ public class CapturePlugin extends PluginCapture
 		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).requestLayout();
 
 		if (ModePreference.compareTo("0") == 0)
-			ApplicationScreen.getGUIManager().showHelp("Dro help",
+			MainScreen.showHelp("Dro help",
 					ApplicationScreen.getAppResources().getString(R.string.Dro_Help), R.drawable.plugin_help_dro,
 					"droShowHelp");
 	}

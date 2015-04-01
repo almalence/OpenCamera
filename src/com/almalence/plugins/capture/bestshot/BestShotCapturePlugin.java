@@ -41,6 +41,7 @@ import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -185,7 +186,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.Bestshot_Help_Header),
+		MainScreen.showHelp(ApplicationScreen.instance.getString(R.string.Bestshot_Help_Header),
 				ApplicationScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
 				"bestShotShowHelp");
 
