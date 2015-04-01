@@ -3503,7 +3503,8 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			toast.show();
 
 			// show google store with paid version
-			callStoreForUnlocked(this);
+			//callStoreForUnlocked(this);
+			launchPurchase(100);
 			
 			return false;
 		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
@@ -3554,12 +3555,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		try
 		{
 			//SAMSUNG ONLY!
-			Intent intent = new Intent();
-			intent.setData(Uri.parse("samsungapps://ProductDetail/com.almalence.opencam_plus")); // The string_of_uri is an 
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
-			Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-			Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setData(Uri.parse("samsungapps://ProductDetail/com.almalence.opencam_plus")); // The string_of_uri is an 
+//			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+//			Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+//			Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+//			startActivity(intent);
 			
 //			Intent intent = new Intent(Intent.ACTION_VIEW);
 //			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));
